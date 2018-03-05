@@ -43,7 +43,6 @@
         <mapping class="org.kitodo.data.database.beans.Client"/>
         <mapping class="org.kitodo.data.database.beans.Docket"/>
         <mapping class="org.kitodo.data.database.beans.Filter"/>
-        <mapping class="org.kitodo.data.database.beans.History"/>
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
         <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>

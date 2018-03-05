@@ -1088,21 +1088,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get size of histories' list.
-     *
-     * @param process
-     *            object
-     * @return size
-     */
-    public int getHistorySize(Process process) {
-        if (process.getHistory() == null) {
-            return 0;
-        } else {
-            return process.getHistory().size();
-        }
-    }
-
-    /**
      * Get size of properties' list.
      *
      * @param process

@@ -49,11 +49,10 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
-import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
+import org.goobi.production.plugin.PluginLoader;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -949,19 +948,6 @@ public class ProzesskopieForm implements Serializable {
 
         // Create configured directories
         serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
-
-        // Adding process to history
-        if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
-            Helper.setFehlerMeldung("historyNotUpdated");
-            return null;
-        } else {
-            try {
-                serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DataException e) {
-                logger.error("error on save: ", e);
-                return null;
-            }
-        }
 
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 

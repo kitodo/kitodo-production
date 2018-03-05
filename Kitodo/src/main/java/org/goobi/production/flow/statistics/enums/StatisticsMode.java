@@ -18,7 +18,6 @@ import org.goobi.production.flow.statistics.hibernate.StatQuestCorrections;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProduction;
 import org.goobi.production.flow.statistics.hibernate.StatQuestProjectAssociations;
 import org.goobi.production.flow.statistics.hibernate.StatQuestStorage;
-import org.goobi.production.flow.statistics.hibernate.StatQuestThroughput;
 import org.goobi.production.flow.statistics.hibernate.StatQuestUsergroups;
 import org.goobi.production.flow.statistics.hibernate.StatQuestVolumeStatus;
 
@@ -36,8 +35,6 @@ public enum StatisticsMode {
     PROJECTS("projectAssociation", StatQuestProjectAssociations.class, false, false, false),
     STATUS_VOLUMES("statusOfVolumes", StatQuestVolumeStatus.class, false, false, false),
     USERGROUPS("statusForUsers", StatQuestUsergroups.class, false, false, false),
-    // the following statistcs are the new statistics from june 2009
-    THROUGHPUT("productionThroughput", StatQuestThroughput.class, true, false, true),
     CORRECTIONS("errorTracking", StatQuestCorrections.class, false, false, true),
     STORAGE("storageCalculator", StatQuestStorage.class, false, false, true),
     PRODUCTION("productionStatistics", StatQuestProduction.class, false, false, true);

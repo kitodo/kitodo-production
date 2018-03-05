@@ -449,15 +449,6 @@
                                                                 value="true"/>
                                     </h:commandLink>
 
-                                    <!-- StatisticsTroughput -->
-                                    <h:commandLink id="action34" rendered="#{!HelperForm.anonymized}"
-                                                   action="#{ProzessverwaltungForm.setStatisticsTroughput}"
-                                                   title="#{msgs.productionThroughput}">
-                                        <h:outputText value="- #{msgs.productionThroughput}"/>
-                                        <t:updateActionListener property="#{ProzessverwaltungForm.showStatistics}"
-                                                                value="true"/>
-                                    </h:commandLink>
-
                                     <!-- StatisticsStorage -->
                                     <h:commandLink id="action35" action="#{ProzessverwaltungForm.setStatisticsStorage}"
                                                    title="#{msgs.storageCalculator}">

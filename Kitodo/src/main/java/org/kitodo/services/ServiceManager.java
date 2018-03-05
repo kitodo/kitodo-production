@@ -17,7 +17,6 @@ import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
-import org.kitodo.services.data.HistoryService;
 import org.kitodo.services.data.LdapGroupService;
 import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
@@ -47,7 +46,6 @@ public class ServiceManager {
     private ClientService clientService;
     private DocketService docketService;
     private FilterService filterService;
-    private HistoryService historyService;
     private LdapGroupService ldapGroupService;
     private LdapServerService ldapServerService;
     private PropertyService propertyService;
@@ -98,12 +96,6 @@ public class ServiceManager {
     private void initializeFilterService() {
         if (filterService == null) {
             filterService = FilterService.getInstance();
-        }
-    }
-
-    private void initializeHistoryService() {
-        if (historyService == null) {
-            historyService = HistoryService.getInstance();
         }
     }
 
@@ -287,17 +279,6 @@ public class ServiceManager {
     public FilterService getFilterService() {
         initializeFilterService();
         return filterService;
-    }
-
-    /**
-     * Initialize HistoryService if it is not yet initialized and next return
-     * it.
-     *
-     * @return HistoryService object
-     */
-    public HistoryService getHistoryService() {
-        initializeHistoryService();
-        return historyService;
     }
 
     /**

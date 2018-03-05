@@ -37,7 +37,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
-import org.goobi.production.flow.jobs.HistoryAnalyserJob;
 import org.goobi.production.importer.ImportObject;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -584,16 +583,11 @@ public class CopyProcess extends ProzesskopieForm {
 
         serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        if (!addProcessToHistory()) {
-            return this.prozessKopie;
-        }
-
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
         Helper.getHibernateSession().refresh(this.prozessKopie);
         return this.prozessKopie;
-
     }
 
     /**
@@ -633,10 +627,6 @@ public class CopyProcess extends ProzesskopieForm {
 
         serviceManager.getFileService().writeMetadataFile(this.myRdf, this.prozessKopie);
 
-        if (!addProcessToHistory()) {
-            return this.prozessKopie;
-        }
-
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
@@ -669,21 +659,6 @@ public class CopyProcess extends ProzesskopieForm {
                 task.setProcessingEnd(date);
             }
         }
-    }
-
-    private boolean addProcessToHistory() {
-        if (!HistoryAnalyserJob.updateHistoryForProcess(this.prozessKopie)) {
-            Helper.setFehlerMeldung("historyNotUpdated");
-        } else {
-            try {
-                serviceManager.getProcessService().save(this.prozessKopie);
-            } catch (DataException e) {
-                e.printStackTrace();
-                logger.error("error on save: ", e);
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

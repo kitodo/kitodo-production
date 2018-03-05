@@ -74,7 +74,7 @@ public class StatQuestStorage implements IStatisticalQuestionLimitedTimeframe {
 
         // TODO: filter results according to date without sql query
         // adding time restrictions
-        String natSQL = new SQLStorage(this.timeFilterFrom, this.timeFilterTo, this.timeGrouping, idList).getSQL();
+        String natSQL = "";
 
         Session session = Helper.getHibernateSession();
         SQLQuery query = session.createSQLQuery(natSQL);

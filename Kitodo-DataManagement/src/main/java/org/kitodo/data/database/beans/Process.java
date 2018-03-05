@@ -26,7 +26,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -95,10 +94,6 @@ public class Process extends BaseIndexedBean {
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
-
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("date ASC")
-    private List<History> history;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
@@ -327,23 +322,6 @@ public class Process extends BaseIndexedBean {
 
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
-    }
-
-    /**
-     * Get list of histories.
-     * 
-     * @return list of History objects or empty list
-     */
-    public List<History> getHistory() {
-        if (this.history == null) {
-            this.history = new ArrayList<>();
-        }
-        return this.history;
-    }
-
-    public void setHistory(List<History> history) {
-
-        this.history = history;
     }
 
     /**
