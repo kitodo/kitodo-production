@@ -53,30 +53,27 @@ public class Multipage {
     private static final Logger logger = LogManager.getLogger(Multipage.class);
 
     private void create(Process process) throws IOException {
-        /* alle tifs durchlaufen */
-        URI pfad = serviceManager.getFileService().getImagesDirectory(process);
+        // ago through all the TIFFs
+        URI path = serviceManager.getFileService().getImagesDirectory(process);
+        ArrayList<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, path);
 
-        ArrayList<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, pfad);
-
-        /* keine Tifs vorhanden, also raus */
+        // No TIFFs available, so get out
         if (files.size() == 0) {
             logger.debug("Directory is empty!");
             return;
         }
 
-        /* alle Bilder in ein Array übernehmen */
+        // take all pictures into an array
         RenderedImage[] image = new PlanarImage[files.size()];
         for (int i = 0; i < files.size(); i++) {
             if (logger.isDebugEnabled()) {
-                logger.debug(pfad + files.get(i).toString());
+                logger.debug(path + files.get(i).toString());
             }
-            image[i] = JAI.create("fileload", pfad + files.get(i).toString());
+            image[i] = JAI.create("fileload", path + files.get(i).toString());
         }
         logger.debug("Bilder durchlaufen");
 
-        /*
-         * alle Bilder als Multipage erzeugen
-         */
+        // generate all images as multi pages
         OutputStream out = new FileOutputStream(
                 ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff");
         TIFFEncodeParam param = new TIFFEncodeParam();
@@ -110,12 +107,14 @@ public class Multipage {
 
             // let the txt file be written directly into the stream
             String filename = ConfigCore.getKitodoDataDirectory() + process.getId() + File.separator + "multipage.tiff";
-            if (!(new File(filename)).exists()) {
+            URI fileURI = URI.create(process.getId() + File.separator + "/multipage.tiff");
+
+            if (!serviceManager.getFileService().fileExist(fileURI)) {
                 create(process);
             }
 
             try (FileInputStream fis = new FileInputStream(filename)) {
-                byte[] buf = new byte[4 * 1024]; // 4K buffer //how about 4096?
+                byte[] buf = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = fis.read(buf)) != -1) {
                     out.write(buf, 0, bytesRead);
