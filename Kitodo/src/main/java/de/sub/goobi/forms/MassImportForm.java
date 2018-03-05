@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -222,87 +221,36 @@ public class MassImportForm implements Serializable {
 
             // found list with ids
             PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            String tempfolder = ConfigCore.getParameter("tempfolder");
-            this.plugin.setImportFolder(tempfolder);
+            String tempFolder = ConfigCore.getParameter("tempfolder");
+            this.plugin.setImportFolder(tempFolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
             this.plugin.setKitodoConfigDirectory(ConfigCore.getKitodoConfigDirectory());
 
             if (StringUtils.isNotEmpty(this.idList)) {
-                List<String> ids = this.plugin.splitIds(this.idList);
-                List<Record> recordList = new ArrayList<>();
-                for (String id : ids) {
-                    Record r = new Record();
-                    r.setData(id);
-                    r.setId(id);
-                    r.setCollections(this.digitalCollections);
-                    recordList.add(r);
-                }
-
-                answer = this.plugin.generateFiles(recordList);
+                answer = this.plugin.generateFiles(generateRecordList());
             } else if (this.importFile != null) {
                 this.plugin.setFile(this.importFile);
-                List<Record> recordList = this.plugin.generateRecordsFromFile();
-                for (Record r : recordList) {
-                    r.setCollections(this.digitalCollections);
-                }
-                answer = this.plugin.generateFiles(recordList);
+                answer = getAnswer(this.plugin.generateRecordsFromFile());
             } else if (StringUtils.isNotEmpty(this.records)) {
-                List<Record> recordList = this.plugin.splitRecords(this.records);
-                for (Record r : recordList) {
-                    r.setCollections(this.digitalCollections);
-                }
-                answer = this.plugin.generateFiles(recordList);
+                answer = getAnswer(this.plugin.splitRecords(this.records));
             } else if (this.selectedFilenames.size() > 0) {
-                List<Record> recordList = this.plugin.generateRecordsFromFilenames(this.selectedFilenames);
-                for (Record r : recordList) {
-                    r.setCollections(this.digitalCollections);
-                }
-                answer = this.plugin.generateFiles(recordList);
-
+                answer = getAnswer(this.plugin.generateRecordsFromFilenames(this.selectedFilenames));
             }
 
             if (answer.size() > 1) {
-                if (importFile != null) {
-                    List<String> args = Arrays
-                            .asList(new String[] {FilenameUtils.getBaseName(importFile.getAbsolutePath()),
-                                                  DateTimeFormat.shortDateTime().print(new DateTime()) });
-                    batch = new Batch(Helper.getTranslation("importedBatchLabel", args), Type.LOGISTIC);
-                } else {
-                    batch = new Batch();
-                }
+                batch = getBatch();
             }
 
             for (ImportObject io : answer) {
                 if (batch != null) {
                     io.getBatches().add(batch);
                 }
-                URI importFileName = io.getImportFileName();
-                if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-                    Process p = JobCreation.generateProcess(io, this.template);
-                    if (p == null) {
-                        if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
-                                && selectedFilenames != null && !selectedFilenames.isEmpty()
-                                && selectedFilenames.contains(importFileName.getRawPath())) {
-                            selectedFilenames.remove(importFileName.getRawPath());
-                        }
-                        Helper.setFehlerMeldung(
-                            "import failed for " + io.getProcessTitle() + ", process generation failed");
 
-                    } else {
-                        Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
-                        this.processList.add(p);
-                    }
+                if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
+                    addProcessToList(io);
                 } else {
-                    List<String> param = new ArrayList<>();
-                    param.add(io.getProcessTitle());
-                    param.add(io.getErrorMessage());
-                    Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
-                    if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
-                            && selectedFilenames != null && !selectedFilenames.isEmpty()
-                            && selectedFilenames.contains(importFileName.getRawPath())) {
-                        selectedFilenames.remove(importFileName.getRawPath());
-                    }
+                    removeImportFileNameFromSelectedFileNames(io);
                 }
             }
             if (answer.size() != this.processList.size()) {
@@ -349,7 +297,6 @@ public class MassImportForm implements Serializable {
                 .createResource(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename);
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
-
     }
 
     public UploadedFile getUploadedFile() {
@@ -369,6 +316,68 @@ public class MassImportForm implements Serializable {
     private boolean testForData() {
         return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
                 && this.selectedFilenames.size() == 0);
+    }
+
+    private List<Record> generateRecordList() {
+        List<String> pluginIds = this.plugin.splitIds(this.idList);
+        List<Record> recordList = new ArrayList<>();
+        for (String id : pluginIds) {
+            Record r = new Record();
+            r.setData(id);
+            r.setId(id);
+            r.setCollections(this.digitalCollections);
+            recordList.add(r);
+        }
+        return recordList;
+    }
+
+    private List<ImportObject> getAnswer(List<Record> recordList) {
+        for (Record record : recordList) {
+            record.setCollections(this.digitalCollections);
+        }
+        return this.plugin.generateFiles(recordList);
+    }
+
+    private Batch getBatch() {
+        if (importFile != null) {
+            List<String> arguments = new ArrayList<>();
+            arguments.add(FilenameUtils.getBaseName(importFile.getAbsolutePath()));
+            arguments.add(DateTimeFormat.shortDateTime().print(new DateTime()));
+            return new Batch(Helper.getTranslation("importedBatchLabel", arguments), Type.LOGISTIC);
+        } else {
+            return new Batch();
+        }
+    }
+
+    private void addProcessToList(ImportObject io) throws DataException, IOException {
+        URI importFileName = io.getImportFileName();
+        Process process = JobCreation.generateProcess(io, this.template);
+        if (process == null) {
+            if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+                    && selectedFilenames != null && !selectedFilenames.isEmpty()
+                    && selectedFilenames.contains(importFileName.getRawPath())) {
+                selectedFilenames.remove(importFileName.getRawPath());
+            }
+            Helper.setFehlerMeldung(
+                    "import failed for " + io.getProcessTitle() + ", process generation failed");
+
+        } else {
+            Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
+            this.processList.add(process);
+        }
+    }
+
+    private void removeImportFileNameFromSelectedFileNames(ImportObject io) {
+        URI importFileName = io.getImportFileName();
+        List<String> param = new ArrayList<>();
+        param.add(io.getProcessTitle());
+        param.add(io.getErrorMessage());
+        Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
+        if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+                && selectedFilenames != null && !selectedFilenames.isEmpty()
+                && selectedFilenames.contains(importFileName.getRawPath())) {
+            selectedFilenames.remove(importFileName.getRawPath());
+        }
     }
 
     /**
