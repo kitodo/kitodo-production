@@ -1775,7 +1775,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         filteredList = filterForCorrectionSolutionMessages(properties);
 
         if (filteredList.size() > 1) {
-            filteredList.sort(Comparator.comparing(PropertyDTO::getCreationDate));
+            filteredList.sort(Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
         }
 
         return new ArrayList<>(filteredList);

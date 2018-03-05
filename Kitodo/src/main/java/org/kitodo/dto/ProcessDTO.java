@@ -11,7 +11,9 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Process DTO object.
@@ -223,6 +225,9 @@ public class ProcessDTO extends BaseDTO {
      * @return list of properties as PropertyDTO
      */
     public List<PropertyDTO> getProperties() {
+        if (Objects.isNull(this.properties)) {
+            properties = new ArrayList<>();
+        }
         return properties;
     }
 
