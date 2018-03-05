@@ -92,22 +92,7 @@ public class MetadatenImagesHelper {
 
         // the physical structure tree is only created if it does not exist yet
         if (physicalStructure == null) {
-            DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
-            physicalStructure = this.mydocument.createDocStruct(dst);
-
-            /*
-             * Probleme mit dem FilePath
-             */
-            MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
-            try {
-                MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
-                URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
-                String pathString = new File(pathURI).getPath();
-                mdForPath.setStringValue(pathString);
-                physicalStructure.addMetadata(mdForPath);
-            } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-                logger.error(e);
-            }
+            physicalStructure = createPhysicalStructure(process);
             this.mydocument.setPhysicalDocStruct(physicalStructure);
         }
 
@@ -119,19 +104,14 @@ public class MetadatenImagesHelper {
                 fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
-        /*
-         * retrieve existing pages/images
-         */
+        // retrieve existing pages/images
         DocStructTypeInterface newPage = this.myPrefs.getDocStrctTypeByName("page");
         List<DocStructInterface> oldPages = physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*");
         if (oldPages == null) {
             oldPages = new ArrayList<>();
         }
 
-        /*
-         * add new page/images if necessary
-         */
-
+        // add new page/images if necessary
         if (oldPages.size() == this.myLastImage) {
             return;
         }
@@ -139,7 +119,6 @@ public class MetadatenImagesHelper {
         String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
         Map<String, DocStructInterface> assignedImages = new HashMap<>();
         List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
-        List<URI> imagesWithoutPageElements = new ArrayList<>();
 
         if (physicalStructure.getAllChildren() != null && !physicalStructure.getAllChildren().isEmpty()) {
             for (DocStructInterface page : physicalStructure.getAllChildren()) {
@@ -168,16 +147,7 @@ public class MetadatenImagesHelper {
                 }
             }
         }
-        try {
-            List<URI> imageNamesInMediaFolder = getDataFiles(process);
-            for (URI imageName : imageNamesInMediaFolder) {
-                if (!assignedImages.containsKey(imageName)) {
-                    imagesWithoutPageElements.add(imageName);
-                }
-            }
-        } catch (InvalidImagesException e1) {
-            logger.error(e1);
-        }
+        List<URI> imagesWithoutPageElements = getImagesWithoutPageElements(process, assignedImages);
 
         // handle possible cases
 
@@ -266,6 +236,40 @@ public class MetadatenImagesHelper {
                 currentPhysicalOrder++;
             }
         }
+    }
+
+    private DocStructInterface createPhysicalStructure(Process process) throws IOException {
+        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName("BoundBook");
+        DocStructInterface physicalStructure = this.mydocument.createDocStruct(dst);
+
+        // problems with FilePath
+        MetadataTypeInterface metadataTypeForPath = this.myPrefs.getMetadataTypeByName("pathimagefiles");
+        try {
+            MetadataInterface mdForPath = UghImplementation.INSTANCE.createMetadata(metadataTypeForPath);
+            URI pathURI = serviceManager.getProcessService().getImagesTifDirectory(false, process);
+            String pathString = new File(pathURI).getPath();
+            mdForPath.setStringValue(pathString);
+            physicalStructure.addMetadata(mdForPath);
+        } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
+            logger.error(e);
+        }
+
+        return physicalStructure;
+    }
+
+    private List<URI> getImagesWithoutPageElements(Process process, Map<String, DocStructInterface> assignedImages) {
+        List<URI> imagesWithoutPageElements = new ArrayList<>();
+        try {
+            List<URI> imageNamesInMediaFolder = getDataFiles(process);
+            for (URI imageName : imageNamesInMediaFolder) {
+                if (!assignedImages.containsKey(imageName.getRawPath())) {
+                    imagesWithoutPageElements.add(imageName);
+                }
+            }
+        } catch (InvalidImagesException e1) {
+            logger.error(e1);
+        }
+        return imagesWithoutPageElements;
     }
 
     /**
@@ -552,11 +556,7 @@ public class MetadatenImagesHelper {
         if (pages != null) {
             for (DocStructInterface page : pages) {
                 URI filename = URI.create(page.getImageName());
-                if (filename != null) {
-                    orderedFileList.add(filename);
-                } else {
-                    logger.error("cannot find image");
-                }
+                orderedFileList.add(filename);
             }
         }
         return orderedFileList;
