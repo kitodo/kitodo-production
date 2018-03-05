@@ -16,6 +16,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;
@@ -34,18 +35,21 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.file.FileService;
 
 public class VariableReplacer {
 
     private enum MetadataLevel {
-        ALL, FIRSTCHILD, TOPSTRUCT
+        ALL,
+        FIRSTCHILD,
+        TOPSTRUCT
     }
 
     private static final Logger logger = LogManager.getLogger(VariableReplacer.class);
 
-    DigitalDocumentInterface dd;
-    PrefsInterface prefs;
+    private DigitalDocumentInterface dd;
+    private PrefsInterface prefs;
     // $(meta.abc)
     private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
 
@@ -53,6 +57,7 @@ public class VariableReplacer {
     private Task task;
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
+    private final ProcessService processService = serviceManager.getProcessService();
 
     @SuppressWarnings("unused")
     private VariableReplacer() {
@@ -84,62 +89,31 @@ public class VariableReplacer {
     /**
      * Variablen innerhalb eines Strings ersetzen. Dabei vergleichbar zu Ant die
      * Variablen durchlaufen und aus dem Digital Document holen
+     *
+     * @param inString
+     *            to replacement
+     * @return replaced String
      */
     public String replace(String inString) {
         if (inString == null) {
             return "";
         }
 
-        /*
-         * replace metadata, usage: $(meta.firstchild.METADATANAME)
-         */
-        for (MatchResult r : findRegexMatches(this.namespaceMeta, inString)) {
-            if (r.group(1).toLowerCase().startsWith("firstchild.")) {
-                inString = inString.replace(r.group(),
-                        getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
-            } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
-                inString = inString.replace(r.group(),
-                        getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
-            } else {
-                inString = inString.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
-            }
-        }
+        inString = replaceMetadata(inString);
 
         // replace paths and files
         try {
-            String processPath = fileService
-                    .getFileName(serviceManager.getProcessService().getProcessDataDirectory(this.process))
-                    .replace("\\", "/");
-            String tifPath = fileService
-                    .getFileName(serviceManager.getProcessService().getImagesTifDirectory(false, this.process))
-                    .replace("\\", "/");
-            String imagePath = fileService.getFileName(fileService.getImagesDirectory(this.process)).replace("\\", "/");
-            String origPath = fileService
-                    .getFileName(serviceManager.getProcessService().getImagesOrigDirectory(false, this.process))
-                    .replace("\\", "/");
-            String metaFile = fileService.getFileName(fileService.getMetadataFilePath(this.process)).replace("\\", "/");
-            String ocrBasisPath = fileService.getFileName(fileService.getOcrDirectory(this.process)).replace("\\", "/");
-            String ocrPlaintextPath = fileService.getFileName(fileService.getTxtDirectory(this.process)).replace("\\",
-                    "/");
-            // TODO name ändern?
-            String sourcePath = fileService.getFileName(fileService.getSourceDirectory(this.process))
-                    .replace("\\", "/");
-            String importPath = fileService.getFileName(fileService.getImportDirectory(this.process)).replace("\\",
-                    "/");
+            // TIFF writer scripts will have a path without an end slash
+            String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
+            String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process));
+            String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
+            String origPath = replaceSlashAndSeparator(processService.getImagesOrigDirectory(false, this.process));
+            String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process));
+            String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
+            String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
+            String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
+            String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
             String prefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
-
-            /*
-             * da die Tiffwriter-Scripte einen Pfad ohne endenen Slash haben wollen, wird
-             * diese rausgenommen
-             */
-            tifPath = replaceSeparator(tifPath);
-            imagePath = replaceSeparator(imagePath);
-            origPath = replaceSeparator(origPath);
-            processPath = replaceSeparator(processPath);
-            importPath = replaceSeparator(importPath);
-            sourcePath = replaceSeparator(sourcePath);
-            ocrBasisPath = replaceSeparator(ocrBasisPath);
-            ocrPlaintextPath = replaceSeparator(ocrPlaintextPath);
 
             inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
             inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);
@@ -160,41 +134,9 @@ public class VariableReplacer {
 
             inString = replaceStringForTask(inString);
 
-            // replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE)
-            for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", inString)) {
-                String propertyTitle = r.group(1);
-                for (Property workpieceProperty : this.process.getWorkpieces()) {
-                    if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                        inString = inString.replace(r.group(), workpieceProperty.getValue());
-                        break;
-                    }
-                }
-            }
-
-            // replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE)
-            for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", inString)) {
-                String propertyTitle = r.group(1);
-                for (Property templateProperty : this.process.getTemplates()) {
-                    if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
-                        inString = inString.replace(r.group(), templateProperty.getValue());
-                        break;
-                    }
-
-                }
-            }
-
-            // replace Prozesseigenschaft, usage: (process.PROPERTYTITLE)
-            for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", inString)) {
-                String propertyTitle = r.group(1);
-                List<Property> ppList = this.process.getProperties();
-                for (Property pe : ppList) {
-                    if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
-                        inString = inString.replace(r.group(), pe.getValue());
-                        break;
-                    }
-                }
-
-            }
+            inString = replaceForWorkpieceProperty(inString);
+            inString = replaceForTemplateProperty(inString);
+            inString = replaceForProcessProperty(inString);
 
         } catch (IOException e) {
             logger.error(e);
@@ -203,11 +145,42 @@ public class VariableReplacer {
         return inString;
     }
 
+    /**
+     * Replace metadata, usage: $(meta.firstchild.METADATANAME).
+     *
+     * @param input
+     *            String for replacement
+     * @return replaced String
+     */
+    private String replaceMetadata(String input) {
+        for (MatchResult r : findRegexMatches(this.namespaceMeta, input)) {
+            if (r.group(1).toLowerCase().startsWith("firstchild.")) {
+                input = input.replace(r.group(),
+                    getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
+            } else if (r.group(1).toLowerCase().startsWith("topstruct.")) {
+                input = input.replace(r.group(),
+                    getMetadataFromDigitalDocument(MetadataLevel.TOPSTRUCT, r.group(1).substring(10)));
+            } else {
+                input = input.replace(r.group(), getMetadataFromDigitalDocument(MetadataLevel.ALL, r.group(1)));
+            }
+        }
+
+        return input;
+    }
+
+    private String replaceSlash(URI directory) {
+        return fileService.getFileName(directory).replace("\\", "/");
+    }
+
     private String replaceSeparator(String input) {
         if (input.endsWith(File.separator)) {
             input = input.substring(0, input.length() - File.separator.length()).replace("\\", "/");
         }
         return input;
+    }
+
+    private String replaceSlashAndSeparator(URI directory) {
+        return replaceSeparator(replaceSlash(directory));
     }
 
     private String replaceStringAccordingToOS(String input, String condition, String replacer) {
@@ -235,6 +208,67 @@ public class VariableReplacer {
 
             input = input.replace("(stepid)", taskId);
             input = input.replace("(stepname)", taskName);
+        }
+        return input;
+    }
+
+    /**
+     * Replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE).
+     * 
+     * @param input
+     *            String for replacement
+     * @return replaced String
+     */
+    private String replaceForWorkpieceProperty(String input) {
+        for (MatchResult r : findRegexMatches("\\(product\\.([\\w.-]*)\\)", input)) {
+            String propertyTitle = r.group(1);
+            for (Property workpieceProperty : this.process.getWorkpieces()) {
+                if (workpieceProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                    input = input.replace(r.group(), workpieceProperty.getValue());
+                    break;
+                }
+            }
+        }
+        return input;
+    }
+
+    /**
+     * Replace Vorlageeigenschaft, usage: (template.PROPERTYTITLE).
+     *
+     * @param input
+     *            String for replacement
+     * @return replaced String
+     */
+    private String replaceForTemplateProperty(String input) {
+        for (MatchResult r : findRegexMatches("\\(template\\.([\\w.-]*)\\)", input)) {
+            String propertyTitle = r.group(1);
+            for (Property templateProperty : this.process.getTemplates()) {
+                if (templateProperty.getTitle().equalsIgnoreCase(propertyTitle)) {
+                    input = input.replace(r.group(), templateProperty.getValue());
+                    break;
+                }
+            }
+        }
+        return input;
+    }
+
+    /**
+     * Replace Prozesseigenschaft, usage: (process.PROPERTYTITLE).
+     *
+     * @param input
+     *            String for replacement
+     * @return replaced String
+     */
+    private String replaceForProcessProperty(String input) {
+        for (MatchResult r : findRegexMatches("\\(process\\.([\\w.-]*)\\)", input)) {
+            String propertyTitle = r.group(1);
+            List<Property> ppList = this.process.getProperties();
+            for (Property pe : ppList) {
+                if (pe.getTitle().equalsIgnoreCase(propertyTitle)) {
+                    input = input.replace(r.group(), pe.getValue());
+                    break;
+                }
+            }
         }
         return input;
     }
@@ -333,7 +367,7 @@ public class VariableReplacer {
      * Suche nach regulären Ausdrücken in einem String, liefert alle gefundenen
      * Treffer als Liste zurück.
      */
-    public static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
+    private static Iterable<MatchResult> findRegexMatches(String pattern, CharSequence s) {
         List<MatchResult> results = new ArrayList<>();
         for (Matcher m = Pattern.compile(pattern).matcher(s); m.find();) {
             results.add(m.toMatchResult());
