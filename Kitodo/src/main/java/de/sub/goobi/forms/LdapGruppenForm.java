@@ -61,7 +61,7 @@ public class LdapGruppenForm extends BasisForm {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
             return redirectToList();
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("ldapgruppe") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
         }
     }
@@ -75,7 +75,7 @@ public class LdapGruppenForm extends BasisForm {
         try {
             this.serviceManager.getLdapGroupService().remove(this.myLdapGruppe);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new String[] {Helper.getTranslation("ldapgruppe") }, logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
         }
         return redirectToList();

@@ -145,7 +145,7 @@ public class BenutzergruppenForm extends BasisForm {
 
             return redirectToList();
         } catch (DataException | DAOException e) {
-            Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("benutzergruppe") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
         }
     }
@@ -183,7 +183,7 @@ public class BenutzergruppenForm extends BasisForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException | DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new String[] {Helper.getTranslation("benutzergruppe") }, logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
         }
         return redirectToList();

@@ -193,7 +193,7 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return redirectToList("?faces-redirect=true");
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("projekt") }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
                 return null;
             }
         }
@@ -216,7 +216,7 @@ public class ProjekteForm extends BasisForm {
                 Helper.setMeldung("Project saved!");
                 return null;
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("projekt") }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
                 return null;
             }
         }
@@ -235,7 +235,7 @@ public class ProjekteForm extends BasisForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new String[] {Helper.getTranslation("project") }, logger, e);
+                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("project") }, logger, e);
                 return null;
             }
         }
@@ -394,7 +394,7 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProcessService().findByProjectId(this.myProjekt.getId(), false);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new String[] {Helper.getTranslation("projekte") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -720,7 +720,7 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new String[] {Helper.getTranslation("projekte") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
             return new LinkedList<>();
         }
     }

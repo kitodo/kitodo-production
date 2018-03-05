@@ -327,7 +327,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 renameOcrDirectories();
                 renameDefinedDirectories();
             } catch (Exception e) {
-                Helper.setErrorMessage("errorRenaming", new String[] {Helper.getTranslation("directory") }, logger, e);
+                Helper.setErrorMessage("errorRenaming", new Object[] {Helper.getTranslation("directory") }, logger, e);
             }
 
             this.process.setTitle(this.newProcessTitle);
@@ -729,7 +729,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             serviceManager.getTaskService().save(this.task);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
     }
 
@@ -764,7 +764,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getTaskService().remove(this.task);
             return redirectToEdit();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new String[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
             return null;
         }
 
@@ -1325,7 +1325,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.getHibernateSession().refresh(this.task);
             } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
-                    Helper.setErrorMessage("errorReloading", new String[] {Helper.getTranslation("arbeitsschritt") },
+                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("arbeitsschritt") },
                         logger, e);
                 }
             }
@@ -1335,7 +1335,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.getHibernateSession().refresh(this.process);
             } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
-                    Helper.setErrorMessage("errorReloading", new String[] {Helper.getTranslation("prozess") }, logger,
+                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("prozess") }, logger,
                         e);
                 }
             }
@@ -1929,7 +1929,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (Exception e) {
-                Helper.setErrorMessage("errorCreating", new String[] {Helper.getTranslation("resultPDF") }, logger, e);
+                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
             }
         }
     }
@@ -1958,7 +1958,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (IOException e) {
-                Helper.setErrorMessage("errorCreating", new String[] {Helper.getTranslation("resultSet") }, logger, e);
+                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultSet") }, logger, e);
             }
         }
     }
@@ -2018,7 +2018,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 serviceManager.getProcessService().save(process);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new String[] {Helper.getTranslation("wikiField") }, logger, e);
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
             }
         }
     }
@@ -2173,7 +2173,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMeldung("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new String[] {Helper.getTranslation("eigenschaft") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("eigenschaft") }, logger, e);
         }
         loadProcessProperties();
     }
@@ -2245,7 +2245,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserService().findAllActiveUsers();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new String[] {Helper.getTranslation("users") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("users") }, logger, e);
             return new LinkedList<>();
         }
     }
@@ -2259,7 +2259,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new String[] {Helper.getTranslation("benutzergruppen") }, logger,
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("benutzergruppen") }, logger,
                 e);
             return new LinkedList<>();
         }
