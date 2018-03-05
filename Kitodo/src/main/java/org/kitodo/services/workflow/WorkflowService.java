@@ -507,7 +507,7 @@ public class WorkflowService {
         processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
         processProperty.setValue("[" + this.formatter.format(date) + ", "
                 + serviceManager.getUserService().getFullName(this.user) + "] " + this.problem.getMessage());
-        processProperty.setType(PropertyType.messageError);
+        processProperty.setType(PropertyType.MESSAGE_ERROR);
         return processProperty;
     }
 
@@ -518,7 +518,7 @@ public class WorkflowService {
             "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
                     + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
                     + this.solution.getMessage());
-        processProperty.setType(PropertyType.messageImportant);
+        processProperty.setType(PropertyType.MESSAGE_IMPORTANT);
         return processProperty;
     }
 
