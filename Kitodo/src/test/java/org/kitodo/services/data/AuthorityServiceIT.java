@@ -31,7 +31,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int EXPECTED_AUTHORITIES_COUNT = 6;
+    private final int EXPECTED_AUTHORITIES_COUNT = 60;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -76,13 +76,13 @@ public class AuthorityServiceIT {
     public void shouldFindById() throws Exception {
         AuthorityDTO authority = authorityService.findById(2);
         String actual = authority.getTitle();
-        String expected = "manager";
+        String expected = "viewClient";
         assertEquals("Authority was not found in index!", expected, actual);
     }
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> authorities = authorityService.findByTitle("user", true);
+        List<JSONObject> authorities = authorityService.findByTitle("viewAllUserGroups", true);
         Integer actual = authorities.size();
         Integer expected = 1;
         assertEquals("Authority was not found in index!", expected, actual);
@@ -102,7 +102,7 @@ public class AuthorityServiceIT {
     @Test
     public void shouldNotSaveAlreadyExistinAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
-        adminAuthority.setTitle("admin");
+        adminAuthority.setTitle("viewClient");
         exception.expect(DataException.class);
         authorityService.save(adminAuthority);
     }
@@ -110,12 +110,12 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetAllClientAssignableAuthorities() {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals("Client assignable authorities were not found databse!", 4, authorities.size());
+        assertEquals("Client assignable authorities were not found databse!", 37, authorities.size());
     }
 
     @Test
     public void shouldGetAllProjectAssignableAuthorities() {
         List<Authority> authorities = authorityService.getAllAssignableToProjects();
-        assertEquals("Project assignable authorities were not found databse!", 4, authorities.size());
+        assertEquals("Project assignable authorities were not found databse!", 32, authorities.size());
     }
 }

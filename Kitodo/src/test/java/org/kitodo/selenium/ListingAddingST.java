@@ -28,7 +28,7 @@ public class ListingAddingST extends BaseTestSelenium {
 
     @Test
     public void securityAccessTest() throws Exception {
-        boolean expectedTrue = Pages.getTopNavigation().isShowingAdmin();
+        boolean expectedTrue = Pages.getTopNavigation().isShowingAllLinks();
         Assert.assertTrue("Top navigation is not showing that current user is admin", expectedTrue);
     }
 

@@ -43,13 +43,13 @@ public class UserGroupProjectAuthorityRelationServiceIT {
     public void shouldGetRelation() throws Exception {
         UserGroupProjectAuthorityRelation relation = userGroupProjectAuthorityRelationService.getById(1);
         assertEquals("Project title is not matching", "First project", relation.getProject().getTitle());
-        assertEquals("Authority title is not matching", "admin", relation.getAuthority().getTitle());
+        assertEquals("Authority title is not matching", "viewAllClients", relation.getAuthority().getTitle());
         assertEquals("UserGroup title is not matching", "Admin", relation.getUserGroup().getTitle());
 
         relation = userGroupProjectAuthorityRelationService.getById(6);
         assertEquals("Project title is not matching", "Second project", relation.getProject().getTitle());
         assertEquals("UserGroup title is not matching", "Without authorities", relation.getUserGroup().getTitle());
-        assertEquals("Authority title is not matching", "admin", relation.getAuthority().getTitle());
+        assertEquals("Authority title is not matching", "viewAllClients", relation.getAuthority().getTitle());
     }
 
     @Test

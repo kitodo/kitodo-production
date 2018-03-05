@@ -9,6 +9,10 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
+-- Delete admin authority
+
+DELETE FROM authority WHERE id='1';
+
 -- Add authorities to secure the access to the entities
 
 # Client
@@ -31,7 +35,7 @@ VALUES ('viewAllProjects', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('editProject', '1', '1', '1');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('delteProject', '1', '1', '0');
+VALUES ('deleteProject', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('addProject', '1', '1', '0');
 
@@ -154,3 +158,67 @@ INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssigna
 VALUES ('editLdapServer', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('deleteLdapServer', '1', '0', '0');
+
+-- Assign all authorities to user group 1, assuming that this is administrator user group
+-- starting with id 2 because id 1 was used by admin authority at V2_17
+
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,2);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,3);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,4);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,5);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,6);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,7);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,8);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,9);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,10);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,11);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,12);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,13);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,14);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,15);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,16);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,17);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,18);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,19);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,20);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,21);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,22);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,23);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,24);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,25);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,26);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,27);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,28);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,29);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,30);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,31);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,32);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,33);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,34);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,35);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,36);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,37);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,38);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,39);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,40);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,41);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,42);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,43);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,44);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,45);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,46);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,47);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,48);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,49);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,50);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,51);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,52);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,53);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,54);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,55);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,56);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,57);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,58);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,59);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,60);
+INSERT INTO usergroup_x_authority (userGroup_id,authority_id) VALUES (1,61);

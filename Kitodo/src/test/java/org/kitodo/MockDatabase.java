@@ -130,7 +130,7 @@ public class MockDatabase {
         node = null;
     }
 
-    public static void insertProcessesFull() throws DAOException, DataException {
+    public static void insertProcessesFull() throws DAOException, DataException, IOException {
         insertAuthorities();
         insertBatches();
         insertDockets();
@@ -151,7 +151,7 @@ public class MockDatabase {
         insertUserGroupProjectAuthorityRelations();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
+    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException {
         insertAuthorities();
         insertBatches();
         insertDockets();
@@ -169,14 +169,14 @@ public class MockDatabase {
         insertTasksForWorkflow();
     }
 
-    public static void insertUserGroupsFull() throws DAOException, DataException {
+    public static void insertUserGroupsFull() throws DAOException, DataException, IOException {
         insertAuthorities();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
     }
 
-    public static void insertForAuthenticationTesting() throws DAOException, DataException {
+    public static void insertForAuthenticationTesting() throws DAOException, DataException, IOException {
         insertAuthorities();
         insertLdapGroups();
         insertUsers();
@@ -335,33 +335,82 @@ public class MockDatabase {
     }
 
     private static void insertAuthorities() throws DataException {
-        Authority adminAuthority = new Authority();
-        adminAuthority.setTitle("admin");
-        serviceManager.getAuthorityService().save(adminAuthority);
+        List<Authority> authorities = new ArrayList<>();
+        authorities.add(new Authority("viewAllClients", true, false, false));
+        authorities.add(new Authority("viewClient", true, true, false));
+        authorities.add(new Authority("editClient", true, true, false));
+        authorities.add(new Authority("deleteClient", true, false, false));
+        authorities.add(new Authority("addClient", true, false, false));
 
-        Authority managerAuthority = new Authority();
-        managerAuthority.setTitle("manager");
-        serviceManager.getAuthorityService().save(managerAuthority);
+        authorities.add(new Authority("viewProject", true, true, true));
+        authorities.add(new Authority("viewAllProjects", true, true, false));
+        authorities.add(new Authority("editProject", true, true, true));
+        authorities.add(new Authority("deleteProject", true, true, false));
+        authorities.add(new Authority("addProject", true, true, false));
 
-        Authority userAuthority = new Authority();
-        userAuthority.setTitle("user");
-        serviceManager.getAuthorityService().save(userAuthority);
+        authorities.add(new Authority("viewAllBatches", true, true, true));
+        authorities.add(new Authority("viewBatch", true, true, true));
+        authorities.add(new Authority("addBatch", true, true, true));
+        authorities.add(new Authority("editBatch", true, true, true));
+        authorities.add(new Authority("deleteBatch", true, true, true));
 
-        Authority globalAuthority = new Authority();
-        globalAuthority.setTitle("globalAuthority");
-        globalAuthority.setClientAssignable(false);
-        globalAuthority.setProjectAssignable(false);
-        serviceManager.getAuthorityService().save(globalAuthority);
+        authorities.add(new Authority("viewAllDockets", true, true, true));
+        authorities.add(new Authority("viewDocket", true, true, true));
+        authorities.add(new Authority("addDocket", true, true, true));
+        authorities.add(new Authority("editDocket", true, true, true));
+        authorities.add(new Authority("deleteDocket", true, true, true));
 
-        Authority clientAuthority = new Authority();
-        clientAuthority.setTitle("clientAuthority");
-        clientAuthority.setProjectAssignable(false);
-        serviceManager.getAuthorityService().save(clientAuthority);
+        authorities.add(new Authority("viewAllProcesses", true, true, true));
+        authorities.add(new Authority("viewProcess", true, true, true));
+        authorities.add(new Authority("addProcess", true, true, true));
+        authorities.add(new Authority("editProcess", true, true, true));
+        authorities.add(new Authority("deleteProcess", true, true, true));
 
-        Authority projectAuthority = new Authority();
-        projectAuthority.setTitle("projectAuthority");
-        projectAuthority.setClientAssignable(false);
-        serviceManager.getAuthorityService().save(projectAuthority);
+        authorities.add(new Authority("viewAllTasks", true, true, true));
+        authorities.add(new Authority("viewTask", true, true, true));
+        authorities.add(new Authority("addTask", true, true, true));
+        authorities.add(new Authority("editTask", true, true, true));
+        authorities.add(new Authority("deleteTask", true, true, true));
+
+        authorities.add(new Authority("viewAllTemplates", true, true, true));
+        authorities.add(new Authority("viewTemplate", true, true, true));
+        authorities.add(new Authority("addTemplate", true, true, true));
+        authorities.add(new Authority("editTemplate", true, true, true));
+        authorities.add(new Authority("deleteTemplate", true, true, true));
+
+        authorities.add(new Authority("viewAllRulesets", true, true, true));
+        authorities.add(new Authority("viewRuleset", true, true, true));
+        authorities.add(new Authority("addRuleset", true, true, true));
+        authorities.add(new Authority("editRuleset", true, true, true));
+        authorities.add(new Authority("deleteRuleset", true, true, true));
+
+        authorities.add(new Authority("viewAllUserGroups", true, false, false));
+        authorities.add(new Authority("viewUserGroup", true, false, false));
+        authorities.add(new Authority("addUserGroup", true, false, false));
+        authorities.add(new Authority("editUserGroup", true, false, false));
+        authorities.add(new Authority("deleteUserGroup", true, false, false));
+
+        authorities.add(new Authority("viewAllUsers", true, false, false));
+        authorities.add(new Authority("viewUser", true, false, false));
+        authorities.add(new Authority("addUser", true, false, false));
+        authorities.add(new Authority("editUser", true, false, false));
+        authorities.add(new Authority("deleteUser", true, false, false));
+
+        authorities.add(new Authority("viewAllLdapGroups", true, false, false));
+        authorities.add(new Authority("viewLdapGroup", true, false, false));
+        authorities.add(new Authority("addLdapGroup", true, false, false));
+        authorities.add(new Authority("editLdapGroup", true, false, false));
+        authorities.add(new Authority("deleteLdapGroup", true, false, false));
+
+        authorities.add(new Authority("viewAllLdapServers", true, false, false));
+        authorities.add(new Authority("viewLdapServer", true, false, false));
+        authorities.add(new Authority("addLdapServer", true, false, false));
+        authorities.add(new Authority("editLdapServer", true, false, false));
+        authorities.add(new Authority("deleteLdapServer", true, false, false));
+
+        for (Authority authority : authorities) {
+            serviceManager.getAuthorityService().save(authority);
+        }
     }
 
     private static void insertBatches() throws DataException {
@@ -1067,13 +1116,7 @@ public class MockDatabase {
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
-        List<Authority> adminAuthorities = new ArrayList<>();
-        Authority adminAuthority = serviceManager.getAuthorityService().getById(1); // admin
-        Authority managerAuthority = serviceManager.getAuthorityService().getById(2); // manager
-        Authority userAuthority = serviceManager.getAuthorityService().getById(3); // user
-        adminAuthorities.add(adminAuthority);
-        adminAuthorities.add(managerAuthority);
-        adminAuthorities.add(userAuthority);
+        List<Authority> adminAuthorities = serviceManager.getAuthorityService().getAll();
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
@@ -1090,14 +1133,12 @@ public class MockDatabase {
         users.add(secondUser);
         firstUserGroup.setUsers(users);
         serviceManager.getUserGroupService().save(firstUserGroup);
-        adminAuthority.getUserGroups().add(firstUserGroup);
-        serviceManager.getAuthorityService().save(adminAuthority);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
 
         List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(userAuthority);
+        userAuthorities.add(serviceManager.getAuthorityService().getById(1));
         secondUserGroup.setGlobalAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 

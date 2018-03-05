@@ -48,6 +48,16 @@ public class Authority extends BaseIndexedBean {
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
+    public Authority(String title, boolean globalAssignable, boolean clientAssignable, boolean projectAssignable) {
+        this.title = title;
+        this.globalAssignable = globalAssignable;
+        this.clientAssignable = clientAssignable;
+        this.projectAssignable = projectAssignable;
+    }
+
+    public Authority() {
+    }
+
     /**
      * Gets the title.
      *

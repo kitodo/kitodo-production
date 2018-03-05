@@ -44,7 +44,7 @@ public class Browser {
     private static BrowserType browserType = BrowserType.CHROME;
 
     private static int delayIndexing = 3000;
-    private static int delayAfterSave = 3000;
+    private static int delayAfterSave = 6000;
     private static int delayAfterLogin = 2000;
     private static int delayAfterLogout = 3000;
     private static int delayAfterLinkClick = 500;
@@ -78,7 +78,7 @@ public class Browser {
 
     private static void provideChromeDriver() throws IOException {
         String userDir = System.getProperty("user.dir");
-        String driverFilePath = System.getProperty("user.dir" + "/target/extracts/");
+        String driverFilePath = userDir + "/target/extracts/";
         String driverFileName = "";
         driverFileName = "chromedriver";
         if (SystemUtils.IS_OS_WINDOWS) {
