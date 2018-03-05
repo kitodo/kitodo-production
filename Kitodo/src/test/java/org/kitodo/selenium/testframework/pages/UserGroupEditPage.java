@@ -112,7 +112,7 @@ public class UserGroupEditPage {
     }
 
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
-        saveUserGroupButton.click();
+        Browser.clickAjaxSaveButton(saveUserGroupButton);
         Thread.sleep(Browser.getDelayAfterSave());
         return Pages.getUsersPage();
     }

@@ -26,6 +26,7 @@ import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -50,6 +51,7 @@ public class Browser {
     private static int delayAfterHoverMenu = 500;
     private static int delayAfterNewItemClick = 500;
     private static int delayAfterPickListClick = 1500;
+    private static int delayAfterUpdate = 3000;
 
     /**
      * Provides the web driver, sets timeout and window size.
@@ -110,7 +112,7 @@ public class Browser {
 
     /**
      * Gets current url.
-     * 
+     *
      * @return The current url.
      */
     public static String getCurrentUrl() {
@@ -119,7 +121,7 @@ public class Browser {
 
     /**
      * Gets the driver for sending remote commands to the browser.
-     * 
+     *
      * @return The Web Driver.
      */
     public static RemoteWebDriver getDriver() {
@@ -128,7 +130,7 @@ public class Browser {
 
     /**
      * Can be used give an url to which the browser navigates.
-     * 
+     *
      * @param url
      *            The url as String.
      */
@@ -146,7 +148,7 @@ public class Browser {
 
     /**
      * Hovers the given web element.
-     * 
+     *
      * @param webElement
      *            The web element.
      */
@@ -156,7 +158,7 @@ public class Browser {
 
     /**
      * Scrolls to a given web element.
-     * 
+     *
      * @param webElement
      *            The web element
      */
@@ -174,6 +176,30 @@ public class Browser {
             logger.error(e.getMessage());
         }
         return screenshotFile;
+    }
+
+    /**
+     * Click a save button that is disabled and enabled via Ajax, resulting in a
+     * small delay before its 'disabled' state is updated on the page. For that
+     * reason this function incorporates a short delay to allow the button to become
+     * enabled properly.
+     *
+     * @param webElement
+     *            the save button to be clicked
+     * @throws InterruptedException
+     *             when the thread gets interrupted
+     */
+    public static void clickAjaxSaveButton(WebElement webElement) throws InterruptedException {
+        for (int attempt = 1; attempt < 4; attempt++) {
+            try {
+                Thread.sleep(Browser.getDelayAfterUpdate());
+                webElement.click();
+                return;
+            } catch (StaleElementReferenceException e) {
+                logger.error("Save button is not accessible, retry now (" + attempt + ". attempt)");
+            }
+        }
+        throw new StaleElementReferenceException("Could not access save button!");
     }
 
     public static List<WebElement> getRowsOfTable(WebElement table) {
@@ -278,4 +304,14 @@ public class Browser {
     public static boolean isOnTravis() {
         return onTravis;
     }
+
+    /**
+     * Gets delayAfterUpdate.
+     *
+     * @return The delayAfterUpdate.
+     */
+    public static int getDelayAfterUpdate() {
+        return delayAfterUpdate;
+    }
+
 }
