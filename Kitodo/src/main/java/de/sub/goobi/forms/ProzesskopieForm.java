@@ -139,8 +139,10 @@ public class ProzesskopieForm implements Serializable {
         }
 
         copyProcess.setProzessVorlage(this.prozessVorlage);
-        boolean result = copyProcess.prepare(null);
+        copyProcess.prepare(null);
         setProzessKopie(copyProcess.getProzessKopie());
+        this.standardFields = copyProcess.getStandardFields();
+        this.digitalCollections = copyProcess.getDigitalCollections();
 
         return redirectToProcessFromTemplateEdit();
     }

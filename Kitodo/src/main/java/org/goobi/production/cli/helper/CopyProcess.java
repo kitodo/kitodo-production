@@ -126,7 +126,7 @@ public class CopyProcess {
                 this.rdf = UghImplementation.INSTANCE.createMetsMods(prefs);
                 this.rdf.read(this.metadataFile.getPath());
             } catch (PreferencesException | ReadException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
 
@@ -157,7 +157,7 @@ public class CopyProcess {
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
@@ -241,8 +241,7 @@ public class CopyProcess {
             fillFieldsFromConfig();
 
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-            e.printStackTrace();
+            Helper.setErrorMessage("Fehler beim Einlesen des Opac-Ergebnisses ", logger, e);
         }
         return "";
     }
@@ -261,7 +260,7 @@ public class CopyProcess {
                         try {
                             tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e);
+                            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -297,7 +296,7 @@ public class CopyProcess {
                             }
                         }
                     } catch (UghHelperException e) {
-                        Helper.setFehlerMeldung(e.getMessage(), "");
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
             }
@@ -372,7 +371,7 @@ public class CopyProcess {
         try {
             this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Error on reading template-metadata ", e);
+            Helper.setErrorMessage("Error on reading template-metadata ", logger, e);
         }
 
         // falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
@@ -382,8 +381,7 @@ public class CopyProcess {
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
         } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("Error on creating process", e);
-            logger.error("Error on creating process", e);
+            Helper.setErrorMessage("Error on creating process", logger, e);
         } catch (RuntimeException e) {
             // the first child below the topstruct could not be determined
         }
@@ -469,7 +467,7 @@ public class CopyProcess {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+            Helper.setErrorMessage("Fehler beim Einlesen der Vorgaenge", logger, e);
             return false;
         }
         if (amount > 0) {
@@ -495,8 +493,7 @@ public class CopyProcess {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            e.printStackTrace();
-            logger.error("error on save: ", e);
+            Helper.setErrorMessage("error on save: ", logger, e);
             return this.prozessKopie;
         }
 
@@ -547,7 +544,7 @@ public class CopyProcess {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            logger.error("error on save: ", e);
+            Helper.setErrorMessage("error on save: ", logger, e);
             return this.prozessKopie;
         }
 
@@ -586,7 +583,7 @@ public class CopyProcess {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            logger.error("error on save: ", e);
+            Helper.setErrorMessage("error on save: ", logger, e);
             return false;
         }
 
@@ -628,7 +625,7 @@ public class CopyProcess {
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
                         populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName() : null);
             } catch (UGHException catchAll) {
-                Helper.setFehlerMeldung(catchAll.getMessage());
+                Helper.setErrorMessage(catchAll.getLocalizedMessage(), logger, catchAll);
             }
 
             for (AdditionalField field : this.additionalFields) {
@@ -640,8 +637,8 @@ public class CopyProcess {
                         try {
                             tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(
-                                e.getMessage() + " The first child below the top structure could not be determined!");
+                            Helper.setErrorMessage(e.getLocalizedMessage()
+                                    + " The first child below the top structure could not be determined!", logger, e);
                         }
                     }
                     // if topstruct and firstchild should get the metadata
@@ -649,7 +646,7 @@ public class CopyProcess {
                         try {
                             tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e);
+                            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -675,7 +672,7 @@ public class CopyProcess {
                             }
                         }
                     } catch (Exception e) {
-                        Helper.setFehlerMeldung(e);
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
             }
@@ -690,7 +687,8 @@ public class CopyProcess {
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
-                logger.error(e.getMessage() + " The first child below the top structure could not be determined!");
+                Helper.setErrorMessage(e.getLocalizedMessage()
+                        + " The first child below the top structure could not be determined!", logger, e);
             }
 
             // add image path (possibly delete existing ones first)
@@ -722,14 +720,11 @@ public class CopyProcess {
                 }
 
             } catch (DocStructHasNoTypeException e) {
-                Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
             } catch (UghHelperException e) {
-                Helper.setFehlerMeldung("UghHelperException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("UghHelperException", logger, e);
             } catch (MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung("MetadataTypeNotAllowedException", e.getMessage());
-                logger.error("creation of new process throws an error: ", e);
+                Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
             }
 
         }
@@ -857,7 +852,7 @@ public class CopyProcess {
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
             } catch (UghHelperException | DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-                Helper.setFehlerMeldung(e.getMessage(), "");
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -880,8 +875,7 @@ public class CopyProcess {
                 }
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -945,10 +939,9 @@ public class CopyProcess {
             }
 
         } catch (TypeNotAllowedAsChildException | PreferencesException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
     }
 
@@ -1037,12 +1030,12 @@ public class CopyProcess {
                         }
                     }
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 try {
                     fillFieldsFromMetadataFile();
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1055,7 +1048,7 @@ public class CopyProcess {
                 try {
                     newDocStruct.addMetadata(md);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1064,7 +1057,7 @@ public class CopyProcess {
                 try {
                     newDocStruct.addPerson(p);
                 } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -1227,7 +1220,7 @@ public class CopyProcess {
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
@@ -1325,7 +1318,8 @@ public class CopyProcess {
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
-                Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
+                Helper.setErrorMessage(Helper.getTranslation("UngueltigeDaten: ")
+                        + "Bandnummer ist keine gültige Zahl", logger, e);
             }
             if (result != null && result.length() < 4) {
                 result = "0000".substring(result.length()) + result;
@@ -1342,7 +1336,7 @@ public class CopyProcess {
         try {
             cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
         String tifDefinition = cp.getParamString("tifheader." + this.docType, "intranda");
@@ -1367,9 +1361,8 @@ public class CopyProcess {
                 // if the doctype should be specified
                 try {
                     this.tifHeaderImageDescription.append(ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType());
-                } catch (Throwable t) {
-                    logger.error("Error while reading von opac-config", t);
-                    Helper.setFehlerMeldung("Error while reading von opac-config", t.getMessage());
+                } catch (Exception e) {
+                    Helper.setErrorMessage("Error while reading von opac-config", logger, e);
                 }
             } else {
                 // otherwise, evaluate the string as a field name
@@ -1405,7 +1398,7 @@ public class CopyProcess {
                 this.tifHeaderImageDescription = new StringBuilder(
                         this.tifHeaderImageDescription.toString().replace(title, newTitle));
             } catch (IndexOutOfBoundsException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -1630,11 +1623,11 @@ public class CopyProcess {
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
-                    Helper.setFehlerMeldung(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl");
+                    Helper.setErrorMessage(Helper.getTranslation("UngueltigeDaten: ")
+                            + "Bandnummer ist keine gültige Zahl", logger, e);
                 } else {
-                    Helper.setFehlerMeldung(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number");
+                    Helper.setErrorMessage(Helper.getTranslation("UngueltigeDaten: ")
+                            + "Volume number is not a valid number", logger, e);
                 }
             }
             if (result != null && result.length() < 4) {
