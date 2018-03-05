@@ -247,7 +247,7 @@ body.first-visit #portal-header {
     background-color: #f3f3f3;
     }
 
-#header-nav li ul li a {
+#header-nav li ul li a, #header-nav li ul li div {
     padding: 12px 15px;
     color: #1b2b36;
     text-decoration: none !important;
@@ -893,7 +893,7 @@ min 700px
         padding: 30px;
         }
 
-    #header-nav li ul li a {
+    #header-nav li ul li a, #header-nav li ul li div {
        padding: 12px 30px;
         }
 
