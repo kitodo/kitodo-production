@@ -782,8 +782,8 @@ public class GoobiScript {
         try {
             serviceManager.getProcessService().save(process);
         } catch (DataException e) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), e);
             logger.error(KITODO_SCRIPT_FIELD + "Error while saving process: " + process.getTitle(), e);
+            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), e);
         }
     }
 
@@ -791,8 +791,8 @@ public class GoobiScript {
         try {
             serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, e);
             logger.error(KITODO_SCRIPT_FIELD + "Error while saving - " + processTitle, e);
+            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, e);
         }
     }
 }

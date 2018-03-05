@@ -196,7 +196,8 @@ public class ExportDms extends ExportMets {
                     return false;
                 }
                 // delete old success folder
-                URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/" + process.getTitle());
+                URI successFolder = URI
+                        .create(process.getProject().getDmsImportSuccessPath() + "/" + process.getTitle());
                 if (!fileService.delete(successFolder)) {
                     Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
                         "Success folder could not be cleared");
@@ -234,11 +235,11 @@ public class ExportDms extends ExportMets {
         }
 
         /*
-         * zum Schluss Datei an gewünschten Ort exportieren entweder direkt in den
-         * Import-Ordner oder ins Benutzerhome anschliessend den Import-Thread starten
+         * export the file to the desired location, either directly into the import
+         * folder or into the user's home, then start the import thread
          */
         if (process.getProject().isUseDmsImport()) {
-            exportWithImport(process, gdzfile, userHome);
+            asyncExportWithImport(process, gdzfile, userHome);
         } else {
             exportWithoutImport(process, gdzfile, userHome);
         }
@@ -291,7 +292,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void exportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
+    private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
             throws IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
         String processTitle = process.getTitle();
@@ -315,13 +316,13 @@ public class ExportDms extends ExportMets {
 
         Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
-            DmsImportThread agoraThread = new DmsImportThread(process, atsPpnBand);
-            agoraThread.start();
+            DmsImportThread asyncThread = new DmsImportThread(process, atsPpnBand);
+            asyncThread.start();
             try {
                 // wait 30 seconds for the thread, possibly kill
-                agoraThread.join(process.getProject().getDmsImportTimeOut().longValue());
-                if (agoraThread.isAlive()) {
-                    agoraThread.stopThread();
+                asyncThread.join(process.getProject().getDmsImportTimeOut().longValue());
+                if (asyncThread.isAlive()) {
+                    asyncThread.stopThread();
                 }
             } catch (InterruptedException e) {
                 if (exportDmsTask != null) {
@@ -331,11 +332,11 @@ public class ExportDms extends ExportMets {
                 }
                 logger.error(processTitle + ": error on export", e);
             }
-            if (agoraThread.result.length() > 0) {
+            if (asyncThread.result.length() > 0) {
                 if (exportDmsTask != null) {
-                    exportDmsTask.setException(new RuntimeException(processTitle + ": " + agoraThread.result));
+                    exportDmsTask.setException(new RuntimeException(processTitle + ": " + asyncThread.result));
                 } else {
-                    Helper.setFehlerMeldung(processTitle + ": ", agoraThread.result);
+                    Helper.setFehlerMeldung(processTitle + ": ", asyncThread.result);
                 }
             } else {
                 if (exportDmsTask != null) {
@@ -357,10 +358,10 @@ public class ExportDms extends ExportMets {
 
     private void exportWithoutImport(Process process, FileformatInterface gdzfile, URI destinationDirectory)
             throws IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
-        // without Agora import write the xml file directly into the home
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
-            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile, false);
+            writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile,
+                false);
         } else {
             gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
         }
@@ -493,9 +494,7 @@ public class ExportDms extends ExportMets {
                     fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
-                /*
-                 * wenn kein Agora-Import, dann den Ordner mit Benutzerberechtigung neu anlegen
-                 */
+                // if no async import, then create the folder with user authorization again
                 User user = Helper.getCurrentUser();
                 try {
                     if (user != null) {
@@ -513,15 +512,15 @@ public class ExportDms extends ExportMets {
             }
 
             /* jetzt den eigentlichen Kopiervorgang */
-            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < dateien.size(); i++) {
+            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            for (int i = 0; i < files.size(); i++) {
                 if (exportDmsTask != null) {
-                    exportDmsTask.setWorkDetail(fileService.getFileName(dateien.get(i)));
+                    exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
                 }
 
-                fileService.copyFile(dateien.get(i), zielTif);
+                fileService.copyFile(files.get(i), zielTif);
                 if (exportDmsTask != null) {
-                    exportDmsTask.setProgress((int) ((i + 1) * 98d / dateien.size() + 1));
+                    exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
                     if (exportDmsTask.isInterrupted()) {
                         throw new InterruptedException();
                     }
