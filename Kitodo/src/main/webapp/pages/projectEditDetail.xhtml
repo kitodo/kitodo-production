@@ -52,7 +52,7 @@
                     <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
                     <f:selectItems value="#{ProjekteForm.clients}" var="client" itemValue="#{client}"
                                    itemLabel="#{client.name}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>
@@ -60,21 +60,21 @@
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startdate}" />
                 <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.startDate}" showOn="button" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="dateSelect" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
-                    <p:ajax event="blur" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="dateSelect" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="blur" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:calendar>
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.enddate}" />
                 <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.endDate}" showOn="button" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="dateSelect" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
-                    <p:ajax event="blur" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="dateSelect" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="blur" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:calendar>
             </div>
             <div>
                 <p:outputLabel for="projectIsArchived" value="#{msgs.projectIsArchived}" />
                 <p:selectBooleanCheckbox id="projectIsArchived" class="input" value="#{ProjekteForm.myProjekt.projectIsArchived}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="change" oncomplete="jQuery('#projectEditForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>
             </div>
         </p:row>

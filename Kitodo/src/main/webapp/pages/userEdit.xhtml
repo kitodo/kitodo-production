@@ -25,7 +25,7 @@
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
-            window.onload = function () {checkForm('userEditForm')};
+            window.onload = function () {checkForm('editForm')};
         </script>
 
         <p:panel styleClass="content-header">
@@ -86,7 +86,8 @@
                         <div>
                             <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
                             <p:selectBooleanCheckbox id="active"
-                                                     value="#{BenutzerverwaltungForm.userObject.active}"/>
+                                                     value="#{BenutzerverwaltungForm.userObject.active}"
+                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
                     </p:row>
                     <p:row>
@@ -136,6 +137,7 @@
                             <p:commandLink id="delete"
                                            action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                            title="#{msgs.ausGruppeLoeschen}"
+                                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                            update="@form">
                                 <i class="fa fa-trash-o fa-lg"/>
                                 <f:param name="ID" value="#{item.id}"/>
