@@ -84,7 +84,7 @@ public class IndexingForm {
             try {
                 sleep(pause);
             } catch (InterruptedException e) {
-                logger.error("Thread interrupted: " + e.getMessage());
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 Thread.currentThread().interrupt();
             }
 
@@ -185,7 +185,7 @@ public class IndexingForm {
                 return toIntExact(searchService.countDatabaseRows());
             }
         } catch (DAOException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return 0;
     }
@@ -208,7 +208,7 @@ public class IndexingForm {
                     indexedObjects.put(objectType, toIntExact(searchService.count()));
                 }
             } catch (DataException e) {
-                logger.error(e.getMessage());
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
         return indexedObjects.get(objectType);
@@ -258,7 +258,7 @@ public class IndexingForm {
                         attempts++;
                     }
                 } catch (InterruptedException e) {
-                    logger.error(e.getMessage());
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     Thread.currentThread().interrupt();
                 }
             }
@@ -332,7 +332,7 @@ public class IndexingForm {
             if (updatePollingChannel) {
                 pollingChannel.send(MAPPING_FAILED_MESSAGE);
             }
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -350,7 +350,7 @@ public class IndexingForm {
             currentState = IndexStates.DELETE_SUCCESS;
             updateMessage = DELETION_FINISHED_MESSAGE;
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             currentState = IndexStates.DELETE_ERROR;
             updateMessage = DELETION_FAILED_MESSAGE;
         }
@@ -369,8 +369,7 @@ public class IndexingForm {
         try {
             return indexRestClient.getServerInformation();
         } catch (IOException e) {
-            logger.error(e.getMessage());
-            Helper.setFehlerMeldung("elasticSearchNotRunning");
+            Helper.setErrorMessage("elasticSearchNotRunning", logger, e);
             return "";
         }
     }
@@ -416,7 +415,7 @@ public class IndexingForm {
             JSONObject jsonObject = (JSONObject) object;
             return jsonObject.toJSONString();
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
         }
     }

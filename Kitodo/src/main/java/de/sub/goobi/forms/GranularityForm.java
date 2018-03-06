@@ -138,11 +138,9 @@ public class GranularityForm {
             byte[] data = XMLUtils.documentToByteArray(courseXML, 4);
             FacesUtils.sendDownload(data, "course.xml");
         } catch (TransformerException e) {
-            Helper.setFehlerMeldung("granularity.download.error", "error.TransformerException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("granularity.download.error", "error.TransformerException", logger, e);
         } catch (IOException e) {
-            Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("granularity.download.error", "error.IOException", logger, e);
         }
     }
 

@@ -76,8 +76,7 @@ public class RulesetForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-            logger.error(e);
+            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
             return null;
         }
     }
@@ -110,7 +109,7 @@ public class RulesetForm extends BasisForm {
                 serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            Helper.setErrorMessage("fehlerNichtLoeschbar", logger, e);
             return null;
         }
         return redirectToList();
@@ -134,7 +133,8 @@ public class RulesetForm extends BasisForm {
                 setRuleset(this.serviceManager.getRulesetService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving ruleset with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("regelsatz"), id }, logger,
+                e);
         }
     }
 

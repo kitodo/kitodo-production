@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -21,31 +21,30 @@
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProjekteForm.loadProject(id)}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="projectEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
-                        <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.title}"/>
-                    </h3>
-                    <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <p:tabView id="tabs">
-                    <p:tab title="#{msgs.details}">
-                        <ui:include src="projectEditDetail.xhtml"/>
-                    </p:tab>
-                    <p:tab title="#{msgs.technischeDaten}">
-                        <ui:include src="projectEditSpecification.xhtml"/>
-                    </p:tab>
-                    <p:tab title="#{msgs.metsParamater}">
-                        <ui:include src="projectEditMets.xhtml"/>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
+            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.title}"/>
+        </h3>
+        <p:commandButton value="#{msgs.speichern}" action="#{ProjekteForm.save()}" icon="fa fa-floppy-o fa-lg" iconPos="right" onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});" update="notifications"/>
+        <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="tabs">
+            <p:tab title="#{msgs.details}">
+                <ui:include src="projectEditDetail.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.technischeDaten}">
+                <ui:include src="projectEditSpecification.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.metsParamater}">
+                <ui:include src="projectEditMets.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>

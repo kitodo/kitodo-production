@@ -28,19 +28,19 @@ public class IndexingPage {
     private static final Logger logger = LogManager.getLogger(IndexingPage.class);
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexingTable")
+    @FindBy(id = "indexingTabView:indexing_form:indexingTable")
     private WebElement indexingTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexing_form:createMappingButton")
+    @FindBy(id = "indexingTabView:indexing_form:createMappingButton")
     private WebElement createMappingButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexing_form:deleteIndexButton")
+    @FindBy(id = "indexingTabView:indexing_form:deleteIndexButton")
     private WebElement deleteIndexButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexing_form:startIndexingAllButton")
+    @FindBy(id = "indexingTabView:indexing_form:startIndexingAllButton")
     private WebElement startIndexingAllButton;
 
     /**
@@ -139,7 +139,7 @@ public class IndexingPage {
 
     /**
      * Attempts to read indexing progress
-     * 
+     *
      * @return The indexing progress value as String. Empty String in case element
      *         is not readable.
      */
@@ -161,7 +161,7 @@ public class IndexingPage {
 
     /**
      * Checks if the indexing progress is at 100%.
-     * 
+     *
      * @return True if indexing is at 100%.
      */
     public boolean isIndexingComplete() {

@@ -23,6 +23,8 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -33,6 +35,7 @@ public class LdapGruppenForm extends BasisForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
 
     @Inject
     @Named("BenutzerverwaltungForm")
@@ -58,7 +61,7 @@ public class LdapGruppenForm extends BasisForm {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
             return redirectToList();
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Could not save", e.getMessage());
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
         }
     }
@@ -72,7 +75,7 @@ public class LdapGruppenForm extends BasisForm {
         try {
             this.serviceManager.getLdapGroupService().remove(this.myLdapGruppe);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Could not delete from database", e.getMessage());
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
         }
         return redirectToList();
@@ -101,7 +104,8 @@ public class LdapGruppenForm extends BasisForm {
                 setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving Ldap group with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("ldapgruppe"), id }, logger,
+                e);
         }
     }
 

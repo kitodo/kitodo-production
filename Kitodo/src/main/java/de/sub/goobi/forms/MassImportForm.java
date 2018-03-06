@@ -104,7 +104,7 @@ public class MassImportForm implements Serializable {
         try {
             this.template = serviceManager.getProcessService().getById(id);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
         if (serviceManager.getProcessService().getContainsUnreachableSteps(this.template)) {
@@ -176,8 +176,7 @@ public class MassImportForm implements Serializable {
                 }
             }
         } catch (JDOMException | IOException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+            Helper.setErrorMessage("Error while parsing digital collections", logger, e1);
         }
 
         if (this.possibleDigitalCollections.size() == 0) {
@@ -458,7 +457,7 @@ public class MassImportForm implements Serializable {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
         return allOpacCatalogues;
     }
@@ -677,7 +676,7 @@ public class MassImportForm implements Serializable {
                 return true;
             }
         } catch (Exception e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
             method = this.plugin.getClass().getMethod("getProperties");
@@ -688,7 +687,7 @@ public class MassImportForm implements Serializable {
                 return true;
             }
         } catch (Exception e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return false;
     }
@@ -713,7 +712,7 @@ public class MassImportForm implements Serializable {
                 return "/pages/MultiMassImportPage2";
             }
         } catch (Exception e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return "/pages/MassImportFormPage2";
     }
@@ -773,7 +772,7 @@ public class MassImportForm implements Serializable {
                 return list;
             }
         } catch (Exception e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return new ArrayList<>();
     }

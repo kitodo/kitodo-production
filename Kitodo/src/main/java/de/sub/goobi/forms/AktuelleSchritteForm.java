@@ -134,7 +134,7 @@ public class AktuelleSchritteForm extends BasisForm {
             }
             this.page = new Page<>(0, tasks);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Error on reading ElasticSearch: ", e.getMessage());
+            Helper.setErrorMessage("Error on reading ElasticSearch: ", logger, e);
             return null;
         }
         return redirectToList();
@@ -226,7 +226,6 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String takeOverBatch() {
         // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch;
         String taskTitle = this.mySchritt.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
             Type.LOGISTIC);
@@ -234,6 +233,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
             return null;
         }
+        List<Task> currentStepsOfBatch;
         if (batches.size() != 0) {
             Integer batchNumber = batches.iterator().next().getId();
             // only steps with same title
@@ -270,7 +270,7 @@ public class AktuelleSchritteForm extends BasisForm {
                     try {
                         new File(serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()));
                     } catch (Exception e1) {
-                        logger.error(e1);
+                        Helper.setErrorMessage("Error retrieving image directory: ", logger, e1);
                     }
                     s.setProcessingTime(new Date());
 
@@ -285,8 +285,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(s.getProcess());
             } catch (DataException e) {
-                Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-                logger.error("Task couldn't get saved", e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             }
         }
 
@@ -337,7 +336,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
-            logger.error("Task couldn't get saved/inserted", e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
 
         return filterAll();
@@ -380,7 +379,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            logger.error("Problem couldn't be reported: " + e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
         return filterAll();
@@ -408,7 +407,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            logger.error("Problem couldn't be solved: " + e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
         return filterAll();
@@ -483,7 +482,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
-                logger.error(e);
+                Helper.setErrorMessage("errorLoadingOne",
+                    new Object[] {Helper.getTranslation("arbeitsschritt"), taskDTO.getId() }, logger, e);
             }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
@@ -498,7 +498,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     this.serviceManager.getProcessService().save(proz);
                 } catch (DataException e) {
-                    Helper.setMeldung("fehlerNichtSpeicherbar" + proz.getTitle());
+                    Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
                 }
                 this.myDav.downloadToHome(proz, false);
             }
@@ -555,7 +555,7 @@ public class AktuelleSchritteForm extends BasisForm {
                                 .size();
                     }
                 } catch (DAOException | IOException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -570,7 +570,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             schrittPerParameterLaden();
         } catch (DAOException | NumberFormatException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return this.mySchritt;
     }
@@ -597,11 +597,8 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             return serviceManager.getTaskService().getById(id);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(
-                    Helper.getTranslation("ERROR") + ": " + Helper.getTranslation("unableToRetrieveTask"));
-            facesContext.addMessage(null, facesMessage);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+                logger, e);
             return null;
         }
     }
@@ -755,8 +752,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             export.startExport(this.mySchritt.getProcess());
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Error on export", e.getMessage());
-            logger.error(e);
+            Helper.setErrorMessage("Error on export", logger, e);
         }
     }
 
@@ -823,7 +819,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             } catch (DataException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -892,8 +888,7 @@ public class AktuelleSchritteForm extends BasisForm {
             serviceManager.getProcessService().save(this.myProcess);
             Helper.setMeldung("propertiesSaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
         loadProcessProperties();
     }
@@ -909,8 +904,7 @@ public class AktuelleSchritteForm extends BasisForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMeldung("propertySaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
         loadProcessProperties();
     }
@@ -960,7 +954,8 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(this.serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+                logger, e);
         }
     }
 

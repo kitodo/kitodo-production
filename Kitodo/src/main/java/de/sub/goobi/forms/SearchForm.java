@@ -92,7 +92,7 @@ public class SearchForm {
             workpiecePropertiesTitlesDistinct = serviceManager.getPropertyService()
                     .findWorkpiecePropertiesTitlesDistinct();
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.masterpiecePropertyTitles = workpiecePropertiesTitlesDistinct;
     }
@@ -123,7 +123,7 @@ public class SearchForm {
             processPropertiesTitlesDistinct = serviceManager.getPropertyService()
                     .findProcessPropertiesTitlesDistinct();
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.processPropertyTitles = processPropertiesTitlesDistinct;
     }
@@ -143,7 +143,7 @@ public class SearchForm {
         try {
             taskTitles = serviceManager.getTaskService().findTaskTitlesDistinct();
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.stepTitles = taskTitles;
     }
@@ -157,7 +157,7 @@ public class SearchForm {
             templatePropertiesTitlesDistinct = serviceManager.getPropertyService()
                     .findTemplatePropertiesTitlesDistinct();
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.templatePropertyTitles = templatePropertiesTitlesDistinct;
     }
@@ -169,7 +169,8 @@ public class SearchForm {
         try {
             this.user.addAll(serviceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
         } catch (RuntimeException rte) {
-            logger.warn("Catched RuntimeException. List of users could be empty!");
+            logger.warn("RuntimeException caught. List of users could be empty!");
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("aktiveBenutzer") });
         }
     }
 

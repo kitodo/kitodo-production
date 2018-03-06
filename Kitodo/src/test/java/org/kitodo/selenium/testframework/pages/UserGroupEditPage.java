@@ -22,31 +22,31 @@ import org.openqa.selenium.support.FindBy;
 public class UserGroupEditPage {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:saveUserGroupButton")
+    @FindBy(id = "editForm:saveUserGroupButton")
     private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:titleInput")
+    @FindBy(id = "editForm:usergroupTabView:titleInput")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesGlobalPick")
+    @FindBy(id = "editForm:usergroupTabView:authoritiesGlobalPick")
     private WebElement globalAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesClientPick")
+    @FindBy(id = "editForm:usergroupTabView:authoritiesClientPick")
     private WebElement clientAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:authoritiesProjectPick")
+    @FindBy(id = "editForm:usergroupTabView:authoritiesProjectPick")
     private WebElement projectAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:clientSelect")
+    @FindBy(id = "editForm:usergroupTabView:clientSelect")
     private WebElement clientSelector;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usergroupEditForm:usergroupTabView:projectSelect")
+    @FindBy(id = "editForm:usergroupTabView:projectSelect")
     private WebElement projectSelector;
 
     private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {

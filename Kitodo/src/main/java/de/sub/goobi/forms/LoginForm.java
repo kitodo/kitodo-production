@@ -74,11 +74,11 @@ public class LoginForm implements Serializable {
                 this.myBenutzer = temp;
                 Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
             } catch (DAOException e) {
-                Helper.setFehlerMeldung("could not save", e.getMessage());
+                Helper.setErrorMessage("could not save", logger, e);
             } catch (NoSuchAlgorithmException e) {
-                Helper.setFehlerMeldung("ldap errror", e.getMessage());
+                Helper.setErrorMessage("ldap errror", logger, e);
             } catch (DataException e) {
-                Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+                Helper.setErrorMessage("could not insert to index", logger, e);
             }
         }
         return null;
@@ -92,7 +92,7 @@ public class LoginForm implements Serializable {
             serviceManager.getUserService().save(this.myBenutzer);
             Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
         } catch (DataException e) {
-            Helper.setFehlerMeldung("could not insert to index", e.getMessage());
+            Helper.setErrorMessage("could not insert to index", logger, e);
         }
         return null;
     }
@@ -157,7 +157,7 @@ public class LoginForm implements Serializable {
                 this.myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
                 return this.myBenutzer;
             } catch (DAOException e) {
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return null;
             }
         }

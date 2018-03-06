@@ -12,147 +12,146 @@
 -->
 
 <ui:composition
-    template="/WEB-INF/templates/base.xhtml"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui">
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{BenutzergruppenForm.loadUserGroup(id)}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="usergroupEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
-                                      rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
-                        <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
-                                      rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
-                    </h3>
-                    <p:commandButton value="#{msgs.speichern}"
-                                     action="#{BenutzergruppenForm.save}"
-                                     id="saveUserGroupButton"
-                                     process="usergroupTabView:authoritiesGlobalPick, usergroupTabView:authoritiesClientPick, usergroupTabView:titleInput, usergroupTabView:authoritiesProjectPick"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     styleClass="button-filled-blue"
-                                     onclick="PF('notifications').renderMessage({
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
+                          rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
+            <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
+                          rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
+        </h3>
+        <p:commandButton value="#{msgs.speichern}"
+                         action="#{BenutzergruppenForm.save}"
+                         id="saveUserGroupButton"
+                         process="editForm:usergroupTabView:authoritiesGlobalPick,
+                                  editForm:usergroupTabView:authoritiesClientPick,
+                                  editForm:usergroupTabView:titleInput,
+                                  editForm:usergroupTabView:authoritiesProjectPick"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         styleClass="button-filled-blue"
+                         onclick="PF('notifications').renderMessage({
                                         'summary':'#{msgs.userGroupSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
-                                     update="notifications"/>
-                    <p:button id="cancel" value="#{msgs.abbrechen}"
-                              outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-
-                <!-- main form -->
-                <p:messages id="usergroupedit-messages" autoUpdate="true"/>
-                <p:tabView id="usergroupTabView">
-                    <p:tab id="usergroupTab" title="#{msgs.details}">
-                        <p:panelGrid columns="1" layout="grid">
-                            <p:row>
-                                <div>
-                                    <p:outputLabel for="titleInput" value="#{msgs.titel}"/>
-                                    <p:inputText id="titleInput"
-                                                 class="input"
-                                                 value="#{BenutzergruppenForm.userGroup.title}"
-                                                 placeholder="#{msgs.titel}"
-                                                 required="true"/>
-                                </div>
-                                <div>
-                                    <p:panelGrid columns="3" layout="grid">
-                                        <!--global authorities-->
-                                        <h:panelGroup>
-                                            <h3>
-                                                <h:outputText value="#{msgs.authoritiesGlobal}"/>
-                                            </h3>
-                                            <div style="visibility: hidden;margin-top: 15px">
-                                                <p:outputLabel for="hiddenSelect" value="hidden"/>
-                                                <p:selectOneMenu id="hiddenSelect">
-                                                </p:selectOneMenu>
-                                            </div>
-                                            <p:pickList id="authoritiesGlobalPick"
-                                                        value="#{BenutzergruppenForm.authorities}"
-                                                        converter="#{authorityConverter}"
-                                                        var="authority" itemLabel="#{authority.title}"
-                                                        itemValue="#{authority}">
-                                                <f:facet name="sourceCaption"
-                                                         style="color: #000;">#{msgs.available}</f:facet>
-                                                <f:facet name="targetCaption"
-                                                         style="color: #000;">#{msgs.assigned}</f:facet>
-                                            </p:pickList>
-                                        </h:panelGroup>
-
-                                        <!--client authorities-->
-                                        <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
-                                            <h3>
-                                                <h:outputText value="#{msgs.authoritiesClient}"/>
-                                            </h3>
-                                            <div style="margin-top: 15px">
-                                                <p:outputLabel for="clientSelect" value="#{msgs.client}"/>
-                                                <p:selectOneMenu id="clientSelect"
-                                                                 converter="#{clientConverter}"
-                                                                 value="#{BenutzergruppenForm.selectedClient}">
-                                                    <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
-                                                                   itemValue="#{client}"
-                                                                   itemLabel="#{client.name}"/>
-                                                    <p:ajax event="change" update="authoritiesClientPick"/>
-                                                </p:selectOneMenu>
-                                            </div>
-                                            <p:pickList id="authoritiesClientPick"
-                                                        value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
-                                                        converter="#{authorityConverter}"
-                                                        var="authority" itemLabel="#{authority.title}"
-                                                        itemValue="#{authority}">
-                                                <f:facet name="sourceCaption"
-                                                         style="color: #000;">#{msgs.available}</f:facet>
-                                                <f:facet name="targetCaption"
-                                                         style="color: #000;">#{msgs.assigned}</f:facet>
-                                                <p:ajax event="transfer"/>
-                                            </p:pickList>
-                                        </h:panelGroup>
-
-                                        <!--project authorities-->
-                                        <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
-                                            <h3>
-                                                <h:outputText value="#{msgs.authoritiesProject}"/>
-                                            </h3>
-                                            <div style="margin-top: 15px">
-                                                <p:outputLabel for="projectSelect" value="#{msgs.project}"/>
-                                                <p:selectOneMenu id="projectSelect"
-                                                                 converter="#{projectConverter}"
-                                                                 value="#{BenutzergruppenForm.selectedProject}">
-                                                    <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
-                                                                   itemValue="#{project}"
-                                                                   itemLabel="#{project.title}"/>
-                                                    <p:ajax event="change" update="authoritiesProjectPick"/>
-                                                </p:selectOneMenu>
-                                            </div>
-                                            <p:pickList id="authoritiesProjectPick"
-                                                        value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
-                                                        converter="#{authorityConverter}"
-                                                        var="authority" itemLabel="#{authority.title}"
-                                                        itemValue="#{authority}">
-                                                <f:facet name="sourceCaption"
-                                                         style="color: #000;">#{msgs.available}</f:facet>
-                                                <f:facet name="targetCaption"
-                                                         style="color: #000;">#{msgs.assigned}</f:facet>
-                                                <p:ajax event="transfer"/>
-                                            </p:pickList>
-                                        </h:panelGroup>
-                                    </p:panelGrid>
-                                </div>
-                            </p:row>
-                            <p:row/>
-                        </p:panelGrid>
-                    </p:tab>
-                </p:tabView>
-            </h:form>
-        </p:panel>
+                         update="notifications"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}"
+                  outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="usergroupTabView">
+            <p:tab id="usergroupTab" title="#{msgs.details}">
+                <p:panelGrid columns="1" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="titleInput" value="#{msgs.titel}"/>
+                            <p:inputText id="titleInput"
+                                         class="input"
+                                         value="#{BenutzergruppenForm.userGroup.title}"
+                                         placeholder="#{msgs.titel}"
+                                         required="true"/>
+                        </div>
+                        <div>
+                            <p:panelGrid columns="3" layout="grid">
+                                <!--global authorities-->
+                                <h:panelGroup>
+                                    <h3>
+                                        <h:outputText value="#{msgs.authoritiesGlobal}"/>
+                                    </h3>
+                                    <div style="visibility: hidden;margin-top: 15px">
+                                        <p:outputLabel for="hiddenSelect" value="hidden"/>
+                                        <p:selectOneMenu id="hiddenSelect">
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p:pickList id="authoritiesGlobalPick"
+                                                value="#{BenutzergruppenForm.authorities}"
+                                                converter="#{authorityConverter}"
+                                                var="authority" itemLabel="#{authority.title}"
+                                                itemValue="#{authority}">
+                                        <f:facet name="sourceCaption"
+                                                 style="color: #000;">#{msgs.available}</f:facet>
+                                        <f:facet name="targetCaption"
+                                                 style="color: #000;">#{msgs.assigned}</f:facet>
+                                    </p:pickList>
+                                </h:panelGroup>
+
+                                <!--client authorities-->
+                                <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
+                                    <h3>
+                                        <h:outputText value="#{msgs.authoritiesClient}"/>
+                                    </h3>
+                                    <div style="margin-top: 15px">
+                                        <p:outputLabel for="clientSelect" value="#{msgs.client}"/>
+                                        <p:selectOneMenu id="clientSelect"
+                                                         converter="#{clientConverter}"
+                                                         value="#{BenutzergruppenForm.selectedClient}">
+                                            <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
+                                                           itemValue="#{client}"
+                                                           itemLabel="#{client.name}"/>
+                                            <p:ajax event="change" update="authoritiesClientPick"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p:pickList id="authoritiesClientPick"
+                                                value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
+                                                converter="#{authorityConverter}"
+                                                var="authority" itemLabel="#{authority.title}"
+                                                itemValue="#{authority}">
+                                        <f:facet name="sourceCaption"
+                                                 style="color: #000;">#{msgs.available}</f:facet>
+                                        <f:facet name="targetCaption"
+                                                 style="color: #000;">#{msgs.assigned}</f:facet>
+                                        <p:ajax event="transfer"/>
+                                    </p:pickList>
+                                </h:panelGroup>
+
+                                <!--project authorities-->
+                                <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
+                                    <h3>
+                                        <h:outputText value="#{msgs.authoritiesProject}"/>
+                                    </h3>
+                                    <div style="margin-top: 15px">
+                                        <p:outputLabel for="projectSelect" value="#{msgs.project}"/>
+                                        <p:selectOneMenu id="projectSelect"
+                                                         converter="#{projectConverter}"
+                                                         value="#{BenutzergruppenForm.selectedProject}">
+                                            <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
+                                                           itemValue="#{project}"
+                                                           itemLabel="#{project.title}"/>
+                                            <p:ajax event="change" update="authoritiesProjectPick"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <p:pickList id="authoritiesProjectPick"
+                                                value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
+                                                converter="#{authorityConverter}"
+                                                var="authority" itemLabel="#{authority.title}"
+                                                itemValue="#{authority}">
+                                        <f:facet name="sourceCaption"
+                                                 style="color: #000;">#{msgs.available}</f:facet>
+                                        <f:facet name="targetCaption"
+                                                 style="color: #000;">#{msgs.assigned}</f:facet>
+                                        <p:ajax event="transfer"/>
+                                    </p:pickList>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </div>
+                    </p:row>
+                    <p:row/>
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>

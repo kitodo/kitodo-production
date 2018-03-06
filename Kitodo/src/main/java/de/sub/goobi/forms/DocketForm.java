@@ -77,8 +77,7 @@ public class DocketForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-            logger.error(e);
+            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
             return null;
         }
     }
@@ -102,7 +101,7 @@ public class DocketForm extends BasisForm {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtLoeschbar", e.getMessage());
+            Helper.setErrorMessage("fehlerNichtLoeschbar", logger, e);
             return null;
         }
         return "/pages/DocketList";
@@ -126,7 +125,7 @@ public class DocketForm extends BasisForm {
                 setMyDocket(this.serviceManager.getDocketService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving docket with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("docket"), id }, logger, e);
         }
     }
 

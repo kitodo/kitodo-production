@@ -26,14 +26,14 @@
             <h:outputText value="#{item.ordering}"/>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
                              id="orderUp"
-                             update="processEditForm:tabs:taskTable"
+                             update="editForm:tabs:taskTable"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
             </p:commandButton>
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
                              id="orderDown"
-                             update="processEditForm:tabs:taskTable"
+                             update="editForm:tabs:taskTable"
                              rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>

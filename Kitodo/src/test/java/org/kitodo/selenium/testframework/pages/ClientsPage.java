@@ -21,11 +21,11 @@ import org.openqa.selenium.support.FindBy;
 public class ClientsPage {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "newClientButton")
+    @FindBy(id = "clientForm:newClientButton")
     private WebElement newClientButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "clientsTable_data")
+    @FindBy(id = "clientsTabView:clientsTable_data")
     private WebElement clientsTable;
 
     /**

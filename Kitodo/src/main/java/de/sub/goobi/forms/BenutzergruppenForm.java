@@ -70,7 +70,7 @@ public class BenutzergruppenForm extends BasisForm {
                     this.clientsAvailable = false;
                 }
             } catch (DAOException e) {
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 clientsAvailable = false;
             }
         }
@@ -87,7 +87,7 @@ public class BenutzergruppenForm extends BasisForm {
                     this.projectsAvailable = false;
                 }
             } catch (DAOException e) {
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 projectsAvailable = false;
             }
         }
@@ -145,8 +145,7 @@ public class BenutzergruppenForm extends BasisForm {
 
             return redirectToList();
         } catch (DataException | DAOException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("Error, could not save user group", e.getMessage());
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
         }
     }
@@ -184,7 +183,7 @@ public class BenutzergruppenForm extends BasisForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException | DAOException e) {
-            Helper.setFehlerMeldung("Error, could not delete", e.getMessage());
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
         }
         return redirectToList();
@@ -203,7 +202,8 @@ public class BenutzergruppenForm extends BasisForm {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving user group with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("benutzergruppe"), id },
+                logger, e);
         }
         initializeSelectedClient();
         initializeSelectedProject();

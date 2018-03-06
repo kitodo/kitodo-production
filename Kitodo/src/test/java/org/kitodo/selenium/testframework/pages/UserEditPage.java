@@ -19,31 +19,31 @@ import org.openqa.selenium.support.FindBy;
 
 public class UserEditPage {
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:saveUserButton")
+    @FindBy(id = "editForm:saveUserButton")
     private WebElement saveUserButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:firstName")
+    @FindBy(id = "editForm:userTabView:firstName")
     private WebElement firstNameInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:surname")
+    @FindBy(id = "editForm:userTabView:surname")
     private WebElement lastNameInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:login")
+    @FindBy(id = "editForm:userTabView:login")
     private WebElement loginInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:password")
+    @FindBy(id = "editForm:userTabView:password")
     private WebElement passwordInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:location")
+    @FindBy(id = "editForm:userTabView:location")
     private WebElement locationInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userEditForm:userTabView:metaDataLanguage")
+    @FindBy(id = "editForm:userTabView:metaDataLanguage")
     private WebElement metaDataLanguageInput;
 
     public UserEditPage insertUserData(User user) throws InterruptedException {

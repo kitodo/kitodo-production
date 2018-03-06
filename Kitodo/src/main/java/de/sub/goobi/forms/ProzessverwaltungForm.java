@@ -216,8 +216,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 serviceManager.getProcessService().save(this.process);
             } catch (DataException e) {
-                Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");
@@ -240,8 +239,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 serviceManager.getProcessService().save(this.process);
             } catch (DataException e) {
-                Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");
@@ -260,8 +258,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("could not delete ", e);
-            logger.error(e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             return null;
         }
         if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
@@ -330,7 +327,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 renameOcrDirectories();
                 renameDefinedDirectories();
             } catch (Exception e) {
-                logger.warn("could not rename folder", e);
+                Helper.setErrorMessage("errorRenaming", new Object[] {Helper.getTranslation("directory") }, logger, e);
             }
 
             this.process.setTitle(this.newProcessTitle);
@@ -395,7 +392,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 fileService.delete(ocrDirectory);
             }
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Can not delete metadata directory", e);
+            Helper.setErrorMessage("Can not delete metadata directory", logger, e);
         }
     }
 
@@ -417,7 +414,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
             this.page = new Page<>(0, this.processDTOS);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("ProzessverwaltungForm.filterCurrentProcesses", e);
+            Helper.setErrorMessage("ProzessverwaltungForm.filterCurrentProcesses", logger, e);
             return null;
         }
         this.displayMode = ObjectMode.PROCESS;
@@ -439,7 +436,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 filterTemplatesWithFilter();
             }
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
         this.page = new Page<>(0, this.processDTOS);
@@ -456,7 +453,7 @@ public class ProzessverwaltungForm extends BasisForm {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
         String originLink = params.get("linkId");
         if (Objects.equals(originLink, "newProcess")) {
-            NeuenVorgangAnlegen();
+            createNewProcess();
         } else if (Objects.equals(originLink, "templates")) {
             filterTemplates();
         } else if (Objects.equals(originLink, "allProcesses")) {
@@ -470,7 +467,7 @@ public class ProzessverwaltungForm extends BasisForm {
      *
      * @return page
      */
-    public String NeuenVorgangAnlegen() {
+    public String createNewProcess() {
         filterTemplates();
         if (this.page.getTotalResults() == 1) {
             ProcessDTO single = (ProcessDTO) this.page.getListReload().get(0);
@@ -483,7 +480,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
                 return "";
             } catch (DAOException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
         return PROCESS_LIST_PATH_OLD;
@@ -514,13 +511,13 @@ public class ProzessverwaltungForm extends BasisForm {
             }
             this.page = new Page<>(0, processDTOS);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerBeimEinlesen", e.getMessage());
+            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;
         } catch (NumberFormatException ne) {
-            Helper.setFehlerMeldung("Falsche Suchparameter angegeben", ne.getMessage());
+            Helper.setErrorMessage("Falsche Suchparameter angegeben", logger, ne);
             return null;
         } catch (UnsupportedOperationException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return redirectToList();
     }
@@ -627,8 +624,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.templateProperty);
         } catch (DataException e) {
-            logger.error("Template property couldn't be removed: " + e.getMessage());
-            Helper.setFehlerMeldung("propertiesNotDeleted");
+            Helper.setErrorMessage("propertiesNotDeleted", logger, e);
         }
         loadTemplateProperties();
     }
@@ -643,8 +639,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.workpieceProperty);
         } catch (DataException e) {
-            logger.error("Workpiece property couldn't be removed: " + e.getMessage());
-            Helper.setFehlerMeldung("propertiesNotDeleted");
+            Helper.setErrorMessage("propertiesNotDeleted", logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -687,8 +682,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMeldung("propertiesSaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
         loadTemplateProperties();
     }
@@ -705,8 +699,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMeldung("propertiesSaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -736,7 +729,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             serviceManager.getTaskService().save(this.task);
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
     }
 
@@ -771,7 +764,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getTaskService().remove(this.task);
             return redirectToEdit();
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
             return null;
         }
 
@@ -784,7 +777,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 webDav.uploadFromHome(user, this.task.getProcess());
             } catch (RuntimeException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
         /* alle Benutzergruppen mit ihren Benutzern */
@@ -793,7 +786,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 try {
                     webDav.uploadFromHome(user, this.task.getProcess());
                 } catch (RuntimeException e) {
-                    logger.error(e);
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
@@ -811,7 +804,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.task.getUsers().remove(user);
             return null;
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
     }
@@ -828,7 +821,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.task.getUserGroups().remove(userGroup);
             return null;
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
     }
@@ -850,7 +843,7 @@ public class ProzessverwaltungForm extends BasisForm {
             this.task.getUserGroups().add(userGroup);
             return null;
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
     }
@@ -871,7 +864,7 @@ public class ProzessverwaltungForm extends BasisForm {
             }
             this.task.getUsers().add(user);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error on reading database", e.getMessage());
+            Helper.setErrorMessage("Error on reading database", logger, e);
             return null;
         }
         return null;
@@ -886,12 +879,10 @@ public class ProzessverwaltungForm extends BasisForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error loading process with ID " + id);
-            logger.error("ExportMETS error", e);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         } catch (Exception e) {
-            Helper.setFehlerMeldung(
-                    "An error occurred while trying to export METS file for: " + this.process.getTitle(), e);
-            logger.error("ExportMETS error", e);
+            Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
+                logger, e);
         }
     }
 
@@ -904,12 +895,10 @@ public class ProzessverwaltungForm extends BasisForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error loading process with ID " + id);
-            logger.error("ExportMETS error", e);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         } catch (Exception e) {
-            Helper.setFehlerMeldung(
-                    "An error occurred while trying to export PDF file for: " + this.process.getTitle(), e);
-            logger.error("ExportPDF error", e);
+            Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
+                logger, e);
         }
     }
 
@@ -922,12 +911,10 @@ public class ProzessverwaltungForm extends BasisForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error loading process with ID " + id);
-            logger.error("ExportMETS error", e);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         } catch (Exception e) {
-            Helper.setFehlerMeldung("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
-                    e);
-            logger.error("exportDMS error", e);
+            Helper.setErrorMessage("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
+                logger, e);
         }
     }
 
@@ -952,8 +939,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 } else {
                     errorMessage = e.toString();
                 }
-                Helper.setFehlerMeldung("ExportErrorID" + processDTO.getId() + ":", errorMessage);
-                logger.error(e);
+                Helper.setErrorMessage("errorExporting",
+                    new Object[] {Helper.getTranslation("prozess"), processDTO.getId() }, logger, e);
                 flagError = true;
             }
         }
@@ -974,8 +961,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
             } catch (Exception e) {
-                Helper.setFehlerMeldung("ExportError", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("ExportError", logger, e);
             }
         }
         Helper.setMeldung(null, "ExportFinished", "");
@@ -991,10 +977,10 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 export.startExport(proz);
             } catch (Exception e) {
-                Helper.setFehlerMeldung("ExportError", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("ExportError", logger, e);
             }
         }
+        logger.info(Helper.getTranslation("ExportFinished"));
         Helper.setMeldung(null, "ExportFinished", "");
     }
 
@@ -1084,7 +1070,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 webDav.downloadToHome(process, true);
             }
         } catch (DAOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1339,7 +1325,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.getHibernateSession().refresh(this.task);
             } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("could not refresh step with id " + this.task.getId(), e);
+                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("arbeitsschritt") },
+                        logger, e);
                 }
             }
         }
@@ -1348,7 +1335,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 Helper.getHibernateSession().refresh(this.process);
             } catch (Exception e) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug("could not refresh process with id " + this.process.getId(), e);
+                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("prozess") }, logger,
+                        e);
                 }
             }
         }
@@ -1379,8 +1367,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 this.process.setProject(serviceManager.getProjectService().getById(inProjektAuswahl));
             } catch (DAOException e) {
-                Helper.setFehlerMeldung("Projekt kann nicht zugewiesen werden", "");
-                logger.error(e);
+                Helper.setErrorMessage("Error assigning project", logger, e);
             }
         }
     }
@@ -1521,7 +1508,7 @@ public class ProzessverwaltungForm extends BasisForm {
             gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getCompleteList()),
                     this.kitodoScript);
         } catch (DAOException | DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1534,7 +1521,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getListReload()), this.kitodoScript);
         } catch (DAOException | DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1548,7 +1535,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.selectedProcesses), this.kitodoScript);
         } catch (DAOException | DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -1770,7 +1757,7 @@ public class ProzessverwaltungForm extends BasisForm {
             String destination = directory + this.process.getTitle() + "_log.xml";
             xmlExport.startExport(this.process, destination);
         } catch (IOException e) {
-            Helper.setFehlerMeldung("could not  write logfile to home directory:", e);
+            Helper.setErrorMessage("Error creating log file in home directory", logger, e);
         }
     }
 
@@ -1800,7 +1787,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 export.startTransformation(out, this.process, this.selectedXslt);
                 out.flush();
             } catch (IOException | XSLTransformException e) {
-                Helper.setFehlerMeldung("Could not create transformation: ", e);
+                Helper.setErrorMessage("Error transforming XML", logger, e);
             }
             facesContext.responseComplete();
         }
@@ -1825,7 +1812,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 }
             }
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return answer;
     }
@@ -1879,7 +1866,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 facesContext.responseComplete();
 
             } catch (IOException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -1919,9 +1906,9 @@ public class ProzessverwaltungForm extends BasisForm {
                     rowList.add(row);
                 }
                 Document document = new Document();
-                Rectangle a4quer = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
+                Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
                 PdfWriter.getInstance(document, out);
-                document.setPageSize(a4quer);
+                document.setPageSize(rectangle);
                 document.open();
                 if (rowList.size() > 0) {
                     Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
@@ -1942,7 +1929,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (Exception e) {
-                logger.error(e);
+                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
             }
         }
     }
@@ -1971,7 +1958,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (IOException e) {
-                logger.error(e);
+                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultSet") }, logger, e);
             }
         }
     }
@@ -2031,7 +2018,7 @@ public class ProzessverwaltungForm extends BasisForm {
             try {
                 serviceManager.getProcessService().save(process);
             } catch (DataException e) {
-                logger.error(e);
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
             }
         }
     }
@@ -2152,8 +2139,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMeldung("propertiesSaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
         loadProcessProperties();
     }
@@ -2168,8 +2154,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.property);
         } catch (DataException e) {
-            logger.error("Property couldn't be removed: " + e.getMessage());
-            Helper.setFehlerMeldung("propertiesNotDeleted");
+            Helper.setErrorMessage("propertiesNotDeleted", logger, e);
         }
 
         List<Property> properties = this.process.getProperties();
@@ -2188,8 +2173,7 @@ public class ProzessverwaltungForm extends BasisForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMeldung("propertySaved");
         } catch (DataException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("propertiesNotSaved");
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("eigenschaft") }, logger, e);
         }
         loadProcessProperties();
     }
@@ -2204,7 +2188,7 @@ public class ProzessverwaltungForm extends BasisForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    logger.error("Property couldn't be removed: " + e.getMessage());
+                    Helper.setErrorMessage("Property couldn't be removed: " + e.getMessage(), logger, e);
                 }
             }
         }
@@ -2234,7 +2218,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 newProcess();
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving process with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         }
     }
 
@@ -2247,7 +2231,8 @@ public class ProzessverwaltungForm extends BasisForm {
                 setTask(this.serviceManager.getTaskService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving task with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+                logger, e);
         }
     }
 
@@ -2260,7 +2245,7 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserService().findAllActiveUsers();
         } catch (DataException e) {
-            logger.error("Unable to load users: " + e.getMessage());
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("users") }, logger, e);
             return new LinkedList<>();
         }
     }
@@ -2274,7 +2259,8 @@ public class ProzessverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            logger.error("Unable to load user groups: " + e.getMessage());
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("benutzergruppen") }, logger,
+                e);
             return new LinkedList<>();
         }
     }

@@ -170,10 +170,7 @@ public class ProjekteForm extends BasisForm {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
             return redirectToEdit();
         } catch (DAOException e) {
-            logger.error(e.getMessage());
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToDuplicateProject"));
-            facesContext.addMessage(null, facesMessage);
+            Helper.setErrorMessage("unableToDuplicateProject", logger, e);
             return null;
         }
     }
@@ -196,8 +193,7 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return redirectToList("?faces-redirect=true");
             } catch (DataException e) {
-                Helper.setFehlerMeldung("Project could not be saved: ", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
                 return null;
             }
         }
@@ -220,8 +216,7 @@ public class ProjekteForm extends BasisForm {
                 Helper.setMeldung("Project saved!");
                 return null;
             } catch (DataException e) {
-                Helper.setFehlerMeldung("Project could not be save: ", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
                 return null;
             }
         }
@@ -240,8 +235,7 @@ public class ProjekteForm extends BasisForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setFehlerMeldung("Project could not be delete: ", e.getMessage());
-                logger.error(e);
+                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("project") }, logger, e);
                 return null;
             }
         }
@@ -400,7 +394,7 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProcessService().findByProjectId(this.myProjekt.getId(), false);
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -416,7 +410,7 @@ public class ProjekteForm extends BasisForm {
             countSortHelperImages = serviceManager.getProcessService()
                     .findCountForSortHelperImages(this.myProjekt.getId());
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         this.myProjekt.setNumberOfPages(sumSortHelperImages.intValue());
         this.myProjekt.setNumberOfVolumes(countSortHelperImages.intValue());
@@ -676,7 +670,7 @@ public class ProjekteForm extends BasisForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (IOException e) {
-                logger.error(e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
     }
@@ -712,7 +706,7 @@ public class ProjekteForm extends BasisForm {
                 setMyProjekt(this.serviceManager.getProjectService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setFehlerMeldung("Error retrieving project with ID '" + id + "'; ", e.getMessage());
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("projekt"), id }, logger, e);
         }
 
     }
@@ -726,7 +720,7 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
             return new LinkedList<>();
         }
     }
@@ -743,17 +737,14 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProjectService().getProjectTemplatesTitlesAsString(id);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
-            FacesContext facesContext = FacesContext.getCurrentInstance();
-            FacesMessage facesMessage = new FacesMessage(Helper.getTranslation("unableToRetrieveTemplates"));
-            facesContext.addMessage(null, facesMessage);
+            Helper.setErrorMessage("unableToRetrieveTemplates", logger, e);
             return null;
         }
     }
 
     /**
      * Gets all available clients.
-     * 
+     *
      * @return The list of clients.
      */
     public List<Client> getClients() {

@@ -10,7 +10,7 @@
   -->
 
 <ui:composition
-    template="/WEB-INF/templates/base.xhtml"
+    template="/WEB-INF/templates/baseEditView.xhtml"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
@@ -19,28 +19,28 @@
         <f:viewParam name="id" value="#{ClientForm.clientId}"/>
         <f:viewAction action="#{ClientForm.loadClient}"/>
     </f:metadata>
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="clientEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.clientEdit}"
-                                      rendered="#{ClientForm.client.id ne null}"/>
-                        <h:outputText value="#{msgs.clientNew}"
-                                      rendered="#{ClientForm.client.id eq null}"/>
-                    </h3>
-                    <p:commandButton value="#{msgs.speichern}"
-                                     action="#{ClientForm.save}"
-                                     update="notifications"
-                                     icon="fa fa-floppy-o fa-lg"
-                                     iconPos="right"
-                                     onclick="PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                                     styleClass="button-filled-blue"/>
-                    <p:button value="#{msgs.abbrechen}" outcome="clients"
-                              icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-                </p:panel>
-                <!-- main form -->
-                <p:messages id="clientEdit-messages" autoUpdate="true"/>
+
+    <ui:define name="contentHeader">
+        <h3>
+            <h:outputText value="#{msgs.clientEdit}"
+                          rendered="#{ClientForm.client.id ne null}"/>
+            <h:outputText value="#{msgs.clientNew}"
+                          rendered="#{ClientForm.client.id eq null}"/>
+        </h3>
+        <p:commandButton value="#{msgs.speichern}"
+                         action="#{ClientForm.save}"
+                         update="notifications"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         styleClass="button-filled-blue"/>
+        <p:button value="#{msgs.abbrechen}" outcome="clients"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="clientsTabView">
+            <p:tab id="clientsTab" title="#{msgs.client}">
                 <p:panelGrid id="clientEdit-grid" columns="2">
                     <p:outputLabel for="name" value="#{msgs.name}"/>
                     <p:inputText id="name"
@@ -48,9 +48,10 @@
                                  value="#{ClientForm.client.name}"
                                  required="true"/>
                 </p:panelGrid>
-            </h:form>
-        </p:panel>
+            </p:tab>
+        </p:tabView>
     </ui:define>
+
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.clients}" outcome="clients"/></li>

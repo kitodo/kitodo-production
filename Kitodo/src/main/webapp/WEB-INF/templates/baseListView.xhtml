@@ -1,0 +1,33 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panel id="listWrapper">
+            <p:panel styleClass="content-header">
+                <ui:insert name="contentHeader">
+                    <h3>Kitodo.Production</h3>
+                </ui:insert>
+            </p:panel>
+            <p:messages id="error-messages" autoUpdate="true" />
+
+            <ui:insert name="pageTabView">
+                <p:tabView/>
+            </ui:insert>
+        </p:panel>
+    </ui:define>
+</ui:composition>
