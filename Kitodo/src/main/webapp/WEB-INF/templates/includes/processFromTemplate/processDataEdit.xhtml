@@ -21,13 +21,13 @@
     <p:panelGrid layout="grid" columns="2">
         <p:row>
             <div>
-                <!-- Prozessvorlage -->
+                <!-- process template -->
                 <p:outputLabel value="#{msgs.prozessvorlage}"/>
                 <h3><p:outputLabel value="#{ProzesskopieForm.prozessVorlage.title}"/></h3>
             </div>
 
             <div>
-                <!-- ProzessTitel -->
+                <!-- process title -->
                 <p:outputLabel for="processTitle" value="#{msgs.prozessTitel}"/>
                 <h:panelGroup>
                     <p:inputText class="input" id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="prozessKopieFeldbreite"/>
@@ -55,12 +55,11 @@
                                      required="true">
                         <f:selectItems value="#{HelperForm.regelsaetze}"/>
                     </p:selectOneMenu>
-                    <!--<t:message for="Regelsatz" style="color: red" replaceIdWithLabel="true"/>-->
                 </h:panelGroup>
             </div>
 
             <div>
-                <!-- digitale Kollektion -->
+                <!-- digital collection -->
                 <p:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
                                value="#{msgs.digitaleKollektionen}"/>
                 <p:selectManyMenu id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"

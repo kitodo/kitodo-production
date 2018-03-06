@@ -1301,6 +1301,10 @@ public class ProzesskopieForm implements Serializable {
         return this.additionalFields;
     }
 
+    /**
+     * The method getVisibleAdditionalFields returns a list of visible additional fields
+     * @return list of AdditionalField
+     */
     public List<AdditionalField> getVisibleAdditionalFields() {
         return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype()).collect(Collectors.toList());
     }
@@ -1969,9 +1973,9 @@ public class ProzesskopieForm implements Serializable {
                 return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
             }
         } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
+            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
             // used from it's integration test
-            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
+            // class "ProzesskopieFormIT", where no "FacesContext" is available!
             return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
         }
     }

@@ -19,7 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:panelGrid columns="2" cellpadding="10">
-        <!-- aus den bereits vorhandenen Prozessen einen auswaehlen -->
+        <!-- choose from existing processes  -->
         <h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.useTemplates}"/>
         <h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.useTemplates}"
                          style="margin-left:10px;margin-right:10px; width:200px">
@@ -31,7 +31,7 @@
                             style="vertical-align:middle; margin-right:3px"/>
             <h:outputText value="#{msgs.uebernehmen}"/>
         </h:commandLink>
-        <!-- aus dem Opac auswaehlen -->
+        <!-- choose from opac -->
         <h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
             <h:outputText value="#{msgs.sucheImOpac}" style="display:inline"/>
 
