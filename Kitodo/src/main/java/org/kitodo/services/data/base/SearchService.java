@@ -589,12 +589,16 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return bean object
      */
     protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject, String key,
-            SearchService<?, O, ?> service) throws DataException {
-        List<O> listDTO = new ArrayList<>();
-        for (Integer id : getRelatedPropertyForDTO(jsonObject, key)) {
-            listDTO.add(service.findById(id, true));
+           SearchService<?, O, ?> service) throws DataException {
+        List<Integer> ids = getRelatedPropertyForDTO(jsonObject, key);
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
         }
-        return listDTO;
+        return service.findByQuery(createSetQueryForIds(ids), true);
+    }
+
+    private QueryBuilder createSetQueryForIds(List<Integer> ids) {
+        return termsQuery("_id", ids);
     }
 
     /**
