@@ -69,14 +69,12 @@ public class IndexRestClient extends KitodoRestClient {
      *            with document which is going to be indexed
      * @param id
      *            of document - equal to the id from table in database
-     * @return status code of the response from the server
      */
-    public boolean addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
+    public void addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.emptyMap(),
                 entity);
-        int statusCode = processStatusCode(indexResponse.getStatusLine());
-        return statusCode == 200 || statusCode == 201;
+        processStatusCode(indexResponse.getStatusLine());
     }
 
     /**
@@ -86,7 +84,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    public String addType(HashMap<Integer, HttpEntity> documentsToIndex)
+    public void addType(HashMap<Integer, HttpEntity> documentsToIndex)
             throws InterruptedException, CustomResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final ArrayList<String> output = new ArrayList<>();
@@ -109,7 +107,6 @@ public class IndexRestClient extends KitodoRestClient {
         }
         latch.await();
         filterAsynchronousResponses(output);
-        return output.toString();
     }
 
     /**
@@ -117,23 +114,18 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @param id
      *            of the document
-     * @return status code of the response from server
      */
-    public boolean deleteDocument(Integer id) throws IOException, CustomResponseException {
-        boolean result;
+    public void deleteDocument(Integer id) throws IOException, CustomResponseException {
         try {
-            Response indexResponse = restClient.performRequest("DELETE",
+            restClient.performRequest("DELETE",
                     "/" + this.getIndex() + "/" + this.getType() + "/" + id);
-            result = processStatusCode(indexResponse.getStatusLine()) == 200;
         } catch (ResponseException e) {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());
-                result = true;
             } else {
                 throw new CustomResponseException(e.getMessage());
             }
         }
-        return result;
     }
 
     /**
@@ -143,9 +135,8 @@ public class IndexRestClient extends KitodoRestClient {
      *            as String
      * @param field
      *            as String
-     * @return true or false
      */
-    public boolean enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
+    public void enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
         String query = "{\n \"properties\": {\n\""
                 + field
                 + "\": {\n"
@@ -161,8 +152,7 @@ public class IndexRestClient extends KitodoRestClient {
         Response indexResponse = restClient.performRequest("PUT",
                 "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types",
                 Collections.emptyMap(), entity);
-        int statusCode = processStatusCode(indexResponse.getStatusLine());
-        return statusCode == 200 || statusCode == 201;
+        processStatusCode(indexResponse.getStatusLine());
     }
 
     private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
