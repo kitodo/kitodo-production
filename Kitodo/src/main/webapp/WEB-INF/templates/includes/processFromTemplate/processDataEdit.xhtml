@@ -43,6 +43,7 @@
                                  styleClass="prozessKopieFeldbreite">
                     <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
                                    itemValue="#{step.title}"/>
+                    <p:ajax event="change"/>
                 </p:selectOneMenu>
             </div>
 
