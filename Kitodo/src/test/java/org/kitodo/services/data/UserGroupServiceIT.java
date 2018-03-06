@@ -228,8 +228,8 @@ public class UserGroupServiceIT {
             "addRuleset", "editRuleset", "deleteRuleset", "viewAllUserGroups", "viewUserGroup", "addUserGroup",
             "editUserGroup", "deleteUserGroup", "viewAllUsers", "viewUser", "addUser", "editUser", "deleteUser",
             "viewAllLdapGroups", "viewLdapGroup", "addLdapGroup", "editLdapGroup", "deleteLdapGroup",
-            "viewAllLdapServers", "viewLdapServer", "addLdapServer", "editLdapServer", "deleteLdapServer");
-        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
+            "viewAllLdapServers", "viewLdapServer", "addLdapServer", "editLdapServer", "deleteLdapServer", "admin");
+        assertEquals("Authority strings doesn't match to given plain text!", expected, actual);
     }
 
     @Test

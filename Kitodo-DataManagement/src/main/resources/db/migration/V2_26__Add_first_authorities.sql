@@ -8,10 +8,9 @@
 -- For the full copyright and license information, please read the
 -- GPL3-License.txt file that was distributed with this source code.
 --
+-- Update admin authority that it can only assigned globally
 
--- Delete admin authority
-
-DELETE FROM authority WHERE id='1';
+UPDATE authority SET clientAssignable='0',projectAssignable='0' WHERE title='admin';
 
 -- Add authorities to secure the access to the entities
 
@@ -159,67 +158,8 @@ VALUES ('editLdapServer', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('deleteLdapServer', '1', '0', '0');
 
--- Assign all authorities to user group 1, assuming that this is administrator user group
--- starting with id 2 because id 1 was used by admin authority at V2_17
--- if user group with id 1 does not exist, these inserts are ignored
+-- Assign admin authority to user group with id=1, assuming that this is administrator user group
+-- admin authority was inserted at V2_17
+-- if user group with id 1 does not exist, the insert is ignored
 
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,2);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,3);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,4);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,5);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,6);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,7);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,8);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,9);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,10);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,11);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,12);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,13);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,14);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,15);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,16);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,17);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,18);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,19);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,20);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,21);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,22);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,23);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,24);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,25);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,26);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,27);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,28);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,29);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,30);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,31);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,32);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,33);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,34);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,35);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,36);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,37);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,38);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,39);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,40);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,41);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,42);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,43);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,44);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,45);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,46);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,47);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,48);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,49);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,50);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,51);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,52);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,53);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,54);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,55);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,56);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,57);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,58);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,59);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,60);
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,61);
+INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,1);

@@ -59,12 +59,30 @@ public class SecurityAccessService {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
+    public boolean hasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
         if (hasGlobalAuthority(authorityTitle)) {
             return true;
         } else {
             String titleOfRequiredAuthority = authorityTitle + "_PROJECT_" + projectId;
             return hasAuthority(titleOfRequiredAuthority);
+        }
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
+     * in relation to a project id.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param projectId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
+        if (isAdmin()) {
+            return true;
+        } else {
+            return hasAuthorityGlobalOrForProject(authorityTitle, projectId);
         }
     }
 
@@ -78,7 +96,7 @@ public class SecurityAccessService {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
         if (hasGlobalAuthority(authorityTitle)) {
             return true;
         } else {
@@ -87,10 +105,37 @@ public class SecurityAccessService {
         }
     }
 
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
+     * in relation to a client id.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param clientId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
+        if (isAdmin()) {
+            return true;
+        } else {
+            return hasAuthorityGlobalOrForClient(authorityTitle, clientId);
+        }
+    }
+
     private boolean hasAuthority(String authorityTitle) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorityTitle);
         Collection<? extends GrantedAuthority> authorities = getAuthorities();
         return authorities.contains(authority);
+    }
+
+    /**
+     * Checks if the current user is admin
+     * 
+     * @return True if the current user has the admin authority
+     */
+    public boolean isAdmin() {
+        return hasGlobalAuthority("admin");
     }
 
     /**
@@ -102,6 +147,20 @@ public class SecurityAccessService {
      */
     public boolean hasGlobalAuthority(String authorityTitle) {
         return hasAuthority(authorityTitle + "_GLOBAL");
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasGlobalAuthority(String authorityTitle) {
+        if (isAdmin()) {
+            return true;
+        }
+        return hasGlobalAuthority(authorityTitle);
     }
 
     /**
@@ -120,5 +179,20 @@ public class SecurityAccessService {
             return true;
         }
         return hasAuthority(authorityTitle + "_ANYPROJECT");
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally, for any client
+     * oder for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasGlobalOrClientOrProjectAuthority(String authorityTitle) {
+        if (isAdmin()) {
+            return true;
+        }
+        return hasGlobalOrClientOrProjectAuthority(authorityTitle);
     }
 }

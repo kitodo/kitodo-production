@@ -408,6 +408,8 @@ public class MockDatabase {
         authorities.add(new Authority("editLdapServer", true, false, false));
         authorities.add(new Authority("deleteLdapServer", true, false, false));
 
+        authorities.add(new Authority("admin", true, false, false));
+
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
         }

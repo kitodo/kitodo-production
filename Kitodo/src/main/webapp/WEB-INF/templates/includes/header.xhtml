@@ -74,31 +74,33 @@
                             <li id="dashboard-menu-header">
                                 <h3>#{msgs.dashboard}
                                     <h:outputText
-                                        rendered="#{SecurityAccessController.hasAuthorityGlobally('admin')}">
+                                        rendered="#{SecurityAccessController.isAdmin()}">
                                         <i>(Admin)</i>
                                     </h:outputText>
                                 </h3>
                             </li>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthority('viewAllTasks')}">
+                            <h:panelGroup rendered="#{SecurityAccessController.isAdminOrHasAuthority('viewAllTasks')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.schritte}" id="linkTasks"
                                                                  outcome="tasks"><i
                                     class="fa fa-bell fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthority('viewAllProcesses')}">
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAuthority('viewAllProcesses')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" id="linkProcesses"
                                                                  outcome="processes"><i
                                     class="fa fa-hourglass-3 fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthority('viewAllProjects')}">
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAuthority('viewAllProjects')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.projekte}" id="linkProjects"
                                                                  outcome="projects"><i
                                     class="fa fa-folder-open fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthority('viewAllUsers')}">
+                            <h:panelGroup rendered="#{SecurityAccessController.isAdminOrHasAuthority('viewAllUsers')}">
                             <li class="nav-pic-text"><h:link value="#{msgs.benutzer}" id="linkUsers" outcome="users"><i
                                 class="fa fa-user fa-lg"/></h:link></li>
                             </h:panelGroup>
@@ -109,7 +111,8 @@
                                     class="fa fa-puzzle-piece fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="#{SecurityAccessController.hasAuthority('viewAllClients')}">
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAuthority('viewAllClients')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.clients}" id="linkClients"
                                                                  outcome="clients"><i
                                     class="fa fa-suitcase fa-lg"/></h:link></li>
