@@ -70,7 +70,7 @@
                                          class="input"
                                          value="#{BenutzergruppenForm.userGroup.title}"
                                          placeholder="#{msgs.titel}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:panelGrid columns="3" layout="grid">

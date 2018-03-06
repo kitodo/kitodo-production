@@ -19,25 +19,25 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}"/>
-                <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="true" class="input">
+                <p:inputText id="title" value="#{ProzessverwaltungForm.task.title}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
-                <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="true" class="input">
+                <p:inputText id="ordering" value="#{ProzessverwaltungForm.task.ordering}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="priority" value="#{msgs.prioritaet}"/>
-                <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="true" class="input">
+                <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
-                <p:selectOneMenu id="status" value="#{ProzessverwaltungForm.task.processingStatusAsString}" required="true" class="input">
+                <p:selectOneMenu id="status" value="#{ProzessverwaltungForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
                     <f:selectItem itemValue="0" itemLabel="#{msgs.statusGesperrt}"/>
                     <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>

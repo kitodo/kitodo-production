@@ -65,13 +65,13 @@
                                          class="input"
                                          value="#{DocketForm.myDocket.title}"
                                          placeholder="#{msgs.titel}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.datei}"/>
                             <p:inputText id="file" value="#{DocketForm.myDocket.file}"
                                          class="input"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                     </p:row>
                     <p:row/>

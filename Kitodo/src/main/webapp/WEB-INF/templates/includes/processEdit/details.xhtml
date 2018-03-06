@@ -22,14 +22,14 @@
                 <p:inputText id="title" placeholder="#{msgs.prozessTitel}"
                              value="#{ProzessverwaltungForm.newProcessTitle}"
                              class="input"
-                             required="true">
+                             required="#{empty param['editForm:saveButtonToggler']}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.projekt}"/>
-                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="true">
+                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}" required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
                     <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
@@ -47,7 +47,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
-                <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="true" converter="#{rulesetConverter}">
+                <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" required="#{empty param['editForm:saveButtonToggler']}" converter="#{rulesetConverter}">
                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>
@@ -55,7 +55,7 @@
 
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
-                <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="true" converter="#{docketConverter}">
+                <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" required="#{empty param['editForm:saveButtonToggler']}" converter="#{docketConverter}">
                     <f:selectItems value="#{HelperForm.dockets}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>

@@ -27,9 +27,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.titel}" />
-                <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="blur"/>
-                </p:inputText>
+                <p:inputText id="title" placeholder="#{msgs.titel}" class="input" value="#{ProjekteForm.myProjekt.title}" disabled="#{ProjekteForm.locked}" required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />

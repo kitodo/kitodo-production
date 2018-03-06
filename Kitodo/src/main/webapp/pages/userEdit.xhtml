@@ -65,7 +65,7 @@
                                          class="input"
                                          placeholder="#{msgs.surname}"
                                          value="#{BenutzerverwaltungForm.userObject.surname}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
@@ -73,7 +73,7 @@
                                          class="input"
                                          placeholder="#{msgs.vorname}"
                                          value="#{BenutzerverwaltungForm.userObject.name}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="location" value="#{msgs.location}"/>
@@ -81,7 +81,7 @@
                                          class="input"
                                          placeholder="#{msgs.location}"
                                          value="#{BenutzerverwaltungForm.userObject.location}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
@@ -98,7 +98,7 @@
                                          placeholder="#{msgs.login}"
                                          value="#{BenutzerverwaltungForm.userObject.login}"
                                          readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="password" value="#{msgs.password}"/>
@@ -107,7 +107,7 @@
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
                                         onblur="jQuery('#editForm\\:saveButtonToggler').click()"
-                                        required="true"
+                                        required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
                         <div>
@@ -117,7 +117,7 @@
                                          placeholder="#{msgs.spracheFuerMetadaten}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
                                          onchange="jQuery('#editForm\\:saveButtonToggler').click()"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>

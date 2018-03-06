@@ -62,7 +62,7 @@
                                          class="input"
                                          placeholder="#{msgs.titel}"
                                          value="#{RulesetForm.ruleset.title}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.datei}"/>
@@ -70,7 +70,7 @@
                                          class="input"
                                          placeholder="#{msgs.datei}"
                                          value="#{RulesetForm.ruleset.file}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
