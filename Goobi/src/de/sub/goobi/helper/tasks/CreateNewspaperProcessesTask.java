@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.CourseToGerman;
@@ -52,12 +53,6 @@ import de.sub.goobi.persistence.BatchDAO;
  * @author Matthias Ronge
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
-
-    /**
-     * January the 1ˢᵗ.
-     */
-    public static final MonthDay FIRST_OF_JANUARY = new MonthDay(1, 1);
-
     /**
      * The field batchLabel is set in addToBatches() on the first function call
      * which finds it to be null, and is used and set back to null in
@@ -122,12 +117,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     /**
      * The day of the year the new season starts.
      */
-    private MonthDay seasonBegin;
+    private final MonthDay seasonBegin;
 
     /**
      * A name for the season.
      */
-    private String seasonLabel;
+    private final String seasonLabel;
 
     /**
      * The field description holds a verbal description of the course of
@@ -143,20 +138,16 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            a ProzesskopieForm to use for creating processes
      * @param course
      *            course of appearance to create processes for
-     * @param seasonBegin
-     *            the first day of the new year
-     * @param seasonLabel
-     *            a label for the year level
      * @param batchGranularity
      *            a granularity level at which baches shall be created
      */
-    public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, MonthDay seasonBegin, String seasonLabel, Granularity batchGranularity) {
+    public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
         super(pattern.getProzessVorlageTitel());
         this.pattern = pattern;
         this.processes = new ArrayList<List<IndividualIssue>>(course.getNumberOfProcesses());
         this.description = CourseToGerman.asReadableText(course);
-        this.seasonBegin = seasonBegin;
-        this.seasonLabel = seasonLabel;
+        this.seasonBegin = course.getYearStart();
+        this.seasonLabel = course.getYearName();
         this.createBatches = batchGranularity;
         for (List<IndividualIssue> issues : course.getProcesses()) {
             List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
@@ -355,7 +346,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         DocStruct year = createFirstChild(newspaper, document, ruleset);
         LocalDate firstDate = issues.get(0).getDate();
         String theYear = Integer.toString(firstDate.getYear());
-        if (seasonBegin.isEqual(FIRST_OF_JANUARY) && seasonLabel.isEmpty()) {
+        if (seasonBegin.isEqual(Course.FIRST_OF_JANUARY) && seasonLabel.isEmpty()) {
             addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
         } else {
             boolean secondYear = compare(firstDate, seasonBegin) < 0;
@@ -411,6 +402,9 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             addMetadatum(issue, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
             addMetadatum(issue, day.getType().getName(), Integer.toString(date.getDayOfMonth()), false);
             addMetadatum(issue, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
+            for (Pair<String, String> metaDatum : individualIssue.getMetadata(seasonBegin)) {
+                addMetadatum(issue, metaDatum.getKey(), metaDatum.getValue(), true);
+            }
         }
     }
 

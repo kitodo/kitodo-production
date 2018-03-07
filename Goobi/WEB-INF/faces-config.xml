@@ -537,6 +537,14 @@
         <managed-bean-name>CalendarForm</managed-bean-name>
         <managed-bean-class> de.sub.goobi.forms.CalendarForm </managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>docType</property-name>
+            <value>#{ProzesskopieForm.docType}</value>
+        </managed-property>
+        <managed-property>
+            <property-name>ruleset</property-name>
+            <value>#{ProzesskopieForm.prozessKopie.regelsatz}</value>
+        </managed-property>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>GranularityForm</managed-bean-name>

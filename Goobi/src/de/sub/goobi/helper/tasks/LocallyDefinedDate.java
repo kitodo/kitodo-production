@@ -11,7 +11,6 @@
 
 package de.sub.goobi.helper.tasks;
 
-import org.joda.time.LocalDate;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
@@ -29,7 +28,7 @@ class LocallyDefinedDate {
     /**
      * A day of a month is a date that occurs once per year.
      */
-    private LocalDate date;
+    private org.joda.time.LocalDate date;
 
     /**
      * Creates a new local date.
@@ -46,7 +45,7 @@ class LocallyDefinedDate {
      */
     public LocallyDefinedDate(int calendarYear, String compoundYear, int monthOfYear, int dayOfMonth) {
         this.compoundYear = compoundYear;
-        this.date = new LocalDate(calendarYear, monthOfYear, dayOfMonth);
+        this.date = new org.joda.time.LocalDate(calendarYear, monthOfYear, dayOfMonth);
     }
 
     /**

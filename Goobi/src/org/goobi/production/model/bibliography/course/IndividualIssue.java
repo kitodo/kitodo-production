@@ -12,9 +12,13 @@
 
 package org.goobi.production.model.bibliography.course;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.goobi.production.model.bibliography.course.metadata.CountableMetadata;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -206,6 +210,25 @@ public class IndividualIssue {
     }
 
     /**
+     * Returns the meta-data for this individual issue.
+     *
+     * @param yearStart
+     *            the day of the year start—relevant to correctly calculate the
+     *            counter value
+     * @return a list of pairs, each consisting of the meta-data type name and
+     *         the value
+     */
+    public Iterable<Pair<String, String>> getMetadata(MonthDay yearStart) {
+        List<Pair<String, String>> result = new ArrayList<>();
+        Pair<LocalDate, Issue> selectedIssue = Pair.of(date, issue);
+        for (CountableMetadata counter : block.getMetadata(selectedIssue, null)) {
+            String value = counter.getValue(selectedIssue, yearStart);
+            result.add(Pair.of(counter.getMetadataType().getName(), value));
+        }
+        return result;
+    }
+
+    /**
      * The function getHeading() returns the name of the issue this is an issue
      * from.
      *
@@ -213,6 +236,15 @@ public class IndividualIssue {
      */
     public String getHeading() {
         return issue.getHeading();
+    }
+
+    /**
+     * The function getIssue() returns the issue this is an issue from.
+     *
+     * @return the issue
+     */
+    public Issue getIssue() {
+        return issue;
     }
 
     /**

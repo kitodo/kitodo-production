@@ -227,16 +227,20 @@
                                             <h:outputText value="#{msgs['calendar.header']}" />
                                         </htm:h3>
                                         <h:commandLink value="#{msgs['granularity.download']}"
-                                            action="#{CalendarForm.downloadClick}" styleClass="rightText" />
+                                            action="#{CalendarForm.downloadClick}" rendered="#{not CalendarForm.editingYear}"
+                                            styleClass="rightText" />
                                         <h:commandLink value="#{msgs['calendar.upload']}"
                                             action="#{CalendarForm.showUploadClick}"
                                             onclick="uploadWindow=true" styleClass="rightText"
+                                            rendered="#{not CalendarForm.editingYear}"
                                             style="padding-right: 10px; " />
                                         <h:commandLink value="#{msgs['calendar.applyChanges']}"
                                             id="applyLink" styleClass="rightText"
+                                            rendered="#{not CalendarForm.editingYear}"
                                             style="padding-right: 10px; display: none; " />
                                         <h:outputText value="#{msgs['calendar.applyChanges']}"
                                             title="#{msgs['calendar.applyChanges.placeholder']}"
+                                            rendered="#{not CalendarForm.editingYear}"
                                             onclick="alert('#{msgs['calendar.applyChanges.placeholder']}'); return false;"
                                             id="applyLinkPlaceholder" styleClass="rightText"
                                             style="padding-right: 10px; color: gray; cursor: help;" />
@@ -253,7 +257,8 @@
                                     <%-- ===================== Page main content ====================== --%>
 
                                     <htm:fieldset styleClass="calendarTitleMgmt"
-                                        style="margin-bottom: 14px; ">
+                                            rendered="#{not CalendarForm.editingYear}"
+                                            style="margin-bottom: 14px; ">
                                         <htm:legend>
                                             <h:outputText value="#{msgs['calendar.block.caption']}" />
                                         </htm:legend>
@@ -415,6 +420,139 @@
                                         </htm:div>
                                     </htm:fieldset>
 
+                                    <%-- Metadata input box --%>
+
+                                    <htm:fieldset styleClass="calendarTitleMgmt" style="margin-bottom: 14px; "
+                                        rendered="#{not CalendarForm.editingYear and not empty CalendarForm.metadataOptions}">
+                                        <htm:legend>
+                                            <h:outputText value="#{msgs['calendar.metadata.caption']}" />
+                                        </htm:legend>
+
+                                        <htm:div styleClass="formRow">
+                                            <%-- Drop down list to switch between issues --%>
+                                            <h:outputLabel for="issueChanger" styleClass="leftText"
+                                                value="#{msgs['calendar.metadata.select']}"
+                                                style="margin-top: 10px;" />
+
+                                            <h:selectOneMenu value="#{CalendarForm.metadataSelected}" id="issueChanger"
+                                                onchange="submit();" style="margin-top: 5px; min-width: 162px; ">
+                                                <si:selectItems var="item" value="#{CalendarForm.metadataOptions}"
+                                                    itemValue="#{item.value}" itemLabel="#{item.label}" />
+                                            </h:selectOneMenu>
+                                        </htm:div>
+                                        
+                                        <htm:div styleClass="calendarTitleContent">
+                                            <t:dataList layout="simple" var="counter" value="#{CalendarForm.metadata}">
+                                                <htm:div styleClass="filling formRow">
+
+                                                    <%-- Metadata key --%>
+                                                    <h:selectOneMenu value="#{counter.metadataKeySelected}"
+                                                        onchange="submit();" style="margin-top: 5px; min-width: 162px; "
+                                                        styleClass="leftText">
+                                                        <si:selectItems var="item" value="#{CalendarForm.metadataKeyOptions}"
+                                                            itemValue="#{item.value}" itemLabel="#{item.label}" />
+                                                    </h:selectOneMenu>
+
+                                                    <%-- Counter edit mode --%>
+                                                    <h:selectOneRadio value="#{counter.editModeSelected}"
+                                                        styleClass="leftText" layout="pageDirection" onchange="submit();">
+                                                        <f:selectItem itemValue="CONTINUE"
+                                                            itemLabel="#{msgs['calendar.metadata.continue']}"
+                                                            itemDisabled="#{not counter.editModeChangeable}" />
+                                                        <f:selectItem itemValue="DEFINE"
+                                                            itemLabel="#{msgs['calendar.metadata.define']}" />
+                                                        <f:selectItem itemValue="DELETE"
+                                                            itemLabel="#{msgs['calendar.metadata.delete']}"
+                                                            itemDisabled="#{not counter.editModeChangeable}" />
+                                                    </h:selectOneRadio>
+
+                                                    <%-- Delete button --%>
+                                                    <h:commandLink title="#{msgs['calendar.metadata.delete']}"
+                                                        action="#{counter.deleteClick}"
+                                                        styleClass="rightText"
+                                                        style="margin-left: 8px; margin-top: -2px;">
+                                                        <h:graphicImage
+                                                            value="/newpages/images/buttons/waste1_20px.gif" />
+                                                    </h:commandLink>
+                                                    
+                                                    <%-- Counter mode --%>
+                                                    <h:selectOneMenu value="#{counter.modeSelected}"
+                                                        style="margin-top: 5px; min-width: 162px; "
+                                                        styleClass="rightText" readonly="#{counter.editModeSelected != 'DEFINE'}">
+                                                        <f:selectItem itemValue=""
+                                                            itemLabel="#{msgs['calendar.metadata.mode.off']}" />
+                                                        <f:selectItem itemValue="ISSUES"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.issues']}" />
+                                                        <f:selectItem itemValue="DAYS"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.days']}" />
+                                                        <f:selectItem itemValue="WEEKS"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.weeks']}" />
+                                                        <f:selectItem itemValue="MONTHS"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.months']}" />
+                                                        <f:selectItem itemValue="QUARTERS"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.quarters']}" />
+                                                        <f:selectItem itemValue="YEARS"
+                                                            itemLabel="#{msgs['calendar.metadata.mode.years']}" />
+                                                    </h:selectOneMenu>
+
+                                                    <%-- Counter value --%>
+                                                    <htm:span styleClass="fillWrapper">
+                                                        <h:inputText value="#{counter.value}" id="metadataValue"
+                                                            styleClass="filling" readonly="#{counter.editModeSelected != 'DEFINE'}" />
+                                                    </htm:span>
+                                                </htm:div>
+                                            </t:dataList>
+
+                                            <%-- Add button --%>
+                                            <htm:div style="clear: both; ">
+                                                <h:commandLink title="#{msgs['calendar.metadata.add']}"
+                                                    action="#{CalendarForm.addMetadataClick}">
+                                                    <h:graphicImage style="margin-left: -5px;"
+                                                        value="/newpages/images/buttons/star_blue.gif" />
+                                                </h:commandLink>
+                                            </htm:div>
+                                        </htm:div>
+                                    </htm:fieldset>
+                                    
+                                    <%-- Year properties box --%>
+
+                                    <htm:table cellpadding="3" cellspacing="0" width="100%" styleClass="eingabeBoxen"
+                                        rendered="#{CalendarForm.editingYear}" style="margin-bottom: 14px; ">
+ 
+                                        <htm:tr>
+                                            <htm:td styleClass="eingabeBoxen_row1" colspan="2">
+                                                <h:outputText value="#{msgs['calendar.yearSettings.caption']}" />
+                                            </htm:td>
+                                        </htm:tr>
+                                        <htm:tr>
+                                            <htm:td styleClass="eingabeBoxen_row2" colspan="2">
+                                                <h:panelGrid columns="2">
+                                                    <h:outputLabel for="yearName1"
+                                                        value="#{msgs['calendar.yearSettings.yearName']}" />
+                                                    <h:panelGroup>
+                                                        <h:inputText id="yearName1"
+                                                            style="width: 300px;margin-right:15px"
+                                                            value="#{CalendarForm.yearName}" />
+                                                    </h:panelGroup>
+
+                                                    <h:outputLabel for="yearStart"
+                                                        value="#{msgs['calendar.yearSettings.yearStart']}" />
+                                                    <h:panelGroup>
+                                                        <h:inputText id="yearName"
+                                                            style="width: 300px;margin-right:15px"
+                                                            value="#{CalendarForm.yearStart}" />
+                                                    </h:panelGroup>
+                                                </h:panelGrid>
+                                            </htm:td>
+                                        </htm:tr>
+                                        <htm:tr>
+                                            <htm:td styleClass="eingabeBoxen_row3" align="right" colspan="2">
+                                                <h:commandButton value="#{msgs.speichern}"
+                                                    action="#{CalendarForm.onSaveYearPropertiesClick}" />
+                                            </htm:td>
+                                        </htm:tr>
+                                    </htm:table>
+
                                     <%-- File upload dialogue --%>
 
                                     <htm:div styleClass="modalBackground"
@@ -441,6 +579,17 @@
 
                                     <htm:table styleClass="calendarSheet">
                                         <htm:caption>
+                                            <h:graphicImage
+                                                    value="/newpages/images/buttons/edit_20.gif"
+                                                    style="float:left; visibility: hidden;"
+                                                    rendered="#{not CalendarForm.editingYear}" />
+                                            <h:commandLink title="#{msgs['calendar.yearSettings.edit']}"
+                                                    action="#{CalendarForm.onEditYearClick}" style="float: right;"
+                                                    rendered="#{not CalendarForm.editingYear}"
+                                                    onclick="uploadWindow=true" >
+                                                <h:graphicImage
+                                                    value="/newpages/images/buttons/edit_20.gif" />
+                                            </h:commandLink>
                                             <h:commandLink value="←"
                                                 action="#{CalendarForm.backwardClick}" styleClass="backward" />
                                             <h:outputText value="#{CalendarForm.year}" />
