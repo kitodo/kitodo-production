@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -712,11 +713,7 @@ public class Metadaten {
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
-            try {
-                createPagination();
-            } catch (TypeNotAllowedForParentException e) {
-                logger.error(e);
-            }
+            createPagination();
         }
 
         if (this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
@@ -1308,7 +1305,7 @@ public class Metadaten {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public String createPagination() throws TypeNotAllowedForParentException, IOException {
+    public String createPagination() throws IOException {
         this.imageHelper.createPagination(this.process, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1652,7 +1649,7 @@ public class Metadaten {
             try {
                 createPagination();
                 dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
-            } catch (IOException | TypeNotAllowedForParentException e) {
+            } catch (IOException e) {
                 logger.error(e);
             }
         }
@@ -2910,12 +2907,7 @@ public class Metadaten {
      * @return boolean
      */
     public boolean getIsNotRootElement() {
-        if (this.docStruct != null) {
-            if (this.docStruct.getParent() == null) {
-                return false;
-            }
-        }
-        return true;
+        return !(Objects.nonNull(this.docStruct) && Objects.isNull(this.docStruct.getParent()));
     }
 
     public boolean getFictitious() {

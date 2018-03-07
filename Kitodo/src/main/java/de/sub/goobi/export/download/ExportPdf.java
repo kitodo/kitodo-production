@@ -17,10 +17,10 @@ import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 import de.sub.goobi.metadaten.MetadatenHelper;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,49 +49,31 @@ public class ExportPdf extends ExportMets {
     private final FileService fileService = serviceManager.getFileService();
 
     @Override
-    public boolean startExport(Process myProcess, URI userHome)
+    public boolean startExport(Process process, URI userHome)
             throws ReadException, IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
 
-        /*
-         * Read Document
-         */
-        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
+        // Read Document
+        FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         prepareUserDirectory(userHome);
-        this.myPrefs = serviceManager.getRulesetService().getPreferences(myProcess.getRuleset());
+        this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
 
-        /*
-         * first of all write mets-file in images-Folder of process
-         */
-        URI targetFileName = fileService.createResource(myProcess.getTitle() + ".xml");
+        // first of all write mets-file in images-Folder of process
+        URI targetFileName = fileService.createResource(process.getTitle() + ".xml");
         URI metaFile = userHome.resolve(targetFileName);
-        writeMetsFile(myProcess, metaFile, gdzfile, true);
-        Helper.setMeldung(null, myProcess.getTitle() + ": ", "mets file created");
-        Helper.setMeldung(null, myProcess.getTitle() + ": ", "start pdf generation now");
+        writeMetsFile(process, metaFile, gdzfile, true);
+        Helper.setMeldung(null, process.getTitle() + ": ", "mets file created");
+        Helper.setMeldung(null, process.getTitle() + ": ", "start pdf generation now");
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("METS file created: " + targetFileName);
-        }
+        logger.debug("METS file created: " + targetFileName);
 
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest req = (HttpServletRequest) context.getExternalContext().getRequest();
-        String fullpath = req.getRequestURL().toString();
-        String servletpath = context.getExternalContext().getRequestServletPath();
-        String myBasisUrl = fullpath.substring(0, fullpath.indexOf(servletpath));
+        String fullPath = req.getRequestURL().toString();
+        String servletPath = context.getExternalContext().getRequestServletPath();
+        String basisUrl = fullPath.substring(0, fullPath.indexOf(servletPath));
 
         if (!ConfigCore.getBooleanParameter("pdfAsDownload")) {
-            /*
-             * use contentserver api for creation of pdf-file
-             */
-            CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
-            pdf.setMetsURL(metaFile.toURL());
-            pdf.setTargetFolder(userHome);
-            pdf.setInternalServletPath(myBasisUrl);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Target directory: " + userHome);
-                logger.debug("Using ContentServer2 base URL: " + myBasisUrl);
-            }
-            pdf.initialize(myProcess);
-            pdf.start();
+            useContentServerForPdfCreation(metaFile, userHome, process, basisUrl);
         } else {
 
             GetMethod method = null;
@@ -101,85 +83,33 @@ public class ExportPdf extends ExportMets {
                 String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
                 Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
 
-                /*
-                 * using mets file
-                 */
-
-                // TODO:second condition is always true if reached
-                if (serviceManager.getMetadataValidationService().validate(myProcess) && metaFile.toURL() != null) {
-                    /*
-                     * if no contentserverurl defined use internal
-                     * goobiContentServerServlet
-                     */
+                // using mets file
+                if (serviceManager.getMetadataValidationService().validate(process)) {
+                    // if no contentServerUrl defined use internal goobiContentServerServlet
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
-                        contentServerUrl = myBasisUrl + "/gcs/gcs?action=pdf&metsFile=";
+                        contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }
                     kitodoContentServerUrl = new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
-                            + myProcess.getTitle() + PDF_EXTENSION);
-                    /*
-                     * mets data does not exist or is invalid
-                     */
-
+                            + process.getTitle() + PDF_EXTENSION);
+                    // mets data does not exist or is invalid
                 } else {
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
-                        contentServerUrl = myBasisUrl + "/cs/cs?action=pdf&images=";
+                        contentServerUrl = basisUrl + "/cs/cs?action=pdf&images=";
                     }
-                    FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
-                    URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, myProcess);
-                    ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
-                    int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
-                            + myProcess.getTitle().length() + PDF_EXTENSION.length();
-                    TreeSet<String> fileNames = new TreeSet<>(new MetadatenHelper(null, null));
-                    String basePath = ConfigCore.getKitodoDataDirectory();
-                    for (URI data : meta) {
-                        String file = basePath + data.getRawPath();
-                        fileNames.add(file);
-                        capacity += file.length();
-                    }
-                    StringBuilder url = new StringBuilder(capacity);
-                    url.append(contentServerUrl);
-                    boolean subsequent = false;
-                    for (String f : fileNames) {
-                        if (subsequent) {
-                            url.append('$');
-                        } else {
-                            subsequent = true;
-                        }
-                        url.append(f);
-                    }
-                    url.append(AND_TARGET_FILE_NAME_IS);
-                    url.append(myProcess.getTitle());
-                    url.append(PDF_EXTENSION);
-                    kitodoContentServerUrl = new URL(url.toString());
+                    kitodoContentServerUrl = new URL(prepareKitodoContentServerURL(process, contentServerUrl));
                 }
 
-                /*
-                 * get pdf from servlet and forward response to file
-                 */
+                // get pdf from servlet and forward response to file
                 method = new GetMethod(kitodoContentServerUrl.toString());
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
 
                 if (!context.getResponseComplete()) {
-                    HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-                    String fileName = myProcess.getTitle() + PDF_EXTENSION;
-                    ServletContext servletContext = (ServletContext) context.getExternalContext().getContext();
-                    String contentType = servletContext.getMimeType(fileName);
-                    response.setContentType(contentType);
-                    response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
-                    response.sendRedirect(kitodoContentServerUrl.toString());
-                    context.responseComplete();
+                    completeResponse(context, kitodoContentServerUrl, process);
                 }
-                if (metaFile.toURL() != null) {
-                    File tempMets = new File(metaFile.toURL().toString());
-                    tempMets.delete();
-                }
+                fileService.delete(metaFile);
             } catch (Exception e) {
-
-                /*
-                 * report Error to User as Error-Log
-                 */
                 String text = "error while pdf creation: " + e.getMessage();
-                URI uri = userHome.resolve(myProcess.getTitle() + ".PDF-ERROR.log");
+                URI uri = userHome.resolve(process.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                     output.write(text);
                 } catch (IOException e1) {
@@ -193,5 +123,59 @@ public class ExportPdf extends ExportMets {
             }
         }
         return true;
+    }
+
+    private void useContentServerForPdfCreation(URI metaFile, URI userHome, Process process, String basisUrl)
+            throws MalformedURLException {
+        CreatePdfFromServletThread pdf = new CreatePdfFromServletThread();
+        pdf.setMetsURL(metaFile.toURL());
+        pdf.setTargetFolder(userHome);
+        pdf.setInternalServletPath(basisUrl);
+        logger.debug("Target directory: " + userHome);
+        logger.debug("Using ContentServer2 base URL: " + basisUrl);
+        pdf.initialize(process);
+        pdf.start();
+    }
+
+    private String prepareKitodoContentServerURL(Process process, String contentServerUrl) throws IOException {
+        FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
+        URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
+        ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
+        int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
+                + process.getTitle().length() + PDF_EXTENSION.length();
+        TreeSet<String> fileNames = new TreeSet<>(new MetadatenHelper(null, null));
+        String basePath = ConfigCore.getKitodoDataDirectory();
+        for (URI data : meta) {
+            String file = basePath + data.getRawPath();
+            fileNames.add(file);
+            capacity += file.length();
+        }
+        StringBuilder url = new StringBuilder(capacity);
+        url.append(contentServerUrl);
+        boolean subsequent = false;
+        for (String fileName : fileNames) {
+            if (subsequent) {
+                url.append('$');
+            } else {
+                subsequent = true;
+            }
+            url.append(fileName);
+        }
+        url.append(AND_TARGET_FILE_NAME_IS);
+        url.append(process.getTitle());
+        url.append(PDF_EXTENSION);
+        return url.toString();
+    }
+
+    private void completeResponse(FacesContext context, URL kitodoContentServerUrl, Process process)
+            throws IOException {
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        String fileName = process.getTitle() + PDF_EXTENSION;
+        ServletContext servletContext = (ServletContext) context.getExternalContext().getContext();
+        String contentType = servletContext.getMimeType(fileName);
+        response.setContentType(contentType);
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+        response.sendRedirect(kitodoContentServerUrl.toString());
+        context.responseComplete();
     }
 }

@@ -51,8 +51,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process)
-            throws IOException, DocStructHasNoTypeException, PreferencesException, WriteException,
+    public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
         User user = Helper.getCurrentUser();
         if (user != null) {
@@ -70,8 +69,7 @@ public class ExportMets {
      * @param userHome
      *            String
      */
-    public boolean startExport(Process process, URI userHome)
-            throws IOException, PreferencesException, WriteException, DocStructHasNoTypeException,
+    public boolean startExport(Process process, URI userHome) throws IOException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
 
         /*

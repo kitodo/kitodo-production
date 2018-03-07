@@ -232,7 +232,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             // ReadException, PreferencesException, SwapException, DAOException,
             // WriteException, IOException,
             // InterruptedException from ProzesskopieForm.createNewProcess()
-            String message = (e instanceof MetadataTypeNotAllowedException) && (currentTitle != null)
+            String message = currentTitle != null
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
                             Arrays.asList(new String[] {currentTitle }))
                     : e.getClass().getSimpleName() + getMessagePart(currentTitle);

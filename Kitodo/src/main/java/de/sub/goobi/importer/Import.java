@@ -67,9 +67,8 @@ public class Import {
         return "";
     }
 
-    private void read() throws IOException, WrongImportFileException, TypeNotAllowedForParentException,
-            TypeNotAllowedAsChildException, MetadataTypeNotAllowedException, ReadException, PreferencesException,
-            WriteException {
+    private void read() throws IOException, WrongImportFileException, TypeNotAllowedAsChildException,
+            MetadataTypeNotAllowedException, ReadException, PreferencesException, WriteException {
         logger.debug("Einlesen() - start");
 
         // Russian import
