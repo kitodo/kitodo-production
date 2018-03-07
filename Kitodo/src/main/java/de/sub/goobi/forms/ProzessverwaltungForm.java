@@ -790,7 +790,7 @@ public class ProzessverwaltungForm extends BasisForm {
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

@@ -102,6 +102,9 @@
                 <f:setPropertyActionListener
                         target="#{ProzessverwaltungForm.task}"
                         value="#{item}"/>
+                <p:confirm header="#{msgs.deleteTask}?"
+                           message="#{msgs.sollDieserEintragWirklichGeloeschtWerden}"
+                           icon="ui-icon-alert"/>
             </p:commandLink>
         </p:column>
 
@@ -135,6 +138,11 @@
         </p:rowExpansion>
 
     </p:dataTable>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
+        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    </p:confirmDialog>
 
     <p:commandButton action="#{ProzessverwaltungForm.newTask}"
                      value="#{msgs.schrittHinzufuegen}"
