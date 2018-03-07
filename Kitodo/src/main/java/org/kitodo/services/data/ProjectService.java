@@ -246,9 +246,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        projectDTO.setProcesses(
-                convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
-        projectDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        //TODO: frontend needs only list of templates, not processes, change it
+        projectDTO.setProcesses(new ArrayList<>());
+        //TODO: does frontend list will need list of users?
+        projectDTO.setUsers(new ArrayList<>());
         return projectDTO;
     }
 
