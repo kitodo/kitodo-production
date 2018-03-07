@@ -518,7 +518,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find process by property.
-     * 
+     *
      * @param title
      *            of property as String
      * @param value
@@ -533,7 +533,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find process by template.
-     * 
+     *
      * @param title
      *            of property as String
      * @param value
@@ -548,7 +548,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find process by workpiece.
-     * 
+     *
      * @param title
      *            of property as String
      * @param value
@@ -731,7 +731,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             ProjectDTO projectDTO = new ProjectDTO();
             projectDTO.setId(getIntegerPropertyForDTO(processJSONObject, "project.id"));
             projectDTO.setTitle(getStringPropertyForDTO(processJSONObject, "project.title"));
-            projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(processJSONObject, "project.archived"));
+            projectDTO.setActive(getBooleanPropertyForDTO(processJSONObject, "project.active"));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
@@ -1774,7 +1774,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find amount of processes for given title.
-     * 
+     *
      * @param title
      *            as String
      * @return amount as Long
@@ -1785,7 +1785,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     /**
      * Find amount of not template processes for given project id.
-     * 
+     *
      * @param projectId
      *            as Integer
      * @return amount as Long
@@ -1796,9 +1796,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find amount of images for not templates processes and for given project
-     * id.
-     * 
+     * Find amount of images for not templates processes and for given project id.
+     *
      * @param projectId
      *            as Integer
      * @return amount of images as Double

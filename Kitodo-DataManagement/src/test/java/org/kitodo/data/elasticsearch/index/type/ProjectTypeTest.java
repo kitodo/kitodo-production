@@ -151,7 +151,7 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         HttpEntity document = processType.createDocument(project);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"archived\":false,"
+        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"active\":true,"
                 + "\"processes\":[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":100,"
                 + "\"endDate\":\"2017-03-01\",\"metsRightsOwner\":\"\","
                 + "\"numberOfVolumes\":10,\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$"
@@ -172,7 +172,7 @@ public class ProjectTypeTest {
         project = prepareData().get(1);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"archived\":false,\"processes\":"
+        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"active\":true,\"processes\":"
                 + "[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}],\"numberOfPages\":2000,"
                 + "\"endDate\":\"2017-09-10\",\"numberOfVolumes\":20,\"metsRightsOwner\":\"\","
                 + "\"projectFileGroups\":[{\"path\":\"http:\\/\\/www.example.com\\/content\\/$(meta.CatalogIDDigital"
@@ -193,7 +193,7 @@ public class ProjectTypeTest {
         project = prepareData().get(2);
         document = processType.createDocument(project);
         actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"archived\":false,\"processes\":[],"
+        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"active\":true,\"processes\":[],"
                 + "\"numberOfPages\":0,\"metsRightsOwner\":\"\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","

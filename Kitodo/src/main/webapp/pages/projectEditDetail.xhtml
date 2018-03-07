@@ -70,10 +70,10 @@
                 </p:calendar>
             </div>
             <div>
-                <p:outputLabel for="projectIsArchived" value="#{msgs.projectIsArchived}" />
-                <p:selectBooleanCheckbox id="projectIsArchived" class="input" value="#{ProjekteForm.myProjekt.projectIsArchived}" disabled="#{ProjekteForm.locked}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
-                </p:selectBooleanCheckbox>
+               <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
+               <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjekteForm.myProjekt.active}" disabled="#{ProjekteForm.locked}">
+                   <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()" />
+               </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>

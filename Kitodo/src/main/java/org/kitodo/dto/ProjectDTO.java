@@ -27,6 +27,7 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfPages;
     private Integer numberOfVolumes;
     private Boolean projectIsArchived = false;
+    private Boolean active = true;
     private List<ProcessDTO> processes;
     private List<UserDTO> users;
 
@@ -183,22 +184,22 @@ public class ProjectDTO extends BaseDTO {
     }
 
     /**
-     * Get if project is archived.
+     * Get if project is active.
      *
-     * @return true or false
+     * @return whether project is active or not
      */
-    public Boolean getProjectIsArchived() {
-        return this.projectIsArchived;
+    public Boolean isActive() {
+        return this.active;
     }
 
     /**
-     * Set if projects is archived.
+     * Set if project is active.
      *
-     * @param projectIsArchived
-     *            true or false
+     * @param active
+     *            whether project is active or not
      */
-    public void setProjectIsArchived(Boolean projectIsArchived) {
-        this.projectIsArchived = projectIsArchived;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**

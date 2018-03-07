@@ -238,7 +238,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setMetsRightsOwner(getStringPropertyForDTO(projectJSONObject, "metsRightsOwner"));
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
-        projectDTO.setProjectIsArchived(getBooleanPropertyForDTO(projectJSONObject, "archived"));
+        projectDTO.setActive(getBooleanPropertyForDTO(projectJSONObject, "active"));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }

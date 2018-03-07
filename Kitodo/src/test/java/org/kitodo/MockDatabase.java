@@ -670,7 +670,7 @@ public class MockDatabase {
         thirdProject.setEndDate(localDate.toDate());
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
-        thirdProject.setProjectIsArchived(true);
+        thirdProject.setActive(false);
         if (clientsCount > 0) {
             Client client = serviceManager.getClientService().getById(2);
             thirdProject.setClient(client);

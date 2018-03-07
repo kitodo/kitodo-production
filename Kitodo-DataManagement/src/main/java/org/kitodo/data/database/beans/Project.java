@@ -140,8 +140,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Column(name = "numberOfVolumes")
     private Integer numberOfVolumes;
 
-    @Column(name = "projectIsArchived")
-    private Boolean projectIsArchived = false;
+    @Column(name = "active")
+    private Boolean active = true;
 
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<User> users;
@@ -445,7 +445,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * Set number of pages.
-     * 
+     *
      * @param numberOfPages
      *            the number of pages to set
      */
@@ -486,20 +486,22 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Set if projects is archived.
+     * Set if project is active.
      *
-     * @param projectIsArchived
-     *            true or false
+     * @param active
+     *            whether project is active
      */
-    public void setProjectIsArchived(Boolean projectIsArchived) {
-        if (projectIsArchived == null) {
-            projectIsArchived = false;
-        }
-        this.projectIsArchived = projectIsArchived;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
-    public Boolean getProjectIsArchived() {
-        return this.projectIsArchived;
+    /**
+     * Get if project is active.
+     *
+     * @return whether project is active
+     */
+    public boolean isActive() {
+        return this.active;
     }
 
     /**
