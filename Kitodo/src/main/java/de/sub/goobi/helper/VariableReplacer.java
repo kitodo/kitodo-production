@@ -58,6 +58,10 @@ public class VariableReplacer {
     private VariableReplacer() {
     }
 
+    VariableReplacer(Process process) {
+        this.process = process;
+    }
+
     /**
      * Constructor.
      *
