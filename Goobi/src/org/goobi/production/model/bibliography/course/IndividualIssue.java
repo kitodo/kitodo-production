@@ -15,7 +15,7 @@ package org.goobi.production.model.bibliography.course;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.joda.time.LocalDate;
+import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -95,10 +95,11 @@ public class IndividualIssue {
      *
      * @param mode
      *            how the course shall be broken into processes
+     * @param yearStart the first day of the business year
      * @return an int which differs if two neighbouring individual issues belong
      *         to different processes
      */
-    public int getBreakMark(Granularity mode) {
+    public int getBreakMark(Granularity mode, MonthDay yearStart) {
         final int prime = 31;
         switch (mode) {
         case ISSUES:
@@ -106,16 +107,28 @@ public class IndividualIssue {
         case DAYS:
             return date.hashCode();
         case WEEKS:
-            return prime * date.getYear() + date.getWeekOfWeekyear();
+            return prime * getFirstYear(yearStart) + date.getWeekOfWeekyear();
         case MONTHS:
-            return prime * date.getYear() + date.getMonthOfYear();
+            return prime * getFirstYear(yearStart) + date.getMonthOfYear();
         case QUARTERS:
-            return prime * date.getYear() + (date.getMonthOfYear() - 1) / 3;
+            return prime * getFirstYear(yearStart) + (date.getMonthOfYear() - 1) / 3;
         case YEARS:
-            return date.getYear();
+            return getFirstYear(yearStart);
         default:
             throw new UnreachableCodeException("default case in complete switch statement");
         }
+    }
+
+    /**
+     * Returns the first calendar year of the year range this issue is on.
+     *
+     * @param yearStart
+     *            the day the new year starts
+     * @return the first calendar year of the year range this issue is on
+     */
+    private int getFirstYear(MonthDay yearStart) {
+        int year = date.getYear();
+        return date.compareTo(yearStart.toLocalDate(year)) < 0 ? year - 1 : year;
     }
 
     /**

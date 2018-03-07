@@ -21,8 +21,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang.StringUtils;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
+import org.joda.time.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -511,16 +510,17 @@ public class Course extends ArrayList<Block> {
      *
      * @param mode
      *            how the course shall be broken into issues
+     * @param yearStart the new year’s day
      */
 
-    public void splitInto(Granularity mode) {
+    public void splitInto(Granularity mode, MonthDay yearStart) {
         int initialCapacity = 10;
         Integer lastMark = null;
         List<IndividualIssue> process = null;
 
         processes.clear();
         for (IndividualIssue issue : getIndividualIssues()) {
-            Integer mark = issue.getBreakMark(mode);
+            Integer mark = issue.getBreakMark(mode, yearStart);
             if (!mark.equals(lastMark) && process != null) {
                 initialCapacity = (int) Math.round(1.1 * process.size());
                 processes.add(process);
