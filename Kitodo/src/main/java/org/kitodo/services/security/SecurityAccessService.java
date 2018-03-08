@@ -129,16 +129,6 @@ public class SecurityAccessService {
         return authorities.contains(authority);
     }
 
-    // private boolean hasAnyAuthority(String authorityTitlesComplete) {
-    // String[] authorityTitles = getStringArray(authorityTitlesComplete);
-    // for (String authorityTitle : authorityTitles) {
-    // if (hasAuthority(authorityTitle)) {
-    // return true;
-    // }
-    // }
-    // return false;
-    // }
-
     private String[] getStringArray(String strings) {
         strings = strings.replaceAll("\\s+", ""); // remove whitespaces
         return strings.split(",");
@@ -187,13 +177,13 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitle) {
-        if (hasAuthority(authorityTitle + "_GLOBAL")) {
+        if (hasGlobalAuthority(authorityTitle)) {
             return true;
         }
-        if (hasAuthority(authorityTitle + "_ANYCLIENT")) {
+        if (hasAuthority(authorityTitle + "_CLIENT_ANY")) {
             return true;
         }
-        return hasAuthority(authorityTitle + "_ANYPROJECT");
+        return hasAuthority(authorityTitle + "_PROJECT_ANY");
     }
 
     /**
