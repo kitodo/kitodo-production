@@ -723,8 +723,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
         processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
         processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
-        processDTO.setTifDirectoryExists(
-                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+        //TODO: remove access to database here, store path in index
+        processDTO.setTifDirectoryExists(false);
+        //processDTO.setTifDirectoryExists(
+        //checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
@@ -740,8 +742,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
         Integer project = getIntegerPropertyForDTO(jsonObject, "project.id");
         processDTO.setProject(serviceManager.getProjectService().findById(project));
-        processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
+        //TODO: check if this is displayed in frontend
+        //processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
+        //TODO: are tasks displayed in the lists of processes/templates? - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO));
