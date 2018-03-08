@@ -249,6 +249,9 @@ public class ProzesskopieForm implements Serializable {
     private static final String PROCESS_FROM_TEMPLATE_PATH = TEMPLATE_ROOT + "processFromTemplate";
     private static final String PROCESS_FROM_TEMPLATE_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
 
+    private static final String PROCESS_PATH = TEMPLATE_ROOT + "processes";
+    private static final String PROCESS_PATH_OLD = TEMPLATE_ROOT + "/NewProcess/Page3";
+
     static final String REDIRECT_PARAMETER = "faces-redirect=true";
 
     /**
@@ -953,7 +956,7 @@ public class ProzesskopieForm implements Serializable {
 
         startTaskScriptThreads();
 
-        return "/pages/NewProcess/Page3";
+        return this.redirectToProcessesAfterSave();
     }
 
     private void updateTasks() {
@@ -1977,6 +1980,28 @@ public class ProzesskopieForm implements Serializable {
             // used from it's integration test
             // class "ProzesskopieFormIT", where no "FacesContext" is available!
             return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/processFromTemplate" once we have completely
+    // switched to the new frontend pages
+    private String redirectToProcessesAfterSave() {
+        try {
+            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty()
+                    && (callerViewId.contains("processFromTemplate.jsf"))) {
+                return PROCESS_PATH + "?" + REDIRECT_PARAMETER;
+            } else {
+                return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
+            // used from it's integration test
+            // class "ProzesskopieFormIT", where no "FacesContext" is available!
+            return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
         }
     }
 }
