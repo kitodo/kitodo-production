@@ -1739,46 +1739,6 @@ public class Metadaten {
         }
     }
 
-    /**
-     * Check if current image is the correct (actually wanted) image from the
-     * list.
-     *
-     * @param dataList
-     *            list of all images
-     * @param i
-     *            iterator
-     * @return true or false
-     */
-    private boolean isCurrentImageCorrectImage(List<URI> dataList, int i) {
-        if (logger.isTraceEnabled()) {
-            logger.trace("myBild: " + this.image);
-        }
-        String index = fileService.getFileName(dataList.get(i));
-        if (logger.isTraceEnabled()) {
-            logger.trace("index: " + index);
-        }
-        String picture = fileService.getFileName(this.image);
-        return index.equals(picture);
-    }
-
-    private void checkImage() {
-        /* wenn bisher noch kein Bild da ist, das erste nehmen */
-        boolean exists = false;
-        try {
-            if (this.currentTifFolder != null && this.image != null) {
-                exists = fileService.fileExist(
-                    fileService.getImagesDirectory(this.process).resolve(this.currentTifFolder + "/" + this.image));
-            }
-        } catch (Exception e) {
-            this.imageNumber = -1;
-            logger.error(e);
-        }
-        /* wenn das Bild nicht existiert, den Status ändern */
-        if (!exists) {
-            this.imageNumber = -1;
-        }
-    }
-
     /*
      * Sperrung der Metadaten aktualisieren oder prüfen
      */
@@ -1807,14 +1767,6 @@ public class Metadaten {
     /*
      * Navigationsanweisungen
      */
-
-    /**
-     * zurück zur Startseite, Metadaten vorher freigeben.
-     */
-    public String goMain() {
-        disableReturn();
-        return "newMain";
-    }
 
     /**
      * zurück gehen.
