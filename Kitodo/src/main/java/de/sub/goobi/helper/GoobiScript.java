@@ -562,7 +562,7 @@ public class GoobiScript {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equals(this.parameters.get("steptitle"))) {
-                    serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get("status"));
+                    task.setProcessingStatus(serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get("status")));
                     saveTask(process.getTitle(), task);
                     Helper.setMeldung(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
                     break;
