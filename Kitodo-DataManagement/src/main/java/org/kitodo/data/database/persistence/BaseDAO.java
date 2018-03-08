@@ -202,12 +202,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     T retrieveObject(Class cls, Integer id) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
-            if (session == null) {
-                session = HibernateUtil.getSessionFactory().openSession();
-                T object = (T) session.get(cls, id);
-                session.close();
-                return object;
-            }
             return (T) session.get(cls, id);
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -354,11 +348,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     void refreshObject(T object) {
         Session session = HibernateHelper.getHibernateSession();
-        if (session == null) {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.refresh(object);
-            session.close();
-        }
         session.refresh(object);
     }
 
@@ -366,12 +355,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     T loadObjects(Class cls, Integer id) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
-            if (session == null) {
-                session = HibernateUtil.getSessionFactory().openSession();
-                T object = (T) session.load(cls, id);
-                session.close();
-                return object;
-            }
             return (T) session.load(cls, id);
         } catch (HibernateException he) {
             throw new DAOException(he);
@@ -386,11 +369,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     void updateObject(T object) {
         Session session = HibernateHelper.getHibernateSession();
-        if (session == null) {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.update(object);
-            session.close();
-        }
         session.update(object);
     }
 }
