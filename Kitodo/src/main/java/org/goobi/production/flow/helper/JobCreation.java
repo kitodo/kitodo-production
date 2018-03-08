@@ -53,19 +53,13 @@ public class JobCreation {
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage) throws DataException, IOException {
         String processTitle = io.getProcessTitle();
-        if (logger.isTraceEnabled()) {
-            logger.trace("processtitle is " + processTitle);
-        }
+        logger.trace("processtitle is {}", processTitle);
         // TODO: what is differecene between metsfilename and basepath and
         // metsfile
         URI metsfilename = io.getMetsFilename();
-        if (logger.isTraceEnabled()) {
-            logger.trace("mets filename is " + metsfilename);
-        }
+        logger.trace("mets filename is {}", metsfilename);
         URI basepath = metsfilename;
-        if (logger.isTraceEnabled()) {
-            logger.trace("basepath is " + basepath);
-        }
+        logger.trace("basepath is {}", basepath);
         URI metsfile = metsfilename;
         Process p = null;
         if (!testTitle(processTitle)) {

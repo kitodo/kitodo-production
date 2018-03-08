@@ -144,14 +144,9 @@ public class StatisticsManager implements Serializable {
             return;
         }
 
-        /*
-         * some debugging here
-         */
-        if (logger.isDebugEnabled()) {
-            logger.debug(sourceDateFrom + " - " + sourceDateTo + " - " + sourceNumberOfTimeUnits + " - "
-                    + sourceTimeUnit + "\n" + targetTimeUnit + " - " + targetCalculationUnit + " - "
-                    + targetResultOutput + " - " + showAverage);
-        }
+        logger.debug("{} - {} - {} - {}\n{} - {} - {} - {}",
+                sourceDateFrom, sourceDateTo, sourceNumberOfTimeUnits, sourceTimeUnit, targetTimeUnit,
+                targetCalculationUnit, targetResultOutput, showAverage);
 
         /*
          * calculate the statistical results and save it as List of DataTables (because

@@ -36,11 +36,8 @@ public class ConfigMain {
                     try {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
-                        if (logger.isWarnEnabled()) {
-                            logger.warn(
-                                    "Loading of " + CONFIG_FILE + " failed. Trying to start with empty configuration.",
-                                    e);
-                        }
+                        logger.warn("Loading of {} failed. Trying to start with empty configuration. Exception: {}",
+                                CONFIG_FILE, e);
                         initialized = new PropertiesConfiguration();
                     }
                     initialized.setListDelimiter('&');

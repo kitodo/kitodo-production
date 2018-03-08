@@ -63,9 +63,7 @@ public class DataCopier {
             try {
                 rule.apply(data);
             } catch (RuntimeException notApplicable) {
-                if (logger.isInfoEnabled()) {
-                    logger.info("Rule not applicable for \"" + data.getProcessTitle() + "\", skipped: " + rule);
-                }
+                logger.info("Rule not applicable for \"{}\", skipped: {}", data.getProcessTitle(), rule);
             }
         }
     }

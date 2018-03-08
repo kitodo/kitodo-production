@@ -191,19 +191,13 @@ public class LocalMetadataSelector extends MetadataSelector {
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
-            if (logger.isDebugEnabled()) {
-                logger.debug("Cannot create metadata element " + selector.getName()
-                        + ": The type isn’t defined by the rule set used.");
-            }
+            logger.debug("Cannot create metadata element {}: The type isn’t defined by the rule set used.",
+                    selector.getName());
             return;
         } catch (Exception e) {
             // copy rule failed, skip it
-            if (logger.isDebugEnabled()) {
-                logger.debug("Cannot create metadata element " + selector.getName()
-                        + ": Accessing the rule set failed with exception: "
-                        + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()),
-                    e);
-            }
+            logger.debug("Cannot create metadata element {}: Accessing the rule set failed with exception: {}",
+                    selector.getName(), e.getMessage());
             return;
         }
         try {
@@ -212,13 +206,10 @@ public class LocalMetadataSelector extends MetadataSelector {
         } catch (MetadataTypeNotAllowedException e) {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
-            if (logger.isDebugEnabled()) {
-                logger.debug("Cannot assign metadata element " + selector.getName() + " (\"" + value
-                        + "\") to structural element "
-                        + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName()
-                                : "without type")
-                        + ": " + e.getMessage());
-            }
+            String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName()
+                    : "without type";
+            logger.debug("Cannot assign metadata element {} (\"{}\") to structural element {}: {}",
+                    selector.getName(), value, nodeName, e.getMessage());
         }
     }
 }

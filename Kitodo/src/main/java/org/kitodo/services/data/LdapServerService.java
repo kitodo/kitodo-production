@@ -273,10 +273,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             logger.debug("ldap environment set");
 
             try {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("start classic ldap authentification");
-                    logger.debug("user DN is " + buildUserDN(user));
-                }
+                logger.debug("start classic ldap authentication");
+                logger.debug("user DN is {}", buildUserDN(user));
 
                 if (ConfigCore.getParameter("ldap_AttributeToTest") == null) {
                     logger.debug("ldap attribute to test is null");
@@ -302,9 +300,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                     }
                 }
             } catch (NamingException e) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("login not allowed for " + user.getLogin(), e);
-                }
+                logger.debug("login not allowed for {}. Exception: {}", user.getLogin(), e);
                 return false;
             }
         }
@@ -419,9 +415,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             while (answer.hasMore()) {
                 SearchResult sr = answer.next();
-                if (logger.isDebugEnabled()) {
-                    logger.debug(">>>" + sr.getName());
-                }
+                logger.debug(">>>{}", sr.getName());
                 Attributes attrs = sr.getAttributes();
                 String givenName = getStringForAttribute(attrs, "givenName");
                 String surName = getStringForAttribute(attrs, "sn");

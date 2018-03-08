@@ -351,9 +351,7 @@ public class MetadatenImagesHelper {
         if (tmpSize < 1) {
             tmpSize = 1;
         }
-        if (logger.isTraceEnabled()) {
-            logger.trace("tmpSize: " + tmpSize);
-        }
+        logger.trace("tmpSize: {}", tmpSize);
         if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
             logger.trace("api");
             // TODO source image files are locked under windows forever after
@@ -376,9 +374,7 @@ public class MetadatenImagesHelper {
             String cs = ConfigCore.getParameter("kitodoContentServerUrl") + inFileName + "&scale=" + tmpSize
                     + "&rotate=" + intRotation + "&format=jpg";
             cs = cs.replace("\\", "/");
-            if (logger.isTraceEnabled()) {
-                logger.trace("url: " + cs);
-            }
+            logger.trace("url: {}", cs);
             URL csUrl = new URL(cs);
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
@@ -389,9 +385,7 @@ public class MetadatenImagesHelper {
             if (statusCode != HttpStatus.SC_OK) {
                 return;
             }
-            if (logger.isTraceEnabled()) {
-                logger.trace("statusCode: " + statusCode);
-            }
+            logger.trace("statusCode: {}", statusCode);
             InputStream inStream = method.getResponseBodyAsStream();
             logger.trace("inStream");
             try (BufferedInputStream bis = new BufferedInputStream(inStream);

@@ -143,10 +143,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
         currentIdentifier = data;
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                "retrieving pica record for " + currentIdentifier + " with server address: " + this.getOpacAddress());
-        }
+        logger.debug("retrieving pica record for {} with server address: {}", this.currentIdentifier, getOpacAddress());
         String search = SRUHelper.search(currentIdentifier, this.getOpacAddress());
         logger.trace(search);
         try {
@@ -434,9 +431,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     MetsModsInterface mm = UghImplementation.INSTANCE.createMetsMods(this.prefs);
                     mm.setDigitalDocument(ff.getDigitalDocument());
                     String fileName = getImportFolder() + getProcessTitle() + ".xml";
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Writing '" + fileName + "' into given folder...");
-                    }
+                    logger.debug("Writing '{}' into given folder...", fileName);
                     mm.write(fileName);
                     io.setMetsFilename(new File(fileName).toURI());
                     io.setImportReturnValue(ImportReturnValue.ExportFinished);

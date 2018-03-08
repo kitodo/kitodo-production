@@ -552,20 +552,15 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             try {
                 child.addMetadata(optionalField, identifier);
             } catch (MetadataTypeNotAllowedException e) {
-                if (logger.isInfoEnabled()) {
-                    logger.info(
-                            e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
-                }
+                logger.info("Exception: {}",
+                        e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
             }
 
             Integer rank = null;
             try {
                 rank = Integer.valueOf(identifier);
             } catch (NumberFormatException e) {
-                if (logger.isWarnEnabled()) {
-                    logger.warn("Cannot place " + type + " \"" + identifier
-                            + "\" correctly because its sorting criterion is not numeric.");
-                }
+                logger.warn("Cannot place {} \"{}\" correctly because its sorting criterion is not numeric.", type, identifier);
             }
             parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
 
@@ -608,15 +603,13 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                                 return result;
                             }
                         } catch (NumberFormatException e) {
-                            if (logger.isWarnEnabled()) {
-                                String typeName = aforeborn.getDocStructType() != null
-                                        && aforeborn.getDocStructType().getName() != null
-                                                ? aforeborn.getDocStructType().getName()
-                                                : "cross-reference";
-                                logger.warn("Cannot determine position to place " + typeName
-                                        + " correctly because the sorting criterion of one of its siblings is \""
-                                        + metadataElement.getValue() + "\", but must be numeric.");
-                            }
+                            String typeName = aforeborn.getDocStructType() != null
+                                    && aforeborn.getDocStructType().getName() != null
+                                    ? aforeborn.getDocStructType().getName() : "cross-reference";
+                            logger.warn(
+                                    "Cannot determine position to place {} correctly because the sorting criterion "
+                                            + "of one of its siblings is \"{}\", but must be numeric.",
+                                    typeName, metadataElement.getValue());
                         }
                     }
                 }

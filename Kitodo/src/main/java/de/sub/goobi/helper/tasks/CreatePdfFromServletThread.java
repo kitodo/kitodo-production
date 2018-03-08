@@ -134,23 +134,16 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 kitodoContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
             }
 
-            /*
-             * get pdf from servlet and forward response to file
-             */
-
+            // get pdf from servlet and forward response to file
             HttpClient httpclient = new HttpClient();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Retrieving: " + kitodoContentServerUrl.toString());
-            }
+            logger.debug("Retrieving: {}", kitodoContentServerUrl.toString());
             method = new GetMethod(kitodoContentServerUrl.toString());
             try {
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
                 int statusCode = httpclient.executeMethod(method);
                 if (statusCode != HttpStatus.SC_OK) {
                     logger.error("HttpStatus not ok");
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Response is:\n" + method.getResponseBodyAsString());
-                    }
+                    logger.debug("Response is:\n {}", method.getResponseBodyAsString());
                     return;
                 }
 
@@ -171,16 +164,10 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             } finally {
                 method.releaseConnection();
             }
-            /*
-             * copy pdf from temp to final destination
-             */
-            if (logger.isDebugEnabled()) {
-                logger.debug("pdf file created: " + tempPdf + "; now copy it to " + finalPdf);
-            }
+            // copy pdf from temp to final destination
+            logger.debug("pdf file created: {}; now copy it to {}", tempPdf, finalPdf);
             fileService.copyFile(tempPdf, finalPdf);
-            if (logger.isDebugEnabled()) {
-                logger.debug("pdf copied to " + finalPdf + "; now start cleaning up");
-            }
+            logger.debug("pdf copied to {}; now start cleaning up", finalPdf);
             fileService.delete(tempPdf);
             if (this.metsURL != null) {
                 File tempMets = new File(this.metsURL.toString());

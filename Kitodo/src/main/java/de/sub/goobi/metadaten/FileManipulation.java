@@ -109,15 +109,10 @@ public class FileManipulation {
                 baseName = uploadedFileName;
 
             }
-            if (logger.isTraceEnabled()) {
-                logger.trace("folder to import: " + currentFolder);
-            }
+            logger.trace("folder to import: {}", currentFolder);
             URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                     ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
-
-            if (logger.isTraceEnabled()) {
-                logger.trace("filename to import: " + filename);
-            }
+            logger.trace("filename to import: {}", filename);
 
             if (fileService.fileExist(filename)) {
                 List<String> parameterList = new ArrayList<>();
@@ -134,19 +129,14 @@ public class FileManipulation {
             while ((len = inputStream.read(buf)) > 0) {
                 outputStream.write(buf, 0, len);
             }
-            if (logger.isTraceEnabled()) {
-                logger.trace(filename + " was imported");
-            }
+            logger.trace("{} was imported", filename);
             // if file was uploaded into media folder, update pagination
             // sequence
             if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess())
                     .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                             ProcessSubType.IMAGE, currentFolder + File.separator))) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("update pagination for " + metadataBean.getProcess().getTitle());
-                }
+                logger.trace("update pagination for {}", metadataBean.getProcess().getTitle());
                 updatePagination(filename);
-
             }
 
             Helper.setMeldung(Helper.getTranslation("metsEditorFileUploadSuccessful"));

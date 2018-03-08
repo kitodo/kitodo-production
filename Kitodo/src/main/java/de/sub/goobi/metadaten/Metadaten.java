@@ -1072,9 +1072,7 @@ public class Metadaten {
         try {
             this.metaHelper.moveNodeUp(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
-            }
+            logger.debug("Fehler beim Verschieben des Knotens: {}", e.getMessage());
         }
         readMetadataAsFirstTree();
     }
@@ -1086,9 +1084,7 @@ public class Metadaten {
         try {
             this.metaHelper.moveNodeDown(this.docStruct);
         } catch (TypeNotAllowedAsChildException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Fehler beim Verschieben des Knotens: " + e.getMessage());
-            }
+            logger.debug("Fehler beim Verschieben des Knotens: {}", e.getMessage());
         }
         readMetadataAsFirstTree();
     }
@@ -1661,9 +1657,7 @@ public class Metadaten {
                 this.image = dataList.get(0);
             }
             if (this.currentTifFolder != null) {
-                if (logger.isTraceEnabled()) {
-                    logger.trace("currentTifFolder: " + this.currentTifFolder);
-                }
+                logger.trace("currentTifFolder: {}", this.currentTifFolder);
                 dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
                 if (dataList == null) {
                     return;
@@ -1699,9 +1693,7 @@ public class Metadaten {
             if (this.image != null) {
                 try {
                     URI tifFile = this.currentTifFolder.resolve(this.image);
-                    if (logger.isTraceEnabled()) {
-                        logger.trace("tiffconverterpfad: " + tifFile);
-                    }
+                    logger.trace("tiffconverterpfad: {}", tifFile);
                     if (!fileService.fileExist(tifFile)) {
                         tifFile = serviceManager.getProcessService().getImagesTifDirectory(true, this.process)
                                 .resolve(this.image);
