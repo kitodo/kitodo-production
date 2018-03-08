@@ -21,6 +21,7 @@ import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.Netty4Plugin;
+import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,6 +30,7 @@ import org.junit.Test;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
+import org.kitodo.data.elasticsearch.search.Searcher;
 
 /**
  * Test class for IndexRestClient.
@@ -39,6 +41,7 @@ public class IndexRestClientIT {
     private static Node node;
     private static String testIndexName;
     private static String port;
+    private static Searcher searcher = new Searcher("indexer");
     private static final String HTTP_TRANSPORT_PORT = "9305";
 
     @BeforeClass
@@ -82,35 +85,46 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldAddDocument() throws Exception {
-        IndexRestClient restClient = initializeRestClient();
-        assertTrue("Add of document has failed!", restClient.addDocument(MockEntity.createEntities().get(1), 1));
+        JSONObject response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response.toJSONString()));
+
+        restClient.addDocument(MockEntity.createEntities().get(1), 1);
+
+        response = searcher.findDocument(1);
+        assertTrue("Add of document has failed!", isFound(response.toJSONString()));
     }
 
     @Test
     public void shouldAddType() throws Exception {
-        String result = restClient.addType(MockEntity.createEntities());
+        JSONObject response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response.toJSONString()));
+        response = searcher.findDocument(2);
+        assertTrue("Document exists!", !isFound(response.toJSONString()));
 
-        boolean created = result.contains("HTTP/1.1 201 Created");
-        assertTrue("Add of type has failed - document id 1!", created);
+        restClient.addType(MockEntity.createEntities());
 
-        created = result.contains("HTTP/1.1 201 Created");
-        assertTrue("Add of type has failed - document id 2!", created);
+        response = searcher.findDocument(1);
+        assertTrue("Add of type has failed - document id 1!", isFound(response.toJSONString()));
+        response = searcher.findDocument(2);
+        assertTrue("Add of type has failed - document id 2!", isFound(response.toJSONString()));
 
-        result = restClient.addType(MockEntity.createEntities());
-
-        boolean ok = result.contains("HTTP/1.1 200 OK");
-        assertTrue("Update of type has failed - document id 1!", ok);
-
-        ok = result.contains("HTTP/1.1 200 OK");
-        assertTrue("Update of type has failed - document id 2!", ok);
     }
 
     @Test
     public void shouldDeleteDocument() throws Exception {
         restClient.addType(MockEntity.createEntities());
-        assertTrue("Delete of document has failed!", restClient.deleteDocument(1));
 
-        assertTrue("Delete of document has failed!", restClient.deleteDocument(100));
+        JSONObject response = searcher.findDocument(1);
+        assertTrue("Document doesn't exist!", isFound(response.toJSONString()));
+
+        restClient.deleteDocument(1);
+        response = searcher.findDocument(1);
+        assertTrue("Delete of document has failed!", !isFound(response.toJSONString()));
+
+        // remove even if document doesn't exist should be possible
+        restClient.deleteDocument(100);
+        response = searcher.findDocument(100);
+        assertTrue("Delete of document has failed!", !isFound(response.toJSONString()));
     }
 
     private static IndexRestClient initializeRestClient() {
@@ -118,5 +132,9 @@ public class IndexRestClientIT {
         restClient.setIndex(testIndexName);
         restClient.setType("indexer");
         return restClient;
+    }
+
+    private static boolean isFound(String response) {
+        return response.contains("found");
     }
 }

@@ -60,23 +60,20 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            bean object which will be added or deleted from index
      * @param baseType
      *            type on which will be called method createDocument()
-     * @return response from the server
      */
     @SuppressWarnings("unchecked")
-    public String performSingleRequest(T baseIndexedBean, S baseType) throws IOException, CustomResponseException {
+    public void performSingleRequest(T baseIndexedBean, S baseType) throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
-        String response;
 
         if (method == HTTPMethods.PUT) {
             HttpEntity document = baseType.createDocument(baseIndexedBean);
-            response = String.valueOf(restClient.addDocument(document, baseIndexedBean.getId()));
+            restClient.addDocument(document, baseIndexedBean.getId());
         } else if (method == HTTPMethods.DELETE) {
-            response = String.valueOf(restClient.deleteDocument(baseIndexedBean.getId()));
+            restClient.deleteDocument(baseIndexedBean.getId());
         } else {
-            response = "Incorrect HTTP method!";
+            throw new CustomResponseException("Incorrect HTTP method!");
         }
 
-        return response;
     }
 
     /**
@@ -85,40 +82,35 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      * @param beanId
      *            response from the server
      */
-    public String performSingleRequest(Integer beanId) throws IOException, CustomResponseException {
+    public void performSingleRequest(Integer beanId) throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
-        String response;
 
         if (method == HTTPMethods.DELETE) {
-            response = String.valueOf(restClient.deleteDocument(beanId));
+            restClient.deleteDocument(beanId);
         } else {
-            response = "Incorrect HTTP method!";
+            throw new CustomResponseException("Incorrect HTTP method!");
         }
-
-        return response;
     }
 
     /**
      * This function is called directly by the administrator of the system.
      *
-     * @return response from the server
-     * @throws InterruptedException
-     *             add description
+     * @param baseIndexedBeans
+     *            list of bean objects which will be added to index
+     * @param baseType
+     *            type on which will be called method createDocument()
      */
     @SuppressWarnings("unchecked")
-    public String performMultipleRequests(List<T> baseIndexedBeans, S baseType)
+    public void performMultipleRequests(List<T> baseIndexedBeans, S baseType)
             throws InterruptedException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
-        String response;
 
         if (method == HTTPMethods.PUT) {
             HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
-            response = restClient.addType(documents);
+            restClient.addType(documents);
         } else {
-            response = "Incorrect HTTP method!";
+            throw new CustomResponseException("Incorrect HTTP method!");
         }
-
-        return response;
     }
 
     private IndexRestClient initiateRestClient() {
