@@ -31,7 +31,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
@@ -69,7 +68,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
-    private int pageAnzahlImages = 0;
     private boolean nurOffeneSchritte = false;
     private boolean nurEigeneSchritte = false;
     private boolean showAutomaticTasks = false;
@@ -521,17 +519,8 @@ public class AktuelleSchritteForm extends BasisForm {
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
-    @Deprecated
-    public int getHomeBaende() {
-        return 0;
-    }
-
     public int getAllImages() {
         return this.gesamtAnzahlImages;
-    }
-
-    public int getPageImages() {
-        return this.pageAnzahlImages;
     }
 
     /**
@@ -540,7 +529,6 @@ public class AktuelleSchritteForm extends BasisForm {
     @SuppressWarnings("unchecked")
     public void calcHomeImages() {
         this.gesamtAnzahlImages = 0;
-        this.pageAnzahlImages = 0;
         User user = getUser();
         if (user != null && user.isWithMassDownload()) {
             for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getCompleteList()) {
