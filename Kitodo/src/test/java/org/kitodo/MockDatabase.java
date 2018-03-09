@@ -130,7 +130,7 @@ public class MockDatabase {
         node = null;
     }
 
-    public static void insertProcessesFull() throws DAOException, DataException, IOException {
+    public static void insertProcessesFull() throws DAOException, DataException {
         insertAuthorities();
         insertBatches();
         insertDockets();
@@ -151,7 +151,7 @@ public class MockDatabase {
         insertUserGroupProjectAuthorityRelations();
     }
 
-    public static void insertProcessesForWorkflowFull() throws DAOException, DataException, IOException {
+    public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
         insertAuthorities();
         insertBatches();
         insertDockets();
@@ -169,14 +169,14 @@ public class MockDatabase {
         insertTasksForWorkflow();
     }
 
-    public static void insertUserGroupsFull() throws DAOException, DataException, IOException {
+    public static void insertUserGroupsFull() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
     }
 
-    public static void insertForAuthenticationTesting() throws DAOException, DataException, IOException {
+    public static void insertForAuthenticationTesting() throws DAOException, DataException {
         insertAuthorities();
         insertLdapGroups();
         insertUsers();
