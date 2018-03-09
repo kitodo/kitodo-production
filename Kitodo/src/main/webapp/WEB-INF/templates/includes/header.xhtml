@@ -88,21 +88,21 @@
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProcesses, viewAllBatches')}">
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProcesses')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" id="linkProcesses"
                                                                  outcome="processes"><i
                                     class="fa fa-hourglass-3 fa-lg"/></h:link></li>
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProjects, viewAllTemplates, viewAllDockets, viewAllRulesets')}">
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.projekte}" id="linkProjects"
                                                                  outcome="projects"><i
                                     class="fa fa-folder-open fa-lg"/></h:link></li>
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllUsers, viewAllUserGroups, viewAllLdapGroups')}">
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllUsers, viewAllUserGroups')}">
                             <li class="nav-pic-text"><h:link value="#{msgs.benutzer}" id="linkUsers" outcome="users"><i
                                 class="fa fa-user fa-lg"/></h:link></li>
                             </h:panelGroup>
