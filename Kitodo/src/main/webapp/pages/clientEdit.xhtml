@@ -80,11 +80,14 @@
         <li><h:link value="#{msgs.clients}" outcome="clients"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{ClientForm.client.id ne null}">
+                <ui:fragment rendered="#{isEditMode}">
                     #{msgs.clientEdit}
                 </ui:fragment>
-                <ui:fragment rendered="#{ClientForm.client.id eq null}">
+                <ui:fragment rendered="#{isCreateMode}">
                     #{msgs.clientNew}
+                </ui:fragment>
+                <ui:fragment rendered="#{isViewMode}">
+                    #{msgs.clientView}
                 </ui:fragment>
             </a>
         </li>
