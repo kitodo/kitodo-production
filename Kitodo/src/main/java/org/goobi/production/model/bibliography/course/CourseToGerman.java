@@ -50,6 +50,9 @@ public class CourseToGerman {
                                                               "Juli", "August", "September", "Oktober", "November",
                                                               "Dezember" };
 
+    private CourseToGerman() {
+    }
+
     /**
      * The function toString() returns a verbal description of the course of
      * appearance in German.
@@ -88,7 +91,6 @@ public class CourseToGerman {
      */
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
-        int currentIssuesSize = block.getIssues().size();
         if (!subsequentBlock) {
             result.append("Die Zeitung erschien vom ");
             appendDate(result, block.getFirstAppearance());
@@ -101,6 +103,12 @@ public class CourseToGerman {
         appendDate(result, block.getLastAppearance());
         result.append(" regelmäßig ");
 
+        result.append(iterateOverIssues(block, result));
+        return result.toString();
+    }
+
+    private static String iterateOverIssues(Block block, StringBuilder result) {
+        int currentIssuesSize = block.getIssues().size();
         Iterator<Issue> issueIterator = block.getIssues().iterator();
         for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
             Issue issue = issueIterator.next();
@@ -131,6 +139,7 @@ public class CourseToGerman {
                 result.append(".");
             }
         }
+
         return result.toString();
     }
 
@@ -191,6 +200,7 @@ public class CourseToGerman {
 
         TreeSet<LocalDate> orderedDates = dates instanceof TreeSet ? (TreeSet<LocalDate>) dates : new TreeSet<>(dates);
 
+        //TODO: there is something wrong with this whole iterator - investigate it
         Iterator<LocalDate> datesIterator = orderedDates.iterator();
 
         LocalDate current = datesIterator.next();
@@ -229,8 +239,6 @@ public class CourseToGerman {
                             buffer.append("nicht ");
                         }
                     }
-                }
-                if (next != null) {
                     lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
                 }
             } else if (next != null) {
