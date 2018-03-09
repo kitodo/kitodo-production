@@ -1658,7 +1658,7 @@ public class Metadaten {
             }
             if (this.currentTifFolder != null) {
                 logger.trace("currentTifFolder: {}", this.currentTifFolder);
-                dataList = this.imageHelper.getImageFiles(this.process, this.currentTifFolder);
+                dataList = this.imageHelper.getImageFiles(this.currentTifFolder);
                 if (dataList == null) {
                     return;
                 }
