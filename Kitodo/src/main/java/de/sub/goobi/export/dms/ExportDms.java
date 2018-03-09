@@ -12,7 +12,6 @@
 package de.sub.goobi.export.dms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
@@ -47,7 +46,6 @@ import org.kitodo.services.file.FileService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
-    private ConfigProjects cp;
     private String atsPpnBand;
     private boolean exportWithImages = true;
     private boolean exportFullText = true;
@@ -139,7 +137,6 @@ public class ExportDms extends ExportMets {
             throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        this.cp = new ConfigProjects(process.getProject().getTitle());
         this.atsPpnBand = process.getTitle();
 
         FileformatInterface gdzfile = readDocument(process, newFile);

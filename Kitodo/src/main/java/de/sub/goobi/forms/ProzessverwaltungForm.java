@@ -954,15 +954,6 @@ public class ProzessverwaltungForm extends BasisForm {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
             } catch (Exception e) {
-                // without this a new exception is thrown, if an exception
-                // caught here doesn't have an errorMessage
-                String errorMessage;
-
-                if (e.getMessage() != null) {
-                    errorMessage = e.getMessage();
-                } else {
-                    errorMessage = e.toString();
-                }
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("prozess"), processDTO.getId() }, logger, e);
                 flagError = true;

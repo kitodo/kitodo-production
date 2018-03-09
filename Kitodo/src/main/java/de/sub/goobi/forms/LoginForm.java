@@ -11,23 +11,16 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -95,23 +88,6 @@ public class LoginForm implements Serializable {
             Helper.setErrorMessage("could not insert to index", logger, e);
         }
         return null;
-    }
-
-    private void AlteBilderAufraeumen() throws IOException {
-        /* Pages-Verzeichnis mit den temporären Images ermitteln */
-        URI path = ConfigCore.getTempImagesPathAsCompleteDirectory();
-
-        /* Verzeichnis einlesen */
-        FilenameFilter filter = new FileNameEndsWithFilter(".png");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, path);
-
-        /* alle Dateien durchlaufen und die alten löschen */
-        for (URI uri : uris) {
-            URI file = path.resolve(uri);
-            if ((System.currentTimeMillis() - new File(file).lastModified()) > 7200000) {
-                serviceManager.getFileService().delete(file);
-            }
-        }
     }
 
     /*
