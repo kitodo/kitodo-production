@@ -567,12 +567,7 @@ public class WorkflowService {
                     task.setProcessingTime(new Date());
                     task.setEditType(4);
 
-                    // if it is an automatic task with script
-                    if (task.isTypeAutomatic()) {
-                        automaticTasks.add(task);
-                    } else if (task.isTypeAcceptClose()) {
-                        tasksToFinish.add(task);
-                    }
+                    verifyTask(task);
 
                     serviceManager.getTaskService().save(task);
                     matched = true;
@@ -582,6 +577,15 @@ public class WorkflowService {
                     }
                 }
             }
+        }
+    }
+
+    private void verifyTask(Task task) {
+        // if it is an automatic task with script
+        if (task.isTypeAutomatic()) {
+            automaticTasks.add(task);
+        } else if (task.isTypeAcceptClose()) {
+            tasksToFinish.add(task);
         }
     }
 
