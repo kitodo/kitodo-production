@@ -161,5 +161,5 @@ VALUES ('deleteLdapServer', '1', '0', '0');
 -- Assign admin authority to all user groups which has permission = 1
 -- admin authority was inserted at V2_17
 
-INSERT INTO usergGoup_x_authority (userGroup_id,authority_id)
+INSERT INTO userGroup_x_authority (userGroup_id,authority_id)
 SELECT userGroup.id,1 FROM userGroup WHERE permission = '1';
