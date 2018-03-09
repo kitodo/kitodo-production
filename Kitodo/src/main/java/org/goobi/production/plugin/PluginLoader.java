@@ -180,10 +180,8 @@ public class PluginLoader {
                     plugin.configure(getPluginConfiguration());
                     result.add(plugin);
                 } catch (NoSuchMethodException | SecurityException e) {
-                    if (logger.isWarnEnabled()) {
-                        logger.warn("Bad implementation of " + type.getName() + " plugin "
-                                + implementation.getClass().getName(), e);
-                    }
+                    logger.warn("Bad implementation of {} plugin {}. Exception: {}",
+                            type.getName(), implementation.getClass().getName(), e);
                 }
             }
         }

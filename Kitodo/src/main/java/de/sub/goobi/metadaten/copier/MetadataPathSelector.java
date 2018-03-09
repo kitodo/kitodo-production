@@ -175,23 +175,18 @@ public class MetadataPathSelector extends MetadataSelector {
                 // copy rules aren’t related to the rule set but depend on it,
                 // so copy rules that don’t work with the current rule set are
                 // ignored
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Cannot create structural element " + docStructType + " as child of "
-                            + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type")
-                            + " because it isn’t allowed by the rule set.");
-                }
+                String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";
+                logger.debug("Cannot create structural element {} as child of {} because it isn’t allowed by the rule set.",
+                        docStructType, nodeName);
                 return;
             } catch (TypeNotAllowedForParentException e) {
                 // see https://github.com/kitodo/kitodo-ugh/issues/2
                 throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
             } catch (Exception e) {
                 // copy rule failed, skip it
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Cannot create structural element " + docStructType + " as child of "
-                            + (logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type")
-                            + ": Accessing the rule set failed with exception: "
-                            + (e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName()), e);
-                }
+                String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";
+                logger.debug("Cannot create structural element {} as child of {}: Accessing the rule set failed with exception: {}",
+                        docStructType, nodeName, e.getMessage());
                 return;
             }
         }

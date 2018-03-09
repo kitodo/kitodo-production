@@ -153,9 +153,7 @@ public class FileManagement implements FileManagementInterface {
         boolean success;
 
         if (!fileExist(mappedFileURI)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("File " + uri.getPath() + " does not exist for renaming.");
-            }
+            logger.debug("File {} does not exist for renaming.", uri.getPath());
             throw new FileNotFoundException(uri + " does not exist for renaming.");
         }
 

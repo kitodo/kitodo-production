@@ -304,13 +304,9 @@ public class VariableReplacer {
 
             switch (inLevel) {
                 case FIRSTCHILD:
-                    /*
-                     * ohne vorhandenes FirstChild, kann dieses nicht zurückgegeben werden
-                     */
+                    // without existing FirstChild, this can not be returned
                     if (resultFirst == null) {
-                        if (logger.isInfoEnabled()) {
-                            logger.info("Can not replace firstChild-variable for METS: " + metadata);
-                        }
+                        logger.info("Can not replace firstChild-variable for METS: {}", metadata);
                         result = "";
                     } else {
                         result = resultFirst;
@@ -320,9 +316,7 @@ public class VariableReplacer {
                 case TOPSTRUCT:
                     if (resultTop == null) {
                         result = "";
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("Can not replace topStruct-variable for METS: " + metadata);
-                        }
+                        logger.warn("Can not replace topStruct-variable for METS: {}", metadata);
                     } else {
                         result = resultTop;
                     }
@@ -335,9 +329,7 @@ public class VariableReplacer {
                         result = resultTop;
                     } else {
                         result = "";
-                        if (logger.isWarnEnabled()) {
-                            logger.warn("Can not replace variable for METS: " + metadata);
-                        }
+                        logger.warn("Can not replace variable for METS: {}", metadata);
                     }
                     break;
 

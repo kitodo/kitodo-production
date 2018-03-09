@@ -612,9 +612,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         script = replacer.replace(script);
         boolean executedSuccessful = false;
         try {
-            if (logger.isInfoEnabled()) {
-                logger.info("Calling the shell: " + script);
-            }
+            logger.info("Calling the shell: {}", script);
 
             CommandService commandService = serviceManager.getCommandService();
             CommandResult commandResult = commandService.runCommand(script);
@@ -646,9 +644,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public void executeScript(Task task, boolean automatic) throws DataException {
         String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
-        if (logger.isDebugEnabled()) {
-            logger.debug("starting script " + script);
-        }
+        logger.debug("starting script {}", script);
         if (script != null && !script.equals(" ") && script.length() != 0) {
             scriptFinishedSuccessful = executeScript(task, script, automatic);
         }

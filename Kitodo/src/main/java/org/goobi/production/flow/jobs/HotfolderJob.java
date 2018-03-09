@@ -101,9 +101,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                 logger.trace("12");
 
                                 for (URI filename : metsfiles) {
-                                    if (logger.isDebugEnabled()) {
-                                        logger.debug("found file: " + filename);
-                                    }
+                                    logger.debug("found file: {}", filename);
                                     logger.trace("13");
 
                                     int returnValue = generateProcess(filename.toString(), template,
@@ -115,9 +113,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                                         failedData.put(filename.toString(), returnValue);
                                         logger.trace("16");
                                     } else {
-                                        if (logger.isDebugEnabled()) {
-                                            logger.debug("finished file: " + filename);
-                                        }
+                                        logger.debug("finished file: {}", filename);
                                     }
                                 }
                                 if (!failedData.isEmpty()) {
@@ -326,17 +322,11 @@ public class HotfolderJob extends AbstractGoobiJob {
     @SuppressWarnings("static-access")
     public static Process generateProcess(ImportObject io, Process vorlage) throws IOException {
         String processTitle = io.getProcessTitle();
-        if (logger.isTraceEnabled()) {
-            logger.trace("processtitle is " + processTitle);
-        }
+        logger.trace("processtitle is {}", processTitle);
         URI metsfilename = io.getMetsFilename();
-        if (logger.isTraceEnabled()) {
-            logger.trace("mets filename is " + metsfilename);
-        }
+        logger.trace("mets filename is {}", metsfilename);
         URI basepath = URI.create(metsfilename.toString().substring(0, metsfilename.toString().length() - 4));
-        if (logger.isTraceEnabled()) {
-            logger.trace("basepath is " + basepath);
-        }
+        logger.trace("basepath is {}", basepath);
         Process p = null;
         if (!testTitle(processTitle)) {
             logger.trace("wrong title");

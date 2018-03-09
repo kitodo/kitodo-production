@@ -73,10 +73,8 @@ public class BackupFileRotation {
         metaFiles = generateBackupBaseNameFileList(format, process);
 
         if (metaFiles.size() < 1) {
-            if (logger.isInfoEnabled()) {
-                logger.info("No files matching format '" + format + "' in directory "
-                        + serviceManager.getProcessService().getProcessDataDirectory(process) + " found.");
-            }
+            logger.info("No files matching format '{}' in directory {} found.",
+                    this.format, serviceManager.getProcessService().getProcessDataDirectory(process));
             return;
         }
 
@@ -142,9 +140,7 @@ public class BackupFileRotation {
             try {
                 fileService.renameFile(oldName, newName);
             } catch (FileNotFoundException oldNameNotYetPresent) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug(oldName + " does not yet exist >>> nothing to do");
-                }
+                logger.debug("{} does not yet exist >>> nothing to do", oldName);
             }
         }
     }

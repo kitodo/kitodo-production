@@ -137,9 +137,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             if (!state.equals("NewProcess/Page3")) {
                 throw new RuntimeException();
             }
-            if (logger.isInfoEnabled()) {
-                logger.info("Created new process: " + id);
-            }
+            logger.info("Created new process: {}", id);
         } catch (Exception exited) {
             logger.error("Failed to create new process: " + id, exited);
             throw exited;
@@ -151,7 +149,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * from a given template.
      *
      * @param templateTitle
-     *            titel value of the template to look for
+     *            title value of the template to look for
      * @return a ProzesskopieForm object, prepared from a given template
      * @throws IllegalArgumentException
      *             if no suitable template is found

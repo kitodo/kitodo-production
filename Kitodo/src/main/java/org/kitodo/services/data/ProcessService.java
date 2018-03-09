@@ -1335,11 +1335,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throw new IOException(Helper.getTranslation("metadataFileNotFound") + " " + metadataFileUri);
         }
 
-        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
+        // check the format of the metadata - METS, XStream or RDF
         String type = MetadatenHelper.getMetaFileType(metadataFileUri);
-        if (logger.isDebugEnabled()) {
-            logger.debug("current meta.xml file type for id " + process.getId() + ": " + type);
-        }
+        logger.debug("current meta.xml file type for id {}: {}", process.getId(), type);
 
         FileformatInterface ff = determineFileFormat(type, process);
         try {
@@ -1395,9 +1393,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
             String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
-            if (logger.isDebugEnabled()) {
-                logger.debug("current template.xml file type: " + type);
-            }
+            logger.debug("current template.xml file type: {}", type);
             FileformatInterface ff = determineFileFormat(type, process);
             ff.read(processSubTypeURI.toString());
             return ff;
@@ -1500,10 +1496,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            object
      */
     public void downloadDocket(Process process) throws IOException {
-
-        if (logger.isDebugEnabled()) {
-            logger.debug("generate docket for process " + process.getId());
-        }
+        logger.debug("generate docket for process with id {}", process.getId());
         URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
         URI xsltFile;
         if (process.getDocket() != null) {
@@ -1535,9 +1528,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *             failed.
      */
     public void downloadDocket(List<Process> processes) throws IOException {
-        if (logger.isDebugEnabled()) {
-            logger.debug("generate docket for processes " + processes);
-        }
+        logger.debug("generate docket for processes {}", processes);
         URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
         URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();

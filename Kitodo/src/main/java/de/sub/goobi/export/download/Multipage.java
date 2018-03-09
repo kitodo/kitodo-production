@@ -66,9 +66,7 @@ public class Multipage {
         // take all pictures into an array
         RenderedImage[] image = new PlanarImage[files.size()];
         for (int i = 0; i < files.size(); i++) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(path + files.get(i).toString());
-            }
+            logger.debug("Path: {}, file: {}", path, files.get(i).toString());
             image[i] = JAI.create("fileload", path + files.get(i).toString());
         }
         logger.debug("Bilder durchlaufen");

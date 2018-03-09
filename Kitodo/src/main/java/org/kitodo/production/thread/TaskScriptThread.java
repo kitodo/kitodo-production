@@ -14,8 +14,8 @@ package org.kitodo.production.thread;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -49,9 +49,7 @@ public class TaskScriptThread extends EmptyTask {
     @Override
     public void run() {
         boolean automatic = this.task.isTypeAutomatic();
-        if (logger.isDebugEnabled()) {
-            logger.debug("task is automatic: " + automatic);
-        }
+        logger.debug("task is automatic: {}", automatic);
         String scriptPath = taskService.getScriptPath(this.task);
         if (!scriptPath.equals("")) {
             try {

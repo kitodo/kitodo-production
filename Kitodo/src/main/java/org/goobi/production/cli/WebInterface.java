@@ -80,9 +80,7 @@ public class WebInterface extends HttpServlet {
                         "No command given. Use help as command to get more information.");
                 return;
             }
-            if (logger.isDebugEnabled()) {
-                logger.debug("command: " + command);
-            }
+            logger.debug("command: {}", command);
 
             // check if command is allowed for used IP
             List<String> allowedCommands = WebInterfaceConfig.getCredentials(ip, password);
