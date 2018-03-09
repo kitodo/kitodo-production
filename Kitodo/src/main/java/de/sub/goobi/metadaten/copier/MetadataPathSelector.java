@@ -363,11 +363,8 @@ public class MetadataPathSelector extends MetadataSelector {
         if (index == null && lastChildIndex == 0 || ALL_CHILDREN_SYMBOL.equals(index)) {
             return true;
         }
-        int comparee = ((Integer) index).intValue();
-        if (childIndex == comparee || (comparee == Integer.MAX_VALUE && childIndex == lastChildIndex)) {
-            return true;
-        }
-        throw new RuntimeException("Could not resolve metadata path: Path selector is ambiguous for " + docStructType);
+        int compare = ((Integer) index).intValue();
+        return (childIndex == compare || (compare == Integer.MAX_VALUE && childIndex == lastChildIndex));
     }
 
     /**
