@@ -348,12 +348,6 @@ public class MockDatabase {
         authorities.add(new Authority("deleteProject", true, true, false));
         authorities.add(new Authority("addProject", true, true, false));
 
-        authorities.add(new Authority("viewAllBatches", true, true, true));
-        authorities.add(new Authority("viewBatch", true, true, true));
-        authorities.add(new Authority("addBatch", true, true, true));
-        authorities.add(new Authority("editBatch", true, true, true));
-        authorities.add(new Authority("deleteBatch", true, true, true));
-
         authorities.add(new Authority("viewAllDockets", true, true, true));
         authorities.add(new Authority("viewDocket", true, true, true));
         authorities.add(new Authority("addDocket", true, true, true));
@@ -372,41 +366,17 @@ public class MockDatabase {
         authorities.add(new Authority("editTask", true, true, true));
         authorities.add(new Authority("deleteTask", true, true, true));
 
-        authorities.add(new Authority("viewAllTemplates", true, true, true));
-        authorities.add(new Authority("viewTemplate", true, true, true));
-        authorities.add(new Authority("addTemplate", true, true, true));
-        authorities.add(new Authority("editTemplate", true, true, true));
-        authorities.add(new Authority("deleteTemplate", true, true, true));
+        authorities.add(new Authority("viewAllUserGroups", true, true, false));
+        authorities.add(new Authority("viewUserGroup", true, true, false));
+        authorities.add(new Authority("addUserGroup", true, true, false));
+        authorities.add(new Authority("editUserGroup", true, true, false));
+        authorities.add(new Authority("deleteUserGroup", true, true, false));
 
-        authorities.add(new Authority("viewAllRulesets", true, true, true));
-        authorities.add(new Authority("viewRuleset", true, true, true));
-        authorities.add(new Authority("addRuleset", true, true, true));
-        authorities.add(new Authority("editRuleset", true, true, true));
-        authorities.add(new Authority("deleteRuleset", true, true, true));
-
-        authorities.add(new Authority("viewAllUserGroups", true, false, false));
-        authorities.add(new Authority("viewUserGroup", true, false, false));
-        authorities.add(new Authority("addUserGroup", true, false, false));
-        authorities.add(new Authority("editUserGroup", true, false, false));
-        authorities.add(new Authority("deleteUserGroup", true, false, false));
-
-        authorities.add(new Authority("viewAllUsers", true, false, false));
-        authorities.add(new Authority("viewUser", true, false, false));
-        authorities.add(new Authority("addUser", true, false, false));
-        authorities.add(new Authority("editUser", true, false, false));
-        authorities.add(new Authority("deleteUser", true, false, false));
-
-        authorities.add(new Authority("viewAllLdapGroups", true, false, false));
-        authorities.add(new Authority("viewLdapGroup", true, false, false));
-        authorities.add(new Authority("addLdapGroup", true, false, false));
-        authorities.add(new Authority("editLdapGroup", true, false, false));
-        authorities.add(new Authority("deleteLdapGroup", true, false, false));
-
-        authorities.add(new Authority("viewAllLdapServers", true, false, false));
-        authorities.add(new Authority("viewLdapServer", true, false, false));
-        authorities.add(new Authority("addLdapServer", true, false, false));
-        authorities.add(new Authority("editLdapServer", true, false, false));
-        authorities.add(new Authority("deleteLdapServer", true, false, false));
+        authorities.add(new Authority("viewAllUsers", true, true, false));
+        authorities.add(new Authority("viewUser", true, true, false));
+        authorities.add(new Authority("addUser", true, true, false));
+        authorities.add(new Authority("editUser", true, true, false));
+        authorities.add(new Authority("deleteUser", true, true, false));
 
         authorities.add(new Authority("admin", true, false, false));
 

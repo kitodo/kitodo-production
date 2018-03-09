@@ -31,7 +31,7 @@ import org.kitodo.services.ServiceManager;
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int EXPECTED_AUTHORITIES_COUNT = 61;
+    private final int EXPECTED_AUTHORITIES_COUNT = 36;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -110,12 +110,12 @@ public class AuthorityServiceIT {
     @Test
     public void shouldGetAllClientAssignableAuthorities() {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals("Client assignable authorities were not found databse!", 37, authorities.size());
+        assertEquals("Client assignable authorities were not found databse!", 32, authorities.size());
     }
 
     @Test
     public void shouldGetAllProjectAssignableAuthorities() {
         List<Authority> authorities = authorityService.getAllAssignableToProjects();
-        assertEquals("Project assignable authorities were not found databse!", 32, authorities.size());
+        assertEquals("Project assignable authorities were not found databse!", 17, authorities.size());
     }
 }
