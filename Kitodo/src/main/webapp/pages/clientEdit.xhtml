@@ -20,6 +20,13 @@
         <f:viewAction action="#{ClientForm.loadClient}"/>
     </f:metadata>
 
+    <ui:param name="isEditMode"
+              value="#{ClientForm.client.id ne null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editClient',ClientForm.client.id)}"/>
+    <ui:param name="isCreateMode"
+              value="#{ClientForm.client.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode}"/>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
@@ -27,11 +34,14 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.clientEdit}"
-                          rendered="#{ClientForm.client.id ne null}"/>
+                          rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.clientNew}"
-                          rendered="#{ClientForm.client.id eq null}"/>
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.clientView}"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
+                         rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.speichern}"
                          action="#{ClientForm.save}"
@@ -52,9 +62,11 @@
     <ui:define name="pageTabView">
         <p:tabView id="clientsTabView">
             <p:tab id="clientsTab" title="#{msgs.client}">
-                <p:panelGrid id="clientEdit-grid" columns="2">
+                <p:panelGrid id="clientEdit-grid" columns="1" cellpadding="10" layout="grid">
                     <p:outputLabel for="name" value="#{msgs.name}"/>
                     <p:inputText id="name"
+                                 class="input"
+                                 disabled="#{isViewMode}"
                                  placeholder="#{msgs.name}"
                                  value="#{ClientForm.client.name}"
                                  required="true"/>
