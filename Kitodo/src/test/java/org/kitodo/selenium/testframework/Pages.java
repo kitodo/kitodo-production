@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework;
 
+import org.kitodo.selenium.testframework.pages.ClientEditPage;
 import org.kitodo.selenium.testframework.pages.ClientsPage;
 import org.kitodo.selenium.testframework.pages.HelpPage;
 import org.kitodo.selenium.testframework.pages.IndexingPage;
@@ -35,6 +36,10 @@ public class Pages {
 
     public static ClientsPage getClientsPage() throws InstantiationException, IllegalAccessException {
         return getPage(ClientsPage.class);
+    }
+
+    public static ClientEditPage getClientEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(ClientEditPage.class);
     }
 
     public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {

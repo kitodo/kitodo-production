@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -63,6 +64,17 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getLoginPage().performLogin(user);
 
         Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
+    }
+
+    @Test
+    public void addClientTest() throws Exception {
+        Client client = new Client();
+        client.setName("MockClient");
+        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLoginAsAdmin();
+        boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
+        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
     @Test
