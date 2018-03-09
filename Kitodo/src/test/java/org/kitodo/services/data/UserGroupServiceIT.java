@@ -219,7 +219,7 @@ public class UserGroupServiceIT {
         UserGroup userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
         int expected = 36;
-        assertEquals("Authority strings doesn't match to given plain text!", expected, actual);
+        assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
     @Test
@@ -266,7 +266,8 @@ public class UserGroupServiceIT {
         userGroup = userGroupService.getById(1);
 
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        assertTrue(actual.contains(authority.getTitle()));
+        assertTrue("Title of Authority was not found in user group authorities!",
+            actual.contains(authority.getTitle()));
     }
 
 }

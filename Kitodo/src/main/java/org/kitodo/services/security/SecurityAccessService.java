@@ -79,11 +79,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
-        if (isAdmin()) {
-            return true;
-        } else {
-            return hasAuthorityGlobalOrForProject(authorityTitle, projectId);
-        }
+        return isAdmin() || hasAuthorityGlobalOrForProject(authorityTitle, projectId);
     }
 
     /**
@@ -115,11 +111,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
-        if (isAdmin()) {
-            return true;
-        } else {
-            return hasAuthorityGlobalOrForClient(authorityTitle, clientId);
-        }
+        return isAdmin() || hasAuthorityGlobalOrForClient(authorityTitle, clientId);
     }
 
     private boolean hasAuthority(String authorityTitle) {
@@ -134,7 +126,7 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user is admin
+     * Checks if the current user is admin.
      * 
      * @return True if the current user has the admin authority
      */
@@ -162,10 +154,7 @@ public class SecurityAccessService {
      *         globally.
      */
     public boolean isAdminOrHasGlobalAuthority(String authorityTitle) {
-        if (isAdmin()) {
-            return true;
-        }
-        return hasGlobalAuthority(authorityTitle);
+        return isAdmin() || hasGlobalAuthority(authorityTitle);
     }
 
     /**
@@ -197,10 +186,7 @@ public class SecurityAccessService {
      *         any client or project.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitle) {
-        if (isAdmin()) {
-            return true;
-        }
-        return hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
+        return isAdmin() || hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
     }
 
     /**
