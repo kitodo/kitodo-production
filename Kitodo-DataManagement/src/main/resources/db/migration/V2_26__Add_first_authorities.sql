@@ -112,27 +112,27 @@ VALUES ('deleteRuleset', '1', '1', '1');
 
 # UserGroup
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewAllUserGroups', '1', '0', '0');
+VALUES ('viewAllUserGroups', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewUserGroup', '1', '0', '0');
+VALUES ('viewUserGroup', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('addUserGroup', '1', '0', '0');
+VALUES ('addUserGroup', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('editUserGroup', '1', '0', '0');
+VALUES ('editUserGroup', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('deleteUserGroup', '1', '0', '0');
+VALUES ('deleteUserGroup', '1', '1', '0');
 
 # User
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewAllUsers', '1', '0', '0');
+VALUES ('viewAllUsers', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewUser', '1', '0', '0');
+VALUES ('viewUser', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('addUser', '1', '0', '0');
+VALUES ('addUser', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('editUser', '1', '0', '0');
+VALUES ('editUser', '1', '1', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('deleteUser', '1', '0', '0');
+VALUES ('deleteUser', '1', '1', '0');
 
 # LdapGroup
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
@@ -158,8 +158,8 @@ VALUES ('editLdapServer', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('deleteLdapServer', '1', '0', '0');
 
--- Assign admin authority to user group with id=1, assuming that this is administrator user group
+-- Assign admin authority to all user groups which has permission = 1
 -- admin authority was inserted at V2_17
--- if user group with id 1 does not exist, the insert is ignored
 
-INSERT IGNORE INTO userGroup_x_authority (userGroup_id,authority_id) VALUES (1,1);
+INSERT INTO usergGoup_x_authority (userGroup_id,authority_id)
+SELECT userGroup.id,1 FROM userGroup WHERE permission = '1';
