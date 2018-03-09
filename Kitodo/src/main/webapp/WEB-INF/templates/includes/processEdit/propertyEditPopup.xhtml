@@ -35,7 +35,7 @@
             <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
                              id="save"
                              update="editForm"
-                             oncomplete="PF('editPropertyDialog').hide()"
+                             oncomplete="PF('editPropertyDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
                              value="#{msgs.uebernehmen}">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
                                              value="#{objectMode.NONE}"/>

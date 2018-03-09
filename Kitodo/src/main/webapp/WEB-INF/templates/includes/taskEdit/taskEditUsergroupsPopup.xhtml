@@ -35,7 +35,9 @@
                         <h:outputText value="#{usergroup.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <p:commandLink id="addUsergroup" action="#{ProzessverwaltungForm.addUserGroup}"
+                        <p:commandLink id="addUsergroup"
+                                       action="#{ProzessverwaltungForm.addUserGroup}"
+                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                        update="editForm:tabs:usergroupTable">
                             <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{usergroup.id}"/>

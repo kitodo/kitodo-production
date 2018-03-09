@@ -23,17 +23,27 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
         <h3>
             <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
             <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
+                         widgetVar="save"
                          value="#{msgs.speichern}"
                          action="#{ProzessverwaltungForm.saveAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
+                         disabled="#{ProzessverwaltungForm.saveDisabled}"
                          onclick="PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{ProzessverwaltungForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
         <p:button id="cancel" value="#{msgs.abbrechen}"
                   outcome="#{ProzessverwaltungForm.process.template ? 'projects' : 'processes'}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>

@@ -35,7 +35,9 @@
                         <h:outputText value="#{user.surname}, #{user.name}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">
-                        <p:commandLink id="addUser" action="#{ProzessverwaltungForm.addUser}"
+                        <p:commandLink id="addUser"
+                                       action="#{ProzessverwaltungForm.addUser}"
+                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                        update="editForm:tabs:userTable">
                             <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{user.id}"/>

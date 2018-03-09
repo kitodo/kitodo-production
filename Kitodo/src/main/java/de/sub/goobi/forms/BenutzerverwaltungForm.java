@@ -384,6 +384,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             if (!Objects.equals(id, 0)) {
                 setUserObject(this.serviceManager.getUserService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("user"), id }, logger, e);
         }

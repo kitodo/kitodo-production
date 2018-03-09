@@ -34,10 +34,9 @@
 
             <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
                              id="save"
-                             update="@form"
-                             oncomplete="PF('editTemplateDialog').hide()"
-                             value="#{msgs.uebernehmen}"
-                             ajax="false"/>
+                             update="editForm"
+                             oncomplete="PF('editTemplateDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
+                             value="#{msgs.uebernehmen}"/>
         </h:form>
     </p:dialog>
 </ui:composition>

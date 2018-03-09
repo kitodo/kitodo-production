@@ -770,6 +770,30 @@ public class ProzessverwaltungForm extends BasisForm {
 
     }
 
+    // TODO deleteTask() and removeTask() can be merged, when old templates have been removed
+    /**
+     * Remove task.
+     *
+     */
+    public void removeTask() {
+        try {
+            this.process.getTasks().remove(this.task);
+            List<User> users = this.task.getUsers();
+            for (User user : users) {
+                user.getTasks().remove(this.task);
+            }
+
+            List<UserGroup> userGroups = this.task.getUserGroups();
+            for (UserGroup userGroup : userGroups) {
+                userGroup.getTasks().remove(this.task);
+            }
+            deleteSymlinksFromUserHomes();
+            serviceManager.getTaskService().remove(this.task);
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
         /* alle Benutzer */
@@ -2217,6 +2241,7 @@ public class ProzessverwaltungForm extends BasisForm {
             } else {
                 newProcess();
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         }
@@ -2230,6 +2255,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (id != 0) {
                 setTask(this.serviceManager.getTaskService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
                 logger, e);

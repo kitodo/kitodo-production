@@ -705,6 +705,7 @@ public class ProjekteForm extends BasisForm {
             if (!Objects.equals(id, 0)) {
                 setMyProjekt(this.serviceManager.getProjectService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("projekt"), id }, logger, e);
         }

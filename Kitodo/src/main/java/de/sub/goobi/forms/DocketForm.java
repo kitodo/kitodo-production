@@ -124,6 +124,7 @@ public class DocketForm extends BasisForm {
             if (!Objects.equals(id, 0)) {
                 setMyDocket(this.serviceManager.getDocketService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("docket"), id }, logger, e);
         }

@@ -23,6 +23,10 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
         <h3>
             <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
                           rendered="#{not empty RulesetForm.ruleset.title}"/>
@@ -30,13 +34,19 @@
                           rendered="#{empty RulesetForm.ruleset.title}"/>
         </h3>
         <p:commandButton id="save"
+                         widgetVar="save"
                          value="#{msgs.speichern}"
                          action="#{RulesetForm.saveRuleset}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         disabled="#{RulesetForm.saveDisabled}"
                          styleClass="button-filled-blue"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{RulesetForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
         <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
@@ -52,7 +62,7 @@
                                          class="input"
                                          placeholder="#{msgs.titel}"
                                          value="#{RulesetForm.ruleset.title}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.datei}"/>
@@ -60,12 +70,13 @@
                                          class="input"
                                          placeholder="#{msgs.datei}"
                                          value="#{RulesetForm.ruleset.file}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset"
-                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"/>
+                                                     value="#{RulesetForm.ruleset.orderMetadataByRuleset}"
+                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
                     </p:row>
                     <p:row/>

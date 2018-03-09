@@ -56,7 +56,7 @@
                     </p:panelGrid>
                     <p:commandButton action="#{ProjekteForm.filegroupSave()}"
                                      update="editForm"
-                                     oncomplete="PF('editFileGroupDialog').hide()"
+                                     oncomplete="PF('editFileGroupDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
                                      value="#{msgs.uebernehmen}"
                                      styleClass="button-filled-blue right"/>
                     <p:commandButton value="#{msgs.abbrechen}"

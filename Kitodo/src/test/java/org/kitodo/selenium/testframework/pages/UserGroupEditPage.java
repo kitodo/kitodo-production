@@ -22,7 +22,7 @@ import org.openqa.selenium.support.FindBy;
 public class UserGroupEditPage {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveUserGroupButton")
+    @FindBy(id = "editForm:save")
     private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")
@@ -112,7 +112,7 @@ public class UserGroupEditPage {
     }
 
     public UsersPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
-        saveUserGroupButton.click();
+        Browser.clickAjaxSaveButton(saveUserGroupButton);
         Thread.sleep(Browser.getDelayAfterSave());
         return Pages.getUsersPage();
     }

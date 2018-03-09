@@ -39,7 +39,8 @@
                             <p:commandLink id="add"
                                            action="#{BenutzerverwaltungForm.addToGroup}"
                                            title="add to user group"
-                                           update="editForm">
+                                           update="editForm"
+                                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()">
                                 <i class="fa fa-user-plus fa-lg"/>
                                 <f:param name="ID" value="#{item.id}"/>
                             </p:commandLink>

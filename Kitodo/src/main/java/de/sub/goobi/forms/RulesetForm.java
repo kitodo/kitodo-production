@@ -132,6 +132,7 @@ public class RulesetForm extends BasisForm {
             if (!Objects.equals(id, 0)) {
                 setRuleset(this.serviceManager.getRulesetService().getById(id));
             }
+            setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("regelsatz"), id }, logger,
                 e);

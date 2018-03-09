@@ -23,6 +23,10 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
         <h3>
             <h:outputText value="#{msgs.editDocket} (#{DocketForm.myDocket.title})"
                           rendered="#{not empty DocketForm.myDocket.title}"/>
@@ -36,10 +40,15 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
+                         disabled="#{DocketForm.saveDisabled}"
                          onclick="PF('notifications').renderMessage({
                             'summary':'#{msgs.docketSaving}',
                             'detail':'#{msgs.youWillBeRedirected}',
                             'severity':'info'});"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{DocketForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
         <p:button id="cancel" value="#{msgs.abbrechen}"
                   outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
@@ -56,13 +65,13 @@
                                          class="input"
                                          value="#{DocketForm.myDocket.title}"
                                          placeholder="#{msgs.titel}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.datei}"/>
                             <p:inputText id="file" value="#{DocketForm.myDocket.file}"
                                          class="input"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                     </p:row>
                     <p:row/>

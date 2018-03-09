@@ -385,6 +385,11 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     padding: 8px 10px;
 }
 
+.confirm-delete .ui-dialog-title {
+    color: #d8d8d8;;
+    float: none;
+}
+
 .ui-accordion .ui-state-default,
 .ui-fieldset .ui-state-default {
     background: #d8d8d8;

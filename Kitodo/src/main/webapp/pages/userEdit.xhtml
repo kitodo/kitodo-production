@@ -23,6 +23,11 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+
         <p:panel styleClass="content-header">
             <h3>
                 <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
@@ -32,12 +37,18 @@
             </h3>
             <p:commandButton value="#{msgs.speichern}"
                              action="#{BenutzerverwaltungForm.save}"
-                             id="saveUserButton"
+                             id="save"
+                             widgetVar="save"
                              update="notifications"
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
+                             disabled="#{BenutzerverwaltungForm.saveDisabled}"
                              onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                              styleClass="button-filled-blue"/>
+            <p:commandButton id="saveButtonToggler"
+                             actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
+                             update="save"
+                             style="display:none;"/>
             <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
                       icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
         </p:panel>
@@ -54,7 +65,7 @@
                                          class="input"
                                          placeholder="#{msgs.surname}"
                                          value="#{BenutzerverwaltungForm.userObject.surname}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
@@ -62,7 +73,7 @@
                                          class="input"
                                          placeholder="#{msgs.vorname}"
                                          value="#{BenutzerverwaltungForm.userObject.name}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="location" value="#{msgs.location}"/>
@@ -70,12 +81,13 @@
                                          class="input"
                                          placeholder="#{msgs.location}"
                                          value="#{BenutzerverwaltungForm.userObject.location}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
                             <p:selectBooleanCheckbox id="active"
-                                                     value="#{BenutzerverwaltungForm.userObject.active}"/>
+                                                     value="#{BenutzerverwaltungForm.userObject.active}"
+                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
                     </p:row>
                     <p:row>
@@ -86,7 +98,7 @@
                                          placeholder="#{msgs.login}"
                                          value="#{BenutzerverwaltungForm.userObject.login}"
                                          readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
-                                         required="true"/>
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="password" value="#{msgs.password}"/>
@@ -94,7 +106,8 @@
                                         class="input"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
-                                        required="true"
+                                        onblur="jQuery('#editForm\\:saveButtonToggler').click()"
+                                        required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
                         <div>
@@ -103,12 +116,14 @@
                                          class="input"
                                          placeholder="#{msgs.spracheFuerMetadaten}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
-                                         required="true"/>
+                                         onchange="jQuery('#editForm\\:saveButtonToggler').click()"
+                                         required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
                             <p:selectBooleanCheckbox id="withMassDownload"
-                                                     value="#{BenutzerverwaltungForm.userObject.withMassDownload}"/>
+                                                     value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
+                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
                     </p:row>
                 </p:panelGrid>
@@ -122,6 +137,7 @@
                             <p:commandLink id="delete"
                                            action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                            title="#{msgs.ausGruppeLoeschen}"
+                                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                            update="@form">
                                 <i class="fa fa-trash-o fa-lg"/>
                                 <f:param name="ID" value="#{item.id}"/>
