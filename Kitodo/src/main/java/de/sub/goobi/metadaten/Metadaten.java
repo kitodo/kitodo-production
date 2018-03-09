@@ -456,7 +456,7 @@ public class Metadaten {
     /**
      * die noch erlaubten Rollen zurückgeben.
      */
-    public ArrayList<SelectItem> getAddableRollen() {
+    public List<SelectItem> getAddableRollen() {
         return this.metaHelper.getAddablePersonRoles(this.docStruct, "");
     }
 
