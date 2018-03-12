@@ -69,7 +69,6 @@ public class HotfolderJob extends AbstractGoobiJob {
      */
     @Override
     public void execute() {
-        // logger.error("TEST123");
         if (ConfigCore.getBooleanParameter("runHotfolder", false)) {
             logger.trace("1");
             List<GoobiHotfolder> hotlist = GoobiHotfolder.getInstances();
@@ -83,7 +82,6 @@ public class HotfolderJob extends AbstractGoobiJob {
                 try {
                     if (size > 0) {
                         if (!hotfolder.isLocked()) {
-
                             logger.trace("6");
                             Thread.sleep(10000);
                             logger.trace("7");
@@ -92,56 +90,23 @@ public class HotfolderJob extends AbstractGoobiJob {
                             if (size == list.size()) {
                                 hotfolder.lock();
                                 logger.trace("9");
-                                Process template = serviceManager.getProcessService().getById(hotfolder.getTemplate());
-                                serviceManager.getProcessService().refresh(template);
-                                logger.trace("10");
-                                List<URI> metsfiles = hotfolder.getFileNamesByFilter(GoobiHotfolder.filter);
-                                logger.trace("11");
-                                HashMap<String, Integer> failedData = new HashMap<>();
-                                logger.trace("12");
-
-                                for (URI filename : metsfiles) {
-                                    logger.debug("found file: {}", filename);
-                                    logger.trace("13");
-
-                                    int returnValue = generateProcess(filename.toString(), template,
-                                            hotfolder.getFolderAsUri(), hotfolder.getCollection(),
-                                            hotfolder.getUpdateStrategy());
-                                    logger.trace("14");
-                                    if (returnValue != 0) {
-                                        logger.trace("15");
-                                        failedData.put(filename.toString(), returnValue);
-                                        logger.trace("16");
-                                    } else {
-                                        logger.debug("finished file: {}", filename);
-                                    }
-                                }
+                                Map<String, Integer> failedData = collectFailedData(hotfolder);
                                 if (!failedData.isEmpty()) {
                                     // // TODO Errorhandling
-                                    logger.trace("17");
-                                    for (Map.Entry<String, Integer> entry : failedData.entrySet()) {
-                                        String key = entry.getKey();
-                                        File oldFile = new File(hotfolder.getFolderAsFile(), key);
-                                        if (oldFile.exists()) {
-                                            File newFile = new File(oldFile.getAbsolutePath() + "_");
-                                            oldFile.renameTo(newFile);
-                                        }
-                                        logger.error("error while importing file: " + key + " with error code "
-                                                + entry.getValue());
-                                    }
+                                    renameFailedData(hotfolder, failedData);
                                 }
                                 hotfolder.unlock();
                             }
                         } else {
-                            logger.trace("18");
+                            logger.trace("15");
                             return;
                         }
-                        logger.trace("19");
+                        logger.trace("16");
                     }
 
                 } catch (InterruptedException e) {
                     logger.error(e);
-                    logger.trace("20");
+                    logger.trace("17");
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                     logger.error(e);
@@ -151,12 +116,49 @@ public class HotfolderJob extends AbstractGoobiJob {
         }
     }
 
+    private Map<String, Integer> collectFailedData(GoobiHotfolder hotFolder)
+            throws DAOException, IOException {
+        Map<String, Integer> failedData = new HashMap<>();
+        Process template = serviceManager.getProcessService().getById(hotFolder.getTemplate());
+        List<URI> metsFiles = hotFolder.getFileNamesByFilter(GoobiHotfolder.filter);
+
+        for (URI fileName : metsFiles) {
+            logger.debug("found file: {}", fileName);
+            logger.trace("10");
+
+            int returnValue = generateProcess(fileName.getRawPath(), template, hotFolder.getFolderAsUri(),
+                hotFolder.getCollection(), hotFolder.getUpdateStrategy());
+            logger.trace("11");
+            if (returnValue != 0) {
+                logger.trace("12");
+                failedData.put(fileName.getRawPath(), returnValue);
+                logger.trace("13");
+            } else {
+                logger.debug("finished file: {}", fileName);
+            }
+        }
+        return failedData;
+    }
+
+    private void renameFailedData(GoobiHotfolder hotFolder, Map<String, Integer> failedData) {
+        logger.trace("14");
+        for (Map.Entry<String, Integer> entry : failedData.entrySet()) {
+            String key = entry.getKey();
+            File oldFile = new File(hotFolder.getFolderAsFile(), key);
+            if (oldFile.exists()) {
+                File newFile = new File(oldFile.getAbsolutePath() + "_");
+                oldFile.renameTo(newFile);
+            }
+            logger.error("error while importing file: " + key + " with error code " + entry.getValue());
+        }
+    }
+
     /**
      * Generate process.
      *
      * @param processTitle
      *            String
-     * @param vorlage
+     * @param template
      *            Process object
      * @param dir
      *            File object
@@ -166,7 +168,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      *            String
      * @return int
      */
-    public static int generateProcess(String processTitle, Process vorlage, URI dir, String digitalCollection,
+    public static int generateProcess(String processTitle, Process template, URI dir, String digitalCollection,
             String updateStrategy) throws IOException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
@@ -174,7 +176,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 boolean test = testTitle(processTitle.substring(0, processTitle.length() - 4));
                 if (!test && updateStrategy.equals("error")) {
                     URI images = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                        processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
                         ArrayList<URI> files = fileService.getSubUris(images);
@@ -188,7 +190,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         return 30;
                     }
                     URI anchor = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                        processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                     if (fileService.fileExist(anchor)) {
                         fileService.delete(anchor);
                     }
@@ -196,7 +198,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 } else if (!test && updateStrategy.equals("update")) {
                     // TODO UPDATE mets data
                     URI images = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                        processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
                         ArrayList<URI> files = fileService.getSubUris(images);
@@ -210,7 +212,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         return 30;
                     }
                     URI anchor = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                        processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                     if (fileService.fileExist(anchor)) {
                         fileService.delete(anchor);
                     }
@@ -218,9 +220,9 @@ public class HotfolderJob extends AbstractGoobiJob {
                 }
             }
             CopyProcess form = new CopyProcess();
-            form.setProzessVorlage(vorlage);
+            form.setProzessVorlage(template);
             form.setMetadataFile(dir.resolve(File.separator + processTitle));
-            form.prepare(vorlage.getId());
+            form.prepare(template.getId());
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
             if (form.testTitle()) {
                 if (digitalCollection == null) {
@@ -238,7 +240,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     if (Objects.nonNull(p) && Objects.nonNull(p.getId())) {
                         // copy image files to new directory
                         URI images = fileService.createResource(dir,
-                                processTitle.substring(0, processTitle.length() - 4) + File.separator);
+                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
                         List<URI> imageDir = new ArrayList<>();
                         if (fileService.isDirectory(images)) {
                             ArrayList<URI> files = fileService.getSubUris(images);
@@ -246,44 +248,36 @@ public class HotfolderJob extends AbstractGoobiJob {
                             for (URI file : imageDir) {
                                 URI image = fileService.createResource(images, fileService.getFileName(file));
                                 URI dest = fileService.createResource(
-                                        serviceManager.getProcessService().getImagesOrigDirectory(false, p),
-                                        fileService.getFileName(image));
+                                    serviceManager.getProcessService().getImagesOrigDirectory(false, p),
+                                    fileService.getFileName(image));
                                 fileService.moveFile(image, dest);
                             }
                             fileService.delete(images);
                         }
 
                         // copy fulltext files
-
                         URI textDirectory = fileService.createDirectory(dir,
-                                processTitle.substring(0, processTitle.length() - 4) + "_txt");
-
-                        fileService.moveDirectory(textDirectory, serviceManager.getFileService().getTxtDirectory(p));
+                            processTitle.substring(0, processTitle.length() - 4) + "_txt");
+                        fileService.moveDirectory(textDirectory, fileService.getTxtDirectory(p));
 
                         // copy source files
-
                         URI sourceDirectory = fileService.createDirectory(dir,
-                                processTitle.substring(0, processTitle.length() - 4) + "_src");
-                        fileService.moveDirectory(sourceDirectory,
-                                serviceManager.getFileService().getImportDirectory(p));
+                            processTitle.substring(0, processTitle.length() - 4) + "_src");
+                        fileService.moveDirectory(sourceDirectory, fileService.getImportDirectory(p));
 
                         try {
                             fileService.delete(dir.resolve(File.separator + processTitle));
                         } catch (IOException e) {
                             logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
-                                    + " into kitodo", e);
+                                    + " into kitodo",
+                                e);
                             return 30;
                         }
                         URI anchorUri = fileService.createResource(dir,
-                                processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
                         fileService.delete(anchorUri);
                         List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
-                        for (Task t : tasks) {
-                            if (t.getProcessingStatus() == 1 && t.isTypeAutomatic()) {
-                                TaskScriptThread myThread = new TaskScriptThread(t);
-                                myThread.start();
-                            }
-                        }
+                        runThreads(tasks);
                     }
                 } catch (ReadException e) {
                     logger.error(e);
@@ -307,6 +301,15 @@ public class HotfolderJob extends AbstractGoobiJob {
             return 0;
         } else {
             return 26;
+        }
+    }
+
+    private static void runThreads(List<Task> tasks) {
+        for (Task task : tasks) {
+            if (task.getProcessingStatus() == 1 && task.isTypeAutomatic()) {
+                TaskScriptThread thread = new TaskScriptThread(task);
+                thread.start();
+            }
         }
     }
 
