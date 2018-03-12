@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
@@ -189,32 +190,42 @@ public class Course extends ArrayList<Block> {
             if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS)) {
                 continue;
             }
-            List<IndividualIssue> process = new ArrayList<>(initialCapacity);
-            for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
-                    .getNextSibling()) {
-                if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
-                    continue;
-                }
-                String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
-                for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
-                        .getNextSibling()) {
-                    if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
-                        continue;
-                    }
-                    String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
-                    String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
-                    if (date == null) {
-                        throw new NullPointerException(ATTRIBUTE_DATE);
-                    }
-                    IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
-                    process.add(individualIssue);
-                }
-            }
+            List<IndividualIssue> process =  prepareIndividualIssues(processNode, initialCapacity);
             processes.add(process);
             initialCapacity = (int) Math.round(1.1 * process.size());
         }
         recalculateRegularityOfIssues();
         processesAreVolatile = true;
+    }
+
+    private List<IndividualIssue> prepareIndividualIssues(Node processNode, int initialCapacity) {
+        List<IndividualIssue> process = new ArrayList<>(initialCapacity);
+        for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
+                .getNextSibling()) {
+            if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
+                continue;
+            }
+            String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
+            for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
+                    .getNextSibling()) {
+                if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
+                    continue;
+                }
+
+                IndividualIssue individualIssue = prepareIndividualIssue((Element) issueNode, variant);
+                process.add(individualIssue);
+            }
+        }
+        return process;
+    }
+
+    private IndividualIssue prepareIndividualIssue(Element issueNode, String variant) {
+        String issue = issueNode.getAttribute(ATTRIBUTE_ISSUE_HEADING);
+        String date = issueNode.getAttribute(ATTRIBUTE_DATE);
+        if (date == null) {
+            throw new NullPointerException(ATTRIBUTE_DATE);
+        }
+        return addAddition(variant, issue, LocalDate.parse(date));
     }
 
     /**
@@ -345,7 +356,7 @@ public class Course extends ArrayList<Block> {
      * @return a LinkedHashSet of IndividualIssue objects, each of them
      *         representing one physically appeared issue
      */
-    public LinkedHashSet<IndividualIssue> getIndividualIssues() {
+    public Set<IndividualIssue> getIndividualIssues() {
         LinkedHashSet<IndividualIssue> result = new LinkedHashSet<>();
         LocalDate lastAppearance = getLastAppearance();
         LocalDate firstAppearance = getFirstAppearance();
