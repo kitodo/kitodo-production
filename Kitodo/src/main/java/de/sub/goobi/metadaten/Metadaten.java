@@ -74,7 +74,6 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -97,10 +96,10 @@ import org.primefaces.model.TreeNode;
  */
 public class Metadaten {
     private static final Logger logger = LogManager.getLogger(Metadaten.class);
-    MetadatenImagesHelper imageHelper;
-    MetadatenHelper metaHelper;
+    private MetadatenImagesHelper imageHelper;
+    private MetadatenHelper metaHelper;
     private boolean treeReloaded = false;
-    String ocrResult = "";
+    private String ocrResult = "";
     private FileformatInterface gdzfile;
     private DocStructInterface docStruct;
     private DocStructInterface tempStrukturelement;
@@ -160,7 +159,6 @@ public class Metadaten {
 
     private boolean displayImage = true;
     private boolean imageToStructuralElement = false;
-    private String imageNumberToGo = "";
     private String addFirstDocStructType;
     private String addSecondDocStructType;
     private String result = "Main";
@@ -353,10 +351,7 @@ public class Metadaten {
             logger.error("Error while adding metadata (MetadataTypeNotAllowedException): " + e.getMessage());
         }
 
-        /*
-         * wenn TitleDocMain, dann gleich Sortiertitel mit gleichem Inhalt
-         * anlegen
-         */
+        // if TitleDocMain, then create equal sort titles with the same content
         if (this.tempTyp.equals("TitleDocMain") && this.myPrefs.getMetadataTypeByName("TitleDocMainShort") != null) {
             try {
                 MetadataInterface secondMetadata = UghImplementation.INSTANCE
@@ -454,9 +449,11 @@ public class Metadaten {
     }
 
     /**
-     * die noch erlaubten Rollen zurückgeben.
+     * Get allowed roles.
+     *
+     * @return list of allowed roles as SelectItems
      */
-    public ArrayList<SelectItem> getAddableRollen() {
+    public List<SelectItem> getAddableRollen() {
         return this.metaHelper.getAddablePersonRoles(this.docStruct, "");
     }
 
@@ -499,16 +496,16 @@ public class Metadaten {
      *
      * @return The metadata types.
      */
-    public ArrayList<SelectItem> getAddableMetadataTypes() {
+    public List<SelectItem> getAddableMetadataTypes() {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
 
     /**
-     * Gets addable metadatatypes from tempTyp.
+     * Gets addable metadata types from tempTyp.
      *
-     * @return The addable metadatatypes from tempTyp.
+     * @return The addable metadata types from tempTyp.
      */
-    public ArrayList<SelectItem> getAddableMetadataTypesFromTempType() {
+    public List<SelectItem> getAddableMetadataTypesFromTempType() {
         DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
         DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
 
@@ -519,8 +516,7 @@ public class Metadaten {
             ArrayList<MetadatumImpl> tempMetadatumList) {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
-        // zuerst mal alle addierbaren Metadatentypen ermitteln
-
+        // determine all addable metadata types
         List<MetadataTypeInterface> types = myDocStruct.getAddableMetadataTypes();
         if (types == null) {
             return selectItems;
@@ -528,14 +524,13 @@ public class Metadaten {
 
         // alle Metadatentypen, die keine Person sind, oder mit einem
         // Unterstrich anfangen rausnehmen
-
         for (MetadataTypeInterface mdt : new ArrayList<>(types)) {
             if (mdt.isPerson()) {
                 types.remove(mdt);
             }
         }
 
-        // die Metadatentypen sortieren
+        // sort the metadata types
         HelperComparator c = new HelperComparator();
         c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
@@ -559,14 +554,6 @@ public class Metadaten {
         return selectItems;
     }
 
-    public ArrayList<MetadatumImpl> getTempMetadatumList() {
-        return this.tempMetadatumList;
-    }
-
-    public void setTempMetadatumList(ArrayList<MetadatumImpl> tempMetadatumList) {
-        this.tempMetadatumList = tempMetadatumList;
-    }
-
     /**
      * die MetadatenTypen zurückgeben.
      */
@@ -580,9 +567,7 @@ public class Metadaten {
             return new SelectItem[0];
         }
 
-        /*
-         * die Metadatentypen sortieren
-         */
+        // sort the metadata types
         HelperComparator c = new HelperComparator();
         c.setSortType("MetadatenTypen");
         Collections.sort(types, c);
@@ -635,10 +620,7 @@ public class Metadaten {
     }
 
     private void readXmlAndBuildTree() {
-
-        /*
-         * re-reading the config for display rules
-         */
+        // re-reading the config for display rules
         ConfigDispayRules.getInstance().refresh();
 
         Modes.setBindState(BindState.edit);
@@ -664,13 +646,11 @@ public class Metadaten {
 
         expandTree();
         this.sperrung.setLocked(this.process.getId(), this.userId);
-
     }
 
     /**
-     * Metadaten Einlesen.
+     * Read metadata.
      */
-
     public void readXmlStart() throws ReadException, IOException, PreferencesException {
         currentRepresentativePage = "";
         this.myPrefs = serviceManager.getRulesetService().getPreferences(this.process.getRuleset());
@@ -748,11 +728,7 @@ public class Metadaten {
     }
 
     private void calculateMetadataAndImages() {
-
-        /*
-         * für den Prozess nochmal die Metadaten durchlaufen und die Daten
-         * speichern
-         */
+        // go again through the metadata for the process and save the data
         XmlArtikelZaehlen zaehlen = new XmlArtikelZaehlen();
 
         this.process
@@ -763,18 +739,14 @@ public class Metadaten {
                     .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
             serviceManager.getProcessService().save(this.process);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
-            logger.error(e);
+            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
         } catch (IOException e) {
-            Helper.setFehlerMeldung("error while counting current images", e);
-            logger.error(e);
+            Helper.setErrorMessage("error while counting current images", logger, e);
         }
     }
 
     private void cleanupMetadata() {
-        /*
-         * vor dem save alle ungenutzen Docstructs rauswerfen
-         */
+        // before save remove all unused docstructs
         this.metaHelper.deleteAllUnusedElements(this.digitalDocument.getLogicalDocStruct());
 
         if (currentRepresentativePage != null && currentRepresentativePage.length() > 0) {
@@ -792,16 +764,19 @@ public class Metadaten {
             }
             if (!match) {
                 MetadataTypeInterface mdt = myPrefs.getMetadataTypeByName("_representative");
-                try {
-                    MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
-                    Integer value = Integer.valueOf(currentRepresentativePage);
-                    md.setStringValue(String.valueOf(value + 1));
-                    this.digitalDocument.getPhysicalDocStruct().addMetadata(md);
-                } catch (MetadataTypeNotAllowedException e) {
-                    logger.error(e);
-                }
-
+                addMetadataToPhysicalDocStruct(mdt);
             }
+        }
+    }
+
+    private void addMetadataToPhysicalDocStruct(MetadataTypeInterface mdt) {
+        try {
+            MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
+            Integer value = Integer.valueOf(currentRepresentativePage);
+            md.setStringValue(String.valueOf(value + 1));
+            this.digitalDocument.getPhysicalDocStruct().addMetadata(md);
+        } catch (MetadataTypeNotAllowedException e) {
+            logger.error(e);
         }
     }
 
@@ -813,7 +788,6 @@ public class Metadaten {
             Helper.setFehlerMeldung("fehlerNichtSpeicherbar", e);
             logger.error(e);
             result = false;
-
         }
         return result;
     }
@@ -822,13 +796,9 @@ public class Metadaten {
      * Metadaten Schreiben.
      */
     public String writeXml() {
-
         calculateMetadataAndImages();
-
         cleanupMetadata();
-
         storeMetadata();
-
         disableReturn();
         return this.result;
     }
@@ -850,7 +820,6 @@ public class Metadaten {
      * @param inStrukturelement
      *            DocStruct object
      */
-
     private void saveMetadataAsBean(DocStructInterface inStrukturelement) {
         this.docStruct = inStrukturelement;
         LinkedList<MetadatumImpl> lsMeta = new LinkedList<>();
@@ -883,9 +852,6 @@ public class Metadaten {
         this.myMetadaten = lsMeta;
         this.metaPersonList = lsPers;
 
-        /*
-         * die zugehörigen Seiten ermitteln
-         */
         determinePagesStructure(this.docStruct);
     }
 
@@ -899,9 +865,7 @@ public class Metadaten {
         TreeNodeStruct3 nodes;
         List<DocStructInterface> status = new ArrayList<>();
 
-        /*
-         * den Ausklapp-Zustand aller Knoten erfassen
-         */
+        // capture the pop-up state of all nodes
         if (this.treeNodeStruct != null) {
             for (HashMap childrenList : this.treeNodeStruct.getChildrenAsList()) {
                 map = childrenList;
@@ -1171,7 +1135,7 @@ public class Metadaten {
     }
 
     /**
-     * Adds a serveral new DocStruct elements to the current DocStruct tree and
+     * Adds a several new DocStruct elements to the current DocStruct tree and
      * sets specified metadata.
      */
     public void addSeveralNodesWithMetadata() {
@@ -1683,48 +1647,54 @@ public class Metadaten {
             String currentPngFile = session.getId() + "_" + this.imageCounter + ".png";
             logger.trace("facescontext");
 
-            File temporaryTifFile = null;
+            assignNewImage(pagesDirectory, currentPngFile);
+        }
+    }
+
+    private void assignNewImage(URI pagesDirectory, String currentPngFile) {
+        File temporaryTifFile = null;
+        try {
+            temporaryTifFile = File.createTempFile("tempTif_", ".tif");
+        } catch (IOException e) {
+            logger.error(e);
+        }
+
+        if (this.image != null) {
             try {
-                temporaryTifFile = File.createTempFile("tempTif_", ".tif");
-            } catch (IOException e) {
-                logger.error(e);
-            }
-            /* das neue Bild zuweisen */
-            if (this.image != null) {
-                try {
-                    URI tifFile = this.currentTifFolder.resolve(this.image);
-                    logger.trace("tiffconverterpfad: {}", tifFile);
-                    if (!fileService.fileExist(tifFile)) {
-                        tifFile = serviceManager.getProcessService().getImagesTifDirectory(true, this.process)
-                                .resolve(this.image);
-                        Helper.setFehlerMeldung("formularOrdner:TifFolders", "", "image " + this.image
-                                + " does not exist in folder " + this.currentTifFolder + ", using image from "
+                URI tifFile = this.currentTifFolder.resolve(this.image);
+                logger.trace("tiffconverterpfad: {}", tifFile);
+                if (!fileService.fileExist(tifFile)) {
+                    tifFile = serviceManager.getProcessService().getImagesTifDirectory(true, this.process)
+                            .resolve(this.image);
+                    Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
+                        "image " + this.image + " does not exist in folder " + this.currentTifFolder
+                                + ", using image from "
                                 + new File(serviceManager.getProcessService().getImagesTifDirectory(true, this.process))
                                         .getName());
-                    }
+                }
 
-                    // Copy tif-file to temporay folder
-                    InputStream tifFileInputStream = fileService.read(tifFile);
+                // Copy tif-file to temporary folder
+                try (InputStream tifFileInputStream = fileService.read(tifFile)) {
                     if (temporaryTifFile != null) {
                         FileUtils.copyInputStreamToFile(tifFileInputStream, temporaryTifFile);
                         this.imageHelper.scaleFile(temporaryTifFile.toURI(), pagesDirectory.resolve(currentPngFile),
-                            this.imageSize, this.imageRotation);
+                                this.imageSize, this.imageRotation);
                         logger.trace("scaleFile");
                     }
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("could not getById image folder", e);
-                    logger.error(e);
-                } finally {
-                    if (temporaryTifFile != null) {
-                        try {
-                            if (!fileService.delete(temporaryTifFile.toURI())) {
-                                logger.error(
-                                    "Error while deleting temporary tif file: " + temporaryTifFile.getAbsolutePath());
-                            }
-                            // not working
-                        } catch (IOException e) {
-                            logger.error("Error while deleting temporary tif file: " + e.getMessage());
+                }
+            } catch (Exception e) {
+                Helper.setFehlerMeldung("could not getById image folder", e);
+                logger.error(e);
+            } finally {
+                if (temporaryTifFile != null) {
+                    try {
+                        if (!fileService.delete(temporaryTifFile.toURI())) {
+                            logger.error(
+                                "Error while deleting temporary tif file: " + temporaryTifFile.getAbsolutePath());
                         }
+                        // not working
+                    } catch (IOException e) {
+                        logger.error("Error while deleting temporary tif file: " + e.getMessage());
                     }
                 }
             }
@@ -1859,10 +1829,10 @@ public class Metadaten {
         while (tokenizer.hasMoreTokens()) {
             String tok = tokenizer.nextToken();
             try {
-                FileformatInterface addrdf = CataloguePlugin.getFirstHit(opacCatalog,
+                FileformatInterface addRdf = CataloguePlugin.getFirstHit(opacCatalog,
                     QueryBuilder.restrictToField(opacSearchField, tok), myPrefs);
-                if (addrdf != null) {
-                    this.docStruct.addChild(addrdf.getDigitalDocument().getLogicalDocStruct());
+                if (addRdf != null) {
+                    this.docStruct.addChild(addRdf.getDigitalDocument().getLogicalDocStruct());
                     readMetadataAsFirstTree();
                 } else {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
@@ -1883,36 +1853,10 @@ public class Metadaten {
         while (tokenizer.hasMoreTokens()) {
             String tok = tokenizer.nextToken();
             try {
-                FileformatInterface addrdf = CataloguePlugin.getFirstHit(opacCatalog,
+                FileformatInterface addRdf = CataloguePlugin.getFirstHit(opacCatalog,
                     QueryBuilder.restrictToField(opacSearchField, tok), myPrefs);
-                if (addrdf != null) {
-
-                    /* die Liste aller erlaubten Metadatenelemente erstellen */
-                    List<MetadataTypeInterface> addableMetadataTypes = this.docStruct.getAddableMetadataTypes();
-                    List<String> allowed = new ArrayList<>();
-                    if (addableMetadataTypes != null && addableMetadataTypes.size() > 0) {
-                        for (MetadataTypeInterface metadataType : addableMetadataTypes) {
-                            allowed.add(metadataType.getName());
-                        }
-                    }
-
-                    /*
-                     * wenn der Metadatentyp in der Liste der erlaubten Typen,
-                     * dann hinzufügen
-                     */
-                    for (MetadataInterface metadata : addrdf.getDigitalDocument().getLogicalDocStruct()
-                            .getAllMetadata()) {
-                        if (allowed.contains(metadata.getMetadataType().getName())) {
-                            this.docStruct.addMetadata(metadata);
-                        }
-                    }
-
-                    for (PersonInterface person : addrdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()) {
-                        if (allowed.contains(person.getMetadataType().getName())) {
-                            this.docStruct.addPerson(person);
-                        }
-                    }
-
+                if (addRdf != null) {
+                    addMetadataToDocStruct(addRdf);
                     readMetadataAsFirstTree();
                 } else {
                     Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
@@ -1926,8 +1870,33 @@ public class Metadaten {
         return "";
     }
 
+    private void addMetadataToDocStruct(FileformatInterface addRdf)
+            throws MetadataTypeNotAllowedException, PreferencesException {
+        // create the list of all allowed metadata elements
+        List<MetadataTypeInterface> addableMetadataTypes = this.docStruct.getAddableMetadataTypes();
+        List<String> allowed = new ArrayList<>();
+        if (addableMetadataTypes != null && addableMetadataTypes.size() > 0) {
+            for (MetadataTypeInterface metadataType : addableMetadataTypes) {
+                allowed.add(metadataType.getName());
+            }
+        }
+
+        // if the metadata type in the list of allowed types, then add
+        for (MetadataInterface metadata : addRdf.getDigitalDocument().getLogicalDocStruct().getAllMetadata()) {
+            if (allowed.contains(metadata.getMetadataType().getName())) {
+                this.docStruct.addMetadata(metadata);
+            }
+        }
+
+        for (PersonInterface person : addRdf.getDigitalDocument().getLogicalDocStruct().getAllPersons()) {
+            if (allowed.contains(person.getMetadataType().getName())) {
+                this.docStruct.addPerson(person);
+            }
+        }
+    }
+
     /**
-     * Metadatenvalidierung.
+     * Metadata validation.
      */
     public void validate() {
         serviceManager.getMetadataValidationService().validate(this.gdzfile, this.myPrefs, this.process);
@@ -2028,26 +1997,23 @@ public class Metadaten {
      * die Seiten über die Ajax-Felder festlegen.
      */
     public void ajaxSeitenStartUndEndeSetzen() {
-        boolean startseiteOk = false;
-        boolean endseiteOk = false;
+        boolean startPageOk = false;
+        boolean endPageOk = false;
 
-        /*
-         * alle Seiten durchlaufen und prüfen, ob die eingestellte Seite
-         * überhaupt existiert
-         */
+        // go through all the pages and check if the page you have set exists
         for (String selectItem : this.allPages) {
             if (selectItem.equals(this.ajaxPageStart)) {
-                startseiteOk = true;
+                startPageOk = true;
                 this.allPagesSelectionFirstPage = selectItem;
             }
             if (selectItem.equals(this.ajaxPageEnd)) {
-                endseiteOk = true;
+                endPageOk = true;
                 this.allPagesSelectionLastPage = selectItem;
             }
         }
 
-        /* wenn die Seiten ok sind */
-        if (startseiteOk && endseiteOk) {
+        // if pages are ok
+        if (startPageOk && endPageOk) {
             setPageStartAndEnd();
         } else {
             Helper.setFehlerMeldung("Selected image(s) unavailable");
@@ -2086,19 +2052,13 @@ public class Metadaten {
             return "SperrungAbgelaufen";
         }
 
-        /* alle Kinder des aktuellen DocStructs durchlaufen */
+        // go through all the children of the current DocStruct
         this.docStruct.getAllReferences("to").removeAll(this.docStruct.getAllReferences("to"));
         if (this.docStruct.getAllChildren() != null) {
             for (DocStructInterface child : this.docStruct.getAllChildren()) {
                 List<ReferenceInterface> childRefs = child.getAllReferences("to");
                 for (ReferenceInterface toAdd : childRefs) {
-                    boolean match = false;
-                    for (ReferenceInterface ref : this.docStruct.getAllReferences("to")) {
-                        if (ref.getTarget().equals(toAdd.getTarget())) {
-                            match = true;
-                            break;
-                        }
-                    }
+                    boolean match = isFoundMatchForReference(toAdd);
                     if (!match) {
                         this.docStruct.getAllReferences("to").add(toAdd);
                     }
@@ -2108,6 +2068,15 @@ public class Metadaten {
         }
         determinePagesStructure(this.docStruct);
         return null;
+    }
+
+    private boolean isFoundMatchForReference(ReferenceInterface toAdd) {
+        for (ReferenceInterface ref : this.docStruct.getAllReferences("to")) {
+            if (ref.getTarget().equals(toAdd.getTarget())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -2145,9 +2114,9 @@ public class Metadaten {
      * ausgewählte Seiten dem aktuellen Strukturelement hinzufügen.
      */
     public String addPages() {
-        /* alle markierten Seiten durchlaufen */
+        // go through all selected pages
         for (String page : this.allPagesSelection) {
-            int aktuelleID = Integer.parseInt(page.split(":")[0]);
+            int currentId = Integer.parseInt(page.split(":")[0]);
             boolean schonEnthalten = false;
 
             /*
@@ -2156,7 +2125,7 @@ public class Metadaten {
              */
             if (this.docStruct.getAllToReferences("logical_physical") != null) {
                 for (ReferenceInterface reference : this.docStruct.getAllToReferences("logical_physical")) {
-                    if (reference.getTarget() == this.allPagesNew[aktuelleID - 1].getMd().getDocStruct()) {
+                    if (reference.getTarget() == this.allPagesNew[currentId - 1].getMd().getDocStruct()) {
                         schonEnthalten = true;
                         break;
                     }
@@ -2164,7 +2133,7 @@ public class Metadaten {
             }
 
             if (!schonEnthalten) {
-                this.docStruct.addReferenceTo(this.allPagesNew[aktuelleID - 1].getMd().getDocStruct(),
+                this.docStruct.addReferenceTo(this.allPagesNew[currentId - 1].getMd().getDocStruct(),
                     "logical_physical");
             }
         }
@@ -2181,8 +2150,8 @@ public class Metadaten {
      */
     public String removePages() {
         for (String structurePage : this.structSeitenAuswahl) {
-            int aktuelleID = Integer.parseInt(structurePage);
-            this.docStruct.removeReferenceTo(this.structSeitenNeu[aktuelleID].getMd().getDocStruct());
+            int currentId = Integer.parseInt(structurePage);
+            this.docStruct.removeReferenceTo(this.structSeitenNeu[currentId].getMd().getDocStruct());
         }
         determinePagesStructure(this.docStruct);
         this.structSeitenAuswahl = null;
@@ -2224,6 +2193,16 @@ public class Metadaten {
 
     public String getOcrResult() {
         return this.ocrResult;
+    }
+
+    /**
+     * Set OCR result.
+     *
+     * @param ocrResult
+     *            as String
+     */
+    public void setOcrResult(String ocrResult) {
+        this.ocrResult = ocrResult;
     }
 
     /**
@@ -2959,20 +2938,7 @@ public class Metadaten {
             return;
         }
 
-        for (Integer pageIndex : selectedPages) {
-
-            DocStructInterface pageToRemove = allPages.get(pageIndex);
-            String imageName = pageToRemove.getImageName();
-
-            removeImage(imageName);
-            digitalDocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
-            digitalDocument.getPhysicalDocStruct().removeChild(pageToRemove);
-            List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
-            for (ReferenceInterface ref : refs) {
-                ref.getSource().removeReferenceTo(pageToRemove);
-            }
-
-        }
+        removeReferenceToSelectedPages(selectedPages, allPages);
 
         allPagesSelection = null;
         if (digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
@@ -3002,10 +2968,24 @@ public class Metadaten {
 
         // current image was deleted, load first image
         if (selectedPages.contains(imageNumber - 1)) {
-
             imageShowFirstPage();
         } else {
             identifyImage(1);
+        }
+    }
+
+    private void removeReferenceToSelectedPages(List<Integer> selectedPages, List<DocStructInterface> allPages)
+            throws IOException {
+        for (Integer pageIndex : selectedPages) {
+            DocStructInterface pageToRemove = allPages.get(pageIndex);
+            String imageName = pageToRemove.getImageName();
+            removeImage(imageName);
+            digitalDocument.getFileSet().removeFile(pageToRemove.getAllContentFiles().get(0));
+            digitalDocument.getPhysicalDocStruct().removeChild(pageToRemove);
+            List<ReferenceInterface> refs = new ArrayList<>(pageToRemove.getAllFromReferences());
+            for (ReferenceInterface ref : refs) {
+                ref.getSource().removeReferenceTo(pageToRemove);
+            }
         }
     }
 
@@ -3081,16 +3061,9 @@ public class Metadaten {
     private void removeImage(String fileToDelete) throws IOException {
         // TODO check what happens with .tar.gz
         String fileToDeletePrefix = fileToDelete.substring(0, fileToDelete.lastIndexOf('.'));
+
         for (URI folder : allTifFolders) {
-            ArrayList<URI> filesInFolder = fileService
-                    .getSubUris(fileService.getImagesDirectory(process).resolve(folder));
-            for (URI currentFile : filesInFolder) {
-                String filename = fileService.getFileName(currentFile);
-                String filenamePrefix = filename.replace(getFileExtension(filename), "");
-                if (filenamePrefix.equals(fileToDeletePrefix)) {
-                    fileService.delete(currentFile);
-                }
-            }
+            removeFiles(fileService.getImagesDirectory(process).resolve(folder), fileToDeletePrefix);
         }
 
         URI ocr = serviceManager.getFileService().getOcrDirectory(process);
@@ -3098,18 +3071,20 @@ public class Metadaten {
             ArrayList<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0) {
-                    ArrayList<URI> filesInFolder = fileService.getSubUris(dir);
-                    for (URI currentFile : filesInFolder) {
-                        String filename = fileService.getFileName(currentFile);
-                        String filenamePrefix = filename.substring(0, filename.lastIndexOf('.'));
-                        if (filenamePrefix.equals(fileToDeletePrefix)) {
-                            fileService.delete(currentFile);
-                        }
-                    }
+                    removeFiles(dir, fileToDeletePrefix);
                 }
             }
         }
+    }
 
+    private void removeFiles(URI directory, String fileToDeletePrefix) throws IOException {
+        ArrayList<URI> filesInFolder = fileService.getSubUris(directory);
+        for (URI currentFile : filesInFolder) {
+            String fileName = fileService.getFileName(currentFile);
+            if (fileName.equals(fileToDeletePrefix)) {
+                fileService.delete(currentFile);
+            }
+        }
     }
 
     private static String generateFileName(int counter) {
