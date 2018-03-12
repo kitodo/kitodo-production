@@ -486,13 +486,11 @@ public class MetadatenImagesHelper {
     /**
      * Get image files.
      *
-     * @param myProcess
-     *            current process
      * @param directory
      *            current folder
      * @return sorted list with strings representing images of process
      */
-    public List<URI> getImageFiles(Process myProcess, URI directory) {
+    public List<URI> getImageFiles(URI directory) {
         /* Verzeichnis einlesen */
         ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, directory);
         ArrayList<URI> finalFiles = new ArrayList<>();
@@ -500,41 +498,43 @@ public class MetadatenImagesHelper {
             String newURI = file.toString().replace(directory.toString(), "");
             finalFiles.add(URI.create(newURI));
         }
-        List<URI> dataList = new ArrayList<>();
+
         if (finalFiles.size() > 0) {
-            dataList.addAll(finalFiles);
-            /* alle Dateien durchlaufen */
+            List<URI> dataList = new ArrayList<>(finalFiles);
+
+            if (dataList.size() != 0) {
+                List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
+
+                if (orderedFileNameList.size() == dataList.size()) {
+                    return orderedFileNameList;
+                } else {
+                    Collections.sort(dataList, new GoobiImageFileComparator());
+                    return dataList;
+                }
+            } else {
+                return new ArrayList<>();
+            }
         }
-        List<URI> orderedFilenameList = new ArrayList<>();
-        if (dataList.size() != 0) {
-            List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-            if (pagesList != null) {
-                for (DocStructInterface page : pagesList) {
-                    String filename = page.getImageName();
-                    String filenamePrefix = filename.replace("." + Metadaten.getFileExtension(filename), "");
-                    for (URI currentImage : dataList) {
-                        String currentFileName = fileService.getFileName(currentImage);
-                        String currentImagePrefix = currentFileName.replace(Metadaten.getFileExtension(currentFileName),
-                            "");
-                        if (currentImagePrefix.equals(filenamePrefix)) {
-                            orderedFilenameList.add(currentImage);
-                            break;
-                        }
+        return new ArrayList<>();
+    }
+
+    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
+        List<URI> orderedFileNameList = new ArrayList<>();
+        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        if (pagesList != null) {
+            for (DocStructInterface page : pagesList) {
+                String fileName = page.getImageName();
+                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
+                for (URI currentImage : dataList) {
+                    String currentFileName = fileService.getFileName(currentImage);
+                    if (currentFileName.equals(fileNamePrefix)) {
+                        orderedFileNameList.add(currentImage);
+                        break;
                     }
                 }
-                // orderedFilenameList.add(page.getImageName());
             }
-
-            if (orderedFilenameList.size() == dataList.size()) {
-                return orderedFilenameList;
-
-            } else {
-                Collections.sort(dataList, new GoobiImageFileComparator());
-                return dataList;
-            }
-        } else {
-            return new ArrayList<>();
         }
+        return orderedFileNameList;
     }
 
     /**

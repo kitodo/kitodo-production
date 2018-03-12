@@ -13,7 +13,7 @@ package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.model.SelectItem;
 
@@ -150,7 +150,7 @@ public class MetaPerson {
         this.p.setType(mdt);
     }
 
-    public ArrayList<SelectItem> getAddableRollen() {
+    public List<SelectItem> getAddableRollen() {
         return this.mdh.getAddablePersonRoles(this.myDocStruct, this.p.getRole());
     }
 }

@@ -11,7 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -21,7 +20,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 
 public interface Metadatum {
 
-    ArrayList<Item> getWert();
+    List<Item> getWert();
 
     void setWert(String inWert);
 

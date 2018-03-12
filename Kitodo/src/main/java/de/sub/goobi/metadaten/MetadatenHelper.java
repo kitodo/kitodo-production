@@ -95,21 +95,13 @@ public class MetadatenHelper implements Comparator<Object> {
 
         DocStructTypeInterface dst = this.prefs.getDocStrctTypeByName(inNewType);
         DocStructInterface newDocstruct = this.digitalDocument.createDocStruct(dst);
-        /*
-         * alle Metadaten hinzufügen
-         */
+
+        // add all metadata
         if (inOldDocstruct.getAllMetadata() != null && inOldDocstruct.getAllMetadata().size() > 0) {
             for (MetadataInterface old : inOldDocstruct.getAllMetadata()) {
-                boolean match = false;
-
                 if (newDocstruct.getPossibleMetadataTypes() != null
                         && newDocstruct.getPossibleMetadataTypes().size() > 0) {
-                    for (MetadataTypeInterface mt : newDocstruct.getPossibleMetadataTypes()) {
-                        if (mt.getName().equals(old.getMetadataType().getName())) {
-                            match = true;
-                            break;
-                        }
-                    }
+                    boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
                         try {
                             newDocstruct.addMetadata(old);
@@ -128,20 +120,13 @@ public class MetadatenHelper implements Comparator<Object> {
                 }
             }
         }
-        /*
-         * alle Personen hinzufügen
-         */
+
+        // add all persons
         if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
             for (PersonInterface old : inOldDocstruct.getAllPersons()) {
-                boolean match = false;
                 if (newDocstruct.getPossibleMetadataTypes() != null
                         && newDocstruct.getPossibleMetadataTypes().size() > 0) {
-                    for (MetadataTypeInterface mt : newDocstruct.getPossibleMetadataTypes()) {
-                        if (mt.getName().equals(old.getMetadataType().getName())) {
-                            match = true;
-                            break;
-                        }
-                    }
+                    boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
                         Helper.setFehlerMeldung("Person " + old.getMetadataType().getName()
                                 + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
@@ -155,18 +140,15 @@ public class MetadatenHelper implements Comparator<Object> {
                 }
             }
         }
-        /*
-         * alle Seiten hinzufügen
-         */
+
+        // add all pages
         if (inOldDocstruct.getAllToReferences() != null) {
             for (ReferenceInterface reference : inOldDocstruct.getAllToReferences()) {
                 newDocstruct.addReferenceTo(reference.getTarget(), reference.getType());
             }
         }
 
-        /*
-         * alle Docstruct-Children hinzufügen
-         */
+        // add all Docstruct children
         if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
             for (DocStructInterface old : inOldDocstruct.getAllChildren()) {
                 if (newDocstruct.getDocStructType().getAllAllowedDocStructTypes() != null
@@ -208,6 +190,15 @@ public class MetadatenHelper implements Comparator<Object> {
          */
         inOldDocstruct.getParent().removeChild(inOldDocstruct);
         return newDocstruct;
+    }
+
+    private boolean isFoundMatchForMetadata(DocStructInterface newDocStruct, MetadataInterface old) {
+        for (MetadataTypeInterface metadataType : newDocStruct.getPossibleMetadataTypes()) {
+            if (metadataType.getName().equals(old.getMetadataType().getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -617,7 +608,7 @@ public class MetadatenHelper implements Comparator<Object> {
      *            der aktuellen Person, damit diese ggf. in die Liste mit
      *            übernommen wird
      */
-    public ArrayList<SelectItem> getAddablePersonRoles(DocStructInterface myDocStruct, String inRoleName) {
+    public List<SelectItem> getAddablePersonRoles(DocStructInterface myDocStruct, String inRoleName) {
         ArrayList<SelectItem> myList = new ArrayList<>();
         /*
          * zuerst mal alle addierbaren Metadatentypen ermitteln

@@ -40,7 +40,6 @@ public class MetadatumImpl implements Metadatum {
     private MetadataInterface md;
     private int identifier;
     private PrefsInterface myPrefs;
-    private Process myProcess;
     private HashMap<String, DisplayCase> myValues = new HashMap<>();
     private List<SelectItem> items;
     private List<String> selectedItems;
@@ -52,15 +51,14 @@ public class MetadatumImpl implements Metadatum {
         this.md = m;
         this.identifier = inID;
         this.myPrefs = inPrefs;
-        this.myProcess = inProcess;
         for (BindState state : BindState.values()) {
             this.myValues.put(state.getTitle(),
-                    new DisplayCase(this.myProcess, state.getTitle(), this.md.getMetadataType().getName()));
+                    new DisplayCase(inProcess, state.getTitle(), this.md.getMetadataType().getName()));
         }
     }
 
     @Override
-    public ArrayList<Item> getWert() {
+    public List<Item> getWert() {
         String value = this.md.getValue();
         if (value != null) {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
@@ -166,19 +164,11 @@ public class MetadatumImpl implements Metadatum {
                 int semicolon = values.indexOf(';');
                 if (semicolon != -1) {
                     String value = values.substring(0, semicolon);
-                    for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                        if (i.getValue().equals(value)) {
-                            this.selectedItems.add(i.getLabel());
-                        }
-                    }
+                    addItemsToSelectedItems(value);
                     int length = values.length();
                     values = values.substring(semicolon + 1, length);
                 } else {
-                    for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
-                        if (i.getValue().equals(values)) {
-                            this.selectedItems.add(i.getLabel());
-                        }
-                    }
+                    addItemsToSelectedItems(values);
                     values = "";
                 }
             }
@@ -196,9 +186,16 @@ public class MetadatumImpl implements Metadatum {
         return this.selectedItems;
     }
 
+    private void addItemsToSelectedItems(String value) {
+        for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
+            if (i.getValue().equals(value)) {
+                this.selectedItems.add(i.getLabel());
+            }
+        }
+    }
+
     @Override
     public void setSelectedItems(List<String> selectedItems) {
-
         StringBuilder val = new StringBuilder();
         for (String sel : selectedItems) {
             for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
@@ -235,7 +232,6 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public void setSelectedItem(String selectedItem) {
-
         for (Item i : this.myValues.get(Modes.getBindState().getTitle()).getItemList()) {
             if (i.getLabel().equals(selectedItem)) {
                 setWert(i.getValue());
