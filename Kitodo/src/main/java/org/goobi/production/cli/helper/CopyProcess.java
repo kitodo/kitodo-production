@@ -13,6 +13,7 @@ package org.goobi.production.cli.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
@@ -22,7 +23,6 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -36,12 +36,8 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.FileNames;
 import org.goobi.production.importer.ImportObject;
-import org.jdom.Document;
-import org.jdom.Element;
 import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
@@ -804,62 +800,16 @@ public class CopyProcess extends ProzesskopieForm {
 
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
-        this.possibleDigitalCollection = new ArrayList<>();
-        ArrayList<String> defaultCollections = new ArrayList<>();
-        String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
-        if (!(new File(filename).exists())) {
-            Helper.setFehlerMeldung("File not found: ", filename);
-            return;
-        }
-        this.digitalCollections = new ArrayList<>();
         try {
-            /* Datei einlesen und Root ermitteln */
-            SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new File(filename));
-            Element root = doc.getRootElement();
-            /* alle Projekte durchlaufen */
-            List<Element> projekte = root.getChildren();
-            for (Element project : projekte) {
-                // collect default collections
-                if (project.getName().equals("default")) {
-                    List<Element> myCols = project.getChildren("DigitalCollection");
-                    for (Element digitalCollection : myCols) {
-                        if (digitalCollection.getAttribute("default") != null
-                                && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
-                            digitalCollections.add(digitalCollection.getText());
-                        }
-                        defaultCollections.add(digitalCollection.getText());
-                    }
-                } else {
-                    // run through the projects
-                    List<Element> projektnamen = project.getChildren("name");
-                    for (Element projectName : projektnamen) {
-                        // all all collections to list
-                        if (projectName.getText().equalsIgnoreCase(this.prozessKopie.getProject().getTitle())) {
-                            List<Element> myCols = project.getChildren("DigitalCollection");
-                            for (Element digitalCollection : myCols) {
-                                if (digitalCollection.getAttribute("default") != null
-                                        && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
-                                    digitalCollections.add(digitalCollection.getText());
-                                }
-
-                                this.possibleDigitalCollection.add(digitalCollection.getText());
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (JDOMException | IOException e1) {
-            logger.error("error while parsing digital collections", e1);
-            Helper.setFehlerMeldung("Error while parsing digital collections", e1);
+            DigitalCollections.possibleDigitalCollectionsForProcess(this.prozessKopie);
+        } catch (JDOMException | IOException e) {
+            Helper.setErrorMessage("Error while parsing digital collections", logger, e);
         }
 
-        if (this.possibleDigitalCollection.size() == 0) {
-            this.possibleDigitalCollection = defaultCollections;
-        }
+        this.possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
+        this.digitalCollections = DigitalCollections.getDigitalCollections();
 
         // if only one collection is possible take it directly
-
         if (isSingleChoiceCollection()) {
             this.digitalCollections.add(getDigitalCollectionIfSingleChoice());
         }

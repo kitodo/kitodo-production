@@ -27,56 +27,90 @@ import org.kitodo.data.database.beans.Process;
 
 public class DigitalCollections {
 
+    private static List<String> digitalCollections;
+    private static List<String> possibleDigitalCollection;
+
+    public static List<String> getDigitalCollections() {
+        if (digitalCollections == null) {
+            digitalCollections = new ArrayList<>();
+        }
+        return digitalCollections;
+    }
+
+    public static List<String> getPossibleDigitalCollection() {
+        if (possibleDigitalCollection == null) {
+            possibleDigitalCollection = new ArrayList<>();
+        }
+        return DigitalCollections.possibleDigitalCollection;
+    }
+
     /**
      * Get possible digital collections for process.
      *
      * @param process
      *            object
-     * @return list of Strings
      */
     @SuppressWarnings("unchecked")
-    public static List<String> possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
+    public static void possibleDigitalCollectionsForProcess(Process process) throws JDOMException, IOException {
+        digitalCollections = new ArrayList<>();
+        possibleDigitalCollection = new ArrayList<>();
 
-        List<String> result = new ArrayList<>();
+        ArrayList<String> defaultCollections = new ArrayList<>();
+
+        Element root = getRoot();
+
+        /* alle Projekte durchlaufen */
+        List<Element> projects = root.getChildren();
+        for (Element project : projects) {
+            // collect default collections
+            if (project.getName().equals("default")) {
+                List<Element> myCols = project.getChildren("DigitalCollection");
+                for (Element digitalCollection : myCols) {
+                    if (digitalCollection.getAttribute("default") != null
+                            && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                        digitalCollections.add(digitalCollection.getText());
+                    }
+                    defaultCollections.add(digitalCollection.getText());
+                }
+            } else {
+                iterateOverAllProjects(project, process);
+            }
+        }
+
+        if (possibleDigitalCollection.size() == 0) {
+            possibleDigitalCollection = defaultCollections;
+        }
+    }
+
+    private static Element getRoot() throws JDOMException, IOException {
         String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
                 FileNames.DIGITAL_COLLECTIONS_FILE);
         if (!(new File(filename).exists())) {
             throw new FileNotFoundException("File not found: " + filename);
         }
 
-        /* Datei einlesen und Root ermitteln */
+        // import file and determine root
         SAXBuilder builder = new SAXBuilder();
         Document doc = builder.build(new File(filename));
-        Element root = doc.getRootElement();
-        /* alle Projekte durchlaufen */
-        List<Element> projekte = root.getChildren();
-        for (Element project : projekte) {
-            List<Element> projektnamen = project.getChildren("name");
-            for (Element projectName : projektnamen) {
-                /*
-                 * wenn der Projektname aufgeführt wird, dann alle Digitalen
-                 * Collectionen in die Liste
-                 */
-                if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
-                    List<Element> myCols = project.getChildren("DigitalCollection");
-                    for (Element digitalCollection : myCols) {
-                        result.add(digitalCollection.getText());
+        return doc.getRootElement();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void iterateOverAllProjects(Element project, Process process) {
+        // run through the projects
+        List<Element> projectNames = project.getChildren("name");
+        for (Element projectName : projectNames) {
+            // all all collections to list
+            if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
+                List<Element> myCols = project.getChildren("DigitalCollection");
+                for (Element digitalCollection : myCols) {
+                    if (digitalCollection.getAttribute("default") != null
+                            && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                        digitalCollections.add(digitalCollection.getText());
                     }
+                    possibleDigitalCollection.add(digitalCollection.getText());
                 }
             }
         }
-        // If result is empty, get „default“
-        if (result.size() == 0) {
-            List<Element> children = root.getChildren();
-            for (Element child : children) {
-                if (child.getName().equals("default")) {
-                    List<Element> myCols = child.getChildren("DigitalCollection");
-                    for (Element digitalCollection : myCols) {
-                        result.add(digitalCollection.getText());
-                    }
-                }
-            }
-        }
-        return result;
     }
 }

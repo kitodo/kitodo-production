@@ -1615,12 +1615,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return null;
     }
 
-    /*
-     * public List<String> getPossibleDigitalCollections(Process process) throws
-     * JDOMException, IOException { return
-     * DigitalCollections.possibleDigitalCollectionsForProcess(process); }
-     */
-
     /**
      * The addMessageToWikiField() method is a helper method which composes the
      * new wiki field using a StringBuilder. The message is encoded using HTML
