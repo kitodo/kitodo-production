@@ -424,8 +424,8 @@ public class MetadataValidationService {
                 metadataTypes.add(emdete);
             } catch (UghHelperException e) {
                 /*
-                 * wenn die zusammenzustellenden Personen für CreatorsAllOrigin als Metadatatyp
-                 * nicht existieren, Exception abfangen und nicht weiter drauf eingehen
+                 * if the compilation does not exist for creatorsAllOrigin as the metadata type,
+                 * fetch exception and do not elaborate on it
                  */
             }
         }
@@ -510,11 +510,24 @@ public class MetadataValidationService {
     }
 
     /**
-     * Metadatum soll mit bestimmten String beginnen oder enden.
+     * Metadata should start or end with a certain string.
+     *
+     * @param errorList
+     *            list of errors
+     * @param propStartsWith
+     *            check if starts with this String
+     * @param propEndsWith
+     *            check if ends with this String
+     * @param myStruct
+     *            DocStruct
+     * @param mdt
+     *            MetadataType
+     * @param language
+     *            as String
      */
     private void checkStartsEndsWith(List<String> errorList, String propStartsWith, String propEndsWith,
             DocStructInterface myStruct, MetadataTypeInterface mdt, String language) {
-        /* startswith oder endswith */
+        // starts with or ends with
         List<? extends MetadataInterface> alleMetadaten = myStruct.getAllMetadataByType(mdt);
         if (alleMetadaten != null && alleMetadaten.size() > 0) {
             for (MetadataInterface md : alleMetadaten) {

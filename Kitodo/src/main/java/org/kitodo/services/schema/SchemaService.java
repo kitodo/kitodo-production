@@ -234,7 +234,7 @@ public class SchemaService {
     private boolean containsInvalidImages(PrefsInterface prefs, DigitalDocumentInterface digitalDocument,
             Process process) {
         try {
-            // TODO andere Dateigruppen nicht mit image Namen ersetzen
+            // TODO: do not replace other file groups with image names
             List<URI> images = new MetadatenImagesHelper(prefs, digitalDocument).getDataFiles(process);
             List<String> imageStrings = new ArrayList<>();
             for (URI uri : images) {
