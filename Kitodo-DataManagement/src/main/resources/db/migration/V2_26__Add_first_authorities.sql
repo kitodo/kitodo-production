@@ -40,15 +40,15 @@ VALUES ('addProject', '1', '1', '0');
 
 # Docket
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewAllDockets', '1', '1', '1');
+VALUES ('viewAllDockets', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('viewDocket', '1', '1', '1');
+VALUES ('viewDocket', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('addDocket', '1', '1', '1');
+VALUES ('addDocket', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('editDocket', '1', '1', '1');
+VALUES ('editDocket', '1', '0', '0');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
-VALUES ('deleteDocket', '1', '1', '1');
+VALUES ('deleteDocket', '1', '0', '0');
 
 # Process
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
