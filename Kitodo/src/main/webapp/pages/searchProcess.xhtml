@@ -163,10 +163,10 @@
                         <p:column colspan="3"><p:inputText value="#{SearchForm.idin}" style="width:100%"/></p:column>
                     </p:row>
                     <p:row>
-                        <p:column><p:outputLabel value="#{msgs.showArchivedProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/></p:column>
+                        <p:column><p:outputLabel value="#{msgs.showInactiveProjects}" rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/></p:column>
                         <p:column>
                             <p:selectBooleanCheckbox
-                                    value="#{ProzessverwaltungForm.showArchivedProjects}"
+                                    value="#{ProzessverwaltungForm.showInactiveProjects}"
                                     rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
                         </p:column>
                     </p:row>

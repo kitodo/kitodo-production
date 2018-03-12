@@ -46,7 +46,7 @@ public class ProzessverwaltungFormIT {
     public void shouldFilterAllStart() {
         ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
 
-        prozessverwaltungForm.setShowArchivedProjects(false);
+        prozessverwaltungForm.setShowInactiveProjects(false);
         prozessverwaltungForm.setShowClosedProcesses(false);
         prozessverwaltungForm.setDisplayMode(ObjectMode.PROCESS);
         prozessverwaltungForm.setFilter("id:2 3");

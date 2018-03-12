@@ -130,18 +130,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Find archived or not archived projects.
+     * Find active or inactive projects.
      *
-     * @param archived
-     *            if true - find archived projects, if false - find not archived
+     * @param active
+     *            if true - find active projects, if false - find not active
      *            projects
      * @param related
      *            if true - found project is related to some other DTO object, if
      *            false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
-    List<ProjectDTO> findByArchived(Boolean archived, boolean related) throws DataException {
-        QueryBuilder query = createSimpleQuery("archived", archived, true);
+    List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
+        QueryBuilder query = createSimpleQuery("active", active, true);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
@@ -217,12 +217,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Get all not archived projects sorted by title.
+     * Get all active projects sorted by title.
      *
-     * @return all not archived projects sorted by title as Project objects
+     * @return all active projects sorted by title as Project objects
      */
-    public List<Project> getAllNotArchivedProjectsSortedByTitle() {
-        return dao.getAllNotArchivedProjectsSortedByTitle();
+    public List<Project> getAllActiveProjectsSortedByTitle() {
+        return dao.getAllActiveProjectsSortedByTitle();
     }
 
     @Override

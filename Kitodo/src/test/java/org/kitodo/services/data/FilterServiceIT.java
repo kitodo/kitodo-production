@@ -136,14 +136,14 @@ public class FilterServiceIT {
         assertEquals("Incorrect amount of processes for project with title containing 'Second'!", 0,
                 processDTOS.size());
 
-        query = filterService.queryBuilder("\"project:Archived\"", ObjectType.PROCESS, true, false, false);
+        query = filterService.queryBuilder("\"project:Inactive\"", ObjectType.PROCESS, true, false, false);
         processDTOS = processService.findByQuery(query, true);
-        assertEquals("Incorrect amount of processes for project with title containing 'Archived'!", 1,
+        assertEquals("Incorrect amount of processes for project with title containing 'Inactive'!", 1,
                 processDTOS.size());
 
-        query = filterService.queryBuilder("\"project:First Archived\"", ObjectType.PROCESS, true, false, false);
+        query = filterService.queryBuilder("\"project:First Inactive\"", ObjectType.PROCESS, true, false, false);
         processDTOS = processService.findByQuery(query, true);
-        assertEquals("Incorrect amount of processes for project with with title containing 'First Archived'!", 0,
+        assertEquals("Incorrect amount of processes for project with with title containing 'First Inactive'!", 0,
                 processDTOS.size());
 
         query = filterService.queryBuilder("\"project:First project\"", ObjectType.PROCESS, true, false, false);
@@ -295,13 +295,13 @@ public class FilterServiceIT {
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
         assertEquals("Incorrect amount of tasks for project with title containing 'First'!", 3, taskDTOS.size());
 
-        query = filterService.queryBuilder("\"project:Archived\"", ObjectType.TASK, true, false, false);
+        query = filterService.queryBuilder("\"project:Inactive\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of tasks for project with title containing 'Archived'!", 2, taskDTOS.size());
+        assertEquals("Incorrect amount of tasks for project with title containing 'Inactive'!", 2, taskDTOS.size());
 
-        query = filterService.queryBuilder("\"project:First Archived\"", ObjectType.TASK, true, false, false);
+        query = filterService.queryBuilder("\"project:First Inactive\"", ObjectType.TASK, true, false, false);
         taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of tasks for project with title containing 'First Archived'!", 0,
+        assertEquals("Incorrect amount of tasks for project with title containing 'First Inactive'!", 0,
                 taskDTOS.size());
 
         query = filterService.queryBuilder("\"project:First project\"", ObjectType.TASK, true, false, false);

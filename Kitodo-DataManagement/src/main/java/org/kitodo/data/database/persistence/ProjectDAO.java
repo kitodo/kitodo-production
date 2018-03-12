@@ -53,7 +53,7 @@ public class ProjectDAO extends BaseDAO<Project> {
 
     /**
      * Get all projects sorted by title.
-     * 
+     *
      * @return all projects sorted by title as Project objects
      */
     public List<Project> getAllProjectsSortedByTitle() {
@@ -61,11 +61,11 @@ public class ProjectDAO extends BaseDAO<Project> {
     }
 
     /**
-     * Get all not archived projects sorted by title.
-     * 
-     * @return all not archived projects sorted by title as Project objects
+     * Get all active projects sorted by title.
+     *
+     * @return all active projects sorted by title as Project objects
      */
-    public List<Project> getAllNotArchivedProjectsSortedByTitle() {
-        return getByQuery("FROM Project WHERE projectIsArchived = 0 ORDER BY title ASC");
+    public List<Project> getAllActiveProjectsSortedByTitle() {
+        return getByQuery("FROM Project WHERE active = 1 ORDER BY title ASC");
     }
 }

@@ -663,7 +663,7 @@ public class MockDatabase {
         serviceManager.getUserService().save(secondUser);
 
         Project thirdProject = new Project();
-        thirdProject.setTitle("Archived project");
+        thirdProject.setTitle("Inactive project");
         localDate = new LocalDate(2014, 11, 10);
         thirdProject.setStartDate(localDate.toDate());
         localDate = new LocalDate(2016, 9, 15);

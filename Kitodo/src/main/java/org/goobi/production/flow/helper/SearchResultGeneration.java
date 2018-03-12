@@ -36,7 +36,7 @@ public class SearchResultGeneration {
 
     private String filter;
     private boolean showClosedProcesses;
-    private boolean showArchivedProjects;
+    private boolean showInactiveProjects;
     private static ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(SearchResultGeneration.class);
 
@@ -47,13 +47,13 @@ public class SearchResultGeneration {
      *            String
      * @param showClosedProcesses
      *            boolean
-     * @param showArchivedProjects
+     * @param showInactiveProjects
      *            boolean
      */
-    public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showArchivedProjects) {
+    public SearchResultGeneration(String filter, boolean showClosedProcesses, boolean showInactiveProjects) {
         this.filter = filter;
         this.showClosedProcesses = showClosedProcesses;
-        this.showArchivedProjects = showArchivedProjects;
+        this.showInactiveProjects = showInactiveProjects;
     }
 
     /**
@@ -77,9 +77,9 @@ public class SearchResultGeneration {
         if (!this.showClosedProcesses) {
             query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));
         }
-        if (!this.showArchivedProjects) {
+        if (!this.showInactiveProjects) {
             try {
-                query.mustNot(serviceManager.getProcessService().getQueryProjectArchived(true));
+                query.mustNot(serviceManager.getProcessService().getQueryProjectActive(false));
             } catch (DataException e) {
                 logger.error(e);
             }

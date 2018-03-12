@@ -74,7 +74,8 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
         BoolQueryBuilder query;
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(serviceManager.getProcessService().findBySort(false, false, true, sort, offset, size), false);
+            return convertJSONObjectsToDTOs(
+                serviceManager.getProcessService().findBySort(false, true, true, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
@@ -96,7 +97,7 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
         if (Objects.equals(filters, null) || filters.isEmpty()) {
             query = new BoolQueryBuilder();
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
             query.must(getQueryTemplate(true));
         } else {
             query = readFilters(filterMap);
@@ -120,8 +121,8 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
             if (!form.isShowClosedProcesses()) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
-            if (!form.isShowArchivedProjects()) {
-                query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+            if (!form.isShowInactiveProjects()) {
+                query.must(serviceManager.getProcessService().getQueryProjectActive(true));
             }
         }
         return query;

@@ -105,7 +105,7 @@ public class SearchForm {
 
         List<Project> projects;
         if (restriction > 2) {
-            projects = serviceManager.getProjectService().getAllNotArchivedProjectsSortedByTitle();
+            projects = serviceManager.getProjectService().getAllActiveProjectsSortedByTitle();
         } else {
             projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
         }

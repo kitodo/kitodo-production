@@ -202,10 +202,10 @@
                                                         <h:outputText value="#{msgs.id}: "/>
                                                         <h:inputText value="#{SearchForm.idin}" style="width:690px"/>
 
-                                                        <h:outputText value="#{msgs.showArchivedProjects}:"
+                                                        <h:outputText value="#{msgs.showInactiveProjects}:"
                                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
                                                         <h:selectBooleanCheckbox
-                                                                value="#{ProzessverwaltungForm.showArchivedProjects}"
+                                                                value="#{ProzessverwaltungForm.showInactiveProjects}"
                                                                 rendered="#{(LoginForm.maximaleBerechtigung == 1)}"/>
 
                                                         <h:outputText value="#{msgs.showClosedProcesses}:"/>

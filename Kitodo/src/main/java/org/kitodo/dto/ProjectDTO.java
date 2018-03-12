@@ -26,7 +26,6 @@ public class ProjectDTO extends BaseDTO {
     private String metsRightsOwner = "";
     private Integer numberOfPages;
     private Integer numberOfVolumes;
-    private Boolean projectIsArchived = false;
     private Boolean active = true;
     private List<ProcessDTO> processes;
     private List<UserDTO> users;

@@ -153,7 +153,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         BoolQueryBuilder query;
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(findBySort(false, false, false, sort, offset, size), false);
+            return convertJSONObjectsToDTOs(findBySort(false, true, false, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
@@ -175,7 +175,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (Objects.equals(filters, null) || filters.isEmpty()) {
             query = new BoolQueryBuilder();
             query.must(getQuerySortHelperStatus(false));
-            query.must(getQueryProjectArchived(false));
+            query.must(getQueryProjectActive(true));
             query.must(templateService.getQueryTemplate(false));
         } else {
             query = readFilters(filterMap);
@@ -200,8 +200,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!form.isShowClosedProcesses()) {
                 query.must(getQuerySortHelperStatus(false));
             }
-            if (!form.isShowArchivedProjects()) {
-                query.must(getQueryProjectArchived(false));
+            if (!form.isShowInactiveProjects()) {
+                query.must(getQueryProjectActive(true));
             }
         }
         return query;
@@ -591,20 +591,20 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
-    List<JSONObject> findBySort(boolean closed, boolean archived, boolean template, String sort, Integer offset,
+    List<JSONObject> findBySort(boolean closed, boolean active, boolean template, String sort, Integer offset,
             Integer size) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryProjectActive(active));
         query.must(templateService.getQueryTemplate(template));
         return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
-    private List<JSONObject> findBySortHelperStatusProjectArchivedAndTemplate(boolean closed, boolean archived,
+    private List<JSONObject> findBySortHelperStatusProjectActiveAndTemplate(boolean closed, boolean active,
             boolean template, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryProjectActive(active));
         query.must(templateService.getQueryTemplate(template));
         return searcher.findDocuments(query.toString(), sort);
     }
@@ -617,16 +617,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findByArchivedAndTemplate(boolean archived, boolean template, String sort)
+    private List<JSONObject> findByActiveAndTemplate(boolean active, boolean template, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryProjectArchived(archived));
+        query.must(getQueryProjectActive(active));
         query.must(templateService.getQueryTemplate(template));
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findByArchived(boolean archived, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectArchived(archived).toString(), sort);
+    private List<JSONObject> findByActive(boolean active, String sort) throws DataException {
+        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
     }
 
     List<ProcessDTO> findNotTemplateByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
@@ -658,14 +658,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get query for archived projects.
+     * Get query for active projects.
      *
-     * @param archived
+     * @param active
      *            true or false
      * @return query as QueryBuilder
      */
-    public QueryBuilder getQueryProjectArchived(boolean archived) throws DataException {
-        List<ProjectDTO> projects = serviceManager.getProjectService().findByArchived(archived, true);
+    public QueryBuilder getQueryProjectActive(boolean active) throws DataException {
+        List<ProjectDTO> projects = serviceManager.getProjectService().findByActive(active, true);
         return createSetQuery("project.id", serviceManager.getFilterService().collectIds(projects), true);
     }
 
@@ -2420,14 +2420,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find all not archived processes sorted according to sort query.
+     * Find all processes of active projects, sorted according to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findNotArchivedProcesses(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByArchived(false, sort), false);
+    public List<ProcessDTO> findProcessesOfActiveProjects(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
     }
 
     /**
@@ -2443,27 +2443,26 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find not closed and not archived processes sorted according to sort
-     * query.
+     * Find processes of open and active projects, sorted according to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findNotClosedAndNotArchivedProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, false, sort),
+    public List<ProcessDTO> findOpenAndActiveProcessesWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActiveAndTemplate(false, true, false, sort),
                 false);
     }
 
     /**
-     * Find not archived templates sorted according to sort query.
+     * Find templates of active projects, sorted according to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findNotArchivedTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByArchivedAndTemplate(false, true, sort), false);
+    public List<ProcessDTO> findTemplatesOfActiveProjects(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByActiveAndTemplate(true, true, sort), false);
     }
 
     /**
@@ -2479,27 +2478,27 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find all not archived processes which are not a template sorted according
-     * to sort query.
+     * Find all processes of active projects that are not templates, sorted
+     * according to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objectss
      */
-    public List<ProcessDTO> findAllNotArchivedWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByArchivedAndTemplate(false, false, sort), false);
+    public List<ProcessDTO> findAllActiveWithoutTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByActiveAndTemplate(true, false, sort), false);
     }
 
     /**
-     * Find all not closed and not archived templates sorted according to sort
+     * Find all templates of open and active projects, sorted according to sort
      * query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findAllNotClosedAndNotArchivedTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectArchivedAndTemplate(false, false, true, sort),
+    public List<ProcessDTO> findAllOpenAndActiveTemplates(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActiveAndTemplate(false, true, true, sort),
                 false);
     }
 
