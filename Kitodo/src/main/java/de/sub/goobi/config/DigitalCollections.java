@@ -30,6 +30,11 @@ public class DigitalCollections {
     private static List<String> digitalCollections;
     private static List<String> possibleDigitalCollection;
 
+    /**
+     * Get list of digital collections.
+     * 
+     * @return list of digital collections as String
+     */
     public static List<String> getDigitalCollections() {
         if (digitalCollections == null) {
             digitalCollections = new ArrayList<>();
@@ -37,6 +42,11 @@ public class DigitalCollections {
         return digitalCollections;
     }
 
+    /**
+     * Get list of possible digital collections.
+     * 
+     * @return list of possible digital collections as String
+     */
     public static List<String> getPossibleDigitalCollection() {
         if (possibleDigitalCollection == null) {
             possibleDigitalCollection = new ArrayList<>();
@@ -45,7 +55,7 @@ public class DigitalCollections {
     }
 
     /**
-     * Get possible digital collections for process.
+     * Prepare digital collections and possible digital collections for process.
      *
      * @param process
      *            object
@@ -59,7 +69,7 @@ public class DigitalCollections {
 
         Element root = getRoot();
 
-        /* alle Projekte durchlaufen */
+        // run through all project elements
         List<Element> projects = root.getChildren();
         for (Element project : projects) {
             // collect default collections
@@ -83,21 +93,21 @@ public class DigitalCollections {
     }
 
     private static Element getRoot() throws JDOMException, IOException {
-        String filename = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
-                FileNames.DIGITAL_COLLECTIONS_FILE);
-        if (!(new File(filename).exists())) {
-            throw new FileNotFoundException("File not found: " + filename);
+        String fileName = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
+            FileNames.DIGITAL_COLLECTIONS_FILE);
+        if (!(new File(fileName).exists())) {
+            throw new FileNotFoundException("File not found: " + fileName);
         }
 
         // import file and determine root
         SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(new File(filename));
+        Document doc = builder.build(new File(fileName));
         return doc.getRootElement();
     }
 
     @SuppressWarnings("unchecked")
     private static void iterateOverAllProjects(Element project, Process process) {
-        // run through the projects
+        // run through all project name elements
         List<Element> projectNames = project.getChildren("name");
         for (Element projectName : projectNames) {
             // all all collections to list
