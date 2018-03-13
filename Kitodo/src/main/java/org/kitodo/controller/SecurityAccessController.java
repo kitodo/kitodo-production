@@ -23,8 +23,8 @@ public class SecurityAccessController {
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
 
     /**
-     * Checks if the current user has a specified authority globally or in relation
-     * to a project id.
+     * Checks if the current user has a specified authority globally or for a
+     * project.
      *
      * @param authorityTitle
      *            The authority title.
@@ -32,13 +32,27 @@ public class SecurityAccessController {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForProjectOrGlobally(String authorityTitle, int projectId) {
-        return securityAccessService.hasAuthorityForProject(authorityTitle, projectId);
+    public boolean hasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
+        return securityAccessService.hasAuthorityGlobalOrForProject(authorityTitle, projectId);
     }
 
     /**
-     * Checks if the current user has a specified authority globally or in relation
-     * to a client id.
+     * Checks if the current user is admin or has a specified authority globally or
+     * for a project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param projectId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForProject(authorityTitle, projectId);
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally or for a client
+     * id.
      *
      * @param authorityTitle
      *            The authority title.
@@ -46,8 +60,22 @@ public class SecurityAccessController {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForClientOrGlobally(String authorityTitle, int clientId) {
-        return securityAccessService.hasAuthorityForClient(authorityTitle, clientId);
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
+        return securityAccessService.hasAuthorityGlobalOrForClient(authorityTitle, clientId);
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
+     * for a client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param clientId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForClient(authorityTitle, clientId);
     }
 
     /**
@@ -57,8 +85,64 @@ public class SecurityAccessController {
      *            The authority title.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityGlobally(String authorityTitle) {
+    public boolean hasAuthorityGlobal(String authorityTitle) {
         return securityAccessService.hasGlobalAuthority(authorityTitle);
     }
 
+    /**
+     * Checks if the current user is admin or has a specified authority globally.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobal(String authorityTitle) {
+        return securityAccessService.isAdminOrHasGlobalAuthority(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally, for any client
+     * or for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAuthorityForAny(String authorityTitle) {
+        return securityAccessService.hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally,
+     * for any client or for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority or is admin.
+     */
+    public boolean isAdminOrHasAuthorityForAny(String authorityTitle) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user is admin or has one of the specified authorities
+     * globally, for any client or for any project.
+     *
+     * @param authorityTitles
+     *            The authority titles.
+     * @return True if the current user has one of the specified authorities or is
+     *         admin.
+     */
+    public boolean isAdminOrHasAnyAuthorityForAny(String authorityTitles) {
+        return securityAccessService.isAdminOrHasAnyAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitles);
+    }
+
+    /**
+     * Checks if the current user is admin.
+     * 
+     * @return True if the current user is admin.
+     */
+    public boolean isAdmin() {
+        return securityAccessService.isAdmin();
+    }
 }

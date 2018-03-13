@@ -19,12 +19,15 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
-        <h:form id="newElementForm">
+        <h:form id="newElementForm"
+                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addUser, addUserGroup')}">
             <p:menuButton value="#{msgs.newElement}" id="newElementButton" icon="fa fa-plus-circle fa-lg"
                           iconPos="right" styleClass="button-filled-green">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUser')}"
                             action="#{BenutzerverwaltungForm.newUser}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
                             action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.Neu}"
                             icon="ui-icon-plusthick"/>
@@ -35,10 +38,12 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
             <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
-            <p:tab title="#{msgs.benutzerverwaltung}">
+            <p:tab title="#{msgs.benutzerverwaltung}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUsers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.benutzergruppen}">
+            <p:tab title="#{msgs.benutzergruppen}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUserGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.ldapgruppen}">

@@ -74,31 +74,62 @@
                             <li id="dashboard-menu-header">
                                 <h3>#{msgs.dashboard}
                                     <h:outputText
-                                        rendered="#{SecurityAccessController.hasAuthorityGlobally('admin')}">
+                                        rendered="#{SecurityAccessController.isAdmin()}">
                                         <i>(Admin)</i>
                                     </h:outputText>
                                 </h3>
                             </li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.schritte}" id="linkTasks" outcome="tasks"><i
-                                class="fa fa-bell fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" id="linkProcesses"
-                                                             outcome="processes"><i
-                                class="fa fa-hourglass-3 fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.projekte}" id="linkProjects"
-                                                             outcome="projects"><i
-                                class="fa fa-folder-open fa-lg"/></h:link></li>
+
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllTasks')}">
+                                <li class="nav-pic-text"><h:link value="#{msgs.schritte}" id="linkTasks"
+                                                                 outcome="tasks"><i
+                                    class="fa fa-bell fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProcesses')}">
+                                <li class="nav-pic-text"><h:link value="#{msgs.prozesse}" id="linkProcesses"
+                                                                 outcome="processes"><i
+                                    class="fa fa-hourglass-3 fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
+                                <li class="nav-pic-text"><h:link value="#{msgs.projekte}" id="linkProjects"
+                                                                 outcome="projects"><i
+                                    class="fa fa-folder-open fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllUsers, viewAllUserGroups')}">
                             <li class="nav-pic-text"><h:link value="#{msgs.benutzer}" id="linkUsers" outcome="users"><i
                                 class="fa fa-user fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.modules}" id="linkModules"
-                                                             outcome="newTaskManager"><i
-                                class="fa fa-puzzle-piece fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.clients}" id="linkClients" outcome="clients"><i
-                                class="fa fa-suitcase fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.help}" id="linkHelp" outcome="help"><i
-                                class="fa fa-life-ring fa-lg"/></h:link></li>
-                            <li class="nav-pic-text"><h:link value="#{msgs.indexing}" id="linkIndexing"
-                                                             outcome="indexingPage"><i
-                                class="fa fa-database fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="true">
+                                <li class="nav-pic-text"><h:link value="#{msgs.modules}" id="linkModules"
+                                                                 outcome="newTaskManager"><i
+                                    class="fa fa-puzzle-piece fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup
+                                rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllClients')}">
+                                <li class="nav-pic-text"><h:link value="#{msgs.clients}" id="linkClients"
+                                                                 outcome="clients"><i
+                                    class="fa fa-suitcase fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="true">
+                                <li class="nav-pic-text"><h:link value="#{msgs.help}" id="linkHelp" outcome="help"><i
+                                    class="fa fa-life-ring fa-lg"/></h:link></li>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="true">
+                                <li class="nav-pic-text"><h:link value="#{msgs.indexing}" id="linkIndexing"
+                                                                 outcome="indexingPage"><i
+                                    class="fa fa-database fa-lg"/></h:link></li>
+                            </h:panelGroup>
                         </ul>
                     </li>
                     <li>
@@ -107,7 +138,7 @@
                         <h:form id="logout-form">
                             <ul id="nav-user">
                                 <li><h3>#{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}
-                                    <h:outputText rendered="#{SecurityAccessController.hasAuthorityGlobally('admin')}">
+                                    <h:outputText rendered="#{SecurityAccessController.isAdmin()}">
                                         <i>(Admin)</i>
                                     </h:outputText>
                                 </h3></li>

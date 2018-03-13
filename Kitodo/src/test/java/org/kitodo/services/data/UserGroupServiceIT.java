@@ -14,7 +14,6 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -82,9 +81,9 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        boolean condition = userGroup.getTitle().equals("Admin")
-                && userGroup.getGlobalAuthorities().get(0).getTitle().equals("admin");
-        assertTrue("User group was not found in database!", condition);
+        assertEquals("User group title is not matching", "Admin", userGroup.getTitle());
+        assertEquals("User group first authorities title is not matching", "viewAllClients",
+            userGroup.getGlobalAuthorities().get(0).getTitle());
     }
 
     @Test
@@ -173,14 +172,14 @@ public class UserGroupServiceIT {
     @Test
     public void shouldFindByAuthorization() throws Exception {
 
-        List<JSONObject> userGroups = userGroupService.findByAuthorizationTitle("admin");
+        List<JSONObject> userGroups = userGroupService.findByAuthorizationTitle("viewAllClients");
         Integer actual = userGroups.size();
-        Integer expected = 1;
+        Integer expected = 2;
         assertEquals("User group was not found in index!", expected, actual);
 
-        userGroups = userGroupService.findByAuthorizationTitle("user");
+        userGroups = userGroupService.findByAuthorizationTitle("viewAllUsers");
         actual = userGroups.size();
-        expected = 2;
+        expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
 
         userGroups = userGroupService.findByAuthorizationTitle("notExisting");
@@ -218,16 +217,17 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        List<String> expected = Arrays.asList("admin", "manager", "user");
-        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
+        int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
+        int expected = 36;
+        assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
     @Test
     public void shouldGetAuthorizations() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         List<Authority> actual = userGroup.getGlobalAuthorities();
-        assertEquals("Permission strings doesn't match to given plain text!", "admin", actual.get(0).getTitle());
+        assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients",
+            actual.get(0).getTitle());
     }
 
     @Test
@@ -245,7 +245,7 @@ public class UserGroupServiceIT {
         assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
 
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
-        assertEquals("Incorrect authorization!", "admin", authorityDTO.getTitle());
+        assertEquals("Incorrect authorization!", "viewAllClients", authorityDTO.getTitle());
     }
 
     @Test
@@ -266,14 +266,8 @@ public class UserGroupServiceIT {
         userGroup = userGroupService.getById(1);
 
         List<String> actual = userGroupService.getAuthorizationsAsString(userGroup);
-        List<String> expected = Arrays.asList("admin", "manager", "user", "newAuthorization");
-        assertEquals("Permission strings doesn't match to given plain text!", expected, actual);
-
-        authorities = userGroup.getGlobalAuthorities();
-
-        assertEquals("Permission strings doesn't match to given plain text!", "newAuthorization",
-            authorities.get(3).getTitle());
-
+        assertTrue("Title of Authority was not found in user group authorities!",
+            actual.contains(authority.getTitle()));
     }
 
 }

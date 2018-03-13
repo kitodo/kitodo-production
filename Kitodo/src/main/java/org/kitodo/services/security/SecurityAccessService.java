@@ -40,7 +40,7 @@ public class SecurityAccessService {
         return instance;
     }
 
-    private Collection<? extends GrantedAuthority> getAuthorities() {
+    private Collection<? extends GrantedAuthority> getAuthoritiesOfCurrentAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             return authentication.getAuthorities();
@@ -50,8 +50,8 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has a specified authority globally or in relation
-     * to a project id.
+     * Checks if the current user has a specified authority globally or for a
+     * project.
      * 
      * @param authorityTitle
      *            The authority title.
@@ -59,7 +59,7 @@ public class SecurityAccessService {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
+    public boolean hasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
         if (hasGlobalAuthority(authorityTitle)) {
             return true;
         } else {
@@ -69,8 +69,21 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has a specified authority globally or in relation
-     * to a client id.
+     * Checks if the current user is admin or has a specified authority globally or
+     * for a project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param projectId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForProject(String authorityTitle, int projectId) {
+        return isAdmin() || hasAuthorityGlobalOrForProject(authorityTitle, projectId);
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally or for client.
      *
      * @param authorityTitle
      *            The authority title.
@@ -78,7 +91,7 @@ public class SecurityAccessService {
      *            The project id.
      * @return True if the current user has the specified authority.
      */
-    public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
+    public boolean hasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
         if (hasGlobalAuthority(authorityTitle)) {
             return true;
         } else {
@@ -87,10 +100,38 @@ public class SecurityAccessService {
         }
     }
 
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
+     * for a client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @param clientId
+     *            The project id.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForClient(String authorityTitle, int clientId) {
+        return isAdmin() || hasAuthorityGlobalOrForClient(authorityTitle, clientId);
+    }
+
     private boolean hasAuthority(String authorityTitle) {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorityTitle);
-        Collection<? extends GrantedAuthority> authorities = getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
         return authorities.contains(authority);
+    }
+
+    private String[] getStringArray(String strings) {
+        strings = strings.replaceAll("\\s+", ""); // remove whitespaces
+        return strings.split(",");
+    }
+
+    /**
+     * Checks if the current user is admin.
+     * 
+     * @return True if the current user has the admin authority
+     */
+    public boolean isAdmin() {
+        return hasGlobalAuthority("admin");
     }
 
     /**
@@ -104,4 +145,69 @@ public class SecurityAccessService {
         return hasAuthority(authorityTitle + "_GLOBAL");
     }
 
+    /**
+     * Checks if the current user is admin or has a specified authority globally.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user is admin or has the specified authority
+     *         globally.
+     */
+    public boolean isAdminOrHasGlobalAuthority(String authorityTitle) {
+        return isAdmin() || hasGlobalAuthority(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally, for any client
+     * or for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority globally, for
+     *         any client or for any project.
+     */
+    public boolean hasAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitle) {
+        if (hasGlobalAuthority(authorityTitle)) {
+            return true;
+        }
+        if (hasAuthority(authorityTitle + "_CLIENT_ANY")) {
+            return true;
+        }
+        return hasAuthority(authorityTitle + "_PROJECT_ANY");
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally,
+     * for any client or for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user is admin or has the specified authority for
+     *         any client or project.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitle) {
+        return isAdmin() || hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has one of the specified authorities globally, for
+     * any client or for any project.
+     *
+     * @param authorityTitlesComplete
+     *            The authority titles separated with commas.
+     * @return True if the current user is admin or has any of the specified
+     *         authorities for any client or project.
+     */
+    public boolean isAdminOrHasAnyAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitlesComplete) {
+        if (isAdmin()) {
+            return true;
+        }
+        String[] authorityTitles = getStringArray(authorityTitlesComplete);
+        for (String authorityTitle : authorityTitles) {
+            if (hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

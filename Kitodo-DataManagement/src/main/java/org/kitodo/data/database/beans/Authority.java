@@ -49,6 +49,31 @@ public class Authority extends BaseIndexedBean {
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     /**
+     * The constructor for setting title and assignables.
+     * 
+     * @param title
+     *            The title.
+     * @param globalAssignable
+     *            True if it should be assignable global.
+     * @param clientAssignable
+     *            True if it should be assignable to clients.
+     * @param projectAssignable
+     *            True if it should be assignable to projects.
+     */
+    public Authority(String title, boolean globalAssignable, boolean clientAssignable, boolean projectAssignable) {
+        this.title = title;
+        this.globalAssignable = globalAssignable;
+        this.clientAssignable = clientAssignable;
+        this.projectAssignable = projectAssignable;
+    }
+
+    /**
+     * The normal constructor.
+     */
+    public Authority() {
+    }
+
+    /**
      * Gets the title.
      *
      * @return The title.

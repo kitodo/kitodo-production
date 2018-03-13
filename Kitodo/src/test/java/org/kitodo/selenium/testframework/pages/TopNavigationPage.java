@@ -16,7 +16,6 @@ import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
-import org.openqa.selenium.By;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -179,12 +178,36 @@ public class TopNavigationPage {
     }
 
     /**
-     * Hovers dashboard menu and checks menu header if "Admin" is displayed.
+     * Hovers dashboard menu and checks menu header if all buttons are displayed.
      * 
      * @return True if "Admin" is displayed.
      */
-    public boolean isShowingAdmin() throws InterruptedException {
+    public boolean isShowingAllLinks() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
-        return dashboardMenuHeader.findElement(By.tagName("i")).getText().contains("Admin");
+        if (!linkHelp.isDisplayed()) {
+            return false;
+        }
+        if (!linkClients.isDisplayed()) {
+            return false;
+        }
+        if (!linkIndexing.isDisplayed()) {
+            return false;
+        }
+        if (!linkModules.isDisplayed()) {
+            return false;
+        }
+        if (!linkProjects.isDisplayed()) {
+            return false;
+        }
+        if (!linkTasks.isDisplayed()) {
+            return false;
+        }
+        if (!linkUsers.isDisplayed()) {
+            return false;
+        }
+        if (!linkProcesses.isDisplayed()) {
+            return false;
+        }
+        return true;
     }
 }

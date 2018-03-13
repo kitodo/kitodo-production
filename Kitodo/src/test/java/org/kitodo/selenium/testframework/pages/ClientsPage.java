@@ -12,6 +12,9 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+
+import java.util.List;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -47,11 +50,46 @@ public class ClientsPage {
         return Browser.getCurrentUrl().contains("clients");
     }
 
+    /**
+     * Checks if the browser is currently not at clients page.
+     *
+     * @return True if browser is not at clients page.
+     */
+    public boolean isNotAt() {
+        return !isAt();
+    }
+
     public int countListedClients() throws Exception {
         if (!isAt()) {
             goTo();
         }
         return getRowsOfTable(clientsTable).size();
+    }
+
+    /**
+     * Goes to edit page for creating a new user.
+     *
+     * @return The user edit page.
+     */
+    public ClientEditPage createNewClient() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newClientButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        return Pages.getClientEditPage();
+    }
+
+    /**
+     * Returns a list of all client titles which were displayed on clients page.
+     *
+     * @return The list of client titles
+     */
+    public List<String> getListOfClientNames() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(clientsTable, 0);
     }
 
 }
