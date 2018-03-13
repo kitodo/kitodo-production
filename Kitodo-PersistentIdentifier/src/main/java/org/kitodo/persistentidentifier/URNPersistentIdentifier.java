@@ -118,7 +118,10 @@ public class URNPersistentIdentifier implements PersistentIdentifierInterface {
             }
         }
         int lastDigit = ((charCode < 10) ? (charCode) : (charCode % 10));
-        int checkDigit = (sum / lastDigit) % 10;
-        return String.valueOf(checkDigit);
+        if (lastDigit != 0) {
+            int checkDigit = (sum / lastDigit) % 10;
+            return String.valueOf(checkDigit);
+        }
+        return "";
     }
 }
