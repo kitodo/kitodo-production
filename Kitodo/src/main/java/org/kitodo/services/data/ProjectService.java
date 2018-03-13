@@ -267,7 +267,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        //TODO: does frontend list will need list of users?
+        //TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         return projectDTO;
     }

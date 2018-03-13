@@ -742,10 +742,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
         Integer project = getIntegerPropertyForDTO(jsonObject, "project.id");
         processDTO.setProject(serviceManager.getProjectService().findById(project));
-        //TODO: check if this is displayed in frontend
+        //TODO: it looks it is not needed as batches will be displayed in workflow tab
         //processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
-        //TODO: are tasks displayed in the lists of processes/templates? - right now it displays only status
+        //TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO));
