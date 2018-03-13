@@ -75,8 +75,8 @@ public class BatchTypeTest {
         HttpEntity document = batchType.createDocument(batch);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\","
-                        + "\"processes\":[{\"id\":1,\"title\":\"First\"},{\"id\":2,\"title\":\"Second\"}]}");
+                .parse("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":1,\"title\":\"First\","
+                        + "\"template\":false},{\"id\":2,\"title\":\"Second\",\"template\":false}]}");
         assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
 
         batch = prepareData().get(1);

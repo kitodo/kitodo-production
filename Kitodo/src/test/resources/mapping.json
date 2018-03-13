@@ -51,6 +51,9 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "template": {
+                            "type": "boolean"
                         }
                     }
                 },
@@ -179,6 +182,9 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "template": {
+                            "type": "boolean"
                         }
                     }
                 },

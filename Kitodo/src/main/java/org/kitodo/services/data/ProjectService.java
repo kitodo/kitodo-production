@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StepInformation;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -41,6 +42,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -239,15 +241,32 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
         projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
         projectDTO.setActive(getBooleanPropertyForDTO(projectJSONObject, "active"));
+        projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }
         return projectDTO;
     }
 
+    private List<ProcessDTO> getTemplatesForProjectDTO(JSONObject jsonObject) {
+        List<ProcessDTO> processDTOS = new ArrayList<>();
+        // TODO: jsonObject.get("processes") returns null even if there is a list of objects
+        /*JSONArray jsonArray = (JSONArray) jsonObject.get("processes");
+
+        for (Object singleObject : jsonArray) {
+            JSONObject processJson = (JSONObject) singleObject;
+            boolean template = getBooleanPropertyForDTO(processJson, "template");
+            if (template) {
+                ProcessDTO processDTO = new ProcessDTO();
+                processDTO.setId(getIntegerPropertyForDTO(processJson, "id"));
+                processDTO.setTitle(getStringPropertyForDTO(processJson, "title"));
+                processDTOS.add(processDTO);
+            }
+        }*/
+        return processDTOS;
+    }
+
     private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        //TODO: frontend needs only list of templates, not processes, change it
-        projectDTO.setProcesses(new ArrayList<>());
         //TODO: does frontend list will need list of users?
         projectDTO.setUsers(new ArrayList<>());
         return projectDTO;
