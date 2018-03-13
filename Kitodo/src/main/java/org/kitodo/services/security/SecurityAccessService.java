@@ -209,12 +209,29 @@ public class SecurityAccessService {
      *         any client or for any project.
      */
     public boolean hasAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitle) {
-        if (hasAuthorityGlobal(authorityTitle)) {
-            return true;
-        }
-        if (hasAuthority(authorityTitle + "_CLIENT_ANY")) {
-            return true;
-        }
+        return hasAuthorityGlobal(authorityTitle) || hasAuthorityForAnyClient(authorityTitle)
+                || hasAuthorityForAnyProject(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has a specified authority for any client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority for any client.
+     */
+    public boolean hasAuthorityForAnyClient(String authorityTitle) {
+        return hasAuthority(authorityTitle + "_CLIENT_ANY");
+    }
+
+    /**
+     * Checks if the current user has a specified authority for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority for any project.
+     */
+    public boolean hasAuthorityForAnyProject(String authorityTitle) {
         return hasAuthority(authorityTitle + "_PROJECT_ANY");
     }
 
