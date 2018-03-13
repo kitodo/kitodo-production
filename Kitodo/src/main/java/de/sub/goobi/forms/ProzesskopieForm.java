@@ -50,10 +50,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.Parameters;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.PluginLoader;
 import org.jdom.JDOMException;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -385,35 +385,63 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<SelectItem> processTemplates = new ArrayList<>();
 
-        // Einschränkung auf bestimmte Projekte, wenn kein Admin
-        // TODO: remove it after method getMaximaleBerechtigung() is gone
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        List<Process> processes = serviceManager.getProcessService().getProcessTemplates();
-        if (loginForm != null) {
-            User currentUser = loginForm.getMyBenutzer();
-            if (currentUser != null) {
-                /*
-                 * wenn die maximale Berechtigung nicht Admin ist, dann nur
-                 * bestimmte
-                 */
-                if (loginForm.getMaximaleBerechtigung() > 1) {
-                    ArrayList<Integer> projectIds = new ArrayList<>();
-                    for (Project project : currentUser.getProjects()) {
-                        projectIds.add(project.getId());
-                    }
-                    if (projectIds.size() > 0) {
-                        processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
-                    }
-                }
+        List<Process> processes = new ArrayList<>();
+        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal("viewAllTemplates")) {
+            processes = serviceManager.getProcessService().getProcessTemplates();
+        } else if (serviceManager.getSecurityAccessService().hasAuthorityGlobal("viewAllAssignedTemplates")) {
+            User currentUser = null;
+            try {
+                currentUser = serviceManager.getUserService().getAuthenticatedUser();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
+            ArrayList<Integer> projectIds = new ArrayList<>();
+
+            for (Project project : currentUser.getProjects()) {
+                projectIds.add(project.getId());
+            }
+            processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
         }
 
+        List<SelectItem> processTemplates = new ArrayList<>();
         for (Process process : processes) {
             processTemplates.add(new SelectItem(process.getId(), process.getTitle(), null));
         }
         return processTemplates;
+
+        // Einschränkung auf bestimmte Projekte, wenn kein Admin
+        // TODO: remove it after method getMaximaleBerechtigung() is gone
+        // LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+        // List<Process> processes =
+        // serviceManager.getProcessService().getProcessTemplates();
+        // if (loginForm != null) {
+        // User currentUser = loginForm.getMyBenutzer();
+        // if (currentUser != null) {
+        // /*
+        // * wenn die maximale Berechtigung nicht Admin ist, dann nur
+        // * bestimmte
+        // */
+        // if
+        // (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal("viewAllTemplates"))
+        // {
+        // ArrayList<Integer> projectIds = new ArrayList<>();
+        // for (Project project : currentUser.getProjects()) {
+        // projectIds.add(project.getId());
+        // }
+        // if (projectIds.size() > 0) {
+        // processes =
+        // serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
+        // }
+        // }
+        // }
+        // }
+        //
+        // for (Process process : processes) {
+        // processTemplates.add(new SelectItem(process.getId(), process.getTitle(),
+        // null));
+        // }
+
     }
 
     /**

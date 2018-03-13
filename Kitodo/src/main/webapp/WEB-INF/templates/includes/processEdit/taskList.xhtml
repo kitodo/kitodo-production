@@ -27,7 +27,7 @@
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
                              id="orderUp"
                              update="editForm:tabs:taskTable"
-                             rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                              oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
@@ -35,7 +35,7 @@
             <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
                              id="orderDown"
                              update="editForm:tabs:taskTable"
-                             rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                              oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
@@ -55,7 +55,7 @@
                                 title="#{item.processingStatusEnum.title}"
                                 alt="status"/>
                 <p:panelGrid columns="1" cellpadding="0" cellspacing="0" style="background: transparent"
-                             rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}">
                     <!-- Set workflow state to next step -->
                     <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
                                    id="taskStatusUp"
@@ -85,14 +85,15 @@
         </p:column>
 
         <!-- actions -->
-        <p:column rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
-                  headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
+                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.process.project.client.id,item.process.project.id)}"
                            title="#{msgs.loeschen}"
                            action="#{ProzessverwaltungForm.removeTask}"
                            immediate="true"
@@ -146,9 +147,9 @@
 
     <p:commandButton action="#{ProzessverwaltungForm.newTask}"
                      value="#{msgs.schrittHinzufuegen}"
+                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      styleClass="button-filled-green"
                      id="addStepButton"/>
-
 </ui:composition>
