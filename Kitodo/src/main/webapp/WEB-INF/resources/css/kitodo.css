@@ -755,21 +755,8 @@ footer {
     box-sizing: border-box;
 }
 
-.ui-helper-clearfix::after {
-    display: none;
-}
-
-.ui-picklist .ui-picklist-list {
-    width: 100%;
-}
-
-.ui-picklist .ui-picklist-buttons {
-    width: 30px;
-}
-
-.ui-panelgrid-cell .ui-picklist {
-    width: 100%;
-    box-sizing: border-box;
+.ui-picklist.ui-picklist-responsive .ui-picklist-list-wrapper {
+    width: 45%;
 }
 
 .ui-commandlink.button-blue,
