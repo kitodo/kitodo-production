@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -416,16 +415,15 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private BoolQueryBuilder limitToUserAccessRights() {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
         UserDTO currentUser = null;
         try {
-            if (loginForm != null && loginForm.getMyBenutzer() != null) {
-                currentUser = serviceManager.getUserService().findById(loginForm.getMyBenutzer().getId());
-            }
-        } catch (DataException e) {
+            currentUser = serviceManager.getUserService().findAuthenticatedUser();
+
+        } catch (DataException | DAOException e) {
             logger.error(e);
         }
-        if (currentUser != null && loginForm.getMaximaleBerechtigung() > 1) {
+        // TODO Change to check the corresponding authority
+        if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
             List<ProjectDTO> projects = currentUser.getProjects();
             query.must(createSetQuery("project", collectIds(projects), true));
         }

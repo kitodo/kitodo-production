@@ -107,7 +107,6 @@
                                 <!-- Prozessübersicht -->
                                 <sec:authorize access="hasAuthority('admin_GLOBAL')">
                                     <h:commandLink styleClass="mlink" id="allProcesses"
-                                                   rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
                                                    action="#{ProzessverwaltungForm.filterCurrentProcesses}"
                                                    style="#{NavigationForm.aktuell == '22' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                         <h:panelGroup rendered="#{NavigationForm.aktuell == '22'}">
@@ -142,7 +141,6 @@
 
                                     <!-- Prozessvorlagen -->
                                     <h:commandLink styleClass="mlink" id="templates"
-                                                   rendered="#{LoginForm.maximaleBerechtigung == 1}"
                                                    action="#{ProzessverwaltungForm.filterTemplates}"
                                                    style="#{NavigationForm.aktuell == '24' ? 'font-weight: bold;':'font-weight:normal ;'}">
                                         <h:panelGroup rendered="#{NavigationForm.aktuell == '24'}">

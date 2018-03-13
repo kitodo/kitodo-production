@@ -21,9 +21,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.security.SecurityPasswordEncoder;
@@ -140,30 +138,6 @@ public class LoginForm implements Serializable {
 
     public void setMyBenutzer(User myClass) {
         this.myBenutzer = myClass;
-    }
-
-    /**
-     * Get max rights.
-     *
-     * @return int
-     */
-    public int getMaximaleBerechtigung() {
-        //TODO Only to keep compatibility to old frontend pages
-        //TODO delete this methode when all new frontend is ready or security tags are replaced
-        if (this.myBenutzer != null) {
-            for (UserGroup userGroup : this.myBenutzer.getUserGroups()) {
-                if (userGroup.getGlobalAuthorities().size() > 0) {
-                    for (Authority authority : userGroup.getGlobalAuthorities()) {
-                        if (authority.getTitle().equals("admin")) {
-                            return 1; //Admin permission
-                        }
-                    }
-                }
-            }
-            return 4; //User permission
-        }
-        return 0; //Anonymus permission
-
     }
 
     public String getPasswortAendernAlt() {

@@ -26,8 +26,7 @@
             <h:outputText value="#{property.value}"/>
         </p:column>
         <p:column headerText="#{msgs.auswahl}"
-                  styleClass="actionsColumn"
-                  rendered="#{(LoginForm.maximaleBerechtigung eq 1) or (LoginForm.maximaleBerechtigung eq 2)}">
+                  styleClass="actionsColumn">
             <p:commandLink id="editTemplateProperty"
                            title="#{msgs.bearbeiten}"
                            oncomplete="PF('editTemplateDialog').show()"

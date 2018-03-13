@@ -10,3 +10,15 @@
 --
 
 ALTER TABLE userGroup DROP COLUMN permission;
+
+# Ruleset
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('viewAllRulesets', '1', '0', '0');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('viewRuleset', '1', '0', '0');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('addRuleset', '1', '0', '0');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('editRuleset', '1', '0', '0');
+INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
+VALUES ('deleteRuleset', '1', '0', '0');

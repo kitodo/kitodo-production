@@ -266,6 +266,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return null;
     }
 
+    public UserDTO findAuthenticatedUser() throws DAOException, DataException {
+        User user = getAuthenticatedUser();
+        return findById(user.getId());
+    }
+
     public List<User> getByQuery(String query, String parameter) throws DAOException {
         return dao.search(query, parameter);
     }

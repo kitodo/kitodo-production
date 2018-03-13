@@ -101,10 +101,9 @@ public class SearchForm {
      * Initialise drop down list of projects.
      */
     protected void initProjects() {
-        int restriction = ((LoginForm) Helper.getManagedBeanValue("#{LoginForm}")).getMaximaleBerechtigung();
-
         List<Project> projects;
-        if (restriction > 2) {
+        // TODO Change to check the corresponding authority
+        if (serviceManager.getSecurityAccessService().isAdmin()) {
             projects = serviceManager.getProjectService().getAllActiveProjectsSortedByTitle();
         } else {
             projects = serviceManager.getProjectService().getAllProjectsSortedByTitle();
