@@ -42,7 +42,6 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -122,7 +121,7 @@ public class SchemaService {
                             process.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
                     Helper.setFehlerMeldung(
-                            process.getTitle() + ": could not find any referenced images, export aborted");
+                        process.getTitle() + ": could not find any referenced images, export aborted");
                 }
                 return null;
             }
@@ -147,22 +146,8 @@ public class SchemaService {
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(metsMods.getDigitalDocument(), prefs, process, null);
-        List<ProjectFileGroup> fileGroups = process.getProject().getProjectFileGroups();
 
-        if (fileGroups != null && fileGroups.size() > 0) {
-            for (ProjectFileGroup pfg : fileGroups) {
-                // check if source files exists
-                if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), process);
-                    if (serviceManager.getFileService().fileExist(folder)
-                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        metsMods.getDigitalDocument().getFileSet().addVirtualFileGroup(setVirtualFileGroup(pfg, vp));
-                    }
-                } else {
-                    metsMods.getDigitalDocument().getFileSet().addVirtualFileGroup(setVirtualFileGroup(pfg, vp));
-                }
-            }
-        }
+        metsMods = addVirtualFileGroupsToMetsMods(metsMods, process, vp);
 
         // Replace rights and digiprov entries.
         metsMods.setRightsOwner(vp.replace(process.getProject().getMetsRightsOwner()));
@@ -198,28 +183,7 @@ public class SchemaService {
         metsMods.setMptrAnchorUrl(metsPointer);
 
         if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
-            try {
-                // TODO andere Dateigruppen nicht mit image Namen ersetzen
-                List<URI> images = new MetadatenImagesHelper(prefs, digitalDocument).getDataFiles(process);
-                List<String> imageStrings = new ArrayList<>();
-                for (URI uri : images) {
-                    imageStrings.add(uri.toString());
-                }
-                int sizeOfPagination = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
-                if (images.size() > 0) {
-                    int sizeOfImages = images.size();
-                    if (sizeOfPagination == sizeOfImages) {
-                        digitalDocument.overrideContentFiles(imageStrings);
-                    } else {
-                        List<String> param = new ArrayList<>();
-                        param.add(String.valueOf(sizeOfPagination));
-                        param.add(String.valueOf(sizeOfImages));
-                        Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
-                        return null;
-                    }
-                }
-            } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-                logger.error(e);
+            if (containsInvalidImages(prefs, digitalDocument, process)) {
                 return null;
             }
         } else {
@@ -228,6 +192,29 @@ public class SchemaService {
         }
 
         metsMods.setDigitalDocument(digitalDocument);
+        return metsMods;
+    }
+
+    private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
+            Process process, VariableReplacer variableReplacer) throws PreferencesException {
+        List<ProjectFileGroup> fileGroups = process.getProject().getProjectFileGroups();
+
+        if (fileGroups != null && fileGroups.size() > 0) {
+            for (ProjectFileGroup pfg : fileGroups) {
+                // check if source files exists
+                if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+                    URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), process);
+                    if (serviceManager.getFileService().fileExist(folder)
+                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
+                        metsMods.getDigitalDocument().getFileSet()
+                                .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
+                    }
+                } else {
+                    metsMods.getDigitalDocument().getFileSet()
+                            .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
+                }
+            }
+        }
         return metsMods;
     }
 
@@ -242,6 +229,35 @@ public class SchemaService {
         virtualFileGroup.setOrdinary(!projectFileGroup.isPreviewImage());
 
         return virtualFileGroup;
+    }
+
+    private boolean containsInvalidImages(PrefsInterface prefs, DigitalDocumentInterface digitalDocument,
+            Process process) {
+        try {
+            // TODO: do not replace other file groups with image names
+            List<URI> images = new MetadatenImagesHelper(prefs, digitalDocument).getDataFiles(process);
+            List<String> imageStrings = new ArrayList<>();
+            for (URI uri : images) {
+                imageStrings.add(uri.toString());
+            }
+            int sizeOfPagination = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
+            if (images.size() > 0) {
+                int sizeOfImages = images.size();
+                if (sizeOfPagination == sizeOfImages) {
+                    digitalDocument.overrideContentFiles(imageStrings);
+                } else {
+                    List<String> param = new ArrayList<>();
+                    param.add(String.valueOf(sizeOfPagination));
+                    param.add(String.valueOf(sizeOfImages));
+                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                    return true;
+                }
+            }
+        } catch (IndexOutOfBoundsException | InvalidImagesException e) {
+            logger.error(e);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -259,9 +275,7 @@ public class SchemaService {
     public void tempConvertRusdml(DigitalDocumentInterface digitalDocument, PrefsInterface prefs, Process process,
             String atsPpnBand) throws ExportFileException, MetadataTypeNotAllowedException {
 
-        /*
-         * Run recursively through DocStruct and check the metadata
-         */
+        // Run recursively through DocStruct and check the metadata
         DocStructInterface logicalTopStruct = digitalDocument.getLogicalDocStruct();
 
         evaluateDocStructPages(logicalTopStruct, prefs);
