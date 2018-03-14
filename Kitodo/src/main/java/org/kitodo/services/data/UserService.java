@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -276,6 +277,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM User WHERE deleted = 0");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
     }
 
     /**
