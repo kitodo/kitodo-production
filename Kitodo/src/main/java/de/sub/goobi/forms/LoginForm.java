@@ -83,7 +83,6 @@ public class LoginForm implements Serializable {
     public String BenutzerkonfigurationSpeichern() {
         try {
             serviceManager.getUserService().save(this.myBenutzer);
-            Helper.setMeldung(null, "", Helper.getTranslation("configurationChanged"));
         } catch (DataException e) {
             Helper.setErrorMessage("could not insert to index", logger, e);
         }
