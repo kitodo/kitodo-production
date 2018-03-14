@@ -14,25 +14,31 @@
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid layout="grid" columns="2">
         <p:row>
-            <ui:repeat value="#{ProzesskopieForm.visibleAdditionalFields}" var="field">
+            <ui:repeat id="fieldList" value="#{ProzesskopieForm.visibleAdditionalFields}" var="field">
                 <div>
-                    <p:outputLabel value="#{field.title}:"/>
-                    <p:inputText value="#{field.value}" styleClass="prozessKopieFeldbreite"
-                                 rendered="#{field.selectList==null}" class="input" required="#{field.required}">
-                        <p:ajax event="change"/>
-                    </p:inputText>
-                    <p:selectOneListbox value="#{field.value}" styleClass="prozessKopieFeldbreite"
-                                        rendered="#{field.selectList!=null}" class="input"
-                                        required="#{field.required}">
-                        <f:selectItems value="#{field.selectList}"/>
-                        <p:ajax event="change"/>
-                    </p:selectOneListbox>
+                    <ui:fragment rendered="#{field.selectList==null}">
+                        <p:outputLabel for="additionalInputField" value="#{field.title}:"/>
+                        <p:inputText id="additionalInputField" value="#{field.value}"
+                                     styleClass="prozessKopieFeldbreite"
+                                     class="input" required="#{field.required}">
+                            <p:ajax event="change"/>
+                        </p:inputText>
+                    </ui:fragment>
+
+                    <ui:fragment rendered="#{field.selectList!=null}">
+                        <p:outputLabel for="additionalSelectField" value="#{field.title}:"/>
+                        <p:selectOneListbox id="additionalSelectField" value="#{field.value}"
+                                            styleClass="prozessKopieFeldbreite"
+                                            class="input" required="#{field.required}">
+                            <f:selectItems value="#{field.selectList}"/>
+                            <p:ajax event="change"/>
+                        </p:selectOneListbox>
+                    </ui:fragment>
                 </div>
 
             </ui:repeat>

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
@@ -81,6 +82,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.omnifaces.util.Ajax;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -893,17 +895,20 @@ public class ProzesskopieForm implements Serializable {
              * Collectionen hinzufügen
              */
             DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-            try {
-                addCollections(colStruct);
-                /*
-                 * falls ein erstes Kind vorhanden ist, sind die Collectionen
-                 * dafür
-                 */
-                colStruct = colStruct.getAllChildren().get(0);
-                addCollections(colStruct);
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(
-                    e.getMessage() + " The first child below the top structure could not be determined!", logger, e);
+            if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
+                    && colStruct.getAllChildren().size() > 0) {
+                try {
+                    addCollections(colStruct);
+                    /*
+                     * falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
+                     */
+                    colStruct = colStruct.getAllChildren().get(0);
+                    addCollections(colStruct);
+                } catch (RuntimeException e) {
+                    Helper.setErrorMessage(
+                        e.getMessage() + " The first child below the top structure could not be determined!", logger,
+                        e);
+                }
             }
 
             /*
@@ -1503,6 +1508,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateProcessTitle() {
         try {
             generateTitle(null);
+            Ajax.update("editForm:processFromTemplateTabView:processTitle");
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
