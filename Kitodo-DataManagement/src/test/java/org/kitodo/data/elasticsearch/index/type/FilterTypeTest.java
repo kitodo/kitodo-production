@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
@@ -55,18 +57,19 @@ public class FilterTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         FilterType propertyType = new FilterType();
-        JSONParser parser = new JSONParser();
 
         Filter property = prepareData().get(0);
         HttpEntity document = propertyType.createDocument(property);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"value\":\"\\\"id:1\\\"\",\"user\":1}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"value\":\"\\\"id:1\\\"\",\"user\":1}")).readObject();
         assertEquals("Filter JSONObject doesn't match to given JSONObject!", expected, actual);
 
         property = prepareData().get(1);
         document = propertyType.createDocument(property);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"value\":\"\\\"id:2\\\"\",\"user\":1}");
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"value\":\"\\\"id:2\\\"\",\"user\":1}")).readObject();
         assertEquals("Filter JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

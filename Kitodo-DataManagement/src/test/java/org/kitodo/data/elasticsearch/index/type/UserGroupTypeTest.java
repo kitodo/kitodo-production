@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
@@ -88,24 +90,23 @@ public class UserGroupTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         UserGroupType userGroupType = new UserGroupType();
-        JSONParser parser = new JSONParser();
 
         UserGroup userGroup = prepareData().get(0);
         HttpEntity document = userGroupType.createDocument(userGroup);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser
-                .parse("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
-                        + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Administrator\",\"users\":[{\"surname\":"
-                        + "\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\","
-                        + "\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Administrator\",\"users\":[{\"surname\":"
+                + "\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":\"Barney\","
+                + "\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}")).readObject();
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
 
         userGroup = prepareData().get(1);
         document = userGroupType.createDocument(userGroup);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser
-                .parse("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
-                    + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Random\",\"users\":[]}");
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"authorities\":[{\"id\":1,\"title\":\"admin\"},{\"id\":2,\"title\":\"manager\"},"
+                + "{\"id\":3,\"title\":\"user\"}],\"title\":\"Random\",\"users\":[]}")).readObject();
         assertEquals("UserGroup JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

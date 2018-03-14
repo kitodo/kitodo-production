@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Docket;
 
@@ -54,9 +56,9 @@ public class DocketTypeTest {
         Docket docket = prepareData().get(0);
 
         HttpEntity document = docketType.createDocument(docket);
-        JSONParser parser = new JSONParser();
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse("{\"title\":\"default\",\"file\":\"docket.xsl\"}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject excepted = Json.createReader(new StringReader("{\"title\":\"default\",\"file\":\"docket.xsl\"}")).readObject();
         assertEquals("Docket JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 

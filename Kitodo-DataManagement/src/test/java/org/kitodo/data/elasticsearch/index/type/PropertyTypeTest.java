@@ -13,16 +13,18 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -71,23 +73,23 @@ public class PropertyTypeTest {
     public void shouldCreateDocument() throws Exception {
         PropertyType propertyType = new PropertyType();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        JSONParser parser = new JSONParser();
 
         Property property = prepareData().get(0);
         HttpEntity document = propertyType.createDocument(property);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":2},"
-                        + "{\"id\":3}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
-                        + dateFormat.format(property.getCreationDate()) + "\"}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":2},"
+                + "{\"id\":3}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
+                + dateFormat.format(property.getCreationDate()) + "\"}")).readObject();
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 
         property = prepareData().get(1);
         document = propertyType.createDocument(property);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
                 + "\"processes\":[],\"type\":\"template\",\"templates\":[{\"id\":1}],\"creationDate\":\""
-                + dateFormat.format(property.getCreationDate()) + "\"}");
+                + dateFormat.format(property.getCreationDate()) + "\"}")).readObject();
         assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

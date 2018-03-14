@@ -17,11 +17,12 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.Map;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.transport.Netty4Plugin;
-import org.json.simple.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -85,28 +86,28 @@ public class IndexRestClientIT {
 
     @Test
     public void shouldAddDocument() throws Exception {
-        JSONObject response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response.toJSONString()));
+        JsonObject response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response.toString()));
 
         restClient.addDocument(MockEntity.createEntities().get(1), 1);
 
         response = searcher.findDocument(1);
-        assertTrue("Add of document has failed!", isFound(response.toJSONString()));
+        assertTrue("Add of document has failed!", isFound(response.toString()));
     }
 
     @Test
     public void shouldAddType() throws Exception {
-        JSONObject response = searcher.findDocument(1);
-        assertTrue("Document exists!", !isFound(response.toJSONString()));
+        JsonObject response = searcher.findDocument(1);
+        assertTrue("Document exists!", !isFound(response.toString()));
         response = searcher.findDocument(2);
-        assertTrue("Document exists!", !isFound(response.toJSONString()));
+        assertTrue("Document exists!", !isFound(response.toString()));
 
         restClient.addType(MockEntity.createEntities());
 
         response = searcher.findDocument(1);
-        assertTrue("Add of type has failed - document id 1!", isFound(response.toJSONString()));
+        assertTrue("Add of type has failed - document id 1!", isFound(response.toString()));
         response = searcher.findDocument(2);
-        assertTrue("Add of type has failed - document id 2!", isFound(response.toJSONString()));
+        assertTrue("Add of type has failed - document id 2!", isFound(response.toString()));
 
     }
 
@@ -114,17 +115,17 @@ public class IndexRestClientIT {
     public void shouldDeleteDocument() throws Exception {
         restClient.addType(MockEntity.createEntities());
 
-        JSONObject response = searcher.findDocument(1);
-        assertTrue("Document doesn't exist!", isFound(response.toJSONString()));
+        JsonObject response = searcher.findDocument(1);
+        assertTrue("Document doesn't exist!", isFound(response.toString()));
 
         restClient.deleteDocument(1);
         response = searcher.findDocument(1);
-        assertTrue("Delete of document has failed!", !isFound(response.toJSONString()));
+        assertTrue("Delete of document has failed!", !isFound(response.toString()));
 
         // remove even if document doesn't exist should be possible
         restClient.deleteDocument(100);
         response = searcher.findDocument(100);
-        assertTrue("Delete of document has failed!", !isFound(response.toJSONString()));
+        assertTrue("Delete of document has failed!", !isFound(response.toString()));
     }
 
     private static IndexRestClient initializeRestClient() {

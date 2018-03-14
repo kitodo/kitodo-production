@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Ruleset;
 
@@ -52,12 +54,13 @@ public class RulesetTypeTest {
     public void shouldCreateDocument() throws Exception {
         RulesetType rulesetType = new RulesetType();
         Ruleset ruleset = prepareData().get(0);
-        JSONParser parser = new JSONParser();
 
         HttpEntity document = rulesetType.createDocument(ruleset);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject excepted = (JSONObject) parser.parse(
-                "{\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\",\"orderMetadataByRuleset\":false\"fileContent\":\"\"}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject excepted = Json
+                .createReader(new StringReader("{\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\","
+                        + "\"orderMetadataByRuleset\":false,\"fileContent\":\"\"}")).readObject();
         assertEquals("Ruleset JSONObject doesn't match to given JSONObject!", excepted, actual);
     }
 
