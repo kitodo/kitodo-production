@@ -11,10 +11,12 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.User;
 
 /**
@@ -22,24 +24,24 @@ import org.kitodo.data.database.beans.User;
  */
 public class UserType extends BaseType<User> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(User user) {
 
-        JSONObject userObject = new JSONObject();
-        userObject.put("name", user.getName());
-        userObject.put("surname", user.getSurname());
-        userObject.put("login", user.getLogin());
-        userObject.put("ldapLogin", user.getLdapLogin());
-        userObject.put("active", user.isActive());
-        userObject.put("location", user.getLocation());
-        userObject.put("metadataLanguage", user.getMetadataLanguage());
-        userObject.put("userGroups", addObjectRelation(user.getUserGroups(), true));
-        userObject.put("filters", addObjectRelation(user.getFilters(), true));
-        userObject.put("projects", addObjectRelation(user.getProjects(), true));
-        userObject.put("processingTasks", addObjectRelation(user.getProcessingTasks()));
-        userObject.put("tasks", addObjectRelation(user.getTasks()));
+        JsonObject userObject = Json.createObjectBuilder()
+                .add("name", preventNull(user.getName()))
+                .add("surname", preventNull(user.getSurname()))
+                .add("login", preventNull(user.getLogin()))
+                .add("ldapLogin", preventNull(user.getLdapLogin()))
+                .add("active", user.isActive())
+                .add("location", preventNull(user.getLocation()))
+                .add("metadataLanguage", preventNull(user.getMetadataLanguage()))
+                .add("userGroups", addObjectRelation(user.getUserGroups(), true))
+                .add("filters", addObjectRelation(user.getFilters(), true))
+                .add("projects", addObjectRelation(user.getProjects(), true))
+                .add("processingTasks", addObjectRelation(user.getProcessingTasks()))
+                .add("tasks", addObjectRelation(user.getTasks()))
+                .build();
 
-        return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
+        return new NStringEntity(userObject.toString(), ContentType.APPLICATION_JSON);
     }
 }

@@ -13,11 +13,13 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 
@@ -26,38 +28,36 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
  */
 public class ProjectType extends BaseType<Project> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Project project) {
-
-        JSONObject projectObject = new JSONObject();
-        projectObject.put("title", project.getTitle());
-        String startDate = project.getStartDate() != null ? formatDate(project.getStartDate()) : null;
-        projectObject.put("startDate", startDate);
-        String endDate = project.getEndDate() != null ? formatDate(project.getEndDate()) : null;
-        projectObject.put("endDate", endDate);
-        projectObject.put("numberOfPages", project.getNumberOfPages());
-        projectObject.put("numberOfVolumes", project.getNumberOfVolumes());
-        projectObject.put("fileFormatDmsExport", project.getFileFormatDmsExport());
-        projectObject.put("fileFormatInternal", project.getFileFormatInternal());
-        projectObject.put("metsRightsOwner", project.getMetsRightsOwner());
-        projectObject.put("active", project.isActive());
-        projectObject.put("processes", addObjectRelation(project.getProcesses(), true));
-        projectObject.put("users", addObjectRelation(project.getUsers(), true));
-
-        JSONArray projectFileGroups = new JSONArray();
+        JsonArrayBuilder projectFileGroups = Json.createArrayBuilder();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
         for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
-            JSONObject projectFileGroupObject = new JSONObject();
-            projectFileGroupObject.put("name", projectFileGroup.getName());
-            projectFileGroupObject.put("path", projectFileGroup.getPath());
-            projectFileGroupObject.put("mimeType", projectFileGroup.getMimeType());
-            projectFileGroupObject.put("suffix", projectFileGroup.getSuffix());
-            projectFileGroupObject.put("folder", projectFileGroup.getFolder());
+            JsonObject projectFileGroupObject = Json.createObjectBuilder()
+                    .add("name", preventNull(projectFileGroup.getName()))
+                    .add("path", preventNull(projectFileGroup.getPath()))
+                    .add("mimeType", preventNull(projectFileGroup.getMimeType()))
+                    .add("suffix", preventNull(projectFileGroup.getSuffix()))
+                    .add("folder", preventNull(projectFileGroup.getFolder()))
+                    .build();
             projectFileGroups.add(projectFileGroupObject);
         }
-        projectObject.put("projectFileGroups", projectFileGroups);
 
-        return new NStringEntity(projectObject.toJSONString(), ContentType.APPLICATION_JSON);
+        JsonObject projectObject = Json.createObjectBuilder()
+                .add("title", preventNull(project.getTitle()))
+                .add("startDate", getFormattedDate(project.getStartDate()))
+                .add("endDate", getFormattedDate(project.getEndDate()))
+                .add("numberOfPages", project.getNumberOfPages())
+                .add("numberOfVolumes", project.getNumberOfVolumes())
+                .add("fileFormatDmsExport", project.getFileFormatDmsExport())
+                .add("fileFormatInternal", project.getFileFormatInternal())
+                .add("metsRightsOwner", project.getMetsRightsOwner())
+                .add("active", project.isActive())
+                .add("processes", addObjectRelation(project.getProcesses(), true))
+                .add("users", addObjectRelation(project.getUsers(), true))
+                .add("projectFileGroups", projectFileGroups.build())
+                .build();
+
+        return new NStringEntity(projectObject.toString(), ContentType.APPLICATION_JSON);
     }
 }

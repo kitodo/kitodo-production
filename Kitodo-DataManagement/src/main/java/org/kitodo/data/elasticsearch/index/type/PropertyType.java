@@ -11,10 +11,12 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Property;
 
 /**
@@ -22,20 +24,9 @@ import org.kitodo.data.database.beans.Property;
  */
 public class PropertyType extends BaseType<Property> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Property property) {
-
-        JSONObject propertyObject = new JSONObject();
-        propertyObject.put("title", property.getTitle());
-        propertyObject.put("value", property.getValue());
-        String creationDate = property.getCreationDate() != null ? formatDate(property.getCreationDate()) : null;
-        propertyObject.put("creationDate", creationDate);
-        propertyObject.put("processes", addObjectRelation(property.getProcesses()));
-        propertyObject.put("templates", addObjectRelation(property.getTemplates()));
-        propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));
-
-        String type = null;
+        String type = "";
         if (!property.getProcesses().isEmpty()) {
             type = "process";
         } else if (!property.getTemplates().isEmpty()) {
@@ -44,8 +35,16 @@ public class PropertyType extends BaseType<Property> {
             type = "workpiece";
         }
 
-        propertyObject.put("type", type);
+        JsonObject propertyObject = Json.createObjectBuilder()
+                .add("title", preventNull(property.getTitle()))
+                .add("value", preventNull(property.getValue()))
+                .add("creationDate", getFormattedDate(property.getCreationDate()))
+                .add("processes", addObjectRelation(property.getProcesses()))
+                .add("templates", addObjectRelation(property.getTemplates()))
+                .add("workpieces", addObjectRelation(property.getWorkpieces()))
+                .add("type", type)
+                .build();
 
-        return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
+        return new NStringEntity(propertyObject.toString(), ContentType.APPLICATION_JSON);
     }
 }

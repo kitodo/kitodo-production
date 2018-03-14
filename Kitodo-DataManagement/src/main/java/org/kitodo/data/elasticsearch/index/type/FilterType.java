@@ -11,10 +11,12 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
 
 /**
@@ -22,15 +24,15 @@ import org.kitodo.data.database.beans.Filter;
  */
 public class FilterType extends BaseType<Filter> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Filter filter) {
+        Integer user = filter.getUser() != null ? filter.getUser().getId() : 0;
 
-        JSONObject propertyObject = new JSONObject();
-        propertyObject.put("value", filter.getValue());
-        Integer user = filter.getUser() != null ? filter.getUser().getId() : null;
-        propertyObject.put("user", user);
+        JsonObject propertyObject = Json.createObjectBuilder()
+                .add("value", preventNull(filter.getValue()))
+                .add("user", user)
+                .build();
 
-        return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
+        return new NStringEntity(propertyObject.toString(), ContentType.APPLICATION_JSON);
     }
 }

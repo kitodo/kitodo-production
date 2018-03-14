@@ -11,22 +11,24 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Authority;
 
 public class AuthorityType extends BaseType<Authority> {
 
-    @SuppressWarnings("unchecked")
     @Override
     public HttpEntity createDocument(Authority authority) {
 
-        JSONObject authorizationObject = new JSONObject();
-        authorizationObject.put("title", authority.getTitle());
-        authorizationObject.put("userGroups", addObjectRelation(authority.getUserGroups(), true));
+        JsonObject authorityObject = Json.createObjectBuilder()
+                .add("title", preventNull(authority.getTitle()))
+                .add("title", preventNull(authority.getTitle()))
+                .add("userGroups", addObjectRelation(authority.getUserGroups(), true)).build();
 
-        return new NStringEntity(authorizationObject.toJSONString(), ContentType.APPLICATION_JSON);
+        return new NStringEntity(authorityObject.toString(), ContentType.APPLICATION_JSON);
     }
 }
