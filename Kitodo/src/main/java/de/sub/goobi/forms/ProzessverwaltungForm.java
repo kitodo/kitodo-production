@@ -1986,10 +1986,23 @@ public class ProzessverwaltungForm extends BasisForm {
         this.showClosedProcesses = showClosedProcesses;
     }
 
+    /**
+     * Set whether inactive projects should be displayed or not.
+     *
+     * @param showInactiveProjects
+     *            boolean flag signaling whether inactive projects should be
+     *            displayed or not
+     */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
     }
 
+    /**
+     * Return whether inactive projects should be displayed or not.
+     *
+     * @return parameter controlling whether inactive projects should be displayed
+     *         or not
+     */
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }
