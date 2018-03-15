@@ -1508,7 +1508,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateProcessTitle() {
         try {
             generateTitle(null);
-            Ajax.update("editForm:processFromTemplateTabView:processTitle");
+            Ajax.update("editForm");
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
