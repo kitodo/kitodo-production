@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProcessDAO;
@@ -129,7 +130,7 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public ProcessDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         return serviceManager.getProcessService().convertJSONObjectToDTO(jsonObject, related);
     }
 
@@ -164,7 +165,7 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
         return createSimpleQuery("template", template, true);
     }
 
-    List<JSONObject> findByTemplate(boolean template, String sort) throws DataException {
+    List<JsonObject> findByTemplate(boolean template, String sort) throws DataException {
         return searcher.findDocuments(getQueryTemplate(template).toString(), sort);
     }
 }

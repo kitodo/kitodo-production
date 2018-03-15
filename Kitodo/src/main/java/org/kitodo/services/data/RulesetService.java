@@ -16,12 +16,13 @@ import de.sub.goobi.config.ConfigCore;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Ruleset;
@@ -75,7 +76,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public JSONObject findByFile(String file) throws DataException {
+    public JsonObject findByFile(String file) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("file", file, true);
         return searcher.findDocument(queryBuilder.toString());
     }
@@ -87,7 +88,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return list of JSON objects
      */
-    public List<JSONObject> findByFileContent(String fileContent) throws DataException {
+    public List<JsonObject> findByFileContent(String fileContent) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery("fileContent", fileContent, true);
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -101,7 +102,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public JSONObject findByTitleAndFile(String title, String file) throws DataException {
+    public JsonObject findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("file", file, true, Operator.AND));
@@ -117,7 +118,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
      *            of the searched ruleset
      * @return search result
      */
-    public List<JSONObject> findByTitleOrFile(String title, String file) throws DataException {
+    public List<JsonObject> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true));
         query.should(createSimpleQuery("file", file, true));
@@ -125,13 +126,13 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     }
 
     @Override
-    public RulesetDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
+    public RulesetDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
         RulesetDTO rulesetDTO = new RulesetDTO();
         rulesetDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject rulesetJSONObject = getSource(jsonObject);
-        rulesetDTO.setTitle(getStringPropertyForDTO(rulesetJSONObject, "title"));
-        rulesetDTO.setFile(getStringPropertyForDTO(rulesetJSONObject, "file"));
-        rulesetDTO.setOrderMetadataByRuleset(getBooleanPropertyForDTO(rulesetJSONObject, "orderMetadataByRuleset"));
+        JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
+        rulesetDTO.setTitle(rulesetJSONObject.getString("title"));
+        rulesetDTO.setFile(rulesetJSONObject.getString("file"));
+        rulesetDTO.setOrderMetadataByRuleset(rulesetJSONObject.getBoolean("orderMetadataByRuleset"));
         return rulesetDTO;
     }
 

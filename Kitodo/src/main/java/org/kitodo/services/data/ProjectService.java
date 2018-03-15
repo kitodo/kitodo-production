@@ -23,13 +23,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.flow.statistics.StepInformation;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -154,7 +154,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return search result
      */
-    public JSONObject findByProcessId(Integer id) throws DataException {
+    public JsonObject findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocument(query.toString());
     }
@@ -166,11 +166,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return list of JSON objects with projects for specific process title
      */
-    public List<JSONObject> findByProcessTitle(String title) throws DataException {
+    public List<JsonObject> findByProcessTitle(String title) throws DataException {
         Set<Integer> processIds = new HashSet<>();
 
-        List<JSONObject> processes = serviceManager.getProcessService().findByTitle(title, true);
-        for (JSONObject process : processes) {
+        List<JsonObject> processes = serviceManager.getProcessService().findByTitle(title, true);
+        for (JsonObject process : processes) {
             processIds.add(getIdFromJSONObject(process));
         }
         return searcher.findDocuments(createSetQuery("processes.id", processIds, true).toString());
@@ -183,7 +183,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of user
      * @return list of JSON objects
      */
-    List<JSONObject> findByUserId(Integer id) throws DataException {
+    List<JsonObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -195,8 +195,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of user
      * @return list of search result with projects for specific user login
      */
-    List<JSONObject> findByUserLogin(String login) throws DataException {
-        JSONObject user = serviceManager.getUserService().findByLogin(login);
+    List<JsonObject> findByUserLogin(String login) throws DataException {
+        JsonObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
     }
 
@@ -228,19 +228,19 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     @Override
-    public ProjectDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public ProjectDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject projectJSONObject = getSource(jsonObject);
-        projectDTO.setTitle(getStringPropertyForDTO(projectJSONObject, "title"));
-        projectDTO.setStartDate(getStringPropertyForDTO(projectJSONObject, "startDate"));
-        projectDTO.setEndDate(getStringPropertyForDTO(projectJSONObject, "endDate"));
-        projectDTO.setFileFormatDmsExport(getStringPropertyForDTO(projectJSONObject, "fileFormatDmsExport"));
-        projectDTO.setFileFormatInternal(getStringPropertyForDTO(projectJSONObject, "fileFormatInternal"));
-        projectDTO.setMetsRightsOwner(getStringPropertyForDTO(projectJSONObject, "metsRightsOwner"));
-        projectDTO.setNumberOfPages(getIntegerPropertyForDTO(projectJSONObject, "numberOfPages"));
-        projectDTO.setNumberOfVolumes(getIntegerPropertyForDTO(projectJSONObject, "numberOfVolumes"));
-        projectDTO.setActive(getBooleanPropertyForDTO(projectJSONObject, "active"));
+        JsonObject projectJSONObject = jsonObject.getJsonObject("_source");
+        projectDTO.setTitle(projectJSONObject.getString("title"));
+        projectDTO.setStartDate(projectJSONObject.getString("startDate"));
+        projectDTO.setEndDate(projectJSONObject.getString("endDate"));
+        projectDTO.setFileFormatDmsExport(projectJSONObject.getString("fileFormatDmsExport"));
+        projectDTO.setFileFormatInternal(projectJSONObject.getString("fileFormatInternal"));
+        projectDTO.setMetsRightsOwner(projectJSONObject.getString("metsRightsOwner"));
+        projectDTO.setNumberOfPages(projectJSONObject.getInt("numberOfPages"));
+        projectDTO.setNumberOfVolumes(projectJSONObject.getInt("numberOfVolumes"));
+        projectDTO.setActive(projectJSONObject.getBoolean("active"));
         projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
@@ -248,7 +248,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return projectDTO;
     }
 
-    private List<ProcessDTO> getTemplatesForProjectDTO(JSONObject jsonObject) {
+    private List<ProcessDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         // TODO: jsonObject.get("processes") returns null even if there is a list of objects
         /*JSONArray jsonArray = (JSONArray) jsonObject.get("processes");
@@ -266,8 +266,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return processDTOS;
     }
 
-    private ProjectDTO convertRelatedJSONObjects(JSONObject jsonObject, ProjectDTO projectDTO) throws DataException {
-        //TODO: not clear if project lists will need it
+    private ProjectDTO convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
+        // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         return projectDTO;
     }

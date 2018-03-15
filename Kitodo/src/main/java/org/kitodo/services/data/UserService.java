@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -34,7 +36,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -332,7 +333,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return list of JSON objects
      */
-    List<JSONObject> findByName(String name) throws DataException {
+    List<JsonObject> findByName(String name) throws DataException {
         QueryBuilder query = createSimpleQuery("name", name, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -344,7 +345,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return list of JSON objects
      */
-    List<JSONObject> findBySurname(String surname) throws DataException {
+    List<JsonObject> findBySurname(String surname) throws DataException {
         QueryBuilder query = createSimpleQuery("surname", surname, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -358,7 +359,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return list of JSON objects
      */
-    List<JSONObject> findByFullName(String name, String surname) throws DataException {
+    List<JsonObject> findByFullName(String name, String surname) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("name", name, true, Operator.AND));
         query.must(createSimpleQuery("surname", surname, true, Operator.AND));
@@ -372,7 +373,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return JSON objects
      */
-    JSONObject findByLogin(String login) throws DataException {
+    JsonObject findByLogin(String login) throws DataException {
         QueryBuilder query = createSimpleQuery("login", login, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -384,7 +385,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return search result
      */
-    JSONObject findByLdapLogin(String ldapLogin) throws DataException {
+    JsonObject findByLdapLogin(String ldapLogin) throws DataException {
         QueryBuilder query = createSimpleQuery("ldapLogin", ldapLogin, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
@@ -396,7 +397,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            true -active user or false - inactive user
      * @return list of JSON objects
      */
-    List<JSONObject> findByActive(boolean active) throws DataException {
+    List<JsonObject> findByActive(boolean active) throws DataException {
         QueryBuilder query = createSimpleQuery("active", active, true);
         return searcher.findDocuments(query.toString(), sortByLogin());
     }
@@ -410,7 +411,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            name or surname
      * @return list of JSONObjects
      */
-    List<JSONObject> findByActiveAndName(boolean active, String name) throws DataException {
+    List<JsonObject> findByActiveAndName(boolean active, String name) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
         boolQuery.must(createSimpleQuery("active", active, true));
         BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
@@ -427,7 +428,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of the searched user
      * @return list of JSON objects
      */
-    List<JSONObject> findByLocation(String location) throws DataException {
+    List<JsonObject> findByLocation(String location) throws DataException {
         QueryBuilder query = createSimpleQuery("location", location, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -439,7 +440,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of user group
      * @return list of JSON objects with users for specific user group id
      */
-    List<JSONObject> findByUserGroupId(Integer id) throws DataException {
+    List<JsonObject> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -451,7 +452,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of user group
      * @return list of JSON objects with users for specific user group title
      */
-    List<JSONObject> findByUserGroupTitle(String title) throws DataException {
+    List<JsonObject> findByUserGroupTitle(String title) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.title", title, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -463,12 +464,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *            of filter
      * @return list of JSON objects with users for specific filter
      */
-    List<JSONObject> findByFilter(String value) throws DataException {
+    List<JsonObject> findByFilter(String value) throws DataException {
         Set<Integer> filterIds = new HashSet<>();
 
-        List<JSONObject> filters = serviceManager.getFilterService().findByValue(value, true);
+        List<JsonObject> filters = serviceManager.getFilterService().findByValue(value, true);
 
-        for (JSONObject filter : filters) {
+        for (JsonObject filter : filters) {
             filterIds.add(getIdFromJSONObject(filter));
         }
         return searcher.findDocuments(createSetQuery("filters.id", filterIds, true).toString());
@@ -482,7 +483,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of JSON objects with users for specific filter
      */
     List<UserDTO> findByProcessingTask(Integer id, boolean related) throws DataException {
-        List<JSONObject> jsonObjects = searcher
+        List<JsonObject> jsonObjects = searcher
                 .findDocuments(createSimpleQuery("processingTasks.id", id, true).toString());
         return convertJSONObjectsToDTOs(jsonObjects, related);
     }
@@ -493,7 +494,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return a list of all visible users as UserDTO
      */
     public List<UserDTO> findAllVisibleUsers() throws DataException {
-        List<JSONObject> jsonObjects = findAllDocuments(sortByLogin());
+        List<JsonObject> jsonObjects = findAllDocuments(sortByLogin());
         return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
@@ -503,7 +504,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return a list of all visible users as UserDTO
      */
     public List<UserDTO> findAllVisibleUsersWithRelations() throws DataException {
-        List<JSONObject> jsonObjects = findAllDocuments(sortByLogin());
+        List<JsonObject> jsonObjects = findAllDocuments(sortByLogin());
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
 
@@ -513,7 +514,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return a list of all active users as UserDTO
      */
     public List<UserDTO> findAllActiveUsers() throws DataException {
-        List<JSONObject> jsonObjects = findByActive(true);
+        List<JsonObject> jsonObjects = findByActive(true);
         return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
@@ -523,7 +524,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return a list of all active users as UserDTO
      */
     public List<UserDTO> findAllActiveUsersWithRelations() throws DataException {
-        List<JSONObject> jsonObjects = findByActive(true);
+        List<JsonObject> jsonObjects = findByActive(true);
         return convertJSONObjectsToDTOs(jsonObjects, false);
     }
 
@@ -535,7 +536,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return a list of filtered users
      */
     public List<UserDTO> findActiveUsersByName(String name) throws DataException {
-        List<JSONObject> jsonObjects = findByActiveAndName(true, name);
+        List<JsonObject> jsonObjects = findByActiveAndName(true, name);
         return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
@@ -553,16 +554,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
-    public UserDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public UserDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject userJSONObject = getSource(jsonObject);
-        userDTO.setLogin(getStringPropertyForDTO(userJSONObject, "login"));
-        userDTO.setName(getStringPropertyForDTO(userJSONObject, "name"));
-        userDTO.setSurname(getStringPropertyForDTO(userJSONObject, "surname"));
-        userDTO.setActive(getBooleanPropertyForDTO(userJSONObject, "active"));
-        userDTO.setLdapLogin(getStringPropertyForDTO(userJSONObject, "ldapLogin"));
-        userDTO.setLocation(getStringPropertyForDTO(userJSONObject, "location"));
+        JsonObject userJSONObject = jsonObject.getJsonObject("_source");
+        userDTO.setLogin(userJSONObject.getString("login"));
+        userDTO.setName(userJSONObject.getString("name"));
+        userDTO.setSurname(userJSONObject.getString("surname"));
+        userDTO.setActive(userJSONObject.getBoolean("active"));
+        userDTO.setLdapLogin(userJSONObject.getString("ldapLogin"));
+        userDTO.setLocation(userJSONObject.getString("location"));
         userDTO.setFullName(getFullName(userDTO));
         userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "filters"));
         userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, "projects"));
@@ -581,7 +582,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return userDTO;
     }
 
-    private UserDTO convertRelatedJSONObjects(JSONObject jsonObject, UserDTO userDTO) throws DataException {
+    private UserDTO convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
         userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, "filters", serviceManager.getFilterService()));
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
@@ -590,7 +591,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return userDTO;
     }
 
-    private UserDTO addBasicFilterRelation(UserDTO userDTO, JSONObject jsonObject) {
+    private UserDTO addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getFiltersSize() > 0) {
             List<FilterDTO> filters = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -609,7 +610,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return userDTO;
     }
 
-    private UserDTO addBasicProjectRelation(UserDTO userDTO, JSONObject jsonObject) {
+    private UserDTO addBasicProjectRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -629,7 +630,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return userDTO;
     }
 
-    private UserDTO addBasicUserGroupRelation(UserDTO userDTO, JSONObject jsonObject) {
+    private UserDTO addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getUserGroupSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();

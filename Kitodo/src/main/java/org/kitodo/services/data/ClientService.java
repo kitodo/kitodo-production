@@ -15,10 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
@@ -68,11 +69,11 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     @Override
-    public ClientDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public ClientDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject clientJSONObject = getSource(jsonObject);
-        clientDTO.setName(getStringPropertyForDTO(clientJSONObject, "clientName"));
+        JsonObject clientJSONObject = jsonObject.getJsonObject("_source");
+        clientDTO.setName(clientJSONObject.getString("clientName"));
         clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, "projects"));
         if (!related) {
             clientDTO = convertRelatedJSONObjects(clientJSONObject, clientDTO);
@@ -82,13 +83,13 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         return clientDTO;
     }
 
-    private ClientDTO convertRelatedJSONObjects(JSONObject jsonObject, ClientDTO clientDTO) throws DataException {
+    private ClientDTO convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
         clientDTO
                 .setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
         return clientDTO;
     }
 
-    private ClientDTO addBasicProjectRelation(ClientDTO clientDTO, JSONObject jsonObject) {
+    private ClientDTO addBasicProjectRelation(ClientDTO clientDTO, JsonObject jsonObject) {
         if (clientDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -152,7 +153,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
      *            of user group
      * @return list of JSON objects with authorizations for specific user group id
      */
-    List<JSONObject> findByProjectId(Integer id) throws DataException {
+    List<JsonObject> findByProjectId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("projects.id", id, true);
         return searcher.findDocuments(query.toString());
     }
