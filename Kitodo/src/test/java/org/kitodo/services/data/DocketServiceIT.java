@@ -17,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -104,7 +105,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> dockets = docketService.findByTitle("default", true);
+        List<JsonObject> dockets = docketService.findByTitle("default", true);
         Integer actual = dockets.size();
         Integer expected = 1;
         assertEquals("Docket was not found in index!", expected, actual);
@@ -112,16 +113,16 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByFile() throws Exception {
-        JSONObject docket = docketService.findByFile("docket.xsl");
-        JSONObject jsonObject = (JSONObject) docket.get("_source");
-        String actual = (String) jsonObject.get("file");
+        JsonObject docket = docketService.findByFile("docket.xsl");
+        JsonObject jsonObject = docket.getJsonObject("_source");
+        String actual = jsonObject.getString("file");
         String expected = "docket.xsl";
         assertEquals("Docket was not found in index!", expected, actual);
     }
 
     @Test
     public void shouldFindByTitleAndFile() throws Exception {
-        JSONObject docket = docketService.findByTitleAndFile("default", "docket.xsl");
+        JsonObject docket = docketService.findByTitleAndFile("default", "docket.xsl");
         Integer actual = docketService.getIdFromJSONObject(docket);
         Integer expected = 1;
         assertEquals("Docket was not found in index!", expected, actual);
@@ -134,7 +135,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitleOrFile() throws Exception {
-        List<JSONObject> docket = docketService.findByTitleOrFile("default", "docket.xsl");
+        List<JsonObject> docket = docketService.findByTitleOrFile("default", "docket.xsl");
         Integer actual = docket.size();
         Integer expected = 2;
         assertEquals("Dockets were not found in index!", expected, actual);
@@ -152,7 +153,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindAllDocketsDocuments() throws Exception {
-        List<JSONObject> dockets = docketService.findAllDocuments();
+        List<JsonObject> dockets = docketService.findAllDocuments();
         assertEquals("Not all dockets were found in index!", 2, dockets.size());
     }
 

@@ -22,11 +22,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -189,7 +190,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByName() throws Exception {
-        List<JSONObject> users = userService.findByName("Jan");
+        List<JsonObject> users = userService.findByName("Jan");
         Integer actual = users.size();
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
@@ -202,7 +203,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindBySurname() throws Exception {
-        List<JSONObject> users = userService.findBySurname("Kowalski");
+        List<JsonObject> users = userService.findBySurname("Kowalski");
         Integer actual = users.size();
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
@@ -215,7 +216,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByFullName() throws Exception {
-        List<JSONObject> users = userService.findByFullName("Jan", "Kowalski");
+        List<JsonObject> users = userService.findByFullName("Jan", "Kowalski");
         Integer actual = users.size();
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
@@ -228,7 +229,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByLogin() throws Exception {
-        JSONObject user = userService.findByLogin("kowal");
+        JsonObject user = userService.findByLogin("kowal");
         Integer actual = userService.getIdFromJSONObject(user);
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
@@ -241,7 +242,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByLdapLogin() throws Exception {
-        JSONObject user = userService.findByLdapLogin("kowalLDP");
+        JsonObject user = userService.findByLdapLogin("kowalLDP");
         Integer actual = userService.getIdFromJSONObject(user);
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);
@@ -254,7 +255,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByLocation() throws Exception {
-        List<JSONObject> users = userService.findByLocation("Dresden");
+        List<JsonObject> users = userService.findByLocation("Dresden");
         Integer actual = users.size();
         Integer expected = 2;
         assertEquals("Users were not found in index!", expected, actual);
@@ -272,7 +273,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByActive() throws Exception {
-        List<JSONObject> users = userService.findByActive(true);
+        List<JsonObject> users = userService.findByActive(true);
         boolean result = users.size() == 2 || users.size() == 3 || users.size() == 4 || users.size() == 5;
         assertTrue("Users were not found in index!", result);
 
@@ -283,7 +284,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByUserGroupId() throws Exception {
-        List<JSONObject> users = userService.findByUserGroupId(1);
+        List<JsonObject> users = userService.findByUserGroupId(1);
         Integer actual = users.size();
         Integer expected = 2;
         assertEquals("Users were not found in index!", expected, actual);
@@ -296,7 +297,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByUserGroupTitle() throws Exception {
-        List<JSONObject> users = userService.findByUserGroupTitle("Admin");
+        List<JsonObject> users = userService.findByUserGroupTitle("Admin");
         Integer actual = users.size();
         Integer expected = 2;
         assertEquals("User was not found in index!", expected, actual);
@@ -309,7 +310,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldFindByFilter() throws Exception {
-        List<JSONObject> users = userService.findByFilter("\"id:1\"");
+        List<JsonObject> users = userService.findByFilter("\"id:1\"");
         Integer actual = users.size();
         Integer expected = 1;
         assertEquals("User was not found in index!", expected, actual);

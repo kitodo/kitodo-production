@@ -16,7 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.json.simple.JSONObject;
+import javax.json.JsonObject;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -158,7 +159,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> userGroups = userGroupService.findByTitle("Admin", true);
+        List<JsonObject> userGroups = userGroupService.findByTitle("Admin", true);
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
@@ -171,8 +172,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByAuthorization() throws Exception {
-
-        List<JSONObject> userGroups = userGroupService.findByAuthorizationTitle("viewAllClients");
+        List<JsonObject> userGroups = userGroupService.findByAuthorizationTitle("viewAllClients");
         Integer actual = userGroups.size();
         Integer expected = 2;
         assertEquals("User group was not found in index!", expected, actual);
@@ -190,7 +190,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByUserId() throws Exception {
-        List<JSONObject> userGroups = userGroupService.findByUserId(1);
+        List<JsonObject> userGroups = userGroupService.findByUserId(1);
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);
@@ -203,7 +203,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindByUserLogin() throws Exception {
-        List<JSONObject> userGroups = userGroupService.findByUserLogin("kowal");
+        List<JsonObject> userGroups = userGroupService.findByUserLogin("kowal");
         Integer actual = userGroups.size();
         Integer expected = 1;
         assertEquals("User group was not found in index!", expected, actual);

@@ -16,8 +16,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -168,7 +169,7 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByValue() throws Exception {
-        List<JSONObject> properties = propertyService.findByValue("second", null, true);
+        List<JsonObject> properties = propertyService.findByValue("second", null, true);
         Integer actual = properties.size();
         Integer expected = 3;
         assertEquals("Properties were not found in index!", expected, actual);
@@ -181,7 +182,7 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByValueForExactType() throws Exception {
-        List<JSONObject> properties = propertyService.findByValue("second", "process", true);
+        List<JsonObject> properties = propertyService.findByValue("second", "process", true);
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
@@ -199,7 +200,7 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByTitleAndValue() throws Exception {
-        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true);
+        List<JsonObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true);
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);
@@ -212,7 +213,7 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindByTitleAndValueForExactType() throws Exception {
-        List<JSONObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true);
+        List<JsonObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true);
         Integer actual = properties.size();
         Integer expected = 1;
         assertEquals("Property was not found in index!", expected, actual);

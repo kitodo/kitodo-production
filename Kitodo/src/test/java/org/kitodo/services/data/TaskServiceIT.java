@@ -17,7 +17,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.json.simple.JSONObject;
+import javax.json.JsonObject;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -122,7 +123,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldFindByProcessingStatusAndUser() throws Exception {
-        List<JSONObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
+        List<JsonObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
         assertEquals("Some tasks were found in database!", 0, tasks.size());
 
         tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);

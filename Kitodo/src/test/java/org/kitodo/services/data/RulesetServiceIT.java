@@ -17,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -105,7 +106,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> rulesets = rulesetService.findByTitle("SLUBDD", true);
+        List<JsonObject> rulesets = rulesetService.findByTitle("SLUBDD", true);
         Integer actual = rulesets.size();
         Integer expected = 1;
         assertEquals("Ruleset was not found in index!", expected, actual);
@@ -113,16 +114,16 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByFile() throws Exception {
-        JSONObject ruleset = rulesetService.findByFile("ruleset_test.xml");
-        JSONObject jsonObject = (JSONObject) ruleset.get("_source");
-        String actual = (String) jsonObject.get("file");
+        JsonObject ruleset = rulesetService.findByFile("ruleset_test.xml");
+        JsonObject jsonObject = ruleset.getJsonObject("_source");
+        String actual = jsonObject.getString("file");
         String expected = "ruleset_test.xml";
         assertEquals("Ruleset was not found in index!", expected, actual);
     }
 
     @Test
     public void shouldFindByTitleAndFile() throws Exception {
-        JSONObject ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
+        JsonObject ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
         Integer actual = rulesetService.getIdFromJSONObject(ruleset);
         Integer expected = 2;
         assertEquals("Ruleset was not found in index!", expected, actual);
@@ -135,7 +136,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitleOrFile() throws Exception {
-        List<JSONObject> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
+        List<JsonObject> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
         Integer actual = ruleset.size();
         Integer expected = 2;
         assertEquals("Rulesets were not found in index!", expected, actual);
@@ -153,7 +154,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindAllRulesetsDocuments() throws Exception {
-        List<JSONObject> rulesets = rulesetService.findAllDocuments();
+        List<JsonObject> rulesets = rulesetService.findAllDocuments();
         assertEquals("Not all rulesets were found in index!", 2, rulesets.size());
     }
 

@@ -17,8 +17,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -129,7 +130,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> batches = batchService.findByTitle("batch", true);
+        List<JsonObject> batches = batchService.findByTitle("batch", true);
         Integer actual = batches.size();
         Integer expected = 3;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -147,7 +148,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByType() throws Exception {
-        List<JSONObject> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
+        List<JsonObject> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -160,7 +161,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByTitleAndType() throws Exception {
-        List<JSONObject> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
+        List<JsonObject> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
         Integer actual = batches.size();
         Integer expected = 1;
         assertEquals("Batch was not found in index!", expected, actual);
@@ -173,7 +174,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByTitleOrType() throws Exception {
-        List<JSONObject> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
+        List<JsonObject> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -186,7 +187,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByProcessId() throws Exception {
-        List<JSONObject> batches = batchService.findByProcessId(1);
+        List<JsonObject> batches = batchService.findByProcessId(1);
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
@@ -199,7 +200,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldFindByProcessTitle() throws Exception {
-        List<JSONObject> batches = batchService.findByProcessTitle("First process");
+        List<JsonObject> batches = batchService.findByProcessTitle("First process");
         Integer actual = batches.size();
         Integer expected = 2;
         assertEquals("Batches were not found in index!", expected, actual);
