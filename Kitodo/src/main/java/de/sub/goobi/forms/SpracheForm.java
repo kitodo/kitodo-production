@@ -30,7 +30,10 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
+import de.sub.goobi.helper.Helper;
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -43,6 +46,7 @@ public class SpracheForm implements Serializable {
 
     public static final String SESSION_LOCALE_FIELD_ID = "lang";
     private static final long serialVersionUID = -8766724454080390450L;
+    private static final Logger logger = LogManager.getLogger(SpracheForm.class);
 
     /**
      * The constructor of this class loads the required MessageBundle.
@@ -194,5 +198,28 @@ public class SpracheForm implements Serializable {
      */
     public char getGroupingSeparator() {
         return DecimalFormatSymbols.getInstance(getLocale()).getGroupingSeparator();
+    }
+
+    /**
+     * Set language.
+     *
+     * @param language
+     *            String
+     */
+    public void setLanguage(String language) {
+        try {
+            switchLanguage(language);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Get language.
+     *
+     * @return String language
+     */
+    public String getLanguage() {
+        return getLocale().getLanguage();
     }
 }
