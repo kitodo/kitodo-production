@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.ProjectHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +28,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
-import org.goobi.production.flow.statistics.StepInformation;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -49,7 +47,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
-    private List<StepInformation> commonWorkFlow = null;
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectService.class);
     private static ProjectService instance = null;
@@ -270,22 +267,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         return projectDTO;
-    }
-
-    /**
-     * Get workflow.
-     *
-     * @return a list with information for each step on workflow
-     */
-    public List<StepInformation> getWorkFlow(Project project)throws DataException {
-        if (this.commonWorkFlow == null) {
-            if (project.getId() != null) {
-                this.commonWorkFlow = ProjectHelper.getProjectWorkFlowOverview(project);
-            } else {
-                this.commonWorkFlow = new ArrayList<>();
-            }
-        }
-        return this.commonWorkFlow;
     }
 
     /**
