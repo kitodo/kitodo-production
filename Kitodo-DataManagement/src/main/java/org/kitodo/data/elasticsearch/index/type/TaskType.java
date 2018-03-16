@@ -30,6 +30,8 @@ public class TaskType extends BaseType<Task> {
         Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
         Integer processId = task.getProcess() != null ? task.getProcess().getId() : 0;
         String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
+        Integer templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
+        String templateTitle = task.getTemplate() != null ? task.getTemplate().getTitle() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add("title", preventNull(task.getTitle()));
@@ -51,6 +53,8 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add("processingUser", processingUser);
         jsonObjectBuilder.add("processForTask.id", processId);
         jsonObjectBuilder.add("processForTask.title", processTitle);
+        jsonObjectBuilder.add("templateForTask.id", templateId);
+        jsonObjectBuilder.add("templateForTask.title", templateTitle);
         jsonObjectBuilder.add("users", addObjectRelation(task.getUsers()));
         jsonObjectBuilder.add("userGroups", addObjectRelation(task.getUserGroups()));
         return jsonObjectBuilder.build();

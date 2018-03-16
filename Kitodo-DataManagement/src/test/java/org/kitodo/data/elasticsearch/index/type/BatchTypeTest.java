@@ -87,12 +87,10 @@ public class BatchTypeTest {
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Key processes.id doesn't match to given value!", 1, process.getInt("id"));
         assertEquals("Key processes.title doesn't match to given value!", "First", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", false, process.getBoolean("template"));
 
         process = processes.getJsonObject(1);
         assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
         assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", false, process.getBoolean("template"));
     }
 
     @Test
@@ -123,7 +121,7 @@ public class BatchTypeTest {
 
         JsonArray processes = actual.getJsonArray("processes");
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Amount of keys in processes is incorrect!", 3, process.keySet().size());
+        assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
     }
 
     @Test

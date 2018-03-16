@@ -42,7 +42,6 @@ public class ProcessType extends BaseType<Process> {
         jsonObjectBuilder.add("sortHelperImages", process.getSortHelperImages());
         jsonObjectBuilder.add("sortHelperMetadata", process.getSortHelperMetadata());
         jsonObjectBuilder.add("processBaseUri", processBaseUri);
-        jsonObjectBuilder.add("template", process.isTemplate());
         jsonObjectBuilder.add("project.id", projectId);
         jsonObjectBuilder.add("project.title", projectTitle);
         jsonObjectBuilder.add("project.active", projectActive);

@@ -30,9 +30,9 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.BaseIndexedBean;
+import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -80,9 +80,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                 if (title) {
                     if (property instanceof Batch) {
                         jsonObject.add("title", preventNull(((Batch) property).getTitle()));
-                    } else if (property instanceof Process) {
-                        jsonObject.add("title", preventNull(((Process) property).getTitle()));
-                        jsonObject.add("template", ((Process) property).isTemplate());
+                    } else if (property instanceof BaseTemplateBean) {
+                        jsonObject.add("title", preventNull(((BaseTemplateBean) property).getTitle()));
                     } else if (property instanceof Project) {
                         jsonObject.add("title", preventNull(((Project) property).getTitle()));
                     } else if (property instanceof User) {
