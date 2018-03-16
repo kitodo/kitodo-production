@@ -65,7 +65,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Constructor necessary to use searcher in child classes.
-     * 
+     *
      * @param dao
      *            DAO object for executing operations on database
      * @param type
@@ -97,7 +97,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     /**
      * Get all DTO objects from index an convert them for frontend wit all
      * relations.
-     * 
+     *
      * @return List of DTO objects
      */
     public List<S> findAll() throws DataException {
@@ -106,7 +106,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Get all DTO objects from index an convert them for frontend.
-     * 
+     *
      * @param related
      *            true or false
      * @return List of DTO objects
@@ -424,7 +424,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Display all documents for exact type with exact sorting.
-     * 
+     *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return sorted list of all documents
@@ -466,7 +466,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Find object in ES and convert it to DTO.
-     * 
+     *
      * @param id
      *            object id
      * @return DTO object
@@ -477,7 +477,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Find object related to previously found object in ES and convert it to DTO.
-     * 
+     *
      * @param id
      *            related object id
      * @param related
@@ -599,7 +599,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Get id from JSON object returned form ElasticSearch.
-     * 
+     *
      * @param jsonObject
      *            returned form ElasticSearch
      * @return id as Integer
@@ -614,7 +614,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Create query for set of data.
-     * 
+     *
      * @param key
      *            JSON key for searched object
      * @param values
@@ -825,7 +825,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
 
     /**
      * Find distinct values sorted by terms. Returned values are stored as Strings.
-     * 
+     *
      * @param query
      *            for searched values to aggregation
      * @param field
@@ -890,7 +890,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         if (object != null) {
             return (Boolean) object.get(key);
         }
-        return null;
+        return false;
     }
 
     /**

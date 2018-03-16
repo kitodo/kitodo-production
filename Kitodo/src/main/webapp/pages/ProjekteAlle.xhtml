@@ -111,15 +111,15 @@
                                             <p:column id="id23" style="text-align:center" headerText="#{msgs.dmsExportformat}">
                                                 <h:outputText id="id25" value="#{item.fileFormatDmsExport}"/>
                                             </p:column>
-                                            <p:column id="id234" style="text-align:center" headerText="#{msgs.projectIsArchived}">
+                                            <p:column id="id234" style="text-align:center" headerText="#{msgs.projectIsActive}">
                                                 <h:graphicImage id="id2341"
                                                                 value="/pages/images/check_true.gif"
-                                                                rendered="#{item.projectIsArchived}"
-                                                                alt="archived"/>
+                                                                rendered="#{item.active}"
+                                                                alt="active"/>
                                                 <h:graphicImage id="id2342"
                                                                 value="/pages/images/check_false.gif"
-                                                                rendered="#{!item.projectIsArchived}"
-                                                                alt="not archived"/>
+                                                                rendered="#{!item.active}"
+                                                                alt="inactive"/>
                                             </p:column>
                                             <p:column id="id26" style="text-align:center" headerText="#{msgs.auswahl}"
                                                       rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}">

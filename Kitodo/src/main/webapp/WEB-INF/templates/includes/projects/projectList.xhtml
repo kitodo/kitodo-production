@@ -38,10 +38,10 @@
 
         <p:column headerText="#{msgs.active}" styleClass="checkboxColumn">
             <h:outputText>
-                <ui:fragment rendered="#{not item.projectIsArchived}">
+                <ui:fragment rendered="#{item.isActive()}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
                 </ui:fragment>
-                <ui:fragment rendered="#{item.projectIsArchived}">
+                <ui:fragment rendered="#{not item.isActive()}">
                     <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
                 </ui:fragment>
             </h:outputText>

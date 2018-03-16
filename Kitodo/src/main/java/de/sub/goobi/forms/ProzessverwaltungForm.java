@@ -108,7 +108,7 @@ public class ProzessverwaltungForm extends BasisForm {
     private String selectedXslt = "";
     private StatisticsRenderingElement myCurrentTable;
     private boolean showClosedProcesses = false;
-    private boolean showArchivedProjects = false;
+    private boolean showInactiveProjects = false;
     private List<Property> properties;
     private List<Property> templates;
     private List<Property> workpieces;
@@ -528,23 +528,23 @@ public class ProzessverwaltungForm extends BasisForm {
         if (!this.showClosedProcesses) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
         }
-        if (!this.showArchivedProjects) {
-            query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+        if (!this.showInactiveProjects) {
+            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
         }
         processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
     }
 
     private void filterProcessesWithoutFilter() throws DataException {
         if (!this.showClosedProcesses) {
-            if (!this.showArchivedProjects) {
+            if (!this.showInactiveProjects) {
                 processDTOS = serviceManager.getProcessService()
-                        .findNotClosedAndNotArchivedProcessesWithoutTemplates(sortList());
+                        .findOpenAndActiveProcessesWithoutTemplates(sortList());
             } else {
                 processDTOS = serviceManager.getProcessService().findNotClosedProcessesWithoutTemplates(sortList());
             }
         } else {
-            if (!this.showArchivedProjects) {
-                processDTOS = serviceManager.getProcessService().findAllNotArchivedWithoutTemplates(sortList());
+            if (!this.showInactiveProjects) {
+                processDTOS = serviceManager.getProcessService().findAllActiveWithoutTemplates(sortList());
             } else {
                 processDTOS = serviceManager.getProcessService().findAllWithoutTemplates(sortList());
             }
@@ -557,22 +557,22 @@ public class ProzessverwaltungForm extends BasisForm {
         if (!this.showClosedProcesses) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
         }
-        if (!this.showArchivedProjects) {
-            query.must(serviceManager.getProcessService().getQueryProjectArchived(false));
+        if (!this.showInactiveProjects) {
+            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
         }
         processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
     }
 
     private void filterTemplatesWithoutFilter() throws DataException {
         if (!this.showClosedProcesses) {
-            if (!this.showArchivedProjects) {
-                processDTOS = serviceManager.getProcessService().findAllNotClosedAndNotArchivedTemplates(sortList());
+            if (!this.showInactiveProjects) {
+                processDTOS = serviceManager.getProcessService().findAllOpenAndActiveTemplates(sortList());
             } else {
                 processDTOS = serviceManager.getProcessService().findAllNotClosedTemplates(sortList());
             }
         } else {
-            if (!this.showArchivedProjects) {
-                processDTOS = serviceManager.getProcessService().findNotArchivedTemplates(sortList());
+            if (!this.showInactiveProjects) {
+                processDTOS = serviceManager.getProcessService().findTemplatesOfActiveProjects(sortList());
             } else {
                 processDTOS = serviceManager.getTemplateService().findAllTemplates(sortList());
             }
@@ -1905,7 +1905,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 ServletOutputStream out = response.getOutputStream();
 
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
-                        this.showArchivedProjects);
+                        this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
                 List<List<HSSFCell>> rowList = new ArrayList<>();
                 HSSFSheet mySheet = wb.getSheetAt(0);
@@ -1967,7 +1967,7 @@ public class ProzessverwaltungForm extends BasisForm {
                 response.setHeader("Content-Disposition", "attachment;filename=\"search.xls\"");
                 ServletOutputStream out = response.getOutputStream();
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
-                        this.showArchivedProjects);
+                        this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
                 wb.write(out);
                 out.flush();
@@ -1986,12 +1986,25 @@ public class ProzessverwaltungForm extends BasisForm {
         this.showClosedProcesses = showClosedProcesses;
     }
 
-    public void setShowArchivedProjects(boolean showArchivedProjects) {
-        this.showArchivedProjects = showArchivedProjects;
+    /**
+     * Set whether inactive projects should be displayed or not.
+     *
+     * @param showInactiveProjects
+     *            boolean flag signaling whether inactive projects should be
+     *            displayed or not
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
     }
 
-    public boolean isShowArchivedProjects() {
-        return this.showArchivedProjects;
+    /**
+     * Return whether inactive projects should be displayed or not.
+     *
+     * @return parameter controlling whether inactive projects should be displayed
+     *         or not
+     */
+    public boolean isShowInactiveProjects() {
+        return this.showInactiveProjects;
     }
 
     /**

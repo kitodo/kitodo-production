@@ -127,7 +127,7 @@
         "project": {
             "dynamic": "strict",
             "properties": {
-                "archived": {
+                "active": {
                     "type": "boolean"
                 },
                 "endDate": {
@@ -317,7 +317,7 @@
                         "id": {
                             "type": "long"
                         },
-                        "archived": {
+                        "active": {
                             "type": "boolean"
                         },
                         "title": {

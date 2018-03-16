@@ -25,7 +25,7 @@ public class TemplateForm extends BasisForm {
 
     private static final long serialVersionUID = 2890900843176821176L;
     private boolean showClosedProcesses = false;
-    private boolean showArchivedProjects = false;
+    private boolean showInactiveProjects = false;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -37,7 +37,7 @@ public class TemplateForm extends BasisForm {
 
     /**
      * Check if closed processes should be shown.
-     * 
+     *
      * @return true or false
      */
     public boolean isShowClosedProcesses() {
@@ -46,7 +46,7 @@ public class TemplateForm extends BasisForm {
 
     /**
      * Set if closed processes should be shown.
-     * 
+     *
      * @param showClosedProcesses
      *            true or false
      */
@@ -55,21 +55,21 @@ public class TemplateForm extends BasisForm {
     }
 
     /**
-     * Check if archived projects should be shown.
-     * 
+     * Check if inactive projects should be shown.
+     *
      * @return true or false
      */
-    public boolean isShowArchivedProjects() {
-        return this.showArchivedProjects;
+    public boolean isShowInactiveProjects() {
+        return this.showInactiveProjects;
     }
 
     /**
-     * Set if archived projects should be shown.
-     * 
-     * @param showArchivedProjects
+     * Set if inactive projects should be shown.
+     *
+     * @param showInactiveProjects
      *            true or false
      */
-    public void setShowArchivedProjects(boolean showArchivedProjects) {
-        this.showArchivedProjects = showArchivedProjects;
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
     }
 }

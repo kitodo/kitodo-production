@@ -684,14 +684,14 @@ public class MockDatabase {
         serviceManager.getUserService().save(secondUser);
 
         Project thirdProject = new Project();
-        thirdProject.setTitle("Archived project");
+        thirdProject.setTitle("Inactive project");
         localDate = new LocalDate(2014, 11, 10);
         thirdProject.setStartDate(localDate.toDate());
         localDate = new LocalDate(2016, 9, 15);
         thirdProject.setEndDate(localDate.toDate());
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
-        thirdProject.setProjectIsArchived(true);
+        thirdProject.setActive(false);
         if (clientsCount > 0) {
             Client client = serviceManager.getClientService().getById(2);
             thirdProject.setClient(client);

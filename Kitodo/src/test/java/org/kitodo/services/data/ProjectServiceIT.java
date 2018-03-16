@@ -86,10 +86,10 @@ public class ProjectServiceIT {
         ProjectDTO project = projectService.findById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in index!", condition);
-        assertTrue("Project was not found in index!", project.getProjectIsArchived().equals(false));
+        assertTrue("Project was not found in index!", project.isActive().equals(true));
 
         project = projectService.findById(3);
-        assertTrue("Project was not found in index!", project.getProjectIsArchived().equals(true));
+        assertTrue("Project was not found in index!", project.isActive().equals(false));
     }
 
     @Test

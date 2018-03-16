@@ -121,12 +121,12 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
         JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
         JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
-                + "\"project.archived\":false,\"templates\":[],"
+                + "\"project.active\":true,\"templates\":[],"
                 + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":null,"
                 + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":null,\"template\":false,\"sortHelperImages\":20,"
                 + "\"batches\":[{\"id\":1,\"title\":\"First\"}],\"workpieces\":[],\"tasks\":[{\"id\":1,\"title\":"
                 + "\"Task one\"},{\"id\":2,\"title\":\"Task two\"}],\"project.title\":\"Project\",\"properties\":[]}");
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
+        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
@@ -135,8 +135,8 @@ public class ProcessTypeTest {
                 + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project.id\":1,\"template\":false,\"templates\":[],"
                 + "\"project.title\":\"Project\",\"sortHelperStatus\":null,\"processBaseUri\":null,\"creationDate\":\""
                 + dateFormat.format(process.getCreationDate()) + "\",\"sortHelperImages\":30,\"workpieces\":[],"
-                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.archived\":false}");
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
+                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.active\":true}");
+        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
@@ -144,9 +144,9 @@ public class ProcessTypeTest {
         expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
                 + "\"docket\":null,\"ruleset\":null,\"project.id\":null,\"project.title\":null,\"template\":false,"
                 + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],\"project.archived\":false,\"templates\":[],"
+                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],\"project.active\":false,\"templates\":[],"
                 + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
+        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
     }
 
     @Test

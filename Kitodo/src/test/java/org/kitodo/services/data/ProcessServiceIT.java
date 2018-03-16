@@ -593,10 +593,9 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindNotArchivedProcesses() throws Exception {
-        List<ProcessDTO> notArchivedProcesses = processService.findNotArchivedProcesses(null);
-        assertTrue("Found " + notArchivedProcesses.size() + " processes, instead of 3",
-            notArchivedProcesses.size() == 3);
+    public void shouldFindProcessesOfActiveProjects() throws Exception {
+        List<ProcessDTO> activeProcesses = processService.findProcessesOfActiveProjects(null);
+        assertTrue("Found " + activeProcesses.size() + " processes, instead of 3", activeProcesses.size() == 3);
     }
 
     @Test
@@ -606,18 +605,16 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindNotClosedAndNotArchivedProcessesWithoutTemplates() throws Exception {
-        List<ProcessDTO> notClosedAndNotArchivedProcesses = processService
-                .findNotClosedAndNotArchivedProcessesWithoutTemplates(null);
-        assertTrue("Found " + notClosedAndNotArchivedProcesses.size() + " processes, instead of 2",
-            notClosedAndNotArchivedProcesses.size() == 2);
+    public void shouldFindProcessesOfOpenAndActiveProjectsWithoutTemplates() throws Exception {
+        List<ProcessDTO> openAndActiveProcesses = processService.findOpenAndActiveProcessesWithoutTemplates(null);
+        assertTrue("Found " + openAndActiveProcesses.size() + " processes, instead of 2",
+            openAndActiveProcesses.size() == 2);
     }
 
     @Test
-    public void shouldFindNotArchivedTemplates() throws Exception {
-        List<ProcessDTO> notArchivedTemplates = processService.findNotArchivedTemplates(null);
-        assertTrue("Found " + notArchivedTemplates.size() + " processes, instead of 1",
-            notArchivedTemplates.size() == 1);
+    public void shouldFindTemplatesOfActiveProjects() throws Exception {
+        List<ProcessDTO> activeTemplates = processService.findTemplatesOfActiveProjects(null);
+        assertTrue("Found " + activeTemplates.size() + " processes, instead of 1", activeTemplates.size() == 1);
     }
 
     @Test
@@ -627,18 +624,17 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindAllNotArchivedWithoutTemplates() throws Exception {
-        List<ProcessDTO> notArchivedProcessesWithoutTemplates = processService.findAllNotArchivedWithoutTemplates(null);
-        assertTrue("Found " + notArchivedProcessesWithoutTemplates.size() + " processes, instead of 2",
-            notArchivedProcessesWithoutTemplates.size() == 2);
+    public void shouldFindAllActiveWithoutTemplates() throws Exception {
+        List<ProcessDTO> activeProcessesWithoutTemplates = processService.findAllActiveWithoutTemplates(null);
+        assertTrue("Found " + activeProcessesWithoutTemplates.size() + " processes, instead of 2",
+            activeProcessesWithoutTemplates.size() == 2);
     }
 
     @Test
-    public void shouldFindAllNotClosedAndNotArchivedTemplates() throws Exception {
-        List<ProcessDTO> notClosedAndNotArchivedTemplates = processService
-                .findAllNotClosedAndNotArchivedTemplates(null);
-        assertTrue("Found " + notClosedAndNotArchivedTemplates.size() + " processes, instead of 1",
-            notClosedAndNotArchivedTemplates.size() == 1);
+    public void shouldFindAllTemplatesOfOpenAndActiveProjects() throws Exception {
+        List<ProcessDTO> openAndActiveTemplates = processService.findAllOpenAndActiveTemplates(null);
+        assertTrue("Found " + openAndActiveTemplates.size() + " processes, instead of 1",
+            openAndActiveTemplates.size() == 1);
     }
 
     @Test
