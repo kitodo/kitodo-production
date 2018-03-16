@@ -34,6 +34,7 @@ public class TaskDTO extends BaseDTO {
     private String processingBegin;
     private String processingEnd;
     private ProcessDTO process;
+    private TemplateDTO template;
     private List<UserDTO> users;
     private Integer usersSize;
     private List<UserGroupDTO> userGroups;
@@ -291,6 +292,25 @@ public class TaskDTO extends BaseDTO {
      */
     public void setProcess(ProcessDTO process) {
         this.process = process;
+    }
+
+    /**
+     * Get template as TemplateDTO.
+     *
+     * @return template as TemplateDTO
+     */
+    public TemplateDTO getTemplate() {
+        return template;
+    }
+
+    /**
+     * Set template as TemplateDTO.
+     *
+     * @param template
+     *            as TemplateDTO
+     */
+    public void setTemplate(TemplateDTO template) {
+        this.template = template;
     }
 
     /**
