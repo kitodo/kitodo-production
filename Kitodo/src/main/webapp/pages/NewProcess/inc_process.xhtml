@@ -27,21 +27,21 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <h:panelGrid columns="3" border="0" width="90%" rowClasses="rowMiddle"
-                 rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
+                 rendered="#{ProzesskopieForm.copyProcess.useOpac || ProzesskopieForm.copyProcess.useTemplates}">
     <!-- aus den bereits vorhandenen Prozessen einen auswaehlen -->
-    <h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-    <h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.useTemplates}"
+    <h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"/>
+    <h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"
                      style="margin-left:10px;margin-right:10px; width:200px">
         <f:selectItems value="#{ProzesskopieForm.prozessTemplates}"/>
     </h:selectOneMenu>
-    <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
+    <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"
                    title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
         <h:graphicImage alt="" value="/pages/images/buttons/copy.gif"
                         style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
     </h:commandLink>
     <!-- aus dem Opac auswaehlen -->
-    <h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
+    <h:panelGroup rendered="#{ProzesskopieForm.copyProcess.useOpac}">
         <h:outputText value="#{msgs.sucheImOpac}" style="display:inline"/>
 
         <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}"
@@ -62,18 +62,18 @@
         </h:selectOneMenu>
 
     </h:panelGroup>
-    <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}"
+    <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.copyProcess.useOpac}"
                  style="margin-left:7px;margin-right:7px; width:200px"
                  onkeypress="return checkOpac('OpacRequest',event)"/>
     <h:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
-                   rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
+                   rendered="#{ProzesskopieForm.copyProcess.useOpac}" title="#{msgs.opacAbfragen}">
         <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
                         style="vertical-align:middle; margin-right:3px"/>
         <h:outputText value="#{msgs.uebernehmen}"/>
     </h:commandLink>
     </h:panelGrid>
 
-    <h:panelGroup rendered="#{ProzesskopieForm.useOpac || ProzesskopieForm.useTemplates}">
+    <h:panelGroup rendered="#{ProzesskopieForm.copyProcess.useOpac || ProzesskopieForm.copyProcess.useTemplates}">
     <f:verbatim>
         <hr width="90%"/>
     </f:verbatim>
@@ -99,8 +99,8 @@
     </h:panelGroup>
 
     <!-- DocType -->
-    <h:outputText value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
-    <h:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
+    <h:outputText value="DocType" rendered="#{ProzesskopieForm.copyProcess.standardFields.doctype}"/>
+    <h:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.copyProcess.standardFields.doctype}"
                      onchange="submit()"
                      styleClass="prozessKopieFeldbreite">
         <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
@@ -108,8 +108,8 @@
     </h:selectOneMenu>
 
     <!-- Preferences -->
-    <h:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.preferences}" value="#{msgs.regelsatz}"/>
-    <h:panelGroup rendered="#{ProzesskopieForm.standardFields.preferences}">
+    <h:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.copyProcess.standardFields.preferences}" value="#{msgs.regelsatz}"/>
+    <h:panelGroup rendered="#{ProzesskopieForm.copyProcess.standardFields.preferences}">
         <h:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
                          onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
                          required="true">
@@ -119,29 +119,29 @@
     </h:panelGroup>
 
     <!-- digitale Kollektion -->
-    <h:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
+    <h:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.copyProcess.standardFields.collections}"
                    value="#{msgs.digitaleKollektionen}"/>
     <h:selectManyListbox id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
-                         rendered="#{ProzesskopieForm.standardFields.collections}"
+                         rendered="#{ProzesskopieForm.copyProcess.standardFields.collections}"
                          value="#{ProzesskopieForm.digitalCollections}">
-        <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
+        <f:selectItems value="#{ProzesskopieForm.copyProcess.possibleDigitalCollections}" var="step" itemLabel="#{step}"
                         itemValue="#{step}"/>
     </h:selectManyListbox>
 
     <!-- Tifheader - Documentname -->
     <h:outputText value="#{msgs.tifheaderdocumentname}"/>
-    <h:inputText value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+    <h:inputText value="#{ProzesskopieForm.copyProcess.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
 
     <!-- Tifheader - Imagedescription -->
     <h:outputText value="#{msgs.tifheaderimagedescription}"/>
-    <h:inputText value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+    <h:inputText value="#{ProzesskopieForm.copyProcess.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
 
-    <h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-    <h:selectBooleanCheckbox rendered="#{ProzesskopieForm.useTemplates}"
+    <h:outputText value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"/>
+    <h:selectBooleanCheckbox rendered="#{ProzesskopieForm.copyProcess.useTemplates}"
                              value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
 
-    <h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
-    <h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
+    <h:outputText value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.copyProcess.standardFields.images}"/>
+    <h:inputText value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.copyProcess.standardFields.images}"
                  styleClass="prozessKopieFeldbreite"/>
 
     </h:panelGrid>

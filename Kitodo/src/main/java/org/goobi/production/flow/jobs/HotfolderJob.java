@@ -222,7 +222,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             CopyProcess form = new CopyProcess();
             form.setProzessVorlage(template);
             form.setMetadataFile(dir.resolve(File.separator + processTitle));
-            form.prepare(template.getId());
+            form.prepare(null);
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
             if (form.testTitle()) {
                 if (digitalCollection == null) {

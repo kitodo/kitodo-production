@@ -59,7 +59,7 @@
                 <p:selectManyMenu id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
                                      rendered="#{ProzesskopieForm.standardFields.collections}"
                                      value="#{ProzesskopieForm.digitalCollections}">
-                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
+                    <f:selectItems value="#{ProzesskopieForm.copyProcess.possibleDigitalCollections}" var="step" itemLabel="#{step}"
                                    itemValue="#{step}"/>
                     <p:ajax event="change"/>
                 </p:selectManyMenu>
@@ -70,13 +70,13 @@
             <div>
                 <!-- Tifheader - Documentname -->
                 <p:outputLabel for="tifHeaderDocumentName" value="#{msgs.tifheaderdocumentname}"/>
-                <p:inputText class="input" id="tifHeaderDocumentName" value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+                <p:inputText class="input" id="tifHeaderDocumentName" value="#{ProzesskopieForm.copyProcess.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
             </div>
 
             <div>
                 <!-- Tifheader - Imagedescription -->
                 <p:outputLabel for="tifHeaderImageDescription" value="#{msgs.tifheaderimagedescription}"/>
-                <p:inputText class="input" id="tifHeaderImageDescription" value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+                <p:inputText class="input" id="tifHeaderImageDescription" value="#{ProzesskopieForm.copyProcess.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
             </div>
 
             <div>
@@ -86,8 +86,8 @@
             </div>
 
             <div>
-                <p:outputLabel for="useTemplates" value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
-                <p:selectBooleanCheckbox class="input" id="useTemplates" rendered="#{ProzesskopieForm.useTemplates}"
+                <p:outputLabel for="useTemplates" value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"/>
+                <p:selectBooleanCheckbox class="input" id="useTemplates" rendered="#{ProzesskopieForm.copyProcess.useTemplates}"
                                          value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
             </div>
         </p:row>
