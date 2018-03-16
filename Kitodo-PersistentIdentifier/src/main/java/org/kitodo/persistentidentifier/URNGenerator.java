@@ -13,12 +13,14 @@ package org.kitodo.persistentidentifier;
 
 import java.util.HashMap;
 
-import org.kitodo.api.persistentidentifier.PersistentIdentifierInterface;
+import org.kitodo.api.persistentidentifier.urn.UnifiedResourceNameGeneratorInterface;
+
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Class for generation and registration DBNURN identifier.
  */
-public class URNPersistentIdentifier implements PersistentIdentifierInterface {
+public class URNGenerator implements UnifiedResourceNameGeneratorInterface {
 
     private static final String SCHEME = "urn:nbn:de";
     private static final int URN_NBN_DE_PART_CHECKSUM = 801;
@@ -86,15 +88,14 @@ public class URNPersistentIdentifier implements PersistentIdentifierInterface {
      * @return generated URN
      */
     @Override
-    public String generateUnifiedResourceName(String namespace, String libraryIdentifier, String subNamespace,
-            String identifier) {
+    public String generate(String namespace, String libraryIdentifier, String subNamespace, String identifier) {
         String urn = namespace + ':' + libraryIdentifier + '-' + subNamespace + "-" + identifier;
         return SCHEME + ':' + urn + getCheckDigit(urn);
     }
 
     @Override
-    public boolean registerUnifiedResourceName(String urn) {
-        return false;
+    public boolean register(String urn) {
+        throw new NotImplementedException();
     }
 
     /**

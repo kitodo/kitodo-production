@@ -9,30 +9,24 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.persistentidentifier;
+package org.kitodo.api.persistentidentifier.urn;
 
-/** Handles persistent Identifiers. */
-public interface PersistentIdentifierInterface {
+import org.kitodo.api.persistentidentifier.PersistentIdentifierGeneratorInterface;
+
+public interface UnifiedResourceNameGeneratorInterface extends PersistentIdentifierGeneratorInterface {
 
     /**
      * Generates a URN for the given namespace and id.
      *
      * @param namespace
      *            the URN-namespace (usually unique within an organisation).
+     * @param libraryIdentifier
+     *            the identifier of the library
+     * @param subNamespace
+     *            sub namespace
      * @param identifier
      *            the identifier of the specific object to which the URN points.
      * @return a valid URN (including check digit).
      */
-    String generateUnifiedResourceName(String namespace, String libraryIdentifier, String subNamespace,
-            String identifier);
-
-    /**
-     * Registers the given urn.
-     * 
-     * @param urn
-     *            the urn to register.
-     * @return true, if successful, false otherwise.
-     */
-    boolean registerUnifiedResourceName(String urn);
-
+    String generate(String namespace, String libraryIdentifier, String subNamespace, String identifier);
 }
