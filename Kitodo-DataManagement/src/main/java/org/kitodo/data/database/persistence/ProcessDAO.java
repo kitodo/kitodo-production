@@ -97,58 +97,11 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
-     * Get all process templates.
-     * 
-     * @return list of all process templates as Process objects
-     */
-    public List<Process> getProcessTemplates() {
-        return getByQuery("FROM Process WHERE template = 1 AND inChoiceListShown = 1 ORDER BY title ASC");
-    }
-
-    /**
-     * Get all processes.
-     *
-     * @return list of all processes as Process objects
-     */
-    public List<Process> getProcesses() {
-        return getByQuery("FROM Process WHERE template = 0 ORDER BY title ASC");
-    }
-
-    /**
      * Get all active processes.
      *
      * @return list of all active processes as Process objects
      */
     public List<Process> getActiveProcesses() {
-        return getByQuery("SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE process.template = 0 AND project.active = 1");
-    }
-
-    /**
-     * Get all process templates with exact title.
-     *
-     * @return list of all process templates as Process objects
-     */
-    public List<Process> getProcessTemplatesWithTitle(String title) {
-        return getByQuery("FROM Process WHERE template = 1 AND title LIKE '" + title + "' ORDER BY title ASC");
-    }
-
-    /**
-     * Get process templates for users.
-     * 
-     * @param projects
-     *            list of project ids fof user's projects
-     * @return list of all process templates for user as Process objects
-     */
-    public List<Process> getProcessTemplatesForUser(List<Integer> projects) {
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT process FROM Process process, Project project WHERE process.template = 1 AND ");
-        query.append("process.inChoiceListShown = 1 AND project.id IN (");
-        for (Integer projectId : projects) {
-            query.append(projectId);
-            query.append(", ");
-        }
-        query.setLength(query.length() - 2);
-        query.append(") ORDER BY process.title ASC");
-        return getByQuery(query.toString());
+        return getByQuery("SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE project.active = 1");
     }
 }
