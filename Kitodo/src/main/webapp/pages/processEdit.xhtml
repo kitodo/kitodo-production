@@ -77,13 +77,18 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
-        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+        <ui:fragment rendered="#{ProzessverwaltungForm.process.template}">
+            <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+            <li><a href="">#{msgs.editTemplate}</a></li>
         </ui:fragment>
-        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+        <ui:fragment rendered="#{! ProzessverwaltungForm.process.template}">
+            <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+            <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+                <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+            </ui:fragment>
+            <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+                <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+            </ui:fragment>
         </ui:fragment>
     </ui:define>
-
 </ui:composition>
