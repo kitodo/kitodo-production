@@ -696,6 +696,14 @@ footer {
     border: 0 none !important;
 }
 
+.ui-selectmanymenu.ui-widget-content, .ui-selectonelistbox.ui-widget-content {
+    border: 1px solid #004f81 !important;
+}
+
+.ui-selectmanymenu, .ui-selectonelistbox {
+    width: auto;
+}
+
 .ui-datatable thead th.ui-state-default {
     background: #d8d8d8;
 }

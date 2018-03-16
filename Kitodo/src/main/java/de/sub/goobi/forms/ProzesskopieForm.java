@@ -34,9 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
@@ -79,6 +82,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
+import org.omnifaces.util.Ajax;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -243,6 +247,15 @@ public class ProzesskopieForm implements Serializable {
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
 
+    private static final String TEMPLATE_ROOT = "/pages/";
+    private static final String PROCESS_FROM_TEMPLATE_PATH = TEMPLATE_ROOT + "processFromTemplate";
+    private static final String PROCESS_FROM_TEMPLATE_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
+
+    private static final String PROCESS_PATH = TEMPLATE_ROOT + "processes";
+    private static final String PROCESS_PATH_OLD = TEMPLATE_ROOT + "/NewProcess/Page3";
+
+    static final String REDIRECT_PARAMETER = "faces-redirect=true";
+
     /**
      * Prepare.
      *
@@ -295,7 +308,7 @@ public class ProzesskopieForm implements Serializable {
 
         initializePossibleDigitalCollections();
 
-        return NAVI_FIRST_PAGE;
+        return redirectToProcessFromTemplateEdit();
     }
 
     private void readProjectConfigs() {
@@ -882,17 +895,20 @@ public class ProzesskopieForm implements Serializable {
              * Collectionen hinzufügen
              */
             DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-            try {
-                addCollections(colStruct);
-                /*
-                 * falls ein erstes Kind vorhanden ist, sind die Collectionen
-                 * dafür
-                 */
-                colStruct = colStruct.getAllChildren().get(0);
-                addCollections(colStruct);
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(
-                    e.getMessage() + " The first child below the top structure could not be determined!", logger, e);
+            if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
+                    && colStruct.getAllChildren().size() > 0) {
+                try {
+                    addCollections(colStruct);
+                    /*
+                     * falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
+                     */
+                    colStruct = colStruct.getAllChildren().get(0);
+                    addCollections(colStruct);
+                } catch (RuntimeException e) {
+                    Helper.setErrorMessage(
+                        e.getMessage() + " The first child below the top structure could not be determined!", logger,
+                        e);
+                }
             }
 
             /*
@@ -945,7 +961,7 @@ public class ProzesskopieForm implements Serializable {
 
         startTaskScriptThreads();
 
-        return "/pages/NewProcess/Page3";
+        return this.redirectToProcessesAfterSave();
     }
 
     private void updateTasks() {
@@ -1294,6 +1310,14 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
+     * The method getVisibleAdditionalFields returns a list of visible additional fields
+     * @return list of AdditionalField
+     */
+    public List<AdditionalField> getVisibleAdditionalFields() {
+        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype()).collect(Collectors.toList());
+    }
+
+    /**
      * The method setAdditionalField() sets the value of an AdditionalField held
      * by a ProzesskopieForm object.
      *
@@ -1484,6 +1508,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateProcessTitle() {
         try {
             generateTitle(null);
+            Ajax.update("editForm");
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1940,5 +1965,49 @@ public class ProzesskopieForm implements Serializable {
      */
     public FileformatInterface getFileformat() {
         return rdf;
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/processFromTemplate" once we have completely
+    // switched to the new frontend pages
+    private String redirectToProcessFromTemplateEdit() {
+        try {
+            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty()
+                    && (callerViewId.contains("projects.jsf"))) {
+                return PROCESS_FROM_TEMPLATE_PATH + "?" + REDIRECT_PARAMETER;
+            } else {
+                return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
+            // used from it's integration test
+            // class "ProzesskopieFormIT", where no "FacesContext" is available!
+            return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
+        }
+    }
+
+    // TODO:
+    // replace calls to this function with "/pages/processFromTemplate" once we have completely
+    // switched to the new frontend pages
+    private String redirectToProcessesAfterSave() {
+        try {
+            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
+                    .get("referer");
+            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
+            if (!callerViewId.isEmpty()
+                    && (callerViewId.contains("processFromTemplate.jsf"))) {
+                return PROCESS_PATH + "?" + REDIRECT_PARAMETER;
+            } else {
+                return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
+            }
+        } catch (NullPointerException e) {
+            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
+            // used from it's integration test
+            // class "ProzesskopieFormIT", where no "FacesContext" is available!
+            return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
+        }
     }
 }

@@ -1,0 +1,66 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <h:panelGrid columns="2" cellpadding="10">
+        <!-- choose from existing processes  -->
+        <h:outputText value="#{msgs.AuswaehlenAusVorhandenenProzessen}" rendered="#{ProzesskopieForm.useTemplates}"/>
+        <h:selectOneMenu value="#{ProzesskopieForm.auswahl}" rendered="#{ProzesskopieForm.useTemplates}"
+                         style="margin-left:10px;margin-right:10px; width:200px">
+            <f:selectItems value="#{ProzesskopieForm.prozessTemplates}"/>
+        </h:selectOneMenu>
+        <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}" rendered="#{ProzesskopieForm.useTemplates}"
+                       title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
+            <h:graphicImage alt="" value="/pages/images/buttons/copy.gif"
+                            style="vertical-align:middle; margin-right:3px"/>
+            <h:outputText value="#{msgs.uebernehmen}"/>
+        </h:commandLink>
+        <!-- choose from opac -->
+        <h:panelGroup rendered="#{ProzesskopieForm.useOpac}">
+            <h:outputText value="#{msgs.sucheImOpac}" style="display:inline"/>
+
+            <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}"
+                             style="display:inline; margin-left:7px">
+                <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}"
+                               itemValue="#{step}"/>
+            </h:selectOneMenu>
+            <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px"/>
+            <h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}"
+                             style="display:inline; margin-left:10px">
+                <f:selectItem itemLabel="Identifier" itemValue="12"/>
+                <f:selectItem itemLabel="Barcode" itemValue="8535"/>
+                <f:selectItem itemLabel="Barcode 8200" itemValue="8200"/>
+                <f:selectItem itemLabel="ISBN" itemValue="7"/>
+                <f:selectItem itemLabel="ISSN" itemValue="8"/>
+                <f:selectItem itemLabel="Title" itemValue="4"/>
+                <f:selectItem itemLabel="ZDB-ID" itemValue="8506"/>
+            </h:selectOneMenu>
+
+        </h:panelGroup>
+        <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}"
+                     style="margin-left:7px;margin-right:7px; width:200px"
+                     onkeypress="return checkOpac('OpacRequest',event)"/>
+        <h:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
+                       rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
+            <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
+                            style="vertical-align:middle; margin-right:3px"/>
+            <h:outputText value="#{msgs.uebernehmen}"/>
+        </h:commandLink>
+    </h:panelGrid>
+</ui:composition>

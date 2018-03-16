@@ -1,0 +1,70 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
+    </f:metadata>
+
+    <ui:define name="contentHeader">
+        <p:panel styleClass="content-header">
+            <h3>
+                <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.prozessVorlage.title}')"/>
+            </h3>
+            <p:commandButton value="#{msgs.speichern}"
+                             action="#{ProzesskopieForm.createNewProcess}"
+                             icon="fa fa-floppy-o fa-lg" iconPos="right"
+                             onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                             update="notifications"/>
+            <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        </p:panel>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="processFromTemplateTabView">
+            <p:tab id="processDataTab" title="#{msgs.prozessdaten}">
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processDataEdit.xhtml" />
+            </p:tab>
+            <p:tab id="additionalDetailsTab" title="#{msgs.zusaetzlicheDetails}">
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processAdditionalDataEdit.xhtml" />
+            </p:tab>
+            <p:tab id="searchTab" title="#{msgs.suche}">
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processSearchEdit.xhtml" />
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+        </ui:fragment>
+        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+        </ui:fragment>
+    </ui:define>
+
+</ui:composition>

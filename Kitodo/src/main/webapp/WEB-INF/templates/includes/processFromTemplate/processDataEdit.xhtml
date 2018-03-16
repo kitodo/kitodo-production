@@ -1,0 +1,96 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid layout="grid" columns="2">
+        <p:row>
+            <div>
+                <!-- process title -->
+                <p:outputLabel for="processTitle" value="#{msgs.prozessTitel}"/>
+                <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button"/>
+                <p:commandButton id="generateTitleButton"
+                                 actionListener="#{ProzesskopieForm.calculateProcessTitle}"
+                                 icon="fa fa-cog" title="#{msgs.generieren}"/>
+            </div>
+
+            <div>
+                <!-- DocType -->
+                <p:outputLabel value="DocType" rendered="#{ProzesskopieForm.standardFields.doctype}"/>
+                <p:selectOneMenu value="#{ProzesskopieForm.docType}" rendered="#{ProzesskopieForm.standardFields.doctype}"
+                                 styleClass="prozessKopieFeldbreite">
+                    <f:selectItems value="#{ProzesskopieForm.allDoctypes}" var="step" itemLabel="#{step.localizedLabel}"
+                                   itemValue="#{step.title}"/>
+                    <f:ajax event="change" render="@form"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <!-- Preferences -->
+                <p:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.regelsatz}" value="#{msgs.regelsatz}"/>
+                <h:panelGroup rendered="#{ProzesskopieForm.standardFields.regelsatz}">
+                    <p:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
+                                     onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
+                                     required="true">
+                        <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    </p:selectOneMenu>
+                </h:panelGroup>
+            </div>
+
+            <div>
+                <!-- digital collection -->
+                <p:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
+                               value="#{msgs.digitaleKollektionen}"/>
+                <p:selectManyMenu id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
+                                     rendered="#{ProzesskopieForm.standardFields.collections}"
+                                     value="#{ProzesskopieForm.digitalCollections}">
+                    <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
+                                   itemValue="#{step}"/>
+                    <p:ajax event="change"/>
+                </p:selectManyMenu>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <!-- Tifheader - Documentname -->
+                <p:outputLabel for="tifHeaderDocumentName" value="#{msgs.tifheaderdocumentname}"/>
+                <p:inputText class="input" id="tifHeaderDocumentName" value="#{ProzesskopieForm.tifHeaderDocumentName}" styleClass="prozessKopieFeldbreite"/>
+            </div>
+
+            <div>
+                <!-- Tifheader - Imagedescription -->
+                <p:outputLabel for="tifHeaderImageDescription" value="#{msgs.tifheaderimagedescription}"/>
+                <p:inputText class="input" id="tifHeaderImageDescription" value="#{ProzesskopieForm.tifHeaderImageDescription}" styleClass="prozessKopieFeldbreite"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="guessImages" value="#{msgs.guessImages}" rendered="#{ProzesskopieForm.standardFields.images}"/>
+                <p:inputText class="input" id="guessImages" value="#{ProzesskopieForm.imagesGuessed}" rendered="#{ProzesskopieForm.standardFields.images}"
+                             styleClass="prozessKopieFeldbreite"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="useTemplates" value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
+                <p:selectBooleanCheckbox class="input" id="useTemplates" rendered="#{ProzesskopieForm.useTemplates}"
+                                         value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
+            </div>
+        </p:row>
+
+    </p:panelGrid>
+</ui:composition>
