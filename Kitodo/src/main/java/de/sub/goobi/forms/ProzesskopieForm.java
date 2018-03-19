@@ -385,7 +385,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<Process> processes;
+        List<Process> processes = new ArrayList<>();
         // TODO Change to check the corresponding authority
         if (serviceManager.getSecurityAccessService().isAdmin()) {
             processes = serviceManager.getProcessService().getProcessTemplates();
@@ -396,12 +396,13 @@ public class ProzesskopieForm implements Serializable {
             } catch (DAOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-            ArrayList<Integer> projectIds = new ArrayList<>();
-
-            for (Project project : currentUser.getProjects()) {
-                projectIds.add(project.getId());
+            if (Objects.nonNull(currentUser)) {
+                ArrayList<Integer> projectIds = new ArrayList<>();
+                for (Project project : currentUser.getProjects()) {
+                    projectIds.add(project.getId());
+                }
+                processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
             }
-            processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
         }
 
         List<SelectItem> processTemplates = new ArrayList<>();

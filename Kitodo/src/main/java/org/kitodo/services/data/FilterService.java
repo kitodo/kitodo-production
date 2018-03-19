@@ -418,7 +418,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         UserDTO currentUser = null;
         try {
             currentUser = serviceManager.getUserService().findAuthenticatedUser();
-
         } catch (DataException | DAOException e) {
             logger.error(e);
         }

@@ -60,29 +60,6 @@ public class SecurityAccessService {
         return strings.split(",");
     }
 
-    private Collection<? extends GrantedAuthority> getProjectAuthoritiesOfCurrentAuthenticationByAuthorityTitle(
-            String authorityTitle) {
-        return getFilteredAuthoritiesOfCurrentAuthentication(authorityTitle, "PROJECT");
-    }
-
-    private Collection<? extends GrantedAuthority> getClientAuthoritiesOfCurrentAuthenticationByAuthorityTitle(
-            String authorityTitle) {
-        return getFilteredAuthoritiesOfCurrentAuthentication(authorityTitle, "CLIENT");
-    }
-
-    private Collection<? extends GrantedAuthority> getFilteredAuthoritiesOfCurrentAuthentication(String firstConstain,
-            String secondConstain) {
-        Collection<? extends GrantedAuthority> authoritiesOfCurrentAuthentication = getAuthoritiesOfCurrentAuthentication();
-        Collection<GrantedAuthority> specifiedAuthorities = new ArrayList<>();
-        for (GrantedAuthority grantedAuthority : authoritiesOfCurrentAuthentication) {
-            if (grantedAuthority.getAuthority().contains(firstConstain)
-                    && grantedAuthority.getAuthority().contains(secondConstain)) {
-                specifiedAuthorities.add(grantedAuthority);
-            }
-        }
-        return specifiedAuthorities;
-    }
-
     /**
      * Checks if the current user has a specified authority globally or for a
      * project.

@@ -25,16 +25,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-/**
- * User groups owning different access rights, represented by integer values.
- *
- * <p>
- * 1: Administration - can do anything 2: Projectmanagement - may do a lot (but
- * not user management, no user switch, no administrative form) 3: User and
- * process (basically like 4 but can be used for setting additional boundaries
- * later, if so desired) 4: User only: can see current steps
- * </p>
- */
 @Entity
 @Table(name = "userGroup")
 public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
@@ -42,9 +32,6 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
-
-    @Column(name = "permission")
-    private Integer permission;
 
     @ManyToMany(mappedBy = "userGroups", cascade = CascadeType.PERSIST)
     private List<User> users;
