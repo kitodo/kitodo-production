@@ -567,7 +567,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     /**
      * Convert JSONObject object to bean object.
      *
-     * gi
      * @param jsonObject
      *            result from ElasticSearch
      * @return bean object
