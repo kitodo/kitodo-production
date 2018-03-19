@@ -230,7 +230,8 @@ public class SecurityAccessService {
      * any client or for any project.
      *
      * @param authorityTitlesComplete
-     *            The authority titles separated with commas.
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
      * @return True if the current user is admin or has any of the specified
      *         authorities for any client or project.
      */
@@ -248,17 +249,18 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has one of the specified authorities globally, for
-     * any client or for any project.
+     * Checks if the current user is admin or has the specified authorities
+     * globally, for any client or for any project.
      *
      * @param authorityTitle
-     *            The authority titles separated with commas.
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
      * @return True if the current user is admin or has any of the specified
      *         authorities for any client or project.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForClientOrForProject(String authorityTitle, int clientId,
             int projectId) {
-        return isAdmin() || hasAuthorityForClient(authorityTitle, clientId)
+        return isAdmin() || hasAuthorityGlobal(authorityTitle) || hasAuthorityForClient(authorityTitle, clientId)
                 || hasAuthorityForProject(authorityTitle, projectId);
     }
 }

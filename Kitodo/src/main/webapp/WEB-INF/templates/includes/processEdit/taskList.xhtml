@@ -85,7 +85,8 @@
         </p:column>
 
         <!-- actions -->
-        <p:column headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
+        <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
+                  headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
