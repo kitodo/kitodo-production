@@ -58,7 +58,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="tabs">
+        <p:tabView id="tabs" activeIndex="#{ProzessverwaltungForm.activeTabIndex}">
+            <p:ajax event="tabChange" listener="#{ProzessverwaltungForm.onTabChange}"/>
             <p:tab title="#{msgs.processList}">
                 <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
             </p:tab>
