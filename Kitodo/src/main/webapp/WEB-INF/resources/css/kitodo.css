@@ -142,6 +142,7 @@ body.first-visit #portal-header {
     border-radius: 3px;
     display: table;
     width: 100%;
+    white-space: nowrap;
     }
 
 #portal-search form:hover {
