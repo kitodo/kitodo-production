@@ -210,9 +210,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * Gets user by login.
      *
      * @param login
-     *      The login.
-     * @return
-     *      The user.
+     *            The login.
+     * @return The user.
      */
     public User getByLogin(String login) throws DAOException {
         return getByLoginQuery(login, "from User where login = :username");
@@ -222,9 +221,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * Gets user by ldap login.
      *
      * @param ldapLogin
-     *      The ldapLogin.
-     * @return
-     *      The user.
+     *            The ldapLogin.
+     * @return The user.
      */
     public User getByLdapLogin(String ldapLogin) throws DAOException {
         return getByLoginQuery(ldapLogin, "from User where ldapLogin = :username");
@@ -232,7 +230,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     private User getByLoginQuery(String login, String query) throws DAOException {
         List<User> users = getByQuery(query, "username", login);
-        if (users.size() == 1)  {
+        if (users.size() == 1) {
             return users.get(0);
         } else if (users.size() == 0) {
             throw new UsernameNotFoundException("Username " + login + " not found!");
@@ -244,8 +242,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     /**
      * Gets the current authenticated user and loads object from database.
      *
-     * @return
-     *      The user object or null if no user is authenticated.
+     * @return The user object or null if no user is authenticated.
      */
     public User getAuthenticatedUser() throws DAOException {
         SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -266,9 +263,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return null;
     }
 
+    /**
+     * Finds the current authenticated user and loads object dto from index.
+     * 
+     * @return The user dto or null if no user is authenticated.
+     */
     public UserDTO findAuthenticatedUser() throws DAOException, DataException {
         User user = getAuthenticatedUser();
-        return findById(user.getId());
+        if (Objects.nonNull(user)) {
+            return findById(user.getId());
+        } else {
+            return null;
+        }
     }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {
@@ -476,7 +482,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return list of JSON objects with users for specific filter
      */
     List<UserDTO> findByProcessingTask(Integer id, boolean related) throws DataException {
-        List<JSONObject> jsonObjects = searcher.findDocuments(createSimpleQuery("processingTasks.id", id, true).toString());
+        List<JSONObject> jsonObjects = searcher
+                .findDocuments(createSimpleQuery("processingTasks.id", id, true).toString());
         return convertJSONObjectsToDTOs(jsonObjects, related);
     }
 
@@ -579,7 +586,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         userDTO.setUserGroups(
-                convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+            convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
         return userDTO;
     }
 
