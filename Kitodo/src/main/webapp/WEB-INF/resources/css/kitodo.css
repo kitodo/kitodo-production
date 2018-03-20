@@ -456,7 +456,8 @@ section#content-section {
 }
 
 .content-header .ui-panel-content > form,
-.content-header .ui-panel-content > button {
+.content-header .ui-panel-content > button,
+.ui-selectbooleanbutton {
     float: right;
     margin-left: 20px;
 }
