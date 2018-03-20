@@ -147,15 +147,15 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     /**
-     * Find authorizations by id of user group.
+     * Find clients by id of projects.
      *
      * @param id
-     *            of user group
-     * @return list of JSON objects with authorizations for specific user group id
+     *            The id of the project.
+     * @return list of JSON objects with clients for specific project id
      */
     List<JsonObject> findByProjectId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("projects.id", id, true);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocument(query.toString());
     }
 
 }

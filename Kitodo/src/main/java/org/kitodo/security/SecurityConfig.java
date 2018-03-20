@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 @Configuration
 @EnableWebSecurity
@@ -69,7 +70,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "viewAllClients_GLOBAL")
             .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
                 "admin_GLOBAL",
-                "editClient_GLOBAL")
+                "editClient_GLOBAL",
+                "editClient_CLIENT_ANY")
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
                 "admin_GLOBAL",
@@ -137,6 +139,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
             .antMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated();
+
+        http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
 
         http.formLogin()
                 .loginPage("/pages/login.jsf")
