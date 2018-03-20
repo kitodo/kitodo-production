@@ -95,7 +95,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            currently logged in user
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(User user) {
+    private BoolQueryBuilder createUserTaskQuery(User user) throws DataException {
 
         BoolQueryBuilder subquery = new BoolQueryBuilder();
         subquery.should(createSimpleQuery("processingUser", user.getId(), true));
@@ -109,6 +109,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
 
+        List<JSONObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
+        if (templateProcesses.size() > 0) {
+            Set<Integer> templates = new HashSet<>();
+            for (JSONObject jsonObject : templateProcesses) {
+                templates.add(getIdFromJSONObject(jsonObject));
+            }
+            query.mustNot(createSetQuery("processForTask.id", templates, true));
+        }
         // TODO: find other way than retrieving the form bean to access
         // "hideCorrectionTasks" and "showAutomaticTasks"
         // e.g. which tasks should be returned!
@@ -137,7 +145,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public String createCountQuery(Map filters) {
+    public String createCountQuery(Map filters) throws DataException {
         User user = Helper.getCurrentUser();
         if (user == null) {
             return "";
