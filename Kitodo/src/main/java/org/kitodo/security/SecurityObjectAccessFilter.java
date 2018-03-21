@@ -21,7 +21,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -31,42 +30,43 @@ import org.springframework.web.filter.GenericFilterBean;
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
     private ServiceManager serviceManager = new ServiceManager();
+    private HttpServletRequest httpServletRequest;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest hreq = (HttpServletRequest) request;
-        HttpServletResponse hres = (HttpServletResponse) response;
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        this.httpServletRequest = (HttpServletRequest) request;
 
-        if (hreq.getRequestURI().contains("pages/clientEdit")) {
-            int id = getIdByRequest(hreq);
-            if (!serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForClient("editClient", id)) {
-                denyAccess(hreq, hres);
+        String id = httpServletRequest.getParameter("id");
+
+        if (Objects.nonNull(id)) {
+            int idInt = Integer.parseInt(id);
+            if (!hasAccessToUrl("pages/clientEdit", "editClient", idInt, true)) {
+                denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
-        }
-
-        if (hreq.getRequestURI().contains("pages/projectEdit")) {
-            if (Objects.nonNull(hreq.getParameter("id"))) {
-                int id = Integer.parseInt(hreq.getParameter("id"));
-                if (!serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient("editProject",id)) {
-                    denyAccess(hreq, hres);
-                    return;
-                }
+            if (!hasAccessToUrl("pages/projectEdit", "editProject", idInt, false)) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
             }
         }
         chain.doFilter(request, response);
     }
 
-    private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {
-        accessDeniedHandler.handle(hreq, hres, new AccessDeniedException("Access is denied"));
+    private boolean hasAccessToUrl(String urlIdentifier, String authority, int id, boolean checkClientOnly) {
+        if (httpServletRequest.getRequestURI().contains(urlIdentifier)) {
+            if (checkClientOnly) {
+                return serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForClient(authority, id);
+            } else {
+                return serviceManager.getSecurityAccessService()
+                    .isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
+            }
+        }
+        return true;
     }
 
-    private Integer getIdByRequest(HttpServletRequest hreq) {
-        Integer id = null;
-        if (Objects.nonNull(hreq.getParameter("id"))) {
-            id = Integer.parseInt(hreq.getParameter("id"));
-        }
-        return id;
+    private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {
+        accessDeniedHandler.handle(hreq, hres, new AccessDeniedException("Access is denied"));
     }
 }
