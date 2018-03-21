@@ -490,35 +490,6 @@ public class ProzessverwaltungForm extends BasisForm {
      * Anzeige der Sammelbände filtern.
      */
     public String filterAll() {
-        this.statisticsManager = null;
-        this.processCounterObjects = null;
-        /*
-         * Filter für die Auflistung anwenden
-         */
-        try {
-            if (this.filter.equals("")) {
-                if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
-                    filterTemplatesWithoutFilter();
-                } else {
-                    filterProcessesWithoutFilter();
-                }
-            } else {
-                if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
-                    filterTemplatesWithFilter();
-                } else {
-                    filterProcessesWithFilter();
-                }
-            }
-            this.page = new Page<>(0, processDTOS);
-        } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
-            return null;
-        } catch (NumberFormatException ne) {
-            Helper.setErrorMessage("Falsche Suchparameter angegeben", logger, ne);
-            return null;
-        } catch (UnsupportedOperationException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
         return redirectToList();
     }
 

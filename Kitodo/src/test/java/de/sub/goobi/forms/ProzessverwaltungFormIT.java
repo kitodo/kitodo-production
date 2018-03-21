@@ -43,32 +43,6 @@ public class ProzessverwaltungFormIT {
     }
 
     @Test
-    public void shouldFilterAllStart() {
-        ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
-
-        prozessverwaltungForm.setShowInactiveProjects(false);
-        prozessverwaltungForm.setShowClosedProcesses(false);
-        prozessverwaltungForm.setDisplayMode(ObjectMode.PROCESS);
-        prozessverwaltungForm.setFilter("id:2 3");
-
-        prozessverwaltungForm.filterAll();
-        List<ProcessDTO> processDTOS = prozessverwaltungForm.getProcessDTOS();
-        assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
-
-        prozessverwaltungForm.setFilter("");
-
-        prozessverwaltungForm.filterAll();
-        processDTOS = prozessverwaltungForm.getProcessDTOS();
-        assertEquals("Amount of found processes is incorrect!", 2, processDTOS.size());
-
-        prozessverwaltungForm.setDisplayMode(ObjectMode.TEMPLATE);
-
-        prozessverwaltungForm.filterAll();
-        processDTOS = prozessverwaltungForm.getProcessDTOS();
-        assertEquals("Amount of found processes is incorrect!", 1, processDTOS.size());
-    }
-
-    @Test
     public void shouldGetStatisticsManager() throws Exception {
         ProzessverwaltungForm prozessverwaltungForm = new ProzessverwaltungForm();
 

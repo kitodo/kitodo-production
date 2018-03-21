@@ -16,7 +16,6 @@ import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
@@ -36,8 +35,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -114,27 +111,6 @@ public class AktuelleSchritteForm extends BasisForm {
      * Anzeige der Schritte.
      */
     public String filterAll() {
-        try {
-            List<TaskDTO> tasks;
-            if (!showAutomaticTasks) {
-                if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService()
-                            .findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(sortList());
-                } else {
-                    tasks = serviceManager.getTaskService().findOpenNotAutomaticTasksForCurrentUser(sortList());
-                }
-            } else {
-                if (hideCorrectionTasks) {
-                    tasks = serviceManager.getTaskService().findOpenTasksWithoutCorrectionForCurrentUser(sortList());
-                } else {
-                    tasks = serviceManager.getTaskService().findOpenTasksForCurrentUser(sortList());
-                }
-            }
-            this.page = new Page<>(0, tasks);
-        } catch (DataException e) {
-            Helper.setErrorMessage("Error on reading ElasticSearch: ", logger, e);
-            return null;
-        }
         return redirectToList();
     }
 
@@ -145,49 +121,6 @@ public class AktuelleSchritteForm extends BasisForm {
     @PostConstruct
     public void initializeTaskList() {
         filterAll();
-    }
-
-    /**
-     * It is possible that sorting by related object can be hard to achieve. Right
-     * now it is replaced with sorting by id.
-     *
-     * @return sort clause for query
-     */
-    private String sortList() {
-        String sort = SortBuilders.fieldSort("priority").order(SortOrder.ASC).toString();
-        // TODO: find out if it's possible to sort by related objects
-        // Order order = Order.asc("proc.title");
-        if (this.sortierung.equals("schrittAsc")) {
-            sort += ", " + SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("schrittDesc")) {
-            sort += ", " + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("prozessAsc")) {
-            sort += ", " + SortBuilders.fieldSort("processForTask.title").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("prozessDesc")) {
-            sort += ", " + SortBuilders.fieldSort("processForTask.title").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("projektAsc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("projektDesc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("modulesAsc")) {
-            sort += ", " + SortBuilders.fieldSort("typeModuleName").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("modulesDesc")) {
-            sort += ", " + SortBuilders.fieldSort("typeModuleName").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("statusAsc")) {
-            sort += ", " + SortBuilders.fieldSort("processingStatus").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("statusDesc")) {
-            sort += ", " + SortBuilders.fieldSort("processingStatus").order(SortOrder.DESC).toString();
-        }
-        return sort;
     }
 
     /**
@@ -337,7 +270,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
 
-        return filterAll();
+        return redirectToList();
     }
 
     /**
@@ -347,7 +280,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
         setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt));
-        return filterAll();
+        return redirectToList();
     }
 
     public String sperrungAufheben() {
@@ -380,7 +313,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
-        return filterAll();
+        return redirectToList();
     }
 
     /**
@@ -408,7 +341,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
-        return filterAll();
+        return redirectToList();
     }
 
     /**
@@ -425,7 +358,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
-            filterAll();
+            redirectToList();
         }
         for (URI element : fertigListe) {
             String id = element.toString()
@@ -688,7 +621,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * nachholen, damit die Liste vollstÃ¤ndig ist
              */
             if (this.page == null &&  getUser() != null) {
-                filterAll();
+                redirectToList();
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {

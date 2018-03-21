@@ -233,9 +233,7 @@ public class Searcher extends Index {
                 JSONObject hits = (JSONObject) jsonObject.get("hits");
                 JSONArray inHits = (JSONArray) hits.get("hits");
                 if (!inHits.isEmpty()) {
-                    for (Object hit : inHits) {
-                        searchResults.add((JSONObject) hit);
-                    }
+                    searchResults.addAll(inHits);
                 }
             } else {
                 searchResults.add(jsonObject);
@@ -243,7 +241,6 @@ public class Searcher extends Index {
         } catch (ParseException e) {
             throw new DataException(e);
         }
-
         return searchResults;
     }
 

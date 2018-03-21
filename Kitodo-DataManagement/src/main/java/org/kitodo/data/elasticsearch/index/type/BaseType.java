@@ -66,6 +66,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                         jsonObject.put("title", ((Batch) property).getTitle());
                     } else if (property instanceof Process) {
                         jsonObject.put("title", ((Process) property).getTitle());
+                        jsonObject.put("template", ((Process) property).isTemplate());
                     } else if (property instanceof Project) {
                         jsonObject.put("title", ((Project) property).getTitle());
                     } else if (property instanceof User) {
