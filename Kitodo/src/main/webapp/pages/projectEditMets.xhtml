@@ -16,12 +16,14 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui">
-    <p:selectBooleanButton
-            onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-            onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
-            style="left:90%" value="#{ProjekteForm.locked}">
-        <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
-    </p:selectBooleanButton>
+    <p:panel>
+        <p:selectBooleanButton
+                onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
+                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
+                value="#{ProjekteForm.locked}">
+            <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
+        </p:selectBooleanButton>
+    </p:panel>
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
