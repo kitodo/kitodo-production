@@ -94,8 +94,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private void manageClientDependenciesForIndex(Project project) throws CustomResponseException, IOException, DataException, DAOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             Client client = project.getClient();
-            client.getProjects().remove(project);
-            serviceManager.getClientService().saveToIndex(client);
+            if (Objects.nonNull(client)) {
+                client.getProjects().remove(project);
+                serviceManager.getClientService().saveToIndex(client);
+            }
         } else {
             JSONObject client = serviceManager.getClientService().findByProjectId(project.getId());
             Integer id = getIdFromJSONObject(client);
