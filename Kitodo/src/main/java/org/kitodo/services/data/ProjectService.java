@@ -23,7 +23,9 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -250,19 +252,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     private List<ProcessDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
         List<ProcessDTO> processDTOS = new ArrayList<>();
-        // TODO: jsonObject.get("processes") returns null even if there is a list of objects
-        /*JSONArray jsonArray = (JSONArray) jsonObject.get("processes");
+        JsonArray jsonArray = jsonObject.getJsonArray("processes");
 
-        for (Object singleObject : jsonArray) {
-            JSONObject processJson = (JSONObject) singleObject;
-            boolean template = getBooleanPropertyForDTO(processJson, "template");
+        for (JsonValue singleObject : jsonArray) {
+            JsonObject processJson = singleObject.asJsonObject();
+            boolean template = processJson.getBoolean("template");
             if (template) {
                 ProcessDTO processDTO = new ProcessDTO();
-                processDTO.setId(getIntegerPropertyForDTO(processJson, "id"));
-                processDTO.setTitle(getStringPropertyForDTO(processJson, "title"));
+                processDTO.setId(processJson.getInt("id"));
+                processDTO.setTitle(processJson.getString("title"));
                 processDTOS.add(processDTO);
             }
-        }*/
+        }
         return processDTOS;
     }
 
