@@ -99,10 +99,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         } else {
             JSONObject client = serviceManager.getClientService().findByProjectId(project.getId());
             Integer id = getIdFromJSONObject(client);
-            if (!Objects.equals(id, project.getClient().getId())) {
-                Client oldClient = serviceManager.getClientService().getById(id);
-                serviceManager.getClientService().saveToIndex(oldClient);
-                serviceManager.getClientService().saveToIndex(project.getClient());
+            if (id > 0) {
+                if (!Objects.equals(id, project.getClient().getId())) {
+                    Client oldClient = serviceManager.getClientService().getById(id);
+                    serviceManager.getClientService().saveToIndex(oldClient);
+                    serviceManager.getClientService().saveToIndex(project.getClient());
+                }
             }
         }
     }
