@@ -50,7 +50,7 @@ public class GoobiScriptIT {
 
         String script = "action:addUser \"steptitle:Testing and Blocking\" username:kowal";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         task = serviceManager.getTaskService().getById(3);
@@ -66,7 +66,7 @@ public class GoobiScriptIT {
 
         String script = "action:addUserGroup \"steptitle:Testing and Blocking\" group:Random";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         task = serviceManager.getTaskService().getById(3);
@@ -82,7 +82,7 @@ public class GoobiScriptIT {
 
         String script = "action:setStepStatus \"steptitle:Testing and Blocking\" status:3";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(3);
@@ -98,7 +98,7 @@ public class GoobiScriptIT {
 
         String script = "action:swapSteps swap1nr:1 \"swap1title:Blocking\" swap2nr:3 \"swap2title:Progress\"";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(2);
@@ -116,7 +116,7 @@ public class GoobiScriptIT {
 
         String script = "action:addStep \"steptitle:Added\" number:4";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         List<Task> tasks = serviceManager.getTaskService().getByQuery("FROM Task WHERE title = 'Added'");
@@ -131,7 +131,7 @@ public class GoobiScriptIT {
 
         String script = "action:deleteStep \"steptitle:Blocking\"";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         List<Task> tasks = serviceManager.getTaskService().getByQuery("FROM Task WHERE title = 'Blocking'");
@@ -147,7 +147,7 @@ public class GoobiScriptIT {
 
         String script = "action:addShellScriptToStep \"steptitle:Testing and Blocking\" \"label:script\" \"script:/some/new/path\"";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(3);
@@ -161,7 +161,7 @@ public class GoobiScriptIT {
 
         String script = "action:setTaskProperty \"steptitle:Blocking\" property:validate value:true";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(2);
@@ -174,7 +174,7 @@ public class GoobiScriptIT {
 
         String script = "action:addUser \"steptitle:Testing and Blocking\" username:";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(3);
@@ -187,7 +187,7 @@ public class GoobiScriptIT {
 
         String script = "action:setTaskProperty \"steptitle:Blocking\" property:validate value:invalid";
         List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(2));
+        processes.add(serviceManager.getProcessService().getById(1));
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(2);

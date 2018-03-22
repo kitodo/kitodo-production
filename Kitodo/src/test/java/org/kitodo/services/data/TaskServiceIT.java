@@ -63,7 +63,7 @@ public class TaskServiceIT {
     @Test
     public void shouldCountAllTasks() throws Exception {
         Long amount = taskService.count();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -71,22 +71,22 @@ public class TaskServiceIT {
         UserService userService = new ServiceManager().getUserService();
 
         Long amount = taskService.getAmountOfCurrentTasks(true, true, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(3), amount);
 
         amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
 
         amount = taskService.getAmountOfCurrentTasks(false, true, userService.getById(1));
         assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
 
         amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(2));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
         Long amount = taskService.countDatabaseRows();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(6), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TaskServiceIT {
     @Test
     public void shouldFindAllTasks() throws Exception {
         List<TaskDTO> tasks = taskService.findAll();
-        assertEquals("Not all tasks were found in index!", 6, tasks.size());
+        assertEquals("Not all tasks were found in index!", 7, tasks.size());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetAllTasks() {
         List<Task> tasks = taskService.getAll();
-        assertEquals("Not all tasks were found in database!", 6, tasks.size());
+        assertEquals("Not all tasks were found in database!", 7, tasks.size());
     }
 
     @Test
@@ -173,23 +173,23 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.getById(7);
+        Task foundTask = taskService.getById(8);
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
         exception.expect(DAOException.class);
-        taskService.getById(7);
+        taskService.getById(8);
 
         task = new Task();
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.getById(8);
+        foundTask = taskService.getById(9);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
-        taskService.remove(7);
+        taskService.remove(9);
         exception.expect(DAOException.class);
-        taskService.getById(8);
+        taskService.getById(9);
     }
 
     @Test
@@ -256,7 +256,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAllTasksInBetween() {
-        List<Task> tasks = taskService.getAllTasksInBetween(2, 4, 2);
+        List<Task> tasks = taskService.getAllTasksInBetween(2, 4, 1);
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
@@ -264,7 +264,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetNextTasksForProblemSolution() {
-        List<Task> tasks = taskService.getNextTasksForProblemSolution(2, 2);
+        List<Task> tasks = taskService.getNextTasksForProblemSolution(2, 1);
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
@@ -272,7 +272,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetPreviousTaskForProblemReporting() {
-        List<Task> tasks = taskService.getPreviousTasksForProblemReporting(2, 2);
+        List<Task> tasks = taskService.getPreviousTasksForProblemReporting(2, 1);
         int actual = tasks.size();
         int expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
@@ -282,7 +282,7 @@ public class TaskServiceIT {
     public void shouldGetTasksForProjectHelper() {
         List<Task> tasks = taskService.getTasksForProjectHelper(1);
         int actual = tasks.size();
-        int expected = 3;
+        int expected = 4;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         for (int i = 0; i < tasks.size(); i++) {
@@ -305,7 +305,7 @@ public class TaskServiceIT {
     public void shouldGetSizeOfTasksForProjectHelper() {
         List<Long> tasksSize = taskService.getSizeOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
-        int expected = 3;
+        int expected = 4;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getSizeOfTasksForProjectHelper(2);
@@ -318,7 +318,7 @@ public class TaskServiceIT {
     public void shouldGetAverageOrderingOfTasksForProjectHelper() {
         List<Double> tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
-        int expected = 3;
+        int expected = 4;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(2);
@@ -331,7 +331,7 @@ public class TaskServiceIT {
     public void shouldGetTasksWithProcessingStatusForProjectHelper() {
         List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1,1);
         int actual = tasks.size();
-        int expected = 1;
+        int expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 2);
@@ -344,7 +344,12 @@ public class TaskServiceIT {
     public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
         List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,1);
         int actual = tasksSize.size();
-        int expected = 1;
+        int expected = 2;
+        assertEquals("Task's list size is incorrect!", expected, actual);
+
+        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(2,1);
+        actual = tasksSize.size();
+        expected = 1;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,2);
@@ -357,7 +362,7 @@ public class TaskServiceIT {
     public void shouldGetAmountOfImagesForTasksWithProcessingStatusForProjectHelper() {
         List<Long> amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = amountOfImages.size();
-        int expected = 1;
+        int expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         amountOfImages = taskService.getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(1, 2);
@@ -370,12 +375,15 @@ public class TaskServiceIT {
     public void shouldFindDistinctTitles() throws Exception {
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
         int size = taskTitlesDistinct.size();
-        assertEquals("Incorrect size of distinct titles for tasks!", 5, size);
+        assertEquals("Incorrect size of distinct titles for tasks!", 6, size);
 
         String title = taskTitlesDistinct.get(0);
-        assertEquals("Incorrect sorting of distinct titles for tasks!", "Blocking", title);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Additional", title);
 
         title = taskTitlesDistinct.get(1);
+        assertEquals("Incorrect sorting of distinct titles for tasks!", "Blocking", title);
+
+        title = taskTitlesDistinct.get(2);
         assertEquals("Incorrect sorting of distinct titles for tasks!", "Closed", title);
     }
 }

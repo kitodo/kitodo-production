@@ -12,9 +12,11 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
@@ -73,11 +75,15 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldSetTasksStatusUp() throws Exception {
-        Process process = serviceManager.getProcessService().getById(2);
+        Process process = serviceManager.getProcessService().getById(1);
 
         workflowService.setTasksStatusUp(process);
         for (Task task : process.getTasks()) {
-            assertEquals("Task status was not set up!", TaskStatus.DONE, task.getProcessingStatusEnum());
+            if (Objects.equals(task.getId(), 7)) {
+                assertEquals("Task status was not set up!", TaskStatus.INWORK, task.getProcessingStatusEnum());
+            } else {
+                assertEquals("Task status was not set up!", TaskStatus.DONE, task.getProcessingStatusEnum());
+            }
         }
 
         // set up task to previous state
@@ -86,7 +92,7 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldSetTasksStatusDown() throws Exception {
-        Process process = serviceManager.getProcessService().getById(2);
+        Process process = serviceManager.getProcessService().getById(1);
 
         workflowService.setTasksStatusDown(process);
         List<Task> tasks = process.getTasks();
@@ -100,13 +106,13 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldClose() throws Exception {
-        Task task = taskService.getById(3);
+        Task task = taskService.getById(6);
 
         workflowService.close(task);
-        task = serviceManager.getTaskService().getById(3);
+        task = serviceManager.getTaskService().getById(6);
         assertEquals("Task was not closed!", TaskStatus.DONE, task.getProcessingStatusEnum());
 
-        Task nextTask = serviceManager.getTaskService().getById(4);
+        Task nextTask = serviceManager.getTaskService().getById(7);
         assertEquals("Task was not set up to open!", TaskStatus.OPEN, nextTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
@@ -124,7 +130,7 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldUnassignTaskFromUser() throws Exception {
-        Task task = taskService.getById(2);
+        Task task = taskService.getById(5);
 
         workflowService.unassignTaskFromUser(task);
         assertEquals("User was not unassigned from the task!", null, task.getProcessingUser());
@@ -133,15 +139,17 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldReportProblem() throws Exception {
+        Helper.setCurrentUser(serviceManager.getUserService().getById(1));
+
         Problem problem = new Problem();
-        problem.setId(1);
+        problem.setId(5);
         problem.setMessage("Fix it!");
         workflowService.setProblem(problem);
 
-        Task currentTask = taskService.getById(3);
+        Task currentTask = taskService.getById(7);
         workflowService.reportProblem(currentTask);
 
-        Task correctionTask = taskService.getById(1);
+        Task correctionTask = taskService.getById(5);
         assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
 
         assertTrue("Report of problem was incorrect - task is not a correction task!", workflowService.isCorrectionTask(correctionTask));
@@ -171,7 +179,7 @@ public class WorkflowServiceIT {
         workflowService.setProblem(problem);
         workflowService.setSolution(solution);
 
-        Task currentTask = taskService.getById(3);
+        Task currentTask = taskService.getById(6);
         workflowService.reportProblem(currentTask);
         workflowService.solveProblem(currentTask);
 

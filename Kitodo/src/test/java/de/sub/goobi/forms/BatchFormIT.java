@@ -57,11 +57,10 @@ public class BatchFormIT {
         batchForm.setProcessfilter("\"id:2 3 4\"");
         batchForm.filterProcesses();
         processes = batchForm.getCurrentProcesses();
-        assertEquals("Size of filtered processes is incorrect!", 3, processes.size());
+        assertEquals("Size of filtered processes is incorrect!", 2, processes.size());
 
         assertEquals("First sorted date is incorrect!", formatDate(new Date()), formatDate(processes.get(0).getCreationDate()));
         assertEquals("Second sorted date is incorrect!", "2017-02-10", formatDate(processes.get(1).getCreationDate()));
-        assertEquals("Third sorted date is incorrect!", "2017-01-20", formatDate(processes.get(2).getCreationDate()));
 
         batchForm.setProcessfilter(null);
         batchForm.filterProcesses();

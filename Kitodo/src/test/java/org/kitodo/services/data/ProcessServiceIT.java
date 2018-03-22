@@ -21,7 +21,6 @@ import de.sub.goobi.config.ConfigCore;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObject;
 
@@ -82,7 +81,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldCountAllProcesses() throws Exception {
         Long amount = processService.count();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(5), amount);
+        assertEquals("Processes were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
@@ -98,25 +97,25 @@ public class ProcessServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.countDatabaseRows();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(5), amount);
+        assertEquals("Processes were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
     public void shouldFindProcess() throws Exception {
         Process process = processService.getById(1);
-        boolean condition = process.getTitle().equals("First process") && process.getOutputName().equals("Test");
+        boolean condition = process.getTitle().equals("First process") && process.getOutputName().equals("Testowy");
         assertTrue("Process was not found in database!", condition);
     }
 
     @Test
-    public void shouldFindAllProcesses() {
+    public void shouldGetAllProcesses() {
         List<Process> processes = processService.getAll();
-        assertEquals("Not all processes were found in database!", 5, processes.size());
+        assertEquals("Not all processes were found in database!", 3, processes.size());
     }
 
     @Test
     public void shouldGetAllProcessesInGivenRange() throws Exception {
-        List<Process> processes = processService.getAll(3, 10);
+        List<Process> processes = processService.getAll(1, 10);
         assertEquals("Not all processes were found in database!", 2, processes.size());
     }
 
@@ -125,7 +124,7 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.getById(6);
+        Process foundProcess = processService.getById(4);
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
@@ -135,12 +134,12 @@ public class ProcessServiceIT {
         process = new Process();
         process.setTitle("To remove");
         processService.save(process);
-        foundProcess = processService.getById(7);
+        foundProcess = processService.getById(5);
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(7);
+        processService.remove(5);
         exception.expect(DAOException.class);
-        processService.getById(7);
+        processService.getById(5);
     }
 
     @Test
@@ -188,21 +187,17 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindByProjectId() throws Exception {
         List<ProcessDTO> processes = processService.findByProjectId(1, true);
-        Integer actual = processes.size();
-        Integer expected = 3;
-        assertEquals("Process was not found in index!", expected, actual);
+        assertEquals("Process was not found in index!", 2, processes.size());
 
         processes = processService.findByProjectId(2, true);
-        actual = processes.size();
-        expected = 0;
-        assertEquals("Some processes were found in index!", expected, actual);
+        assertEquals("Some processes were found in index!", 0, processes.size());
     }
 
     @Test
     public void shouldFindByProjectTitle() throws Exception {
         List<JsonObject> processes = processService.findByProjectTitle("First project");
         Integer actual = processes.size();
-        Integer expected = 3;
+        Integer expected = 2;
         assertEquals("Process was not found in index!", expected, actual);
 
         processes = processService.findByProjectTitle("Some project");
@@ -369,11 +364,15 @@ public class ProcessServiceIT {
     public void shouldGetTasksSize() throws Exception {
         Process process = processService.getById(1);
         int actual = processService.getTasksSize(process);
-        assertEquals("Tasks' size is incorrect!", 1, actual);
+        assertEquals("Tasks' size is incorrect!", 3, actual);
 
         process = processService.getById(2);
         actual = processService.getTasksSize(process);
-        assertEquals("Tasks' size is incorrect!", 3, actual);
+        assertEquals("Tasks' size is incorrect!", 1, actual);
+
+        process = processService.getById(3);
+        actual = processService.getTasksSize(process);
+        assertEquals("Tasks' size is incorrect!", 0, actual);
     }
 
     @Test
@@ -401,7 +400,7 @@ public class ProcessServiceIT {
     public void shouldGetCurrentTask() throws Exception {
         TaskService taskService = new ServiceManager().getTaskService();
 
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
         Task expected = taskService.getById(2);
         assertEquals("Task doesn't match to given task!", expected, actual);
@@ -409,7 +408,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetCreationDateAsString() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
         String expected = "2017-01-20 00:00:00";
         String actual = processService.getCreationDateAsString(process);
         assertEquals("Creation date doesn't match to given plain text!", expected, actual);
@@ -417,35 +416,40 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetProgress() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
+
         String progress = processService.getProgress(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
     }
 
     @Test
     public void shouldGetProgressClosed() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
+
         int condition = processService.getProgressClosed(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 0, condition);
     }
 
     @Test
     public void shouldGetProgressInProcessing() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
+
         int condition = processService.getProgressInProcessing(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
     @Test
     public void shouldGetProgressOpen() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
+
         int condition = processService.getProgressOpen(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
     @Test
     public void shouldGetProgressLocked() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
+
         int condition = processService.getProgressLocked(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
@@ -521,23 +525,12 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetContainsUnreachableSteps() throws Exception {
-        Process process = processService.getById(3);
-        boolean condition = processService.getContainsUnreachableSteps(process);
-        assertTrue("Process doesn't contain unreachable tasks!", condition);
-
-        ProcessDTO processDTO = processService.findById(3);
-        condition = processService.getContainsUnreachableSteps(processDTO);
-        assertTrue("Process DTO doesn't contain unreachable tasks!", condition);
-    }
-
-    @Test
     public void shouldCheckIfIsImageFolderInUse() throws Exception {
-        Process process = processService.getById(1);
+        Process process = processService.getById(2);
         boolean condition = !processService.isImageFolderInUse(process);
         assertTrue("Image folder is in use but it shouldn't be!", condition);
 
-        process = processService.getById(2);
+        process = processService.getById(1);
         condition = processService.isImageFolderInUse(process);
         assertTrue("Image folder is not in use but it should be!", condition);
     }
@@ -546,7 +539,7 @@ public class ProcessServiceIT {
     public void shouldGetImageFolderInUseUser() throws Exception {
         UserService userService = new ServiceManager().getUserService();
 
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
         User expected = userService.getById(2);
         User actual = processService.getImageFolderInUseUser(process);
         assertEquals("Processing user doesn't match to the given user!", expected, actual);
@@ -556,7 +549,7 @@ public class ProcessServiceIT {
     public void shouldGetFirstOpenStep() throws Exception {
         TaskService taskService = new ServiceManager().getTaskService();
 
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
         Task expected = taskService.getById(2);
         Task actual = processService.getFirstOpenStep(process);
         assertEquals("First open task doesn't match to the given task!", expected, actual);
@@ -564,7 +557,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldAddToWikiField() throws Exception {
-        Process process = processService.getById(2);
+        Process process = processService.getById(1);
         process.setWikiField(process.getWikiField() + "<p>test</p>");
         Process actual = processService.addToWikiField("test", process);
         assertEquals("Processes have different wikiField values!", process, actual);
@@ -615,7 +608,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindProcessesOfActiveProjects() throws Exception {
         List<ProcessDTO> activeProcesses = processService.findProcessesOfActiveProjects(null);
-        assertTrue("Found " + activeProcesses.size() + " processes, instead of 3", activeProcesses.size() == 3);
+        assertEquals("Found incorrect amount of processes!", 2, activeProcesses.size());
     }
 
     @Test
@@ -632,61 +625,9 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindTemplatesOfActiveProjects() throws Exception {
-        List<ProcessDTO> activeTemplates = processService.findTemplatesOfActiveProjects(null);
-        assertTrue("Found " + activeTemplates.size() + " processes, instead of 1", activeTemplates.size() == 1);
-    }
-
-    @Test
-    public void shouldFindAllWithoutTemplates() throws Exception {
-        List<ProcessDTO> allWithoutTemplates = processService.findAllWithoutTemplates(null);
-        assertTrue("Found " + allWithoutTemplates.size() + " processes, instead of 3", allWithoutTemplates.size() == 3);
-    }
-
-    @Test
     public void shouldFindAllActiveWithoutTemplates() throws Exception {
         List<ProcessDTO> activeProcessesWithoutTemplates = processService.findAllActiveWithoutTemplates(null);
         assertTrue("Found " + activeProcessesWithoutTemplates.size() + " processes, instead of 2",
             activeProcessesWithoutTemplates.size() == 2);
-    }
-
-    @Test
-    public void shouldFindAllTemplatesOfOpenAndActiveProjects() throws Exception {
-        List<ProcessDTO> openAndActiveTemplates = processService.findAllOpenAndActiveTemplates(null);
-        assertTrue("Found " + openAndActiveTemplates.size() + " processes, instead of 1",
-            openAndActiveTemplates.size() == 1);
-    }
-
-    @Test
-    public void shouldFindAllNotClosedTemplates() throws Exception {
-        List<ProcessDTO> notClosedTemplates = processService.findAllNotClosedTemplates(null);
-        assertTrue("Found " + notClosedTemplates.size() + " processes, instead of 2", notClosedTemplates.size() == 2);
-    }
-
-    @Test
-    public void shouldGetTemplates() {
-        List<Process> templates = processService.getProcessTemplates();
-        assertTrue("Found " + templates.size() + " processes, instead of 2", templates.size() == 2);
-    }
-
-    @Test
-    public void shouldGetTemplatesWithTitle() {
-        List<Process> templates = processService.getProcessTemplatesWithTitle("First process");
-        assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
-    }
-
-    @Ignore("IN clause doesn't work correctly here - to deeper check out")
-    @Test
-    public void shouldGetTemplatesForUser() {
-        List<Integer> projects = new ArrayList<>();
-        projects.add(1);
-        List<Process> templates = processService.getProcessTemplatesForUser(projects);
-        assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
-    }
-
-    @Test
-    public void shouldGetAllActiveProcesses(){
-        List<Process> activeProcesses = processService.getActiveProcesses();
-        assertEquals("Number of found processes was not correct!",activeProcesses.size(),2);
     }
 }
