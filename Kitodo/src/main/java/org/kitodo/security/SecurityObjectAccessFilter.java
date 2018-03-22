@@ -21,6 +21,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -30,40 +31,44 @@ import org.springframework.web.filter.GenericFilterBean;
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
     private ServiceManager serviceManager = new ServiceManager();
-    private HttpServletRequest httpServletRequest;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        this.httpServletRequest = (HttpServletRequest) request;
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
 
         String id = httpServletRequest.getParameter("id");
 
         if (Objects.nonNull(id)) {
             int idInt = Integer.parseInt(id);
-            if (!hasAccessToUrl("pages/clientEdit", "editClient", idInt, true)) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
+            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")) {
+                if (!hasAuthority("editClient", idInt, true)) {
+                    denyAccess(httpServletRequest, httpServletResponse);
+                    return;
+                }
             }
-            if (!hasAccessToUrl("pages/projectEdit", "editProject", idInt, false)) {
-                denyAccess(httpServletRequest, httpServletResponse);
-                return;
+            if (httpServletRequest.getRequestURI().contains("pages/projectEdit")) {
+                if (!hasAuthority("editProject", idInt, false)) {
+                    denyAccess(httpServletRequest, httpServletResponse);
+                    return;
+                }
             }
         }
         chain.doFilter(request, response);
     }
 
-    private boolean hasAccessToUrl(String urlIdentifier, String authority, int id, boolean checkClientOnly) {
-        if (httpServletRequest.getRequestURI().contains(urlIdentifier)) {
-            if (checkClientOnly) {
-                return serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForClient(authority, id);
-            } else {
+    private boolean hasAuthority(String authority, int id, boolean checkClientOnly) throws IOException {
+        if (checkClientOnly) {
+            return serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForClient(authority, id);
+        } else {
+            try {
                 return serviceManager.getSecurityAccessService()
-                    .isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
+                        .isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
+            } catch (DataException e) {
+                throw new IOException(e);
             }
         }
-        return true;
     }
 
     private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {

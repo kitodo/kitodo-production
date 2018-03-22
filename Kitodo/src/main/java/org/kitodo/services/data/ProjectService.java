@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -42,6 +43,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
@@ -83,9 +85,32 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException, DAOException, DataException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
+        manageClientDependenciesForIndex(project);
+    }
+
+    /**
+     * Management od processes for project object.
+     *
+     * @param project
+     *            object
+     */
+    private void manageClientDependenciesForIndex(Project project) throws CustomResponseException, IOException, DataException, DAOException {
+        if (project.getIndexAction() == IndexAction.DELETE) {
+            Client client = project.getClient();
+            client.getProjects().remove(project);
+            serviceManager.getClientService().saveToIndex(client);
+        } else {
+            JSONObject client = serviceManager.getClientService().findByProjectId(project.getId());
+            Integer id = getIdFromJSONObject(client);
+            if (!Objects.equals(id, project.getClient().getId())) {
+                Client oldClient = serviceManager.getClientService().getById(id);
+                serviceManager.getClientService().saveToIndex(oldClient);
+                serviceManager.getClientService().saveToIndex(project.getClient());
+            }
+        }
     }
 
     /**
@@ -241,6 +266,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setNumberOfVolumes(projectJSONObject.getInt("numberOfVolumes"));
         projectDTO.setActive(projectJSONObject.getBoolean("active"));
         projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(getIntegerPropertyForDTO(projectJSONObject, "client.id"));
+        clientDTO.setName(getStringPropertyForDTO(projectJSONObject, "client.clientName"));
+        projectDTO.setClient(clientDTO);
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }

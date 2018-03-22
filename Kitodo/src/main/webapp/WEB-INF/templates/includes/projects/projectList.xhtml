@@ -49,12 +49,14 @@
 
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:link onclick="#{ProjekteForm.setLocked(true)}" outcome="projectEdit"
+                <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',item.client.id,item.id)}"
+                        onclick="#{ProjekteForm.setLocked(true)}" outcome="projectEdit"
                         title="#{msgs.projektBearbeiten}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <h:commandLink action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true"
+                <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject',item.client.id)}"
+                               action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
             </h:form>

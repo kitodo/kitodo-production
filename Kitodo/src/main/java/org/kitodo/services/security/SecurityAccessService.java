@@ -253,22 +253,22 @@ public class SecurityAccessService {
 
     /**
      * Checks if the current user is admin or has the specified authorities
-     * globally, for the specified project or for the client which is related to the project.
+     * globally, for the specified project or for the client which is related to the
+     * project.
      *
      * @param authorityTitle
-     *            The authority titles separated with commas e.g. "authority1,
-     *            authority2, authority3".
-     * @return True if the current user is admin or has any of the specified
-     *         authorities for any client or project.
+     *            The authority title.
+     * 
+     * @param projectId
+     *            The project id.
+     * @return True if the current user is admin or has the specified authority
+     *         global, for the specified project or for the client of the project.
      */
-    public boolean isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(String authorityTitle, int projectId) {
-        int clientId = 0;
-        try {
-            clientId = serviceManager.getClientService().getIdFromJSONObject(serviceManager.getClientService().findByProjectId(projectId));
-        } catch (DataException e) {
-            e.printStackTrace();
-        }
-        return isAdminOrHasAuthorityGlobalOrForClientOrForProject(authorityTitle,clientId,projectId);
+    public boolean isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(String authorityTitle, int projectId)
+            throws DataException {
+        int clientId = serviceManager.getClientService()
+                .getIdFromJSONObject(serviceManager.getClientService().findByProjectId(projectId));
+        return isAdminOrHasAuthorityGlobalOrForClientOrForProject(authorityTitle, clientId, projectId);
     }
 
     /**
