@@ -33,14 +33,14 @@
             <h:outputText>
                 <h:form>
                     <h:link id="editProcess" outcome="/pages/processEdit"
-                            title="#{msgs.prozessBearbeiten}">
+                            title="#{msgs.editTemplate}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
                     <h:commandLink action="#{ProzesskopieForm.prepare(item.id)}" id="action22"
                                    title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}">
-                        <i class="fa fa-inbox fa-lg"/>
+                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                     </h:commandLink>
 
                     <h:link><i class="fa fa-clipboard fa-lg"/></h:link>

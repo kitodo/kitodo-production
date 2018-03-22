@@ -184,7 +184,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.newProcessTitle = "";
         this.process.setTemplate(true);
         this.editMode = ObjectMode.PROCESS;
-        return PROCESS_EDIT_PATH_OLD;
+        return redirectToEdit();
     }
 
     /**
@@ -2214,7 +2214,11 @@ public class ProzessverwaltungForm extends BasisForm {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));
             } else {
-                newProcess();
+                if (Objects.nonNull(this.process) && this.process.isTemplate()) {
+                    newTemplate();
+                } else {
+                    newProcess();
+                }
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -2297,7 +2301,7 @@ public class ProzessverwaltungForm extends BasisForm {
             String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
             if (!callerViewId.isEmpty()
                     && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf")
-                            || callerViewId.contains("processEdit.jsf"))) {
+                            || callerViewId.contains("processEdit.jsf") || callerViewId.contains("projects.jsf"))) {
                 return PROCESS_EDIT_PATH + urlParameters;
             } else {
                 return PROCESS_EDIT_PATH_OLD + urlParameters;

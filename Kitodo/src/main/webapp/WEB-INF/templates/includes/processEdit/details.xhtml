@@ -61,12 +61,13 @@
                 </p:selectOneMenu>
             </div>
 
-            <div>
-                <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
-                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
-                </p:selectBooleanCheckbox>
-            </div>
+            <!-- TODO: decide whether the following switch is required -->
+            <!--<div>-->
+                <!--<p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>-->
+                <!--<p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}">-->
+                    <!--<p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>-->
+                <!--</p:selectBooleanCheckbox>-->
+            <!--</div>-->
         </p:row>
     </p:panelGrid>
 </ui:composition>
