@@ -38,7 +38,7 @@
 
             <div>
                 <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
-                <p:selectBooleanCheckbox id="showInList" value="#{ProzessverwaltungForm.process.inChoiceListShown}">
+                <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{ProzessverwaltungForm.process.inChoiceListShown}">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>
             </div>
@@ -63,7 +63,7 @@
 
             <div>
                 <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
-                <p:selectBooleanCheckbox id="isTemplate" value="#{ProzessverwaltungForm.process.template}">
+                <p:selectBooleanCheckbox id="isTemplate" styleClass="input" value="#{ProzessverwaltungForm.process.template}">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>
             </div>
