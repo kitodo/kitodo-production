@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Process;
 
 /**
@@ -25,7 +23,7 @@ import org.kitodo.data.database.beans.Process;
 public class ProcessType extends BaseType<Process> {
 
     @Override
-    public HttpEntity createDocument(Process process) {
+    JsonObject getJsonObject(Process process) {
         String processBaseUri = process.getProcessBaseUri() != null ? process.getProcessBaseUri().getRawPath() : "";
         Integer projectId = process.getProject() != null ? process.getProject().getId() : 0;
         String projectTitle = process.getProject() != null ? process.getProject().getTitle() : "";
@@ -33,30 +31,28 @@ public class ProcessType extends BaseType<Process> {
         Integer ruleset = process.getRuleset() != null ? process.getRuleset().getId() : 0;
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : 0;
 
-        JsonObject processObject = Json.createObjectBuilder()
-                .add("title", preventNull(process.getTitle()))
-                .add("outputName", preventNull(process.getOutputName()))
-                .add("creationDate", getFormattedDate(process.getCreationDate()))
-                .add("wikiField", preventNull(process.getWikiField()))
-                .add("sortHelperArticles", process.getSortHelperArticles())
-                .add("sortHelperDocstructs", process.getSortHelperDocstructs())
-                .add("sortHelperStatus", preventNull(process.getSortHelperStatus()))
-                .add("sortHelperImages", process.getSortHelperImages())
-                .add("sortHelperMetadata", process.getSortHelperMetadata())
-                .add("processBaseUri", processBaseUri)
-                .add("template", process.isTemplate())
-                .add("project.id", projectId)
-                .add("project.title", projectTitle)
-                .add("project.active", projectActive)
-                .add("ruleset", ruleset)
-                .add("docket", docket)
-                .add("batches", addObjectRelation(process.getBatches(), true))
-                .add("tasks", addObjectRelation(process.getTasks(), true))
-                .add("properties", addObjectRelation(process.getProperties()))
-                .add("templates", addObjectRelation(process.getTemplates()))
-                .add("workpieces", addObjectRelation(process.getWorkpieces()))
-                .build();
-
-        return new NStringEntity(processObject.toString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(process.getTitle()));
+        jsonObjectBuilder.add("outputName", preventNull(process.getOutputName()));
+        jsonObjectBuilder.add("creationDate", getFormattedDate(process.getCreationDate()));
+        jsonObjectBuilder.add("wikiField", preventNull(process.getWikiField()));
+        jsonObjectBuilder.add("sortHelperArticles", process.getSortHelperArticles());
+        jsonObjectBuilder.add("sortHelperDocstructs", process.getSortHelperDocstructs());
+        jsonObjectBuilder.add("sortHelperStatus", preventNull(process.getSortHelperStatus()));
+        jsonObjectBuilder.add("sortHelperImages", process.getSortHelperImages());
+        jsonObjectBuilder.add("sortHelperMetadata", process.getSortHelperMetadata());
+        jsonObjectBuilder.add("processBaseUri", processBaseUri);
+        jsonObjectBuilder.add("template", process.isTemplate());
+        jsonObjectBuilder.add("project.id", projectId);
+        jsonObjectBuilder.add("project.title", projectTitle);
+        jsonObjectBuilder.add("project.active", projectActive);
+        jsonObjectBuilder.add("ruleset", ruleset);
+        jsonObjectBuilder.add("docket", docket);
+        jsonObjectBuilder.add("batches", addObjectRelation(process.getBatches(), true));
+        jsonObjectBuilder.add("tasks", addObjectRelation(process.getTasks(), true));
+        jsonObjectBuilder.add("properties", addObjectRelation(process.getProperties()));
+        jsonObjectBuilder.add("templates", addObjectRelation(process.getTemplates()));
+        jsonObjectBuilder.add("workpieces", addObjectRelation(process.getWorkpieces()));
+        return jsonObjectBuilder.build();
     }
 }

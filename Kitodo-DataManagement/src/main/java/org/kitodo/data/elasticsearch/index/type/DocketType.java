@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Docket;
 
 /**
@@ -25,13 +23,10 @@ import org.kitodo.data.database.beans.Docket;
 public class DocketType extends BaseType<Docket> {
 
     @Override
-    public HttpEntity createDocument(Docket docket) {
-
-        JsonObject docketObject = Json.createObjectBuilder()
-                .add("title", preventNull(docket.getTitle()))
-                .add("file", preventNull(docket.getFile()))
-                .build();
-
-        return new NStringEntity(docketObject.toString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(Docket docket) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(docket.getTitle()));
+        jsonObjectBuilder.add("file", preventNull(docket.getFile()));
+        return jsonObjectBuilder.build();
     }
 }

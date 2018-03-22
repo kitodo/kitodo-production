@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.User;
 
 /**
@@ -25,23 +23,20 @@ import org.kitodo.data.database.beans.User;
 public class UserType extends BaseType<User> {
 
     @Override
-    public HttpEntity createDocument(User user) {
-
-        JsonObject userObject = Json.createObjectBuilder()
-                .add("name", preventNull(user.getName()))
-                .add("surname", preventNull(user.getSurname()))
-                .add("login", preventNull(user.getLogin()))
-                .add("ldapLogin", preventNull(user.getLdapLogin()))
-                .add("active", user.isActive())
-                .add("location", preventNull(user.getLocation()))
-                .add("metadataLanguage", preventNull(user.getMetadataLanguage()))
-                .add("userGroups", addObjectRelation(user.getUserGroups(), true))
-                .add("filters", addObjectRelation(user.getFilters(), true))
-                .add("projects", addObjectRelation(user.getProjects(), true))
-                .add("processingTasks", addObjectRelation(user.getProcessingTasks()))
-                .add("tasks", addObjectRelation(user.getTasks()))
-                .build();
-
-        return new NStringEntity(userObject.toString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(User user) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("name", preventNull(user.getName()));
+        jsonObjectBuilder.add("surname", preventNull(user.getSurname()));
+        jsonObjectBuilder.add("login", preventNull(user.getLogin()));
+        jsonObjectBuilder.add("ldapLogin", preventNull(user.getLdapLogin()));
+        jsonObjectBuilder.add("active", user.isActive());
+        jsonObjectBuilder.add("location", preventNull(user.getLocation()));
+        jsonObjectBuilder.add("metadataLanguage", preventNull(user.getMetadataLanguage()));
+        jsonObjectBuilder.add("userGroups", addObjectRelation(user.getUserGroups(), true));
+        jsonObjectBuilder.add("filters", addObjectRelation(user.getFilters(), true));
+        jsonObjectBuilder.add("projects", addObjectRelation(user.getProjects(), true));
+        jsonObjectBuilder.add("processingTasks", addObjectRelation(user.getProcessingTasks()));
+        jsonObjectBuilder.add("tasks", addObjectRelation(user.getTasks()));
+        return jsonObjectBuilder.build();
     }
 }

@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Filter;
 
 /**
@@ -25,14 +23,12 @@ import org.kitodo.data.database.beans.Filter;
 public class FilterType extends BaseType<Filter> {
 
     @Override
-    public HttpEntity createDocument(Filter filter) {
+    JsonObject getJsonObject(Filter filter) {
         Integer user = filter.getUser() != null ? filter.getUser().getId() : 0;
 
-        JsonObject propertyObject = Json.createObjectBuilder()
-                .add("value", preventNull(filter.getValue()))
-                .add("user", user)
-                .build();
-
-        return new NStringEntity(propertyObject.toString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("value", preventNull(filter.getValue()));
+        jsonObjectBuilder.add("user", user);
+        return jsonObjectBuilder.build();
     }
 }

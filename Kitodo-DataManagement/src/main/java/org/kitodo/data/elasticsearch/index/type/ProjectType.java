@@ -16,10 +16,8 @@ import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 
@@ -29,7 +27,7 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 public class ProjectType extends BaseType<Project> {
 
     @Override
-    public HttpEntity createDocument(Project project) {
+    JsonObject getJsonObject(Project project) {
         JsonArrayBuilder projectFileGroups = Json.createArrayBuilder();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
         for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
@@ -43,21 +41,19 @@ public class ProjectType extends BaseType<Project> {
             projectFileGroups.add(projectFileGroupObject);
         }
 
-        JsonObject projectObject = Json.createObjectBuilder()
-                .add("title", preventNull(project.getTitle()))
-                .add("startDate", getFormattedDate(project.getStartDate()))
-                .add("endDate", getFormattedDate(project.getEndDate()))
-                .add("numberOfPages", project.getNumberOfPages())
-                .add("numberOfVolumes", project.getNumberOfVolumes())
-                .add("fileFormatDmsExport", project.getFileFormatDmsExport())
-                .add("fileFormatInternal", project.getFileFormatInternal())
-                .add("metsRightsOwner", project.getMetsRightsOwner())
-                .add("active", project.isActive())
-                .add("processes", addObjectRelation(project.getProcesses(), true))
-                .add("users", addObjectRelation(project.getUsers(), true))
-                .add("projectFileGroups", projectFileGroups.build())
-                .build();
-
-        return new NStringEntity(projectObject.toString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(project.getTitle()));
+        jsonObjectBuilder.add("startDate", getFormattedDate(project.getStartDate()));
+        jsonObjectBuilder.add("endDate", getFormattedDate(project.getEndDate()));
+        jsonObjectBuilder.add("numberOfPages", project.getNumberOfPages());
+        jsonObjectBuilder.add("numberOfVolumes", project.getNumberOfVolumes());
+        jsonObjectBuilder.add("fileFormatDmsExport", project.getFileFormatDmsExport());
+        jsonObjectBuilder.add("fileFormatInternal", project.getFileFormatInternal());
+        jsonObjectBuilder.add("metsRightsOwner", project.getMetsRightsOwner());
+        jsonObjectBuilder.add("active", project.isActive());
+        jsonObjectBuilder.add("processes", addObjectRelation(project.getProcesses(), true));
+        jsonObjectBuilder.add("users", addObjectRelation(project.getUsers(), true));
+        jsonObjectBuilder.add("projectFileGroups", projectFileGroups.build());
+        return jsonObjectBuilder.build();
     }
 }

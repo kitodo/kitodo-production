@@ -21,10 +21,13 @@ import java.util.Objects;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.Batch;
@@ -42,6 +45,13 @@ import org.kitodo.data.elasticsearch.api.TypeInterface;
 public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterface<T> {
 
     @Override
+    public HttpEntity createDocument(T baseIndexedBean) {
+        JsonObject baseIndexedObject = getJsonObject(baseIndexedBean);
+
+        return new NStringEntity(baseIndexedObject.toString(), ContentType.APPLICATION_JSON);
+    }
+
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (T bean : baseIndexedBeans) {
@@ -49,6 +59,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         }
         return documents;
     }
+
+    abstract JsonObject getJsonObject(T baseIndexedBean);
 
     /**
      * Method for adding relationship between bean objects.

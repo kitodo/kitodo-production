@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Ruleset;
 
 /**
@@ -25,15 +23,12 @@ import org.kitodo.data.database.beans.Ruleset;
 public class RulesetType extends BaseType<Ruleset> {
 
     @Override
-    public HttpEntity createDocument(Ruleset ruleset) {
-
-        JsonObject rulesetObject = Json.createObjectBuilder()
-                .add("title", preventNull(ruleset.getTitle()))
-                .add("file", preventNull(ruleset.getFile()))
-                .add("orderMetadataByRuleset", ruleset.isOrderMetadataByRuleset())
-                .add("fileContent", "")
-                .build();
-
-        return new NStringEntity(rulesetObject.toString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(Ruleset ruleset) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(ruleset.getTitle()));
+        jsonObjectBuilder.add("file", preventNull(ruleset.getFile()));
+        jsonObjectBuilder.add("orderMetadataByRuleset", ruleset.isOrderMetadataByRuleset());
+        jsonObjectBuilder.add("fileContent", "");
+        return jsonObjectBuilder.build();
     }
 }

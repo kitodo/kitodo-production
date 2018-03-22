@@ -13,10 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Task;
 
 /**
@@ -25,7 +23,7 @@ import org.kitodo.data.database.beans.Task;
 public class TaskType extends BaseType<Task> {
 
     @Override
-    public HttpEntity createDocument(Task task) {
+    JsonObject getJsonObject(Task task) {
         Integer processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
                 : 0;
         Integer editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
@@ -33,30 +31,28 @@ public class TaskType extends BaseType<Task> {
         Integer processId = task.getProcess() != null ? task.getProcess().getId() : 0;
         String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
 
-        JsonObject taskObject = Json.createObjectBuilder()
-                .add("title", preventNull(task.getTitle()))
-                .add("priority", task.getPriority())
-                .add("ordering", task.getOrdering())
-                .add("processingStatus", processingStatus)
-                .add("editType", editType)
-                .add("processingTime", getFormattedDate(task.getProcessingTime()))
-                .add("processingBegin", getFormattedDate(task.getProcessingBegin()))
-                .add("processingEnd", getFormattedDate(task.getProcessingEnd()))
-                .add("homeDirectory", preventNull(String.valueOf(task.getHomeDirectory())))
-                .add("typeMetadata", task.isTypeMetadata())
-                .add("typeAutomatic", task.isTypeAutomatic())
-                .add("typeImportFileUpload", task.isTypeImportFileUpload())
-                .add("typeExportRussian", task.isTypeExportRussian())
-                .add("typeImagesRead", task.isTypeImagesRead())
-                .add("typeImagesWrite", task.isTypeImagesWrite())
-                .add("batchStep", task.isBatchStep())
-                .add("processingUser", processingUser)
-                .add("processForTask.id", processId)
-                .add("processForTask.title", processTitle)
-                .add("users", addObjectRelation(task.getUsers()))
-                .add("userGroups", addObjectRelation(task.getUserGroups()))
-                .build();
-
-        return new NStringEntity(taskObject.toString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(task.getTitle()));
+        jsonObjectBuilder.add("priority", task.getPriority());
+        jsonObjectBuilder.add("ordering", task.getOrdering());
+        jsonObjectBuilder.add("processingStatus", processingStatus);
+        jsonObjectBuilder.add("editType", editType);
+        jsonObjectBuilder.add("processingTime", getFormattedDate(task.getProcessingTime()));
+        jsonObjectBuilder.add("processingBegin", getFormattedDate(task.getProcessingBegin()));
+        jsonObjectBuilder.add("processingEnd", getFormattedDate(task.getProcessingEnd()));
+        jsonObjectBuilder.add("homeDirectory", preventNull(String.valueOf(task.getHomeDirectory())));
+        jsonObjectBuilder.add("typeMetadata", task.isTypeMetadata());
+        jsonObjectBuilder.add("typeAutomatic", task.isTypeAutomatic());
+        jsonObjectBuilder.add("typeImportFileUpload", task.isTypeImportFileUpload());
+        jsonObjectBuilder.add("typeExportRussian", task.isTypeExportRussian());
+        jsonObjectBuilder.add("typeImagesRead", task.isTypeImagesRead());
+        jsonObjectBuilder.add("typeImagesWrite", task.isTypeImagesWrite());
+        jsonObjectBuilder.add("batchStep", task.isBatchStep());
+        jsonObjectBuilder.add("processingUser", processingUser);
+        jsonObjectBuilder.add("processForTask.id", processId);
+        jsonObjectBuilder.add("processForTask.title", processTitle);
+        jsonObjectBuilder.add("users", addObjectRelation(task.getUsers()));
+        jsonObjectBuilder.add("userGroups", addObjectRelation(task.getUserGroups()));
+        return jsonObjectBuilder.build();
     }
 }
