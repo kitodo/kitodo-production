@@ -385,31 +385,27 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<SelectItem> processTemplates = new ArrayList<>();
-
-        // Einschränkung auf bestimmte Projekte, wenn kein Admin
-        // TODO: remove it after method getMaximaleBerechtigung() is gone
-        LoginForm loginForm = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        List<Process> processes = serviceManager.getProcessService().getProcessTemplates();
-        if (loginForm != null) {
-            User currentUser = loginForm.getMyBenutzer();
-            if (currentUser != null) {
-                /*
-                 * wenn die maximale Berechtigung nicht Admin ist, dann nur
-                 * bestimmte
-                 */
-                if (loginForm.getMaximaleBerechtigung() > 1) {
-                    ArrayList<Integer> projectIds = new ArrayList<>();
-                    for (Project project : currentUser.getProjects()) {
-                        projectIds.add(project.getId());
-                    }
-                    if (projectIds.size() > 0) {
-                        processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
-                    }
+        List<Process> processes = new ArrayList<>();
+        // TODO Change to check the corresponding authority
+        if (serviceManager.getSecurityAccessService().isAdmin()) {
+            processes = serviceManager.getProcessService().getProcessTemplates();
+        } else {
+            User currentUser = null;
+            try {
+                currentUser = serviceManager.getUserService().getAuthenticatedUser();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+            if (Objects.nonNull(currentUser)) {
+                ArrayList<Integer> projectIds = new ArrayList<>();
+                for (Project project : currentUser.getProjects()) {
+                    projectIds.add(project.getId());
                 }
+                processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
             }
         }
 
+        List<SelectItem> processTemplates = new ArrayList<>();
         for (Process process : processes) {
             processTemplates.add(new SelectItem(process.getId(), process.getTitle(), null));
         }

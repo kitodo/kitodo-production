@@ -42,7 +42,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.auswahl}"
-                  rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                  rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editRuleset')}"
                   styleClass="actionsColumn">
             <h:link outcome="rulesetEdit"
                     title="#{msgs.regelsatzBearbeiten}">

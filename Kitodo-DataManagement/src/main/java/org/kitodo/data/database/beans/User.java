@@ -271,6 +271,9 @@ public class User extends BaseIndexedBean {
     }
 
     public List<Project> getProjects() {
+        if (this.projects == null) {
+            this.projects = new ArrayList<>();
+        }
         return this.projects;
     }
 

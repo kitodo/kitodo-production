@@ -19,19 +19,22 @@
         >
     <ui:define name="contentHeader">
         <h3>#{msgs.projekte}</h3>
-        <h:form>
+        <h:form
+            rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
             <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
-                <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick" immediate="true" />
+                <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick"
+                            immediate="true"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>
                 <p:menuitem value="#{msgs.newProcessTemplate}" action="#{ProzessverwaltungForm.newTemplate}"
                             immediate="true" style="width: inherit;"
-                            rendered="#{(LoginForm.maximaleBerechtigung == 1 || LoginForm.maximaleBerechtigung == 2)}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addTemplate')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
                             immediate="true"
-                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addDocket')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
-                            rendered="#{(LoginForm.maximaleBerechtigung == 1) || (LoginForm.maximaleBerechtigung == 2)}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addRuleset')}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
