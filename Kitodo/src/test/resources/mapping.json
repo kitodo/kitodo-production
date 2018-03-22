@@ -204,6 +204,25 @@
                         }
                     }
                 },
+                "templates": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "template": {
+                            "type": "boolean"
+                        }
+                    }
+                },
                 "projectFileGroups": {
                     "properties": {
                         "folder": {
@@ -457,6 +476,121 @@
                 }
             }
         },
+        "template": {
+            "dynamic": "strict",
+            "properties": {
+                "batches": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "creationDate": {
+                    "type": "date"
+                },
+                "docket": {
+                    "type": "long"
+                },
+                "processBaseUri": {
+                    "type": "long"
+                },
+                "project": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "active": {
+                            "type": "boolean"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "ruleset": {
+                    "type": "long"
+                },
+                "sortHelperStatus": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    },
+                    "fielddata": true
+                },
+                "tasks": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "title": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "outputName": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        },
+                        "raw": {
+                            "type": "text",
+                            "index": false
+                        }
+                    },
+                    "fielddata": true
+                },
+                "wikiField": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                }
+            }
+        },
         "task": {
             "dynamic": "strict",
             "properties": {
@@ -479,6 +613,23 @@
                     "type": "long"
                 },
                 "processForTask": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            },
+                            "fielddata": true
+                        }
+                    }
+                },
+                "templateForTask": {
                     "properties": {
                         "id": {
                             "type": "long"
