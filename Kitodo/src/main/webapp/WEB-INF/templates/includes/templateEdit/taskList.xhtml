@@ -18,27 +18,27 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="taskTable"
                  var="item"
-                 value="#{ProzessverwaltungForm.process.tasks}"
+                 value="#{TemplateForm.template.tasks}"
                  sortBy="#{item.ordering}">
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
             <h:outputText value="#{item.ordering}"/>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
+            <p:commandButton action="#{TemplateForm.setOrderingUp}"
                              id="orderUp"
                              update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
             </p:commandButton>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
+            <p:commandButton action="#{TemplateForm.setOrderingDown}"
                              id="orderDown"
                              update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
+                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
             </p:commandButton>
         </p:column>
 
@@ -48,60 +48,25 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <!-- status -->
-        <p:column headerText="#{msgs.status}" id="taskStatus">
-            <p:panel id="statusColumn" styleClass="statusColumn">
-                <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
-                                title="#{item.processingStatusEnum.title}"
-                                alt="status"/>
-                <p:panel rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}">
-                    <!-- Set workflow state to previous step -->
-                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusDown}"
-                                     id="taskStatusDown"
-                                     title="#{msgs.statusRunterSetzen}"
-                                     oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
-                                     update="statusColumn"
-                                     icon="fa fa-long-arrow-left"
-                                     styleClass="ui-button-small">
-                        <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.taskReload}"
-                                value="#{item}"/>
-                    </p:commandButton>
-                    <!-- Set workflow state to next step -->
-                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusUp}"
-                                     id="taskStatusUp"
-                                     title="#{msgs.statusHoeherSetzen}"
-                                     oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
-                                     update="statusColumn"
-                                     icon="fa fa-long-arrow-right"
-                                     styleClass="ui-button-small">
-                        <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.taskReload}"
-                                value="#{item}"/>
-                    </p:commandButton>
-                </p:panel>
-            </p:panel>
-        </p:column>
-
         <!-- actions -->
         <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
                   headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
-                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
-                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.process.project.client.id,item.process.project.id)}"
+                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.template.project.client.id,item.template.project.id)}"
                            title="#{msgs.loeschen}"
-                           action="#{ProzessverwaltungForm.removeTask}"
+                           action="#{TemplateForm.removeTask}"
                            immediate="true"
                            oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                            update="taskTable">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                 <f:setPropertyActionListener
-                        target="#{ProzessverwaltungForm.task}"
+                        target="#{TemplateForm.task}"
                         value="#{item}"/>
                 <p:confirm header="#{msgs.deleteTask}?"
                            message="#{msgs.sollDieserEintragWirklichGeloeschtWerden}"
@@ -113,7 +78,7 @@
             <div class="row-expansion-wrapper">
                 <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
                     <h:outputText value="#{msgs.title}: "/>
-                    <h:outputText value="#{item.process.title}"/>
+                    <h:outputText value="#{item.template.title}"/>
 
                     <h:outputText value="#{msgs.prioritaet}: "/>
                     <h:outputText value="#{item.priority}"/>
@@ -147,9 +112,9 @@
         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
     </p:confirmDialog>
 
-    <p:commandButton action="#{ProzessverwaltungForm.newTask}"
+    <p:commandButton action="#{TemplateForm.newTask}"
                      value="#{msgs.schrittHinzufuegen}"
-                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
+                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.template.project.client.id,item.template.project.id)}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      styleClass="button-filled-green"

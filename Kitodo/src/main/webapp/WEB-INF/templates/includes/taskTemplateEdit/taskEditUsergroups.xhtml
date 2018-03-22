@@ -1,0 +1,43 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable var="usergroup" id="usergroupTable"
+                 value="#{TemplateForm.task.userGroups}">
+        <p:column headerText="#{msgs.titel}">
+            <h:outputText value="#{usergroup.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.loeschen}">
+            <p:commandLink action="#{TemplateForm.deleteUserGroup}"
+                           id="deleteUsergroup"
+                           immediate="true"
+                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                           update="editForm:tabs:usergroupTable"
+                           title="#{msgs.removeUsergroup}">
+                <i class="fa fa-trash-o fa-lg"/>
+                <f:param name="ID" value="#{usergroup.id}"/>
+            </p:commandLink>
+        </p:column>
+    </p:dataTable>
+    <button id="addUsergroup"
+            onclick="PF('addUsergroupDialog').show()"
+            type="button"
+            class="ui-button ui-widget ui-corner-all button-filled-green"
+            style="padding:.7em;border:none;">
+        #{msgs.benutzergruppenHinzufuegen}
+    </button>
+</ui:composition>

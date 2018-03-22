@@ -25,7 +25,7 @@
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick"
                             immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>
-                <p:menuitem value="#{msgs.newProcessTemplate}" action="#{ProzessverwaltungForm.newTemplate}"
+                <p:menuitem value="#{msgs.newProcessTemplate}" action="#{TemplateForm.newTemplate}"
                             immediate="true" style="width: inherit;"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addTemplate')}"
                             icon="ui-icon-plusthick"/>

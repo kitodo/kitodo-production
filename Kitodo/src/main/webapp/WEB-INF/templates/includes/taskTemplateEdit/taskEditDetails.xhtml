@@ -1,0 +1,107 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:panelGrid columns="2" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="title" value="#{msgs.titel}"/>
+                <p:inputText id="title" value="#{TemplateForm.task.title}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                    <p:ajax event="blur"/>
+                </p:inputText>
+            </div>
+            <div>
+                <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
+                <p:inputText id="ordering" value="#{TemplateForm.task.ordering}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                    <p:ajax event="blur"/>
+                </p:inputText>
+            </div>
+            <div>
+                <p:outputLabel for="priority" value="#{msgs.prioritaet}"/>
+                <p:inputText id="priority" value="#{TemplateForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                    <p:ajax event="blur"/>
+                </p:inputText>
+            </div>
+            <div>
+                <p:outputLabel for="status" value="#{msgs.status}"/>
+                <p:selectOneMenu id="status" value="#{TemplateForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                    <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
+                    <f:selectItem itemValue="0" itemLabel="#{msgs.statusGesperrt}"/>
+                    <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
+                    <f:selectItem itemValue="2" itemLabel="#{msgs.statusInBearbeitung}"/>
+                    <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <p:outputLabel for="typeMetaData" value="#{msgs.metadata}"/>
+                <p:selectBooleanCheckbox id="typeMetaData" value="#{TemplateForm.task.typeMetadata}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeImportFileUpload" value="#{msgs.importMittelsFileUpload}"/>
+                <p:selectBooleanCheckbox id="typeImportFileUpload" value="#{TemplateForm.task.typeImportFileUpload}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeImagesRead" value="#{msgs.imagesLesen}"/>
+                <p:selectBooleanCheckbox id="typeImagesRead" value="#{TemplateForm.task.typeImagesRead}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesSchreiben}"/>
+                <p:selectBooleanCheckbox id="typeImagesWrite" value="#{TemplateForm.task.typeImagesWrite}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
+                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{TemplateForm.task.typeCloseVerify}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeExportDMS" value="#{msgs.exportDMS}"/>
+                <p:selectBooleanCheckbox id="typeExportDMS" value="#{TemplateForm.task.typeExportDMS}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeAcceptClose" value="#{msgs.schrittBeimAnnehmenAbschliessen}"/>
+                <p:selectBooleanCheckbox id="typeAcceptClose" value="#{TemplateForm.task.typeAcceptClose}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeAutomatic" value="#{msgs.automaticTask}"/>
+                <p:selectBooleanCheckbox id="typeAutomatic" value="#{TemplateForm.task.typeAutomatic}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="batchStep" value="#{msgs.batchStep}"/>
+                <p:selectBooleanCheckbox id="batchStep" value="#{TemplateForm.task.batchStep}" class="input">
+                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>
