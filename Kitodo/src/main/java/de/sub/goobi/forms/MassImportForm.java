@@ -54,6 +54,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -63,7 +64,7 @@ import org.kitodo.services.ServiceManager;
 public class MassImportForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private static final long serialVersionUID = -4225927414279404442L;
-    private Process template;
+    private Template template;
     private List<Process> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
@@ -101,12 +102,12 @@ public class MassImportForm implements Serializable {
      */
     public String prepare(int id) {
         try {
-            this.template = serviceManager.getProcessService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.template)) {
+        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             if (this.template.getTasks().size() == 0) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");
             }
@@ -442,7 +443,7 @@ public class MassImportForm implements Serializable {
      * @param template
      *            the template to set
      */
-    public void setTemplate(Process template) {
+    public void setTemplate(Template template) {
         this.template = template;
 
     }
@@ -452,7 +453,7 @@ public class MassImportForm implements Serializable {
      *
      * @return the template
      */
-    public Process getTemplate() {
+    public Template getTemplate() {
         return this.template;
     }
 
