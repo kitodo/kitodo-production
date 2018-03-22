@@ -176,7 +176,8 @@ public class ProjectTypeTest {
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":\"\",\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
                 + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"fileFormatInternal\":\"XStream\","
                 + "\"fileFormatDmsExport\":\"XStream\",\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,"
-                + "\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}")).readObject();
+                + "\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}],"
+                + "\"client.clientName\":\"TestClient\",\"client.id\":1}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
@@ -198,7 +199,8 @@ public class ProjectTypeTest {
                 + "\"folder\":\"\",\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/pdf\",\"suffix\":\"pdf\"}],"
                 + "\"startDate\":\"2017-01-10\",\"fileFormatInternal\":\"XStream\",\"fileFormatDmsExport\":\"XStream\","
                 + "\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":"
-                + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}")).readObject();
+                + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}],"
+                + "\"client.clientName\":null,\"client.id\":null}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
@@ -209,7 +211,8 @@ public class ProjectTypeTest {
                 + "\"numberOfPages\":0,\"metsRightsOwner\":\"\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
-                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[]}")).readObject();
+                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[],"
+                + "\"client.clientName\":null,\"client.id\":null}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
