@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
+import org.joda.time.*;
+import org.joda.time.format.*;
 import org.w3c.dom.Document;
 
 import de.sub.goobi.config.ConfigMain;
@@ -70,6 +72,21 @@ public class GranularityForm {
     protected Long numberOfPages;
 
     /**
+     * The name of the year, such as “business year”, “fiscal year”, or “season”.
+     */
+    private String yearName = "";
+
+    /**
+     * The first day of the year.
+     */
+    private MonthDay yearStart = new MonthDay(1,1);
+
+    /**
+     * The first day of the year, if not parsable.
+     */
+    private String invalidYearStart;
+
+    /**
      * The procedure breakModeClick() is called from the procedures which are
      * called if the user clicks one of the button to select the granularity
      * level. It sets the granularity to the given BreakMode and triggers the
@@ -77,7 +94,7 @@ public class GranularityForm {
      */
     private void alterGranularityClick(Granularity granularity) {
         this.granularity = granularity;
-        course.splitInto(granularity);
+        course.splitInto(granularity, yearStart);
     }
 
     /**
@@ -109,12 +126,12 @@ public class GranularityForm {
         if (!prozesskopieForm.isContentValid(false)) {
             return ProzesskopieForm.NAVI_FIRST_PAGE;
         }
-        if (course == null || course.getNumberOfProcesses() < 1) {
+        if (course == null || course.getNumberOfProcesses() < 1 || yearStart == null) {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");
             return "";
         }
         Helper.removeManagedBean("ProzesskopieForm");
-        CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course, generateBatches);
+        CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course, yearStart, yearName, generateBatches);
         TaskManager.addTask(createProcesses);
         return "taskmanager";
     }
@@ -147,6 +164,19 @@ public class GranularityForm {
             Helper.setFehlerMeldung("granularity.download.error", "error.IOException");
             logger.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * The function formatYearStart() formats the user output for the year start.
+     *
+     * @param yearStart
+     *            the begin of the year as JodaTime object
+     * @return user output
+     */
+    private static String formatYearStart(MonthDay yearStart) {
+        String yearFormat = Helper.getTranslation("granularity.yearStart.format");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(yearFormat);
+        return formatter.print(yearStart);
     }
 
     /**
@@ -243,6 +273,7 @@ public class GranularityForm {
                 .replaceAll("'", "′");
     }
 
+
     /**
      * The function getNumberOfPages returns the total number of pages of the
      * digitization project guessed and entered by the user—or null indicating
@@ -291,7 +322,7 @@ public class GranularityForm {
      */
     public int getNumberOfProcesses() {
         if (course.getNumberOfProcesses() == 0 && granularity != null) {
-            course.splitInto(granularity);
+            course.splitInto(granularity, yearStart);
         }
         return course.getNumberOfProcesses();
     }
@@ -340,6 +371,28 @@ public class GranularityForm {
     }
 
     /**
+     * The function getYearName() returns the name of the year. The name of the
+     * year is optional and maybe empty. Typical values are “Business year”,
+     * “Fiscal year”, or “Season”.
+     *
+     * @return the name of the year
+     */
+    public String getYearName() {
+        return yearName;
+    }
+
+    /**
+     * The function getYearStart() returns the beginning of the year. Typically,
+     * this is the 1ˢᵗ of January, but it can be changed here to other days as
+     * well. The beginning of the year must parse and must not not be empty.
+     *
+     * @return the name of the year
+     */
+    public String getYearStart() {
+        return yearStart == null ? invalidYearStart : formatYearStart(yearStart);
+    }
+
+    /**
      * The procedure monthsClick() is called if the user clicks the button to
      * select the granularity level “months”. It sets the granularity to
      * BreakMode.MONTHS and triggers the recalculation of the breaks in the
@@ -348,6 +401,25 @@ public class GranularityForm {
     public void monthsClick() {
         alterGranularityClick(Granularity.MONTHS);
     }
+
+    /**
+     * The function parseYearStart() parses the user input for the year start.
+     *
+     * @param yearStart
+     *            user input to parse
+     * @return the begin of the year as JodaTime object
+     * @throws IllegalArgumentException
+     *             if the string cannot be parsed
+     * @throws IllegalFieldValueException
+     *             if the string represents an illegal date
+     */
+    private static MonthDay parseYearStart(String yearStart) {
+        String yearFormat = Helper.getTranslation("granularity.yearStart.format");
+        DateTimeFormatter parser = DateTimeFormat.forPattern(yearFormat);
+        LocalDate localDate = parser.parseLocalDate(yearStart.trim());
+        return new MonthDay(localDate.getMonthOfYear(), localDate.getDayOfMonth());
+    }
+
 
     /**
      * The procedure monthsClick() is called if the user clicks the button to
@@ -394,6 +466,37 @@ public class GranularityForm {
             generateBatches = Granularity.valueOf(option.toUpperCase());
         } catch (IllegalArgumentException e) {
             generateBatches = null;
+        }
+    }
+
+    /**
+     * The function getYearName() returns the name of the year. The name of the
+     * year is optional and maybe empty. Typical values are “Business year”,
+     * “Fiscal year”, or “Season”.
+     *
+     * @param yearName
+     *            the name of the year
+     */
+    public void setYearName(String yearName) {
+        this.yearName = yearName;
+    }
+
+    /**
+     * The function getYearStart() returns the beginning of the year. Typically,
+     * this is the 1ˢᵗ of January, but it can be changed here to other days as
+     * well. The beginning of the year must parse and must not not be empty.
+     *
+     * @param yearStart
+     *            the beginning of the year
+     */
+    public void setYearStart(String yearStart) {
+        String trimmedYearStart = yearStart.trim();
+        try {
+            this.yearStart = parseYearStart(trimmedYearStart);
+        } catch (IllegalArgumentException e) {
+            Helper.setFehlerMeldung("granularity.yearStart.IllegalArgumentException", e.getMessage());
+            this.yearStart = null;
+            this.invalidYearStart = trimmedYearStart;
         }
     }
 

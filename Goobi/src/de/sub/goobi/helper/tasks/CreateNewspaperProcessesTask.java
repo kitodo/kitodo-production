@@ -26,6 +26,8 @@ import org.goobi.production.model.bibliography.course.CourseToGerman;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.goobi.production.model.bibliography.course.IndividualIssue;
 import org.joda.time.LocalDate;
+import org.joda.time.MonthDay;
+import org.joda.time.format.*;
 
 import ugh.dl.DigitalDocument;
 import ugh.dl.DocStruct;
@@ -50,6 +52,11 @@ import de.sub.goobi.persistence.BatchDAO;
  * @author Matthias Ronge
  */
 public class CreateNewspaperProcessesTask extends EmptyTask {
+
+    /**
+     * January the 1ˢᵗ.
+     */
+    public static final MonthDay FIRST_OF_JANUARY = new MonthDay(1, 1);
 
     /**
      * The field batchLabel is set in addToBatches() on the first function call
@@ -113,6 +120,16 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     private final List<List<IndividualIssue>> processes;
 
     /**
+     * The day of the year the new season starts.
+     */
+    private MonthDay seasonBegin;
+
+    /**
+     * A name for the season.
+     */
+    private String seasonLabel;
+
+    /**
      * The field description holds a verbal description of the course of
      * appearance.
      */
@@ -126,14 +143,20 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      *            a ProzesskopieForm to use for creating processes
      * @param course
      *            course of appearance to create processes for
+     * @param seasonBegin
+     *            the first day of the new year
+     * @param seasonLabel
+     *            a label for the year level
      * @param batchGranularity
      *            a granularity level at which baches shall be created
      */
-    public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, Granularity batchGranularity) {
+    public CreateNewspaperProcessesTask(ProzesskopieForm pattern, Course course, MonthDay seasonBegin, String seasonLabel, Granularity batchGranularity) {
         super(pattern.getProzessVorlageTitel());
         this.pattern = pattern;
         this.processes = new ArrayList<List<IndividualIssue>>(course.getNumberOfProcesses());
         this.description = CourseToGerman.asReadableText(course);
+        this.seasonBegin = seasonBegin;
+        this.seasonLabel = seasonLabel;
         this.createBatches = batchGranularity;
         for (List<IndividualIssue> issues : course.getProcesses()) {
             List<IndividualIssue> process = new ArrayList<IndividualIssue>(issues.size());
@@ -156,6 +179,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         this.pattern = master.pattern;
         this.processes = master.processes;
         this.description = master.description;
+        this.seasonBegin = master.seasonBegin;
+        this.seasonLabel = master.seasonLabel;
         this.createBatches = master.createBatches;
         this.logisticsBatch = master.logisticsBatch;
         this.currentBreakMark = master.currentBreakMark;
@@ -232,6 +257,21 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
             return;
         }
+    }
+
+    /**
+     * Compares a date with a month day.
+     *
+     * @param comparee
+     *            date to compare
+     * @param compared
+     *            month day to compare with
+     * @return &lt;0, if the date is before the given month day; 0, if if the
+     *         date is on the given month day, &gt;0 if the date is after the
+     *         given month day
+     */
+    private static int compare(LocalDate comparee, MonthDay compared) {
+        return comparee.compareTo(compared.toLocalDate(comparee.getYear()));
     }
 
     /**
@@ -313,8 +353,24 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
 
         // create the year level
         DocStruct year = createFirstChild(newspaper, document, ruleset);
-        String theYear = Integer.toString(issues.get(0).getDate().getYear());
-        addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+        LocalDate firstDate = issues.get(0).getDate();
+        String theYear = Integer.toString(firstDate.getYear());
+        if (seasonBegin.isEqual(FIRST_OF_JANUARY) && seasonLabel.isEmpty()) {
+            addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, theYear, true);
+        } else {
+            boolean secondYear = compare(firstDate, seasonBegin) < 0;
+            int yearNumber = firstDate.getYear();
+            StringBuilder years = new StringBuilder(64);
+            years.append(secondYear ? yearNumber - 1 : yearNumber);
+            years.append('/');
+            years.append(secondYear ? yearNumber : yearNumber + 1);
+            addMetadatum(year, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, years.toString(), true);
+            if(!seasonLabel.isEmpty()){
+                years.insert(0, ' ');
+                years.insert(0, seasonLabel);
+            }
+            addMetadatum(year, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, years.toString(), true);
+        }
 
         // create the month level
         Map<Integer, DocStruct> months = new HashMap<Integer, DocStruct>();
@@ -324,7 +380,8 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             Integer monthNo = date.getMonthOfYear();
             if (!months.containsKey(monthNo)) {
                 DocStruct newMonth = createFirstChild(year, document, ruleset);
-                addMetadatum(newMonth, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE, monthNo.toString(), true);
+                addMetadatum(newMonth, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
+                        ISODateTimeFormat.yearMonth().print(individualIssue.getDate()), true);
                 addMetadatum(newMonth, year.getType().getName(), theYear, false);
                 addMetadatum(newMonth, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, monthNo.toString(), false);
                 months.put(monthNo, newMonth);
@@ -335,7 +392,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             if (!days.containsKey(date)) {
                 DocStruct newDay = createFirstChild(month, document, ruleset);
                 addMetadatum(newDay, MetsModsImportExport.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
-                        Integer.toString(date.getDayOfMonth()), true);
+                        ISODateTimeFormat.yearMonthDay().print(individualIssue.getDate()), true);
                 addMetadatum(newDay, year.getType().getName(), theYear, false);
                 addMetadatum(newDay, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
                 addMetadatum(newDay, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE,
@@ -375,16 +432,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             level.addMetadata(key, value);
         } catch (Exception e) {
             if (fail) {
-                throw new RuntimeException("Could not create metadatum "
-                        + key
-                        + " in "
+                throw new RuntimeException("Could not create metadatum " + key + " in "
                         + (level.getType() != null ? "DocStrctType " + level.getType().getName()
                                 : "anonymous DocStrctType")
-                        + ": "
-                        + e.getClass()
-                                .getSimpleName()
-                                .replace("NullPointerException",
-                                        "No metadata types are associated with that DocStructType."), e);
+                        + ": " + e.getClass().getSimpleName().replace("NullPointerException",
+                                "No metadata types are associated with that DocStructType."),
+                        e);
             }
         }
     }
@@ -407,7 +460,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     private void addToBatches(Prozess process, List<IndividualIssue> issues, String processTitle) throws DAOException {
         if (createBatches != null) {
             int lastIndex = issues.size() - 1;
-            int breakMark = issues.get(lastIndex).getBreakMark(createBatches);
+            int breakMark = issues.get(lastIndex).getBreakMark(createBatches, seasonBegin);
             if ((currentBreakMark != null) && (breakMark != currentBreakMark)) {
                 flushLogisticsBatch(processTitle);
             }

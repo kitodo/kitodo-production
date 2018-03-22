@@ -42,6 +42,7 @@ import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
+import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -773,7 +774,7 @@ public class CalendarForm {
             }
             if (course.getNumberOfProcesses() == 0) {
                 granularityWasTemporarilyAdded = true;
-                course.splitInto(Granularity.DAYS);
+                course.splitInto(Granularity.DAYS, CreateNewspaperProcessesTask.FIRST_OF_JANUARY);
             }
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
             FacesUtils.sendDownload(data, "course.xml");

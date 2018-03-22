@@ -133,6 +133,26 @@
                                                     </h:inputText>
                                                 </htm:span>
                                             </htm:div>
+                                            <htm:div styleClass="formRow">
+                                                <h:outputLabel for="numberOfPages"
+                                                    value="#{msgs['granularity.yearStart']}"
+                                                    styleClass="leftText" />
+                                                <htm:span styleClass="fillWrapper">
+                                                    <h:inputText value="#{GranularityForm.yearStart}"
+                                                        styleClass="filling">
+                                                    </h:inputText>
+                                                </htm:span>
+                                            </htm:div>
+                                            <htm:div styleClass="formRow">
+                                                <h:outputLabel for="numberOfPages"
+                                                    value="#{msgs['granularity.yearName']}"
+                                                    styleClass="leftText" />
+                                                <htm:span styleClass="fillWrapper">
+                                                    <h:inputText value="#{GranularityForm.yearName}"
+                                                        styleClass="filling">
+                                                    </h:inputText>
+                                                </htm:span>
+                                            </htm:div>
 
                                             <%-- Buttons to choose granularity --%>
                                             <h:outputText value="#{msgs['granularity.pick']} " />

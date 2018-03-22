@@ -21,7 +21,7 @@ import java.util.TreeSet;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 
-import de.sub.goobi.helper.DateUtils;
+import de.sub.goobi.helper.*;
 
 /**
  * The static class CourseToGerman provides a toString() method to convert a
@@ -68,7 +68,14 @@ public class CourseToGerman {
             Block block = blocks.next();
             result.add(titleToString(block, hasPreviousBlock));
             for (Issue issue : block.getIssues()) {
-                String irregularities = irregularitiesToString(issue);
+                boolean regular = false;
+                for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+                    if (issue.isDayOfWeek(dayOfWeek)) {
+                        regular = true;
+                        break;
+                    }
+                }
+                String irregularities = irregularitiesToString(issue, regular);
                 if (irregularities != null) {
                     result.add(irregularities);
                 }
@@ -89,39 +96,57 @@ public class CourseToGerman {
      */
     private static String titleToString(Block block, boolean subsequentBlock) {
         StringBuilder result = new StringBuilder(500);
-        int currentIssuesSize = block.getIssues().size();
         if (subsequentBlock == false) {
-            result.append("Die Zeitung erschien vom ");
+            result.append("Die Gesamtausgabe erschien vom ");
             appendDate(result, block.getFirstAppearance());
         } else {
             result.append("Ab dem ");
             appendDate(result, block.getFirstAppearance());
-            result.append(" erschien die Zeitung unter dem gleichen Titel");
+            result.append(" erschien sie");
         }
         result.append(" bis zum ");
         appendDate(result, block.getLastAppearance());
-        result.append(" regelmäßig ");
-
-        Iterator<Issue> issueIterator = block.getIssues().iterator();
+        List<Issue> issues = block.getIssues();
+        result.append(" ");
+        int currentIssuesSize = issues.size();
+        Boolean regularly = null;
         for (int issueIndex = 0; issueIndex < currentIssuesSize; issueIndex++) {
-            Issue issue = issueIterator.next();
-            result.append("an allen ");
-            int daysOfWeekCount = 0;
-            for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
-                if (issue.isDayOfWeek(dayOfWeek)) {
-                    result.append(DAYS_OF_WEEK_NAMES[dayOfWeek]);
-                    result.append("en");
-                    daysOfWeekCount++;
-                    if (daysOfWeekCount < issue.getDaysOfWeek().size() - 1) {
-                        result.append(", ");
+            Issue issue = issues.get(issueIndex);
+            boolean appearedRegularly = false;
+            for (int testDayOfWeek = DateTimeConstants.MONDAY; testDayOfWeek <= DateTimeConstants.SUNDAY; testDayOfWeek++) {
+                if (issue.isDayOfWeek(testDayOfWeek)) {
+                    if (!Boolean.TRUE.equals(regularly)) {
+                        result.append("regelmäßig ");
+                        regularly = Boolean.TRUE;
                     }
-                    if (daysOfWeekCount == issue.getDaysOfWeek().size() - 1) {
-                        result.append(" und ");
+                    result.append("an allen ");
+                    int daysOfWeekCount = 0;
+                    for (int dayOfWeek = DateTimeConstants.MONDAY; dayOfWeek <= DateTimeConstants.SUNDAY; dayOfWeek++) {
+                        if (issue.isDayOfWeek(dayOfWeek)) {
+                            result.append(DAYS_OF_WEEK_NAMES[dayOfWeek]);
+                            result.append("en");
+                            daysOfWeekCount++;
+                            if (daysOfWeekCount < issue.getDaysOfWeek().size() - 1) {
+                                result.append(", ");
+                            }
+                            if (daysOfWeekCount == issue.getDaysOfWeek().size() - 1) {
+                                result.append(" und ");
+                            }
+                        }
                     }
+                    appearedRegularly = true;
+                    break;
                 }
             }
-            result.append(" als ");
-            result.append(issue.getHeading());
+            if (!appearedRegularly && !Boolean.FALSE.equals(regularly)) {
+                result.append("nur unregelmäßig");
+                regularly = Boolean.FALSE;
+            }
+            if (!issue.getHeading().isEmpty()) {
+                result.append(" als ");
+                result.append(issue.getHeading());
+            }
+
             if (issueIndex < currentIssuesSize - 2) {
                 result.append(", ");
             }
@@ -132,6 +157,7 @@ public class CourseToGerman {
                 result.append(".");
             }
         }
+
         return result.toString();
     }
 
@@ -141,8 +167,11 @@ public class CourseToGerman {
      *
      * @param issues
      *            issues whose irregularities shall be formulated
+     * @param regular
+     *            whether the course of appearance has dates of regular
+     *            appearance
      */
-    private static String irregularitiesToString(Issue issue) {
+    private static String irregularitiesToString(Issue issue, boolean regular) {
         int additionsSize = issue.getAdditions().size();
         int exclusionsSize = issue.getExclusions().size();
         StringBuilder buffer = new StringBuilder((int) (Math.ceil(10.907 * (additionsSize + exclusionsSize)) + 500));
@@ -151,18 +180,22 @@ public class CourseToGerman {
             return null;
         }
 
-        buffer.append("Die Ausgabe „");
-        buffer.append(issue.getHeading());
-        buffer.append("“ erschien ");
+        buffer.append("Die Ausgabe");
+        if (!issue.getHeading().isEmpty()) {
+            buffer.append(" „");
+            buffer.append(issue.getHeading());
+            buffer.append("“");
+        }
+        buffer.append(" erschien ");
 
         if (exclusionsSize > 0) {
-            appendManyDates(buffer, issue.getExclusions(), false);
+            appendManyDates(buffer, issue.getExclusions(), Ternary.FALSE);
             if (additionsSize > 0) {
                 buffer.append(", dafür jedoch ");
             }
         }
         if (additionsSize > 0) {
-            appendManyDates(buffer, issue.getAdditions(), true);
+            appendManyDates(buffer, issue.getAdditions(), regular ? Ternary.TRUE : Ternary.UNKNOWN);
         }
         buffer.append(".");
         return buffer.toString();
@@ -183,10 +216,10 @@ public class CourseToGerman {
      * @throws NullPointerException
      *             if buffer or dates is null
      */
-    private static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, boolean signum) {
-        if (signum) {
+    private static void appendManyDates(StringBuilder buffer, Set<LocalDate> dates, Ternary signum) {
+        if (signum.equals(Ternary.TRUE)) {
             buffer.append("zusätzlich ");
-        } else {
+        } else if (signum.equals(Ternary.FALSE)) {
             buffer.append("nicht ");
         }
 
@@ -227,7 +260,7 @@ public class CourseToGerman {
                         buffer.append(", ");
                     } else {
                         buffer.append(" und ebenfalls ");
-                        if (!signum) {
+                        if (signum.equals(Ternary.FALSE)) {
                             buffer.append("nicht ");
                         }
                     }
