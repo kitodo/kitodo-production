@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -215,8 +216,10 @@ public class MockDatabase {
 
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
             String mapping = IOUtils.toString(inputStream, "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(mapping)).readObject();
-            return jsonObject.toString();
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
+                JsonObject jsonObject = jsonReader.readObject();
+                return jsonObject.toString();
+            }
         } catch (IOException e) {
             logger.error(e);
         }

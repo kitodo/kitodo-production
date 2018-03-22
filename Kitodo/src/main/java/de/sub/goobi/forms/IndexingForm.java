@@ -31,6 +31,7 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -411,8 +412,10 @@ public class IndexingForm {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
             String mapping = IOUtils.toString(inputStream, "UTF-8");
-            JsonObject jsonObject = Json.createReader(new StringReader(mapping)).readObject();
-            return jsonObject.toString();
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
+                JsonObject jsonObject = jsonReader.readObject();
+                return jsonObject.toString();
+            }
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";

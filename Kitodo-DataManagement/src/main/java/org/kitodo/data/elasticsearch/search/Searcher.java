@@ -70,9 +70,10 @@ public class Searcher extends Index {
 
         String response = restClient.countDocuments(overrideNullQuery(query));
         if (!response.equals("")) {
-            JsonReader jsonReader = Json.createReader(new StringReader(response));
-            JsonObject result = jsonReader.readObject();
-            return result.getJsonNumber("count").longValue();
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                JsonObject result = jsonReader.readObject();
+                return result.getJsonNumber("count").longValue();
+            }
         } else {
             return 0L;
         }
@@ -92,9 +93,10 @@ public class Searcher extends Index {
 
         String response = restClient.aggregateDocuments(overrideNullQuery(query), aggregation);
         if (!response.equals("")) {
-            JsonReader jsonReader = Json.createReader(new StringReader(response));
-            JsonObject result = jsonReader.readObject();
-            return result.getJsonObject("aggregations");
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                JsonObject result = jsonReader.readObject();
+                return result.getJsonObject("aggregations");
+            }
         } else {
             return Json.createObjectBuilder().build();
         }
@@ -119,8 +121,9 @@ public class Searcher extends Index {
 
         String response = restClient.getDocument(id);
         if (!response.equals("")) {
-            JsonReader jsonReader = Json.createReader(new StringReader(response));
-            return jsonReader.readObject();
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                return jsonReader.readObject();
+            }
         } else {
             return Json.createObjectBuilder().build();
         }
@@ -150,16 +153,17 @@ public class Searcher extends Index {
         SearchRestClient restClient = initiateRestClient();
 
         String response = restClient.getDocument(query, sort, 0, 1);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
-        JsonObject jsonObject = jsonReader.readObject();
-        if (jsonObject.containsKey("hits")) {
-            JsonObject hits = jsonObject.getJsonObject("hits");
-            JsonArray inHits = hits.getJsonArray("hits");
-            if (!inHits.isEmpty()) {
-                return inHits.getJsonObject(0);
+        try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+            JsonObject jsonObject = jsonReader.readObject();
+            if (jsonObject.containsKey("hits")) {
+                JsonObject hits = jsonObject.getJsonObject("hits");
+                JsonArray inHits = hits.getJsonArray("hits");
+                if (!inHits.isEmpty()) {
+                    return inHits.getJsonObject(0);
+                }
+            } else {
+                return jsonObject;
             }
-        } else {
-            return jsonObject;
         }
         return Json.createObjectBuilder().build();
     }
@@ -212,18 +216,19 @@ public class Searcher extends Index {
         List<JsonObject> searchResults = new ArrayList<>();
 
         String response = restClient.getDocument(query, sort, offset, size);
-        JsonReader jsonReader = Json.createReader(new StringReader(response));
-        JsonObject jsonObject = jsonReader.readObject();
-        if (jsonObject.containsKey("hits")) {
-            JsonObject hits = jsonObject.getJsonObject("hits");
-            JsonArray inHits = hits.getJsonArray("hits");
-            if (!inHits.isEmpty()) {
-                for (Object hit : inHits) {
-                    searchResults.add((JsonObject) hit);
+        try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+            JsonObject jsonObject = jsonReader.readObject();
+            if (jsonObject.containsKey("hits")) {
+                JsonObject hits = jsonObject.getJsonObject("hits");
+                JsonArray inHits = hits.getJsonArray("hits");
+                if (!inHits.isEmpty()) {
+                    for (Object hit : inHits) {
+                        searchResults.add((JsonObject) hit);
+                    }
                 }
+            } else {
+                searchResults.add(jsonObject);
             }
-        } else {
-            searchResults.add(jsonObject);
         }
         return searchResults;
     }

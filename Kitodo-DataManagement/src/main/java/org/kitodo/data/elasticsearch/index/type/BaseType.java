@@ -118,12 +118,12 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
     }
 
     /**
-     * Method used for formatting Date as String. It will help to change fast a way
+     * Method used for formatting Date as JsonValue. It will help to change fast a way
      * of Date formatting or expected String format.
      * 
      * @param date
      *            as Date
-     * @return formatted date as String
+     * @return formatted date as JsonValue - String or NULL
      */
     JsonValue getFormattedDate(Date date) {
         if (Objects.nonNull(date)) {

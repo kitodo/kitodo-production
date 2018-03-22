@@ -171,7 +171,6 @@ public class SearcherIT {
 
         query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
         result = searcher.findDocument(query);
-        System.out.println(result);
         id = getIdFromJSONObject(result);
         assertEquals("Incorrect result - id has another value than null!", Integer.valueOf(0), id);
     }
