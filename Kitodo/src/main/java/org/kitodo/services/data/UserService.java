@@ -269,8 +269,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *
      * @return The user dto or null if no user is authenticated.
      */
-    public UserDTO findAuthenticatedUser() throws DAOException, DataException {
-        User user = getAuthenticatedUser();
+    public UserDTO findAuthenticatedUser() throws DataException {
+        User user = Helper.getCurrentUser();
         if (Objects.nonNull(user)) {
             return findById(user.getId());
         } else {

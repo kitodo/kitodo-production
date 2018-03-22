@@ -20,21 +20,23 @@ import java.util.Objects;
 import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.TaskDTO;
+import org.kitodo.dto.TemplateDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.forms.TemplateForm;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
-public class TemplateService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
+public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
@@ -43,7 +45,7 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
      * Constructor with Searcher and Indexer assigning.
      */
     private TemplateService() {
-        super(new ProcessDAO(), new ProcessType(), new Indexer<>(Process.class), new Searcher(Process.class));
+        super(new TemplateDAO(), new TemplateType(), new Indexer<>(Template.class), new Searcher(Template.class));
     }
 
     /**
@@ -64,19 +66,30 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return serviceManager.getProcessService().countDatabaseRows();
+        return countDatabaseRows("FROM Template");
+    }
+
+    /**
+     * Find all templates sorted according to sort query.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @return the list of sorted templates as TemplateDTO objects
+     */
+    public List<TemplateDTO> findAll(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+    public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         Map<String, String> filterMap = (Map<String, String>) filters;
 
         BoolQueryBuilder query;
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
             return convertJSONObjectsToDTOs(
-                serviceManager.getProcessService().findBySort(false, true, true, sort, offset, size), false);
+                findBySort(false, true, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
@@ -99,7 +112,6 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
             query = new BoolQueryBuilder();
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             query.must(serviceManager.getProcessService().getQueryProjectActive(true));
-            query.must(getQueryTemplate(true));
         } else {
             query = readFilters(filterMap);
         }
@@ -118,7 +130,8 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, true, false, false);
+            //query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
+                //false);
             if (!form.isShowClosedProcesses()) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
@@ -130,42 +143,134 @@ public class TemplateService extends TitleSearchService<Process, ProcessDTO, Pro
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
-        return serviceManager.getProcessService().convertJSONObjectToDTO(jsonObject, related);
+    public TemplateDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
+        TemplateDTO templateDTO = new TemplateDTO();
+        templateDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject templateJSONObject = jsonObject.getJsonObject("_source");
+        templateDTO.setTitle(templateJSONObject.getString("title"));
+        templateDTO.setOutputName(templateJSONObject.getString("outputName"));
+        templateDTO.setWikiField(templateJSONObject.getString("wikiField"));
+        templateDTO.setCreationDate(templateJSONObject.getString("creationDate"));
+
+        if (!related) {
+            templateDTO = convertRelatedJSONObjects(templateJSONObject, templateDTO);
+        } else {
+            ProjectDTO projectDTO = new ProjectDTO();
+            projectDTO.setId(templateJSONObject.getInt("project.id"));
+            projectDTO.setTitle(templateJSONObject.getString("project.title"));
+            projectDTO.setActive(templateJSONObject.getBoolean("project.active"));
+            templateDTO.setProject(projectDTO);
+        }
+
+        return templateDTO;
+    }
+
+    private TemplateDTO convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
+        Integer project = jsonObject.getInt("project.id");
+        templateDTO.setProject(serviceManager.getProjectService().findById(project));
+        templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
+        //templateDTO.setImageFolderInUse(isImageFolderInUse(templateDTO));
+        templateDTO.setProgressClosed(serviceManager.getProcessService().getProgressClosed(null, templateDTO.getTasks()));
+        templateDTO.setProgressInProcessing(serviceManager.getProcessService().getProgressInProcessing(null, templateDTO.getTasks()));
+        templateDTO.setProgressOpen(serviceManager.getProcessService().getProgressOpen(null, templateDTO.getTasks()));
+        templateDTO.setProgressLocked(serviceManager.getProcessService().getProgressLocked(null, templateDTO.getTasks()));
+        templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));
+        return templateDTO;
+    }
+
+    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset,Integer size)
+            throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
+        query.must(serviceManager.getProcessService().getQueryProjectActive(active));
+        return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
     /**
-     * Count amount of templates for process.
+     * Check whether the template contains tasks that are not assigned to a user or
+     * user group.
      *
-     * @return amount of templates for process as Long
+     * @param tasks
+     *            list of tasks for testing
+     * @return true or false
      */
-    public Long countTemplates() throws DataException {
-        return count(getQueryTemplate(true).toString());
+    public boolean containsBeanUnreachableSteps(List<Task> tasks) {
+        TaskService taskService = serviceManager.getTaskService();
+        if (tasks.size() == 0) {
+            return true;
+        }
+        for (Task task : tasks) {
+            if (taskService.getUserGroupsSize(task) == 0 && taskService.getUsersSize(task) == 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
-     * Find all templates sorted according to sort query.
+     * Check whether the template contains tasks that are not assigned to a user or
+     * user group.
+     *
+     * @param tasks
+     *            list of tasks for testing
+     * @return true or false
+     */
+    public boolean containsDtoUnreachableSteps(List<TaskDTO> tasks) {
+        if (tasks.size() == 0) {
+            return true;
+        }
+        for (TaskDTO task : tasks) {
+            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Find templates of active projects, sorted according to sort query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted
      * @return the list of sorted processes as ProcessDTO objects
      */
-    public List<ProcessDTO> findAllTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByTemplate(true, sort), false);
+    public List<TemplateDTO> findTemplatesOfActiveProjects(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
+    }
+
+    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
+        return searcher.findDocuments(serviceManager.getProcessService().getQueryProjectActive(active).toString(),
+            sort);
     }
 
     /**
-     * Get query for template.
+     * Get all process templates for given title.
      *
-     * @param template
-     *            true or false
-     * @return query as QueryBuilder
+     * @param title
+     *            of Template
+     * @return list of all process templates as Template objects
      */
-    public QueryBuilder getQueryTemplate(boolean template) {
-        return createSimpleQuery("template", template, true);
+    public List<Template> getProcessTemplatesWithTitle(String title) {
+        return dao.getTemplatesWithTitle(title);
     }
 
-    List<JsonObject> findByTemplate(boolean template, String sort) throws DataException {
-        return searcher.findDocuments(getQueryTemplate(template).toString(), sort);
+    /**
+     * Get process templates for users.
+     *
+     * @param projects
+     *            list of project ids for user's projects
+     * @return list of all process templates for user as Template objects
+     */
+    public List<Template> getProcessTemplatesForUser(List<Integer> projects) {
+        return dao.getTemplatesForUser(projects);
+    }
+
+    /**
+     * Get all active process templates.
+     *
+     * @return A list of all process templates as Template objects.
+     */
+    public List<Template> getActiveTemplates() {
+        return dao.getActiveTemplates();
     }
 }
