@@ -79,7 +79,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Method saves processes and users related to modified project.
+     * Method saves processes, users and clients related to modified project.
      *
      * @param project
      *            object
@@ -91,12 +91,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         manageClientDependenciesForIndex(project);
     }
 
-    /**
-     * Management od processes for project object.
-     *
-     * @param project
-     *            object
-     */
     private void manageClientDependenciesForIndex(Project project) throws CustomResponseException, IOException, DataException, DAOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             Client client = project.getClient();

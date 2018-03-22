@@ -75,8 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
                 "admin_GLOBAL",
-                "viewIndex_GLOBAL",
-                "editIndex_GLOBAL")
+                "viewIndex_GLOBAL")
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
                 "admin_GLOBAL",
