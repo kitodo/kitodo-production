@@ -109,14 +109,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
 
-        List<JSONObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
-        if (templateProcesses.size() > 0) {
-            Set<Integer> templates = new HashSet<>();
-            for (JSONObject jsonObject : templateProcesses) {
-                templates.add(getIdFromJSONObject(jsonObject));
-            }
-            query.mustNot(createSetQuery("processForTask.id", templates, true));
-        }
+        query.must(createOnlyTasksInProcessQuery());
         // TODO: find other way than retrieving the form bean to access
         // "hideCorrectionTasks" and "showAutomaticTasks"
         // e.g. which tasks should be returned!
@@ -132,6 +125,19 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         return query;
+    }
+
+    private BoolQueryBuilder createOnlyTasksInProcessQuery() throws DataException {
+        BoolQueryBuilder subquery = new BoolQueryBuilder();
+        List<JsonObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
+        if (templateProcesses.size() > 0) {
+            Set<Integer> templates = new HashSet<>();
+            for (JsonObject jsonObject : templateProcesses) {
+                templates.add(getIdFromJSONObject(jsonObject));
+            }
+            subquery.mustNot(createSetQuery("processForTask.id", templates, true));
+        }
+        return subquery;
     }
 
     @Override
@@ -283,17 +289,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
-
-        List<JsonObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
-        if (templateProcesses.size() > 0) {
-            Set<Integer> templates = new HashSet<>();
-            for (JsonObject jsonObject : templateProcesses) {
-                templates.add(getIdFromJSONObject(jsonObject));
-            }
-
-            boolQuery.mustNot(createSetQuery("processForTask.id", templates, true));
-        }
-
+        boolQuery.must(createOnlyTasksInProcessQuery());
         return count(boolQuery.toString());
     }
 
