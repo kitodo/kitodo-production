@@ -153,7 +153,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
      *            The id of the project.
      * @return list of JSON objects with clients for specific project id
      */
-    List<JsonObject> findByProjectId(Integer id) throws DataException {
+    public JsonObject findByProjectId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("projects.id", id, true);
         return searcher.findDocument(query.toString());
     }

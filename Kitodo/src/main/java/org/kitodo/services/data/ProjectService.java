@@ -85,13 +85,15 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException, DAOException, DataException {
+    protected void manageDependenciesForIndex(Project project)
+            throws CustomResponseException, IOException, DAOException, DataException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
         manageClientDependenciesForIndex(project);
     }
 
-    private void manageClientDependenciesForIndex(Project project) throws CustomResponseException, IOException, DataException, DAOException {
+    private void manageClientDependenciesForIndex(Project project)
+            throws CustomResponseException, IOException, DataException, DAOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             Client client = project.getClient();
             if (Objects.nonNull(client)) {
@@ -99,14 +101,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
                 serviceManager.getClientService().saveToIndex(client);
             }
         } else {
-            JSONObject client = serviceManager.getClientService().findByProjectId(project.getId());
-            Integer id = getIdFromJSONObject(client);
-            if (id > 0) {
-                if (!Objects.equals(id, project.getClient().getId())) {
-                    Client oldClient = serviceManager.getClientService().getById(id);
-                    serviceManager.getClientService().saveToIndex(oldClient);
-                    serviceManager.getClientService().saveToIndex(project.getClient());
-                }
+            JsonObject clients = serviceManager.getClientService().findByProjectId(project.getId());
+            Integer id = getIdFromJSONObject(clients);
+            if (id > 0 && !Objects.equals(id, project.getClient().getId())) {
+                Client oldClient = serviceManager.getClientService().getById(id);
+                serviceManager.getClientService().saveToIndex(oldClient);
+                serviceManager.getClientService().saveToIndex(project.getClient());
             }
         }
     }
@@ -265,8 +265,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setActive(projectJSONObject.getBoolean("active"));
         projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(getIntegerPropertyForDTO(projectJSONObject, "client.id"));
-        clientDTO.setName(getStringPropertyForDTO(projectJSONObject, "client.clientName"));
+        clientDTO.setId(projectJSONObject.getInt("client.id"));
+        clientDTO.setName(projectJSONObject.getString("client.clientName"));
         projectDTO.setClient(clientDTO);
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
@@ -302,11 +302,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project
-     *         is incomplete
+     * @return true, if project is complete and can be used, false, if project is
+     *         incomplete
      */
     public boolean isProjectComplete(Project project) {
-        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
+        boolean projectsXmlExists = (new File(
+                ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
         boolean digitalCollectionsXmlExists = (new File(
                 ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE)).exists();
 

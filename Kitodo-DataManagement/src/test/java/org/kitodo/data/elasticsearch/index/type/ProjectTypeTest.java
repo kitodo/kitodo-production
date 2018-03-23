@@ -200,7 +200,7 @@ public class ProjectTypeTest {
                 + "\"startDate\":\"2017-01-10\",\"fileFormatInternal\":\"XStream\",\"fileFormatDmsExport\":\"XStream\","
                 + "\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":"
                 + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}],"
-                + "\"client.clientName\":null,\"client.id\":null}")).readObject();
+                + "\"client.clientName\":\"\",\"client.id\":0}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
@@ -212,7 +212,7 @@ public class ProjectTypeTest {
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
                 + "\"fileFormatDmsExport\":\"XStream\",\"users\":[],"
-                + "\"client.clientName\":null,\"client.id\":null}")).readObject();
+                + "\"client.clientName\":\"\",\"client.id\":0}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
