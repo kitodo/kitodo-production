@@ -30,6 +30,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -47,12 +48,12 @@ public class JobCreation {
      *
      * @param io
      *            ImportObject
-     * @param vorlage
-     *            Process object
+     * @param template
+     *            Template object
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws DataException, IOException {
+    public static Process generateProcess(ImportObject io, Template template) throws DataException, IOException {
         String processTitle = io.getProcessTitle();
         logger.trace("processtitle is {}", processTitle);
         // TODO: what is differecene between metsfilename and basepath and
@@ -81,7 +82,7 @@ public class JobCreation {
         }
 
         CopyProcess cp = new CopyProcess();
-        cp.setProzessVorlage(vorlage);
+        cp.setTemplate(template);
         cp.setMetadataFile(metsfilename);
         cp.prepare(io);
         cp.getProzessKopie().setTitle(processTitle);

@@ -34,7 +34,6 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -192,7 +191,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                 List<IndividualIssue> issues = processes.get(nextProcessToCreate);
                 if (issues.size() > 0) {
                     ProzesskopieForm newProcess = CreateNewProcessProcessor
-                            .newProcessFromTemplate(pattern.getProzessVorlage().getTitle());
+                            .newProcessFromTemplate(pattern.getTemplate().getTitle());
                     newProcess.setDigitalCollections(pattern.getDigitalCollections());
                     newProcess.setDocType(pattern.getDocType());
                     newProcess.setAdditionalFields(pattern.getAdditionalFields());

@@ -67,12 +67,11 @@ public class SearchResultGeneration {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         try {
-            query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false, false,
+            query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
                     false);
         } catch (DataException e) {
             logger.error(e);
         }
-        query.must(serviceManager.getTemplateService().getQueryTemplate(false));
 
         if (!this.showClosedProcesses) {
             query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));

@@ -34,6 +34,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -119,7 +120,7 @@ public class HotfolderJob extends AbstractGoobiJob {
     private Map<String, Integer> collectFailedData(GoobiHotfolder hotFolder)
             throws DAOException, IOException {
         Map<String, Integer> failedData = new HashMap<>();
-        Process template = serviceManager.getProcessService().getById(hotFolder.getTemplate());
+        Template template = serviceManager.getTemplateService().getById(hotFolder.getTemplate());
         List<URI> metsFiles = hotFolder.getFileNamesByFilter(GoobiHotfolder.filter);
 
         for (URI fileName : metsFiles) {
@@ -168,8 +169,8 @@ public class HotfolderJob extends AbstractGoobiJob {
      *            String
      * @return int
      */
-    public static int generateProcess(String processTitle, Process template, URI dir, String digitalCollection,
-            String updateStrategy) throws IOException {
+    public static int generateProcess(String processTitle, Template template, URI dir, String digitalCollection,
+                                      String updateStrategy) throws IOException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -220,7 +221,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 }
             }
             CopyProcess form = new CopyProcess();
-            form.setProzessVorlage(template);
+            form.setTemplate(template);
             form.setMetadataFile(dir.resolve(File.separator + processTitle));
             form.prepare(template.getId());
             form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
@@ -318,12 +319,12 @@ public class HotfolderJob extends AbstractGoobiJob {
      *
      * @param io
      *            ImportObject
-     * @param vorlage
+     * @param template
      *            Process object
      * @return Process object
      */
     @SuppressWarnings("static-access")
-    public static Process generateProcess(ImportObject io, Process vorlage) throws IOException {
+    public static Process generateProcess(ImportObject io, Template template) throws IOException {
         String processTitle = io.getProcessTitle();
         logger.trace("processtitle is {}", processTitle);
         URI metsfilename = io.getMetsFilename();
@@ -357,7 +358,7 @@ public class HotfolderJob extends AbstractGoobiJob {
         }
 
         CopyProcess cp = new CopyProcess();
-        cp.setProzessVorlage(vorlage);
+        cp.setTemplate(template);
         cp.setMetadataFile(metsfilename);
         cp.prepare(io);
         cp.getProzessKopie().setTitle(processTitle);
