@@ -16,10 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -194,7 +195,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of the searched user group
      * @return list of JSON objects
      */
-    List<JSONObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
+    List<JsonObject> findByAuthorizationTitle(String authorizationTitle) throws DataException {
         QueryBuilder query = createSimpleQuery("authorities.title", authorizationTitle, true);
         return searcher.findDocuments(query.toString());
     }
@@ -206,7 +207,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of the searched user group
      * @return list of JSON objects
      */
-    List<JSONObject> findByAuthorizationId(Integer authorizationId) throws DataException {
+    List<JsonObject> findByAuthorizationId(Integer authorizationId) throws DataException {
         QueryBuilder query = createSimpleQuery("authorities.id", authorizationId, true);
         return searcher.findDocuments(query.toString());
     }
@@ -218,7 +219,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of user
      * @return list of JSON objects with user groups for specific user id.
      */
-    List<JSONObject> findByUserId(Integer id) throws DataException {
+    List<JsonObject> findByUserId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("users.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -230,17 +231,17 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            of user
      * @return list of search result with user groups for specific user login
      */
-    List<JSONObject> findByUserLogin(String login) throws DataException {
+    List<JsonObject> findByUserLogin(String login) throws DataException {
         QueryBuilder query = createSimpleQuery("users.login", login, true);
         return searcher.findDocuments(query.toString());
     }
 
     @Override
-    public UserGroupDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public UserGroupDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         UserGroupDTO userGroupDTO = new UserGroupDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject userGroupJSONObject = getSource(jsonObject);
-        userGroupDTO.setTitle(getStringPropertyForDTO(userGroupJSONObject, "title"));
+        JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
+        userGroupDTO.setTitle(userGroupJSONObject.getString("title"));
         userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "users"));
         userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "authorities"));
         if (!related) {
@@ -252,13 +253,13 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return userGroupDTO;
     }
 
-    private UserGroupDTO convertRelatedJSONObjects(JSONObject jsonObject, UserGroupDTO userGroupDTO)
+    private UserGroupDTO convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
             throws DataException {
         userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
         return userGroupDTO;
     }
 
-    private UserGroupDTO addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
+    private UserGroupDTO addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -277,7 +278,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return userGroupDTO;
     }
 
-    private UserGroupDTO addBasicUsersRelation(UserGroupDTO userGroupDTO, JSONObject jsonObject) {
+    private UserGroupDTO addBasicUsersRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();

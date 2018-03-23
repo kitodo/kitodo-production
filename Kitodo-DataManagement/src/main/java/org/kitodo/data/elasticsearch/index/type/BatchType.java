@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.Batch;
 
 /**
@@ -22,16 +22,14 @@ import org.kitodo.data.database.beans.Batch;
  */
 public class BatchType extends BaseType<Batch> {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(Batch batch) {
+    JsonObject getJsonObject(Batch batch) {
+        String type = batch.getType() != null ? batch.getType().toString() : "";
 
-        JSONObject batchObject = new JSONObject();
-        batchObject.put("title", batch.getTitle());
-        String type = batch.getType() != null ? batch.getType().toString() : null;
-        batchObject.put("type", type);
-        batchObject.put("processes", addObjectRelation(batch.getProcesses(), true));
-
-        return new NStringEntity(batchObject.toJSONString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(batch.getTitle()));
+        jsonObjectBuilder.add("type", type);
+        jsonObjectBuilder.add("processes", addObjectRelation(batch.getProcesses(), true));
+        return jsonObjectBuilder.build();
     }
 }

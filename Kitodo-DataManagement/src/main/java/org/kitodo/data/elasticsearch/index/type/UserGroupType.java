@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.UserGroup;
 
 /**
@@ -22,15 +22,12 @@ import org.kitodo.data.database.beans.UserGroup;
  */
 public class UserGroupType extends BaseType<UserGroup> {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(UserGroup userGroup) {
-
-        JSONObject userGroupObject = new JSONObject();
-        userGroupObject.put("title", userGroup.getTitle());
-        userGroupObject.put("authorities", addObjectRelation(userGroup.getGlobalAuthorities(), true));
-        userGroupObject.put("users", addObjectRelation(userGroup.getUsers(), true));
-
-        return new NStringEntity(userGroupObject.toJSONString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(UserGroup userGroup) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(userGroup.getTitle()));
+        jsonObjectBuilder.add("authorities", addObjectRelation(userGroup.getGlobalAuthorities(), true));
+        jsonObjectBuilder.add("users", addObjectRelation(userGroup.getUsers(), true));
+        return jsonObjectBuilder.build();
     }
 }

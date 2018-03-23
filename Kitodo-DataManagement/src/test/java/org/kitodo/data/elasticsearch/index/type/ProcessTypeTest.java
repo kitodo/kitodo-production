@@ -13,17 +13,19 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Docket;
@@ -115,38 +117,43 @@ public class ProcessTypeTest {
     public void shouldCreateDocument() throws Exception {
         ProcessType processType = new ProcessType();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        JSONParser parser = new JSONParser();
 
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"outputName\":\"Test\","
-                + "\"project.active\":true,\"templates\":[],"
-                + "\"wikiField\":\"Wiki\",\"docket\":null,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":null,"
-                + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":null,\"template\":false,\"sortHelperImages\":20,"
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Testing\",\"outputName\":\"Test\","
+                + "\"project.active\":true,\"templates\":[],\"sortHelperArticles\":0,\"sortHelperDocstructs\":0,"
+                + "\"wikiField\":\"Wiki\",\"docket\":0,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":\"\","
+                + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":\"\",\"template\":false,\"sortHelperImages\":20,"
                 + "\"batches\":[{\"id\":1,\"title\":\"First\"}],\"workpieces\":[],\"tasks\":[{\"id\":1,\"title\":"
-                + "\"Task one\"},{\"id\":2,\"title\":\"Task two\"}],\"project.title\":\"Project\",\"properties\":[]}");
-        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
+                + "\"Task one\"},{\"id\":2,\"title\":\"Task two\"}],\"project.title\":\"Project\",\"properties\":[],"
+                + "\"sortHelperMetadata\":0}")).readObject();
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(1);
         document = processType.createDocument(process);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
-                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":null,\"project.id\":1,\"template\":false,\"templates\":[],"
-                + "\"project.title\":\"Project\",\"sortHelperStatus\":null,\"processBaseUri\":null,\"creationDate\":\""
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
+                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":0,\"project.id\":1,\"template\":false,\"templates\":[],"
+                + "\"project.title\":\"Project\",\"sortHelperStatus\":\"\",\"processBaseUri\":\"\",\"creationDate\":\""
                 + dateFormat.format(process.getCreationDate()) + "\",\"sortHelperImages\":30,\"workpieces\":[],"
-                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.active\":true}");
-        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
+                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.active\":true,\"sortHelperArticles\":0,"
+                + "\"sortHelperDocstructs\":0,\"sortHelperMetadata\":0}")).readObject();
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
         process = prepareData().get(2);
         document = processType.createDocument(process);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"outputName\":null,\"wikiField\":\"\","
-                + "\"docket\":null,\"ruleset\":null,\"project.id\":null,\"project.title\":null,\"template\":false,"
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Incomplete\",\"outputName\":\"\",\"wikiField\":\"\","
+                + "\"docket\":0,\"ruleset\":0,\"project.id\":0,\"project.title\":\"\",\"template\":false,"
                 + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
                 + "\",\"tasks\":[],\"properties\":[],\"batches\":[],\"project.active\":false,\"templates\":[],"
-                + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":null,\"processBaseUri\":null}");
-        assertEquals("Process JSONObject doesn't match given JSONObject!", expected, actual);
+                + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":\"\",\"processBaseUri\":\"\"," +
+                "\"sortHelperArticles\":0,\"sortHelperDocstructs\":0,\"sortHelperMetadata\":0}")).readObject();
+        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 
     @Test

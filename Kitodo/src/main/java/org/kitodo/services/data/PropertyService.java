@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+import javax.json.JsonValue;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -133,7 +135,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    public List<JSONObject> findByTitle(String title, String type, boolean contains) throws DataException {
+    public List<JsonObject> findByTitle(String title, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, contains, Operator.AND));
         if (type != null) {
@@ -153,7 +155,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            of the searched property
      * @return list of JSON objects with properties
      */
-    List<JSONObject> findByValue(String value, String type, boolean contains) throws DataException {
+    List<JsonObject> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("value", value, contains, Operator.AND));
         if (type != null) {
@@ -176,7 +178,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      *            true or false
      * @return list of JSON objects with batches of exact type
      */
-    List<JSONObject> findByTitleAndValue(String title, String value, String type, boolean contains)
+    List<JsonObject> findByTitleAndValue(String title, String value, String type, boolean contains)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, contains, Operator.AND));
@@ -188,13 +190,14 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     @Override
-    public PropertyDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) {
+    public PropertyDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
         PropertyDTO propertyDTO = new PropertyDTO();
         propertyDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject propertyJSONObject = getSource(jsonObject);
-        propertyDTO.setTitle(getStringPropertyForDTO(propertyJSONObject, "title"));
-        propertyDTO.setValue(getStringPropertyForDTO(propertyJSONObject, "value"));
-        propertyDTO.setCreationDate(getStringPropertyForDTO(propertyJSONObject, "creationDate"));
+        JsonObject propertyJSONObject = jsonObject.getJsonObject("_source");
+        propertyDTO.setTitle(propertyJSONObject.getString("title"));
+        propertyDTO.setValue(propertyJSONObject.getString("value"));
+        JsonValue creationDate = propertyJSONObject.get("creationDate");
+        propertyDTO.setCreationDate(creationDate != JsonValue.NULL ? creationDate.toString() : null);
         return propertyDTO;
     }
 

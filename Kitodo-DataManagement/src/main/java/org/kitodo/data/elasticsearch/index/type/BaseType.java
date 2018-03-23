@@ -16,10 +16,18 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 
 import org.apache.http.HttpEntity;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.apache.http.entity.ContentType;
+import org.apache.http.nio.entity.NStringEntity;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.Batch;
@@ -37,6 +45,13 @@ import org.kitodo.data.elasticsearch.api.TypeInterface;
 public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterface<T> {
 
     @Override
+    public HttpEntity createDocument(T baseIndexedBean) {
+        JsonObject baseIndexedObject = getJsonObject(baseIndexedBean);
+
+        return new NStringEntity(baseIndexedObject.toString(), ContentType.APPLICATION_JSON);
+    }
+
+    @Override
     public HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
         HashMap<Integer, HttpEntity> documents = new HashMap<>();
         for (T bean : baseIndexedBeans) {
@@ -44,6 +59,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         }
         return documents;
     }
+
+    abstract JsonObject getJsonObject(T baseIndexedBean);
 
     /**
      * Method for adding relationship between bean objects.
@@ -54,39 +71,38 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      *            true or false, if true also title information is included
      * @return JSONArray
      */
-    @SuppressWarnings("unchecked")
-    <F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects, boolean title) {
-        JSONArray result = new JSONArray();
+    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects, boolean title) {
+        JsonArrayBuilder result = Json.createArrayBuilder();
         if (objects != null) {
             for (F property : objects) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("id", property.getId());
+                JsonObjectBuilder jsonObject = Json.createObjectBuilder();
+                jsonObject.add("id", property.getId());
                 if (title) {
                     if (property instanceof Batch) {
-                        jsonObject.put("title", ((Batch) property).getTitle());
+                        jsonObject.add("title", preventNull(((Batch) property).getTitle()));
                     } else if (property instanceof Process) {
-                        jsonObject.put("title", ((Process) property).getTitle());
-                        jsonObject.put("template", ((Process) property).isTemplate());
+                        jsonObject.add("title", preventNull(((Process) property).getTitle()));
+                        jsonObject.add("template", ((Process) property).isTemplate());
                     } else if (property instanceof Project) {
-                        jsonObject.put("title", ((Project) property).getTitle());
+                        jsonObject.add("title", preventNull(((Project) property).getTitle()));
                     } else if (property instanceof User) {
-                        jsonObject.put("login", ((User) property).getLogin());
-                        jsonObject.put("name", ((User) property).getName());
-                        jsonObject.put("surname", ((User) property).getSurname());
+                        jsonObject.add("login", preventNull(((User) property).getLogin()));
+                        jsonObject.add("name", preventNull(((User) property).getName()));
+                        jsonObject.add("surname", preventNull(((User) property).getSurname()));
                     } else if (property instanceof UserGroup) {
-                        jsonObject.put("title", ((UserGroup) property).getTitle());
+                        jsonObject.add("title", preventNull(((UserGroup) property).getTitle()));
                     } else if (property instanceof Task) {
-                        jsonObject.put("title", ((Task) property).getTitle());
+                        jsonObject.add("title", preventNull(((Task) property).getTitle()));
                     } else if (property instanceof Filter) {
-                        jsonObject.put("value", ((Filter) property).getValue());
+                        jsonObject.add("value", preventNull(((Filter) property).getValue()));
                     } else if (property instanceof Authority) {
-                        jsonObject.put("title", ((Authority) property).getTitle());
+                        jsonObject.add("title", preventNull(((Authority) property).getTitle()));
                     }
                 }
-                result.add(jsonObject);
+                result.add(jsonObject.build());
             }
         }
-        return result;
+        return result.build();
     }
 
     /**
@@ -97,20 +113,30 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      * @return JSONArray
      */
     @SuppressWarnings("unchecked")
-    <F extends BaseIndexedBean> JSONArray addObjectRelation(List<F> objects) {
+    <F extends BaseIndexedBean> JsonArray addObjectRelation(List<F> objects) {
         return addObjectRelation(objects, false);
     }
 
     /**
-     * Method used for formatting Date as String. It will help to change fast a way
+     * Method used for formatting Date as JsonValue. It will help to change fast a way
      * of Date formatting or expected String format.
      * 
      * @param date
      *            as Date
-     * @return formatted date as String
+     * @return formatted date as JsonValue - String or NULL
      */
-    String formatDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return dateFormat.format(date);
+    JsonValue getFormattedDate(Date date) {
+        if (Objects.nonNull(date)) {
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            return Json.createValue(dateFormat.format(date));
+        }
+        return JsonValue.NULL;
+    }
+
+    String preventNull(String value) {
+        if (Objects.isNull(value)) {
+            value = "";
+        }
+        return value;
     }
 }

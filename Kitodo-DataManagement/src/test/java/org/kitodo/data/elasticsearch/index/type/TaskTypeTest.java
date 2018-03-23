@@ -13,15 +13,17 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -111,43 +113,45 @@ public class TaskTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         TaskType taskType = new TaskType();
-        JSONParser parser = new JSONParser();
 
         Task task = prepareData().get(0);
         HttpEntity document = taskType.createDocument(task);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"title\":\"Testing\",\"processForTask.id\":1,"
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Testing\",\"processForTask.id\":1,"
                 + "\"processForTask.title\":\"First\",\"homeDirectory\":\"1\",\"typeAutomatic\":false,"
                 + "\"ordering\":1,\"typeMetadata\":true,\"priority\":1,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-01\",\"batchStep\":true,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":1,\"processingStatus\":3,"
                 + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"editType\":1,\"typeImagesWrite\":false,"
-                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,\"typeExportRussian\":false}");
+                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,\"typeExportRussian\":false}")).readObject();
 
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(1);
         document = taskType.createDocument(task);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Rendering\",\"processForTask.id\":null,"
-                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":2,"
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Rendering\",\"processForTask.id\":0,"
+                + "\"processForTask.title\":\"\",\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":2,"
                 + "\"typeMetadata\":false,\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":false,"
                 + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,\"editType\":0,"
                 + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":false,\"processingEnd\":null,"
-                + "\"typeImagesRead\":false,\"typeExportRussian\":false}");
+                + "\"typeImagesRead\":false,\"typeExportRussian\":false}")).readObject();
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
 
         task = prepareData().get(2);
         document = taskType.createDocument(task);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Incomplete\",\"processForTask.id\":null,"
-                + "\"processForTask.title\":null,\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":0,"
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Incomplete\",\"processForTask.id\":0,"
+                + "\"processForTask.title\":\"\",\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":0,"
                 + "\"typeMetadata\":false,\"priority\":0,\"typeImportFileUpload\":false,"
                 + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":false,\"users\":[],"
-                + "\"processingUser\":null,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"
+                + "\"processingUser\":0,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"
                 + "\"typeImagesWrite\":false,\"processingEnd\":null,\"typeImagesRead\":false,"
-                + "\"typeExportRussian\":false}");
+                + "\"typeExportRussian\":false}")).readObject();
         assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

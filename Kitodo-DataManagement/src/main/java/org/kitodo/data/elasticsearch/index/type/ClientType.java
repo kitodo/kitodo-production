@@ -11,22 +11,20 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.Client;
 
 public class ClientType extends BaseType<Client> {
-    @SuppressWarnings("unchecked")
+
     @Override
-    public HttpEntity createDocument(Client client) {
-
-        JSONObject clientObject = new JSONObject();
-        clientObject.put("clientName", client.getName());
-        clientObject.put("projects", addObjectRelation(client.getProjects(), true));
-
-        return new NStringEntity(clientObject.toJSONString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(Client client) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("clientName", preventNull(client.getName()));
+        jsonObjectBuilder.add("projects", addObjectRelation(client.getProjects(), true));
+        return jsonObjectBuilder.build();
     }
 
 }

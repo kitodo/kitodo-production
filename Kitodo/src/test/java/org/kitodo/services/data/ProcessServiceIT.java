@@ -19,8 +19,9 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -144,7 +145,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> process = processService.findByTitle("First process", true);
+        List<JsonObject> process = processService.findByTitle("First process", true);
         Integer actual = process.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -152,7 +153,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByBatchId() throws Exception {
-        List<JSONObject> processes = processService.findByBatchId(1);
+        List<JsonObject> processes = processService.findByBatchId(1);
         Integer actual = processes.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -165,7 +166,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByBatchTitle() throws Exception {
-        List<JSONObject> processes = processService.findByBatchTitle("First batch");
+        List<JsonObject> processes = processService.findByBatchTitle("First batch");
         Integer actual = processes.size();
         Integer expected = 1;
         assertEquals("Process was not found in index!", expected, actual);
@@ -191,7 +192,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProjectTitle() throws Exception {
-        List<JSONObject> processes = processService.findByProjectTitle("First project");
+        List<JsonObject> processes = processService.findByProjectTitle("First project");
         Integer actual = processes.size();
         Integer expected = 3;
         assertEquals("Process was not found in index!", expected, actual);
@@ -204,7 +205,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProperty() throws Exception {
-        List<JSONObject> processes = processService.findByProcessProperty("Korrektur notwendig", null, true);
+        List<JsonObject> processes = processService.findByProcessProperty("Korrektur notwendig", null, true);
         Integer actual = processes.size();
         Integer expected = 2;
         assertEquals("Processes were not found in index!", expected, actual);
@@ -529,7 +530,6 @@ public class ProcessServiceIT {
         UserService userService = new ServiceManager().getUserService();
 
         Process process = processService.getById(2);
-        System.out.println(process.getTasks().get(2).getProcessingStatusEnum().getTitle());
         User expected = userService.getById(2);
         User actual = processService.getImageFolderInUseUser(process);
         assertEquals("Processing user doesn't match to the given user!", expected, actual);

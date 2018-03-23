@@ -18,12 +18,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -117,7 +118,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batches
      * @return list of JSON objects with batches of exact type
      */
-    public List<JSONObject> findByType(Batch.Type type, boolean contains) throws DataException {
+    public List<JsonObject> findByType(Batch.Type type, boolean contains) throws DataException {
         QueryBuilder query = createSimpleQuery("type", type.toString(), contains);
         return searcher.findDocuments(query.toString());
     }
@@ -132,7 +133,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batches
      * @return list of JSON objects with batches of exact type
      */
-    public List<JSONObject> findByTitleAndType(String title, Batch.Type type) throws DataException {
+    public List<JsonObject> findByTitleAndType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("title", title, true, Operator.AND));
         query.must(createSimpleQuery("type", type.toString(), true));
@@ -148,7 +149,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of the searched batch
      * @return search result
      */
-    public List<JSONObject> findByTitleOrType(String title, Batch.Type type) throws DataException {
+    public List<JsonObject> findByTitleOrType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.should(createSimpleQuery("title", title, true, Operator.AND));
         query.should(createSimpleQuery("type", type.toString(), true));
@@ -162,7 +163,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of process
      * @return list of JSON objects with batches for specific process id
      */
-    public List<JSONObject> findByProcessId(Integer id) throws DataException {
+    public List<JsonObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -174,25 +175,25 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of process
      * @return list of JSON objects with batches for specific process title
      */
-    public List<JSONObject> findByProcessTitle(String title) throws DataException {
+    public List<JsonObject> findByProcessTitle(String title) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.title", title, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
 
     @Override
-    public BatchDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public BatchDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         BatchDTO batchDTO = new BatchDTO();
         batchDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject batchJSONObject = getSource(jsonObject);
-        batchDTO.setTitle(getStringPropertyForDTO(batchJSONObject, "title"));
-        batchDTO.setType(getStringPropertyForDTO(batchJSONObject, "type"));
+        JsonObject batchJSONObject = jsonObject.getJsonObject("_source");
+        batchDTO.setTitle(batchJSONObject.getString("title"));
+        batchDTO.setType(batchJSONObject.getString("type"));
         if (!related) {
             batchDTO = convertRelatedJSONObjects(batchJSONObject, batchDTO);
         }
         return batchDTO;
     }
 
-    private BatchDTO convertRelatedJSONObjects(JSONObject jsonObject, BatchDTO batchDTO) throws DataException {
+    private BatchDTO convertRelatedJSONObjects(JsonObject jsonObject, BatchDTO batchDTO) throws DataException {
         batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
         return batchDTO;
     }

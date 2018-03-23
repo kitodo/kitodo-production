@@ -21,6 +21,7 @@ import de.sub.goobi.helper.Helper;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -30,6 +31,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -44,9 +49,6 @@ import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.joda.time.LocalDate;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -210,18 +212,18 @@ public class MockDatabase {
     }
 
     private static String readMapping() {
-        JSONParser parser = new JSONParser();
-        JSONObject jsonObject = new JSONObject();
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
 
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
             String mapping = IOUtils.toString(inputStream, "UTF-8");
-            Object object = parser.parse(mapping);
-            jsonObject = (JSONObject) object;
-        } catch (IOException | ParseException e) {
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
+                JsonObject jsonObject = jsonReader.readObject();
+                return jsonObject.toString();
+            }
+        } catch (IOException e) {
             logger.error(e);
         }
-        return jsonObject.toJSONString();
+        return "";
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {

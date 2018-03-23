@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -69,20 +71,21 @@ public class BatchTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         BatchType batchType = new BatchType();
-        JSONParser parser = new JSONParser();
 
         Batch batch = prepareData().get(0);
         HttpEntity document = batchType.createDocument(batch);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser
-                .parse("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\",\"processes\":[{\"id\":1,\"title\":\"First\","
-                        + "\"template\":false},{\"id\":2,\"title\":\"Second\",\"template\":false}]}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\","
+                + "\"processes\":[{\"id\":1,\"title\":\"First\",\"template\":false},{\"id\":2,\"title\":\"Second\","
+                + "\"template\":false}]}")).readObject();
         assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
 
         batch = prepareData().get(1);
         document = batchType.createDocument(batch);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"title\":\"Batch2\",\"type\":null,\"processes\":[]}");
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"title\":\"Batch2\",\"type\":\"\",\"processes\":[]}")).readObject();
         assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

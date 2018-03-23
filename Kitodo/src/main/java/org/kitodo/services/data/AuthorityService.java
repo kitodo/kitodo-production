@@ -16,10 +16,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.json.JsonObject;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -111,7 +112,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      *            of user group
      * @return list of JSON objects with authorities for specific user group id
      */
-    List<JSONObject> findByUserGroupId(Integer id) throws DataException {
+    List<JsonObject> findByUserGroupId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("userGroups.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -171,11 +172,11 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     @Override
-    public AuthorityDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public AuthorityDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         AuthorityDTO authorityDTO = new AuthorityDTO();
         authorityDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject authorizationJSONObject = getSource(jsonObject);
-        authorityDTO.setTitle(getStringPropertyForDTO(authorizationJSONObject, "title"));
+        JsonObject authorizationJSONObject = jsonObject.getJsonObject("_source");
+        authorityDTO.setTitle(authorizationJSONObject.getString("title"));
         authorityDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(authorizationJSONObject, "userGroups"));
         if (!related) {
             authorityDTO = convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
@@ -185,14 +186,14 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         return authorityDTO;
     }
 
-    private AuthorityDTO convertRelatedJSONObjects(JSONObject jsonObject, AuthorityDTO authorityDTO)
+    private AuthorityDTO convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO)
             throws DataException {
         authorityDTO.setUserGroups(
             convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
         return authorityDTO;
     }
 
-    private AuthorityDTO addBasicUserGroupRelation(AuthorityDTO authorityDTO, JSONObject jsonObject) {
+    private AuthorityDTO addBasicUserGroupRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
         if (authorityDTO.getUserGroupsSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();

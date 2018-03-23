@@ -26,7 +26,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,8 +41,6 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -92,7 +95,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            true or false
      * @return DTO object
      */
-    public abstract S convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException;
+    public abstract S convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException;
 
     /**
      * Get all DTO objects from index an convert them for frontend wit all
@@ -417,7 +420,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @return list of all documents
      */
-    public List<JSONObject> findAllDocuments() throws DataException {
+    public List<JsonObject> findAllDocuments() throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString());
     }
@@ -429,7 +432,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            possible sort query according to which results will be sorted
      * @return sorted list of all documents
      */
-    public List<JSONObject> findAllDocuments(String sort) throws DataException {
+    public List<JsonObject> findAllDocuments(String sort) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString(), sort);
     }
@@ -443,7 +446,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return sorted list of all documents
      */
-    public List<JSONObject> findAllDocuments(Integer offset, Integer size) throws DataException {
+    public List<JsonObject> findAllDocuments(Integer offset, Integer size) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString(), offset, size);
     }
@@ -459,7 +462,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            amount of requested results
      * @return sorted list of all documents
      */
-    public List<JSONObject> findAllDocuments(String sort, Integer offset, Integer size) throws DataException {
+    public List<JsonObject> findAllDocuments(String sort, Integer offset, Integer size) throws DataException {
         QueryBuilder queryBuilder = matchAllQuery();
         return searcher.findDocuments(queryBuilder.toString(), sort, offset, size);
     }
@@ -551,10 +554,10 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            so, objects related to it are not included in conversion)
      * @return list of DTO object
      */
-    public List<S> convertJSONObjectsToDTOs(List<JSONObject> jsonObjects, boolean related) throws DataException {
+    public List<S> convertJSONObjectsToDTOs(List<JsonObject> jsonObjects, boolean related) throws DataException {
         List<S> results = new ArrayList<>();
 
-        for (JSONObject jsonObject : jsonObjects) {
+        for (JsonObject jsonObject : jsonObjects) {
             results.add(convertJSONObjectToDTO(jsonObject, related));
         }
 
@@ -568,7 +571,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            result from ElasticSearch
      * @return bean object
      */
-    public T convertJSONObjectToBean(JSONObject jsonObject) throws DAOException {
+    public T convertJSONObjectToBean(JsonObject jsonObject) throws DAOException {
         Integer id = getIdFromJSONObject(jsonObject);
         if (id == 0) {
             // TODO: maybe here could be used some instancing of generic
@@ -588,7 +591,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            name of related property
      * @return bean object
      */
-    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JSONObject jsonObject, String key,
+    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(JsonObject jsonObject, String key,
            SearchService<?, O, ?> service) throws DataException {
         List<Integer> ids = getRelatedPropertyForDTO(jsonObject, key);
         if (ids.isEmpty()) {
@@ -608,10 +611,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            returned form ElasticSearch
      * @return id as Integer
      */
-    public Integer getIdFromJSONObject(JSONObject jsonObject) {
-        Object id = jsonObject.get("_id");
-        if (id != null) {
-            return Integer.valueOf(id.toString());
+    public Integer getIdFromJSONObject(JsonObject jsonObject) {
+        if (jsonObject.containsKey("_id")) {
+            String id = jsonObject.getString("_id");
+            if (Objects.nonNull(id)) {
+                return Integer.valueOf(id);
+            }
         }
         return 0;
     }
@@ -816,15 +821,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     protected Long findCountAggregation(String query, String field) throws DataException {
-        JSONObject jsonObject = searcher.aggregateDocuments(query, createCountAggregation(field));
-        JSONObject count = (JSONObject) jsonObject.get(field);
-        return (Long) count.get("value");
+        JsonObject jsonObject = searcher.aggregateDocuments(query, createCountAggregation(field));
+        JsonObject count = jsonObject.getJsonObject(field);
+        return count.getJsonNumber("value").longValue();
     }
 
     protected Double findSumAggregation(String query, String field) throws DataException {
-        JSONObject jsonObject = searcher.aggregateDocuments(query, createSumAggregation(field));
-        JSONObject sum = (JSONObject) jsonObject.get(field);
-        return (Double) sum.get("value");
+        JsonObject jsonObject = searcher.aggregateDocuments(query, createSumAggregation(field));
+        JsonObject sum = jsonObject.getJsonObject(field);
+        return sum.getJsonNumber("value").doubleValue();
     }
 
     /**
@@ -840,12 +845,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      */
     protected List<String> findDistinctValues(String query, String field, boolean sort) throws DataException {
         List<String> distinctValues = new ArrayList<>();
-        JSONObject jsonObject = searcher.aggregateDocuments(query, createTermAggregation(field, sort));
-        JSONObject aggregations = (JSONObject) jsonObject.get(field);
-        JSONArray buckets = (JSONArray) aggregations.get("buckets");
+        JsonObject jsonObject = searcher.aggregateDocuments(query, createTermAggregation(field, sort));
+        JsonObject aggregations = (JsonObject) jsonObject.get(field);
+        JsonArray buckets = aggregations.getJsonArray("buckets");
         for (Object bucket : buckets) {
-            JSONObject document = (JSONObject) bucket;
-            distinctValues.add((String) document.get("key"));
+            JsonObject document = (JsonObject) bucket;
+            distinctValues.add(document.getString("key"));
         }
         return distinctValues;
     }
@@ -879,55 +884,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return dateFormat.format(date);
     }
 
-    protected JSONObject getSource(JSONObject object) {
-        return (JSONObject) object.get("_source");
-    }
-
-    /**
-     * Converts properties' values returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @return display properties as String
-     */
-    protected Boolean getBooleanPropertyForDTO(JSONObject object, String key) {
-        if (object != null) {
-            return (Boolean) object.get(key);
-        }
-        return false;
-    }
-
-    /**
-     * Converts properties' values returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @return display properties as Integer
-     */
-    protected Integer getIntegerPropertyForDTO(JSONObject object, String key) {
-        if (object != null) {
-            Long returned = (Long) object.get(key);
-            if (returned != null) {
-                return returned.intValue();
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Converts properties' values returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @return display properties as String
-     */
-    protected String getStringPropertyForDTO(JSONObject object, String key) {
-        if (object != null) {
-            return (String) object.get(key);
-        }
-        return "";
-    }
-
     /**
      * Converts properties' values returned from ElasticSearch index.
      *
@@ -935,12 +891,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            JSONObject
      * @return display properties as list of Integers
      */
-    private List<Integer> getRelatedPropertyForDTO(JSONObject object, String key) {
+    private List<Integer> getRelatedPropertyForDTO(JsonObject object, String key) {
         if (object != null) {
-            JSONArray jsonArray = (JSONArray) object.get(key);
+            JsonArray jsonArray = object.getJsonArray(key);
             List<Integer> ids = new ArrayList<>();
-            for (Object singleObject : jsonArray) {
-                ids.add(convertIdForDTO(singleObject));
+            for (JsonValue singleObject : jsonArray) {
+                ids.add(singleObject.asJsonObject().getInt("id"));
             }
             return ids;
         }
@@ -958,19 +914,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            to access specified values in objects of JSONArray
      * @return display properties as list of Integers
      */
-    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(JSONObject object, String key, List<String> subKeys) {
+    protected List<RelatedProperty> getRelatedArrayPropertyForDTO(JsonObject object, String key, List<String> subKeys) {
         if (object != null) {
-            JSONArray jsonArray = (JSONArray) object.get(key);
+            JsonArray jsonArray = (JsonArray) object.get(key);
             List<RelatedProperty> relatedProperties = new ArrayList<>();
             for (Object singleObject : jsonArray) {
-                JSONObject jsonObject = (JSONObject) singleObject;
+                JsonObject jsonObject = (JsonObject) singleObject;
                 RelatedProperty relatedProperty = new RelatedProperty();
-                Long id = (Long) jsonObject.get("id");
-                relatedProperty.setId(id.intValue());
+                relatedProperty.setId(jsonObject.getInt("id"));
                 ArrayList<String> values = new ArrayList<>();
                 for (String subKey : subKeys) {
-                    String value = (String) jsonObject.get(subKey);
-                    values.add(value);
+                    values.add(jsonObject.getString(subKey));
                 }
                 relatedProperty.setValues(values);
                 relatedProperties.add(relatedProperty);
@@ -989,24 +943,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            of property which need to be counted
      * @return size of array with related objects
      */
-    protected int getSizeOfRelatedPropertyForDTO(JSONObject object, String key) {
+    protected int getSizeOfRelatedPropertyForDTO(JsonObject object, String key) {
         if (object != null) {
-            JSONArray jsonArray = (JSONArray) object.get(key);
+            JsonArray jsonArray = (JsonArray) object.get(key);
             return jsonArray.size();
         }
         return 0;
-    }
-
-    /**
-     * Converts id value returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject as Object
-     * @return id as Integer
-     */
-    private Integer convertIdForDTO(Object object) {
-        JSONObject jsonObject = (JSONObject) object;
-        Long longId = (Long) jsonObject.get("id");
-        return longId.intValue();
     }
 }

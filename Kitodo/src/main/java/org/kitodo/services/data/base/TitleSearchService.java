@@ -13,11 +13,12 @@ package org.kitodo.services.data.base;
 
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.json.simple.JSONObject;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -59,7 +60,7 @@ public abstract class TitleSearchService<T extends BaseIndexedBean, S extends Ba
      *            not contain
      * @return list of search result
      */
-    public List<JSONObject> findByTitle(String title, boolean contains) throws DataException {
+    public List<JsonObject> findByTitle(String title, boolean contains) throws DataException {
         return searcher.findDocuments(getQueryTitle(title, contains).toString());
     }
 

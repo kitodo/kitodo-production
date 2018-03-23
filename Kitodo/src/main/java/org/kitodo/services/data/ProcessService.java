@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+import javax.json.JsonObject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +57,6 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.json.simple.JSONObject;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -311,10 +311,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             serviceManager.getTaskService().saveToIndex(task);
         }
 
-        List<JSONObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
-        for (JSONObject object : searchResults) {
-            Integer id = getIdFromJSONObject(object);
-            index.add(id);
+        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
+        for (JsonObject object : searchResults) {
+            index.add(getIdFromJSONObject(object));
         }
 
         List<Integer> missingInIndex = findMissingValues(database, index);
@@ -413,7 +412,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of ProcessDTO objects with processes for specific process id
      */
     public List<ProcessDTO> findByProjectId(Integer id, boolean related) throws DataException {
-        List<JSONObject> processes = searcher.findDocuments(getQueryProjectId(id).toString());
+        List<JsonObject> processes = searcher.findDocuments(getQueryProjectId(id).toString());
         return convertJSONObjectsToDTOs(processes, related);
     }
 
@@ -464,7 +463,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of project
      * @return list of JSON objects with processes for specific docket
      */
-    public List<JSONObject> findByDocket(Docket docket) throws DataException {
+    public List<JsonObject> findByDocket(Docket docket) throws DataException {
         QueryBuilder query = createSimpleQuery("docket", docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -476,7 +475,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of project
      * @return list of JSON objects with processes for specific ruleset
      */
-    public List<JSONObject> findByRuleset(Ruleset ruleset) throws DataException {
+    public List<JsonObject> findByRuleset(Ruleset ruleset) throws DataException {
         QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
@@ -488,7 +487,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of process
      * @return list of JSON objects with processes for specific process id
      */
-    List<JSONObject> findByProjectTitle(String title) throws DataException {
+    List<JsonObject> findByProjectTitle(String title) throws DataException {
         return searcher.findDocuments(getQueryProjectTitle(title).toString());
     }
 
@@ -499,7 +498,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of process
      * @return list of JSON objects with processes for specific batch id
      */
-    List<JSONObject> findByBatchId(Integer id) throws DataException {
+    List<JsonObject> findByBatchId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.id", id, true);
         return searcher.findDocuments(query.toString());
     }
@@ -511,7 +510,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            of batch
      * @return list of JSON objects with processes for specific batch title
      */
-    List<JSONObject> findByBatchTitle(String title) throws DataException {
+    List<JsonObject> findByBatchTitle(String title) throws DataException {
         QueryBuilder query = createSimpleQuery("batches.title", title, true, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
@@ -527,7 +526,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JSONObject> findByProcessProperty(String title, String value, boolean contains) throws DataException {
+    public List<JsonObject> findByProcessProperty(String title, String value, boolean contains) throws DataException {
         return findByProperty(title, value, "process", "properties.id", contains);
     }
 
@@ -542,7 +541,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JSONObject> findByTemplateProperty(String title, String value, boolean contains) throws DataException {
+    public List<JsonObject> findByTemplateProperty(String title, String value, boolean contains) throws DataException {
         return findByProperty(title, value, "template", "templates.id", contains);
     }
 
@@ -557,7 +556,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of process JSONObjects
      */
-    public List<JSONObject> findByWorkpieceProperty(String title, String value, boolean contains) throws DataException {
+    public List<JsonObject> findByWorkpieceProperty(String title, String value, boolean contains) throws DataException {
         return findByProperty(title, value, "workpiece", "workpieces.id", contains);
     }
 
@@ -572,11 +571,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return list of JSON objects with processes for specific property
      */
-    private List<JSONObject> findByProperty(String title, String value, String type, String key, boolean contains)
+    private List<JsonObject> findByProperty(String title, String value, String type, String key, boolean contains)
             throws DataException {
         Set<Integer> propertyIds = new HashSet<>();
 
-        List<JSONObject> properties;
+        List<JsonObject> properties;
         if (value == null) {
             properties = serviceManager.getPropertyService().findByTitle(title, type, contains);
         } else if (title == null) {
@@ -585,13 +584,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             properties = serviceManager.getPropertyService().findByTitleAndValue(title, value, type, contains);
         }
 
-        for (JSONObject property : properties) {
+        for (JsonObject property : properties) {
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
-    List<JSONObject> findBySort(boolean closed, boolean active, boolean template, String sort, Integer offset,
+    List<JsonObject> findBySort(boolean closed, boolean active, boolean template, String sort, Integer offset,
             Integer size) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
@@ -600,7 +599,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
-    private List<JSONObject> findBySortHelperStatusProjectActiveAndTemplate(boolean closed, boolean active,
+    private List<JsonObject> findBySortHelperStatusProjectActiveAndTemplate(boolean closed, boolean active,
             boolean template, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
@@ -609,7 +608,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findBySortHelperStatusAndTemplate(boolean closed, boolean template, String sort)
+    private List<JsonObject> findBySortHelperStatusAndTemplate(boolean closed, boolean template, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
@@ -617,7 +616,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findByActiveAndTemplate(boolean active, boolean template, String sort)
+    private List<JsonObject> findByActiveAndTemplate(boolean active, boolean template, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryProjectActive(active));
@@ -625,7 +624,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort);
     }
 
-    private List<JSONObject> findByActive(boolean active, String sort) throws DataException {
+    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
         return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
     }
 
@@ -707,41 +706,41 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(JSONObject jsonObject, boolean related) throws DataException {
+    public ProcessDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
-        JSONObject processJSONObject = getSource(jsonObject);
-        processDTO.setTitle(getStringPropertyForDTO(processJSONObject, "title"));
-        processDTO.setOutputName(getStringPropertyForDTO(processJSONObject, "outputName"));
-        processDTO.setWikiField(getStringPropertyForDTO(processJSONObject, "wikiField"));
-        processDTO.setCreationDate(getStringPropertyForDTO(processJSONObject, "creationDate"));
+        JsonObject processJSONObject = jsonObject.getJsonObject("_source");
+        processDTO.setTitle(processJSONObject.getString("title"));
+        processDTO.setOutputName(processJSONObject.getString("outputName"));
+        processDTO.setWikiField(processJSONObject.getString("wikiField"));
+        processDTO.setCreationDate(processJSONObject.getString("creationDate"));
         processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, "properties"));
         processDTO.setProperties(
                 convertRelatedJSONObjectToDTO(processJSONObject, "properties", serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(getIntegerPropertyForDTO(processJSONObject, "sortHelperArticles"));
-        processDTO.setSortHelperDocstructs(getIntegerPropertyForDTO(processJSONObject, "sortHelperDocstructs"));
-        processDTO.setSortHelperImages(getIntegerPropertyForDTO(processJSONObject, "sortHelperImages"));
-        processDTO.setSortHelperMetadata(getIntegerPropertyForDTO(processJSONObject, "sortHelperMetadata"));
-        //TODO: remove access to database here, store path in index
-        processDTO.setTifDirectoryExists(false);
-        //processDTO.setTifDirectoryExists(
-        //checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+        processDTO.setSortHelperArticles(processJSONObject.getInt("sortHelperArticles"));
+        processDTO.setSortHelperDocstructs(processJSONObject.getInt("sortHelperDocstructs"));
+        processDTO.setSortHelperImages(processJSONObject.getInt("sortHelperImages"));
+        processDTO.setSortHelperMetadata(processJSONObject.getInt("sortHelperMetadata"));
+        processDTO.setTifDirectoryExists(
+                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(getIntegerPropertyForDTO(processJSONObject, "project.id"));
-            projectDTO.setTitle(getStringPropertyForDTO(processJSONObject, "project.title"));
-            projectDTO.setActive(getBooleanPropertyForDTO(processJSONObject, "project.active"));
+            projectDTO.setId(processJSONObject.getInt("project.id"));
+            projectDTO.setTitle(processJSONObject.getString("project.title"));
+            projectDTO.setActive(processJSONObject.getBoolean("project.active"));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
     }
 
-    private ProcessDTO convertRelatedJSONObjects(JSONObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = getIntegerPropertyForDTO(jsonObject, "project.id");
-        processDTO.setProject(serviceManager.getProjectService().findById(project));
+    private ProcessDTO convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
+        Integer project = jsonObject.getInt("project.id");
+        if (project > 0) {
+            processDTO.setProject(serviceManager.getProjectService().findById(project));
+        }
         //TODO: it looks it is not needed as batches will be displayed in workflow tab
         //processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));

@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.User;
 
 /**
@@ -22,24 +22,21 @@ import org.kitodo.data.database.beans.User;
  */
 public class UserType extends BaseType<User> {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(User user) {
-
-        JSONObject userObject = new JSONObject();
-        userObject.put("name", user.getName());
-        userObject.put("surname", user.getSurname());
-        userObject.put("login", user.getLogin());
-        userObject.put("ldapLogin", user.getLdapLogin());
-        userObject.put("active", user.isActive());
-        userObject.put("location", user.getLocation());
-        userObject.put("metadataLanguage", user.getMetadataLanguage());
-        userObject.put("userGroups", addObjectRelation(user.getUserGroups(), true));
-        userObject.put("filters", addObjectRelation(user.getFilters(), true));
-        userObject.put("projects", addObjectRelation(user.getProjects(), true));
-        userObject.put("processingTasks", addObjectRelation(user.getProcessingTasks()));
-        userObject.put("tasks", addObjectRelation(user.getTasks()));
-
-        return new NStringEntity(userObject.toJSONString(), ContentType.APPLICATION_JSON);
+    JsonObject getJsonObject(User user) {
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("name", preventNull(user.getName()));
+        jsonObjectBuilder.add("surname", preventNull(user.getSurname()));
+        jsonObjectBuilder.add("login", preventNull(user.getLogin()));
+        jsonObjectBuilder.add("ldapLogin", preventNull(user.getLdapLogin()));
+        jsonObjectBuilder.add("active", user.isActive());
+        jsonObjectBuilder.add("location", preventNull(user.getLocation()));
+        jsonObjectBuilder.add("metadataLanguage", preventNull(user.getMetadataLanguage()));
+        jsonObjectBuilder.add("userGroups", addObjectRelation(user.getUserGroups(), true));
+        jsonObjectBuilder.add("filters", addObjectRelation(user.getFilters(), true));
+        jsonObjectBuilder.add("projects", addObjectRelation(user.getProjects(), true));
+        jsonObjectBuilder.add("processingTasks", addObjectRelation(user.getProcessingTasks()));
+        jsonObjectBuilder.add("tasks", addObjectRelation(user.getTasks()));
+        return jsonObjectBuilder.build();
     }
 }

@@ -18,6 +18,7 @@ import de.sub.goobi.helper.IndexWorker;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,14 +27,15 @@ import java.util.Objects;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -327,7 +329,7 @@ public class IndexingForm {
             if (updatePollingChannel) {
                 pollingChannel.send(mappingStateMessage);
             }
-        } catch (CustomResponseException | IOException | ParseException e) {
+        } catch (CustomResponseException | IOException e) {
             currentState = IndexStates.MAPPING_ERROR;
             if (updatePollingChannel) {
                 pollingChannel.send(MAPPING_FAILED_MESSAGE);
@@ -406,14 +408,14 @@ public class IndexingForm {
         }
     }
 
-    private static String readMapping() throws ParseException {
-        JSONParser parser = new JSONParser();
+    private static String readMapping() {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (InputStream inputStream = classloader.getResourceAsStream("mapping.json")) {
             String mapping = IOUtils.toString(inputStream, "UTF-8");
-            Object object = parser.parse(mapping);
-            JSONObject jsonObject = (JSONObject) object;
-            return jsonObject.toJSONString();
+            try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
+                JsonObject jsonObject = jsonReader.readObject();
+                return jsonObject.toString();
+            }
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
@@ -517,12 +519,12 @@ public class IndexingForm {
      *
      * @return JSONArray containing objects type constants.
      */
-    public JSONArray getObjectTypesAsJson() {
-        JSONArray objectsTypesJson = new JSONArray();
+    public JsonArray getObjectTypesAsJson() {
+        JsonArrayBuilder objectsTypesJson = Json.createArrayBuilder();
         for (ObjectType objectType : ObjectType.values()) {
             objectsTypesJson.add(objectType.toString());
         }
-        return objectsTypesJson;
+        return objectsTypesJson.build();
     }
 
     private SearchService getService(ObjectType objectType) {

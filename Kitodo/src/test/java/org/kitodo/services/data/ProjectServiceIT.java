@@ -18,9 +18,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.json.JsonObject;
+
 import org.elasticsearch.index.query.Operator;
 import org.goobi.production.flow.statistics.StepInformation;
-import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -154,7 +155,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> projects = projectService.findByTitle("First project", true);
+        List<JsonObject> projects = projectService.findByTitle("First project", true);
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -163,7 +164,7 @@ public class ProjectServiceIT {
     @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessId() throws Exception {
-        JSONObject project = projectService.findByProcessId(1);
+        JsonObject project = projectService.findByProcessId(1);
         Integer actual = projectService.getIdFromJSONObject(project);
         Integer expected = 1;
         assertEquals("Project were not found in index!", expected, actual);
@@ -177,7 +178,7 @@ public class ProjectServiceIT {
     @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessTitle() throws Exception {
-        List<JSONObject> projects = projectService.findByProcessTitle("First process");
+        List<JsonObject> projects = projectService.findByProcessTitle("First process");
         Integer actual = projects.size();
         Integer expected = 1;
         assertEquals("Project was not found in index!", expected, actual);
@@ -190,7 +191,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByUserId() throws Exception {
-        List<JSONObject> projects = projectService.findByUserId(1);
+        List<JsonObject> projects = projectService.findByUserId(1);
         Integer actual = projects.size();
         Integer expected = 2;
         assertEquals("Projects were not found in index!", expected, actual);
@@ -208,7 +209,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldFindByUserLogin() throws Exception {
-        List<JSONObject> projects = projectService.findByUserLogin("kowal");
+        List<JsonObject> projects = projectService.findByUserLogin("kowal");
         Integer actual = projects.size();
         Integer expected = 2;
         assertEquals("Projects were not found in index!", expected, actual);

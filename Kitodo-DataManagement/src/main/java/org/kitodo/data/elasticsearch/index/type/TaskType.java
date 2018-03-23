@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.Task;
 
 /**
@@ -22,42 +22,37 @@ import org.kitodo.data.database.beans.Task;
  */
 public class TaskType extends BaseType<Task> {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(Task task) {
-        JSONObject taskObject = new JSONObject();
-        taskObject.put("title", task.getTitle());
-        taskObject.put("priority", task.getPriority());
-        taskObject.put("ordering", task.getOrdering());
+    JsonObject getJsonObject(Task task) {
         Integer processingStatus = task.getProcessingStatusEnum() != null ? task.getProcessingStatusEnum().getValue()
-                : null;
-        taskObject.put("processingStatus", processingStatus);
-        Integer editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue()
-                : null;
-        taskObject.put("editType", editType);
-        String processingTime = task.getProcessingTime() != null ? formatDate(task.getProcessingTime()) : null;
-        taskObject.put("processingTime", processingTime);
-        String processingBegin = task.getProcessingBegin() != null ? formatDate(task.getProcessingBegin()) : null;
-        taskObject.put("processingBegin", processingBegin);
-        String processingEnd = task.getProcessingEnd() != null ? formatDate(task.getProcessingEnd()) : null;
-        taskObject.put("processingEnd", processingEnd);
-        taskObject.put("homeDirectory", String.valueOf(task.getHomeDirectory()));
-        taskObject.put("typeMetadata", task.isTypeMetadata());
-        taskObject.put("typeAutomatic", task.isTypeAutomatic());
-        taskObject.put("typeImportFileUpload", task.isTypeImportFileUpload());
-        taskObject.put("typeExportRussian", task.isTypeExportRussian());
-        taskObject.put("typeImagesRead", task.isTypeImagesRead());
-        taskObject.put("typeImagesWrite", task.isTypeImagesWrite());
-        taskObject.put("batchStep", task.isBatchStep());
-        Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : null;
-        taskObject.put("processingUser", processingUser);
-        Integer processId = task.getProcess() != null ? task.getProcess().getId() : null;
-        taskObject.put("processForTask.id", processId);
-        String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : null;
-        taskObject.put("processForTask.title", processTitle);
-        taskObject.put("users", addObjectRelation(task.getUsers()));
-        taskObject.put("userGroups", addObjectRelation(task.getUserGroups()));
+                : 0;
+        Integer editType = task.getEditTypeEnum() != null ? task.getEditTypeEnum().getValue() : 0;
+        Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
+        Integer processId = task.getProcess() != null ? task.getProcess().getId() : 0;
+        String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
 
-        return new NStringEntity(taskObject.toJSONString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(task.getTitle()));
+        jsonObjectBuilder.add("priority", task.getPriority());
+        jsonObjectBuilder.add("ordering", task.getOrdering());
+        jsonObjectBuilder.add("processingStatus", processingStatus);
+        jsonObjectBuilder.add("editType", editType);
+        jsonObjectBuilder.add("processingTime", getFormattedDate(task.getProcessingTime()));
+        jsonObjectBuilder.add("processingBegin", getFormattedDate(task.getProcessingBegin()));
+        jsonObjectBuilder.add("processingEnd", getFormattedDate(task.getProcessingEnd()));
+        jsonObjectBuilder.add("homeDirectory", preventNull(String.valueOf(task.getHomeDirectory())));
+        jsonObjectBuilder.add("typeMetadata", task.isTypeMetadata());
+        jsonObjectBuilder.add("typeAutomatic", task.isTypeAutomatic());
+        jsonObjectBuilder.add("typeImportFileUpload", task.isTypeImportFileUpload());
+        jsonObjectBuilder.add("typeExportRussian", task.isTypeExportRussian());
+        jsonObjectBuilder.add("typeImagesRead", task.isTypeImagesRead());
+        jsonObjectBuilder.add("typeImagesWrite", task.isTypeImagesWrite());
+        jsonObjectBuilder.add("batchStep", task.isBatchStep());
+        jsonObjectBuilder.add("processingUser", processingUser);
+        jsonObjectBuilder.add("processForTask.id", processId);
+        jsonObjectBuilder.add("processForTask.title", processTitle);
+        jsonObjectBuilder.add("users", addObjectRelation(task.getUsers()));
+        jsonObjectBuilder.add("userGroups", addObjectRelation(task.getUserGroups()));
+        return jsonObjectBuilder.build();
     }
 }

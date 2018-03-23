@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.nio.entity.NStringEntity;
-import org.json.simple.JSONObject;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+
 import org.kitodo.data.database.beans.Property;
 
 /**
@@ -22,20 +22,9 @@ import org.kitodo.data.database.beans.Property;
  */
 public class PropertyType extends BaseType<Property> {
 
-    @SuppressWarnings("unchecked")
     @Override
-    public HttpEntity createDocument(Property property) {
-
-        JSONObject propertyObject = new JSONObject();
-        propertyObject.put("title", property.getTitle());
-        propertyObject.put("value", property.getValue());
-        String creationDate = property.getCreationDate() != null ? formatDate(property.getCreationDate()) : null;
-        propertyObject.put("creationDate", creationDate);
-        propertyObject.put("processes", addObjectRelation(property.getProcesses()));
-        propertyObject.put("templates", addObjectRelation(property.getTemplates()));
-        propertyObject.put("workpieces", addObjectRelation(property.getWorkpieces()));
-
-        String type = null;
+    JsonObject getJsonObject(Property property) {
+        String type = "";
         if (!property.getProcesses().isEmpty()) {
             type = "process";
         } else if (!property.getTemplates().isEmpty()) {
@@ -44,8 +33,14 @@ public class PropertyType extends BaseType<Property> {
             type = "workpiece";
         }
 
-        propertyObject.put("type", type);
-
-        return new NStringEntity(propertyObject.toJSONString(), ContentType.APPLICATION_JSON);
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+        jsonObjectBuilder.add("title", preventNull(property.getTitle()));
+        jsonObjectBuilder.add("value", preventNull(property.getValue()));
+        jsonObjectBuilder.add("creationDate", getFormattedDate(property.getCreationDate()));
+        jsonObjectBuilder.add("processes", addObjectRelation(property.getProcesses()));
+        jsonObjectBuilder.add("templates", addObjectRelation(property.getTemplates()));
+        jsonObjectBuilder.add("workpieces", addObjectRelation(property.getWorkpieces()));
+        jsonObjectBuilder.add("type", type);
+        return jsonObjectBuilder.build();
     }
 }

@@ -15,7 +15,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.json.simple.JSONObject;
+import javax.json.JsonObject;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -82,7 +83,7 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldFindByTitle() throws Exception {
-        List<JSONObject> authorities = authorityService.findByTitle("viewAllUserGroups", true);
+        List<JsonObject> authorities = authorityService.findByTitle("viewAllUserGroups", true);
         Integer actual = authorities.size();
         Integer expected = 1;
         assertEquals("Authority was not found in index!", expected, actual);

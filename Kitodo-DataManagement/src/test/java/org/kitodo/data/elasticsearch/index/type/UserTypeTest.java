@@ -13,14 +13,16 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
@@ -91,33 +93,35 @@ public class UserTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         UserType userType = new UserType();
-        JSONParser parser = new JSONParser();
 
         User user = prepareData().get(0);
         HttpEntity document = userType.createDocument(user);
-        JSONObject actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        JSONObject expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[],\"projects\":[],"
-                + "\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":null,\"login\":\"jkowalski\","
-                + "\"active\":true,\"location\":\"Dresden\",\"filters\":[],\"tasks\":[],\"processingTasks\":[]}");
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        JsonObject expected = Json.createReader(new StringReader("{\"ldapLogin\":\"\",\"userGroups\":[],\"projects\":[],"
+                + "\"surname\":\"Kowalski\",\"name\":\"Jan\",\"metadataLanguage\":\"\",\"login\":\"jkowalski\","
+                + "\"active\":true,\"location\":\"Dresden\",\"filters\":[],\"tasks\":[],\"processingTasks\":[]}")).readObject();
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(1);
         document = userType.createDocument(user);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"ldapLogin\":null,\"userGroups\":[{\"id\":1,\"title\":\"Administrator\"}"
-                + ",{\"id\":2,\"title\":\"Basic\"}],\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":null,"
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"ldapLogin\":\"\",\"userGroups\":[{\"id\":1,\"title\":\"Administrator\"}"
+                + ",{\"id\":2,\"title\":\"Basic\"}],\"surname\":\"Nowak\",\"name\":\"Anna\",\"metadataLanguage\":\"\","
                 + "\"active\":true, \"location\":\"Berlin\",\"login\":\"anowak\",\"filters\":[{\"id\":1,"
                 + "\"value\":\"\\\"id:1\\\"\"},{\"id\":2,\"value\":\"\\\"id:2\\\"\"}],\"tasks\":[],\"processingTasks\":[],"
-                + "\"projects\":[]}");
+                + "\"projects\":[]}")).readObject();
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
 
         user = prepareData().get(2);
         document = userType.createDocument(user);
-        actual = (JSONObject) parser.parse(EntityUtils.toString(document));
-        expected = (JSONObject) parser.parse("{\"login\":\"pmueller\",\"ldapLogin\":null,\"userGroups\":[],"
-                + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":null,\"active\":true,"
-                + "\"location\":null,\"filters\":[{\"id\":1,\"value\":\"\\\"id:1\\\"\"},{\"id\":2,"
-                + "\"value\":\"\\\"id:2\\\"\"}],\"projects\":[],\"tasks\":[],\"processingTasks\":[]}");
+
+        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        expected = Json.createReader(new StringReader("{\"login\":\"pmueller\",\"ldapLogin\":\"\",\"userGroups\":[],"
+                + "\"surname\":\"Müller\",\"name\":\"Peter\",\"metadataLanguage\":\"\",\"active\":true,"
+                + "\"location\":\"\",\"filters\":[{\"id\":1,\"value\":\"\\\"id:1\\\"\"},{\"id\":2,"
+                + "\"value\":\"\\\"id:2\\\"\"}],\"projects\":[],\"tasks\":[],\"processingTasks\":[]}")).readObject();
         assertEquals("User JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

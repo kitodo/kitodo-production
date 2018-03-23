@@ -11,13 +11,15 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.exceptions.DataException;
 
@@ -65,15 +67,12 @@ public class Searcher extends Index {
      */
     public Long countDocuments(String query) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        JSONParser parser = new JSONParser();
 
         String response = restClient.countDocuments(overrideNullQuery(query));
         if (!response.equals("")) {
-            try {
-                JSONObject result = (JSONObject) parser.parse(response);
-                return (Long) result.get("count");
-            } catch (ParseException e) {
-                throw new DataException(e);
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                JsonObject result = jsonReader.readObject();
+                return result.getJsonNumber("count").longValue();
             }
         } else {
             return 0L;
@@ -89,20 +88,17 @@ public class Searcher extends Index {
      *            condition as String
      * @return aggregate documents as JSONObject
      */
-    public JSONObject aggregateDocuments(String query, String aggregation) throws DataException {
+    public JsonObject aggregateDocuments(String query, String aggregation) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        JSONParser parser = new JSONParser();
 
         String response = restClient.aggregateDocuments(overrideNullQuery(query), aggregation);
         if (!response.equals("")) {
-            try {
-                JSONObject result = (JSONObject) parser.parse(response);
-                return (JSONObject) result.get("aggregations");
-            } catch (ParseException e) {
-                throw new DataException(e);
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                JsonObject result = jsonReader.readObject();
+                return result.getJsonObject("aggregations");
             }
         } else {
-            return new JSONObject();
+            return Json.createObjectBuilder().build();
         }
     }
 
@@ -120,19 +116,16 @@ public class Searcher extends Index {
      *            of searched document
      * @return JSONObject
      */
-    public JSONObject findDocument(Integer id) throws DataException {
+    public JsonObject findDocument(Integer id) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(id);
         if (!response.equals("")) {
-            try {
-                return (JSONObject) parser.parse(response);
-            } catch (ParseException e) {
-                throw new DataException(e);
+            try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+                return jsonReader.readObject();
             }
         } else {
-            return new JSONObject();
+            return Json.createObjectBuilder().build();
         }
     }
 
@@ -144,7 +137,7 @@ public class Searcher extends Index {
      *            as String
      * @return search result
      */
-    public JSONObject findDocument(String query) throws DataException {
+    public JsonObject findDocument(String query) throws DataException {
         return findDocument(query, null);
     }
 
@@ -156,26 +149,23 @@ public class Searcher extends Index {
      *            as String
      * @return search result
      */
-    public JSONObject findDocument(String query, String sort) throws DataException {
+    public JsonObject findDocument(String query, String sort) throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        JSONParser parser = new JSONParser();
 
         String response = restClient.getDocument(query, sort, 0, 1);
-        try {
-            JSONObject jsonObject = (JSONObject) parser.parse(response);
+        try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+            JsonObject jsonObject = jsonReader.readObject();
             if (jsonObject.containsKey("hits")) {
-                JSONObject hits = (JSONObject) jsonObject.get("hits");
-                JSONArray inHits = (JSONArray) hits.get("hits");
+                JsonObject hits = jsonObject.getJsonObject("hits");
+                JsonArray inHits = hits.getJsonArray("hits");
                 if (!inHits.isEmpty()) {
-                    return (JSONObject) inHits.get(0);
+                    return inHits.getJsonObject(0);
                 }
             } else {
                 return jsonObject;
             }
-        } catch (ParseException e) {
-            throw new DataException(e);
         }
-        return new JSONObject();
+        return Json.createObjectBuilder().build();
     }
 
     /**
@@ -185,7 +175,7 @@ public class Searcher extends Index {
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query) throws DataException {
+    public List<JsonObject> findDocuments(String query) throws DataException {
         return findDocuments(query, null, null, null);
     }
 
@@ -196,7 +186,7 @@ public class Searcher extends Index {
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query, String sort) throws DataException {
+    public List<JsonObject> findDocuments(String query, String sort) throws DataException {
         return findDocuments(query, sort, null, null);
     }
 
@@ -207,7 +197,7 @@ public class Searcher extends Index {
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query, Integer offset, Integer size) throws DataException {
+    public List<JsonObject> findDocuments(String query, Integer offset, Integer size) throws DataException {
         return findDocuments(query, null, offset, size);
     }
 
@@ -220,26 +210,25 @@ public class Searcher extends Index {
      *            as String
      * @return list of JSON objects
      */
-    public List<JSONObject> findDocuments(String query, String sort, Integer offset, Integer size)
+    public List<JsonObject> findDocuments(String query, String sort, Integer offset, Integer size)
             throws DataException {
         SearchRestClient restClient = initiateRestClient();
-        List<JSONObject> searchResults = new ArrayList<>();
-        JSONParser parser = new JSONParser();
+        List<JsonObject> searchResults = new ArrayList<>();
 
         String response = restClient.getDocument(query, sort, offset, size);
-        try {
-            JSONObject jsonObject = (JSONObject) parser.parse(response);
+        try (JsonReader jsonReader = Json.createReader(new StringReader(response))) {
+            JsonObject jsonObject = jsonReader.readObject();
             if (jsonObject.containsKey("hits")) {
-                JSONObject hits = (JSONObject) jsonObject.get("hits");
-                JSONArray inHits = (JSONArray) hits.get("hits");
+                JsonObject hits = jsonObject.getJsonObject("hits");
+                JsonArray inHits = hits.getJsonArray("hits");
                 if (!inHits.isEmpty()) {
-                    searchResults.addAll(inHits);
+                    for (Object hit : inHits) {
+                        searchResults.add((JsonObject) hit);
+                    }
                 }
             } else {
                 searchResults.add(jsonObject);
             }
-        } catch (ParseException e) {
-            throw new DataException(e);
         }
         return searchResults;
     }
