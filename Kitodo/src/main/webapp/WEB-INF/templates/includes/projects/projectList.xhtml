@@ -19,6 +19,7 @@
     <p:dataTable var="item"
                  value="#{ProjekteForm.lazyDTOModel}"
                  lazy="true"
+                 id="projectsTable"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"

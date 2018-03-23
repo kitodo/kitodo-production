@@ -58,14 +58,6 @@ public class LoginPage {
     public void performLoginAsAdmin() throws InterruptedException, DAOException {
         User user = new ServiceManager().getUserService().getById(1);
         user.setPassword("test");
-
-        usernameInput.clear();
-        usernameInput.sendKeys(user.getLogin());
-
-        passwordInput.clear();
-        passwordInput.sendKeys(user.getPassword());
-
-        loginButton.click();
-        Thread.sleep(Browser.getDelayAfterLogin());
+        performLogin(user);
     }
 }

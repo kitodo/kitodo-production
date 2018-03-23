@@ -664,4 +664,10 @@ public class ProcessServiceIT {
         List<Process> templates = processService.getProcessTemplatesForUser(projects);
         assertTrue("Found " + templates.size() + " processes, instead of 1", templates.size() == 1);
     }
+
+    @Test
+    public void shouldGetAllActiveProcesses(){
+        List<Process> activeProcesses = processService.getActiveProcesses();
+        assertEquals("Number of found processes was not correct!",activeProcesses.size(),2);
+    }
 }

@@ -2520,6 +2520,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Get all processes.
+     *
+     * @return A list of all processes as Process objects.
+     */
+    public List<Process> getProcesses() {
+        return dao.getProcesses();
+    }
+
+    /**
+     * Get all active processes.
+     *
+     * @return A list of all processes as Process objects.
+     */
+    public List<Process> getActiveProcesses() {
+        return dao.getActiveProcesses();
+    }
+
+    /**
      * Get all process templates for given title.
      *
      * @param title

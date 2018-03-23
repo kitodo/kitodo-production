@@ -42,6 +42,22 @@ public class ListingAddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void listProjectsTest() throws Exception {
+        Pages.getProjectsPage().goTo();
+        int numberOfProjectsInDatabase = serviceManager.getProjectService().getAll().size();
+        int numberOfProjectsDisplayed = Pages.getProjectsPage().countListedProjects();
+        Assert.assertEquals("Displayed wrong number of projects", numberOfProjectsInDatabase, numberOfProjectsDisplayed);
+    }
+
+    @Test
+    public void listProcessesTest() throws Exception {
+        Pages.getProcessesPage().goTo();
+        int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
+        int numberOfProcessesDisplayed = Pages.getProcessesPage().countListedProcesses();
+        Assert.assertEquals("Displayed wrong number of processes", numberOfProcessesInDatabase, numberOfProcessesDisplayed);
+    }
+
+    @Test
     public void listUsersTest() throws Exception {
         int numberOfUsersInDatabase = serviceManager.getUserService().getAll().size();
         int numberOfUsersDisplayed = Pages.getUsersPage().goTo().countListedUsers();

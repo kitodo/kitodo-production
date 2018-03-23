@@ -13,8 +13,16 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
 public class ProcessesPage {
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "processesTabView:processesForm:processesTable_data")
+    private WebElement processesTable;
 
     /**
      * Goes to processes page.
@@ -33,6 +41,13 @@ public class ProcessesPage {
      */
     public boolean isAt() {
         return Browser.getCurrentUrl().contains("processes");
+    }
+
+    public int countListedProcesses() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getRowsOfTable(processesTable).size();
     }
 
 }
