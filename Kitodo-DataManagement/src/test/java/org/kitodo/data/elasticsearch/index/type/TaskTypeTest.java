@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
@@ -111,48 +113,154 @@ public class TaskTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
+    public void shouldCreateFirstDocument() throws Exception {
         TaskType taskType = new TaskType();
 
         Task task = prepareData().get(0);
         HttpEntity document = taskType.createDocument(task);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Testing\",\"processForTask.id\":1,"
-                + "\"processForTask.title\":\"First\",\"homeDirectory\":\"1\",\"typeAutomatic\":false,"
-                + "\"ordering\":1,\"typeMetadata\":true,\"priority\":1,\"typeImportFileUpload\":false,"
-                + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-01\",\"batchStep\":true,"
-                + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":1,\"processingStatus\":3,"
-                + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"editType\":1,\"typeImagesWrite\":false,"
-                + "\"processingEnd\":\"2017-02-17\",\"typeImagesRead\":false,\"typeExportRussian\":false}")).readObject();
 
-        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
+        assertEquals("Key title doesn't match to given value!", "Testing", actual.getString("title"));
+        assertEquals("Key ordering doesn't match to given value!", 1, actual.getInt("ordering"));
+        assertEquals("Key priority doesn't match to given value!", 1, actual.getInt("priority"));
+        assertEquals("Key editType doesn't match to given value!", 1, actual.getInt("editType"));
+        assertEquals("Key processingStatus doesn't match to given value!", 3, actual.getInt("processingStatus"));
+        assertEquals("Key processingUser doesn't match to given value!", 1, actual.getInt("processingUser"));
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01", actual.getString("processingBegin"));
+        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17", actual.getString("processingEnd"));
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17", actual.getString("processingTime"));
+        assertEquals("Key homeDirectory doesn't match to given value!", "1", actual.getString("homeDirectory"));
+        assertEquals("Key batchStep doesn't match to given value!", true, actual.getBoolean("batchStep"));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
+        assertEquals("Key typeMetadata doesn't match to given value!", true, actual.getBoolean("typeMetadata"));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
+        assertEquals("Key processForTask.id doesn't match to given value!", 1, actual.getInt("processForTask.id"));
+        assertEquals("Key processForTask.title doesn't match to given value!", "First", actual.getString("processForTask.title"));
 
-        task = prepareData().get(1);
-        document = taskType.createDocument(task);
+        JsonArray users = actual.getJsonArray("users");
+        assertEquals("Size users doesn't match to given value!", 2, users.size());
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Rendering\",\"processForTask.id\":0,"
-                + "\"processForTask.title\":\"\",\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":2,"
-                + "\"typeMetadata\":false,\"title\":\"Rendering\",\"priority\":2,\"typeImportFileUpload\":false,"
-                + "\"processingTime\":\"2017-02-17\",\"processingBegin\":\"2017-02-10\",\"batchStep\":false,"
-                + "\"users\":[{\"id\":1},{\"id\":2}],\"processingUser\":2,\"processingStatus\":2,\"editType\":0,"
-                + "\"userGroups\":[{\"id\":1},{\"id\":2}],\"typeImagesWrite\":false,\"processingEnd\":null,"
-                + "\"typeImagesRead\":false,\"typeExportRussian\":false}")).readObject();
-        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonObject user = users.getJsonObject(0);
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
 
-        task = prepareData().get(2);
-        document = taskType.createDocument(task);
+        user = users.getJsonObject(1);
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Incomplete\",\"processForTask.id\":0,"
-                + "\"processForTask.title\":\"\",\"homeDirectory\":\"0\",\"typeAutomatic\":false,\"ordering\":0,"
-                + "\"typeMetadata\":false,\"priority\":0,\"typeImportFileUpload\":false,"
-                + "\"processingTime\":null,\"processingBegin\":null,\"batchStep\":false,\"users\":[],"
-                + "\"processingUser\":0,\"processingStatus\":1,\"userGroups\":[],\"editType\":0,"
-                + "\"typeImagesWrite\":false,\"processingEnd\":null,\"typeImagesRead\":false,"
-                + "\"typeExportRussian\":false}")).readObject();
-        assertEquals("Task JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
+
+        JsonObject userGroup = userGroups.getJsonObject(0);
+        assertEquals("Key users.id doesn't match to given value!", 1, userGroup.getInt("id"));
+
+        userGroup = userGroups.getJsonObject(1);
+        assertEquals("Key users.id doesn't match to given value!", 2, userGroup.getInt("id"));
+    }
+
+    @Test
+    public void shouldCreateSecondDocument() throws Exception {
+        TaskType taskType = new TaskType();
+
+        Task task = prepareData().get(1);
+        HttpEntity document = taskType.createDocument(task);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Rendering", actual.getString("title"));
+        assertEquals("Key ordering doesn't match to given value!", 2, actual.getInt("ordering"));
+        assertEquals("Key priority doesn't match to given value!", 2, actual.getInt("priority"));
+        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt("editType"));
+        assertEquals("Key processingStatus doesn't match to given value!", 2, actual.getInt("processingStatus"));
+        assertEquals("Key processingUser doesn't match to given value!", 2, actual.getInt("processingUser"));
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10", actual.getString("processingBegin"));
+        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL, actual.get("processingEnd"));
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17", actual.getString("processingTime"));
+        assertEquals("Key homeDirectory doesn't match to given value!", "0", actual.getString("homeDirectory"));
+        assertEquals("Key batchStep doesn't match to given value!", false, actual.getBoolean("batchStep"));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
+        assertEquals("Key typeMetadata doesn't match to given value!", false, actual.getBoolean("typeMetadata"));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
+        assertEquals("Key processForTask.id doesn't match to given value!", 0, actual.getInt("processForTask.id"));
+        assertEquals("Key processForTask.title doesn't match to given value!", "", actual.getString("processForTask.title"));
+
+        JsonArray users = actual.getJsonArray("users");
+        assertEquals("Size users doesn't match to given value!", 2, users.size());
+
+        JsonObject user = users.getJsonObject(0);
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
+
+        user = users.getJsonObject(1);
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
+
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
+
+        JsonObject userGroup = userGroups.getJsonObject(0);
+        assertEquals("Key users.id doesn't match to given value!", 1, userGroup.getInt("id"));
+
+        userGroup = userGroups.getJsonObject(1);
+        assertEquals("Key users.id doesn't match to given value!", 2, userGroup.getInt("id"));
+    }
+
+    @Test
+    public void shouldCreateThirdDocument() throws Exception {
+        TaskType taskType = new TaskType();
+
+        Task task = prepareData().get(2);
+        HttpEntity document = taskType.createDocument(task);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Incomplete", actual.getString("title"));
+        assertEquals("Key ordering doesn't match to given value!", 0, actual.getInt("ordering"));
+        assertEquals("Key priority doesn't match to given value!", 0, actual.getInt("priority"));
+        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt("editType"));
+        assertEquals("Key processingStatus doesn't match to given value!", 1, actual.getInt("processingStatus"));
+        assertEquals("Key processingUser doesn't match to given value!", 0, actual.getInt("processingUser"));
+        assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL, actual.get("processingBegin"));
+        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL, actual.get("processingEnd"));
+        assertEquals("Key processingTime doesn't match to given value!", JsonValue.NULL, actual.get("processingTime"));
+        assertEquals("Key homeDirectory doesn't match to given value!", "0", actual.getString("homeDirectory"));
+        assertEquals("Key batchStep doesn't match to given value!", false, actual.getBoolean("batchStep"));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
+        assertEquals("Key typeMetadata doesn't match to given value!", false, actual.getBoolean("typeMetadata"));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
+        assertEquals("Key processForTask.id doesn't match to given value!", 0, actual.getInt("processForTask.id"));
+        assertEquals("Key processForTask.title doesn't match to given value!", "", actual.getString("processForTask.title"));
+
+        JsonArray users = actual.getJsonArray("users");
+        assertEquals("Size users doesn't match to given value!", 0, users.size());
+
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        assertEquals("Size users doesn't match to given value!", 0, userGroups.size());
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        TaskType taskType = new TaskType();
+
+        Task task = prepareData().get(0);
+        HttpEntity document = taskType.createDocument(task);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
+
+        JsonArray users = actual.getJsonArray("users");
+        JsonObject user = users.getJsonObject(0);
+        assertEquals("Amount of keys in users is incorrect!", 1, user.keySet().size());
+
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonObject userGroup = userGroups.getJsonObject(0);
+        assertEquals("Amount of keys in userGroups is incorrect!", 1, userGroup.keySet().size());
     }
 
     @Test

@@ -58,10 +58,22 @@ public class RulesetTypeTest {
         HttpEntity document = rulesetType.createDocument(ruleset);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject excepted = Json
-                .createReader(new StringReader("{\"title\":\"SLUBDD\",\"file\":\"ruleset_slubdd.xml\","
-                        + "\"orderMetadataByRuleset\":false,\"fileContent\":\"\"}")).readObject();
-        assertEquals("Ruleset JSONObject doesn't match to given JSONObject!", excepted, actual);
+
+        assertEquals("Key title doesn't match to given value!", "SLUBDD", actual.getString("title"));
+        assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml", actual.getString("file"));
+        assertEquals("Key orderMetadataByRuleset doesn't match to given value!", false, actual.getBoolean("orderMetadataByRuleset"));
+        assertEquals("Key fileContent doesn't match to given value!", "", actual.getString("fileContent"));
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        RulesetType rulesetType = new RulesetType();
+        Ruleset ruleset = prepareData().get(0);
+
+        HttpEntity document = rulesetType.createDocument(ruleset);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 4, actual.keySet().size());
     }
 
     @Test
