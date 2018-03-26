@@ -125,7 +125,8 @@
                 <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
                                styleClass="buttonset button-blue"
                                update="@(.editDialog)"
-                               disabled="#{ProjekteForm.locked}">
+                               disabled="#{ProjekteForm.locked}"
+                               immediate="true">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
@@ -151,7 +152,8 @@
                          styleClass="button-filled-green"
                          icon="fa fa-plus-circle fa-lg"
                          iconPos="right"
-                         disabled="#{ProjekteForm.locked}">
+                         disabled="#{ProjekteForm.locked}"
+                         immediate="true">
             <f:setPropertyActionListener target="#{ProjekteForm.zurueck}"
                                          value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
