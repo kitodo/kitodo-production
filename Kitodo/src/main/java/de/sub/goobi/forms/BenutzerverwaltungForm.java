@@ -13,7 +13,6 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -100,18 +99,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Anzeige der gefilterten Nutzer.
      */
     public String filterAll() {
-        List<UserDTO> users = new ArrayList<>();
-        try {
-            if (this.filter != null && this.filter.length() != 0) {
-                users = serviceManager.getUserService().findActiveUsersByName(this.filter);
-            } else {
-                users = getUsers();
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        this.page = new Page<>(0, users);
-        return "/pages/BenutzerAlle";
+        return redirectToList();
     }
 
     private List<UserDTO> getUsers() throws DataException {
