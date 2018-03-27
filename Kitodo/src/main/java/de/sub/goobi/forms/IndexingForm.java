@@ -557,6 +557,9 @@ public class IndexingForm {
                 case TASK:
                     searchServices.put(objectType, serviceManager.getTaskService());
                     break;
+                case TEMPLATE:
+                    searchServices.put(objectType, serviceManager.getTemplateService());
+                    break;
                 case USER:
                     searchServices.put(objectType, serviceManager.getUserService());
                     break;
