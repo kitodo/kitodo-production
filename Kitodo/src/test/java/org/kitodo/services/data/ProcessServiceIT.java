@@ -410,35 +410,35 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(2);
-        String progress = processService.getProgress(process, null);
+        String progress = processService.getProgress(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", "000033033033", progress);
     }
 
     @Test
     public void shouldGetProgressClosed() throws Exception {
         Process process = processService.getById(2);
-        int condition = processService.getProgressClosed(process, null);
+        int condition = processService.getProgressClosed(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 0, condition);
     }
 
     @Test
     public void shouldGetProgressInProcessing() throws Exception {
         Process process = processService.getById(2);
-        int condition = processService.getProgressInProcessing(process, null);
+        int condition = processService.getProgressInProcessing(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
     @Test
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(2);
-        int condition = processService.getProgressOpen(process, null);
+        int condition = processService.getProgressOpen(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
     @Test
     public void shouldGetProgressLocked() throws Exception {
         Process process = processService.getById(2);
-        int condition = processService.getProgressLocked(process, null);
+        int condition = processService.getProgressLocked(process.getTasks(), null);
         assertEquals("Progress doesn't match given plain text!", 33, condition);
     }
 
