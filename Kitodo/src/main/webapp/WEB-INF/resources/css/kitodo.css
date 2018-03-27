@@ -624,35 +624,29 @@ main i.fa {
     height: 70vh;
 }
 
-#processEditForm\:tabs\:processEditDetails label,
-#processEditForm\:tabs\:processEditDetails input {
-    display: block;
-}
-
-#processEditForm\:tabs\:taskTable\:taskOrder {
+#editForm\:tabs\:taskTable\:taskOrder {
     width: 90px;
 }
 
-#processEditForm\:tabs\:taskTable\:0\:statusColumn,
-#processEditForm\:tabs\:taskTable\:0\:statusColumn table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-#processEditForm .button-filled-green {
+#editForm .button-filled-green {
     margin: 16px;
 }
 
-#processEditForm .statusColumn .ui-panelgrid-cell {
-    width: 16px;
-}
-
-#processEditForm\:tabs\:taskTable .ui-panelgrid-cell {
+.statusColumn,
+.statusColumn div,
+.statusColumn .ui-panel-content {
     padding: 0;
+    vertical-align: middle;
 }
 
-#processEditForm\:tabs\:taskTable .ui-expanded-row-content .ui-panelgrid-cell {
-    padding: 8px 10px;
+.statusColumn img {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 10px;
+}
+
+.statusColumn .ui-panel-content .ui-panel {
+    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
