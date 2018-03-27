@@ -13,6 +13,7 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +53,9 @@ public class ProjekteForm extends BasisForm {
     private boolean lockedDetail;
     private boolean lockedMets;
     private boolean lockedTechnical;
+
+    private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -108,7 +112,7 @@ public class ProjekteForm extends BasisForm {
         this.newFileGroups = new ArrayList<>();
         // resetting the List of fileGroups marked for deletion
         this.deletedFileGroups = new ArrayList<>();
-        return redirectToList("");
+        return projectListPath;
     }
 
     /**
@@ -121,7 +125,7 @@ public class ProjekteForm extends BasisForm {
         setLockedMets(false);
         setLockedTechnical(false);
         this.myProjekt = new Project();
-        return redirectToEdit();
+        return projectEditPath;
     }
 
     /**
@@ -139,7 +143,7 @@ public class ProjekteForm extends BasisForm {
         setLockedMets(false);
         try {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
-            return redirectToEdit();
+            return projectEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage("unableToDuplicateProject", logger, e);
             return null;
@@ -162,7 +166,7 @@ public class ProjekteForm extends BasisForm {
         } else {
             try {
                 serviceManager.getProjectService().save(this.myProjekt);
-                return redirectToList("?faces-redirect=true");
+                return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
                 return null;
@@ -210,7 +214,7 @@ public class ProjekteForm extends BasisForm {
                 return null;
             }
         }
-        return redirectToList("?faces-redirect=true");
+        return projectListPath;
     }
 
     /**
@@ -415,47 +419,5 @@ public class ProjekteForm extends BasisForm {
      */
     public List<Client> getClients() {
         return serviceManager.getClientService().getAll();
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/projectEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/projectEdit?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
-            // used from it's integration test
-            // class "ProjekteFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteBearbeiten?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/projects" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList(String urlSuffix) {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("projectEdit.jsf")) {
-                return "/pages/projects" + urlSuffix;
-            } else {
-                return "/pages/ProjekteAlle" + urlSuffix;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProjekteForm" is
-            // used from it's integration test
-            // class "ProjekteFormIT", where no "FacesContext" is available!
-            return "/pages/ProjekteAlle" + urlSuffix;
-        }
     }
 }

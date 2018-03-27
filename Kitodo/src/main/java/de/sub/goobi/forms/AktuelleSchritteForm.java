@@ -22,6 +22,7 @@ import de.sub.goobi.metadaten.MetadatenSperrung;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +31,6 @@ import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -78,10 +78,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    private static final String CURRENT_TASK_LIST_PATH = TEMPLATE_ROOT + "tasks";
-    private static final String CURRENT_TASK_LIST_PATH_OLD = TEMPLATE_ROOT + "AktuelleSchritteAlle";
-    private static final String CURRENT_TASK_EDIT_PATH = TEMPLATE_ROOT + "editCurrentTasks";
-    private static final String CURRENT_TASK_EDIT_PATH_OLD = TEMPLATE_ROOT + "AktuelleSchritteBearbeiten";
+    private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
+    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "editCurrentTasks");
 
     /**
      * Constructor.
@@ -111,7 +109,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Anzeige der Schritte.
      */
     public String filterAll() {
-        return redirectToList();
+        return taskListPath;
     }
 
     /**
@@ -135,7 +133,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
         }
-        return redirectToEdit();
+        return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
     }
 
     /**
@@ -147,7 +145,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
         Helper.getHibernateSession().refresh(mySchritt);
 
-        return redirectToEdit();
+        return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
     }
 
     /**
@@ -238,7 +236,7 @@ public class AktuelleSchritteForm extends BasisForm {
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
-            return redirectToEdit();
+            return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
         }
         // if only one step is assigned for this batch, use the single
 
@@ -246,7 +244,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return redirectToEdit();
+            return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
@@ -263,8 +261,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
-
-        return redirectToList();
+        return taskListPath;
     }
 
     /**
@@ -274,7 +271,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
         setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt));
-        return redirectToList();
+        return taskListPath;
     }
 
     public String sperrungAufheben() {
@@ -307,7 +304,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
-        return redirectToList();
+        return taskListPath;
     }
 
     /**
@@ -335,7 +332,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
-        return redirectToList();
+        return taskListPath;
     }
 
     /**
@@ -352,7 +349,7 @@ public class AktuelleSchritteForm extends BasisForm {
          */
         if (fertigListe.size() > 0 && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
-            redirectToList();
+            return taskListPath;
         }
         for (URI element : fertigListe) {
             String id = element.toString()
@@ -599,7 +596,7 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * prüfen, ob per Parameter vielleicht zunÃ¤chst ein anderer geladen werden
+     * prüfen, ob per Parameter vielleicht zunächst ein anderer geladen werden
      * soll.
      *
      * @throws DAOException
@@ -613,7 +610,7 @@ public class AktuelleSchritteForm extends BasisForm {
              * nachholen, damit die Liste vollstÃ¤ndig ist
              */
             if (this.page == null &&  getUser() != null) {
-                redirectToList();
+                // TODO: check if we still need this!
             }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
@@ -881,48 +878,5 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public List<Task> getTasksInProgress() {
         return serviceManager.getUserService().getTasksInProgress(this.user);
-    }
-
-    // replace calls to this function with "/pages/editCurrentTasks" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        String urlParameters = "?" + REDIRECT_PARAMETER + "&id="
-                + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && (callerViewId.contains("tasks.jsf") || callerViewId.contains("editCurrentTasks.jsf"))) {
-                return CURRENT_TASK_EDIT_PATH + urlParameters;
-            } else {
-                return CURRENT_TASK_EDIT_PATH_OLD + urlParameters;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
-            // used from it's integration test
-            // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return CURRENT_TASK_EDIT_PATH_OLD + urlParameters;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/tasks" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("editCurrentTasks.jsf")) {
-                return CURRENT_TASK_LIST_PATH + "?" + REDIRECT_PARAMETER;
-            } else {
-                return CURRENT_TASK_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "AktuelleSchritteForm" is
-            // used from it's integration test
-            // class "AktuelleSchritteFormIT", where no "FacesContext" is available!
-            return CURRENT_TASK_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
-        }
     }
 }

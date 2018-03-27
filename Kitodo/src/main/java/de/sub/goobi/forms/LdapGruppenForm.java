@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,6 +38,9 @@ public class LdapGruppenForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
 
+    private String ldapgrouopListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String ldapgrouopEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
+
     @Inject
     @Named("BenutzerverwaltungForm")
     private BenutzerverwaltungForm userForm;
@@ -48,7 +52,7 @@ public class LdapGruppenForm extends BasisForm {
      */
     public String Neu() {
         this.myLdapGruppe = new LdapGroup();
-        return redirectToEdit();
+        return ldapgrouopEditPath;
     }
 
     /**
@@ -59,7 +63,7 @@ public class LdapGruppenForm extends BasisForm {
     public String Speichern() {
         try {
             this.serviceManager.getLdapGroupService().save(this.myLdapGruppe);
-            return redirectToList();
+            return ldapgrouopListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
@@ -78,7 +82,7 @@ public class LdapGruppenForm extends BasisForm {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
             return null;
         }
-        return redirectToList();
+        return ldapgrouopListPath;
     }
 
     /**
@@ -128,47 +132,5 @@ public class LdapGruppenForm extends BasisForm {
 
     public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
         this.myLdapGruppe = myLdapGruppe;
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/ldapgroupEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/ldapgroupEdit?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/LdapGruppeBearbeiten?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "LdapGruppenForm" is
-            // used from it's integration test
-            // class "LdapGruppenFormIT", where no "FacesContext" is available!
-            return "/pages/LdapGruppeBearbeiten?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/users" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("ldapgroupEdit.jsf")) {
-                return "/pages/users?" + userForm.getActiveTabIndex() + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/LdapGruppenAlle?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "LdapGruppenForm" is
-            // used from it's integration test
-            // class "LdapGruppenFormIT", where no "FacesContext" is available!
-            return "/pages/LdapGruppenAlle?" + REDIRECT_PARAMETER;
-        }
     }
 }

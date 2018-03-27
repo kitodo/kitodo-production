@@ -41,6 +41,8 @@ public class BasisForm implements Serializable {
 
     private LazyDTOModel lazyDTOModel = null;
 
+    static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
+
     /**
      * Getter: return lazyDTOModel.
      *

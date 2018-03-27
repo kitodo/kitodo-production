@@ -32,13 +32,13 @@ import de.sub.goobi.helper.WebDav;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -116,12 +116,9 @@ public class ProzessverwaltungForm extends BasisForm {
     private static String DONEDIRECTORYNAME = "fertig/";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
-    private static final String PROCESS_LIST_PATH = TEMPLATE_ROOT + "processes";
-    private static final String PROCESS_LIST_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
-    private static final String PROCESS_EDIT_PATH = TEMPLATE_ROOT + "processEdit";
-    private static final String PROCESS_EDIT_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungBearbeiten";
-    private static final String TASK_EDIT_PATH = TEMPLATE_ROOT + "taskEdit";
-    private static final String TASK_EDIT_PATH_OLD = TEMPLATE_ROOT + "inc_Prozessverwaltung/schritt";
+    private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
+    private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
+    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
     /**
      * Constructor.
@@ -165,7 +162,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.newProcessTitle = "";
         this.editMode = ObjectMode.PROCESS;
         setProperties(new ArrayList<>());
-        return redirectToEdit();
+        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
     /**
@@ -178,7 +175,7 @@ public class ProzessverwaltungForm extends BasisForm {
         this.newProcessTitle = "";
         this.process.setTemplate(true);
         this.editMode = ObjectMode.PROCESS;
-        return redirectToEdit();
+        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
     /**
@@ -188,7 +185,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String editProcess() {
         reload();
-        return redirectToEdit();
+        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
     /**
@@ -238,7 +235,7 @@ public class ProzessverwaltungForm extends BasisForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return redirectToList();
+        return processListPath;
     }
 
     /**
@@ -411,7 +408,7 @@ public class ProzessverwaltungForm extends BasisForm {
             return null;
         }
         this.displayMode = ObjectMode.PROCESS;
-        return redirectToList();
+        return processListPath;
     }
 
     /**
@@ -433,7 +430,7 @@ public class ProzessverwaltungForm extends BasisForm {
 
         this.page = new Page<>(0, this.processDTOS);
         this.displayMode = ObjectMode.TEMPLATE;
-        return redirectToList();
+        return processListPath;
     }
 
     /**
@@ -442,47 +439,14 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     @PostConstruct
     public void initializeProcessList() {
-        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        String originLink = params.get("linkId");
-        if (Objects.equals(originLink, "newProcess")) {
-            createNewProcess();
-        } else if (Objects.equals(originLink, "templates")) {
-            filterTemplates();
-        } else if (Objects.equals(originLink, "allProcesses")) {
-            filterCurrentProcesses();
-        }
         setFilter("");
-    }
-
-    /**
-     * New process insert.
-     *
-     * @return page
-     */
-    public String createNewProcess() {
-        filterTemplates();
-        if (this.page.getTotalResults() == 1) {
-            ProcessDTO single = (ProcessDTO) this.page.getListReload().get(0);
-            ProzesskopieForm pkf = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
-            try {
-                Process process = serviceManager.getProcessService().convertDtoToBean(single);
-                if (pkf != null) {
-                    pkf.setProzessVorlage(process);
-                    return pkf.prepare(process.getId());
-                }
-                return "";
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
-        return PROCESS_LIST_PATH_OLD;
     }
 
     /**
      * Anzeige der Sammelbände filtern.
      */
     public String filterAll() {
-        return redirectToList();
+        return processListPath;
     }
 
     private void filterProcessesWithFilter() throws DataException {
@@ -675,7 +639,8 @@ public class ProzessverwaltungForm extends BasisForm {
         this.task.setProcess(this.process);
         this.process.getTasks().add(this.task);
         this.editMode = ObjectMode.TASK;
-        return redirectToEditTask();
+        return taskEditPath + "&id="
+                + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
 
     /**
@@ -701,7 +666,7 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public String saveTaskAndRedirect() {
         saveTask();
-        return redirectToEdit();
+        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
     /**
@@ -723,7 +688,7 @@ public class ProzessverwaltungForm extends BasisForm {
             }
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
-            return redirectToEdit();
+            return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
         } catch (DataException e) {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
             return null;
@@ -2149,76 +2114,5 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/processEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        String urlParameters = "?" + REDIRECT_PARAMETER + "&id="
-                + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("processes.jsf") || callerViewId.contains("taskEdit.jsf")
-                            || callerViewId.contains("processEdit.jsf") || callerViewId.contains("projects.jsf"))) {
-                return PROCESS_EDIT_PATH + urlParameters;
-            } else {
-                return PROCESS_EDIT_PATH_OLD + urlParameters;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
-            // used from it's integration test
-            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
-            return PROCESS_EDIT_PATH_OLD + urlParameters;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/taskEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEditTask() {
-        String urlParameters = "?" + REDIRECT_PARAMETER + "&id="
-                + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("processEdit.jsf")) {
-                return TASK_EDIT_PATH + urlParameters;
-            } else {
-                return TASK_EDIT_PATH_OLD + urlParameters;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when
-            // "ProzessverwaltungForm" is
-            // used from it's integration test
-            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
-            return TASK_EDIT_PATH_OLD + urlParameters;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/processes" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("searchProcess.jsf") || callerViewId.contains("processEdit.jsf"))) {
-                return PROCESS_LIST_PATH + "?" + REDIRECT_PARAMETER;
-            } else {
-                return PROCESS_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProzessverwaltungForm" is
-            // used from it's integration test
-            // class "ProzessverwaltungFormIT", where no "FacesContext" is available!
-            return PROCESS_LIST_PATH_OLD + "?" + REDIRECT_PARAMETER;
-        }
     }
 }

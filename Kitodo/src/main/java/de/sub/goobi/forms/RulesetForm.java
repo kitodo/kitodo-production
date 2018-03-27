@@ -15,10 +15,10 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,6 +37,9 @@ public class RulesetForm extends BasisForm {
     private Ruleset ruleset;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
+
+    private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
     @Inject
     @Named("ProjekteForm")
@@ -58,7 +61,7 @@ public class RulesetForm extends BasisForm {
      */
     public String createNewRuleset() {
         this.ruleset = new Ruleset();
-        return redirectToEdit();
+        return rulesetEditPath;
     }
 
     /**
@@ -70,7 +73,7 @@ public class RulesetForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
                 serviceManager.getRulesetService().save(this.ruleset);
-                return redirectToList();
+                return rulesetListPath;
             } else {
                 Helper.setFehlerMeldung("RulesetNotFound");
                 return null;
@@ -112,7 +115,7 @@ public class RulesetForm extends BasisForm {
             Helper.setErrorMessage("fehlerNichtLoeschbar", logger, e);
             return null;
         }
-        return redirectToList();
+        return rulesetListPath;
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
@@ -151,47 +154,4 @@ public class RulesetForm extends BasisForm {
         Helper.getHibernateSession().clear();
         this.ruleset = inPreference;
     }
-
-    // TODO:
-    // replace calls to this function with "/pages/rulesetEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/rulesetEdit?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/RegelsaetzeBearbeiten?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
-            // used from it's integration test
-            // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeBearbeiten?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/projects.jsf" once we have
-    // completely switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("rulesetEdit.jsf")) {
-                return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/RegelsaetzeAlle?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "RulesetForm" is
-            // used from it's integration test
-            // class "RulesetFormIT", where no "FacesContext" is available!
-            return "/pages/RegelsaetzeAlle?" + REDIRECT_PARAMETER;
-        }
-    }
-
 }

@@ -15,10 +15,10 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -38,6 +38,9 @@ public class DocketForm extends BasisForm {
     private Docket myDocket = new Docket();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
+
+    private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
+    private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "editDocket");
 
     @Inject
     @Named("ProjekteForm")
@@ -59,7 +62,7 @@ public class DocketForm extends BasisForm {
      */
     public String newDocket() {
         this.myDocket = new Docket();
-        return redirectToEdit();
+        return docketEditPath;
     }
 
     /**
@@ -71,7 +74,7 @@ public class DocketForm extends BasisForm {
         try {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
                 this.serviceManager.getDocketService().save(myDocket);
-                return redirectToList();
+                return docketListPath;
             } else {
                 Helper.setFehlerMeldung("DocketNotFound");
                 return null;
@@ -141,39 +144,5 @@ public class DocketForm extends BasisForm {
     public void setMyDocket(Docket docket) {
         Helper.getHibernateSession().clear();
         this.myDocket = docket;
-    }
-
-    // replace calls to this function with "/pages/DocketEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("projects.jsf")) {
-                return "/pages/editDocket?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "DocketForm" is
-            // used from it's integration test
-            // class "DocketFormIT", where no "FacesContext" is available!
-            return "/pages/DocketEdit?" + REDIRECT_PARAMETER;
-        }
-    }
-
-
-    // TODO:
-    // replace calls to this function with "/pages/projects" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap().get("referer");
-        String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-        if (!callerViewId.isEmpty() && callerViewId.contains("editDocket.jsf")) {
-            return "/pages/projects.jsf?id=" + projectForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
-        } else {
-            return "/pages/DocketList?" + REDIRECT_PARAMETER;
-        }
     }
 }
