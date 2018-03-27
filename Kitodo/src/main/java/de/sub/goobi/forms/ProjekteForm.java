@@ -39,7 +39,6 @@ import org.kitodo.services.ServiceManager;
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
-    private boolean locked;
     private Project myProjekt = new Project();
     private ProjectFileGroup myFilegroup;
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -49,6 +48,10 @@ public class ProjekteForm extends BasisForm {
     // permanent
     private List<Integer> newFileGroups = new ArrayList<>();
     private List<Integer> deletedFileGroups = new ArrayList<>();
+
+    private boolean lockedDetail;
+    private boolean lockedMets;
+    private boolean lockedTechnical;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -114,7 +117,9 @@ public class ProjekteForm extends BasisForm {
      * @return page address
      */
     public String newProject() {
-        setLocked(false);
+        setLockedDetail(false);
+        setLockedMets(false);
+        setLockedTechnical(false);
         this.myProjekt = new Project();
         return redirectToEdit();
     }
@@ -129,7 +134,9 @@ public class ProjekteForm extends BasisForm {
      *         to remain on the same page and reuse the bean.
      */
     public String duplicateProject(Integer itemId) {
-        setLocked(false);
+        setLockedDetail(false);
+        setLockedTechnical(false);
+        setLockedMets(false);
         try {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
             return redirectToEdit();
@@ -267,22 +274,61 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Getter for locked.
+     * Getter for lockedDetail.
      *
-     * @return the locked
+     * @return the lockedDetail
      */
-    public boolean isLocked() {
-        return locked;
+    public boolean isLockedDetail() {
+        return lockedDetail;
+    }
+
+
+    /**
+     * Setter for lockedDetail.
+     *
+     * @param lockedDetail
+     *            the lockedDetail to set
+     */
+    public void setLockedDetail(boolean lockedDetail) {
+        this.lockedDetail = lockedDetail;
     }
 
     /**
-     * Setter for locked.
+     * Getter for lockedMets.
      *
-     * @param locked
-     *            the locked to set
+     * @return the lockedMets
      */
-    public void setLocked(boolean locked) {
-        this.locked = locked;
+    public boolean isLockedMets() {
+        return lockedMets;
+    }
+
+    /**
+     * Setter for lockedMets.
+     *
+     * @param lockedMets
+     *            the lockedMets to set
+     */
+    public void setLockedMets(boolean lockedMets) {
+        this.lockedMets = lockedMets;
+    }
+
+    /**
+     * Getter for lockedTechnicaal.
+     *
+     * @return the lockedTechnical
+     */
+    public boolean isLockedTechnical() {
+        return lockedTechnical;
+    }
+
+    /**
+     * Setter for lockedTechnical.
+     *
+     * @param lockedTechnical
+     *            the lockedTechnical to set
+     */
+    public void setLockedTechnical(boolean lockedTechnical) {
+        this.lockedTechnical = lockedTechnical;
     }
 
     /**
