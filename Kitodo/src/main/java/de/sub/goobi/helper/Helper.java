@@ -57,16 +57,15 @@ import org.kitodo.data.database.helper.Util;
 public class Helper extends HibernateHelper implements Observer {
 
     /**
-     * Always treat de-serialization as a full-blown constructor, by validating
-     * the final state of the de-serialized object.
+     * Always treat de-serialization as a full-blown constructor, by validating the
+     * final state of the de-serialized object.
      */
     private void readObject(ObjectInputStream aInputStream) {
 
     }
 
     /**
-     * This is the default implementation of writeObject. Customise if
-     * necessary.
+     * This is the default implementation of writeObject. Customise if necessary.
      */
     private void writeObject(ObjectOutputStream aOutputStream) {
 
@@ -78,6 +77,7 @@ public class Helper extends HibernateHelper implements Observer {
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> localMessages = null;
     private static String compoundMessage;
+    private static User currentUser = null;
 
     /**
      * Determine a specific parameter of the request.
@@ -259,7 +259,7 @@ public class Helper extends HibernateHelper implements Observer {
         }
         if (context != null) {
             context.addMessage(control,
-                    new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
+                new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));
         } else {
             // wenn kein Kontext da ist, dann die Meldungen in Log
             logger.log(onlyInfo ? Level.INFO : Level.ERROR, compoundMessage);
@@ -267,8 +267,8 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     /**
-     * Returns a Map holding all translations that are configured in the front
-     * end of a given resource key.
+     * Returns a Map holding all translations that are configured in the front end
+     * of a given resource key.
      *
      * @param key
      *            resource key to get translations for
@@ -464,9 +464,27 @@ public class Helper extends HibernateHelper implements Observer {
         }
     }
 
+    /**
+     * Get current logged in user.
+     * 
+     * @return current logged in user
+     */
     public static User getCurrentUser() {
-        LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
-        return login != null ? login.getMyBenutzer() : null;
+        if (Objects.isNull(currentUser)) {
+            LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            currentUser = login != null ? login.getMyBenutzer() : null;
+        }
+        return currentUser;
+    }
+
+    //TODO: find way to test without this method - faces
+    /**
+     * Set current logged in user. Used for test purpose.
+     *
+     * @param user current logged in user as User
+     */
+    public static void setCurrentUser(User user) {
+        currentUser = user;
     }
 
     /**
@@ -551,9 +569,9 @@ public class Helper extends HibernateHelper implements Observer {
     };
 
     /**
-     * The function getLastMessage() returns the last message processed to be
-     * shown to the user. This is a last resort only to show the user why
-     * perhaps something didn’t work if no error message is available otherwise.
+     * The function getLastMessage() returns the last message processed to be shown
+     * to the user. This is a last resort only to show the user why perhaps
+     * something didn’t work if no error message is available otherwise.
      *
      * @return the most recent message created to be shown to the user
      */
