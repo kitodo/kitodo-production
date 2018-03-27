@@ -262,10 +262,15 @@ body.first-visit #portal-header {
     border-color: #1b2b36 !important;
     }
 
-#header-nav li:hover ul {
+/*#header-nav li:hover ul {
     max-height: 800px;
     visibility: visible;
-    }
+    }*/
+
+.menu-active {
+    max-height: 800px !important;
+    visibility: visible !important;
+}
 
 #header-nav .batch-count {
     position: absolute;
