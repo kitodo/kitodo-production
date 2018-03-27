@@ -79,7 +79,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "editCurrentTasks");
+    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
 
     /**
      * Constructor.

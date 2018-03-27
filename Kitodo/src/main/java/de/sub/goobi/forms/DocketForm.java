@@ -40,7 +40,7 @@ public class DocketForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
     private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
-    private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "editDocket");
+    private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
 
     @Inject
     @Named("ProjekteForm")
