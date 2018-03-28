@@ -638,9 +638,7 @@ public class CopyProcess extends ProzesskopieForm {
             task.setProcessingTime(this.prozessKopie.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
             User user = Helper.getCurrentUser();
-            if (user != null) {
-                task.setProcessingUser(user);
-            }
+            serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             /*
              * only if its done, set edit start and end date

@@ -183,38 +183,32 @@ public class AktuelleSchritteForm extends BasisForm {
             return schrittDurchBenutzerUebernehmen();
         }
 
-        for (Task s : currentStepsOfBatch) {
-            if (s.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
-                s.setProcessingStatusEnum(TaskStatus.INWORK);
-                s.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                s.setProcessingTime(new Date());
+        for (Task task : currentStepsOfBatch) {
+            if (task.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
+                task.setProcessingStatusEnum(TaskStatus.INWORK);
+                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                task.setProcessingTime(new Date());
                 User user = getUser();
-                if (user != null) {
-                    s.setProcessingUser(user);
-                }
-                if (s.getProcessingBegin() == null) {
-                    Date myDate = new Date();
-                    s.setProcessingBegin(myDate);
+                serviceManager.getTaskService().replaceProcessingUser(task, user);
+                if (task.getProcessingBegin() == null) {
+                    task.setProcessingBegin(new Date());
                 }
 
-                if (s.isTypeImagesRead() || s.isTypeImagesWrite()) {
+                if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                     try {
-                        new File(serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()));
+                        new File(serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()));
                     } catch (Exception e1) {
                         Helper.setErrorMessage("Error retrieving image directory: ", logger, e1);
                     }
-                    s.setProcessingTime(new Date());
+                    task.setProcessingTime(new Date());
 
-                    if (user != null) {
-                        s.setProcessingUser(user);
-                    }
-                    this.myDav.downloadToHome(s.getProcess(), !s.isTypeImagesWrite());
-
+                    serviceManager.getTaskService().replaceProcessingUser(task, user);
+                    this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
                 }
             }
 
             try {
-                this.serviceManager.getProcessService().save(s.getProcess());
+                this.serviceManager.getProcessService().save(task.getProcess());
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             }
@@ -419,19 +413,17 @@ public class AktuelleSchritteForm extends BasisForm {
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                mySchritt.setProcessingTime(new Date());
+                task.setProcessingTime(new Date());
                 User user = getUser();
-                if (user != null) {
-                    mySchritt.setProcessingUser(user);
-                }
+                serviceManager.getTaskService().replaceProcessingUser(task, user);
                 task.setProcessingBegin(new Date());
-                Process proz = task.getProcess();
+                Process process = task.getProcess();
                 try {
-                    this.serviceManager.getProcessService().save(proz);
+                    this.serviceManager.getProcessService().save(process);
                 } catch (DataException e) {
                     Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
                 }
-                this.myDav.downloadToHome(proz, false);
+                this.myDav.downloadToHome(process, false);
             }
         }
     }
