@@ -51,7 +51,7 @@ public class HelperForm implements Serializable {
     static final String MAIN_JSF_PATH = "/pages";
     private static final String IMAGE_PATH = "/pages/images";
     private static final String CSS_BASE_PATH = "/WEB-INF/resources/css";
-    private static final String CSS_PATH = "/old/userStyles";
+    private static final String CSS_PATH = "/userStyles";
 
     public String getVersion() {
         return GoobiVersion.getBuildversion();
@@ -130,7 +130,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Get rulesets.
-     * 
+     *
      * @return list of rulesets as SelectItems
      */
     public List<SelectItem> getRegelsaetze() {
@@ -188,7 +188,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Get servlet path.
-     * 
+     *
      * @return servlet path as String
      */
     public String getServletPathAsUrl() {
@@ -198,7 +198,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Get servlet path with host.
-     * 
+     *
      * @return servlet path with host as String
      */
     public String getServletPathWithHostAsUrl() {
@@ -213,7 +213,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Get all css files from root folder.
-     * 
+     *
      * @return list of css files
      */
     public List<SelectItem> getCssFiles() {
@@ -229,10 +229,10 @@ public class HelperForm implements Serializable {
     /**
      * Method returns a valid css file, which is the suggestion unless suggestion is
      * not available if not available default.css is returned.
-     * 
+     *
      * @param cssFileName
      *            suggested css file
-     * 
+     *
      * @return valid css file
      */
     public String getCssLinkIfExists(String cssFileName) {
@@ -252,7 +252,7 @@ public class HelperForm implements Serializable {
 
     /**
      * Check if mass import is allowed.
-     * 
+     *
      * @return true or false
      */
     public boolean getMassImportAllowed() {
