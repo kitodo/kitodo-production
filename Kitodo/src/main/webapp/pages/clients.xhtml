@@ -19,10 +19,10 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.clients}</h3>
         <h:form id="clientForm" rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}">
-            <p:commandButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right"
-                             action="#{ClientForm.newClient}" id="newClientButton"
-                             styleClass="button-filled-green">
-            </p:commandButton>
+            <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                <p:menuitem value="#{msgs.newClient}" icon="ui-icon-plusthick" immediate="true"
+                            action="#{ClientForm.newClient}" id="newClientButton"/>
+            </p:menuButton>
         </h:form>
     </ui:define>
 
