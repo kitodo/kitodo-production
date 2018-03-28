@@ -227,6 +227,35 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
+     * Replace processing user for given task. Handles add/remove from list of
+     * processing tasks.
+     * 
+     * @param task
+     *            for which user will be assigned as processing user
+     * @param user
+     *            which will process given task
+     */
+    public void replaceProcessingUser(Task task, User user) {
+        User currentProcessingUser = task.getProcessingUser();
+
+        if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
+            // do nothing - there is not new nor old user
+        } else if (Objects.isNull(user)) {
+            currentProcessingUser.getProcessingTasks().remove(task);
+            task.setProcessingUser(null);
+        } else if (Objects.isNull(currentProcessingUser)) {
+            user.getProcessingTasks().add(task);
+            task.setProcessingUser(user);
+        } else if (Objects.equals(currentProcessingUser.getId(), user.getId())) {
+            // do nothing - both are the same
+        } else {
+            currentProcessingUser.getProcessingTasks().remove(task);
+            user.getProcessingTasks().add(task);
+            task.setProcessingUser(user);
+        }
+    }
+
+    /**
      * Find the distinct task titles.
      *
      * @return a list of titles
@@ -394,7 +423,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of task as JSONObject objects
      */
     List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
-                                                                        Integer priority, boolean typeAutomatic, String sort) throws DataException {
+            Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery("processingStatus", taskStatus.getValue(), true));
         query.must(createSimpleQuery("processingUser", processingUser, true));
@@ -835,8 +864,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and ordered
+     * by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -847,8 +876,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get average ordering of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
+     * Get average ordering of tasks for non template processes for given project id
+     * and ordered by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -874,8 +903,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and
-     * ordered by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and ordered
+     * by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer
@@ -889,8 +918,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get amount of images of tasks for non template processes for given
-     * project id and ordered by ordering column in Task table.
+     * Get amount of images of tasks for non template processes for given project id
+     * and ordered by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer
