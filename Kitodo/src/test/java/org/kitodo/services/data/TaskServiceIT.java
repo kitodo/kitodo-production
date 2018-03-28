@@ -128,7 +128,6 @@ public class TaskServiceIT {
 
         tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
         assertEquals("Not all tasks were found in database!", 2, tasks.size());
-
     }
 
     @Test
@@ -139,41 +138,32 @@ public class TaskServiceIT {
         assertEquals("Incorrect amount of processing users!", 1, size);
 
         Task task = taskService.getById(6);
-        User user = task.getProcessingUser();
-        user.getProcessingTasks().remove(task);
-        task.setProcessingUser(null);
+        taskService.replaceProcessingUser(task, null);
         taskService.save(task);
+
         TaskDTO taskDTO = taskService.findById(6, false);
-        size = userService.findByProcessingTask(6, false).size();
         assertNull("Processing user is not null!", taskDTO.getProcessingUser());
+        size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 0, size);
 
         task = taskService.getById(6);
-        user = userService.getById(1);
-        User oldUser = task.getProcessingUser();
-        if(oldUser != null) {
-            oldUser.getProcessingTasks().remove(task);
-        }
-        user.getProcessingTasks().add(task);
-        task.setProcessingUser(user);
+        User user = userService.getById(1);
+        taskService.replaceProcessingUser(task, user);
         taskService.save(task);
+
         taskDTO = taskService.findById(6, false);
-        size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect id of processing user!", Integer.valueOf(1), taskDTO.getProcessingUser().getId());
+        size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
 
         task = taskService.getById(6);
         user = userService.getById(2);
-        oldUser = task.getProcessingUser();
-        if(oldUser != null) {
-            oldUser.getProcessingTasks().remove(task);
-        }
-        user.getProcessingTasks().add(task);
-        task.setProcessingUser(user);
+        taskService.replaceProcessingUser(task, user);
         taskService.save(task);
         taskDTO = taskService.findById(6, false);
-        size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect id of processing user!", Integer.valueOf(2), taskDTO.getProcessingUser().getId());
+        Thread.sleep(500);
+        size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
     }
 
