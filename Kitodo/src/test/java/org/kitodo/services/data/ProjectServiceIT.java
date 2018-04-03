@@ -88,6 +88,7 @@ public class ProjectServiceIT {
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in index!", condition);
         assertTrue("Project was not found in index!", project.isActive().equals(true));
+        assertEquals("Project was not found in index!", 1, project.getProcesses().size());
 
         project = projectService.findById(3);
         assertTrue("Project was not found in index!", project.isActive().equals(false));
