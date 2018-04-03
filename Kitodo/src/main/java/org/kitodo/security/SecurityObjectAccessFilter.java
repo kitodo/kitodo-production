@@ -41,7 +41,14 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
         String id = httpServletRequest.getParameter("id");
 
         if (Objects.nonNull(id)) {
-            int idInt = Integer.parseInt(id);
+            int idInt;
+            try {
+                idInt = Integer.parseInt(id);
+            } catch (NumberFormatException e) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
+            }
+
             if (httpServletRequest.getRequestURI().contains("pages/clientEdit")) {
                 if (!hasAuthority("editClient", idInt, true)) {
                     denyAccess(httpServletRequest, httpServletResponse);

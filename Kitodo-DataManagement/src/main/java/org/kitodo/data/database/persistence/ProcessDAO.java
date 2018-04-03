@@ -115,9 +115,9 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
-     * Get all processes.
+     * Get all active processes.
      *
-     * @return list of all processes as Process objects
+     * @return list of all active processes as Process objects
      */
     public List<Process> getActiveProcesses() {
         return getByQuery("SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE process.template = 0 AND project.active = 1");
