@@ -64,9 +64,6 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
-import org.goobi.production.flow.statistics.StatisticsManager;
-import org.goobi.production.flow.statistics.StatisticsRenderingElement;
-import org.goobi.production.flow.statistics.enums.StatisticsMode;
 import org.jdom.transform.XSLTransformException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -95,7 +92,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
     private Process process = new Process();
     private Task task = new Task();
-    private StatisticsManager statisticsManager;
     private List<ProcessCounterObject> processCounterObjects;
     private HashMap<String, Integer> counterSummary;
     private Property templateProperty;
@@ -106,7 +102,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private HashMap<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
     private String selectedXslt = "";
-    private StatisticsRenderingElement myCurrentTable;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private List<Property> properties;
@@ -115,7 +110,6 @@ public class ProzessverwaltungForm extends BasisForm {
     private Property property;
     private String addToWikiField = "";
     private List<ProcessDTO> processDTOS = new ArrayList<>();
-    private boolean showStatistics = false;
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowService workflowService = serviceManager.getWorkflowService();
@@ -402,7 +396,6 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return page
      */
     public String filterCurrentProcesses() {
-        this.statisticsManager = null;
         this.processCounterObjects = null;
 
         try {
@@ -427,7 +420,6 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return page
      */
     public String filterTemplates() {
-        this.statisticsManager = null;
         this.processCounterObjects = null;
         try {
             if (this.filter.equals("")) {
@@ -1525,75 +1517,6 @@ public class ProzessverwaltungForm extends BasisForm {
         }
     }
 
-    /**
-     * Statistische Auswertung.
-     */
-    public void setStatisticsStatusVolumes() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STATUS_VOLUMES, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        this.statisticsManager.calculate();
-    }
-
-    /**
-     * Statistic UserGroups.
-     */
-    public void setStatisticsUserGroups() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.USERGROUPS, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        this.statisticsManager.calculate();
-    }
-
-    /**
-     * Statistic runtime Tasks.
-     */
-    public void setStatisticsRuntimeSteps() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.SIMPLE_RUNTIME_STEPS, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-    }
-
-    public void setStatisticsProduction() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PRODUCTION, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-    }
-
-    public void setStatisticsStorage() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.STORAGE, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-    }
-
-    public void setStatisticsCorrection() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.CORRECTIONS, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-    }
-
-    /**
-     * Project's statistics.
-     */
-    public void setStatisticsProject() {
-        this.statisticsManager = new StatisticsManager(StatisticsMode.PROJECTS, this.processDTOS,
-                FacesContext.getCurrentInstance().getViewRoot().getLocale());
-        this.statisticsManager.calculate();
-    }
-
-    /**
-     * is called via jsf at the end of building a chart in include file
-     * Prozesse_Liste_Statistik.xhtml and resets the statistics so that with the
-     * next reload a chart is not shown anymore.
-     */
-    public String getResetStatistic() {
-        this.showStatistics = false;
-        return null;
-    }
-
-    public String getMyDatasetHoehe() {
-        int bla = this.page.getCompleteList().size() * 20;
-        return String.valueOf(bla);
-    }
-
-    public int getMyDatasetHoeheInt() {
-        return this.page.getCompleteList().size() * 20;
-    }
-
     /*
      * Downloads
      */
@@ -1635,29 +1558,6 @@ public class ProzessverwaltungForm extends BasisForm {
 
     public void setNewProcessTitle(String newProcessTitle) {
         this.newProcessTitle = newProcessTitle;
-    }
-
-    public StatisticsManager getStatisticsManager() {
-        return this.statisticsManager;
-    }
-
-    /**
-     * Getter for showStatistics.
-     *
-     * @return the showStatistics
-     */
-    public boolean isShowStatistics() {
-        return this.showStatistics;
-    }
-
-    /**
-     * Setter for showStatistics.
-     *
-     * @param showStatistics
-     *            the showStatistics to set
-     */
-    public void setShowStatistics(boolean showStatistics) {
-        this.showStatistics = showStatistics;
     }
 
     public static class ProcessCounterObject {
@@ -1819,42 +1719,6 @@ public class ProzessverwaltungForm extends BasisForm {
     public String downloadDocket() throws IOException {
         serviceManager.getProcessService().downloadDocket(this.process);
         return "";
-    }
-
-    public void setMyCurrentTable(StatisticsRenderingElement myCurrentTable) {
-        this.myCurrentTable = myCurrentTable;
-    }
-
-    public StatisticsRenderingElement getMyCurrentTable() {
-        return this.myCurrentTable;
-    }
-
-    /**
-     * Create excel.
-     */
-    public void createExcel() {
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        if (!facesContext.getResponseComplete()) {
-
-            /*
-             * Vorbereiten der Header-Informationen
-             */
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            try {
-                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-                String contentType = servletContext.getMimeType("export.xls");
-                response.setContentType(contentType);
-                response.setHeader("Content-Disposition", "attachment;filename=\"export.xls\"");
-                ServletOutputStream out = response.getOutputStream();
-                HSSFWorkbook wb = (HSSFWorkbook) this.myCurrentTable.getExcelRenderer().getRendering();
-                wb.write(out);
-                out.flush();
-                facesContext.responseComplete();
-
-            } catch (IOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
     }
 
     /**

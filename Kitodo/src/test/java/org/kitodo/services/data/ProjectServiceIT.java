@@ -15,13 +15,11 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.JsonObject;
 
 import org.elasticsearch.index.query.Operator;
-import org.goobi.production.flow.statistics.StepInformation;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -224,15 +222,6 @@ public class ProjectServiceIT {
         actual = projects.size();
         expected = 0;
         assertEquals("Projects were found in index!", expected, actual);
-    }
-
-    @Test
-    public void shouldGetWorkFlow() throws Exception {
-        // test passes... but it can mean that something is wrong...
-        Project project = projectService.getById(1);
-        List<StepInformation> expected = new ArrayList<>();
-        List<StepInformation> actual = projectService.getWorkFlow(project);
-        assertEquals("Work flow doesn't match to given work flow!", expected, actual);
     }
 
     @Test

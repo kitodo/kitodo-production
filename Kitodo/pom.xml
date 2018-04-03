@@ -458,11 +458,6 @@
             <version>3.18.1-GA</version>
         </dependency>
         <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.0.19</version>
-        </dependency>
-        <dependency>
             <groupId>taglibs</groupId>
             <artifactId>standard</artifactId>
             <version>1.1.2</version>
@@ -536,12 +531,6 @@
             <groupId>org.saxon</groupId>
             <artifactId>saxon9-dom</artifactId>
             <version>${saxon.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.jsfcomp.chartcreator</groupId>
-            <artifactId>chartcreator</artifactId>
-            <version>1.2.0</version>
-            <classifier>RC1</classifier>
         </dependency>
         <dependency>
             <groupId>com.sun.medialib.codec</groupId>
