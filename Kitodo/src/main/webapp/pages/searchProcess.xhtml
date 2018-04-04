@@ -18,9 +18,9 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
-        <h3>#{msgs.nachEinemBandSuchen}</h3>
+        <h3>#{msgs.extendedSearch}</h3>
         <p:commandButton id="absenden"
-                         value="#{msgs.suche}"
+                         value="#{msgs.nachEinemBandSuchen}"
                          action="#{SearchForm.filter}"
                          icon="fa fa-search"
                          iconPos="right"
@@ -195,6 +195,6 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
         <li><h:link value="#{msgs.prozesse}" outcome="processes"/> </li>
-        <li><a href="">#{msgs.nachEinemBandSuchen}</a></li>
+        <li><a href="">#{msgs.extendedSearch}</a></li>
     </ui:define>
 </ui:composition>
