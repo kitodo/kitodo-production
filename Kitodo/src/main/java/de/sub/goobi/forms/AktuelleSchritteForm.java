@@ -478,7 +478,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public Task getMySchritt() {
         try {
-            schrittPerParameterLaden();
+            loadStepByParameter();
         } catch (DAOException | NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -596,22 +596,14 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * prüfen, ob per Parameter vielleicht zunächst ein anderer geladen werden
-     * soll.
+     * If the request contains an ID parameter, load step by this given request ID parameter.
      *
      * @throws DAOException
      *             , NumberFormatException
      */
-    private void schrittPerParameterLaden() throws DAOException {
+    private void loadStepByParameter() throws DAOException {
         String param = Helper.getRequestParameter("myid");
         if (param != null && !param.equals("")) {
-            /*
-             * wenn bisher noch keine aktuellen Schritte ermittelt wurden, dann dies jetzt
-             * nachholen, damit die Liste vollstÃ¤ndig ist
-             */
-            if (this.page == null &&  getUser() != null) {
-                // TODO: check if we still need this!
-            }
             Integer inParam = Integer.valueOf(param);
             if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
                 this.mySchritt = serviceManager.getTaskService().getById(inParam);
