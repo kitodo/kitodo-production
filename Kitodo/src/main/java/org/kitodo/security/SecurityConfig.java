@@ -102,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "editProject_GLOBAL",
                 "editProject_CLIENT_ANY",
                 "editProject_PROJECT_ANY")
-            .antMatchers("/pages/editDocket.jsf*").hasAnyAuthority(
+            .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
                 "admin_GLOBAL",
                 "editDocket_GLOBAL")
             .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(

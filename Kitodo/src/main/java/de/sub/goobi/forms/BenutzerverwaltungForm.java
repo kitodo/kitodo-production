@@ -103,7 +103,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Anzeige der gefilterten Nutzer.
      */
     public String filterAll() {
-        return redirectToList();
+        return userListPath;
     }
 
     private List<UserDTO> getUsers() throws DataException {
