@@ -28,8 +28,10 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title and not ProzessverwaltungForm.process.template}"/>
+            <h:outputText value="#{msgs.editTemplate} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title and ProzessverwaltungForm.process.template}"/>
+            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title and not ProzessverwaltungForm.process.template}"/>
+            <h:outputText value="#{msgs.newProcessTemplate}" rendered="#{empty ProzessverwaltungForm.process.title and ProzessverwaltungForm.process.template}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
