@@ -24,6 +24,10 @@ import org.openqa.selenium.support.FindBy;
 public class ClientsPage {
 
     @SuppressWarnings("unused")
+    @FindBy(id = "clientForm:newElementButton_button")
+    private WebElement newElementButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "clientForm:newClientButton")
     private WebElement newClientButton;
 
@@ -75,6 +79,8 @@ public class ClientsPage {
         if (isNotAt()) {
             goTo();
         }
+        newElementButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
         newClientButton.click();
         Thread.sleep(Browser.getDelayAfterNewItemClick());
         return Pages.getClientEditPage();
