@@ -531,11 +531,9 @@ public class BatchStepHelper extends BatchHelper {
                 task.setProcessingBegin(null);
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-            currentStep.setProcessingTime(new Date());
+            task.setProcessingTime(new Date());
             User user = Helper.getCurrentUser();
-            if (user != null) {
-                currentStep.setProcessingUser(user);
-            }
+            serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             try {
                 this.serviceManager.getProcessService().save(task.getProcess());

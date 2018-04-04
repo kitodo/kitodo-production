@@ -683,11 +683,9 @@ public class ProzessverwaltungForm extends BasisForm {
      */
     public void saveTask() {
         this.task.setEditTypeEnum(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
+        this.task.setProcessingTime(new Date());
         User user = getUser();
-        if (user != null) {
-            task.setProcessingUser(user);
-        }
+        serviceManager.getTaskService().replaceProcessingUser(this.task, user);
 
         try {
             serviceManager.getTaskService().save(this.task);

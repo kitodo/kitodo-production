@@ -140,9 +140,7 @@ public class WorkflowService {
                 close(task);
             } else {
                 task.setProcessingTime(new Date());
-                if (this.user != null) {
-                    task.setProcessingUser(this.user);
-                }
+                serviceManager.getTaskService().replaceProcessingUser(task, this.user);
             }
         }
         return task;
@@ -158,9 +156,7 @@ public class WorkflowService {
     public Task setTaskStatusDown(Task task) {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        if (this.user != null) {
-            task.setProcessingUser(this.user);
-        }
+        serviceManager.getTaskService().replaceProcessingUser(task, this.user);
         return setProcessingStatusDown(task);
     }
 
@@ -243,7 +239,7 @@ public class WorkflowService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        task.setProcessingUser(this.user);
+        serviceManager.getTaskService().replaceProcessingUser(task, this.user);
         task.setProcessingEnd(new Date());
 
         serviceManager.getTaskService().save(task);
@@ -292,9 +288,7 @@ public class WorkflowService {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
                 task.setProcessingTime(new Date());
-                if (this.user != null) {
-                    task.setProcessingUser(this.user);
-                }
+                serviceManager.getTaskService().replaceProcessingUser(task, this.user);
                 if (task.getProcessingBegin() == null) {
                     task.setProcessingBegin(new Date());
                 }
@@ -328,7 +322,7 @@ public class WorkflowService {
     public Task unassignTaskFromUser(Task task) throws DataException {
         this.webDav.uploadFromHome(task.getProcess());
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        task.setProcessingUser(null);
+        serviceManager.getTaskService().replaceProcessingUser(task, null);
         // if we have a correction task here then never remove startdate
         if (isCorrectionTask(task)) {
             task.setProcessingBegin(null);
@@ -376,7 +370,7 @@ public class WorkflowService {
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
+        serviceManager.getTaskService().replaceProcessingUser(currentTask, this.user);
         currentTask.setProcessingBegin(null);
 
         Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
@@ -415,7 +409,7 @@ public class WorkflowService {
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        currentTask.setProcessingUser(this.user);
+        serviceManager.getTaskService().replaceProcessingUser(currentTask, this.user);
 
         Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
@@ -486,7 +480,7 @@ public class WorkflowService {
             // TODO: check if this two lines are needed
             // this two lines differs both methods
             currentTask.setProcessingTime(date);
-            currentTask.setProcessingUser(this.user);
+            serviceManager.getTaskService().replaceProcessingUser(taskInBetween, this.user);
             // this two lines differs both methods
 
             serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
@@ -611,7 +605,7 @@ public class WorkflowService {
     private void downloadToHome(Task task) {
         task.setProcessingTime(new Date());
         if (this.user != null) {
-            task.setProcessingUser(this.user);
+            serviceManager.getTaskService().replaceProcessingUser(task, this.user);
             this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
         }
     }
