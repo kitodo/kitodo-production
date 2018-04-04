@@ -27,6 +27,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -110,6 +111,10 @@ public class ProjectTypeTest {
         secondUser.setSurname("Barney");
         users.add(secondUser);
 
+        Client client = new Client();
+        client.setId(1);
+        client.setName("TestClient");
+
         Project firstProject = new Project();
         firstProject.setId(1);
         firstProject.setTitle("Testing");
@@ -122,6 +127,7 @@ public class ProjectTypeTest {
         firstProject.setProcesses(processes);
         firstProject.setProjectFileGroups(projectFileGroups);
         firstProject.setUsers(users);
+        firstProject.setClient(client);
         projects.add(firstProject);
 
         Project secondProject = new Project();
@@ -170,7 +176,8 @@ public class ProjectTypeTest {
                 + "CatalogIDDigital)\\/pdf\\/\",\"folder\":\"\",\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/"
                 + "pdf\",\"suffix\":\"pdf\"}],\"startDate\":\"2017-01-01\",\"fileFormatInternal\":\"XStream\","
                 + "\"fileFormatDmsExport\":\"XStream\",\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,"
-                + "\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}")).readObject();
+                + "\"login\":\"first\"},{\"surname\":\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}],"
+                + "\"client.clientName\":\"TestClient\",\"client.id\":1}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(1);
@@ -192,7 +199,8 @@ public class ProjectTypeTest {
                 + "\"folder\":\"\",\"name\":\"DOWNLOAD\",\"mimeType\":\"application\\/pdf\",\"suffix\":\"pdf\"}],"
                 + "\"startDate\":\"2017-01-10\",\"fileFormatInternal\":\"XStream\",\"fileFormatDmsExport\":\"XStream\","
                 + "\"users\":[{\"surname\":\"Tac\",\"name\":\"Tic\",\"id\":1,\"login\":\"first\"},{\"surname\":"
-                + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}]}")).readObject();
+                + "\"Barney\",\"name\":\"Ted\",\"id\":2,\"login\":\"second\"}],"
+                + "\"client.clientName\":\"\",\"client.id\":0}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
 
         project = prepareData().get(2);
@@ -203,7 +211,8 @@ public class ProjectTypeTest {
                 + "\"numberOfPages\":0,\"metsRightsOwner\":\"\",\"endDate\":\"" + dateFormat.format(project.getEndDate())
                 + "\",\"numberOfVolumes\":0,\"projectFileGroups\":[],\"startDate\":\""
                 + dateFormat.format(project.getEndDate()) + "\",\"fileFormatInternal\":\"XStream\","
-                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[]}")).readObject();
+                + "\"fileFormatDmsExport\":\"XStream\",\"users\":[],"
+                + "\"client.clientName\":\"\",\"client.id\":0}")).readObject();
         assertEquals("Project JSONObject doesn't match to given JSONObject!", expected, actual);
     }
 

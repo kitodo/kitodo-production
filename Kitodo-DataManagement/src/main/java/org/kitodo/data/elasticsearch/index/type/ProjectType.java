@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
@@ -53,6 +54,13 @@ public class ProjectType extends BaseType<Project> {
         jsonObjectBuilder.add("active", project.isActive());
         jsonObjectBuilder.add("processes", addObjectRelation(project.getProcesses(), true));
         jsonObjectBuilder.add("users", addObjectRelation(project.getUsers(), true));
+        if (Objects.nonNull(project.getClient())) {
+            jsonObjectBuilder.add("client.id", project.getClient().getId());
+            jsonObjectBuilder.add("client.clientName", project.getClient().getName());
+        } else {
+            jsonObjectBuilder.add("client.id", 0);
+            jsonObjectBuilder.add("client.clientName", "");
+        }
         jsonObjectBuilder.add("projectFileGroups", projectFileGroups.build());
         return jsonObjectBuilder.build();
     }

@@ -13,8 +13,16 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
 public class ProjectsPage {
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:projectsTable_data")
+    private WebElement projectsTable;
 
     /**
      * Goes to projects page.
@@ -33,6 +41,13 @@ public class ProjectsPage {
      */
     public boolean isAt() {
         return Browser.getCurrentUrl().contains("projects");
+    }
+
+    public int countListedProjects() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getRowsOfTable(projectsTable).size();
     }
 
 }

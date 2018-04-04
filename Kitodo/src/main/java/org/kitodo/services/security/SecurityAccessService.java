@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityAccessService {
 
     private static SecurityAccessService instance = null;
+    private static ServiceManager serviceManager  = new ServiceManager();
 
     /**
      * Return singleton variable of type SecurityAccessService.
@@ -250,13 +253,33 @@ public class SecurityAccessService {
 
     /**
      * Checks if the current user is admin or has the specified authorities
-     * globally, for any client or for any project.
+     * globally, for the specified project or for the client which is related to the
+     * project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * 
+     * @param projectId
+     *            The project id.
+     * @return True if the current user is admin or has the specified authority
+     *         global, for the specified project or for the client of the project.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(String authorityTitle, int projectId)
+            throws DataException {
+        int clientId = serviceManager.getClientService()
+                .getIdFromJSONObject(serviceManager.getClientService().findByProjectId(projectId));
+        return isAdminOrHasAuthorityGlobalOrForClientOrForProject(authorityTitle, clientId, projectId);
+    }
+
+    /**
+     * Checks if the current user is admin or has the specified authorities
+     * globally, for the specified client or for the specified project.
      *
      * @param authorityTitle
      *            The authority titles separated with commas e.g. "authority1,
      *            authority2, authority3".
      * @return True if the current user is admin or has any of the specified
-     *         authorities for any client or project.
+     *         authorities for the specified client or the specified project.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForClientOrForProject(String authorityTitle, int clientId,
             int projectId) {

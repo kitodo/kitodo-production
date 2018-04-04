@@ -133,6 +133,22 @@
                 "active": {
                     "type": "boolean"
                 },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "clientName": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
                 "endDate": {
                     "type": "date"
                 },

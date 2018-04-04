@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -42,6 +43,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ClientDTO;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
@@ -77,15 +79,36 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Method saves processes and users related to modified project.
+     * Method saves processes, users and clients related to modified project.
      *
      * @param project
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Project project) throws CustomResponseException, IOException {
+    protected void manageDependenciesForIndex(Project project)
+            throws CustomResponseException, IOException, DAOException, DataException {
         manageProcessesDependenciesForIndex(project);
         manageUsersDependenciesForIndex(project);
+        manageClientDependenciesForIndex(project);
+    }
+
+    private void manageClientDependenciesForIndex(Project project)
+            throws CustomResponseException, IOException, DataException, DAOException {
+        if (project.getIndexAction() == IndexAction.DELETE) {
+            Client client = project.getClient();
+            if (Objects.nonNull(client)) {
+                client.getProjects().remove(project);
+                serviceManager.getClientService().saveToIndex(client);
+            }
+        } else {
+            JsonObject clients = serviceManager.getClientService().findByProjectId(project.getId());
+            Integer id = getIdFromJSONObject(clients);
+            if (id > 0 && !Objects.equals(id, project.getClient().getId())) {
+                Client oldClient = serviceManager.getClientService().getById(id);
+                serviceManager.getClientService().saveToIndex(oldClient);
+                serviceManager.getClientService().saveToIndex(project.getClient());
+            }
+        }
     }
 
     /**
@@ -241,6 +264,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setNumberOfVolumes(projectJSONObject.getInt("numberOfVolumes"));
         projectDTO.setActive(projectJSONObject.getBoolean("active"));
         projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
+        ClientDTO clientDTO = new ClientDTO();
+        clientDTO.setId(projectJSONObject.getInt("client.id"));
+        clientDTO.setName(projectJSONObject.getString("client.clientName"));
+        projectDTO.setClient(clientDTO);
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }
@@ -275,11 +302,12 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project
-     *         is incomplete
+     * @return true, if project is complete and can be used, false, if project is
+     *         incomplete
      */
     public boolean isProjectComplete(Project project) {
-        boolean projectsXmlExists = (new File(ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
+        boolean projectsXmlExists = (new File(
+                ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
         boolean digitalCollectionsXmlExists = (new File(
                 ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE)).exists();
 

@@ -27,6 +27,7 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfPages;
     private Integer numberOfVolumes;
     private Boolean active = true;
+    private ClientDTO client;
     private List<ProcessDTO> processes;
     private List<UserDTO> users;
 
@@ -199,6 +200,24 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Gets the client.
+     *
+     * @return The client.
+     */
+    public ClientDTO getClient() {
+        return client;
+    }
+
+    /**
+     * Sets the client.
+     *
+     * @param client The client.
+     */
+    public void setClient(ClientDTO client) {
+        this.client = client;
     }
 
     /**

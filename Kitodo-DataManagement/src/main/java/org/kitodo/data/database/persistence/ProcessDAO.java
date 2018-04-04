@@ -106,6 +106,24 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
+     * Get all processes.
+     *
+     * @return list of all processes as Process objects
+     */
+    public List<Process> getProcesses() {
+        return getByQuery("FROM Process WHERE template = 0 ORDER BY title ASC");
+    }
+
+    /**
+     * Get all active processes.
+     *
+     * @return list of all active processes as Process objects
+     */
+    public List<Process> getActiveProcesses() {
+        return getByQuery("SELECT process FROM Process AS process INNER JOIN process.project AS project WHERE process.template = 0 AND project.active = 1");
+    }
+
+    /**
      * Get all process templates with exact title.
      *
      * @return list of all process templates as Process objects

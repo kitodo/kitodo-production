@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 @Configuration
 @EnableWebSecurity
@@ -63,18 +64,84 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
                 .expiredUrl("/pages/login.jsf");
 
-        http
-            .authorizeRequests()
-                .antMatchers("/admin/**").hasAuthority("admin")
-                .antMatchers("/pages/statischBedienung.jsf").permitAll()
-                .antMatchers("/pages/statischTechnischerHintergrund.jsf").permitAll()
-                .antMatchers("/pages/images/**").permitAll()
-                .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
-                .antMatchers("/js/toggle.js").permitAll()
-                .antMatchers("/pages/aktiveNutzer.jsf").permitAll()
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
+        http.authorizeRequests()
+            .antMatchers("/pages/clients.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewAllClients_GLOBAL")
+            .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editClient_GLOBAL",
+                "editClient_CLIENT_ANY")
+
+            .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewIndex_GLOBAL")
+
+            .antMatchers("/pages/processes.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewAllProcesses_GLOBAL",
+                "viewAllProcesses_CLIENT_ANY",
+                "viewAllProcesses_PROJECT_ANY")
+            .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editProcess_GLOBAL",
+                "editProcess_CLIENT_ANY",
+                "editProcess_PROJECT_ANY")
+
+            .antMatchers("/pages/projects.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewAllProjects_GLOBAL",
+                "viewAllProjects_CLIENT_ANY",
+                "viewAllTemplates_GLOBAL",
+                "viewAllTemplates_CLIENT_ANY",
+                "viewAllTemplates_PROJECT_ANY",
+                "viewAllDockets_GLOBAL",
+                "viewAllRulesets_GLOBAL")
+            .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editProject_GLOBAL",
+                "editProject_CLIENT_ANY",
+                "editProject_PROJECT_ANY")
+            .antMatchers("/pages/editDocket.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editDocket_GLOBAL")
+            .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editRuleset_GLOBAL")
+
+            .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewAllTasks_GLOBAL",
+                "viewAllTasks_CLIENT_ANY",
+                "viewAllTasks_PROJECT_ANY")
+
+            .antMatchers("/pages/users.jsf").hasAnyAuthority(
+                "admin_GLOBAL",
+                "viewAllUsers_GLOBAL",
+                "viewAllUsers_CLIENT_ANY",
+                "viewAllUserGroups_GLOBAL",
+                "viewAllUserGroups_CLIENT_ANY",
+                "viewAllLdapGroups_GLOBAL")
+            .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editUser_GLOBAL",
+                "editUser_CLIENT_ANY")
+            .antMatchers("/pages/usergroupEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editUserGroup_GLOBAL",
+                "editUserGroup_CLIENT_ANY")
+            .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
+                "admin_GLOBAL",
+                "editLdapGroup_GLOBAL")
+
+            .antMatchers("/pages/images/**").permitAll()
+            .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
+            .antMatchers("/js/toggle.js").permitAll()
+            .anyRequest().authenticated();
+
+        http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
+
+        http.formLogin()
                 .loginPage("/pages/login.jsf")
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/pages/start.jsf")
@@ -82,7 +149,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
             .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/start.jsf"));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/login.jsf"));
     }
 
     @Autowired
