@@ -763,6 +763,8 @@ footer {
 .ui-panelgrid-cell .ui-selectonemenu {
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 0;
+    display: block;
 }
 
 .ui-picklist.ui-picklist-responsive .ui-picklist-list-wrapper {
