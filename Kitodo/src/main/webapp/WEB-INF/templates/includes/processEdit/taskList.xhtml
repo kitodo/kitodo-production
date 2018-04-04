@@ -49,39 +49,38 @@
         </p:column>
 
         <!-- status -->
-        <p:column headerText="#{msgs.status}" id="taskStatus">
-            <p:panelGrid columns="2" id="statusColumn" styleClass="ui-noborder statusColumn" style="background: transparent">
+        <p:column headerText="#{msgs.status}" id="taskStatus" rendered="#{not ProzessverwaltungForm.process.template}">
+            <p:panel id="statusColumn" styleClass="statusColumn">
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
                                 title="#{item.processingStatusEnum.title}"
                                 alt="status"/>
-                <p:panelGrid columns="1" cellpadding="0" cellspacing="0" style="background: transparent"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}">
-                    <!-- Set workflow state to next step -->
-                    <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusUp}"
-                                   id="taskStatusUp"
-                                   title="#{msgs.statusHoeherSetzen}"
-                                   oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
-                                   update="statusColumn">
-                        <h:graphicImage alt="status up"
-                                        value="/pages/images/buttons/order_right_klein.gif"/>
-                        <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.taskReload}"
-                                value="#{item}"/>
-                    </p:commandLink>
+                <p:panel rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}">
                     <!-- Set workflow state to previous step -->
-                    <p:commandLink action="#{ProzessverwaltungForm.setTaskStatusDown}"
-                                   id="taskStatusDown"
-                                   title="#{msgs.statusRunterSetzen}"
-                                   oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
-                                   update="statusColumn">
-                        <h:graphicImage alt="status down"
-                                        value="/pages/images/buttons/order_left_klein.gif"/>
+                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusDown}"
+                                     id="taskStatusDown"
+                                     title="#{msgs.statusRunterSetzen}"
+                                     oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
+                                     update="statusColumn"
+                                     icon="fa fa-long-arrow-left"
+                                     styleClass="ui-button-small">
                         <f:setPropertyActionListener
                                 target="#{ProzessverwaltungForm.taskReload}"
                                 value="#{item}"/>
-                    </p:commandLink>
-                </p:panelGrid>
-            </p:panelGrid>
+                    </p:commandButton>
+                    <!-- Set workflow state to next step -->
+                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusUp}"
+                                     id="taskStatusUp"
+                                     title="#{msgs.statusHoeherSetzen}"
+                                     oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
+                                     update="statusColumn"
+                                     icon="fa fa-long-arrow-right"
+                                     styleClass="ui-button-small">
+                        <f:setPropertyActionListener
+                                target="#{ProzessverwaltungForm.taskReload}"
+                                value="#{item}"/>
+                    </p:commandButton>
+                </p:panel>
+            </p:panel>
         </p:column>
 
         <!-- actions -->
@@ -111,32 +110,34 @@
         </p:column>
 
         <p:rowExpansion>
-            <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
-                <h:outputText value="#{msgs.title}: "/>
-                <h:outputText value="#{item.process.title}"/>
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
+                    <h:outputText value="#{msgs.title}: "/>
+                    <h:outputText value="#{item.process.title}"/>
 
-                <h:outputText value="#{msgs.prioritaet}: "/>
-                <h:outputText value="#{item.priority}"/>
+                    <h:outputText value="#{msgs.prioritaet}: "/>
+                    <h:outputText value="#{item.priority}"/>
 
-                <h:outputText value="#{msgs.bearbeitungsbeginn}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
-                <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.bearbeitungsbeginn}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
 
-                <h:outputText value="#{msgs.zuletztBearbeitet}: "  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
-                <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.zuletztBearbeitet}: "  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
-                <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
-                <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
-                <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
-                <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
 
-                <h:outputText value="#{msgs.aktualisierungstyp}: " rendered="#{item.editTypeEnum ne null}"/>
-                <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{msgs.aktualisierungstyp}: " rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
 
-                <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
-                <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                    <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                    <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
 
-            </p:panelGrid>
+                </p:panelGrid>
+            </div>
         </p:rowExpansion>
 
     </p:dataTable>
