@@ -27,31 +27,28 @@
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
-
-        <p:panel styleClass="content-header">
-            <h3>
-                <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
-                              rendered="#{BenutzerverwaltungForm.userObject.id ne null}"/>
-                <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
-                              rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
-            </h3>
-            <p:commandButton value="#{msgs.speichern}"
-                             action="#{BenutzerverwaltungForm.save}"
-                             id="save"
-                             widgetVar="save"
-                             update="notifications"
-                             icon="fa fa-floppy-o fa-lg"
-                             iconPos="right"
-                             disabled="#{BenutzerverwaltungForm.saveDisabled}"
-                             onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                             styleClass="button-filled-blue"/>
-            <p:commandButton id="saveButtonToggler"
-                             actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
-                             update="save"
-                             style="display:none;"/>
-            <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
-                      icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-        </p:panel>
+        <h3>
+            <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
+                          rendered="#{BenutzerverwaltungForm.userObject.id ne null}"/>
+            <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
+                          rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
+        </h3>
+        <p:commandButton value="#{msgs.speichern}"
+                         action="#{BenutzerverwaltungForm.save}"
+                         id="save"
+                         widgetVar="save"
+                         update="notifications"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         disabled="#{BenutzerverwaltungForm.saveDisabled}"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         styleClass="button-filled-blue"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">
