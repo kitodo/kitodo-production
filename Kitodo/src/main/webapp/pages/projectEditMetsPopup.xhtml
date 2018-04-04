@@ -21,10 +21,11 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="editFileGroupDialog"
-                      header="#{ProjekteForm.myFilegroup eq null ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
+                      header="#{empty ProjekteForm.myFilegroup.name ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
                       width="700px"
                       modal="true"
-                      dynamic="true">
+                      dynamic="true"
+                      styleClass="editDialog">
                 <h:form>
                     <p:panelGrid columns="1" layout="grid">
                         <p:row>
