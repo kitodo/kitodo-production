@@ -315,6 +315,30 @@ tr.ui-widget-content,
     text-align: left;
 }
 
+.ui-paginator > a::before {
+    font-family: FontAwesome;
+    font-size: 14px;
+}
+.ui-paginator > span > span, .ui-paginator a span {
+    display: none;
+}
+
+.ui-paginator-first::before {
+    content: '\f049';
+}
+
+.ui-paginator-prev::before {
+    content: '\f048';
+}
+
+.ui-paginator-next::before {
+    content: '\f051';
+}
+
+.ui-paginator-last::before {
+    content: '\f050';
+}
+
 .ui-widget-header .ui-state-default,
 .ui-tabmenu .ui-widget-header .ui-state-default.ui-state-active {
     background: #fff;
