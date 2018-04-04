@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
@@ -170,7 +171,7 @@ public class WorkflowService {
      *            object
      */
     public void setTasksStatusUp(Process process) throws DataException, IOException {
-        List<Task> tasks = process.getTasks();
+        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
 
         for (Task task : tasks) {
             setTaskStatusUp(task);
@@ -184,7 +185,7 @@ public class WorkflowService {
      *            object
      */
     public void setTasksStatusDown(Process process) throws DataException {
-        List<Task> tasks = new ArrayList<>(process.getTasks());
+        List<Task> tasks = new CopyOnWriteArrayList<>(process.getTasks());
         Collections.reverse(tasks);
 
         for (Task task : tasks) {
