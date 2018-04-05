@@ -51,7 +51,7 @@
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',item.client.id,item.id)}"
-                        onclick="#{ProjekteForm.setLocked(true)}" outcome="projectEdit"
+                        onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
                         title="#{msgs.projektBearbeiten}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
