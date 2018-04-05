@@ -478,7 +478,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public Task getMySchritt() {
         try {
-            loadStepByParameter();
+            loadTaskByParameter();
         } catch (DAOException | NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -596,12 +596,12 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * If the request contains an ID parameter, load step by this given request ID parameter.
+     * If the request contains an ID parameter, load task by this given request ID parameter.
      *
      * @throws DAOException
      *             , NumberFormatException
      */
-    private void loadStepByParameter() throws DAOException {
+    private void loadTaskByParameter() throws DAOException {
         String param = Helper.getRequestParameter("myid");
         if (param != null && !param.equals("")) {
             Integer inParam = Integer.valueOf(param);
