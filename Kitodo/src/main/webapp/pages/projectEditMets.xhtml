@@ -133,11 +133,12 @@
                 </p:commandLink>
                 <!-- delete button -->
                 <p:commandLink action="#{ProjekteForm.filegroupDelete()}"
-                               update="filegroupTable"
+                               update="editForm"
                                title="#{msgs.filegroupLoeschen}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
                                oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
-                               styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}">
+                               styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}"
+                               immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
                                                  value="#{filegroup}"/>
