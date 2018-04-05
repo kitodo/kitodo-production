@@ -26,4 +26,9 @@ window.onload = function () {
     document.getElementById('filterMenu:filterfield').addEventListener('change', function () {
         applyFilter(this.value);
     });
+
+    var filterString = document.getElementById('filterMenu:filterfield').value;
+    if (filterString.length > 0) {
+        applyFilter(filterString);
+    }
 }
