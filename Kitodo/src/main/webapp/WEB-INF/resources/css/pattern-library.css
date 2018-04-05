@@ -418,6 +418,29 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     float: none;
 }
 
+.ui-dialog-titlebar .ui-dialog-titlebar-close {
+    text-decoration: none;
+    padding: 0;
+}
+
+.ui-dialog-titlebar .ui-dialog-titlebar-close span {
+    display: none;
+}
+
+.ui-dialog-titlebar .ui-dialog-titlebar-close::after {
+    content: '\f00d';
+    font-family: 'FontAwesome';
+    color: white;
+    padding: 5px 10px;
+    background: #0071bc;
+    display: block;
+    border-radius: 3px;
+}
+
+.ui-dialog-titlebar .ui-dialog-titlebar-close.ui-state-hover::after {
+    background: #004f81;
+}
+
 .ui-accordion .ui-state-default,
 .ui-fieldset .ui-state-default {
     background: #d8d8d8;
