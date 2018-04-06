@@ -747,10 +747,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         //TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
-        processDTO.setProgressClosed(getProgressClosed(null, processDTO));
-        processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO));
-        processDTO.setProgressOpen(getProgressOpen(null, processDTO));
-        processDTO.setProgressLocked(getProgressLocked(null, processDTO));
+        processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
+        processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
+        processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
+        processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
         processDTO.setBlockedUser(getBlockedUser(processDTO));
         processDTO.setContainsUnreachableSteps(getContainsUnreachableSteps(processDTO));
         return processDTO;
@@ -1159,14 +1159,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Get full progress for process.
      *
-     * @param process
-     *            bean object
-     * @param processDTO
-     *            DTO object
+     * @param tasksBean
+     *            list of Task bean objects
+     * @param tasksDTO
+     *            list of TaskDTO objects
      * @return string
      */
-    public String getProgress(Process process, ProcessDTO processDTO) {
-        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
+    public String getProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
         double closed = (tasks.get("closed") * 100)
                 / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1185,14 +1185,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Get progress for closed tasks.
      *
-     * @param process
-     *            Process bean object
-     * @param processDTO
-     *            ProcessDTO object
+     * @param tasksBean
+     *            list of Task bean objects
+     * @param tasksDTO
+     *            list of TaskDTO objects
      * @return progress for closed steps
      */
-    public int getProgressClosed(Process process, ProcessDTO processDTO) {
-        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
+    public int getProgressClosed(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
         return (tasks.get("closed") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1201,14 +1201,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Get progress for processed tasks.
      *
-     * @param process
-     *            Process bean object
-     * @param processDTO
-     *            ProcessDTO object
+     * @param tasksBean
+     *            list of Task bean objects
+     * @param tasksDTO
+     *            list of TaskDTO objects
      * @return progress for processed tasks
      */
-    public int getProgressInProcessing(Process process, ProcessDTO processDTO) {
-        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
+    public int getProgressInProcessing(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
         return (tasks.get("inProcessing") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
@@ -1217,14 +1217,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Get progress for open tasks.
      *
-     * @param process
-     *            Process bean object
-     * @param processDTO
-     *            ProcessDTO object
+     * @param tasksBean
+     *            list of Task bean objects
+     * @param tasksDTO
+     *            list of TaskDTO objects
      * @return return progress for open tasks
      */
-    public int getProgressOpen(Process process, ProcessDTO processDTO) {
-        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
+    public int getProgressOpen(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
         return (tasks.get("open") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
     }
@@ -1232,72 +1232,56 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Get progress for open tasks.
      *
-     * @param process
-     *            Process bean object
-     * @param processDTO
-     *            ProcessDTO object
+     * @param tasksBean
+     *            list of Task bean objects
+     * @param tasksDTO
+     *            list of TaskDTO objects
      * @return return progress for open tasks
      */
-    public int getProgressLocked(Process process, ProcessDTO processDTO) {
-        HashMap<String, Integer> tasks = getCalculationForProgress(process, processDTO);
+    public int getProgressLocked(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
         return (tasks.get("locked") * 100)
                 / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
     }
 
-    private HashMap<String, Integer> getCalculationForProgress(Process process, ProcessDTO processDTO) {
-        if (process == null) {
-            return calculationForProgress(processDTO);
+    private HashMap<String, Integer> getCalculationForProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
+        if (Objects.nonNull(tasksBean)) {
+            return calculationForProgress(tasksBean);
         } else {
-            return calculationForProgress(process);
+            return calculationForProgress(tasksDTO);
         }
     }
 
-    private HashMap<String, Integer> calculationForProgress(Process process) {
+    private HashMap<String, Integer> calculationForProgress(List<?> tasks) {
         HashMap<String, Integer> results = new HashMap<>();
         int open = 0;
         int inProcessing = 0;
         int closed = 0;
         int locked = 0;
 
-        for (Task task : process.getTasks()) {
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                closed++;
-            } else if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                open++;
-            } else if (task.getProcessingStatusEnum() == TaskStatus.LOCKED) {
-                locked++;
+        for (Object task : tasks) {
+            if (task instanceof Task) {
+                if (((Task)task).getProcessingStatusEnum() == TaskStatus.DONE) {
+                    closed++;
+                } else if (((Task)task).getProcessingStatusEnum() == TaskStatus.OPEN) {
+                    open++;
+                } else if (((Task)task).getProcessingStatusEnum() == TaskStatus.LOCKED) {
+                    locked++;
+                } else {
+                    inProcessing++;
+                }
+            } else if (task instanceof TaskDTO) {
+                if (((TaskDTO)task).getProcessingStatus() == TaskStatus.DONE) {
+                    closed++;
+                } else if (((TaskDTO)task).getProcessingStatus() == TaskStatus.OPEN) {
+                    open++;
+                } else if (((TaskDTO)task).getProcessingStatus() == TaskStatus.LOCKED) {
+                    locked++;
+                } else {
+                    inProcessing++;
+                }
             } else {
-                inProcessing++;
-            }
-        }
-
-        results.put("closed", closed);
-        results.put("inProcessing", inProcessing);
-        results.put("open", open);
-        results.put("locked", locked);
-
-        if ((open + inProcessing + closed + locked) == 0) {
-            results.put("locked", 1);
-        }
-
-        return results;
-    }
-
-    private HashMap<String, Integer> calculationForProgress(ProcessDTO process) {
-        HashMap<String, Integer> results = new HashMap<>();
-        int open = 0;
-        int inProcessing = 0;
-        int closed = 0;
-        int locked = 0;
-        for (TaskDTO task : process.getTasks()) {
-            if (task.getProcessingStatus() == TaskStatus.DONE) {
-                closed++;
-            } else if (task.getProcessingStatus() == TaskStatus.OPEN) {
-                open++;
-            } else if (task.getProcessingStatus() == TaskStatus.LOCKED) {
-                locked++;
-            } else {
-                inProcessing++;
+                throw new IllegalArgumentException("List should contain tasks as Bean or DTO!");
             }
         }
 

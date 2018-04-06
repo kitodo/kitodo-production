@@ -591,7 +591,7 @@ public class WorkflowService {
      *            object
      */
     private void updateProcessSortHelperStatus(Process process) throws DataException {
-        String value = serviceManager.getProcessService().getProgress(process, null);
+        String value = serviceManager.getProcessService().getProgress(process.getTasks(), null);
         process.setSortHelperStatus(value);
         serviceManager.getProcessService().save(process);
     }
