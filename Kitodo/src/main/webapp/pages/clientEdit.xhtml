@@ -62,14 +62,18 @@
     <ui:define name="pageTabView">
         <p:tabView id="clientsTabView">
             <p:tab id="clientsTab" title="#{msgs.client}">
-                <p:panelGrid id="clientEdit-grid" columns="1" cellpadding="10" layout="grid">
-                    <p:outputLabel for="nameInput" value="#{msgs.name}"/>
-                    <p:inputText id="nameInput"
-                                 class="input"
-                                 disabled="#{isViewMode}"
-                                 placeholder="#{msgs.name}"
-                                 value="#{ClientForm.client.name}"
-                                 required="true"/>
+                <p:panelGrid id="clientEdit-grid" columns="2" cellpadding="10" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="nameInput" value="#{msgs.name}"/>
+                            <p:inputText id="nameInput"
+                                         class="input"
+                                         disabled="#{isViewMode}"
+                                         placeholder="#{msgs.name}"
+                                         value="#{ClientForm.client.name}"
+                                         required="true"/>
+                        </div>
+                    </p:row>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>
