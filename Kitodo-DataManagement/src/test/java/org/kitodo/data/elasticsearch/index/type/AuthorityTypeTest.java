@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import org.apache.http.HttpEntity;
@@ -53,23 +54,52 @@ public class AuthorityTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
+    public void shouldCreateFirstDocument() throws Exception {
         AuthorityType authorityType = new AuthorityType();
 
         Authority authority = prepareData().get(0);
         HttpEntity document = authorityType.createDocument(authority);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"First\","
-                + "\"userGroups\":[{\"id\":1,\"title\":\"First\"}]}")).readObject();
-        assertEquals("Authority JSONObject doesn't match to given JSONObject!", expected, actual);
 
-        authority = prepareData().get(1);
-        document = authorityType.createDocument(authority);
+        assertEquals("Key title doesn't match to given value!", "First", actual.getString("title"));
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Second\",\"userGroups\":[]}")).readObject();
-        assertEquals("Authority JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        assertEquals("Size userGroups doesn't match to given value!", 1, userGroups.size());
+
+        JsonObject userGroup = userGroups.getJsonObject(0);
+        assertEquals("Key userGroups.id doesn't match to given value!", 1, userGroup.getInt("id"));
+        assertEquals("Key userGroups.title doesn't match to given value!", "First", userGroup.getString("title"));
+    }
+
+    @Test
+    public void shouldCreateSecondDocument() throws Exception {
+        AuthorityType authorityType = new AuthorityType();
+
+        Authority authority = prepareData().get(1);
+        HttpEntity document = authorityType.createDocument(authority);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Second", actual.getString("title"));
+
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        AuthorityType authorityType = new AuthorityType();
+
+        Authority authority = prepareData().get(0);
+        HttpEntity document = authorityType.createDocument(authority);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
+
+        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonObject userGroup = userGroups.getJsonObject(0);
+        assertEquals("Amount of keys in userGroups is incorrect!", 2, userGroup.keySet().size());
     }
 
     @Test

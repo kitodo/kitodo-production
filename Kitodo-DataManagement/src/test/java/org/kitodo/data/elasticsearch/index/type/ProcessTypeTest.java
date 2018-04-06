@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import org.apache.http.HttpEntity;
@@ -114,46 +115,168 @@ public class ProcessTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
+    public void shouldCreateFirstDocument() throws Exception {
         ProcessType processType = new ProcessType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(0);
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Testing\",\"outputName\":\"Test\","
-                + "\"project.active\":true,\"templates\":[],\"sortHelperArticles\":0,\"sortHelperDocstructs\":0,"
-                + "\"wikiField\":\"Wiki\",\"docket\":0,\"ruleset\":1,\"project.id\":1,\"sortHelperStatus\":\"\","
-                + "\"creationDate\":\"2017-01-01\",\"processBaseUri\":\"\",\"template\":false,\"sortHelperImages\":20,"
-                + "\"batches\":[{\"id\":1,\"title\":\"First\"}],\"workpieces\":[],\"tasks\":[{\"id\":1,\"title\":"
-                + "\"Task one\"},{\"id\":2,\"title\":\"Task two\"}],\"project.title\":\"Project\",\"properties\":[],"
-                + "\"sortHelperMetadata\":0}")).readObject();
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
 
-        process = prepareData().get(1);
-        document = processType.createDocument(process);
+        assertEquals("Key title doesn't match to given value!", "Testing", actual.getString("title"));
+        assertEquals("Key outputName doesn't match to given value!", "Test", actual.getString("outputName"));
+        assertEquals("Key wikiField doesn't match to given value!", "Wiki", actual.getString("wikiField"));
+        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
+        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01", actual.getString("creationDate"));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 20, actual.getInt("sortHelperImages"));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
+        assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
+        assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
+        assertEquals("Key project.active doesn't match to given value!", true, actual.getBoolean("project.active"));
+        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
+        assertEquals("Key ruleset doesn't match to given value!", 1, actual.getInt("ruleset"));
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Rendering\",\"outputName\":\"Render\",\"batches\":[],"
-                + "\"wikiField\":\"Field\",\"docket\":1,\"ruleset\":0,\"project.id\":1,\"template\":false,\"templates\":[],"
-                + "\"project.title\":\"Project\",\"sortHelperStatus\":\"\",\"processBaseUri\":\"\",\"creationDate\":\""
-                + dateFormat.format(process.getCreationDate()) + "\",\"sortHelperImages\":30,\"workpieces\":[],"
-                + "\"tasks\":[],\"properties\":[{\"id\":1},{\"id\":2}],\"project.active\":true,\"sortHelperArticles\":0,"
-                + "\"sortHelperDocstructs\":0,\"sortHelperMetadata\":0}")).readObject();
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        process = prepareData().get(2);
-        document = processType.createDocument(process);
+        JsonArray properties = actual.getJsonArray("properties");
+        assertEquals("Size properties doesn't match to given value!", 0, properties.size());
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Incomplete\",\"outputName\":\"\",\"wikiField\":\"\","
-                + "\"docket\":0,\"ruleset\":0,\"project.id\":0,\"project.title\":\"\",\"template\":false,"
-                + "\"creationDate\":\"" + dateFormat.format(process.getCreationDate())
-                + "\",\"tasks\":[],\"properties\":[],\"batches\":[],\"project.active\":false,\"templates\":[],"
-                + "\"workpieces\":[],\"sortHelperImages\":0,\"sortHelperStatus\":\"\",\"processBaseUri\":\"\"," +
-                "\"sortHelperArticles\":0,\"sortHelperDocstructs\":0,\"sortHelperMetadata\":0}")).readObject();
-        assertEquals("Process JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray workpieces = actual.getJsonArray("workpieces");
+        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
+
+        JsonArray batches = actual.getJsonArray("batches");
+        assertEquals("Size batches doesn't match to given value!", 1, batches.size());
+
+        JsonObject batch = batches.getJsonObject(0);
+        assertEquals("Key batches.id doesn't match to given value!", 1, batch.getInt("id"));
+        assertEquals("Key batches.title doesn't match to given value!", "First", batch.getString("title"));
+
+        JsonArray tasks = actual.getJsonArray("tasks");
+        assertEquals("Size batches doesn't match to given value!", 2, tasks.size());
+
+        JsonObject task = tasks.getJsonObject(0);
+        assertEquals("Key tasks.id doesn't match to given value!", 1, task.getInt("id"));
+        assertEquals("Key tasks.title doesn't match to given value!", "Task one", task.getString("title"));
+
+        task = tasks.getJsonObject(1);
+        assertEquals("Key tasks.id doesn't match to given value!", 2, task.getInt("id"));
+        assertEquals("Key tasks.title doesn't match to given value!", "Task two", task.getString("title"));
+    }
+
+    @Test
+    public void shouldCreateSecondDocument() throws Exception {
+        ProcessType processType = new ProcessType();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Process process = prepareData().get(1);
+        HttpEntity document = processType.createDocument(process);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Rendering", actual.getString("title"));
+        assertEquals("Key outputName doesn't match to given value!", "Render", actual.getString("outputName"));
+        assertEquals("Key wikiField doesn't match to given value!", "Field", actual.getString("wikiField"));
+        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
+        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 30, actual.getInt("sortHelperImages"));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
+        assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
+        assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
+        assertEquals("Key project.active doesn't match to given value!", true, actual.getBoolean("project.active"));
+        assertEquals("Key docket doesn't match to given value!", 1, actual.getInt("docket"));
+        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
+
+        JsonArray tasks = actual.getJsonArray("tasks");
+        assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
+
+        JsonArray workpieces = actual.getJsonArray("workpieces");
+        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
+
+        JsonArray batches = actual.getJsonArray("batches");
+        assertEquals("Size batches doesn't match to given value!", 0, batches.size());
+
+        JsonArray properties = actual.getJsonArray("properties");
+        assertEquals("Size properties doesn't match to given value!", 2, properties.size());
+
+        JsonObject property = properties.getJsonObject(0);
+        assertEquals("Key properties.id doesn't match to given value!", 1, property.getInt("id"));
+
+        property = properties.getJsonObject(1);
+        assertEquals("Key properties.id doesn't match to given value!", 2, property.getInt("id"));
+    }
+
+    @Test
+    public void shouldCreateThirdDocument() throws Exception {
+        ProcessType processType = new ProcessType();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Process process = prepareData().get(2);
+        HttpEntity document = processType.createDocument(process);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Incomplete", actual.getString("title"));
+        assertEquals("Key outputName doesn't match to given value!", "", actual.getString("outputName"));
+        assertEquals("Key wikiField doesn't match to given value!", "", actual.getString("wikiField"));
+        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
+        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 0, actual.getInt("sortHelperImages"));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
+        assertEquals("Key project.id doesn't match to given value!", 0, actual.getInt("project.id"));
+        assertEquals("Key project.title doesn't match to given value!", "", actual.getString("project.title"));
+        assertEquals("Key project.active doesn't match to given value!", false, actual.getBoolean("project.active"));
+        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
+        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
+
+        JsonArray tasks = actual.getJsonArray("tasks");
+        assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
+
+        JsonArray workpieces = actual.getJsonArray("workpieces");
+        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
+
+        JsonArray batches = actual.getJsonArray("batches");
+        assertEquals("Size batches doesn't match to given value!", 0, batches.size());
+
+        JsonArray properties = actual.getJsonArray("properties");
+        assertEquals("Size properties doesn't match to given value!", 0, properties.size());
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        ProcessType processType = new ProcessType();
+
+        Process process = prepareData().get(0);
+        HttpEntity document = processType.createDocument(process);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
+
+        JsonArray batches = actual.getJsonArray("batches");
+        JsonObject batch = batches.getJsonObject(0);
+        assertEquals("Amount of keys in batches is incorrect!", 2, batch.keySet().size());
+
+        JsonArray tasks = actual.getJsonArray("tasks");
+        JsonObject task = tasks.getJsonObject(0);
+        assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }
 
     @Test

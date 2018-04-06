@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import org.apache.http.HttpEntity;
@@ -69,24 +70,60 @@ public class BatchTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
+    public void shouldCreateFirstDocument() throws Exception {
         BatchType batchType = new BatchType();
 
         Batch batch = prepareData().get(0);
         HttpEntity document = batchType.createDocument(batch);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Batch1\",\"type\":\"LOGISTIC\","
-                + "\"processes\":[{\"id\":1,\"title\":\"First\",\"template\":false},{\"id\":2,\"title\":\"Second\","
-                + "\"template\":false}]}")).readObject();
-        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
 
-        batch = prepareData().get(1);
-        document = batchType.createDocument(batch);
+        assertEquals("Key title doesn't match to given value!", "Batch1", actual.getString("title"));
+        assertEquals("Key type doesn't match to given value!", "LOGISTIC", actual.getString("type"));
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Batch2\",\"type\":\"\",\"processes\":[]}")).readObject();
-        assertEquals("Batch JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray processes = actual.getJsonArray("processes");
+        assertEquals("Size processes doesn't match to given value!", 2, processes.size());
+
+        JsonObject process = processes.getJsonObject(0);
+        assertEquals("Key processes.id doesn't match to given value!", 1, process.getInt("id"));
+        assertEquals("Key processes.title doesn't match to given value!", "First", process.getString("title"));
+        assertEquals("Key processes.template doesn't match to given value!", false, process.getBoolean("template"));
+
+        process = processes.getJsonObject(1);
+        assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
+        assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
+        assertEquals("Key processes.template doesn't match to given value!", false, process.getBoolean("template"));
+    }
+
+    @Test
+    public void shouldCreateSecondDocument() throws Exception {
+        BatchType batchType = new BatchType();
+
+        Batch batch = prepareData().get(1);
+        HttpEntity document = batchType.createDocument(batch);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Batch2", actual.getString("title"));
+        assertEquals("Key type doesn't match to given value!", "", actual.getString("type"));
+
+        JsonArray processes = actual.getJsonArray("processes");
+        assertEquals("Size processes doesn't match to given value!", 0, processes.size());
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        BatchType batchType = new BatchType();
+
+        Batch batch = prepareData().get(0);
+        HttpEntity document = batchType.createDocument(batch);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
+
+        JsonArray processes = actual.getJsonArray("processes");
+        JsonObject process = processes.getJsonObject(0);
+        assertEquals("Amount of keys in processes is incorrect!", 3, process.keySet().size());
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 
 import org.apache.http.HttpEntity;
@@ -70,7 +71,7 @@ public class PropertyTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
+    public void shouldCreateFirstDocument() throws Exception {
         PropertyType propertyType = new PropertyType();
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -78,19 +79,69 @@ public class PropertyTypeTest {
         HttpEntity document = propertyType.createDocument(property);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"title\":\"Property1\",\"value\":\"processes\",\"workpieces\":[],\"processes\":[{\"id\":2},"
-                + "{\"id\":3}],\"type\":\"process\",\"templates\":[],\"creationDate\":\""
-                + dateFormat.format(property.getCreationDate()) + "\"}")).readObject();
-        assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
 
-        property = prepareData().get(1);
-        document = propertyType.createDocument(property);
+        assertEquals("Key title doesn't match to given value!", "Property1", actual.getString("title"));
+        assertEquals("Key value doesn't match to given value!", "processes", actual.getString("value"));
+        assertEquals("Key type doesn't match to given value!", "process", actual.getString("type"));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()), actual.getString("creationDate"));
 
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"title\":\"Property2\",\"value\":\"templates\",\"workpieces\":[],"
-                + "\"processes\":[],\"type\":\"template\",\"templates\":[{\"id\":1}],\"creationDate\":\""
-                + dateFormat.format(property.getCreationDate()) + "\"}")).readObject();
-        assertEquals("Property JSONObject doesn't match to given JSONObject!", expected, actual);
+        JsonArray processes = actual.getJsonArray("processes");
+        assertEquals("Size processes doesn't match to given value!", 2, processes.size());
+
+        JsonObject process = processes.getJsonObject(0);
+        assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
+
+        process = processes.getJsonObject(1);
+        assertEquals("Key processes.id doesn't match to given value!", 3, process.getInt("id"));
+
+        JsonArray workpieces = actual.getJsonArray("workpieces");
+        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 0, templates.size());
+    }
+
+    @Test
+    public void shouldCreateDocument() throws Exception {
+        PropertyType propertyType = new PropertyType();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Property property = prepareData().get(1);
+        HttpEntity document = propertyType.createDocument(property);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key title doesn't match to given value!", "Property2", actual.getString("title"));
+        assertEquals("Key value doesn't match to given value!", "templates", actual.getString("value"));
+        assertEquals("Key type doesn't match to given value!", "template", actual.getString("type"));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()), actual.getString("creationDate"));
+
+        JsonArray processes = actual.getJsonArray("processes");
+        assertEquals("Size processes doesn't match to given value!", 0, processes.size());
+
+        JsonArray workpieces = actual.getJsonArray("workpieces");
+        assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 1, templates.size());
+
+        JsonObject template = templates.getJsonObject(0);
+        assertEquals("Key templates.id doesn't match to given value!", 1, template.getInt("id"));
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        PropertyType propertyType = new PropertyType();
+
+        Property property = prepareData().get(0);
+        HttpEntity document = propertyType.createDocument(property);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
+
+        JsonArray processes = actual.getJsonArray("processes");
+        JsonObject process = processes.getJsonObject(0);
+        assertEquals("Amount of keys in processes is incorrect!", 1, process.keySet().size());
     }
 
     @Test

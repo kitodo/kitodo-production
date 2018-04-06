@@ -55,26 +55,44 @@ public class FilterTypeTest {
     }
 
     @Test
-    public void shouldCreateDocument() throws Exception {
-        FilterType propertyType = new FilterType();
+    public void shouldCreateFirstDocument() throws Exception {
+        FilterType filterType = new FilterType();
 
-        Filter property = prepareData().get(0);
-        HttpEntity document = propertyType.createDocument(property);
+        Filter filter = prepareData().get(0);
+        HttpEntity document = filterType.createDocument(filter);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject expected = Json.createReader(new StringReader("{\"value\":\"\\\"id:1\\\"\",\"user\":1}")).readObject();
-        assertEquals("Filter JSONObject doesn't match to given JSONObject!", expected, actual);
 
-        property = prepareData().get(1);
-        document = propertyType.createDocument(property);
-
-        actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        expected = Json.createReader(new StringReader("{\"value\":\"\\\"id:2\\\"\",\"user\":1}")).readObject();
-        assertEquals("Filter JSONObject doesn't match to given JSONObject!", expected, actual);
+        assertEquals("Key value doesn't match to given value!", "\"id:1\"", actual.getString("value"));
+        assertEquals("Key user doesn't match to given value!", 1, actual.getInt("user"));
     }
 
     @Test
-    public void shouldCreateDocuments() throws Exception {
+    public void shouldCreateSecondDocument() throws Exception {
+        FilterType filterType = new FilterType();
+
+        Filter filter = prepareData().get(1);
+        HttpEntity document = filterType.createDocument(filter);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+
+        assertEquals("Key value doesn't match to given value!", "\"id:2\"", actual.getString("value"));
+        assertEquals("Key user doesn't match to given value!", 1, actual.getInt("user"));
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        FilterType filterType = new FilterType();
+
+        Filter filter = prepareData().get(0);
+        HttpEntity document = filterType.createDocument(filter);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
+    }
+
+    @Test
+    public void shouldCreateDocuments() {
         FilterType filterType = new FilterType();
 
         List<Filter> filters = prepareData();

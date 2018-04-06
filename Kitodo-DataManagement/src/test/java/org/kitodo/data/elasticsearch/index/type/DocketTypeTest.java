@@ -58,8 +58,20 @@ public class DocketTypeTest {
         HttpEntity document = docketType.createDocument(docket);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        JsonObject excepted = Json.createReader(new StringReader("{\"title\":\"default\",\"file\":\"docket.xsl\"}")).readObject();
-        assertEquals("Docket JSONObject doesn't match to given JSONObject!", excepted, actual);
+
+        assertEquals("Key title doesn't match to given value!", "default", actual.getString("title"));
+        assertEquals("Key file doesn't match to given value!", "docket.xsl", actual.getString("file"));
+    }
+
+    @Test
+    public void shouldCreateDocumentWithCorrectAmountOfKeys() throws Exception {
+        DocketType docketType = new DocketType();
+        Docket docket = prepareData().get(0);
+
+        HttpEntity document = docketType.createDocument(docket);
+
+        JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
+        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
     }
 
     @Test
