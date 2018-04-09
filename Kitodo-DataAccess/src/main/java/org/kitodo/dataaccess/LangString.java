@@ -12,6 +12,7 @@
 package org.kitodo.dataaccess;
 
 import java.util.Locale;
+
 import org.kitodo.dataaccess.storage.memory.MemoryNodeReference;
 
 /**

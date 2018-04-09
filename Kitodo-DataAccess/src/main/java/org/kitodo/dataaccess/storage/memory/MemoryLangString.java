@@ -14,6 +14,7 @@ package org.kitodo.dataaccess.storage.memory;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 import org.kitodo.dataaccess.LangString;
