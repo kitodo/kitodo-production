@@ -18,12 +18,12 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
-        <h3><h:outputText value="#{msgs.taskmanager}"/></h3>
+        <h3><h:outputText value="#{msgs.modules}"/></h3>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="modulesTabView">
-            <p:tab id="modulesTab" title="#{msgs.modules}">
+            <p:tab id="modulesTab" title="#{msgs.taskmanager}">
                 <p:dataTable var="item"
                              value="#{LongRunningTasksForm.tasks}">
                     <p:column headerText="#{msgs.titel}">
