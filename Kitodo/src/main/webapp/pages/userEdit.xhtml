@@ -83,6 +83,7 @@
                         <div>
                             <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
                             <p:selectBooleanCheckbox id="active"
+                                                     styleClass="input"
                                                      value="#{BenutzerverwaltungForm.userObject.active}"
                                                      onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
@@ -119,6 +120,7 @@
                         <div>
                             <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
                             <p:selectBooleanCheckbox id="withMassDownload"
+                                                     styleClass="input"
                                                      value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
                                                      onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>

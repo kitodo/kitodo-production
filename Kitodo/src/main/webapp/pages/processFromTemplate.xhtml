@@ -23,17 +23,15 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <p:panel styleClass="content-header">
-            <h3>
-                <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.prozessVorlage.title}')"/>
-            </h3>
-            <p:commandButton value="#{msgs.speichern}"
-                             action="#{ProzesskopieForm.createNewProcess}"
-                             icon="fa fa-floppy-o fa-lg" iconPos="right"
-                             onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                             update="notifications"/>
-            <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
-        </p:panel>
+        <h3>
+            <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.prozessVorlage.title}')"/>
+        </h3>
+        <p:commandButton value="#{msgs.speichern}"
+                         action="#{ProzesskopieForm.createNewProcess}"
+                         icon="fa fa-floppy-o fa-lg" iconPos="right"
+                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">

@@ -65,7 +65,7 @@
                 <div>
                     <!-- show process data in my tasks -->
                     <h:outputLabel for="show-process-data" value="#{msgs.spalteVorgangsdatumInEigenenAufgabenAnzeigen}" />
-                    <p:selectBooleanCheckbox id="show-process-data" value="#{LoginForm.myBenutzer.configProductionDateShow}"/>
+                    <p:selectBooleanCheckbox id="show-process-data" styleClass="input" value="#{LoginForm.myBenutzer.configProductionDateShow}"/>
                 </div>
             </p:row>
             <p:commandButton id="submit"
