@@ -140,15 +140,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    public List<ProcessDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort, offset, size), false);
-    }
-
-    public List<ProcessDTO> findAll(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         Map<String, String> filterMap = (Map<String, String>) filters;
@@ -567,7 +558,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
     }
 
-    List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset,Integer size)
+    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));
@@ -575,7 +566,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
-    private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active,String sort)
+    private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQuerySortHelperStatus(closed));

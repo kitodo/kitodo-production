@@ -69,17 +69,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return countDatabaseRows("FROM Template");
     }
 
-    /**
-     * Find all templates sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted templates as TemplateDTO objects
-     */
-    public List<TemplateDTO> findAll(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
-    }
-
     @Override
     @SuppressWarnings("unchecked")
     public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
@@ -169,7 +158,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         Integer project = jsonObject.getInt("project.id");
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
-        //templateDTO.setImageFolderInUse(isImageFolderInUse(templateDTO));
         templateDTO.setProgressClosed(serviceManager.getProcessService().getProgressClosed(null, templateDTO.getTasks()));
         templateDTO.setProgressInProcessing(serviceManager.getProcessService().getProgressInProcessing(null, templateDTO.getTasks()));
         templateDTO.setProgressOpen(serviceManager.getProcessService().getProgressOpen(null, templateDTO.getTasks()));
@@ -178,7 +166,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return templateDTO;
     }
 
-    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset,Integer size)
+    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));

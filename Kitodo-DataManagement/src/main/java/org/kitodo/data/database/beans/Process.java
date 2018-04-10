@@ -235,7 +235,7 @@ public class Process extends BaseTemplateBean {
     /**
      * Set template.
      *
-     * @param template as org.kitodo.data.database.beans.Template
+     * @param template as Template object
      */
     public void setTemplate(Template template) {
         this.template = template;

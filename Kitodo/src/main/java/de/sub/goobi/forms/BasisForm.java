@@ -175,7 +175,7 @@ public class BasisForm implements Serializable {
     /**
      * Set boolean to disable save button.
      *
-     * @param saveDisabled
+     * @param saveDisabled true or false
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;

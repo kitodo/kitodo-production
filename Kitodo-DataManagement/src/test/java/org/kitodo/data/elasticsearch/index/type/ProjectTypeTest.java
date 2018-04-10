@@ -88,15 +88,15 @@ public class ProjectTypeTest {
         fifthProjectFileGroup.setPreviewImage(false);
         projectFileGroups.add(fifthProjectFileGroup);
 
-        Template firstProcess = new Template();
-        firstProcess.setId(1);
-        firstProcess.setTitle("First");
-        templates.add(firstProcess);
+        Template firstTemplate = new Template();
+        firstTemplate.setId(1);
+        firstTemplate.setTitle("First");
+        templates.add(firstTemplate);
 
-        Process secondProcess = new Process();
-        secondProcess.setId(2);
-        secondProcess.setTitle("Second");
-        processes.add(secondProcess);
+        Process firstProcess = new Process();
+        firstProcess.setId(2);
+        firstProcess.setTitle("Second");
+        processes.add(firstProcess);
 
         User firstUser = new User();
         firstUser.setId(1);

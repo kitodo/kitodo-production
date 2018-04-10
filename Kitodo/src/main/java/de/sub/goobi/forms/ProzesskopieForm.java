@@ -1242,8 +1242,13 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
+    /**
+     * Get template.
+     *
+     * @return value of template
+     */
     public Template getTemplate() {
-        return this.template;
+        return template;
     }
 
     /**
@@ -1258,6 +1263,11 @@ public class ProzesskopieForm implements Serializable {
         return this.template != null ? this.template.getTitle() : null;
     }
 
+    /**
+     * Set template.
+     *
+     * @param template as Template object
+     */
     public void setTemplate(Template template) {
         this.template = template;
     }

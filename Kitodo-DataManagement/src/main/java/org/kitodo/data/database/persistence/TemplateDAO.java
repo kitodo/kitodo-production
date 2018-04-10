@@ -46,23 +46,10 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     /**
-     * @param process
-     *            object
-     * @param progress
-     *            service
-     * @return process object
-     * @throws DAOException
-     *             an exception that can be thrown from the underlying save()
-     *             procedure failure.
-     */
-    public Template save(Template process, String progress) throws DAOException {
-        process.setSortHelperStatus(progress);
-        return save(process);
-    }
-
-    /**
+     * Save list of templates.
+     *
      * @param list
-     *            of processes
+     *            of templates
      * @throws DAOException
      *             an exception that can be thrown from the underlying saveList()
      *             procedure failure.

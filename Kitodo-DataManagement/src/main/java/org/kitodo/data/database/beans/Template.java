@@ -85,7 +85,7 @@ public class Template extends BaseTemplateBean {
     /**
      * Set ruleset.
      *
-     * @param ruleset as Ruleset
+     * @param ruleset as Ruleset object
      */
     public void setRuleset(Ruleset ruleset) {
         this.ruleset = ruleset;
@@ -103,7 +103,7 @@ public class Template extends BaseTemplateBean {
     /**
      * Set docket.
      *
-     * @param docket as Docket
+     * @param docket as Docket object
      */
     public void setDocket(Docket docket) {
         this.docket = docket;

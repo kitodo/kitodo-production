@@ -430,7 +430,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            filter only open tasks - true/false
      * @param includeOtherTasks
      *            as default list of my tasks should contain open or in progress
-     *            tasks, this parameter if true, allows locked or dne tasks to be
+     *            tasks, this parameter if true, allows locked or done tasks to be
      *            displayed
      * @return query as {@link BoolQueryBuilder}
      */
@@ -479,7 +479,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             logger.error(e);
         }
 
-        // TODO: should user see the task if he is not assigned to it but his group is?
         BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
 
         // only tasks assigned to the user groups the current user is member of
