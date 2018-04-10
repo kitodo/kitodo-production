@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -39,7 +40,6 @@ import java.util.StringTokenizer;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
@@ -247,14 +247,10 @@ public class ProzesskopieForm implements Serializable {
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
 
-    private static final String TEMPLATE_ROOT = "/pages/";
-    private static final String PROCESS_FROM_TEMPLATE_PATH = TEMPLATE_ROOT + "processFromTemplate";
-    private static final String PROCESS_FROM_TEMPLATE_PATH_OLD = TEMPLATE_ROOT + "ProzessverwaltungAlle";
+    private static String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
 
-    private static final String PROCESS_PATH = TEMPLATE_ROOT + "processes";
-    private static final String PROCESS_PATH_OLD = TEMPLATE_ROOT + "/NewProcess/Page3";
-
-    static final String REDIRECT_PARAMETER = "faces-redirect=true";
+    private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
+    private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
     /**
      * Prepare.
@@ -308,7 +304,7 @@ public class ProzesskopieForm implements Serializable {
 
         initializePossibleDigitalCollections();
 
-        return redirectToProcessFromTemplateEdit();
+        return processFromTemplatePath;
     }
 
     private void readProjectConfigs() {
@@ -957,7 +953,7 @@ public class ProzesskopieForm implements Serializable {
 
         startTaskScriptThreads();
 
-        return this.redirectToProcessesAfterSave();
+        return processListPath;
     }
 
     private void updateTasks() {
@@ -1959,49 +1955,5 @@ public class ProzesskopieForm implements Serializable {
      */
     public FileformatInterface getFileformat() {
         return rdf;
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/processFromTemplate" once we have completely
-    // switched to the new frontend pages
-    private String redirectToProcessFromTemplateEdit() {
-        try {
-            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("projects.jsf"))) {
-                return PROCESS_FROM_TEMPLATE_PATH + "?" + REDIRECT_PARAMETER;
-            } else {
-                return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
-            // used from it's integration test
-            // class "ProzesskopieFormIT", where no "FacesContext" is available!
-            return PROCESS_FROM_TEMPLATE_PATH_OLD + "?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/processFromTemplate" once we have completely
-    // switched to the new frontend pages
-    private String redirectToProcessesAfterSave() {
-        try {
-            String referer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referer.substring(referer.lastIndexOf("/") + 1);
-            if (!callerViewId.isEmpty()
-                    && (callerViewId.contains("processFromTemplate.jsf"))) {
-                return PROCESS_PATH + "?" + REDIRECT_PARAMETER;
-            } else {
-                return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "ProzesskopieForm" is
-            // used from it's integration test
-            // class "ProzesskopieFormIT", where no "FacesContext" is available!
-            return PROCESS_PATH_OLD + "?" + REDIRECT_PARAMETER;
-        }
     }
 }

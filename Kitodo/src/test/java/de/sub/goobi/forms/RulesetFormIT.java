@@ -33,9 +33,9 @@ public class RulesetFormIT {
 
     @Test
     public void shouldRedirectAtRulesetCreation(){
-        String shouldRedirect = "/pages/RegelsaetzeBearbeiten?faces-redirect=true";
+        String shouldRedirect = "/pages/rulesetEdit?faces-redirect=true";
         String Redirect = rulesetForm.createNewRuleset();
-        assertEquals("Should redirect to RegelsaetzeBearbeiten",shouldRedirect,Redirect);
+        assertEquals("Should redirect to rulesetEdit",shouldRedirect,Redirect);
     }
 
     @Test

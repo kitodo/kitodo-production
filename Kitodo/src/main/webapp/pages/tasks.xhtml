@@ -58,7 +58,7 @@
                                 <f:setPropertyActionListener target="#{AktuelleSchritteForm.mySchritt}" value="#{AktuelleSchritteForm.getTaskById(item.id)}"/>
                             </h:commandLink>
                             <!-- already assigned task (this user) -->
-                            <h:link outcome="/pages/editCurrentTasks"
+                            <h:link outcome="/pages/currentTasksEdit"
                                     rendered="#{(item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and !item.batchStep) || (item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and !item.batchSize)}"
                                     title="#{msgs.inBearbeitungDurch}: #{item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName:''}">
                                 <i class="fa fa-bell"/>

@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +62,9 @@ public class BenutzerverwaltungForm extends BasisForm {
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;
 
+    private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
+
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -83,7 +87,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userObject.setLdapLogin("");
         this.userObject.setPassword("");
         this.password = "";
-        return redirectToEdit();
+        return userEditPath;
     }
 
     /**
@@ -99,7 +103,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Anzeige der gefilterten Nutzer.
      */
     public String filterAll() {
-        return redirectToList();
+        return userListPath;
     }
 
     private List<UserDTO> getUsers() throws DataException {
@@ -133,7 +137,8 @@ public class BenutzerverwaltungForm extends BasisForm {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
-                return redirectToList();
+                return userListPath;
+
             } else {
                 Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
                 return null;
@@ -424,47 +429,5 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/userEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/userEdit?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
-            // used from it's integration test
-            // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerBearbeiten?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/users" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("userEdit.jsf")) {
-                return "/pages/users?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when "BenutzerverwaltungForm" is
-            // used from it's integration test
-            // class "BenutzerverwaltungFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzerAlle?" + REDIRECT_PARAMETER;
-        }
     }
 }

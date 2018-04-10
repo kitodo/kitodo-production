@@ -261,7 +261,7 @@ public class Metadaten {
         calculateMetadataAndImages();
         cleanupMetadata();
         if (storeMetadata()) {
-            return "/pages/ProzessverwaltungAlle?faces-redirect=true";
+            return "/pages/processes?faces-redirect=true";
         } else {
             Helper.setMeldung("XML could not be saved");
             return "";

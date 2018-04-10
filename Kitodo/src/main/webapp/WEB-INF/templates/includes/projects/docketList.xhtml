@@ -33,9 +33,9 @@
         </p:column>
 
         <p:column headerText="#{msgs.auswahl}"
-                  rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editDocket')}"
+                  rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('docketEdit')}"
                   styleClass="actionsColumn">
-            <h:link outcome="/pages/editDocket"
+            <h:link outcome="/pages/docketEdit"
                     title="#{msgs.editDocket}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>

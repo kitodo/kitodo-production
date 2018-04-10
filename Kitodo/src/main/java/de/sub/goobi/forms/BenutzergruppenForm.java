@@ -13,12 +13,12 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -58,6 +58,9 @@ public class BenutzergruppenForm extends BasisForm {
     private boolean projectsAvailable = false;
     private boolean projectAuthoritiesChanged = false;
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelationsToDelete = new ArrayList<>();
+
+    private String usergroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String usergroupEditPath = MessageFormat.format(REDIRECT_PATH, "usergroupEdit");
 
     private void initializeSelectedClient() {
         if (selectedClient == null) {
@@ -109,7 +112,7 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public String newUserGroup() {
         this.userGroup = new UserGroup();
-        return redirectToEdit();
+        return usergroupEditPath;
     }
 
     /**
@@ -143,7 +146,7 @@ public class BenutzergruppenForm extends BasisForm {
                 this.projectAuthoritiesChanged = false;
             }
 
-            return redirectToList();
+            return usergroupListPath;
         } catch (DataException | DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
@@ -186,7 +189,7 @@ public class BenutzergruppenForm extends BasisForm {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
             return null;
         }
-        return redirectToList();
+        return usergroupListPath;
     }
 
     /**
@@ -502,50 +505,6 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public List<Project> getProjects() {
         return serviceManager.getProjectService().getAll();
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/usergroupEdit" once we have
-    // completely switched to the new frontend pages
-    private String redirectToEdit() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("users.jsf")) {
-                return "/pages/usergroupEdit?" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when
-            // "BenutzergruppenForm" is
-            // used from it's integration test
-            // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenBearbeiten?" + REDIRECT_PARAMETER;
-        }
-    }
-
-    // TODO:
-    // replace calls to this function with "/pages/users" once we have completely
-    // switched to the new frontend pages
-    private String redirectToList() {
-        try {
-            String referrer = FacesContext.getCurrentInstance().getExternalContext().getRequestHeaderMap()
-                    .get("referer");
-            String callerViewId = referrer.substring(referrer.lastIndexOf('/') + 1);
-            if (!callerViewId.isEmpty() && callerViewId.contains("usergroupEdit.jsf")) {
-                return "/pages/users.jsf?id=" + userForm.getActiveTabIndex() + "&" + REDIRECT_PARAMETER;
-            } else {
-                return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
-            }
-        } catch (NullPointerException e) {
-            // This NPE gets thrown - and therefore must be caught - when
-            // "BenutzergruppenForm" is
-            // used from it's integration test
-            // class "BenutzergruppenFormIT", where no "FacesContext" is available!
-            return "/pages/BenutzergruppenAlle?" + REDIRECT_PARAMETER;
-        }
     }
 
     /**

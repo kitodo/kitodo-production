@@ -266,7 +266,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     /**
      * Finds the current authenticated user and loads object dto from index.
-     * 
+     *
      * @return The user dto or null if no user is authenticated.
      */
     public UserDTO findAuthenticatedUser() throws DAOException, DataException {
@@ -700,7 +700,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public String getCss(User user) {
         if (user.getCss() == null || user.getCss().length() == 0) {
-            user.setCss("old/userStyles/default.css");
+            user.setCss("userStyles/default.css");
         }
         return user.getCss();
     }
