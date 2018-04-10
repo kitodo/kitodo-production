@@ -196,11 +196,7 @@ public class ProzesskopieForm implements Serializable {
      * Production configuration file.
      */
     private static final int DEFAULT_HITLIST_PAGE_SIZE = 10;
-
-    public static final String DIRECTORY_SUFFIX = "_tif";
-
-    static final String NAVI_FIRST_PAGE = "/pages/NewProcess/Page1";
-
+    private static final String DIRECTORY_SUFFIX = "_tif";
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
     private String atstsl = "";
@@ -732,24 +728,6 @@ public class ProzesskopieForm implements Serializable {
         return valide;
     }
 
-    public String goToPageOne() {
-        return NAVI_FIRST_PAGE;
-    }
-
-    // TODO: why do we need page two?
-    /**
-     * Go to page 2.
-     *
-     * @return page
-     */
-    public String goToPageTwo() {
-        if (!isContentValid()) {
-            return NAVI_FIRST_PAGE;
-        } else {
-            return "/pages/NewProcess/Page2";
-        }
-    }
-
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
@@ -758,7 +736,7 @@ public class ProzesskopieForm implements Serializable {
         // evict set up id to null
         Helper.getHibernateSession().evict(this.prozessKopie);
         if (!isContentValid()) {
-            return NAVI_FIRST_PAGE;
+            return null;
         }
         addProperties();
 
