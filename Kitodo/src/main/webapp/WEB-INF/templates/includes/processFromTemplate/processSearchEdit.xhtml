@@ -65,12 +65,14 @@
                              rendered="#{ProzesskopieForm.useOpac}" class="input"
                              onkeypress="return checkOpac('OpacRequest',event)"/>
             </div>
-            <p:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery" update="editForm"
-                           rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-                <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
-                                style="vertical-align:middle; margin-right:3px"/>
-                <h:outputText value="#{msgs.uebernehmen}"/>
-            </p:commandLink>
+            <p:commandButton id="performOpacQuery"
+                             action="#{ProzesskopieForm.evaluateOpac}"
+                             value="#{msgs.uebernehmen}"
+                             title="#{msgs.opacAbfragen}"
+                             icon="fa fa-download" iconPos="right"
+                             update="editForm"
+                             onclick="PF('notifications').renderMessage({'summary':'#{msgs.searchingOpac}','detail':'','severity':'info'})"
+                             rendered="#{ProzesskopieForm.useOpac}" />
         </p:row>
     </p:panelGrid>
 </ui:composition>

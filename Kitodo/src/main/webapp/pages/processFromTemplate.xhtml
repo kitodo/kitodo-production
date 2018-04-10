@@ -35,7 +35,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processFromTemplateTabView">
+        <p:tabView id="processFromTemplateTabView" activeIndex="#{ProzesskopieForm.activeTabId}">
             <p:tab id="processDataTab" title="#{msgs.prozessdaten}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processDataEdit.xhtml" />
             </p:tab>
@@ -49,9 +49,7 @@
     </ui:define>
 
     <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/processEdit/propertyEditPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceEditPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/processEdit/templateEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/hitlistPopup.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

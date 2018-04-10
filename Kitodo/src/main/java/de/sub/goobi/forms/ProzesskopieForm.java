@@ -84,6 +84,7 @@ import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.omnifaces.util.Ajax;
+import org.primefaces.context.RequestContext;
 
 @Named("ProzesskopieForm")
 @SessionScoped
@@ -91,6 +92,26 @@ public class ProzesskopieForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final long serialVersionUID = -4512865679353743L;
     private transient ServiceManager serviceManager = new ServiceManager();
+
+    private int activeTabId = 0;
+
+    /**
+     * Get activeTabId.
+     *
+     * @return value of activeTabId
+     */
+    public int getActiveTabId() {
+        return activeTabId;
+    }
+
+    /**
+     * Set activeTabId.
+     *
+     * @param activeTabId as int
+     */
+    public void setActiveTabId(int activeTabId) {
+        this.activeTabId = activeTabId;
+    }
 
     /**
      * The class SelectableHit represents a hit on the hit list that shows up if
@@ -175,10 +196,8 @@ public class ProzesskopieForm implements Serializable {
         /**
          * The function selectClick() is called if the user clicks on a
          * catalogue hit summary in order to import it into Production.
-         *
-         * @return always "", indicating to Faces to stay on that page
          */
-        public String selectClick() {
+        public void selectClick() {
             try {
                 importHit(hit);
             } catch (Exception e) {
@@ -186,7 +205,6 @@ public class ProzesskopieForm implements Serializable {
             } finally {
                 hitlistPage = -1;
             }
-            return null;
         }
     }
 
@@ -402,39 +420,41 @@ public class ProzesskopieForm implements Serializable {
      * to start a catalogue search. It performs the search and loads the hit if
      * it is unique. Otherwise, it will cause a hit list to show up for the user
      * to select a hit.
-     *
-     * @return always "", telling JSF to stay on that page
      */
-    public String evaluateOpac() {
+    public void evaluateOpac() {
         long timeout = CataloguePlugin.getTimeout();
+        clearValues();
+        RequestContext.getCurrentInstance().update("hitlistForm");
         try {
-            clearValues();
             readProjectConfigs();
-            if (!pluginAvailableFor(opacKatalog)) {
-                return null;
+            if (pluginAvailableFor(opacKatalog)) {
+                String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
+                query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
+
+                hitlist = importCatalogue.find(query, timeout);
+                hits = importCatalogue.getNumberOfHits(hitlist, timeout);
+
+                String message = MessageFormat.format(Helper.getTranslation("newProcess.catalogueSearch.results"), hits);
+
+                switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
+                    case 0:
+                        Helper.setFehlerMeldung(message);
+                        break;
+                    case 1:
+                        importHit(importCatalogue.getHit(hitlist, 0, timeout));
+                        Helper.setMeldung(message);
+                        break;
+                    default:
+                        hitlistPage = 0; // show first page of hitlist
+                        Helper.setMeldung(message);
+                        RequestContext.getCurrentInstance().execute("PF('hitlistDialog').show()");
+                        break;
+                }
+            } else {
+                Helper.setFehlerMeldung("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
-
-            String query = QueryBuilder.restrictToField(opacSuchfeld, opacSuchbegriff);
-            query = QueryBuilder.appendAll(query, ConfigOpac.getRestrictionsForCatalogue(opacKatalog));
-
-            hitlist = importCatalogue.find(query, timeout);
-            hits = importCatalogue.getNumberOfHits(hitlist, timeout);
-
-            switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
-                case 0:
-                    Helper.setFehlerMeldung("No hit found", "");
-                    break;
-                case 1:
-                    importHit(importCatalogue.getHit(hitlist, 0, timeout));
-                    break;
-                default:
-                    hitlistPage = 0; // show first page of hitlist
-                    break;
-            }
-            return null;
         } catch (Exception e) {
-            Helper.setErrorMessage("Error on reading opac '" + opacKatalog + "'", logger, e);
-            return null;
+            Helper.setErrorMessage("Error on reading OPAC '" + opacKatalog + "'", logger, e);
         }
     }
 
@@ -497,6 +517,7 @@ public class ProzesskopieForm implements Serializable {
         fillFieldsFromMetadataFile();
         applyCopyingRules(new CopierData(rdf, this.template));
         atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
+        setActiveTabId(0);
     }
 
     /**
