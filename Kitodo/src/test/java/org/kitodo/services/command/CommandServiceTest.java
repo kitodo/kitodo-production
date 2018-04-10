@@ -28,15 +28,16 @@ import org.kitodo.api.command.CommandResult;
 
 public class CommandServiceTest {
     private static String scriptExtension;
+    private static String scriptPath = "src/test/resources/scripts/";
     private static boolean windows = false;
     private static File workingScript = new File(
-            System.getProperty("user.dir") + "/src/test/resources/working_script.sh");
+            System.getProperty("user.dir") + "/" + scriptPath + "working_script.sh");
     private static File workingScriptWithParameters = new File(
-            System.getProperty("user.dir") + "/src/test/resources/working_script_with_parameters.sh");
+            System.getProperty("user.dir") + "/" + scriptPath + "working_script_with_parameters.sh");
     private static File longWorkingScript2s = new File(
-            System.getProperty("user.dir") + "/src/test/resources/long_working_script_2s.sh");
+            System.getProperty("user.dir") + "/" + scriptPath + "long_working_script_2s.sh");
     private static File longWorkingScript1s = new File(
-            System.getProperty("user.dir") + "/src/test/resources/long_working_script_1s.sh");
+            System.getProperty("user.dir") + "/" + scriptPath + "long_working_script_1s.sh");
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -67,7 +68,7 @@ public class CommandServiceTest {
 
     @Test
     public void runScriptWithString() throws IOException {
-        String commandString = "src/test/resources/working_script" + scriptExtension;
+        String commandString = scriptPath + "working_script" + scriptExtension;
         CommandService service = new CommandService();
         CommandResult result = service.runCommand(commandString);
 
@@ -83,7 +84,7 @@ public class CommandServiceTest {
 
     @Test
     public void runScriptWithFile() throws IOException {
-        String commandString = "src/test/resources/working_script" + scriptExtension;
+        String commandString = scriptPath + "working_script" + scriptExtension;
         File file = new File(commandString);
         CommandService service = new CommandService();
         CommandResult result = service.runCommand(file);
@@ -101,7 +102,7 @@ public class CommandServiceTest {
 
     @Test
     public void runScriptParameters() throws IOException {
-        String commandString = "src/test/resources/working_script_with_parameters" + scriptExtension;
+        String commandString = scriptPath + "working_script_with_parameters" + scriptExtension;
         File file = new File(commandString);
         List<String> parameter = new ArrayList<>();
         parameter.add("HelloWorld");
@@ -121,14 +122,14 @@ public class CommandServiceTest {
 
     @Test(expected = IOException.class)
     public void runNotExistingScript() throws IOException {
-        String commandString = "src/test/resources/not_existing_script" + scriptExtension;
+        String commandString = scriptPath + "not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommand(commandString);
     }
 
     @Test
     public void runScriptAsync() throws InterruptedException {
-        String commandString = "src/test/resources/working_script" + scriptExtension;
+        String commandString = scriptPath + "working_script" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
@@ -138,8 +139,8 @@ public class CommandServiceTest {
 
     @Test
     public void runLongScriptAsync() throws InterruptedException {
-        String commandString2s = "src/test/resources/long_working_script_2s" + scriptExtension;
-        String commandString1s = "src/test/resources/long_working_script_1s" + scriptExtension;
+        String commandString2s = scriptPath + "long_working_script_2s" + scriptExtension;
+        String commandString1s = scriptPath + "long_working_script_1s" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommandAsync(commandString2s);
         service.runCommandAsync(commandString1s);
@@ -150,7 +151,7 @@ public class CommandServiceTest {
 
     @Test
     public void runNotExistingScriptAsync() throws InterruptedException {
-        String commandString = "src/test/resources/not_existing_script" + scriptExtension;
+        String commandString = scriptPath + "not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
@@ -161,7 +162,7 @@ public class CommandServiceTest {
 
     @Test
     public void runScriptParametersAsync() throws InterruptedException {
-        String commandString = "src/test/resources/working_script_with_parameters" + scriptExtension;
+        String commandString = scriptPath + "working_script_with_parameters" + scriptExtension;
         File file = new File(commandString);
         List<String> parameter = new ArrayList<>();
         parameter.add("HelloWorld");
@@ -189,10 +190,10 @@ public class CommandServiceTest {
      * 
      * @return The CommandResult.
      */
-    public CommandResult getLastFinishedCommandResult(ArrayList<CommandResult> commandResults) {
-        if (commandResults.isEmpty())
+    private CommandResult getLastFinishedCommandResult(ArrayList<CommandResult> commandResults) {
+        if (commandResults.isEmpty()) {
             return null;
-
+        }
         return commandResults.get(commandResults.size() - 1);
     }
 }
