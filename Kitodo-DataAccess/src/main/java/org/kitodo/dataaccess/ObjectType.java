@@ -12,6 +12,7 @@
 package org.kitodo.dataaccess;
 
 import java.util.regex.Pattern;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 

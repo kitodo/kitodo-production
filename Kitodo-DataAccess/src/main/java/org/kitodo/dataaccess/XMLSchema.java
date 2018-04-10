@@ -13,6 +13,7 @@ package org.kitodo.dataaccess;
 
 import java.math.BigInteger;
 import java.util.Optional;
+
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.RDFNode;
 
