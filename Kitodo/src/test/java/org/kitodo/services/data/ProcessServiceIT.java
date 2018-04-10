@@ -16,7 +16,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
+import de.sub.goobi.config.ConfigCore;
+
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.JsonObject;
@@ -29,8 +33,12 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
+import org.kitodo.api.ugh.FileformatInterface;
+import org.kitodo.api.ugh.MetsModsInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -466,41 +474,50 @@ public class ProcessServiceIT {
         assertTrue("Fulltext file path doesn't match to given file path!", condition);
     }
 
-    @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldReadMetadataFile() throws Exception {
+        FileLoader.createRulesetFile();
+        FileLoader.createMetadataFile();
+
         Process process = processService.getById(1);
-        System.out.println(processService.readMetadataFile(process));
-        boolean condition = processService.readMetadataFile(process).equals("");
-        assertTrue("It was not possible to read metadata file!", condition);
+        DigitalDocumentInterface digitalDocument = processService.readMetadataFile(process).getDigitalDocument();
+
+        String processTitle = process.getTitle();
+        String processTitleFromMetadata = digitalDocument.getLogicalDocStruct().getAllMetadata().get(0).getValue();
+        assertEquals("It was not possible to read metadata file!", processTitle, processTitleFromMetadata);
+
+        FileLoader.deleteMetadataFile();
+        FileLoader.deleteRulesetFile();
     }
 
-    @Ignore("no idea how check if it is correct - Fileformat class")
-    @Test
-    public void shouldWriteMetadataFile() throws Exception {
-        Process process = processService.getById(1);
-        // boolean condition =
-        // processService.writeMetadataFile(process).equals("");
-        // assertTrue("It was not possible to write metadata file!", condition);
-    }
-
-    @Ignore("no idea how check if it is correct - Fileformat class")
     @Test
     public void shouldReadMetadataAsTemplateFile() throws Exception {
+        FileLoader.createRulesetFile();
+        FileLoader.createMetadataTemplateFile();
+
         Process process = processService.getById(1);
-        System.out.println(processService.readMetadataAsTemplateFile(process));
-        boolean condition = processService.readMetadataAsTemplateFile(process).equals("");
-        assertTrue("It was not possible to read metadata as template file!", condition);
+        FileformatInterface fileFormat = processService.readMetadataAsTemplateFile(process);
+        assertTrue("Read template file has incorrect file format!", fileFormat instanceof MetsModsInterface);
+        int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
+        assertEquals("It was not possible to read metadata as template file!", metadataSize, 1);
+
+        FileLoader.deleteMetadataTemplateFile();
+        FileLoader.deleteRulesetFile();
     }
 
-    @Ignore("no idea how check if it is correct - Fileformat class")
+    @Ignore("PreferencesException: Can't obtain DigitalDocument! Maybe wrong preferences file? - METS node")
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
+        FileLoader.createRulesetFile();
+
         Process process = processService.getById(1);
-        // should return true or false
-        fileService.writeMetadataAsTemplateFile(null, process);
-        boolean condition = false;
+        PrefsInterface preferences = new ServiceManager().getRulesetService().getPreferences(process.getRuleset());
+        fileService.writeMetadataAsTemplateFile(UghImplementation.INSTANCE.createMetsMods(preferences), process);
+        boolean condition = fileService.fileExist(URI.create("1/template.xml"));
         assertTrue("It was not possible to write metadata as template file!", condition);
+
+        Files.deleteIfExists(Paths.get(ConfigCore.getKitodoDataDirectory() + "1/template.xml"));
+        FileLoader.deleteRulesetFile();
     }
 
     @Test
@@ -545,7 +562,6 @@ public class ProcessServiceIT {
         assertEquals("First open task doesn't match to the given task!", expected, actual);
     }
 
-    @Ignore("Batch update returned unexpected row count from update [0]; actual row count: 0; expected: 1")
     @Test
     public void shouldAddToWikiField() throws Exception {
         Process process = processService.getById(2);
@@ -559,16 +575,19 @@ public class ProcessServiceIT {
     public void shouldCreateProcessDirs() throws Exception {
         Process process = processService.getById(2);
         processService.createProcessDirs(process);
-        // assertEquals("Process directories are not created!", expected,
-        // actual);
+        //assertEquals("Process directories are not created!", expected, actual);
     }
 
-    @Ignore("not sure how it should look")
     @Test
     public void shouldGetDigitalDocument() throws Exception {
-        DigitalDocumentInterface expected = UghImplementation.INSTANCE.createDigitalDocument();
-        DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(2));
-        // assertEquals("Digital documents are not equal!", expected, actual);
+        FileLoader.createRulesetFile();
+        FileLoader.createMetadataFile();
+
+        DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(1));
+        assertEquals("Metadata size in digital document is incorrect!", 1, actual.getLogicalDocStruct().getAllMetadata().size());
+
+        FileLoader.deleteMetadataFile();
+        FileLoader.deleteRulesetFile();
     }
 
     @Test

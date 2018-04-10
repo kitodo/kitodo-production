@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo;
 
 import de.sub.goobi.config.ConfigCore;
@@ -13,9 +24,11 @@ import org.goobi.production.constants.FileNames;
 public class FileLoader {
 
     private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
+    private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
+    private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
     private static String rulesetPath = ConfigCore.getKitodoConfigDirectory() + "ruleset_test.xml";
 
-    public static  void createDigitalCollectionsFile() throws IOException {
+    public static void createDigitalCollectionsFile() throws IOException {
         List<String> content = new ArrayList<>();
         content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         content.add("<DigitalCollections>");
@@ -38,6 +51,62 @@ public class FileLoader {
         content.add("</project>");
         content.add("</DigitalCollections>");
         Files.write(Paths.get(digitalCollectionsPath), content);
+    }
+
+    public static void createMetadataFile() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<mets:mets xsi:schemaLocation=\"info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd "
+                + "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ "
+                + "http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mix/v10 http://www.loc.gov/standards/mix/mix10/mix10.xsd\" "
+                + "xmlns:mets=\"http://www.loc.gov/METS/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+        content.add("<mets:dmdSec ID=\"DMDLOG_0000\">");
+        content.add("<mets:mdWrap MDTYPE=\"MODS\">");
+        content.add("<mets:xmlData>");
+        content.add("<mods:mods xmlns:mods=\"http://www.loc.gov/mods/v3\">");
+        content.add("<mods:extension>");
+        content.add("<goobi:goobi xmlns:goobi=\"http://meta.goobi.org/v1.5.1/\">");
+        content.add("<goobi:metadata name=\"TitleDocMain\">First process</goobi:metadata>");
+        content.add("</goobi:goobi>");
+        content.add("</mods:extension>");
+        content.add("</mods:mods>");
+        content.add("</mets:xmlData>");
+        content.add("</mets:mdWrap>");
+        content.add("</mets:dmdSec>");
+        content.add("<mets:structMap TYPE=\"LOGICAL\">");
+        content.add("<mets:div DMDID=\"DMDLOG_0000\" ID=\"LOG_0000\" TYPE=\"Monograph\"/>");
+        content.add("</mets:structMap>");
+        content.add("</mets:mets>");
+
+        Files.write(Paths.get(metadataPath), content);
+    }
+
+    public static void createMetadataTemplateFile() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<mets:mets xsi:schemaLocation=\"info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd "
+                + "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ "
+                + "http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mix/v10 http://www.loc.gov/standards/mix/mix10/mix10.xsd\" "
+                + "xmlns:mets=\"http://www.loc.gov/METS/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">");
+        content.add("<mets:dmdSec ID=\"DMDLOG_0000\">");
+        content.add("<mets:mdWrap MDTYPE=\"MODS\">");
+        content.add("<mets:xmlData>");
+        content.add("<mods:mods xmlns:mods=\"http://www.loc.gov/mods/v3\">");
+        content.add("<mods:extension>");
+        content.add("<goobi:goobi xmlns:goobi=\"http://meta.goobi.org/v1.5.1/\">");
+        content.add("<goobi:metadata name=\"TitleDocMain\">First process</goobi:metadata>");
+        content.add("</goobi:goobi>");
+        content.add("</mods:extension>");
+        content.add("</mods:mods>");
+        content.add("</mets:xmlData>");
+        content.add("</mets:mdWrap>");
+        content.add("</mets:dmdSec>");
+        content.add("<mets:structMap TYPE=\"LOGICAL\">");
+        content.add("<mets:div DMDID=\"DMDLOG_0000\" ID=\"LOG_0000\" TYPE=\"Monograph\"/>");
+        content.add("</mets:structMap>");
+        content.add("</mets:mets>");
+
+        Files.write(Paths.get(metadataTemplatePath), content);
     }
 
     public static void createRulesetFile() throws IOException {
@@ -109,6 +178,14 @@ public class FileLoader {
 
     public static void deleteDigitalCollectionsFile() throws IOException {
         Files.deleteIfExists(Paths.get(digitalCollectionsPath));
+    }
+
+    public static void deleteMetadataFile() throws IOException {
+        Files.deleteIfExists(Paths.get(metadataPath));
+    }
+
+    public static void deleteMetadataTemplateFile() throws IOException {
+        Files.deleteIfExists(Paths.get(metadataTemplatePath));
     }
 
     public static void deleteRulesetFile() throws IOException {

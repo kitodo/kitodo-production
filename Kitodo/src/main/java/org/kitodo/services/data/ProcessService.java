@@ -1382,7 +1382,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
             logger.debug("current template.xml file type: {}", type);
             FileformatInterface ff = determineFileFormat(type, process);
-            ff.read(processSubTypeURI.toString());
+            String processSubTypePath = fileService.getFile(processSubTypeURI).getAbsolutePath();
+            ff.read(processSubTypePath);
             return ff;
         } else {
             throw new IOException("File does not exist: " + processSubTypeURI);
