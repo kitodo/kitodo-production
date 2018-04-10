@@ -18,6 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
+    <h:outputScript name="js/opacImport.js" target="body" />
     <p:panelGrid layout="grid" columns="2" cellpadding="10">
         <!-- choose from existing processes  -->
         <p:row rendered="#{ProzesskopieForm.useTemplates}">
@@ -59,15 +60,17 @@
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}"
+                <p:outputLabel for="fieldValue" value="#{msgs.value}"/>
+                <p:inputText id="fieldValue" value="#{ProzesskopieForm.opacSuchbegriff}"
+                             rendered="#{ProzesskopieForm.useOpac}" class="input"
                              onkeypress="return checkOpac('OpacRequest',event)"/>
-                <p:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery"
-                               rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-                    <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
-                                    style="vertical-align:middle; margin-right:3px"/>
-                    <h:outputText value="#{msgs.uebernehmen}"/>
-                </p:commandLink>
             </div>
+            <p:commandLink action="#{ProzesskopieForm.evaluateOpac}" id="performOpacQuery" update="editForm"
+                           rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
+                <h:graphicImage alt="query opac" value="/pages/images/buttons/opac.gif"
+                                style="vertical-align:middle; margin-right:3px"/>
+                <h:outputText value="#{msgs.uebernehmen}"/>
+            </p:commandLink>
         </p:row>
     </p:panelGrid>
 </ui:composition>

@@ -433,7 +433,7 @@ public class ProzesskopieForm implements Serializable {
             }
             return null;
         } catch (Exception e) {
-            Helper.setFehlerMeldung("Error on reading opac ", e);
+            Helper.setErrorMessage("Error on reading opac '" + opacKatalog + "'", logger, e);
             return null;
         }
     }
