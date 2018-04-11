@@ -113,13 +113,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
         BeanHelper.copyTasks(this.template, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.template, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.template, this.prozessKopie);
-        BeanHelper.copyProperties(this.template, this.prozessKopie);
 
         return this.naviFirstPage;
     }
@@ -156,13 +150,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
         BeanHelper.copyTasks(this.template, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.template, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.template, this.prozessKopie);
-        BeanHelper.copyProperties(this.template, this.prozessKopie);
 
         initializePossibleDigitalCollections();
 

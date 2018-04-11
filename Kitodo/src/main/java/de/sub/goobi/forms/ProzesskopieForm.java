@@ -289,13 +289,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
         BeanHelper.copyTasks(this.template, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.template, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.template, this.prozessKopie);
-        BeanHelper.copyProperties(this.template, this.prozessKopie);
 
         initializePossibleDigitalCollections();
 
@@ -904,13 +898,9 @@ public class ProzesskopieForm implements Serializable {
                 }
                 this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
-                /* Rdf-File schreiben */
+                // write Rdf file
                 serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
-                // TODO: what does tis if?
-                /*if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
-                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
-                }*/
             } catch (DocStructHasNoTypeException e) {
                 Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
             } catch (UghHelperException e) {
