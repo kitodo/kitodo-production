@@ -23,7 +23,6 @@ import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -160,7 +159,6 @@ public class ProjectServiceIT {
         assertEquals("Project was not found in index!", expected, actual);
     }
 
-    @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessId() throws Exception {
         JsonObject project = projectService.findByProcessId(1);
@@ -170,11 +168,10 @@ public class ProjectServiceIT {
 
         project = projectService.findByProcessId(4);
         actual = projectService.getIdFromJSONObject(project);
-        expected = null;
+        expected = 0;
         assertEquals("Some project was found in index!", expected, actual);
     }
 
-    @Ignore("save dependencies in Process Service is called but it doesn't update project document")
     @Test
     public void shouldFindByProcessTitle() throws Exception {
         List<JsonObject> projects = projectService.findByProcessTitle("First process");
