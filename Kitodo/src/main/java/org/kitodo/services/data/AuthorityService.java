@@ -29,6 +29,8 @@ import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.AuthorityType;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
@@ -176,8 +178,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         AuthorityDTO authorityDTO = new AuthorityDTO();
         authorityDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject authorizationJSONObject = jsonObject.getJsonObject("_source");
-        authorityDTO.setTitle(authorizationJSONObject.getString("title"));
-        authorityDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(authorizationJSONObject, "userGroups"));
+        authorityDTO.setTitle(authorizationJSONObject.getString(AuthorityTypeField.TITLE.getName()));
+        authorityDTO.setUserGroupsSize(
+            getSizeOfRelatedPropertyForDTO(authorizationJSONObject, AuthorityTypeField.USER_GROUPS.getName()));
         if (!related) {
             authorityDTO = convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
         } else {
@@ -188,8 +191,8 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     private AuthorityDTO convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO)
             throws DataException {
-        authorityDTO.setUserGroups(
-            convertRelatedJSONObjectToDTO(jsonObject, "userGroups", serviceManager.getUserGroupService()));
+        authorityDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.USER_GROUPS.getName(),
+            serviceManager.getUserGroupService()));
         return authorityDTO;
     }
 
@@ -197,8 +200,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         if (authorityDTO.getUserGroupsSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add("title");
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "userGroups", subKeys);
+            subKeys.add(UserGroupTypeField.TITLE.getName());
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                AuthorityTypeField.USER_GROUPS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserGroupDTO userGroup = new UserGroupDTO();
                 userGroup.setId(relatedProperty.getId());

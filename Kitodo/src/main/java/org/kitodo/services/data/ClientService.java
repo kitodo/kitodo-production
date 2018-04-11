@@ -25,6 +25,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ClientType;
+import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
@@ -73,8 +74,8 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject clientJSONObject = jsonObject.getJsonObject("_source");
-        clientDTO.setName(clientJSONObject.getString("clientName"));
-        clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, "projects"));
+        clientDTO.setName(clientJSONObject.getString(ClientTypeField.NAME.getName()));
+        clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, ClientTypeField.PROJECTS.getName()));
         if (!related) {
             clientDTO = convertRelatedJSONObjects(clientJSONObject, clientDTO);
         } else {
@@ -84,8 +85,8 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     private ClientDTO convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
-        clientDTO
-                .setProjects(convertRelatedJSONObjectToDTO(jsonObject, "projects", serviceManager.getProjectService()));
+        clientDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, ClientTypeField.PROJECTS.getName(),
+            serviceManager.getProjectService()));
         return clientDTO;
     }
 
@@ -93,8 +94,9 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         if (clientDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add("clientName");
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "projects", subKeys);
+            subKeys.add(ClientTypeField.NAME.getName());
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                ClientTypeField.PROJECTS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 ProjectDTO project = new ProjectDTO();
                 project.setId(relatedProperty.getId());

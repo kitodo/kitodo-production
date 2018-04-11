@@ -30,6 +30,7 @@ import org.kitodo.data.database.persistence.PropertyDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.PropertyType;
+import org.kitodo.data.elasticsearch.index.type.enums.PropertyTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.PropertyDTO;
@@ -121,7 +122,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     private QueryBuilder getQueryForType(String type) {
-        return createSimpleQuery("type", type, true, Operator.AND);
+        return createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true, Operator.AND);
     }
 
     /**
@@ -137,9 +138,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      */
     public List<JsonObject> findByTitle(String title, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.TITLE.getName(), title, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery("type", type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -157,9 +158,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      */
     List<JsonObject> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("value", value, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.VALUE.getName(), value, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery("type", type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -181,10 +182,10 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     List<JsonObject> findByTitleAndValue(String title, String value, String type, boolean contains)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, contains, Operator.AND));
-        query.must(createSimpleQuery("value", value, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.TITLE.getName(), title, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.VALUE.getName(), value, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery("type", type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -194,9 +195,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         PropertyDTO propertyDTO = new PropertyDTO();
         propertyDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject propertyJSONObject = jsonObject.getJsonObject("_source");
-        propertyDTO.setTitle(propertyJSONObject.getString("title"));
-        propertyDTO.setValue(propertyJSONObject.getString("value"));
-        JsonValue creationDate = propertyJSONObject.get("creationDate");
+        propertyDTO.setTitle(propertyJSONObject.getString(PropertyTypeField.TITLE.getName()));
+        propertyDTO.setValue(propertyJSONObject.getString(PropertyTypeField.VALUE.getName()));
+        JsonValue creationDate = propertyJSONObject.get(PropertyTypeField.CREATION_DATE.getName());
         propertyDTO.setCreationDate(creationDate != JsonValue.NULL ? creationDate.toString() : null);
         return propertyDTO;
     }

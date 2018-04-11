@@ -31,6 +31,9 @@ import org.kitodo.data.database.persistence.UserGroupDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.UserGroupType;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.AuthorityDTO;
@@ -241,9 +244,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         UserGroupDTO userGroupDTO = new UserGroupDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
-        userGroupDTO.setTitle(userGroupJSONObject.getString("title"));
-        userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "users"));
-        userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, "authorities"));
+        userGroupDTO.setTitle(userGroupJSONObject.getString(UserGroupTypeField.TITLE.getName()));
+        userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
+        userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
         if (!related) {
             userGroupDTO = convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
@@ -255,7 +258,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     private UserGroupDTO convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
             throws DataException {
-        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, "users", serviceManager.getUserService()));
+        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getName(),
+                serviceManager.getUserService()));
         return userGroupDTO;
     }
 
@@ -263,8 +267,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroupDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add("title");
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "authorities", subKeys);
+            subKeys.add(AuthorityTypeField.TITLE.getName());
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
+                    jsonObject, UserGroupTypeField.AUTHORITIES.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
@@ -282,9 +287,10 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add("name");
-            subKeys.add("surname");
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, "users", subKeys);
+            subKeys.add(UserTypeField.NAME.getName());
+            subKeys.add(UserTypeField.SURNAME.getName());
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
+                    jsonObject, UserGroupTypeField.USERS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());
