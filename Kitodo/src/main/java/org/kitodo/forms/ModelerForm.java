@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 
@@ -57,6 +57,7 @@ public class ModelerForm implements Serializable {
                 xmlDiagramNames.put(decodeXMLDiagramName(fileName), fileName);
             }
         }
+        readXMLDiagram("base.bpmn20.xml");
     }
 
     /**

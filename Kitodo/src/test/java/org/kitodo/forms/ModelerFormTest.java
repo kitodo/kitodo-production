@@ -1,4 +1,4 @@
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import static org.junit.Assert.assertTrue;
 
