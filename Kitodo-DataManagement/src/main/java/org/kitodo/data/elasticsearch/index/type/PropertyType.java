@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.elasticsearch.index.type.enums.PropertyTypeField;
 
 /**
  * Implementation of Property Type.
@@ -34,13 +35,13 @@ public class PropertyType extends BaseType<Property> {
         }
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(property.getTitle()));
-        jsonObjectBuilder.add("value", preventNull(property.getValue()));
-        jsonObjectBuilder.add("creationDate", getFormattedDate(property.getCreationDate()));
-        jsonObjectBuilder.add("processes", addObjectRelation(property.getProcesses()));
-        jsonObjectBuilder.add("templates", addObjectRelation(property.getTemplates()));
-        jsonObjectBuilder.add("workpieces", addObjectRelation(property.getWorkpieces()));
-        jsonObjectBuilder.add("type", type);
+        jsonObjectBuilder.add(PropertyTypeField.TITLE.getName(), preventNull(property.getTitle()));
+        jsonObjectBuilder.add(PropertyTypeField.VALUE.getName(), preventNull(property.getValue()));
+        jsonObjectBuilder.add(PropertyTypeField.CREATION_DATE.getName(), getFormattedDate(property.getCreationDate()));
+        jsonObjectBuilder.add(PropertyTypeField.PROCESSES.getName(), addObjectRelation(property.getProcesses()));
+        jsonObjectBuilder.add(PropertyTypeField.TEMPLATES.getName(), addObjectRelation(property.getTemplates()));
+        jsonObjectBuilder.add(PropertyTypeField.WORKPIECES.getName(), addObjectRelation(property.getWorkpieces()));
+        jsonObjectBuilder.add(PropertyTypeField.TYPE.getName(), type);
         return jsonObjectBuilder.build();
     }
 }

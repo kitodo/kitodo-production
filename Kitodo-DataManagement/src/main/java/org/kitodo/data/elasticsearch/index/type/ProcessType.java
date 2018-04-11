@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
 /**
  * Implementation of Process Type.
@@ -34,28 +35,28 @@ public class ProcessType extends BaseType<Process> {
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : 0;
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(process.getTitle()));
-        jsonObjectBuilder.add("outputName", preventNull(process.getOutputName()));
-        jsonObjectBuilder.add("creationDate", getFormattedDate(process.getCreationDate()));
-        jsonObjectBuilder.add("wikiField", preventNull(process.getWikiField()));
-        jsonObjectBuilder.add("sortHelperArticles", process.getSortHelperArticles());
-        jsonObjectBuilder.add("sortHelperDocstructs", process.getSortHelperDocstructs());
-        jsonObjectBuilder.add("sortHelperStatus", preventNull(process.getSortHelperStatus()));
-        jsonObjectBuilder.add("sortHelperImages", process.getSortHelperImages());
-        jsonObjectBuilder.add("sortHelperMetadata", process.getSortHelperMetadata());
-        jsonObjectBuilder.add("processBaseUri", processBaseUri);
-        jsonObjectBuilder.add("project.id", projectId);
-        jsonObjectBuilder.add("project.title", projectTitle);
-        jsonObjectBuilder.add("project.active", projectActive);
-        jsonObjectBuilder.add("template.id", templateId);
-        jsonObjectBuilder.add("template.title", templateTitle);
-        jsonObjectBuilder.add("ruleset", ruleset);
-        jsonObjectBuilder.add("docket", docket);
-        jsonObjectBuilder.add("batches", addObjectRelation(process.getBatches(), true));
-        jsonObjectBuilder.add("tasks", addObjectRelation(process.getTasks(), true));
-        jsonObjectBuilder.add("properties", addObjectRelation(process.getProperties()));
-        jsonObjectBuilder.add("templates", addObjectRelation(process.getTemplates()));
-        jsonObjectBuilder.add("workpieces", addObjectRelation(process.getWorkpieces()));
+        jsonObjectBuilder.add(ProcessTypeField.TITLE.getName(), preventNull(process.getTitle()));
+        jsonObjectBuilder.add(ProcessTypeField.OUTPUT_NAME.getName(), preventNull(process.getOutputName()));
+        jsonObjectBuilder.add(ProcessTypeField.CREATION_DATE.getName(), getFormattedDate(process.getCreationDate()));
+        jsonObjectBuilder.add(ProcessTypeField.WIKI_FIELD.getName(), preventNull(process.getWikiField()));
+        jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_ARTICLES.getName(), process.getSortHelperArticles());
+        jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName(), process.getSortHelperDocstructs());
+        jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_STATUS.getName(), preventNull(process.getSortHelperStatus()));
+        jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_IMAGES.getName(), process.getSortHelperImages());
+        jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_METADATA.getName(), process.getSortHelperMetadata());
+        jsonObjectBuilder.add(ProcessTypeField.PROCESS_BASE_URI.getName(), processBaseUri);
+        jsonObjectBuilder.add(ProcessTypeField.TEMPLATE_ID.getName(), templateId);
+        jsonObjectBuilder.add(ProcessTypeField.TEMPLATE_TITLE.getName(), templateTitle);
+        jsonObjectBuilder.add(ProcessTypeField.PROJECT_ID.getName(), projectId);
+        jsonObjectBuilder.add(ProcessTypeField.PROJECT_TITLE.getName(), projectTitle);
+        jsonObjectBuilder.add(ProcessTypeField.PROJECT_ACTIVE.getName(), projectActive);
+        jsonObjectBuilder.add(ProcessTypeField.RULESET.getName(), ruleset);
+        jsonObjectBuilder.add(ProcessTypeField.DOCKET.getName(), docket);
+        jsonObjectBuilder.add(ProcessTypeField.BATCHES.getName(), addObjectRelation(process.getBatches(), true));
+        jsonObjectBuilder.add(ProcessTypeField.TASKS.getName(), addObjectRelation(process.getTasks(), true));
+        jsonObjectBuilder.add(ProcessTypeField.PROPERTIES.getName(), addObjectRelation(process.getProperties()));
+        jsonObjectBuilder.add(ProcessTypeField.TEMPLATES.getName(), addObjectRelation(process.getTemplates()));
+        jsonObjectBuilder.add(ProcessTypeField.WORKPIECES.getName(), addObjectRelation(process.getWorkpieces()));
         return jsonObjectBuilder.build();
     }
 }

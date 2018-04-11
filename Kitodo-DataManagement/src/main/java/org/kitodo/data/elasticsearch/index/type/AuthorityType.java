@@ -16,14 +16,15 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
 
 public class AuthorityType extends BaseType<Authority> {
 
     @Override
     JsonObject getJsonObject(Authority authority) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(authority.getTitle()));
-        jsonObjectBuilder.add("userGroups", addObjectRelation(authority.getUserGroups(), true));
+        jsonObjectBuilder.add(AuthorityTypeField.TITLE.getName(), preventNull(authority.getTitle()));
+        jsonObjectBuilder.add(AuthorityTypeField.USER_GROUPS.getName(), addObjectRelation(authority.getUserGroups(), true));
         return jsonObjectBuilder.build();
     }
 }

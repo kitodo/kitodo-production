@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 
 /**
  * Type class for Filter bean.
@@ -27,8 +28,8 @@ public class FilterType extends BaseType<Filter> {
         Integer user = filter.getUser() != null ? filter.getUser().getId() : 0;
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("value", preventNull(filter.getValue()));
-        jsonObjectBuilder.add("user", user);
+        jsonObjectBuilder.add(FilterTypeField.VALUE.getName(), preventNull(filter.getValue()));
+        jsonObjectBuilder.add(FilterTypeField.USER.getName(), user);
         return jsonObjectBuilder.build();
     }
 }

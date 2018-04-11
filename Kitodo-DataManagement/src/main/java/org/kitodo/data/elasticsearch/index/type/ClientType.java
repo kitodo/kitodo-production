@@ -16,14 +16,15 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
 
 public class ClientType extends BaseType<Client> {
 
     @Override
     JsonObject getJsonObject(Client client) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("clientName", preventNull(client.getName()));
-        jsonObjectBuilder.add("projects", addObjectRelation(client.getProjects(), true));
+        jsonObjectBuilder.add(ClientTypeField.NAME.getName(), preventNull(client.getName()));
+        jsonObjectBuilder.add(ClientTypeField.PROJECTS.getName(), addObjectRelation(client.getProjects(), true));
         return jsonObjectBuilder.build();
     }
 

@@ -25,6 +25,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 
 /**
  * Test class for DocketType.
@@ -59,8 +60,10 @@ public class DocketTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "default", actual.getString("title"));
-        assertEquals("Key file doesn't match to given value!", "docket.xsl", actual.getString("file"));
+        assertEquals("Key title doesn't match to given value!", "default",
+            actual.getString(DocketTypeField.TITLE.getName()));
+        assertEquals("Key file doesn't match to given value!", "docket.xsl",
+            actual.getString(DocketTypeField.FILE.getName()));
     }
 
     @Test

@@ -33,6 +33,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
  * Test class for TaskType.
@@ -121,43 +124,61 @@ public class TaskTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Testing", actual.getString("title"));
-        assertEquals("Key ordering doesn't match to given value!", 1, actual.getInt("ordering"));
-        assertEquals("Key priority doesn't match to given value!", 1, actual.getInt("priority"));
-        assertEquals("Key editType doesn't match to given value!", 1, actual.getInt("editType"));
-        assertEquals("Key processingStatus doesn't match to given value!", 3, actual.getInt("processingStatus"));
-        assertEquals("Key processingUser doesn't match to given value!", 1, actual.getInt("processingUser"));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01", actual.getString("processingBegin"));
-        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17", actual.getString("processingEnd"));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17", actual.getString("processingTime"));
-        assertEquals("Key homeDirectory doesn't match to given value!", "1", actual.getString("homeDirectory"));
-        assertEquals("Key batchStep doesn't match to given value!", true, actual.getBoolean("batchStep"));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
-        assertEquals("Key typeMetadata doesn't match to given value!", true, actual.getBoolean("typeMetadata"));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
-        assertEquals("Key processForTask.id doesn't match to given value!", 1, actual.getInt("processForTask.id"));
-        assertEquals("Key processForTask.title doesn't match to given value!", "First", actual.getString("processForTask.title"));
+        assertEquals("Key title doesn't match to given value!", "Testing",
+            actual.getString(TaskTypeField.TITLE.getName()));
+        assertEquals("Key ordering doesn't match to given value!", 1, actual.getInt(TaskTypeField.ORDERING.getName()));
+        assertEquals("Key priority doesn't match to given value!", 1, actual.getInt(TaskTypeField.PRIORITY.getName()));
+        assertEquals("Key editType doesn't match to given value!", 1, actual.getInt(TaskTypeField.EDIT_TYPE.getName()));
+        assertEquals("Key processingStatus doesn't match to given value!", 3,
+            actual.getInt(TaskTypeField.PROCESSING_STATUS.getName()));
+        assertEquals("Key processingUser doesn't match to given value!", 1,
+            actual.getInt(TaskTypeField.PROCESSING_USER.getName()));
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01",
+            actual.getString(TaskTypeField.PROCESSING_BEGIN.getName()));
+        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17",
+            actual.getString(TaskTypeField.PROCESSING_END.getName()));
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17",
+            actual.getString(TaskTypeField.PROCESSING_TIME.getName()));
+        assertEquals("Key homeDirectory doesn't match to given value!", "1",
+            actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
+        assertEquals("Key batchStep doesn't match to given value!", true,
+            actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
+        assertEquals("Key typeMetadata doesn't match to given value!", true,
+            actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
+        assertEquals("Key processForTask.id doesn't match to given value!", 1,
+            actual.getInt(TaskTypeField.PROCESS_ID.getName()));
+        assertEquals("Key processForTask.title doesn't match to given value!", "First",
+            actual.getString(TaskTypeField.PROCESS_TITLE.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt(UserTypeField.ID.getName()));
 
         user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt(UserTypeField.ID.getName()));
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, userGroup.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 1,
+            userGroup.getInt(UserGroupTypeField.ID.getName()));
 
         userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, userGroup.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 2,
+            userGroup.getInt(UserGroupTypeField.ID.getName()));
     }
 
     @Test
@@ -169,43 +190,61 @@ public class TaskTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Rendering", actual.getString("title"));
-        assertEquals("Key ordering doesn't match to given value!", 2, actual.getInt("ordering"));
-        assertEquals("Key priority doesn't match to given value!", 2, actual.getInt("priority"));
-        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt("editType"));
-        assertEquals("Key processingStatus doesn't match to given value!", 2, actual.getInt("processingStatus"));
-        assertEquals("Key processingUser doesn't match to given value!", 2, actual.getInt("processingUser"));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10", actual.getString("processingBegin"));
-        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL, actual.get("processingEnd"));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17", actual.getString("processingTime"));
-        assertEquals("Key homeDirectory doesn't match to given value!", "0", actual.getString("homeDirectory"));
-        assertEquals("Key batchStep doesn't match to given value!", false, actual.getBoolean("batchStep"));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
-        assertEquals("Key typeMetadata doesn't match to given value!", false, actual.getBoolean("typeMetadata"));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
-        assertEquals("Key processForTask.id doesn't match to given value!", 0, actual.getInt("processForTask.id"));
-        assertEquals("Key processForTask.title doesn't match to given value!", "", actual.getString("processForTask.title"));
+        assertEquals("Key title doesn't match to given value!", "Rendering",
+            actual.getString(TaskTypeField.TITLE.getName()));
+        assertEquals("Key ordering doesn't match to given value!", 2, actual.getInt(TaskTypeField.ORDERING.getName()));
+        assertEquals("Key priority doesn't match to given value!", 2, actual.getInt(TaskTypeField.PRIORITY.getName()));
+        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt(TaskTypeField.EDIT_TYPE.getName()));
+        assertEquals("Key processingStatus doesn't match to given value!", 2,
+            actual.getInt(TaskTypeField.PROCESSING_STATUS.getName()));
+        assertEquals("Key processingUser doesn't match to given value!", 2,
+            actual.getInt(TaskTypeField.PROCESSING_USER.getName()));
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10",
+            actual.getString(TaskTypeField.PROCESSING_BEGIN.getName()));
+        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
+            actual.get(TaskTypeField.PROCESSING_END.getName()));
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17",
+            actual.getString(TaskTypeField.PROCESSING_TIME.getName()));
+        assertEquals("Key homeDirectory doesn't match to given value!", "0",
+            actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
+        assertEquals("Key batchStep doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
+        assertEquals("Key typeMetadata doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
+        assertEquals("Key processForTask.id doesn't match to given value!", 0,
+            actual.getInt(TaskTypeField.PROCESS_ID.getName()));
+        assertEquals("Key processForTask.title doesn't match to given value!", "",
+            actual.getString(TaskTypeField.PROCESS_TITLE.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt(UserTypeField.ID.getName()));
 
         user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt(UserTypeField.ID.getName()));
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, userGroup.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 1,
+            userGroup.getInt(UserGroupTypeField.ID.getName()));
 
         userGroup = userGroups.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, userGroup.getInt("id"));
+        assertEquals("Key users.id doesn't match to given value!", 2,
+            userGroup.getInt(UserGroupTypeField.ID.getName()));
     }
 
     @Test
@@ -217,30 +256,46 @@ public class TaskTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete", actual.getString("title"));
-        assertEquals("Key ordering doesn't match to given value!", 0, actual.getInt("ordering"));
-        assertEquals("Key priority doesn't match to given value!", 0, actual.getInt("priority"));
-        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt("editType"));
-        assertEquals("Key processingStatus doesn't match to given value!", 1, actual.getInt("processingStatus"));
-        assertEquals("Key processingUser doesn't match to given value!", 0, actual.getInt("processingUser"));
-        assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL, actual.get("processingBegin"));
-        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL, actual.get("processingEnd"));
-        assertEquals("Key processingTime doesn't match to given value!", JsonValue.NULL, actual.get("processingTime"));
-        assertEquals("Key homeDirectory doesn't match to given value!", "0", actual.getString("homeDirectory"));
-        assertEquals("Key batchStep doesn't match to given value!", false, actual.getBoolean("batchStep"));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false, actual.getBoolean("typeAutomatic"));
-        assertEquals("Key typeMetadata doesn't match to given value!", false, actual.getBoolean("typeMetadata"));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false, actual.getBoolean("typeImportFileUpload"));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false, actual.getBoolean("typeImagesWrite"));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false, actual.getBoolean("typeImagesRead"));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false, actual.getBoolean("typeExportRussian"));
-        assertEquals("Key processForTask.id doesn't match to given value!", 0, actual.getInt("processForTask.id"));
-        assertEquals("Key processForTask.title doesn't match to given value!", "", actual.getString("processForTask.title"));
+        assertEquals("Key title doesn't match to given value!", "Incomplete",
+            actual.getString(TaskTypeField.TITLE.getName()));
+        assertEquals("Key ordering doesn't match to given value!", 0, actual.getInt(TaskTypeField.ORDERING.getName()));
+        assertEquals("Key priority doesn't match to given value!", 0, actual.getInt(TaskTypeField.PRIORITY.getName()));
+        assertEquals("Key editType doesn't match to given value!", 0, actual.getInt(TaskTypeField.EDIT_TYPE.getName()));
+        assertEquals("Key processingStatus doesn't match to given value!", 1,
+            actual.getInt(TaskTypeField.PROCESSING_STATUS.getName()));
+        assertEquals("Key processingUser doesn't match to given value!", 0,
+            actual.getInt(TaskTypeField.PROCESSING_USER.getName()));
+        assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL,
+            actual.get(TaskTypeField.PROCESSING_BEGIN.getName()));
+        assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
+            actual.get(TaskTypeField.PROCESSING_END.getName()));
+        assertEquals("Key processingTime doesn't match to given value!", JsonValue.NULL,
+            actual.get(TaskTypeField.PROCESSING_TIME.getName()));
+        assertEquals("Key homeDirectory doesn't match to given value!", "0",
+            actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
+        assertEquals("Key batchStep doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
+        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
+        assertEquals("Key typeMetadata doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
+        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
+        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
+        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
+        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+            actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
+        assertEquals("Key processForTask.id doesn't match to given value!", 0,
+            actual.getInt(TaskTypeField.PROCESS_ID.getName()));
+        assertEquals("Key processForTask.title doesn't match to given value!", "",
+            actual.getString(TaskTypeField.PROCESS_TITLE.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
         assertEquals("Size users doesn't match to given value!", 0, userGroups.size());
     }
 
@@ -254,11 +309,11 @@ public class TaskTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 1, user.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in userGroups is incorrect!", 1, userGroup.keySet().size());
     }

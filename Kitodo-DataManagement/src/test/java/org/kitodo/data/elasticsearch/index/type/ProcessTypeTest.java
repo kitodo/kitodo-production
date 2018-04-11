@@ -37,6 +37,10 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.PropertyTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
  * Test class for ProcessType.
@@ -125,48 +129,68 @@ public class ProcessTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Testing", actual.getString("title"));
-        assertEquals("Key outputName doesn't match to given value!", "Test", actual.getString("outputName"));
-        assertEquals("Key wikiField doesn't match to given value!", "Wiki", actual.getString("wikiField"));
-        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01", actual.getString("creationDate"));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
-        assertEquals("Key sortHelperImages doesn't match to given value!", 20, actual.getInt("sortHelperImages"));
-        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
-        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
-        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
-        assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
-        assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
-        assertTrue("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
-        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
-        assertEquals("Key ruleset doesn't match to given value!", 1, actual.getInt("ruleset"));
+        assertEquals("Key title doesn't match to given value!", "Testing",
+            actual.getString(ProcessTypeField.TITLE.getName()));
+        assertEquals("Key outputName doesn't match to given value!", "Test",
+            actual.getString(ProcessTypeField.OUTPUT_NAME.getName()));
+        assertEquals("Key wikiField doesn't match to given value!", "Wiki",
+            actual.getString(ProcessTypeField.WIKI_FIELD.getName()));
+        assertEquals("Key processBaseUri doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.PROCESS_BASE_URI.getName()));
+        assertEquals("Key template.id doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.TEMPLATE_ID.getName()));
+        assertEquals("Key template.title doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.TEMPLATE_TITLE.getName()));
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
+            actual.getString(ProcessTypeField.CREATION_DATE.getName()));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.SORT_HELPER_STATUS.getName()));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 20,
+            actual.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
+        assertEquals("Key project.id doesn't match to given value!", 1,
+            actual.getInt(ProcessTypeField.PROJECT_ID.getName()));
+        assertEquals("Key project.title doesn't match to given value!", "Project",
+            actual.getString(ProcessTypeField.PROJECT_TITLE.getName()));
+        assertTrue("Key project.active doesn't match to given value!",
+            actual.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
+        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt(ProcessTypeField.DOCKET.getName()));
+        assertEquals("Key ruleset doesn't match to given value!", 1, actual.getInt(ProcessTypeField.RULESET.getName()));
 
-        JsonArray templates = actual.getJsonArray("templates");
+        JsonArray templates = actual.getJsonArray(ProcessTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray properties = actual.getJsonArray("properties");
+        JsonArray properties = actual.getJsonArray(ProcessTypeField.PROPERTIES.getName());
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
 
-        JsonArray workpieces = actual.getJsonArray("workpieces");
+        JsonArray workpieces = actual.getJsonArray(ProcessTypeField.WORKPIECES.getName());
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = actual.getJsonArray("batches");
+        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
         assertEquals("Size batches doesn't match to given value!", 1, batches.size());
 
         JsonObject batch = batches.getJsonObject(0);
-        assertEquals("Key batches.id doesn't match to given value!", 1, batch.getInt("id"));
-        assertEquals("Key batches.title doesn't match to given value!", "First", batch.getString("title"));
+        assertEquals("Key batches.id doesn't match to given value!", 1, batch.getInt(BatchTypeField.ID.getName()));
+        assertEquals("Key batches.title doesn't match to given value!", "First",
+            batch.getString(BatchTypeField.TITLE.getName()));
 
-        JsonArray tasks = actual.getJsonArray("tasks");
+        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
         assertEquals("Size batches doesn't match to given value!", 2, tasks.size());
 
         JsonObject task = tasks.getJsonObject(0);
-        assertEquals("Key tasks.id doesn't match to given value!", 1, task.getInt("id"));
-        assertEquals("Key tasks.title doesn't match to given value!", "Task one", task.getString("title"));
+        assertEquals("Key tasks.id doesn't match to given value!", 1, task.getInt(TaskTypeField.ID.getName()));
+        assertEquals("Key tasks.title doesn't match to given value!", "Task one",
+            task.getString(TaskTypeField.TITLE.getName()));
 
         task = tasks.getJsonObject(1);
-        assertEquals("Key tasks.id doesn't match to given value!", 2, task.getInt("id"));
-        assertEquals("Key tasks.title doesn't match to given value!", "Task two", task.getString("title"));
+        assertEquals("Key tasks.id doesn't match to given value!", 2, task.getInt(TaskTypeField.ID.getName()));
+        assertEquals("Key tasks.title doesn't match to given value!", "Task two",
+            task.getString(TaskTypeField.TITLE.getName()));
     }
 
     @Test
@@ -179,44 +203,61 @@ public class ProcessTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Rendering", actual.getString("title"));
-        assertEquals("Key outputName doesn't match to given value!", "Render", actual.getString("outputName"));
-        assertEquals("Key wikiField doesn't match to given value!", "Field", actual.getString("wikiField"));
-        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
-        assertEquals("Key sortHelperImages doesn't match to given value!", 30, actual.getInt("sortHelperImages"));
-        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
-        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
-        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
-        assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
-        assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
-        assertTrue("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
-        assertEquals("Key template.id doesn't match to given value!", 0, actual.getInt("template.id"));
-        assertEquals("Key template.title doesn't match to given value!", "", actual.getString("template.title"));
-        assertEquals("Key docket doesn't match to given value!", 1, actual.getInt("docket"));
-        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
+        assertEquals("Key title doesn't match to given value!", "Rendering",
+            actual.getString(ProcessTypeField.TITLE.getName()));
+        assertEquals("Key outputName doesn't match to given value!", "Render",
+            actual.getString(ProcessTypeField.OUTPUT_NAME.getName()));
+        assertEquals("Key wikiField doesn't match to given value!", "Field",
+            actual.getString(ProcessTypeField.WIKI_FIELD.getName()));
+        assertEquals("Key processBaseUri doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.PROCESS_BASE_URI.getName()));
+        assertEquals("Key template.id doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.TEMPLATE_ID.getName()));
+        assertEquals("Key template.title doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.TEMPLATE_TITLE.getName()));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+            actual.getString(ProcessTypeField.CREATION_DATE.getName()));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.SORT_HELPER_STATUS.getName()));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 30,
+            actual.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
+        assertEquals("Key project.id doesn't match to given value!", 1,
+            actual.getInt(ProcessTypeField.PROJECT_ID.getName()));
+        assertEquals("Key project.title doesn't match to given value!", "Project",
+            actual.getString(ProcessTypeField.PROJECT_TITLE.getName()));
+        assertTrue("Key project.active doesn't match to given value!",
+            actual.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
+        assertEquals("Key docket doesn't match to given value!", 1, actual.getInt(ProcessTypeField.DOCKET.getName()));
+        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt(ProcessTypeField.RULESET.getName()));
 
-        JsonArray templates = actual.getJsonArray("templates");
+        JsonArray templates = actual.getJsonArray(ProcessTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray tasks = actual.getJsonArray("tasks");
+        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
 
-        JsonArray workpieces = actual.getJsonArray("workpieces");
+        JsonArray workpieces = actual.getJsonArray(ProcessTypeField.WORKPIECES.getName());
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = actual.getJsonArray("batches");
+        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
 
-        JsonArray properties = actual.getJsonArray("properties");
+        JsonArray properties = actual.getJsonArray(ProcessTypeField.PROPERTIES.getName());
         assertEquals("Size properties doesn't match to given value!", 2, properties.size());
 
         JsonObject property = properties.getJsonObject(0);
-        assertEquals("Key properties.id doesn't match to given value!", 1, property.getInt("id"));
+        assertEquals("Key properties.id doesn't match to given value!", 1,
+            property.getInt(PropertyTypeField.ID.getName()));
 
         property = properties.getJsonObject(1);
-        assertEquals("Key properties.id doesn't match to given value!", 2, property.getInt("id"));
+        assertEquals("Key properties.id doesn't match to given value!", 2,
+            property.getInt(PropertyTypeField.ID.getName()));
     }
 
     @Test
@@ -229,37 +270,52 @@ public class ProcessTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete", actual.getString("title"));
-        assertEquals("Key outputName doesn't match to given value!", "", actual.getString("outputName"));
-        assertEquals("Key wikiField doesn't match to given value!", "", actual.getString("wikiField"));
-        assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
-        assertEquals("Key sortHelperImages doesn't match to given value!", 0, actual.getInt("sortHelperImages"));
-        assertEquals("Key sortHelperArticles doesn't match to given value!", 0, actual.getInt("sortHelperArticles"));
-        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0, actual.getInt("sortHelperDocstructs"));
-        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
-        assertEquals("Key project.id doesn't match to given value!", 0, actual.getInt("project.id"));
-        assertEquals("Key project.title doesn't match to given value!", "", actual.getString("project.title"));
-        assertFalse("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
-        assertEquals("Key template.id doesn't match to given value!", 0, actual.getInt("template.id"));
-        assertEquals("Key template.title doesn't match to given value!", "", actual.getString("template.title"));
-        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
-        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
+        assertEquals("Key title doesn't match to given value!", "Incomplete",
+            actual.getString(ProcessTypeField.TITLE.getName()));
+        assertEquals("Key outputName doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.OUTPUT_NAME.getName()));
+        assertEquals("Key wikiField doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.WIKI_FIELD.getName()));
+        assertEquals("Key processBaseUri doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.PROCESS_BASE_URI.getName()));
+        assertEquals("Key template.id doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.TEMPLATE_ID.getName()));
+        assertEquals("Key template.title doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.TEMPLATE_TITLE.getName()));
+        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+            actual.getString(ProcessTypeField.CREATION_DATE.getName()));
+        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.SORT_HELPER_STATUS.getName()));
+        assertEquals("Key sortHelperImages doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
+        assertEquals("Key sortHelperArticles doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
+        assertEquals("Key sortHelperDocstructs doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
+        assertEquals("Key sortHelperMetadata doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
+        assertEquals("Key project.id doesn't match to given value!", 0,
+            actual.getInt(ProcessTypeField.PROJECT_ID.getName()));
+        assertEquals("Key project.title doesn't match to given value!", "",
+            actual.getString(ProcessTypeField.PROJECT_TITLE.getName()));
+        assertFalse("Key project.active doesn't match to given value!",
+            actual.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
+        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt(ProcessTypeField.DOCKET.getName()));
+        assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt(ProcessTypeField.RULESET.getName()));
 
-        JsonArray templates = actual.getJsonArray("templates");
+        JsonArray templates = actual.getJsonArray(ProcessTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray tasks = actual.getJsonArray("tasks");
-        assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
+        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
+        assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
 
-        JsonArray workpieces = actual.getJsonArray("workpieces");
+        JsonArray workpieces = actual.getJsonArray(ProcessTypeField.WORKPIECES.getName());
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = actual.getJsonArray("batches");
+        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
 
-        JsonArray properties = actual.getJsonArray("properties");
+        JsonArray properties = actual.getJsonArray(ProcessTypeField.PROPERTIES.getName());
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
     }
 
@@ -273,11 +329,11 @@ public class ProcessTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
 
-        JsonArray batches = actual.getJsonArray("batches");
+        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
         JsonObject batch = batches.getJsonObject(0);
         assertEquals("Amount of keys in batches is incorrect!", 2, batch.keySet().size());
 
-        JsonArray tasks = actual.getJsonArray("tasks");
+        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
         JsonObject task = tasks.getJsonObject(0);
         assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }

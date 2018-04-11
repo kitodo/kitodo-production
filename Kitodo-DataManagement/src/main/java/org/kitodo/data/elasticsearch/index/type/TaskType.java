@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
  * Implementation of Task Type.
@@ -34,29 +35,29 @@ public class TaskType extends BaseType<Task> {
         String templateTitle = task.getTemplate() != null ? task.getTemplate().getTitle() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(task.getTitle()));
-        jsonObjectBuilder.add("priority", task.getPriority());
-        jsonObjectBuilder.add("ordering", task.getOrdering());
-        jsonObjectBuilder.add("processingStatus", processingStatus);
-        jsonObjectBuilder.add("editType", editType);
-        jsonObjectBuilder.add("processingTime", getFormattedDate(task.getProcessingTime()));
-        jsonObjectBuilder.add("processingBegin", getFormattedDate(task.getProcessingBegin()));
-        jsonObjectBuilder.add("processingEnd", getFormattedDate(task.getProcessingEnd()));
-        jsonObjectBuilder.add("homeDirectory", preventNull(String.valueOf(task.getHomeDirectory())));
-        jsonObjectBuilder.add("typeMetadata", task.isTypeMetadata());
-        jsonObjectBuilder.add("typeAutomatic", task.isTypeAutomatic());
-        jsonObjectBuilder.add("typeImportFileUpload", task.isTypeImportFileUpload());
-        jsonObjectBuilder.add("typeExportRussian", task.isTypeExportRussian());
-        jsonObjectBuilder.add("typeImagesRead", task.isTypeImagesRead());
-        jsonObjectBuilder.add("typeImagesWrite", task.isTypeImagesWrite());
-        jsonObjectBuilder.add("batchStep", task.isBatchStep());
-        jsonObjectBuilder.add("processingUser", processingUser);
-        jsonObjectBuilder.add("processForTask.id", processId);
-        jsonObjectBuilder.add("processForTask.title", processTitle);
-        jsonObjectBuilder.add("templateForTask.id", templateId);
-        jsonObjectBuilder.add("templateForTask.title", templateTitle);
-        jsonObjectBuilder.add("users", addObjectRelation(task.getUsers()));
-        jsonObjectBuilder.add("userGroups", addObjectRelation(task.getUserGroups()));
+        jsonObjectBuilder.add(TaskTypeField.TITLE.getName(), preventNull(task.getTitle()));
+        jsonObjectBuilder.add(TaskTypeField.PRIORITY.getName(), task.getPriority());
+        jsonObjectBuilder.add(TaskTypeField.ORDERING.getName(), task.getOrdering());
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_STATUS.getName(), processingStatus);
+        jsonObjectBuilder.add(TaskTypeField.EDIT_TYPE.getName(), editType);
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_TIME.getName(), getFormattedDate(task.getProcessingTime()));
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_BEGIN.getName(), getFormattedDate(task.getProcessingBegin()));
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_END.getName(), getFormattedDate(task.getProcessingEnd()));
+        jsonObjectBuilder.add(TaskTypeField.HOME_DIRECTORY.getName(), preventNull(String.valueOf(task.getHomeDirectory())));
+        jsonObjectBuilder.add(TaskTypeField.TYPE_METADATA.getName(), task.isTypeMetadata());
+        jsonObjectBuilder.add(TaskTypeField.TYPE_AUTOMATIC.getName(), task.isTypeAutomatic());
+        jsonObjectBuilder.add(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName(), task.isTypeImportFileUpload());
+        jsonObjectBuilder.add(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName(), task.isTypeExportRussian());
+        jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_READ.getName(), task.isTypeImagesRead());
+        jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_WRITE.getName(), task.isTypeImagesWrite());
+        jsonObjectBuilder.add(TaskTypeField.BATCH_STEP.getName(), task.isBatchStep());
+        jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER.getName(), processingUser);
+        jsonObjectBuilder.add(TaskTypeField.PROCESS_ID.getName(), processId);
+        jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getName(), processTitle);
+        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getName(), templateId);
+        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getName(), templateTitle);
+        jsonObjectBuilder.add(TaskTypeField.USERS.getName(), addObjectRelation(task.getUsers()));
+        jsonObjectBuilder.add(TaskTypeField.USER_GROUPS.getName(), addObjectRelation(task.getUserGroups()));
         return jsonObjectBuilder.build();
     }
 }
