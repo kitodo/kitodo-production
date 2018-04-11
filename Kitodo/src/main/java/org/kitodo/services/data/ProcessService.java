@@ -416,31 +416,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return convertJSONObjectsToDTOs(processes, related);
     }
 
-    /**
-     * Count all SortHelperImages fields for project id. It is used for
-     * statistical purpose.
-     *
-     * @param projectId
-     *            as Integer
-     * @return amount of SortHelperImages fields for project id as Long
-     */
-    public Long findCountForSortHelperImages(Integer projectId) throws DataException {
-        return findCountAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
-    }
-
-    /**
-     * Sum all values in SortHelperImages fields for project id. It is used for
-     * statistical purpose.
-     *
-     * @param projectId
-     *            as Integer
-     * @return sum of all values in SortHelperImages fields for project id as
-     *         Double
-     */
-    public Double findSumForSortHelperImages(Integer projectId) throws DataException {
-        return findSumAggregation(getQueryProjectId(projectId).toString(), "sortHelperImages");
-    }
-
     private QueryBuilder getQueryProjectId(Integer id) {
         return createSimpleQuery("project.id", id, true);
     }
@@ -1762,30 +1737,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery("title", title, true, Operator.AND).toString());
-    }
-
-    /**
-     * Find amount of not template processes for given project id.
-     *
-     * @param projectId
-     *            as Integer
-     * @return amount as Long
-     */
-    public Long findNumberOfNotTemplateProcessesForProjectId(Integer projectId) throws DataException {
-        String query = getQueryTemplateAndProjectId(projectId).toString();
-        return count(query);
-    }
-
-    /**
-     * Find amount of images for not templates processes and for given project id.
-     *
-     * @param projectId
-     *            as Integer
-     * @return amount of images as Double
-     */
-    public Double findAmountOfImagesForNotTemplatesAndProjectId(Integer projectId) throws DataException {
-        String query = getQueryTemplateAndProjectId(projectId).toString();
-        return findSumAggregation(query, "sortHelperImages");
     }
 
     /**
