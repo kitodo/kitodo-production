@@ -38,7 +38,7 @@ import org.kitodo.services.ServiceManager;
 public class TemplateBaseForm extends BasisForm {
 
     private static final long serialVersionUID = 6566567843176821176L;
-    private static final Logger logger = LogManager.getLogger(TemplateForm.class);
+    private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private transient ServiceManager serviceManager = new ServiceManager();

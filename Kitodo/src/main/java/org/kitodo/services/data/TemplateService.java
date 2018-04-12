@@ -119,8 +119,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            //query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
-                //false);
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
+                false);
             if (!form.isShowClosedProcesses()) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }

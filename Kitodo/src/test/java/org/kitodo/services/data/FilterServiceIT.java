@@ -445,13 +445,8 @@ public class FilterServiceIT {
     public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
         TaskService taskService = new ServiceManager().getTaskService();
 
-        QueryBuilder query = filterService.queryBuilder("\"id:1\" \"steplocked:2\"", ObjectType.TASK, false, false);
+        QueryBuilder query = filterService.queryBuilder("\"id:1\" \"-stepdone:3\"", ObjectType.TASK, false, false);
         List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
-        //assertEquals("Incorrect amount of locked tasks with ordering 2 assigned to process with id 1!", 1,
-            //taskDTOS.size());
-
-        query = filterService.queryBuilder("\"id:1\" \"-stepdone:3\"", ObjectType.TASK, false, false);
-        taskDTOS = taskService.findByQuery(query, true);
         assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 1!", 1,
             taskDTOS.size());
 
