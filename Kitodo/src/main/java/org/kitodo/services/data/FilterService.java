@@ -143,14 +143,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         // this is needed if we filter task
         if (objectType == ObjectType.TASK) {
-            if (filter.contains(FilterString.TASKLOCKED.getFilterEnglish())
-                    || filter.contains(FilterString.TASKLOCKED.getFilterGerman())
-                    || filter.contains(FilterString.TASKDONE.getFilterEnglish())
-                    || filter.contains(FilterString.TASKDONE.getFilterGerman())) {
-                query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks, true);
-            } else {
-                query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks, false);
-            }
+            query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks);
         }
 
         for (String tokenizedFilter : prepareFilters(filter)) {
@@ -227,9 +220,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return limitToUserAccessRights();
     }
 
-    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks,
-            boolean includeOtherTasks) throws DataException {
-        BoolQueryBuilder taskQuery = limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks, includeOtherTasks);
+    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) throws DataException {
+        BoolQueryBuilder taskQuery = limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
 
         if (onlyOpenTasks && onlyUserAssignedTasks) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findAll();
@@ -428,14 +420,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            filter only by open tasks - true/false
      * @param onlyUserAssignedTask
      *            filter only open tasks - true/false
-     * @param includeOtherTasks
-     *            as default list of my tasks should contain open or in progress
-     *            tasks, this parameter if true, allows locked or done tasks to be
-     *            displayed
      * @return query as {@link BoolQueryBuilder}
      */
-    private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask,
-            boolean includeOtherTasks) {
+    private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask) {
         // identify current user
         User user = Helper.getCurrentUser();
         if (user == null) {
@@ -450,8 +437,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         } else if (onlyUserAssignedTask) {
             taskQuery.must(createSimpleQuery("processingStatus", 1, true));
             taskQuery.must(createSimpleQuery("processingUser", user.getId(), true));
-        } else if (includeOtherTasks) {
-            // search filter was defined to search for locked or done tasks
         } else {
             BoolQueryBuilder processingStatus = new BoolQueryBuilder();
             processingStatus.should(createSimpleQuery("processingStatus", 1, true));
