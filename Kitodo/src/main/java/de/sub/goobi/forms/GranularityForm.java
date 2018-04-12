@@ -110,7 +110,7 @@ public class GranularityForm {
     public String createProcessesClick() {
         ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
         if (!prozesskopieForm.isContentValid(false)) {
-            return ProzesskopieForm.NAVI_FIRST_PAGE;
+            return null;
         }
         if (course == null || course.getNumberOfProcesses() < 1) {
             Helper.setFehlerMeldung("UnvollstaendigeDaten", "granularity.header");

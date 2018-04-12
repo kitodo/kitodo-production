@@ -467,20 +467,6 @@ public class CopyProcess extends ProzesskopieForm {
         return valide;
     }
 
-    @Override
-    public String goToPageOne() {
-        return this.naviFirstPage;
-    }
-
-    @Override
-    public String goToPageTwo() {
-        if (!isContentValid()) {
-            return this.naviFirstPage;
-        } else {
-            return "NewProcess/Page2";
-        }
-    }
-
     /**
      * Test title.
      *
