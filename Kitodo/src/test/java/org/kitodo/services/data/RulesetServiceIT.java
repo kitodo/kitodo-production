@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.data.database.beans.Ruleset;
@@ -43,12 +44,16 @@ public class RulesetServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRulesets();
+
+        FileLoader.createRulesetFile();
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+
+        FileLoader.deleteRulesetFile();
     }
 
     @Before
@@ -187,12 +192,15 @@ public class RulesetServiceIT {
         List<DocStructTypeInterface> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
 
         int actual = docStructTypes.size();
-        assertEquals("Size of docstruct types in ruleset file is incorrect!", 2, actual);
+        assertEquals("Size of docstruct types in ruleset file is incorrect!", 3, actual);
 
         String firstName = docStructTypes.get(0).getName();
         assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Acknowledgment", firstName);
 
         String secondName = docStructTypes.get(1).getName();
         assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Article", secondName);
+
+        String thirdName = docStructTypes.get(2).getName();
+        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Monograph", thirdName);
     }
 }
