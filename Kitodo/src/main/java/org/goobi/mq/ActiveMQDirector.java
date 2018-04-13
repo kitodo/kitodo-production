@@ -211,7 +211,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
                 try {
                     watcher.close();
                 } catch (JMSException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                 }
             }
         }
@@ -222,7 +222,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
                 session.close();
             }
         } catch (JMSException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         // shut down connection
@@ -231,7 +231,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
                 connection.close();
             }
         } catch (JMSException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 }

@@ -79,7 +79,7 @@ public class WorkflowService {
 
     /**
      * Get problem.
-     * 
+     *
      * @return Problem object
      */
     public Problem getProblem() {
@@ -88,7 +88,7 @@ public class WorkflowService {
 
     /**
      * Set problem.
-     * 
+     *
      * @param problem
      *            object
      */
@@ -98,7 +98,7 @@ public class WorkflowService {
 
     /**
      * Get solution.
-     * 
+     *
      * @return Solution object
      */
     public Solution getSolution() {
@@ -107,7 +107,7 @@ public class WorkflowService {
 
     /**
      * Set solution.
-     * 
+     *
      * @param solution
      *            object
      */
@@ -162,7 +162,7 @@ public class WorkflowService {
 
     /**
      * Change Task status up for list of tasks assigned to given Process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -176,7 +176,7 @@ public class WorkflowService {
 
     /**
      * Change Task status down for list of tasks assigned to given Process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -201,7 +201,8 @@ public class WorkflowService {
      * @return closed Task
      */
     public Task closeTaskByUser(Task task) throws DataException, IOException {
-        // if the result of the task is to be verified first, then if necessary, cancel
+        // if the result of the task is to be verified first, then if necessary,
+        // cancel
         // the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
@@ -222,7 +223,8 @@ public class WorkflowService {
                 }
             }
         }
-        // if the result of the verification is ok, then continue, otherwise it is not
+        // if the result of the verification is ok, then continue, otherwise it
+        // is not
         // reached
         this.webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -295,7 +297,8 @@ public class WorkflowService {
 
                 updateProcessSortHelperStatus(task.getProcess());
 
-                // if it is an image task, then download the images into the user home directory
+                // if it is an image task, then download the images into the
+                // user home directory
                 if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                     downloadToHome(task);
                 }
@@ -304,6 +307,7 @@ public class WorkflowService {
             }
             this.flagWait = false;
         } catch (DataException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
             logger.error("Task couldn't get saved", e);
         } finally {
@@ -314,7 +318,7 @@ public class WorkflowService {
 
     /**
      * Unassing user from task.
-     * 
+     *
      * @param task
      *            object
      * @return Task object
@@ -348,6 +352,7 @@ public class WorkflowService {
 
     /**
      * Set Priority equal 10 means correction task.
+     * 
      * @param task
      *            Task object
      * @return correction Task
@@ -598,7 +603,7 @@ public class WorkflowService {
 
     /**
      * Download to user home directory.
-     * 
+     *
      * @param task
      *            object
      */

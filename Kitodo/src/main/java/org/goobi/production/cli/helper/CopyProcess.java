@@ -104,7 +104,7 @@ public class CopyProcess extends ProzesskopieForm {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
@@ -142,7 +142,7 @@ public class CopyProcess extends ProzesskopieForm {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
@@ -165,6 +165,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }
@@ -250,6 +251,7 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromConfig();
 
         } catch (Exception e) {
+            logger.error("Fehler beim Einlesen des Opac-Ergebnisses ", e);
             Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
             e.printStackTrace();
         }
@@ -271,7 +273,7 @@ public class CopyProcess extends ProzesskopieForm {
                         try {
                             myTempStruct = myRdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e);
+                            logger.error(e.getMessage(), e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -307,6 +309,7 @@ public class CopyProcess extends ProzesskopieForm {
                             }
                         }
                     } catch (UghHelperException e) {
+                        logger.error(e.getMessage(), e);
                         Helper.setFehlerMeldung(e.getMessage(), "");
                     }
                 } // end if ughbinding
@@ -373,6 +376,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (Exception e) {
+            logger.error("Fehler beim Einlesen der Template-Metadaten ", e);
             Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
         }
 
@@ -495,6 +499,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
+            logger.error("Fehler beim Einlesen der Vorgaenge", e);
             Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
             return false;
         }
@@ -640,7 +645,7 @@ public class CopyProcess extends ProzesskopieForm {
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setFehlerMeldung(e.getMessage(), "");
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -654,7 +659,7 @@ public class CopyProcess extends ProzesskopieForm {
             ff = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             ff.read(this.metadataFile.getPath());
         } catch (PreferencesException | ReadException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -675,11 +680,13 @@ public class CopyProcess extends ProzesskopieForm {
             }
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
@@ -897,6 +904,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }
@@ -996,6 +1004,7 @@ public class CopyProcess extends ProzesskopieForm {
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
             }
             if (result != null && result.length() < 4) {
@@ -1012,6 +1021,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
         }

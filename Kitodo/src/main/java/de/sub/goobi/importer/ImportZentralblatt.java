@@ -173,7 +173,7 @@ public class ImportZentralblatt {
             gdzfile.write(ConfigCore.getKitodoDataDirectory() + processId + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         logger.debug("ParsenZentralblatt() - Ende");
     }

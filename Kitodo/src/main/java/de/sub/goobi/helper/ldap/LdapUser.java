@@ -124,14 +124,14 @@ public class LdapUser implements DirContext {
             try {
                 this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
             } catch (Exception e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
             /* NTLM */
             try {
                 byte[] hmm = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
 
             /*

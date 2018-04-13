@@ -61,7 +61,7 @@ public class Import {
             read();
         } catch (Exception e) {
             this.importError = "An error occurred: " + e.getMessage();
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         logger.info("Import start - ende");
         return "";

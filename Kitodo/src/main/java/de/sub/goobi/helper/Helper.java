@@ -382,7 +382,7 @@ public class Helper extends HibernateHelper implements Observer {
                         }
 
                     } catch (Exception e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

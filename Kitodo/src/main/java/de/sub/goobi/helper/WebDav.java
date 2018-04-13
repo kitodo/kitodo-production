@@ -220,7 +220,7 @@ public class WebDav implements Serializable {
         try {
             encodedProcessLinkName = URLEncoder.encode(processLinkName, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return "";
         }
         return encodedProcessLinkName;
@@ -247,7 +247,7 @@ public class WebDav implements Serializable {
             }
         } catch (Exception e) {
             Helper.setFehlerMeldung("Download aborted", e);
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 }

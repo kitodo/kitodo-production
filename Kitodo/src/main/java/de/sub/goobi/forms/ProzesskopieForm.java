@@ -562,7 +562,7 @@ public class ProzesskopieForm implements Serializable {
                         try {
                             myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
-                            logger.error(e);
+                            logger.error(e.getMessage(), e);
                         }
                     }
                     if (field.getDocstruct().equals("boundbook")) {
@@ -599,7 +599,7 @@ public class ProzesskopieForm implements Serializable {
                             }
                         }
                     } catch (UghHelperException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                         Helper.setFehlerMeldung(e.getMessage(), "");
                     }
                     if (field.getValue() != null && !field.getValue().equals("")) {

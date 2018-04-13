@@ -70,7 +70,7 @@ public class SearchResultGeneration {
             query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
                     false);
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         if (!this.showClosedProcesses) {
@@ -80,7 +80,7 @@ public class SearchResultGeneration {
             try {
                 query.mustNot(serviceManager.getProcessService().getQueryProjectActive(false));
             } catch (DataException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         }
 
@@ -88,14 +88,14 @@ public class SearchResultGeneration {
             processDTOS = serviceManager.getProcessService().findByQuery(query,
                     serviceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         List<Process> processes = new ArrayList<>();
         try {
             processes = serviceManager.getProcessService().convertDtosToBeans(processDTOS);
         } catch (DAOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Search results");

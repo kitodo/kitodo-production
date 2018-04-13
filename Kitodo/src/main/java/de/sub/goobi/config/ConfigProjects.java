@@ -48,7 +48,7 @@ public class ConfigProjects {
         try {
             this.config = new XMLConfiguration(configPfad);
         } catch (ConfigurationException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             this.config = new XMLConfiguration();
         }
         this.config.setListDelimiter('&');
@@ -82,7 +82,7 @@ public class ConfigProjects {
             String rueckgabe = this.config.getString(this.projektTitel + inParameter);
             return cleanXmlFormatedString(rueckgabe);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -137,7 +137,7 @@ public class ConfigProjects {
         try {
             return this.config.getLong(this.projektTitel + inParameter);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return 0;
         }
     }
@@ -152,7 +152,7 @@ public class ConfigProjects {
         try {
             return this.config.getList(this.projektTitel + inParameter);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return new ArrayList<>();
         }
     }

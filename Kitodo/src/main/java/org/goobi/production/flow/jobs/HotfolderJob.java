@@ -106,11 +106,11 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
 
                 } catch (InterruptedException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.trace("17");
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                 }
             }
 
@@ -281,19 +281,19 @@ public class HotfolderJob extends AbstractGoobiJob {
                         runThreads(tasks);
                     }
                 } catch (ReadException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 20;
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 21;
                 } catch (DAOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 22;
                 } catch (WriteException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 23;
                 } catch (IOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 24;
                 }
             }
@@ -372,7 +372,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
             } catch (ReadException | PreferencesException | WriteException | IOException e) {
                 Helper.setFehlerMeldung(e);
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         } else {
             logger.trace("title is invalid");

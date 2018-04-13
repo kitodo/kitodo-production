@@ -249,7 +249,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         // Tear down TLS connection
                         tls.close();
                     } catch (IOException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
                 if (ctx != null) {
@@ -257,7 +257,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         // Close LDAP connection
                         ctx.close();
                     } catch (NamingException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
@@ -357,7 +357,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         // Tear down TLS connection
                         tls.close();
                     } catch (IOException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
                 if (ctx != null) {
@@ -365,7 +365,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                         // Close LDAP connection
                         ctx.close();
                     } catch (NamingException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
@@ -382,7 +382,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             userFolderPath = URI.create((String) ldapAttribute.get(0));
             ctx.close();
         } catch (NamingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         if (userFolderPath != null && !userFolderPath.isAbsolute()) {
@@ -432,7 +432,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             ctx.close();
         } catch (NamingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return result;
     }
@@ -461,7 +461,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             rueckgabe = (String) la.get(0);
             ctx.close();
         } catch (NamingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung(e.getMessage());
         }
         return rueckgabe;
@@ -488,7 +488,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
             ctx.close();
         } catch (NamingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
     }
@@ -558,7 +558,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             // TODO: Don't catch super class exception, make sure that
             // the password isn't logged here
         } catch (Exception e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -590,7 +590,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 ks.setCertificateEntry("PDC", servercert);
                 ks.store(ksos, password);
             } catch (Exception e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
 
         }

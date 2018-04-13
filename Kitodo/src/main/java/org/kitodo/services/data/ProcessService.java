@@ -688,8 +688,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
-        //TODO: it looks it is not needed as batches will be displayed in workflow tab
-        //processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject, "batches", serviceManager.getBatchService()));
+        // TODO: it looks it is not needed as batches will be displayed in
+        // workflow tab
+        // processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject,
+        // "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
         //TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
@@ -742,6 +744,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
             } catch (Exception e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
         }
@@ -760,6 +763,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 result = serviceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (Exception e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
             }
         }
@@ -900,7 +904,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
                     && fileService.getSubUris(testMe).size() > 0;
         } catch (DAOException | IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
@@ -993,7 +997,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 save(process);
             } catch (DataException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
                 return URI.create("");
             }
         }
@@ -1277,6 +1281,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("metadataCorrupt");
             } else {
                 throw e;
@@ -1653,7 +1658,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         filteredList = filterForCorrectionSolutionMessages(properties);
 
         if (filteredList.size() > 1) {
-            filteredList.sort(Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
+            filteredList.sort(
+                Comparator.comparing(PropertyDTO::getCreationDate, Comparator.nullsFirst(Comparator.naturalOrder())));
         }
 
         return new ArrayList<>(filteredList);
@@ -1802,6 +1808,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             directoryDownload(process, targetDirectory);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
             return false;
         }
@@ -1828,8 +1835,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")
-                    && project.isDmsImportCreateProcessFolder()) {
+            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit") && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
                 File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
                 fileService.delete(successFile.toURI());
@@ -1854,9 +1860,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 new DataCopier(rules).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
                 return false;
             } catch (RuntimeException e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
                 return false;
             }
@@ -2151,7 +2159,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         mm.write(targetFileName);
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
@@ -2295,7 +2303,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Find processes of open and active projects, sorted according to sort query.
+     * Find processes of open and active projects, sorted according to sort
+     * query.
      *
      * @param sort
      *            possible sort query according to which results will be sorted

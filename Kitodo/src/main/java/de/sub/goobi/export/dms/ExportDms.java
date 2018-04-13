@@ -54,8 +54,8 @@ public class ExportDms extends ExportMets {
     private static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
-     * The field exportDmsTask holds an optional task instance. Its progress and its
-     * errors will be passed to the task manager screen (if available) for
+     * The field exportDmsTask holds an optional task instance. Its progress and
+     * its errors will be passed to the task manager screen (if available) for
      * visualisation.
      */
     public EmptyTask exportDmsTask = null;
@@ -94,9 +94,9 @@ public class ExportDms extends ExportMets {
 
     /**
      * The function startExport() performs a DMS export to a desired place. In
-     * addition, it accepts an optional ExportDmsTask object. If that is passed in,
-     * the progress in it will be updated during processing and occurring errors
-     * will be passed to it to be visible in the task manager screen.
+     * addition, it accepts an optional ExportDmsTask object. If that is passed
+     * in, the progress in it will be updated during processing and occurring
+     * errors will be passed to it to be visible in the task manager screen.
      *
      * @param process
      *            process to export
@@ -152,6 +152,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
+                    logger.error(e.getMessage(), e);
                     Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
                 }
                 return false;
@@ -159,6 +160,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
+                    logger.error(e.getMessage(), e);
                     Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
                 }
                 return false;
@@ -174,7 +176,8 @@ public class ExportDms extends ExportMets {
         }
 
         // prepare and download save location
-        // TODO: why create again zielVerzeichnis if it is already given as an input??
+        // TODO: why create again zielVerzeichnis if it is already given as an
+        // input??
         URI zielVerzeichnis;
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
@@ -232,8 +235,8 @@ public class ExportDms extends ExportMets {
         }
 
         /*
-         * export the file to the desired location, either directly into the import
-         * folder or into the user's home, then start the import thread
+         * export the file to the desired location, either directly into the
+         * import folder or into the user's home, then start the import thread
          */
         if (process.getProject().isUseDmsImport()) {
             asyncExportWithImport(process, gdzfile, userHome);
@@ -262,6 +265,7 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
             }
             logger.error("Export abgebrochen, xml-LeseFehler", e);
@@ -283,6 +287,7 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
             }
             return false;
@@ -325,6 +330,7 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
+                    logger.error(e.getMessage(), e);
                     Helper.setFehlerMeldung(processTitle + ": error on export - ", e.getMessage());
                 }
                 logger.error(processTitle + ": error on export", e);
@@ -367,8 +373,8 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Setter method to pass in a task thread to whom progress and error messages
-     * shall be reported.
+     * Setter method to pass in a task thread to whom progress and error
+     * messages shall be reported.
      *
      * @param task
      *            task implementation
@@ -378,8 +384,8 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings
-     * calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
      */
     private void trimAllMetadata(DocStructInterface inStruct) {
         // trim all metadata values
@@ -491,7 +497,8 @@ public class ExportDms extends ExportMets {
                     fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
-                // if no async import, then create the folder with user authorization again
+                // if no async import, then create the folder with user
+                // authorization again
                 User user = Helper.getCurrentUser();
                 try {
                     if (user != null) {
@@ -533,6 +540,7 @@ public class ExportDms extends ExportMets {
         if (exportDmsTask != null) {
             exportDmsTask.setException(e);
         } else {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
         }
         logger.error("could not create destination directory", e);

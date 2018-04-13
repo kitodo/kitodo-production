@@ -38,7 +38,7 @@ public class ConfigCore extends ConfigMain {
     /**
      * Return the absolute path for the temporary images directory. Method
      * creates also this folder in case it doesn't exist.
-     * 
+     *
      * @return the path for the temporary images directory as URI
      */
     public static URI getTempImagesPathAsCompleteDirectory() {
@@ -53,7 +53,7 @@ public class ConfigCore extends ConfigMain {
             try {
                 uri = serviceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
             } catch (Exception ioe) {
-                logger.error("IO error: " + ioe);
+                logger.error("IO error", ioe);
                 Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
             }
         }

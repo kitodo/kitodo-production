@@ -144,10 +144,10 @@ public class FileManipulation {
             logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
         } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
         } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         } finally {
             if (inputStream != null) {
                 try {
@@ -370,7 +370,7 @@ public class FileManipulation {
                 int index = Integer.parseInt(fileIndex);
                 filenamesToMove.add(allPages.get(index).getImageName());
             } catch (NumberFormatException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         }
         URI tempDirectory = fileService.getTemporalDirectory();
@@ -519,7 +519,7 @@ public class FileManipulation {
                 }
             }
         } catch (TypeNotAllowedForParentException | MetadataTypeNotAllowedException | IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         // delete folder

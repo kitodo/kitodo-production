@@ -401,7 +401,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             Thread.currentThread().interrupt();
         }
     }

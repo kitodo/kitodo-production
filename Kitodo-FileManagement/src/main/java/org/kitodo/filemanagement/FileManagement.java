@@ -433,7 +433,7 @@ public class FileManagement implements FileManagementInterface {
                 sourceFolder = dir.resolve(directories.get(0));
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         return sourceFolder;
@@ -486,7 +486,7 @@ public class FileManagement implements FileManagementInterface {
         try {
             decodedPath = URLDecoder.decode(uriToDecode, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return "";
         }
         return decodedPath;

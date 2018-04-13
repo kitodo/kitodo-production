@@ -511,7 +511,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 }
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         //
@@ -543,9 +543,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         // }
         // }
         // } catch (BiffException e) {
-        // logger.error(e);
+        // logger.error(e.getMessage(), e);
         // } catch (IOException e) {
-        // logger.error(e);
+        // logger.error(e.getMessage(), e);
         // }
         return records;
     }

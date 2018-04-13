@@ -148,7 +148,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         try {
             myPreferences.loadPrefs(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
         } catch (PreferencesException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return myPreferences;
     }

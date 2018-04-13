@@ -48,6 +48,7 @@ public class XmlArtikelZaehlen {
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("xml error", e.getMessage());
             return -1;
         }
@@ -58,9 +59,9 @@ public class XmlArtikelZaehlen {
             document = gdzfile.getDigitalDocument();
             DocStructInterface logicalTopstruct = document.getLogicalDocStruct();
             rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
-        } catch (PreferencesException e1) {
-            Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
-            logger.error(e1);
+        } catch (PreferencesException e) {
+            Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e.getMessage());
+            logger.error(e.getMessage(), e);
             rueckgabe = 0;
         }
 
@@ -71,7 +72,7 @@ public class XmlArtikelZaehlen {
         try {
             serviceManager.getProcessService().save(myProcess);
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return rueckgabe;
     }

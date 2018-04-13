@@ -224,7 +224,7 @@ public class MockDatabase {
                 return jsonObject.toString();
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return "";
     }

@@ -58,7 +58,7 @@ public class ConfigMain {
         try {
             return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return "- keine Konfiguration gefunden -";
         }
     }

@@ -73,7 +73,7 @@ public class SRUHelper {
             client = new SRUClient("http://" + address, "picaxml", null, null);
             return client.getSearchResponse("pica.ppn=" + ppn);
         } catch (MalformedURLException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return "";
     }

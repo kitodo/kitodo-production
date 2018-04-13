@@ -36,7 +36,7 @@ public class RulesetConverter implements Converter {
             try {
                 return serviceManager.getRulesetService().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
                 return "0";
             }
         }

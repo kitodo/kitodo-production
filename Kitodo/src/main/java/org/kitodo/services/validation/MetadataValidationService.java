@@ -70,6 +70,7 @@ public class MetadataValidationService {
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + process.getTitle(), e.getMessage());
             return false;
         }
@@ -96,6 +97,7 @@ public class MetadataValidationService {
         try {
             dd = gdzfile.getDigitalDocument();
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(),
                 e.getMessage());
             return false;
@@ -165,7 +167,8 @@ public class MetadataValidationService {
         List<String> seitenOhneDocstructs = null;
         try {
             seitenOhneDocstructs = checkSeitenOhneDocstructs(gdzfile);
-        } catch (PreferencesException e1) {
+        } catch (PreferencesException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("[" + process.getTitle() + "] Can not check pages without docstructs: ");
             result = false;
         }
@@ -214,8 +217,9 @@ public class MetadataValidationService {
                 Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
                 return false;
             }
-        } catch (InvalidImagesException e1) {
-            Helper.setFehlerMeldung(process.getTitle() + ": ", e1);
+        } catch (InvalidImagesException e) {
+            logger.error(e.getMessage(), e);
+            Helper.setFehlerMeldung(process.getTitle() + ": ", e);
             result = false;
         }
 
@@ -260,6 +264,7 @@ public class MetadataValidationService {
                 return false;
             }
         } catch (UghHelperException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung(this.process.getTitle() + ": " + "Verify aborted, error: ", e.getMessage());
             return false;
         }
@@ -364,6 +369,7 @@ public class MetadataValidationService {
         try {
             cp = new ConfigProjects(this.process.getProject().getTitle());
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "IOException", e.getMessage());
             return errorList;
         }
@@ -380,6 +386,7 @@ public class MetadataValidationService {
             try {
                 mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
             } catch (UghHelperException e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "Metadatatype does not exist: ",
                     propMetadatatype);
             }
@@ -424,8 +431,8 @@ public class MetadataValidationService {
                 metadataTypes.add(emdete);
             } catch (UghHelperException e) {
                 /*
-                 * if the compilation does not exist for creatorsAllOrigin as the metadata type,
-                 * fetch exception and do not elaborate on it
+                 * if the compilation does not exist for creatorsAllOrigin as
+                 * the metadata type, fetch exception and do not elaborate on it
                  */
             }
         }
@@ -438,6 +445,7 @@ public class MetadataValidationService {
                 serviceManager.getFileService().writeMetadataFile(gdzfile, process);
             }
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("Error while writing metadata: " + process.getTitle(), e);
         }
     }
@@ -460,7 +468,8 @@ public class MetadataValidationService {
             try {
                 MetadataInterface createdElement = UghImplementation.INSTANCE.createMetadata(mdt);
                 String value = "";
-                // go through all the metadata to append and append to the element
+                // go through all the metadata to append and append to the
+                // element
                 for (MetadataTypeInterface metadataType : metadataTypes) {
                     List<PersonInterface> fromElemente = docStruct.getAllPersons();
                     if (fromElemente != null && fromElemente.size() > 0) {
@@ -473,7 +482,7 @@ public class MetadataValidationService {
                     docStruct.addMetadata(createdElement);
                 }
             } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         }
 

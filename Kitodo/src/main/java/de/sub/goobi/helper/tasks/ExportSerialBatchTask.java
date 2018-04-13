@@ -167,7 +167,7 @@ public class ExportSerialBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -209,7 +209,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         try {
             type = root.getAllChildren().get(0).getDocStructType().getName();
         } catch (NullPointerException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
         PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());

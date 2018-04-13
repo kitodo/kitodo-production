@@ -403,7 +403,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         try {
             currentUser = serviceManager.getUserService().findAuthenticatedUser();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         // TODO Change to check the corresponding authority
         if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
@@ -452,7 +452,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             userDTO = serviceManager.getUserService().findById(user.getId());
             assignedProjects = userDTO.getProjects();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         // only processes which are not templates and are part of assigned projects
@@ -461,7 +461,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     .findByProjectIds(collectIds(assignedProjects), true);
             taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
@@ -569,10 +569,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskExact(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -581,10 +581,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskMax(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -593,10 +593,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskMin(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -606,10 +606,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskTitle(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -618,13 +618,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskRange(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (NumberFormatException e) {
                     try {
                         return filterTaskTitle(parameters, taskStatus, negate, objectType);
                     } catch (NullPointerException e1) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                         logger.error("stepdone is preset, don't use 'step' filters");
                     } catch (Exception e1) {
                         logger.error(e1);
@@ -632,7 +632,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                                 + "' caused an error\n");
                     }
                 } catch (Exception e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -830,7 +830,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             UserDTO userDTO = serviceManager.getUserService().convertJSONObjectToDTO(user, false);
             taskDTOS = userDTO.getProcessingTasks();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         if (objectType == ObjectType.PROCESS) {

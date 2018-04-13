@@ -146,7 +146,7 @@ public class ExportXmlLog {
 
             outp.output(answer, outputStream);
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         } finally {
             if (outputStream != null) {
                 try {
@@ -370,7 +370,7 @@ public class ExportXmlLog {
             processElements.add(metsElement);
 
         } catch (IOException | JDOMException | JaxenException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         processElm.setContent(processElements);
         return doc;

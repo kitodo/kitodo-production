@@ -91,7 +91,7 @@ public class HibernateHelper implements Serializable {
                     try {
                         value = vb.getValue(context);
                     } catch (EvaluationException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

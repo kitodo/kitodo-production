@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -43,7 +42,7 @@ public class ExportMets {
     protected Helper help = new Helper();
     protected PrefsInterface myPrefs;
 
-    protected static final Logger logger = LogManager.getLogger(ExportMets.class);
+    private static final Logger logger = LogManager.getLogger(ExportMets.class);
 
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
@@ -109,6 +108,7 @@ public class ExportMets {
             try {
                 fileService.createDirectoryForUser(targetFolder, user.getLogin());
             } catch (Exception e) {
+                logger.error(e.getMessage(), e);
                 Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + targetFolder, e);
             }
         }

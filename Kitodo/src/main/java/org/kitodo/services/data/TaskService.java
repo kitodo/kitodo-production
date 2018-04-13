@@ -230,7 +230,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Replace processing user for given task. Handles add/remove from list of
      * processing tasks.
-     * 
+     *
      * @param task
      *            for which user will be assigned as processing user
      * @param user
@@ -660,6 +660,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 }
             }
         } catch (IOException e) {
+            logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("IOException: ", e.getMessage());
         }
         return executedSuccessful;
@@ -720,7 +721,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 abortTask(task);
             }
         } catch (PreferencesException | WriteException | IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             abortTask(task);
         }
     }
@@ -862,8 +863,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and ordered
-     * by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and
+     * ordered by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -874,8 +875,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get average ordering of tasks for non template processes for given project id
-     * and ordered by ordering column in Task table.
+     * Get average ordering of tasks for non template processes for given
+     * project id and ordered by ordering column in Task table.
      *
      * @param projectId
      *            as Integer
@@ -901,8 +902,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and ordered
-     * by ordering column in Task table.
+     * Get size of tasks for non template processes for given project id and
+     * ordered by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer
@@ -916,8 +917,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get amount of images of tasks for non template processes for given project id
-     * and ordered by ordering column in Task table.
+     * Get amount of images of tasks for non template processes for given
+     * project id and ordered by ordering column in Task table.
      *
      * @param processingStatus
      *            as Integer
