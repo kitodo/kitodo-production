@@ -1,13 +1,17 @@
 package org.kitodo.forms;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
+import java.net.URI;
 
 import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.FileLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -15,10 +19,24 @@ public class ModelerFormTest {
 
     private static FileService fileService = new ServiceManager().getFileService();
 
+
+    @BeforeClass
+    public static void createDiagrams() throws Exception {
+        fileService.createDirectory(URI.create(""), "diagrams");
+
+        FileLoader.createDiagramBaseFile();
+        FileLoader.createDiagramTestFile();
+    }
+
     @AfterClass
     public static void removeDiagram() throws Exception {
         fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "new.bpmn20.xml").toURI());
         fileService.delete(new File(ConfigCore.getKitodoDiagramDirectory() + "test2.bpmn20.xml").toURI());
+
+        FileLoader.deleteDiagramBaseFile();
+        FileLoader.deleteDiagramTestFile();
+
+        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
@@ -31,7 +49,7 @@ public class ModelerFormTest {
         assertTrue("Diagram XML was not read!", fileService.fileExist(new File(ConfigCore.getKitodoDiagramDirectory() + "new.bpmn20.xml").toURI()));
 
         modelerForm.readXMLDiagram();
-        assertTrue("Diagram XML was not read!", modelerForm.getXmlDiagram() != null);
+        assertNotNull("Diagram XML was not read!", modelerForm.getXmlDiagram());
     }
 
     @Test
@@ -41,7 +59,7 @@ public class ModelerFormTest {
         modelerForm.setXmlDiagramName("test.bpmn20.xml");
         modelerForm.readXMLDiagram();
 
-        assertTrue("Diagram XML was not read!", modelerForm.getXmlDiagram() != null);
+        assertNotNull("Diagram XML was not read!", modelerForm.getXmlDiagram());
     }
 
     @Test

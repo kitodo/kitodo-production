@@ -50,7 +50,7 @@ public class ReaderTest {
 
     @Test
     public void shouldLoadProcess() throws Exception {
-        Reader reader = new Reader("test");
+        Reader reader = new Reader("extended-test");
 
         boolean result = Objects.nonNull(reader.getModelInstance());
         assertTrue("Process definition was not loaded!", result);
@@ -58,31 +58,33 @@ public class ReaderTest {
 
     @Test
     public void shouldGetWorkflow() throws Exception {
-        Reader reader = new Reader("test");
+        Reader reader = new Reader("extended-test");
 
         Diagram workflow = reader.getWorkflow();
-        assertEquals("Process definition - workflow was read incorrectly!", workflow.getTitle(), "say-hello");
-        assertEquals("Process definition - workflow was read incorrectly!", workflow.getOutputName(), "Say Hello");
+        assertEquals("Process definition - workflow was read incorrectly!", "say-hello", workflow.getTitle());
+        assertEquals("Process definition - workflow was read incorrectly!", "Say Hello", workflow.getOutputName());
     }
 
     @Test
     public void shouldConvertWorkflowToTemplate() throws Exception {
-        Reader reader = new Reader("test");
+        Reader reader = new Reader("extended-test");
 
         Template template = reader.convertWorkflowToTemplate();
         template.getTasks().sort(Comparator.comparing(Task::getOrdering));
 
-        assertEquals("Process definition - workflow was read incorrectly!", template.getTitle(), "say-hello");
-        assertEquals("Process definition - workflow was read incorrectly!", template.getOutputName(), "Say Hello");
+        assertEquals("Process definition - workflow was read incorrectly!", "say-hello", template.getTitle());
+        assertEquals("Process definition - workflow was read incorrectly!", "Say Hello", template.getOutputName());
+
+        template.getTasks().sort(Comparator.comparing(Task::getOrdering));
 
         Task task = template.getTasks().get(0);
-        assertEquals("Process definition - workflow's task was read incorrectly!", task.getTitle(), "Say hello");
-        assertEquals("Process definition - workflow's task was read incorrectly!", task.getPriority().intValue(), 1);
-        assertEquals("Process definition - workflow's task was read incorrectly!", task.getOrdering().intValue(), 1);
+        assertEquals("Process definition - workflow's task was read incorrectly!", "Say hello", task.getTitle());
+        assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getPriority().intValue());
+        assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getOrdering().intValue());
 
         task = template.getTasks().get(1);
-        assertEquals("Process definition - workflow's task was read incorrectly!", task.getScriptName(), "Test script");
+        assertEquals("Process definition - workflow's task was read incorrectly!", "Test script", task.getScriptName());
         assertNull("Process definition - workflow's task was read incorrectly!", task.getScriptPath());
-        assertEquals("Process definition - workflow's task was read incorrectly!", task.getOrdering().intValue(), 2);
+        assertEquals("Process definition - workflow's task was read incorrectly!", 2, task.getOrdering().intValue());
     }
 }
