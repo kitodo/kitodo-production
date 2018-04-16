@@ -47,7 +47,7 @@ public class CopyIfMetadataIsAbsentRule extends DataCopyrule {
     private DataSelector source;
 
     /**
-     * This method actually applies the rule to the given fileformat.
+     * This method actually applies the rule to the given dataeditor.
      *
      * @see de.sub.goobi.metadaten.copier.DataCopyrule#apply(de.sub.goobi.metadaten.copier.CopierData)
      */

@@ -1,0 +1,85 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<jxb:bindings xmlns="http://java.sun.com/xml/ns/jaxb"
+              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+              version="2.1">
+    <bindings schemaLocation="../xsd/mods-3-7.xsd">
+        <schemaBindings>
+            <package name="metsModsKitodo"/>
+        </schemaBindings>
+
+        <bindings
+            node="//xsd:complexType[@name='abstractDefinition']/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="abstractDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='noteDefinition']/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="noteDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='physicalDescriptionNote']/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="physicalDescriptionNoteType"/>
+        </bindings>
+
+        <bindings node="//xsd:attributeGroup[@name='languageAttributeGroup']/xsd:attribute[@name='lang']">
+            <property name="attributeLanguage"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:element[@name='text']/xsd:complexType/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="textType"/>
+        </bindings>
+
+        <bindings node="//xsd:complexType[@name='relatedItemDefinition']/xsd:attribute[@name='type']">
+            <property name="relatedItemDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='physicalLocationDefinition']/xsd:simpleContent/xsd:extension[@base='stringPlusLanguagePlusAuthority']/xsd:attribute[@name='type']">
+            <property name="physicalLocationDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='tableOfContentsDefinition']/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="tableOfContentsDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='accessConditionDefinition']/xsd:complexContent/xsd:extension[@base='extensionDefinition']/xsd:attribute[@name='type']">
+            <property name="accessConditionDefinitionType"/>
+        </bindings>
+
+        <bindings node="//xsd:complexType[@name='titleInfoDefinition']/xsd:attribute[@name='type']">
+            <property name="titleInfoDefinitionType"/>
+        </bindings>
+
+        <bindings node="//xsd:complexType[@name='subjectTitleInfoDefinition']/xsd:attribute[@name='type']">
+            <property name="subjectTitleInfoDefinitionType"/>
+        </bindings>
+
+        <bindings node="//xsd:complexType[@name='subjectNameDefinition']/xsd:attribute[@name='type']">
+            <property name="subjectNameDefinitionType"/>
+        </bindings>
+
+        <bindings node="//xsd:complexType[@name='nameDefinition']/xsd:attribute[@name='type']">
+            <property name="nameDefinitionType"/>
+        </bindings>
+
+        <bindings
+            node="//xsd:complexType[@name='copyInformationDefinition']/xsd:sequence/xsd:element[@name='note']/xsd:complexType/xsd:simpleContent/xsd:extension[@base='stringPlusLanguage']/xsd:attribute[@name='type']">
+            <property name="noteType"/>
+        </bindings>
+    </bindings>
+</jxb:bindings>

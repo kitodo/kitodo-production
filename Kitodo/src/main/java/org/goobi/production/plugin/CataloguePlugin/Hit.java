@@ -26,7 +26,7 @@ import org.kitodo.api.ugh.FileformatInterface;
  * <p>
  * The class Hit unwraps the contents of a hit result of the basic java types
  * <code>Map&lt;String, Object&gt;</code>. The map should contain a key
- * <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
+ * <code>dataeditor</code> holding an instance of {@link ugh.dl.Fileformat} with
  * the record data and a field <code>type</code> holding the DocType.
  * </p>
  *
@@ -150,7 +150,7 @@ public class Hit {
      * @return the full hit record
      */
     public FileformatInterface getFileformat() {
-        return getAs("fileformat", FileformatInterface.class);
+        return getAs("dataeditor", FileformatInterface.class);
     }
 
     /**

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           targetNamespace="http://meta.kitodo.org/v1/" xmlns="http://meta.kitodo.org/v1/"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="kitodo" type="kitodoType"/>
+    <xs:complexType name="kitodoType">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="metadata" type="metadataType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="version"/>
+    </xs:complexType>
+    <xs:complexType name="metadataType" mixed="true">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="metadata" type="metadataType" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="name"/>
+        <xs:attribute type="xs:string" name="type"/>
+        <xs:attribute type="xs:boolean" name="anchorId"/>
+    </xs:complexType>
+</xs:schema>

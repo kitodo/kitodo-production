@@ -111,6 +111,8 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-DataAccess</module>
         <module>Kitodo-API</module>
+        <module>Kitodo-DataEditor</module>
+        <module>Kitodo-DataFormat</module>
         <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>

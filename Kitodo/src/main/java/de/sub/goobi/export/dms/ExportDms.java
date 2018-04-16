@@ -301,7 +301,7 @@ public class ExportDms extends ExportMets {
             writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile,
                 false);
         } else {
-            // ...if not, just write a fileformat
+            // ...if not, just write a dataeditor
             gdzfile.write(userHome + File.separator + atsPpnBand + ".xml");
         }
 

@@ -105,7 +105,7 @@ public class CopierData {
     }
 
     /**
-     * Returns the digital document contained in the fileformat passed-in in the
+     * Returns the digital document contained in the dataeditor passed-in in the
      * constructor.
      *
      * @return the digital document
@@ -128,7 +128,7 @@ public class CopierData {
     }
 
     /**
-     * Returns the ruleset to be used with the fileformat.
+     * Returns the ruleset to be used with the dataeditor.
      *
      * @return the required ruleset.
      */
@@ -154,6 +154,6 @@ public class CopierData {
      */
     @Override
     public String toString() {
-        return "{fileformat: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
+        return "{dataeditor: " + fileformat.toString() + ", process: " + getProcessTitle() + '}';
     }
 }

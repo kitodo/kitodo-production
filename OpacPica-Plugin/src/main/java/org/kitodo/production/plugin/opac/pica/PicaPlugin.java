@@ -194,7 +194,7 @@ public class PicaPlugin implements Plugin {
     /**
      * The function getHit() returns the hit with the given index from the given
      * search result as a Map&lt;String, Object&gt;. The map contains the full
-     * hit as "fileformat", the docType as "type" and some bibliographic
+     * hit as "dataeditor", the docType as "type" and some bibliographic
      * metadata for Production to be able to show a short hit display as
      * supposed in {@link org.goobi.production.plugin.CataloguePlugin.Hit}.
      *
@@ -764,7 +764,7 @@ public class PicaPlugin implements Plugin {
 
     /**
      * The function createResult() creates a Map&lt;String, Object&gt; as result
-     * of getHit(). The map contains the full hit as "fileformat", the docType
+     * of getHit(). The map contains the full hit as "dataeditor", the docType
      * as "type" and some bibliographic metadata for Production to be able to
      * show a short hit display as supposed in
      * {@link org.goobi.production.plugin.CataloguePlugin.Hit}
