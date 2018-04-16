@@ -11,8 +11,11 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.util.List;
+
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -21,8 +24,16 @@ import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 public class ProjectsPage {
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView")
+    private WebElement projectsTabView;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView:projectsTable_data")
     private WebElement projectsTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable_data")
+    private WebElement templatesTable;
 
     /**
      * Goes to projects page.
@@ -43,11 +54,43 @@ public class ProjectsPage {
         return Browser.getCurrentUrl().contains("projects");
     }
 
+    /**
+     * Checks if the browser is currently not at users page.
+     *
+     * @return True if browser is not at users page.
+     */
+    public boolean isNotAt() {
+        return !isAt();
+    }
+
+    /**
+     * Clicks on the tab indicated by given index (starting with 0 for the first
+     * tab).
+     *
+     * @return The users page.
+     */
+    public ProjectsPage switchToTabByIndex(int index) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        List<WebElement> listTabs = projectsTabView.findElements(By.tagName("li"));
+        WebElement tab = listTabs.get(index);
+        tab.click();
+        return this;
+    }
+
     public int countListedProjects() throws Exception {
         if (!isAt()) {
             goTo();
         }
         return getRowsOfTable(projectsTable).size();
+    }
+
+    public int countListedTemplates() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getRowsOfTable(templatesTable).size();
     }
 
 }

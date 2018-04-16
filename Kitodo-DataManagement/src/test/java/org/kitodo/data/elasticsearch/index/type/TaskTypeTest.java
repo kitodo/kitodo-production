@@ -252,7 +252,7 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
 
         JsonArray users = actual.getJsonArray("users");
         JsonObject user = users.getJsonObject(0);

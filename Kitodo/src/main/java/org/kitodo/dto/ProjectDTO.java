@@ -29,6 +29,7 @@ public class ProjectDTO extends BaseDTO {
     private Boolean active = true;
     private ClientDTO client;
     private List<ProcessDTO> processes;
+    private List<TemplateDTO> templates;
     private List<UserDTO> users;
 
     /**
@@ -237,6 +238,25 @@ public class ProjectDTO extends BaseDTO {
      */
     public void setProcesses(List<ProcessDTO> processes) {
         this.processes = processes;
+    }
+
+    /**
+     * Get list of templates.
+     *
+     * @return list of templates as TemplateDTO
+     */
+    public List<TemplateDTO> getTemplates() {
+        return templates;
+    }
+
+    /**
+     * Set list of templates.
+     *
+     * @param templates
+     *            as list of TemplateDTO
+     */
+    public void setTemplates(List<TemplateDTO> templates) {
+        this.templates = templates;
     }
 
     /**

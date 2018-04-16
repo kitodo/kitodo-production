@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
-import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -157,8 +157,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     public static ProzesskopieForm newProcessFromTemplate(String templateTitle) {
         ProzesskopieForm result = new ProzesskopieForm();
 
-        Process selectedTemplate = getTemplateByTitle(templateTitle);
-        result.setProzessVorlage(selectedTemplate);
+        Template selectedTemplate = getTemplateByTitle(templateTitle);
+        result.setTemplate(selectedTemplate);
         result.prepare(selectedTemplate.getId());
         return result;
     }
@@ -174,8 +174,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             is thrown, if there is no template matching the given
      *             templateTitle
      */
-    private static Process getTemplateByTitle(String templateTitle) {
-        List<Process> response = serviceManager.getProcessService().getProcessTemplatesWithTitle(templateTitle);
+    private static Template getTemplateByTitle(String templateTitle) {
+        List<Template> response = serviceManager.getTemplateService().getProcessTemplatesWithTitle(templateTitle);
 
         if (response.size() > 0) {
             return response.get(0);
@@ -203,7 +203,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
         HashSet<String> possibleCollections = new HashSet<>(process.getPossibleDigitalCollections());
         if (!possibleCollections.containsAll(collections)) {
             throw new IllegalArgumentException("Bad argument: One or more elements of \"collections\" is not "
-                    + "available for template \"" + process.getProzessVorlage().getTitle() + "\".");
+                    + "available for template \"" + process.getTemplate().getTitle() + "\".");
         }
         return new ArrayList<>(collections);
     }

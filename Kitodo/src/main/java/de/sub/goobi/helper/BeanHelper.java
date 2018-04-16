@@ -17,6 +17,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 
@@ -96,7 +97,7 @@ public class BeanHelper {
      * @param processCopy
      *            new object
      */
-    public static void copyTasks(Process processTemplate, Process processCopy) {
+    public static void copyTasks(Template processTemplate, Process processCopy) {
         List<Task> tasks = new ArrayList<>();
         for (Task task : processTemplate.getTasks()) {
 
@@ -132,72 +133,6 @@ public class BeanHelper {
             tasks.add(taskNew);
         }
         processCopy.setTasks(tasks);
-    }
-
-    /**
-     * Copy workpieces from process' template to process.
-     *
-     * @param processTemplate
-     *            template object
-     * @param processCopy
-     *            new object
-     */
-    public static void copyWorkpieces(Process processTemplate, Process processCopy) {
-        List<Property> workpieceProperties = new ArrayList<>();
-        for (Property workpieceProperty : processTemplate.getWorkpieces()) {
-            Property propertyNew = new Property();
-            propertyNew.setObligatory(workpieceProperty.isObligatory());
-            propertyNew.setType(workpieceProperty.getType());
-            propertyNew.setTitle(workpieceProperty.getTitle());
-            propertyNew.setValue(workpieceProperty.getValue());
-            propertyNew.getWorkpieces().add(processCopy);
-            workpieceProperties.add(propertyNew);
-        }
-        processCopy.setWorkpieces(workpieceProperties);
-    }
-
-    /**
-     * Copy properties from process' template to process.
-     *
-     * @param processTemplate
-     *            template object
-     * @param processCopy
-     *            new object
-     */
-    public static void copyProperties(Process processTemplate, Process processCopy) {
-        List<Property> myProperties = new ArrayList<>();
-        for (Property templateProperty : processTemplate.getProperties()) {
-            Property propertyNew = new Property();
-            propertyNew.setObligatory(templateProperty.isObligatory());
-            propertyNew.setType(templateProperty.getType());
-            propertyNew.setTitle(templateProperty.getTitle());
-            propertyNew.setValue(templateProperty.getValue());
-            propertyNew.getProcesses().add(processCopy);
-            myProperties.add(propertyNew);
-        }
-        processCopy.setProperties(myProperties);
-    }
-
-    /**
-     * Copy scan templates from process' template to process.
-     *
-     * @param processTemplate
-     *            template object
-     * @param processCopy
-     *            new object
-     */
-    public static void copyScanTemplates(Process processTemplate, Process processCopy) {
-        List<Property> templateProperties = new ArrayList<>();
-        for (Property templateProperty : processTemplate.getTemplates()) {
-            Property propertyNew = new Property();
-            propertyNew.setObligatory(templateProperty.isObligatory());
-            propertyNew.setType(templateProperty.getType());
-            propertyNew.setTitle(templateProperty.getTitle());
-            propertyNew.setValue(templateProperty.getValue());
-            propertyNew.getTemplates().add(processCopy);
-            templateProperties.add(propertyNew);
-        }
-        processCopy.setTemplates(templateProperties);
     }
 
     /**

@@ -63,6 +63,7 @@ import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
@@ -144,6 +145,7 @@ public class MockDatabase {
         insertProjects();
         insertProjectFileGroups();
         insertProcesses();
+        insertTemplates();
         insertProcessProperties();
         insertWorkpieceProperties();
         insertTemplateProperties();
@@ -163,8 +165,9 @@ public class MockDatabase {
         insertUserGroups();
         insertProjects();
         insertProjectFileGroups();
-        insertProcessesForWorkflow();
-        insertProcessProperties();
+        insertProcessForWorkflow();
+        insertTemplateForWorkflow();
+        insertProcessPropertiesForWorkflow();
         insertWorkpieceProperties();
         insertTemplateProperties();
         insertUserFilters();
@@ -449,37 +452,22 @@ public class MockDatabase {
     private static void insertProcesses() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
 
-        Process firstProcess = new Process();
-        firstProcess.setTitle("First process");
-        firstProcess.setOutputName("Test");
-        firstProcess.setWikiField("wiki");
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstProcess.setCreationDate(localDate.toDate());
-        firstProcess.setSortHelperImages(20);
+        Process secondProcess = new Process();
+        secondProcess.setTitle("First process");
+        secondProcess.setOutputName("Testowy");
+        secondProcess.setWikiField("field");
+        LocalDate localDate = new LocalDate(2017, 1, 20);
+        secondProcess.setCreationDate(localDate.toDate());
         List<Batch> batches = new ArrayList<>();
         Batch firstBatch = serviceManager.getBatchService().getById(1);
         Batch secondBatch = serviceManager.getBatchService().getById(3);
         List<Process> processes = new ArrayList<>();
-        processes.add(firstProcess);
+        processes.add(secondProcess);
         firstBatch.setProcesses(processes);
         secondBatch.setProcesses(processes);
         batches.add(firstBatch);
         batches.add(secondBatch);
-        firstProcess.setBatches(batches);
-        firstProcess.setTemplate(true);
-        firstProcess.setInChoiceListShown(true);
-        firstProcess.setDocket(serviceManager.getDocketService().getById(1));
-        firstProcess.setProject(project);
-        firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
-        serviceManager.getProcessService().save(firstProcess);
-
-        Process secondProcess = new Process();
-        secondProcess.setTitle("Second process");
-        secondProcess.setOutputName("Testowy");
-        secondProcess.setWikiField("field");
-        localDate = new LocalDate(2017, 1, 20);
-        secondProcess.setCreationDate(localDate.toDate());
-        secondProcess.setInChoiceListShown(true);
+        secondProcess.setBatches(batches);
         secondProcess.setSortHelperImages(30);
         secondProcess.setDocket(serviceManager.getDocketService().getById(1));
         secondProcess.setProject(project);
@@ -489,11 +477,12 @@ public class MockDatabase {
 
         Process thirdProcess = new Process();
         thirdProcess.setTitle("Second process");
-        thirdProcess.setOutputName("Unreachable");
+        thirdProcess.setOutputName("Single task");
         thirdProcess.setWikiField("problem");
         localDate = new LocalDate(2017, 2, 10);
         thirdProcess.setCreationDate(localDate.toDate());
-        thirdProcess.setInChoiceListShown(true);
+        secondBatch.getProcesses().add(thirdProcess);
+        thirdProcess.getBatches().add(secondBatch);
         thirdProcess.setDocket(serviceManager.getDocketService().getById(1));
         thirdProcess.setProject(project);
         thirdProcess.setRuleset(serviceManager.getRulesetService().getById(1));
@@ -501,71 +490,91 @@ public class MockDatabase {
 
         Process fourthProcess = new Process();
         fourthProcess.setTitle("DBConnectionTest");
-        fourthProcess.setInChoiceListShown(true);
+        fourthProcess.setOutputName("Unreachable");
         serviceManager.getProcessService().save(fourthProcess);
 
-        project.getProcesses().add(firstProcess);
         project.getProcesses().add(secondProcess);
         project.getProcesses().add(thirdProcess);
 
         serviceManager.getProjectService().save(project);
+    }
+
+    private static void insertTemplates() throws DAOException, DataException {
+        Project project = serviceManager.getProjectService().getById(1);
+
+        Template firstTemplate = new Template();
+        firstTemplate.setTitle("First template");
+        firstTemplate.setOutputName("Test");
+        firstTemplate.setWikiField("wiki");
+        LocalDate localDate = new LocalDate(2016, 10, 20);
+        firstTemplate.setCreationDate(localDate.toDate());
+        firstTemplate.setInChoiceListShown(true);
+        firstTemplate.setDocket(serviceManager.getDocketService().getById(1));
+        firstTemplate.setProject(project);
+        firstTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
+        serviceManager.getTemplateService().save(firstTemplate);
+        project.getTemplates().add(firstTemplate);
+        serviceManager.getProjectService().save(project);
 
         Project thirdProject = serviceManager.getProjectService().getById(3);
-        Process fifthProcess = new Process();
-        fifthProcess.setTitle("Fifth process");
-        fifthProcess.setOutputName("Unreachable");
-        fifthProcess.setWikiField("problem");
+        Template secondTemplate = new Template();
+        secondTemplate.setTitle("Second template");
+        secondTemplate.setOutputName("Reachable");
+        secondTemplate.setWikiField("works");
         localDate = new LocalDate(2017, 2, 10);
-        fifthProcess.setCreationDate(localDate.toDate());
-        fifthProcess.setDocket(serviceManager.getDocketService().getById(1));
-        fifthProcess.setProject(thirdProject);
-        fifthProcess.setRuleset(serviceManager.getRulesetService().getById(1));
-        fifthProcess.setTemplate(true);
-        fifthProcess.setInChoiceListShown(true);
-        serviceManager.getProcessService().save(fifthProcess);
+        secondTemplate.setCreationDate(localDate.toDate());
+        secondTemplate.setDocket(serviceManager.getDocketService().getById(1));
+        secondTemplate.setProject(thirdProject);
+        secondTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
+        secondTemplate.setInChoiceListShown(true);
+        serviceManager.getTemplateService().save(secondTemplate);
+        serviceManager.getProjectService().save(thirdProject);
+
+        Template thirdTemplate = new Template();
+        thirdTemplate.setTitle("Third template");
+        thirdTemplate.setOutputName("Unreachable");
+        thirdTemplate.setWikiField("problem");
+        localDate = new LocalDate(2018, 2, 10);
+        thirdTemplate.setCreationDate(localDate.toDate());
+        thirdTemplate.setDocket(serviceManager.getDocketService().getById(1));
+        thirdTemplate.setProject(thirdProject);
+        thirdTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
+        thirdTemplate.setInChoiceListShown(true);
+        serviceManager.getTemplateService().save(thirdTemplate);
         serviceManager.getProjectService().save(thirdProject);
     }
 
-    private static void insertProcessesForWorkflow() throws DAOException, DataException {
+    private static void insertProcessForWorkflow() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
-
-        Process firstProcess = new Process();
-        firstProcess.setTitle("First process");
-        firstProcess.setOutputName("Test");
-        firstProcess.setWikiField("wiki");
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstProcess.setCreationDate(localDate.toDate());
-        firstProcess.setSortHelperImages(20);
-        List<Batch> batches = new ArrayList<>();
-        Batch firstBatch = serviceManager.getBatchService().getById(1);
-        Batch secondBatch = serviceManager.getBatchService().getById(3);
-        List<Process> processes = new ArrayList<>();
-        processes.add(firstProcess);
-        firstBatch.setProcesses(processes);
-        secondBatch.setProcesses(processes);
-        batches.add(firstBatch);
-        batches.add(secondBatch);
-        firstProcess.setBatches(batches);
-        firstProcess.setTemplate(true);
-        firstProcess.setInChoiceListShown(true);
-        firstProcess.setDocket(serviceManager.getDocketService().getById(1));
-        firstProcess.setProject(project);
-        firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
-        serviceManager.getProcessService().save(firstProcess);
 
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
         secondProcess.setOutputName("Testowy");
         secondProcess.setWikiField("field");
-        localDate = new LocalDate(2017, 1, 20);
+        LocalDate localDate = new LocalDate(2017, 1, 20);
         secondProcess.setCreationDate(localDate.toDate());
-        secondProcess.setInChoiceListShown(true);
         secondProcess.setSortHelperImages(30);
         secondProcess.setDocket(serviceManager.getDocketService().getById(1));
         secondProcess.setProject(project);
         secondProcess.setRuleset(serviceManager.getRulesetService().getById(1));
         secondProcess.setSortHelperStatus("100000000");
         serviceManager.getProcessService().save(secondProcess);
+    }
+
+    private static void  insertTemplateForWorkflow() throws DAOException, DataException {
+        Project project = serviceManager.getProjectService().getById(1);
+
+        Template template = new Template();
+        template.setTitle("First process");
+        template.setOutputName("Test");
+        template.setWikiField("wiki");
+        LocalDate localDate = new LocalDate(2016, 10, 20);
+        template.setCreationDate(localDate.toDate());
+        template.setInChoiceListShown(true);
+        template.setDocket(serviceManager.getDocketService().getById(1));
+        template.setProject(project);
+        template.setRuleset(serviceManager.getRulesetService().getById(1));
+        serviceManager.getTemplateService().save(template);
     }
 
     private static void insertProcessProperties() throws DAOException, DataException {
@@ -624,6 +633,43 @@ public class MockDatabase {
         secondProcess.getProperties().add(fourthProcessProperty);
         serviceManager.getProcessService().save(secondProcess);
 
+    }
+
+    private static void insertProcessPropertiesForWorkflow() throws DAOException, DataException {
+        Process firstProcess = serviceManager.getProcessService().getById(1);
+
+        Property firstProcessProperty = new Property();
+        firstProcessProperty.setTitle("Process Property");
+        firstProcessProperty.setValue("first value");
+        firstProcessProperty.setObligatory(true);
+        firstProcessProperty.setType(PropertyType.STRING);
+        firstProcessProperty.setChoice("choice");
+        LocalDate localDate = new LocalDate(2017, 1, 14);
+        firstProcessProperty.setCreationDate(localDate.toDate());
+        firstProcessProperty.getProcesses().add(firstProcess);
+        serviceManager.getPropertyService().save(firstProcessProperty);
+
+        Property secondProcessProperty = new Property();
+        secondProcessProperty.setTitle("Korrektur notwendig");
+        secondProcessProperty.setValue("second value");
+        secondProcessProperty.setObligatory(false);
+        secondProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        secondProcessProperty.setChoice("chosen");
+        localDate = new LocalDate(2017, 1, 15);
+        secondProcessProperty.setCreationDate(localDate.toDate());
+        secondProcessProperty.getProcesses().add(firstProcess);
+        serviceManager.getPropertyService().save(secondProcessProperty);
+
+        Property thirdProcessProperty = new Property();
+        thirdProcessProperty.setTitle("Korrektur notwendig");
+        thirdProcessProperty.setValue("fix it");
+        thirdProcessProperty.setObligatory(false);
+        thirdProcessProperty.setType(PropertyType.MESSAGE_ERROR);
+        thirdProcessProperty.setChoice("chosen");
+        localDate = new LocalDate(2017, 7, 15);
+        thirdProcessProperty.setCreationDate(localDate.toDate());
+        thirdProcessProperty.getProcesses().add(firstProcess);
+        serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
     public static void insertClients() throws DataException {
@@ -773,9 +819,11 @@ public class MockDatabase {
     }
 
     private static void insertTasks() throws DAOException, DataException {
-        Task firstTask = new Task();
-        Process firstProcess = serviceManager.getProcessService().getById(1);
+        Template firstTemplate = serviceManager.getTemplateService().getById(1);
         UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        User secondUser = serviceManager.getUserService().getById(2);
+
+        Task firstTask = new Task();
         firstTask.setTitle("Testing");
         firstTask.setPriority(1);
         firstTask.setOrdering(1);
@@ -789,18 +837,17 @@ public class MockDatabase {
         User firstUser = serviceManager.getUserService().getById(1);
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        firstTask.setProcess(firstProcess);
+        firstTask.setTemplate(firstTemplate);
         firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         serviceManager.getTaskService().save(firstTask);
-        firstProcess.getTasks().add(firstTask);
-        serviceManager.getProcessService().save(firstProcess);
+        firstTemplate.getTasks().add(firstTask);
+        serviceManager.getTemplateService().save(firstTemplate);
         firstUser.getProcessingTasks().add(firstTask);
         serviceManager.getUserService().save(firstUser);
 
-        Process secondProcess = serviceManager.getProcessService().getById(2);
+        Process firstProcess = serviceManager.getProcessService().getById(1);
         User blockedUser = serviceManager.getUserService().getById(3);
-        User secondUser = serviceManager.getUserService().getById(2);
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
@@ -811,7 +858,7 @@ public class MockDatabase {
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        secondTask.setProcess(secondProcess);
+        secondTask.setProcess(firstProcess);
         secondTask.getUsers().add(blockedUser);
         secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
@@ -827,7 +874,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        thirdTask.setProcess(secondProcess);
+        thirdTask.setProcess(firstProcess);
         thirdTask.getUsers().add(secondUser);
         serviceManager.getTaskService().save(thirdTask);
 
@@ -841,136 +888,10 @@ public class MockDatabase {
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         fourthTask.setProcessingUser(secondUser);
-        fourthTask.setProcess(secondProcess);
-        fourthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fourthTask);
-
-        secondProcess.getTasks().add(secondTask);
-        secondProcess.getTasks().add(thirdTask);
-        secondProcess.getTasks().add(fourthTask);
-        serviceManager.getProcessService().save(secondProcess);
-
-        secondUser.getProcessingTasks().add(fourthTask);
-        blockedUser.getProcessingTasks().add(secondTask);
-        blockedUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(thirdTask);
-        serviceManager.getUserService().save(blockedUser);
-        serviceManager.getUserService().save(secondUser);
-
-        userGroup.getTasks().add(firstTask);
-        userGroup.getTasks().add(secondTask);
-        serviceManager.getUserGroupService().save(userGroup);
-
-        Process fifthProcess = serviceManager.getProcessService().getById(5);
-
-        Task fifthTask = new Task();
-        fifthTask.setTitle("Closed");
-        fifthTask.setOrdering(1);
-        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fifthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 6, 27);
-        fifthTask.setProcessingBegin(localDate.toDate());
-        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
-        fifthTask.setProcessingUser(secondUser);
-        fifthTask.setProcess(fifthProcess);
-        fifthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(fifthTask);
-
-        Task sixthTask = new Task();
-        sixthTask.setTitle("Progress");
-        sixthTask.setOrdering(2);
-        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        sixthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 7, 27);
-        sixthTask.setProcessingBegin(localDate.toDate());
-        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        sixthTask.setProcessingUser(secondUser);
-        sixthTask.setProcess(fifthProcess);
-        sixthTask.setUsers(serviceManager.getUserService().getAll());
-        serviceManager.getTaskService().save(sixthTask);
-
-        fifthProcess.getTasks().add(fifthTask);
-        fifthProcess.getTasks().add(sixthTask);
-        serviceManager.getProcessService().save(fifthProcess);
-
-        secondUser.getProcessingTasks().add(fifthTask);
-        secondUser.getProcessingTasks().add(sixthTask);
-        serviceManager.getUserService().save(secondUser);
-    }
-
-    private static void insertTasksForWorkflow() throws DAOException, DataException {
-        Process firstProcess = serviceManager.getProcessService().getById(1);
-
-        Task firstTask = new Task();
-        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
-        firstTask.setTitle("Testing");
-        firstTask.setPriority(1);
-        firstTask.setOrdering(1);
-        firstTask.setEditTypeEnum(TaskEditType.ADMIN);
-        LocalDate localDate = new LocalDate(2016, 10, 20);
-        firstTask.setProcessingBegin(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
-        firstTask.setProcessingTime(localDate.toDate());
-        localDate = new LocalDate(2016, 12, 24);
-        firstTask.setProcessingEnd(localDate.toDate());
-        User firstUser = serviceManager.getUserService().getById(1);
-        firstTask.setProcessingUser(firstUser);
-        firstTask.setProcessingStatusEnum(TaskStatus.DONE);
-        firstTask.setProcess(firstProcess);
-        firstTask.setUsers(serviceManager.getUserService().getAll());
-        firstTask.getUserGroups().add(userGroup);
-        serviceManager.getTaskService().save(firstTask);
-        serviceManager.getProcessService().save(firstProcess);
-        firstUser.getProcessingTasks().add(firstTask);
-        serviceManager.getUserService().save(firstUser);
-
-        User blockedUser = serviceManager.getUserService().getById(3);
-        User secondUser = serviceManager.getUserService().getById(2);
-
-        Task secondTask = new Task();
-        secondTask.setTitle("Blocking");
-        secondTask.setOrdering(2);
-        secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2016, 9, 25);
-        secondTask.setProcessingBegin(localDate.toDate());
-        secondTask.setProcessingUser(blockedUser);
-        secondTask.setProcessingStatusEnum(TaskStatus.DONE);
-        secondTask.setProcess(firstProcess);
-        secondTask.getUsers().add(blockedUser);
-        secondTask.getUsers().add(secondUser);
-        secondTask.getUserGroups().add(userGroup);
-        secondTask.setScriptName("scriptName");
-        secondTask.setScriptPath("../type/automatic/script/path");
-        serviceManager.getTaskService().save(secondTask);
-
-        Task thirdTask = new Task();
-        thirdTask.setTitle("Testing and Blocking");
-        thirdTask.setOrdering(3);
-        thirdTask.setPriority(10);
-        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        localDate = new LocalDate(2017, 1, 25);
-        thirdTask.setProcessingBegin(localDate.toDate());
-        thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        thirdTask.setProcess(firstProcess);
-        thirdTask.getUsers().add(secondUser);
-        serviceManager.getTaskService().save(thirdTask);
-
-        Task fourthTask = new Task();
-        fourthTask.setTitle("Progress");
-        fourthTask.setOrdering(4);
-        fourthTask.setPriority(10);
-        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
-        fourthTask.setTypeImagesWrite(true);
-        localDate = new LocalDate(2017, 1, 29);
-        fourthTask.setProcessingBegin(localDate.toDate());
-        fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
-        fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(firstProcess);
         fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
 
-        firstProcess.getTasks().add(firstTask);
         firstProcess.getTasks().add(secondTask);
         firstProcess.getTasks().add(thirdTask);
         firstProcess.getTasks().add(fourthTask);
@@ -988,7 +909,7 @@ public class MockDatabase {
         userGroup.getTasks().add(secondTask);
         serviceManager.getUserGroupService().save(userGroup);
 
-        Process secondProcess = serviceManager.getProcessService().getById(2);
+        Template secondTemplate = serviceManager.getTemplateService().getById(2);
 
         Task fifthTask = new Task();
         fifthTask.setTitle("Closed");
@@ -999,7 +920,154 @@ public class MockDatabase {
         fifthTask.setProcessingBegin(localDate.toDate());
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(secondUser);
-        fifthTask.setProcess(secondProcess);
+        fifthTask.setTemplate(secondTemplate);
+        fifthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fifthTask);
+
+        Task sixthTask = new Task();
+        sixthTask.setTitle("Progress");
+        sixthTask.setOrdering(2);
+        sixthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        sixthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 7, 27);
+        sixthTask.setProcessingBegin(localDate.toDate());
+        sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        sixthTask.setUserGroups(serviceManager.getUserGroupService().getAll());
+        sixthTask.setProcessingUser(secondUser);
+        sixthTask.setTemplate(secondTemplate);
+        serviceManager.getTaskService().save(sixthTask);
+
+        secondTemplate.getTasks().add(fifthTask);
+        secondTemplate.getTasks().add(sixthTask);
+        serviceManager.getTemplateService().save(secondTemplate);
+
+        secondUser.getProcessingTasks().add(fifthTask);
+        secondUser.getProcessingTasks().add(sixthTask);
+        serviceManager.getUserService().save(secondUser);
+
+        Process secondProcess = serviceManager.getProcessService().getById(2);
+
+        Task seventhTask = new Task();
+        seventhTask.setTitle("Additional");
+        seventhTask.setOrdering(1);
+        seventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2016, 9, 25);
+        seventhTask.setProcessingBegin(localDate.toDate());
+        seventhTask.setProcessingUser(blockedUser);
+        seventhTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        seventhTask.setProcess(secondProcess);
+        seventhTask.getUsers().add(blockedUser);
+        seventhTask.getUsers().add(secondUser);
+        seventhTask.getUserGroups().add(userGroup);
+        seventhTask.setScriptName("scriptName");
+        seventhTask.setScriptPath("../type/automatic/script/path");
+        serviceManager.getTaskService().save(seventhTask);
+
+        secondProcess.getTasks().add(seventhTask);
+        serviceManager.getProcessService().save(secondProcess);
+    }
+
+    private static void insertTasksForWorkflow() throws DAOException, DataException {
+        Template template = serviceManager.getTemplateService().getById(1);
+
+        Task firstTask = new Task();
+        UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
+        firstTask.setTitle("Testing");
+        firstTask.setPriority(1);
+        firstTask.setOrdering(1);
+        firstTask.setEditTypeEnum(TaskEditType.ADMIN);
+        LocalDate localDate = new LocalDate(2016, 10, 20);
+        firstTask.setProcessingBegin(localDate.toDate());
+        localDate = new LocalDate(2016, 12, 24);
+        firstTask.setProcessingTime(localDate.toDate());
+        localDate = new LocalDate(2016, 12, 24);
+        firstTask.setProcessingEnd(localDate.toDate());
+        User firstUser = serviceManager.getUserService().getById(1);
+        firstTask.setProcessingUser(firstUser);
+        firstTask.setProcessingStatusEnum(TaskStatus.DONE);
+        firstTask.setTemplate(template);
+        firstTask.setUsers(serviceManager.getUserService().getAll());
+        firstTask.getUserGroups().add(userGroup);
+        serviceManager.getTaskService().save(firstTask);
+        serviceManager.getTemplateService().save(template);
+        firstUser.getProcessingTasks().add(firstTask);
+        serviceManager.getUserService().save(firstUser);
+
+        User blockedUser = serviceManager.getUserService().getById(3);
+        User secondUser = serviceManager.getUserService().getById(2);
+
+        Task secondTask = new Task();
+        secondTask.setTitle("Blocking");
+        secondTask.setOrdering(2);
+        secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2016, 9, 25);
+        secondTask.setProcessingBegin(localDate.toDate());
+        secondTask.setProcessingUser(blockedUser);
+        secondTask.setProcessingStatusEnum(TaskStatus.DONE);
+        secondTask.setTemplate(template);
+        secondTask.getUsers().add(blockedUser);
+        secondTask.getUsers().add(secondUser);
+        secondTask.getUserGroups().add(userGroup);
+        secondTask.setScriptName("scriptName");
+        secondTask.setScriptPath("../type/automatic/script/path");
+        serviceManager.getTaskService().save(secondTask);
+
+        Task thirdTask = new Task();
+        thirdTask.setTitle("Testing and Blocking");
+        thirdTask.setOrdering(3);
+        thirdTask.setPriority(10);
+        thirdTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2017, 1, 25);
+        thirdTask.setProcessingBegin(localDate.toDate());
+        thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        thirdTask.setTemplate(template);
+        thirdTask.getUsers().add(secondUser);
+        serviceManager.getTaskService().save(thirdTask);
+
+        Task fourthTask = new Task();
+        fourthTask.setTitle("Progress");
+        fourthTask.setOrdering(4);
+        fourthTask.setPriority(10);
+        fourthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fourthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 1, 29);
+        fourthTask.setProcessingBegin(localDate.toDate());
+        fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+        fourthTask.setProcessingUser(secondUser);
+        fourthTask.setTemplate(template);
+        fourthTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(fourthTask);
+
+        template.getTasks().add(firstTask);
+        template.getTasks().add(secondTask);
+        template.getTasks().add(thirdTask);
+        template.getTasks().add(fourthTask);
+        serviceManager.getTemplateService().save(template);
+
+        secondUser.getProcessingTasks().add(fourthTask);
+        blockedUser.getProcessingTasks().add(secondTask);
+        blockedUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(secondTask);
+        secondUser.getTasks().add(thirdTask);
+        serviceManager.getUserService().save(blockedUser);
+        serviceManager.getUserService().save(secondUser);
+
+        userGroup.getTasks().add(firstTask);
+        userGroup.getTasks().add(secondTask);
+        serviceManager.getUserGroupService().save(userGroup);
+
+        Process process = serviceManager.getProcessService().getById(1);
+
+        Task fifthTask = new Task();
+        fifthTask.setTitle("Closed");
+        fifthTask.setOrdering(1);
+        fifthTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        fifthTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 6, 27);
+        fifthTask.setProcessingBegin(localDate.toDate());
+        fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
+        fifthTask.setProcessingUser(secondUser);
+        fifthTask.setProcess(process);
         fifthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fifthTask);
 
@@ -1012,16 +1080,32 @@ public class MockDatabase {
         sixthTask.setProcessingBegin(localDate.toDate());
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         sixthTask.setProcessingUser(secondUser);
-        sixthTask.setProcess(secondProcess);
+        sixthTask.setProcess(process);
         sixthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(sixthTask);
 
-        secondProcess.getTasks().add(fifthTask);
-        secondProcess.getTasks().add(sixthTask);
-        serviceManager.getProcessService().save(secondProcess);
+        Task seventhTask = new Task();
+        seventhTask.setTitle("Progress");
+        seventhTask.setOrdering(3);
+        seventhTask.setPriority(10);
+        seventhTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        seventhTask.setTypeImagesWrite(true);
+        localDate = new LocalDate(2017, 3, 29);
+        seventhTask.setProcessingBegin(localDate.toDate());
+        seventhTask.setProcessingStatusEnum(TaskStatus.LOCKED);
+        seventhTask.setProcessingUser(secondUser);
+        seventhTask.setProcess(process);
+        seventhTask.setUsers(serviceManager.getUserService().getAll());
+        serviceManager.getTaskService().save(seventhTask);
+
+        process.getTasks().add(fifthTask);
+        process.getTasks().add(sixthTask);
+        process.getTasks().add(seventhTask);
+        serviceManager.getProcessService().save(process);
 
         secondUser.getProcessingTasks().add(fifthTask);
         secondUser.getProcessingTasks().add(sixthTask);
+        secondUser.getProcessingTasks().add(seventhTask);
         serviceManager.getUserService().save(secondUser);
     }
 

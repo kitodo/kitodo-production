@@ -53,6 +53,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObjectBuilder.add("metsRightsOwner", project.getMetsRightsOwner());
         jsonObjectBuilder.add("active", project.isActive());
         jsonObjectBuilder.add("processes", addObjectRelation(project.getProcesses(), true));
+        jsonObjectBuilder.add("templates", addObjectRelation(project.getTemplates(), true));
         jsonObjectBuilder.add("users", addObjectRelation(project.getUsers(), true));
         if (Objects.nonNull(project.getClient())) {
             jsonObjectBuilder.add("client.id", project.getClient().getId());

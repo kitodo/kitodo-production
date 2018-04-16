@@ -50,6 +50,14 @@ public class ListingAddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void listTemplatesTest() throws Exception {
+        Pages.getProjectsPage().goTo();
+        int numberOfTemplatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
+        int numberOfTemplatesDisplayed = Pages.getProjectsPage().countListedTemplates();
+        Assert.assertEquals("Displayed wrong number of templates", numberOfTemplatesInDatabase, numberOfTemplatesDisplayed);
+    }
+
+    @Test
     public void listProcessesTest() throws Exception {
         Pages.getProcessesPage().goTo();
         int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();

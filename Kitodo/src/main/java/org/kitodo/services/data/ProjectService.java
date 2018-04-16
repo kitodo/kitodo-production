@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -44,8 +45,8 @@ import org.kitodo.data.elasticsearch.index.type.ProjectType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
-import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.TemplateDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -253,6 +254,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     public ProjectDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(getIdFromJSONObject(jsonObject));
+
         JsonObject projectJSONObject = jsonObject.getJsonObject("_source");
         projectDTO.setTitle(projectJSONObject.getString("title"));
         projectDTO.setStartDate(projectJSONObject.getString("startDate"));
@@ -263,7 +265,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setNumberOfPages(projectJSONObject.getInt("numberOfPages"));
         projectDTO.setNumberOfVolumes(projectJSONObject.getInt("numberOfVolumes"));
         projectDTO.setActive(projectJSONObject.getBoolean("active"));
-        projectDTO.setProcesses(getTemplatesForProjectDTO(projectJSONObject));
+        projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setId(projectJSONObject.getInt("client.id"));
         clientDTO.setName(projectJSONObject.getString("client.clientName"));
@@ -274,21 +276,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return projectDTO;
     }
 
-    private List<ProcessDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
-        JsonArray jsonArray = jsonObject.getJsonArray("processes");
+    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
+        List<TemplateDTO> templateDTOS = new ArrayList<>();
+        JsonArray jsonArray = jsonObject.getJsonArray("templates");
 
         for (JsonValue singleObject : jsonArray) {
             JsonObject processJson = singleObject.asJsonObject();
-            boolean template = processJson.getBoolean("template");
-            if (template) {
-                ProcessDTO processDTO = new ProcessDTO();
-                processDTO.setId(processJson.getInt("id"));
-                processDTO.setTitle(processJson.getString("title"));
-                processDTOS.add(processDTO);
-            }
+            TemplateDTO templateDTO = new TemplateDTO();
+            templateDTO.setId(processJson.getInt("id"));
+            templateDTO.setTitle(processJson.getString("title"));
+            templateDTOS.add(templateDTO);
         }
-        return processDTOS;
+        return templateDTOS;
     }
 
     private ProjectDTO convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
@@ -381,7 +380,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      */
     public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
         Project project = serviceManager.getProjectService().getById(id);
-        return String.join(", ", project.getProcesses().stream().filter(Process::isTemplate).map(Process::getTitle)
+        return String.join(", ", project.getTemplates().stream().map(Template::getTitle)
                 .collect(Collectors.toList()));
     }
 }

@@ -127,7 +127,6 @@ public class ProcessTypeTest {
         assertEquals("Key outputName doesn't match to given value!", "Test", actual.getString("outputName"));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki", actual.getString("wikiField"));
         assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
         assertEquals("Key creationDate doesn't match to given value!", "2017-01-01", actual.getString("creationDate"));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
         assertEquals("Key sortHelperImages doesn't match to given value!", 20, actual.getInt("sortHelperImages"));
@@ -182,7 +181,6 @@ public class ProcessTypeTest {
         assertEquals("Key outputName doesn't match to given value!", "Render", actual.getString("outputName"));
         assertEquals("Key wikiField doesn't match to given value!", "Field", actual.getString("wikiField"));
         assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
         assertEquals("Key sortHelperImages doesn't match to given value!", 30, actual.getInt("sortHelperImages"));
@@ -231,7 +229,6 @@ public class ProcessTypeTest {
         assertEquals("Key outputName doesn't match to given value!", "", actual.getString("outputName"));
         assertEquals("Key wikiField doesn't match to given value!", "", actual.getString("wikiField"));
         assertEquals("Key processBaseUri doesn't match to given value!", "", actual.getString("processBaseUri"));
-        assertEquals("Key template doesn't match to given value!", false, actual.getBoolean("template"));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()), actual.getString("creationDate"));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "", actual.getString("sortHelperStatus"));
         assertEquals("Key sortHelperImages doesn't match to given value!", 0, actual.getInt("sortHelperImages"));
@@ -248,7 +245,7 @@ public class ProcessTypeTest {
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
         JsonArray tasks = actual.getJsonArray("tasks");
-        assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
+        assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
 
         JsonArray workpieces = actual.getJsonArray("workpieces");
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
@@ -268,7 +265,7 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 20, actual.keySet().size());
 
         JsonArray batches = actual.getJsonArray("batches");
         JsonObject batch = batches.getJsonObject(0);

@@ -28,10 +28,8 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title and not ProzessverwaltungForm.process.template}"/>
-            <h:outputText value="#{msgs.editTemplate} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title and ProzessverwaltungForm.process.template}"/>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title and not ProzessverwaltungForm.process.template}"/>
-            <h:outputText value="#{msgs.newProcessTemplate}" rendered="#{empty ProzessverwaltungForm.process.title and ProzessverwaltungForm.process.template}"/>
+            <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -47,7 +45,7 @@
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.abbrechen}"
-                  outcome="#{ProzessverwaltungForm.process.template ? 'projects' : 'processes'}"
+                  outcome="#{'processes'}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -79,18 +77,12 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <ui:fragment rendered="#{ProzessverwaltungForm.process.template}">
-            <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
-            <li><a href="">#{msgs.editTemplate}</a></li>
+        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.prozessBearbeiten}</a></li>
         </ui:fragment>
-        <ui:fragment rendered="#{! ProzessverwaltungForm.process.template}">
-            <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
-            <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
-                <li><a href="">#{msgs.prozessBearbeiten}</a></li>
-            </ui:fragment>
-            <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
-                <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
-            </ui:fragment>
+        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
         </ui:fragment>
     </ui:define>
 </ui:composition>

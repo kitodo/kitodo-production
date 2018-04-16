@@ -150,6 +150,9 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<Process> processes;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Template> templates;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProjectFileGroup> projectFileGroups;
 
     @ManyToOne
@@ -212,6 +215,27 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     public void setProcesses(List<Process> processes) {
         this.processes = processes;
+    }
+
+    /**
+     * Get templates.
+     *
+     * @return value of templates
+     */
+    public List<Template> getTemplates() {
+        if (this.templates == null) {
+            this.templates = new ArrayList<>();
+        }
+        return this.templates;
+    }
+
+    /**
+     * Set templates.
+     *
+     * @param templates as list of templates
+     */
+    public void setTemplates(List<Template> templates) {
+        this.templates = templates;
     }
 
     public String getDmsImportImagesPath() {

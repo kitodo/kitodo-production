@@ -17,6 +17,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -45,6 +46,8 @@ public class CopierData {
      */
     private final Process process;
 
+    private final Template template;
+
     /**
      * Creates a new CopierData bean with an additional destination metadata
      * selector.
@@ -58,6 +61,7 @@ public class CopierData {
         this.fileformat = data.fileformat;
         this.process = data.process;
         this.destination = destination;
+        this.template = new Template();
     }
 
     /**
@@ -72,6 +76,22 @@ public class CopierData {
         this.fileformat = fileformat;
         this.process = process;
         this.destination = null;
+        this.template = new Template();
+    }
+
+    /**
+     * Creates a new CopierData bean.
+     *
+     * @param fileformat
+     *            the document to modify
+     * @param template
+     *            the related goobi process
+     */
+    public CopierData(FileformatInterface fileformat, Template template) {
+        this.fileformat = fileformat;
+        this.template = template;
+        this.destination = null;
+        this.process = new Process();
     }
 
     /**

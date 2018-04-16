@@ -30,18 +30,18 @@ public class BasisForm implements Serializable {
     private static final long serialVersionUID = 2950419497162710096L;
     private transient ServiceManager serviceManager = new ServiceManager();
     protected Page page;
-    protected String zurueck = null;
+    String zurueck = null;
     protected String filter = "";
     protected User user;
     protected String sortierung = "prozessAsc";
     static final String REDIRECT_PARAMETER = "faces-redirect=true";
-    static final String TEMPLATE_ROOT = "/pages/";
+    private static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabId = 0;
     private boolean saveDisabled = true;
 
     private LazyDTOModel lazyDTOModel = null;
 
-    static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
+    protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
 
     /**
      * Getter: return lazyDTOModel.
@@ -175,7 +175,7 @@ public class BasisForm implements Serializable {
     /**
      * Set boolean to disable save button.
      *
-     * @param saveDisabled
+     * @param saveDisabled true or false
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;

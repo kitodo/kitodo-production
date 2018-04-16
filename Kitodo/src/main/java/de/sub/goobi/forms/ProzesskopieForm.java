@@ -74,6 +74,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -234,7 +235,7 @@ public class ProzesskopieForm implements Serializable {
     private String opacSuchbegriff;
     private String opacKatalog;
     private List<String> possibleDigitalCollection;
-    private Process prozessVorlage = new Process();
+    private Template template = new Template();
     private Process prozessKopie = new Process();
     private boolean useOpac;
     private boolean useTemplates;
@@ -256,18 +257,18 @@ public class ProzesskopieForm implements Serializable {
     public String prepare(int id) {
         atstsl = "";
         try {
-            this.prozessVorlage = serviceManager.getProcessService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
             Helper.setFehlerMeldung("Process " + id + " not found.");
             return null;
         }
-        Helper.getHibernateSession().refresh(this.prozessVorlage);
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            if (this.prozessVorlage.getTasks().size() == 0) {
+
+        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
+            if (this.template.getTasks().size() == 0) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");
             }
-            for (Task s : this.prozessVorlage.getTasks()) {
+            for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
                     List<String> param = new ArrayList<>();
@@ -283,20 +284,12 @@ public class ProzesskopieForm implements Serializable {
         this.rdf = null;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(false);
-        this.prozessKopie.setInChoiceListShown(false);
-        this.prozessKopie.setProject(this.prozessVorlage.getProject());
-        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-        this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
+        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setRuleset(this.template.getRuleset());
+        this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
-        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie);
 
         initializePossibleDigitalCollections();
 
@@ -307,7 +300,7 @@ public class ProzesskopieForm implements Serializable {
         // projektabhängig die richtigen Felder in der Gui anzeigen
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+            cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
@@ -377,10 +370,10 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProzessTemplates() {
-        List<Process> processes = new ArrayList<>();
+        List<Template> templates = new ArrayList<>();
         // TODO Change to check the corresponding authority
         if (serviceManager.getSecurityAccessService().isAdmin()) {
-            processes = serviceManager.getProcessService().getProcessTemplates();
+            templates = serviceManager.getTemplateService().getAll();
         } else {
             User currentUser = null;
             try {
@@ -393,13 +386,13 @@ public class ProzesskopieForm implements Serializable {
                 for (Project project : currentUser.getProjects()) {
                     projectIds.add(project.getId());
                 }
-                processes = serviceManager.getProcessService().getProcessTemplatesForUser(projectIds);
+                templates = serviceManager.getTemplateService().getProcessTemplatesForUser(projectIds);
             }
         }
 
         List<SelectItem> processTemplates = new ArrayList<>();
-        for (Process process : processes) {
-            processTemplates.add(new SelectItem(process.getId(), process.getTitle(), null));
+        for (Template template : templates) {
+            processTemplates.add(new SelectItem(template.getId(), template.getTitle(), null));
         }
         return processTemplates;
     }
@@ -502,7 +495,7 @@ public class ProzesskopieForm implements Serializable {
         rdf = hit.getFileformat();
         docType = hit.getDocType();
         fillFieldsFromMetadataFile();
-        applyCopyingRules(new CopierData(rdf, prozessVorlage));
+        applyCopyingRules(new CopierData(rdf, this.template));
         atstsl = createAtstsl(hit.getTitle(), hit.getAuthors());
     }
 
@@ -905,15 +898,9 @@ public class ProzesskopieForm implements Serializable {
                 }
                 this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
-                /* Rdf-File schreiben */
+                // write Rdf file
                 serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
 
-                /*
-                 * soll der Prozess als Vorlage verwendet werden?
-                 */
-                if (this.useTemplates && this.prozessKopie.isInChoiceListShown()) {
-                    serviceManager.getFileService().writeMetadataAsTemplateFile(this.rdf, this.prozessKopie);
-                }
             } catch (DocStructHasNoTypeException e) {
                 Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
             } catch (UghHelperException e) {
@@ -1159,8 +1146,8 @@ public class ProzesskopieForm implements Serializable {
         BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
             this.tifHeaderImageDescription);
         BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
-        BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", prozessVorlage.getTitle());
-        BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+        BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
+        BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
     }
 
     public String getDocType() {
@@ -1245,8 +1232,13 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    public Process getProzessVorlage() {
-        return this.prozessVorlage;
+    /**
+     * Get template.
+     *
+     * @return value of template
+     */
+    public Template getTemplate() {
+        return template;
     }
 
     /**
@@ -1258,11 +1250,16 @@ public class ProzesskopieForm implements Serializable {
      * @return a human-readable identifier for this object
      */
     public String getProzessVorlageTitel() {
-        return prozessVorlage != null ? prozessVorlage.getTitle() : null;
+        return this.template != null ? this.template.getTitle() : null;
     }
 
-    public void setProzessVorlage(Process prozessVorlage) {
-        this.prozessVorlage = prozessVorlage;
+    /**
+     * Set template.
+     *
+     * @param template as Template object
+     */
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
     public Integer getAuswahl() {
@@ -1509,7 +1506,7 @@ public class ProzesskopieForm implements Serializable {
         }
         StringBuilder newTitle = new StringBuilder();
         String titeldefinition = "";
-        ConfigProjects cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+        ConfigProjects cp = new ConfigProjects(this.template.getProject().getTitle());
 
         int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
         for (int i = 0; i < count; i++) {
@@ -1643,7 +1640,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateTiffHeader() {
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+            cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -1764,7 +1761,7 @@ public class ProzesskopieForm implements Serializable {
      *            String
      */
     public void setAddToWikiField(String addToWikiField) {
-        this.prozessKopie.setWikiField(prozessVorlage.getWikiField());
+        this.prozessKopie.setWikiField(this.template.getWikiField());
         this.addToWikiField = addToWikiField;
         if (addToWikiField != null && !addToWikiField.equals("")) {
             User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");

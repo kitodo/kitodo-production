@@ -194,8 +194,13 @@ public class BatchServiceIT {
 
         batches = batchService.findByProcessId(2);
         actual = batches.size();
+        expected = 1;
+        assertEquals("Batch was not found in index!", expected, actual);
+
+        batches = batchService.findByProcessId(3);
+        actual = batches.size();
         expected = 0;
-        assertEquals("Some batches ere found in index!", expected, actual);
+        assertEquals("Some batches were found in index!", expected, actual);
     }
 
     @Test
@@ -207,8 +212,13 @@ public class BatchServiceIT {
 
         batches = batchService.findByProcessTitle("Second process");
         actual = batches.size();
+        expected = 1;
+        assertEquals("Batch was not found in index!", expected, actual);
+
+        batches = batchService.findByProcessTitle("DBConnectionTest");
+        actual = batches.size();
         expected = 0;
-        assertEquals("Batches were not found in index!", expected, actual);
+        assertEquals("Some batches were found in index!", expected, actual);
     }
 
     @Test

@@ -49,7 +49,7 @@
         </p:column>
 
         <!-- status -->
-        <p:column headerText="#{msgs.status}" id="taskStatus" rendered="#{not ProzessverwaltungForm.process.template}">
+        <p:column headerText="#{msgs.status}" id="taskStatus">
             <p:panel id="statusColumn" styleClass="statusColumn">
                 <h:graphicImage value="#{item.processingStatusEnum.bigImagePath}"
                                 title="#{item.processingStatusEnum.title}"

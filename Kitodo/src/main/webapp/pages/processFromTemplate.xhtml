@@ -24,7 +24,7 @@
 
     <ui:define name="contentHeader">
         <h3>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.prozessVorlage.title}')"/>
+            <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.template.title}')"/>
         </h3>
         <p:commandButton value="#{msgs.speichern}"
                          action="#{ProzesskopieForm.createNewProcess}"

@@ -1,0 +1,122 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable id="taskTable"
+                 var="item"
+                 value="#{TemplateForm.template.tasks}"
+                 sortBy="#{item.ordering}">
+
+        <!-- ordering -->
+        <p:column headerText="#{msgs.nr}" id="taskOrder">
+            <h:outputText value="#{item.ordering}"/>
+            <p:commandButton action="#{TemplateForm.setOrderingUp}"
+                             id="orderUp"
+                             update="editForm:tabs:taskTable"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
+                             oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
+                             icon="fa fa-long-arrow-up" styleClass="ui-button-small">
+                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
+            </p:commandButton>
+            <p:commandButton action="#{TemplateForm.setOrderingDown}"
+                             id="orderDown"
+                             update="editForm:tabs:taskTable"
+                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
+                             oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
+                             icon="fa fa-long-arrow-down" styleClass="ui-button-small">
+                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
+            </p:commandButton>
+        </p:column>
+
+        <!-- title -->
+        <p:column headerText="#{msgs.arbeitsschritt}" id="taskTitle">
+            <p:rowToggler />
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+
+        <!-- actions -->
+        <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
+                  headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
+            <h:link outcome="taskEdit" id="editTask"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
+                    title="#{msgs.detailsDesSchritts}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+            <p:commandLink id="deleteTask"
+                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.template.project.client.id,item.template.project.id)}"
+                           title="#{msgs.loeschen}"
+                           action="#{TemplateForm.removeTask}"
+                           immediate="true"
+                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
+                           update="taskTable">
+                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
+                <f:setPropertyActionListener
+                        target="#{TemplateForm.task}"
+                        value="#{item}"/>
+                <p:confirm header="#{msgs.deleteTask}?"
+                           message="#{msgs.sollDieserEintragWirklichGeloeschtWerden}"
+                           icon="ui-icon-alert"/>
+            </p:commandLink>
+        </p:column>
+
+        <p:rowExpansion>
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
+                    <h:outputText value="#{msgs.title}: "/>
+                    <h:outputText value="#{item.template.title}"/>
+
+                    <h:outputText value="#{msgs.prioritaet}: "/>
+                    <h:outputText value="#{item.priority}"/>
+
+                    <h:outputText value="#{msgs.bearbeitungsbeginn}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.zuletztBearbeitet}: "  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.aktualisierungstyp}: " rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+
+                    <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                    <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+
+                </p:panelGrid>
+            </div>
+        </p:rowExpansion>
+
+    </p:dataTable>
+
+    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
+        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+    </p:confirmDialog>
+
+    <p:commandButton action="#{TemplateForm.newTask}"
+                     value="#{msgs.schrittHinzufuegen}"
+                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.template.project.client.id,item.template.project.id)}"
+                     icon="fa fa-plus-circle fa-lg"
+                     iconPos="right"
+                     styleClass="button-filled-green"
+                     id="addStepButton"/>
+</ui:composition>

@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 
 /**
@@ -44,6 +45,7 @@ public class ProjectTypeTest {
         List<Project> projects = new ArrayList<>();
         List<ProjectFileGroup> projectFileGroups = new ArrayList<>();
         List<Process> processes = new ArrayList<>();
+        List<Template> templates = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
         ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
@@ -86,17 +88,15 @@ public class ProjectTypeTest {
         fifthProjectFileGroup.setPreviewImage(false);
         projectFileGroups.add(fifthProjectFileGroup);
 
-        Process firstProcess = new Process();
-        firstProcess.setId(1);
-        firstProcess.setTitle("First");
-        firstProcess.setTemplate(true);
-        processes.add(firstProcess);
+        Template firstTemplate = new Template();
+        firstTemplate.setId(1);
+        firstTemplate.setTitle("First");
+        templates.add(firstTemplate);
 
-        Process secondProcess = new Process();
-        secondProcess.setId(2);
-        secondProcess.setTitle("Second");
-        secondProcess.setTemplate(true);
-        processes.add(secondProcess);
+        Process firstProcess = new Process();
+        firstProcess.setId(2);
+        firstProcess.setTitle("Second");
+        processes.add(firstProcess);
 
         User firstUser = new User();
         firstUser.setId(1);
@@ -125,6 +125,7 @@ public class ProjectTypeTest {
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(100);
         firstProject.setNumberOfVolumes(10);
+        firstProject.setTemplates(templates);
         firstProject.setProcesses(processes);
         firstProject.setProjectFileGroups(projectFileGroups);
         firstProject.setUsers(users);
@@ -140,6 +141,7 @@ public class ProjectTypeTest {
         secondProject.setEndDate(localDate.toDate());
         secondProject.setNumberOfPages(2000);
         secondProject.setNumberOfVolumes(20);
+        secondProject.setTemplates(templates);
         secondProject.setProcesses(processes);
         secondProject.setProjectFileGroups(projectFileGroups);
         secondProject.setUsers(users);
@@ -176,17 +178,18 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "TestClient", actual.getString("client.clientName"));
 
         JsonArray processes = actual.getJsonArray("processes");
-        assertEquals("Size processes doesn't match to given value!", 2, processes.size());
+        assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 1, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "First", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", true, process.getBoolean("template"));
-
-        process = processes.getJsonObject(1);
         assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
         assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", true, process.getBoolean("template"));
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 1, processes.size());
+
+        JsonObject template = templates.getJsonObject(0);
+        assertEquals("Key templates.id doesn't match to given value!", 1, template.getInt("id"));
+        assertEquals("Key templates.title doesn't match to given value!", "First", template.getString("title"));
 
         JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
@@ -270,17 +273,18 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "", actual.getString("client.clientName"));
 
         JsonArray processes = actual.getJsonArray("processes");
-        assertEquals("Size processes doesn't match to given value!", 2, processes.size());
+        assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 1, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "First", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", true, process.getBoolean("template"));
-
-        process = processes.getJsonObject(1);
         assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
         assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
-        assertEquals("Key processes.template doesn't match to given value!", true, process.getBoolean("template"));
+
+        JsonArray templates = actual.getJsonArray("templates");
+        assertEquals("Size templates doesn't match to given value!", 1, templates.size());
+
+        JsonObject template = templates.getJsonObject(0);
+        assertEquals("Key templates.id doesn't match to given value!", 1, template.getInt("id"));
+        assertEquals("Key templates.title doesn't match to given value!", "First", template.getString("title"));
 
         JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
@@ -382,12 +386,15 @@ public class ProjectTypeTest {
         HttpEntity document = processType.createDocument(project);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        System.out.println(actual);
-        assertEquals("Amount of keys is incorrect!", 14, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
 
         JsonArray processes = actual.getJsonArray("processes");
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Amount of keys in processes is incorrect!", 3, process.keySet().size());
+        assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
+
+        JsonArray templates = actual.getJsonArray("templates");
+        JsonObject template = templates.getJsonObject(0);
+        assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
         JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);

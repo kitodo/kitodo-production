@@ -116,13 +116,11 @@ public class BatchForm extends BasisForm {
 
         if (this.processfilter != null) {
             try {
-                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
+                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS,
                         false, false);
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
-        } else {
-            query = serviceManager.getTemplateService().getQueryTemplate(false);
         }
 
         Integer batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);

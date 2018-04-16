@@ -23,6 +23,7 @@ public enum ObjectType {
     PROPERTY("eigenschaften"),
     RULESET("regelsaetze"),
     TASK("schritte"),
+    TEMPLATE("template"),
     USER("users"),
     USERGROUP("benutzergruppen"),
     FILTER("filter"),

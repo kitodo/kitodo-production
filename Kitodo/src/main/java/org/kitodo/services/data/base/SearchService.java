@@ -123,6 +123,17 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param sort
      *            possible sort query according to which results will be sorted
+     * @return list of all objects from ES
+     */
+    public List<S> findAll(String sort) throws DataException {
+        return convertJSONObjectsToDTOs(findAllDocuments(sort), false);
+    }
+
+    /**
+     * Find list of all objects from ES.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
      * @param offset
      *            start point for get results
      * @param size

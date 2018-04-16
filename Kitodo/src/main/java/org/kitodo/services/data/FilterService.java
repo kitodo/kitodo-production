@@ -124,28 +124,26 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param filter
      *            as String
      * @param objectType
-     *            as ObjectType - "PROCESS" or "TASK"
-     * @param template
-     *            as Boolean
+     *            as ObjectType - "PROCESS", "TEMPLATE" or "TASK"
      * @param onlyOpenTasks
      *            as Boolean
      * @param onlyUserAssignedTasks
      *            as Boolean
      * @return query as {@link BoolQueryBuilder}
      */
-    public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean template, Boolean onlyOpenTasks,
+    public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         // this is needed if we filter processes
         if (objectType == ObjectType.PROCESS) {
-            query = buildProcessQuery(template);
+            query = buildProcessQuery();
         }
 
         // this is needed if we filter task
         if (objectType == ObjectType.TASK) {
-            query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks, template);
+            query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks);
         }
 
         for (String tokenizedFilter : prepareFilters(filter)) {
@@ -154,17 +152,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASK, null)) {
                 query.must(createHistoricFilter(tokenizedFilter));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, null)) {
-                query.must(createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, false,
-                        objectType));
+                query.must(
+                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, null)) {
-                query.must(createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, false,
-                        objectType));
+                query.must(
+                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, null)) {
                 query.must(
-                        createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType));
+                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, null)) {
                 query.must(
-                        createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, false, objectType));
+                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, null)) {
                 String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
@@ -188,17 +186,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESSPROPERTY, "-")) {
                 query.must(filterProcessProperty(tokenizedFilter, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, "-")) {
-                query.must(createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true,
-                        objectType));
+                query.must(
+                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, "-")) {
-                query.must(createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, true,
-                        objectType));
+                query.must(
+                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, "-")) {
                 query.must(
-                        createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, true, objectType));
+                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, "-")) {
                 query.must(
-                        createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, true, objectType));
+                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, true, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, "-")) {
                 String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, true, objectType));
@@ -218,30 +216,15 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return query;
     }
 
-    private BoolQueryBuilder buildProcessQuery(Boolean template) {
-        BoolQueryBuilder processQuery = limitToUserAccessRights();
-
-        // this is needed for the template filter (true) and the undefined
-        // processes filter (false) in any other case it needs to be null
-        if (template != null) {
-            processQuery.must(serviceManager.getTemplateService().getQueryTemplate(template));
-        }
-        return processQuery;
+    private BoolQueryBuilder buildProcessQuery() {
+        return limitToUserAccessRights();
     }
 
-    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks, Boolean template)
-            throws DataException {
+    private BoolQueryBuilder buildTaskQuery(Boolean onlyOpenTasks, Boolean onlyUserAssignedTasks) throws DataException {
         BoolQueryBuilder taskQuery = limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
 
-        // this is needed for the template filter (true) and the undefined
-        // processes filter (false) in any other case it needs to be null
-        if (template != null) {
-            List<ProcessDTO> processDTOS;
-            if (!template) {
-                processDTOS = serviceManager.getProcessService().findAllWithoutTemplates(null);
-            } else {
-                processDTOS = serviceManager.getTemplateService().findAllTemplates(null);
-            }
+        if (onlyOpenTasks && onlyUserAssignedTasks) {
+            List<ProcessDTO> processDTOS = serviceManager.getProcessService().findAll();
             taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         }
         return taskQuery;
@@ -419,13 +402,13 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         UserDTO currentUser = null;
         try {
             currentUser = serviceManager.getUserService().findAuthenticatedUser();
-        } catch (DataException | DAOException e) {
+        } catch (DataException e) {
             logger.error(e);
         }
         // TODO Change to check the corresponding authority
         if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
             List<ProjectDTO> projects = currentUser.getProjects();
-            query.must(createSetQuery("project", collectIds(projects), true));
+            query.must(createSetQuery("project.id", collectIds(projects), true));
         }
         return query;
     }
@@ -475,18 +458,20 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // only processes which are not templates and are part of assigned projects
         try {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService()
-                    .findNotTemplateByProjectIds(collectIds(assignedProjects), true);
+                    .findByProjectIds(collectIds(assignedProjects), true);
             taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         } catch (DataException e) {
             logger.error(e);
         }
 
+        BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
+
         // only tasks assigned to the user groups the current user is member of
         List<UserGroupDTO> userUserGroups = userDTO.getUserGroups();
-        taskQuery.must(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
-
+        userGroupsOrUsers.should(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
         // only task where the user is assigned to
-        taskQuery.must(createSimpleQuery("users.id", user.getId(), true));
+        userGroupsOrUsers.should(createSimpleQuery("users.id", user.getId(), true));
+        taskQuery.must(userGroupsOrUsers);
 
         return taskQuery;
     }
@@ -509,7 +494,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } catch (NumberFormatException e) {
                 taskTitle = filterPart.substring(filterPart.indexOf(':') + 1);
                 historicFilter.must(createSimpleCompareQuery("processingStatus", TaskStatus.OPEN.getValue(),
-                        SearchCondition.EQUAL_OR_BIGGER));
+                    SearchCondition.EQUAL_OR_BIGGER));
                 if (taskTitle.startsWith("-")) {
                     taskTitle = taskTitle.substring(1);
                     historicFilter.mustNot(createSimpleWildcardQuery("title", taskTitle));
@@ -546,7 +531,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true);
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(
-                    createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
+                createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
             return createSetQuery("processForTask.id", collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
@@ -700,7 +685,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * Restrictions.
      */
     private enum TaskFilter {
-        exact, range, min, max, name, unknown
+        exact,
+        range,
+        min,
+        max,
+        name,
+        unknown
     }
 
     /**
@@ -721,17 +711,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder taskRange = new BoolQueryBuilder();
         if (!negate) {
             taskRange.must(
-                    createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
+                createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
             taskRange.must(
-                    createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
+                createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
             taskRange.must(createSimpleCompareQuery("processingStatus", taskStatus.getValue(), SearchCondition.EQUAL));
         } else {
             taskRange.mustNot(
-                    createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
+                createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
             taskRange.mustNot(
-                    createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
+                createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
             taskRange.mustNot(
-                    createSimpleCompareQuery("processingStatus", taskStatus.getValue(), SearchCondition.EQUAL));
+                createSimpleCompareQuery("processingStatus", taskStatus.getValue(), SearchCondition.EQUAL));
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskRange);
     }
@@ -930,12 +920,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> titleValue = getFilterValueFromFilterStringForProperty(filter, FilterString.PROCESSPROPERTY);
         if (titleValue.size() > 1) {
             jsonObjects = serviceManager.getProcessService().findByProcessProperty(titleValue.get(0), titleValue.get(1),
-                    !negate);
+                !negate);
         } else {
             jsonObjects = serviceManager.getProcessService().findByProcessProperty(null, titleValue.get(0), !negate);
         }
-        List<ProcessDTO> processes = serviceManager.getProcessService().convertJSONObjectsToDTOs(jsonObjects,
-                true);
+        List<ProcessDTO> processes = serviceManager.getProcessService().convertJSONObjectsToDTOs(jsonObjects, true);
         QueryBuilder projectQuery = createSetQuery("_id", collectIds(processes), true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
     }
@@ -952,7 +941,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterProject(String filter, boolean negate, ObjectType objectType) throws DataException {
-        /* filter according to linked project */
+        // filter according to linked project
         String projectTitle = getFilterValueFromFilterString(filter, FilterString.PROJECT);
         QueryBuilder projectQuery = serviceManager.getProcessService().getQueryProjectTitle(projectTitle);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, projectQuery);
@@ -970,17 +959,18 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterScanTemplate(String filter, boolean negate, ObjectType objectType) throws DataException {
-        /* Filtering by signature */
+        // Filtering by signature
         List<JsonObject> jsonObjects;
         List<String> templateProperty = getFilterValueFromFilterStringForProperty(filter, FilterString.TEMPLATE);
         if (templateProperty.size() > 1) {
             jsonObjects = serviceManager.getProcessService().findByTemplateProperty(templateProperty.get(0),
-                    templateProperty.get(1), !negate);
+                templateProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0), !negate);
+            jsonObjects = serviceManager.getProcessService().findByTemplateProperty(null, templateProperty.get(0),
+                !negate);
         }
         List<PropertyDTO> templateDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-                true);
+            true);
         QueryBuilder templateQuery = createSetQuery("template", collectIds(templateDTOS), true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, templateQuery);
     }
@@ -1002,18 +992,19 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return query as {@link QueryBuilder}
      */
     private QueryBuilder filterWorkpiece(String filter, boolean negate, ObjectType objectType) throws DataException {
-        /* filter according signature */
+        // filter according signature
         List<JsonObject> jsonObjects;
         List<String> workpieceProperty = getFilterValueFromFilterStringForProperty(filter,
-                FilterString.PROCESSPROPERTY);
+            FilterString.PROCESSPROPERTY);
         if (workpieceProperty.size() > 1) {
             jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(workpieceProperty.get(0),
-                    workpieceProperty.get(1), !negate);
+                workpieceProperty.get(1), !negate);
         } else {
-            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0), !negate);
+            jsonObjects = serviceManager.getProcessService().findByWorkpieceProperty(null, workpieceProperty.get(0),
+                !negate);
         }
         List<PropertyDTO> workpieceDTOS = serviceManager.getPropertyService().convertJSONObjectsToDTOs(jsonObjects,
-                true);
+            true);
         QueryBuilder workpieceQuery = createSetQuery("workpieces.id", collectIds(workpieceDTOS), true);
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, workpieceQuery);
     }

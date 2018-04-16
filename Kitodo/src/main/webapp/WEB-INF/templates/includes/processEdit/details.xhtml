@@ -32,22 +32,15 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.projekt}"/>
-                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projektAuswahl}"
+                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projectSelect}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
                     <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
-                    <f:selectItems value="#{ProzessverwaltungForm.projektAuswahlListe}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.projectsSelectList}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>
-            </div>
-
-            <div>
-                <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
-                <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{ProzessverwaltungForm.process.inChoiceListShown}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
-                </p:selectBooleanCheckbox>
             </div>
         </p:row>
 
@@ -74,13 +67,6 @@
                     <f:selectItems value="#{HelperForm.dockets}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>
-            </div>
-
-            <div>
-                <p:outputLabel for="isTemplate" value="#{msgs.istTemplate}"/>
-                <p:selectBooleanCheckbox id="isTemplate" styleClass="input" value="#{ProzessverwaltungForm.process.template}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
-                </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>

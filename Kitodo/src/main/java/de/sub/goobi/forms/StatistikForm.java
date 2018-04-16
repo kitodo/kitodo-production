@@ -97,7 +97,7 @@ public class StatistikForm {
      */
     public Long getAmountTemplates() {
         try {
-            return serviceManager.getTemplateService().countTemplates();
+            return serviceManager.getTemplateService().count();
         } catch (DataException e) {
             Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
             return null;

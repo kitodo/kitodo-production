@@ -30,7 +30,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 
 @XmlAccessorType(XmlAccessType.NONE)
 // This annotation is to instruct the Jersey API not to generate arbitrary XML
@@ -40,27 +39,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 // the Coding Guidelines (e.g. *english* names).
 @Entity
 @Table(name = "process")
-public class Process extends BaseIndexedBean {
+public class Process extends BaseTemplateBean {
 
     private static final long serialVersionUID = -6503348094655786275L;
-
-    @Column(name = "title")
-    private String title;
-
-    @Column(name = "outputName")
-    private String outputName;
-
-    @Column(name = "template")
-    private Boolean template;
-
-    @Column(name = "inChoiceListShown")
-    private Boolean inChoiceListShown;
-
-    @Column(name = "creationDate")
-    private Date creationDate;
-
-    @Column(name = "sortHelperStatus")
-    private String sortHelperStatus;
 
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
@@ -73,9 +54,6 @@ public class Process extends BaseIndexedBean {
 
     @Column(name = "sortHelperDocstructs")
     private Integer sortHelperDocstructs;
-
-    @Column(name = "wikiField", columnDefinition = "longtext")
-    private String wikiField = "";
 
     @Column(name = "processBaseUri")
     private URI processBaseUri;
@@ -92,25 +70,29 @@ public class Process extends BaseIndexedBean {
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
     private Ruleset ruleset;
 
+    @ManyToOne
+    @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_process_template_id"))
+    private Template template;
+
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "template_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> templates;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "workpiece_x_property", joinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
+            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
     private List<Property> workpieces;
 
     @ManyToMany(mappedBy = "processes")
@@ -130,66 +112,15 @@ public class Process extends BaseIndexedBean {
      */
     public Process() {
         this.title = "";
-        this.template = false;
-        this.inChoiceListShown = false;
         this.properties = new ArrayList<>();
         this.tasks = new ArrayList<>();
+        this.inChoiceListShown = false;
         this.creationDate = new Date();
-
-    }
-
-    @XmlAttribute(name = "key")
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String inputTitle) {
-        this.title = inputTitle.trim();
-    }
-
-    public String getOutputName() {
-        return this.outputName;
-    }
-
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
-    /**
-     * Check if process is a template.
-     * 
-     * @return true or false, for null false
-     */
-    public boolean isTemplate() {
-        if (this.template == null) {
-            this.template = Boolean.FALSE;
-        }
-        return this.template;
-    }
-
-    public void setTemplate(boolean template) {
-        this.template = template;
-    }
-
-    public boolean isInChoiceListShown() {
-        return this.inChoiceListShown;
-    }
-
-    public void setInChoiceListShown(boolean inChoiceListShown) {
-        this.inChoiceListShown = inChoiceListShown;
-    }
-
-    public String getSortHelperStatus() {
-        return this.sortHelperStatus;
-    }
-
-    public void setSortHelperStatus(String sortHelperStatus) {
-        this.sortHelperStatus = sortHelperStatus;
     }
 
     /**
      * Get sorting helper for images.
-     * 
+     *
      * @return sorting helper as Integer, in case of null it returns 0
      */
     public Integer getSortHelperImages() {
@@ -205,7 +136,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get sorting helper for articles.
-     * 
+     *
      * @return sorting helper as Integer, in case of null it returns 0
      */
     public Integer getSortHelperArticles() {
@@ -221,7 +152,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get sorting helper for document structure.
-     * 
+     *
      * @return sorting helper as Integer, in case of null it returns 0
      */
     public Integer getSortHelperDocstructs() {
@@ -237,7 +168,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get sorting helper for metadata.
-     * 
+     *
      * @return sorting helper as Integer, in case of null it returns 0
      */
     public Integer getSortHelperMetadata() {
@@ -249,22 +180,6 @@ public class Process extends BaseIndexedBean {
 
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
-    }
-
-    public Date getCreationDate() {
-        return this.creationDate;
-    }
-
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getWikiField() {
-        return this.wikiField;
-    }
-
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
     }
 
     /**
@@ -309,8 +224,26 @@ public class Process extends BaseIndexedBean {
     }
 
     /**
+     * Get template.
+     *
+     * @return value of template
+     */
+    public Template getTemplate() {
+        return template;
+    }
+
+    /**
+     * Set template.
+     *
+     * @param template as Template object
+     */
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    /**
      * Get list of task.
-     * 
+     *
      * @return list of Task objects or empty list
      */
     public List<Task> getTasks() {
@@ -326,7 +259,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get list of templates.
-     * 
+     *
      * @return list of Property objects or empty list
      */
     public List<Property> getTemplates() {
@@ -339,7 +272,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Set list of templates.
-     * 
+     *
      * @param templates
      *            as list of Property objects
      */
@@ -349,7 +282,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get list of workpieces.
-     * 
+     *
      * @return list of Property objects or empty list
      */
     public List<Property> getWorkpieces() {
@@ -361,7 +294,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Set list of workpieces.
-     * 
+     *
      * @param workpieces
      *            as list of Property objects
      */
@@ -398,7 +331,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get list of properties.
-     * 
+     *
      * @return list of Property objects or empty list
      */
     public List<Property> getProperties() {
@@ -414,7 +347,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get blocked user.
-     * 
+     *
      * @return User object if this user is blocked
      */
     public User getBlockedUser() {
@@ -423,7 +356,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Set blocked user.
-     * 
+     *
      * @param blockedUser
      *            User object
      */
@@ -433,7 +366,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get blocked minutes.
-     * 
+     *
      * @return blocked minutes as long
      */
     public long getBlockedMinutes() {
@@ -442,7 +375,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Set blocked minutes.
-     * 
+     *
      * @param blockedMinutes
      *            as long
      */
@@ -452,7 +385,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Get blocked seconds.
-     * 
+     *
      * @return blocked seconds as long
      */
     public long getBlockedSeconds() {
@@ -461,7 +394,7 @@ public class Process extends BaseIndexedBean {
 
     /**
      * Set blocked seconds.
-     * 
+     *
      * @param blockedSeconds
      *            as long
      */
@@ -508,7 +441,7 @@ public class Process extends BaseIndexedBean {
      * Determines whether or not two processes are equal. Two instances of
      * {@code Process} are equal if the values of their {@code Id}, {@code Title},
      * {@code OutputName} and {@code CreationDate} member fields are the same.
-     * 
+     *
      * @param o
      *            An object to be compared with this {@code Process}.
      * @return {@code true} if the object to be compared is an instance of

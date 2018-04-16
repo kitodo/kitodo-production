@@ -12,20 +12,57 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/base.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <h:form id="templateEditForm">
-                <p:panel styleClass="content-header">
-                    <h3>
-                        <h:outputText value="#{msgs.prozessBearbeiten}" rendered="#{ProzessverwaltungForm.process.id ne 0}"/>
-                    </h3>
-                </p:panel>
-                <h:outputText value="This page is a placeholder - must be replaced."/>
-            </h:form>
-        </p:panel>
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{TemplateForm.loadTemplate(id)}" />
+    </f:metadata>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+        <h3>
+            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{not empty TemplateForm.template.title}"/>
+            <h:outputText value="#{msgs.newProcessTemplate}" rendered="#{empty TemplateForm.template.title}"/>
+        </h3>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         value="#{msgs.speichern}"
+                         action="#{TemplateForm.saveAndRedirect}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         disabled="#{TemplateForm.saveDisabled}"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{TemplateForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:button id="cancel" value="#{msgs.abbrechen}"
+                  outcome="#{'projects'}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="tabs" cache="false">
+            <p:tab title="#{msgs.prozessDetails}" id="details">
+                <ui:include src="/WEB-INF/templates/includes/templateEdit/details.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.arbeitsschritte}" id="taskOrder">
+                <ui:include src="/WEB-INF/templates/includes/templateEdit/taskList.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><a href="">#{msgs.editTemplate}</a></li>
     </ui:define>
 </ui:composition>

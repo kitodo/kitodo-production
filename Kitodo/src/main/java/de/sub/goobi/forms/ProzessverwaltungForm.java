@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,7 +43,6 @@ import java.util.Objects;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -59,27 +57,24 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.jdom.transform.XSLTransformException;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
-import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -87,7 +82,7 @@ import org.kitodo.services.workflow.WorkflowService;
 
 @Named("ProzessverwaltungForm")
 @SessionScoped
-public class ProzessverwaltungForm extends BasisForm {
+public class ProzessverwaltungForm extends TemplateBaseForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
     private Process process = new Process();
@@ -166,19 +161,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Create new template.
-     *
-     * @return page
-     */
-    public String newTemplate() {
-        this.process = new Process();
-        this.newProcessTitle = "";
-        this.process.setTemplate(true);
-        this.editMode = ObjectMode.PROCESS;
-        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
-    }
-
-    /**
      * Edit process.
      *
      * @return page
@@ -221,20 +203,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        if (this.process != null && this.process.getTitle() != null) {
-            if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
-                    && !renameAfterProcessTitleChanged()) {
-                return null;
-            }
-
-            try {
-                serviceManager.getProcessService().save(this.process);
-            } catch (DataException e) {
-                Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
-            }
-        } else {
-            Helper.setFehlerMeldung("titleEmpty");
-        }
+        save();
         return processListPath;
     }
 
@@ -252,11 +221,7 @@ public class ProzessverwaltungForm extends BasisForm {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             return null;
         }
-        if (this.displayMode.equals(ObjectMode.TEMPLATE)) {
-            return filterTemplates();
-        } else {
-            return filterAll();
-        }
+        return filterAll();
     }
 
     /**
@@ -323,14 +288,12 @@ public class ProzessverwaltungForm extends BasisForm {
 
             this.process.setTitle(this.newProcessTitle);
 
-            if (!this.process.isTemplate()) {
-                // remove Tiffwriter file
-                GoobiScript gs = new GoobiScript();
-                ArrayList<Process> pro = new ArrayList<>();
-                pro.add(this.process);
-                gs.deleteTiffHeaderFile(pro);
-                gs.updateImagePath(pro);
-            }
+            // remove Tiffwriter file
+            GoobiScript gs = new GoobiScript();
+            List<Process> pro = new ArrayList<>();
+            pro.add(this.process);
+            gs.deleteTiffHeaderFile(pro);
+            gs.updateImagePath(pro);
         }
         return true;
     }
@@ -412,28 +375,6 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Filter templates.
-     *
-     * @return page
-     */
-    public String filterTemplates() {
-        this.processCounterObjects = null;
-        try {
-            if (this.filter.equals("")) {
-                filterTemplatesWithoutFilter();
-            } else {
-                filterTemplatesWithFilter();
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-
-        this.page = new Page<>(0, this.processDTOS);
-        this.displayMode = ObjectMode.TEMPLATE;
-        return processListPath;
-    }
-
-    /**
      * This method initializes the process list without any filter whenever the bean
      * is constructed.
      */
@@ -450,7 +391,7 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     private void filterProcessesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, false,
+        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS,
                 false, false);
         if (!this.showClosedProcesses) {
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
@@ -473,72 +414,9 @@ public class ProzessverwaltungForm extends BasisForm {
             if (!this.showInactiveProjects) {
                 processDTOS = serviceManager.getProcessService().findAllActiveWithoutTemplates(sortList());
             } else {
-                processDTOS = serviceManager.getProcessService().findAllWithoutTemplates(sortList());
+                processDTOS = serviceManager.getProcessService().findAll(sortList());
             }
         }
-    }
-
-    private void filterTemplatesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS, true,
-                false, false);
-        if (!this.showClosedProcesses) {
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-        }
-        if (!this.showInactiveProjects) {
-            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
-        }
-        processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
-    }
-
-    private void filterTemplatesWithoutFilter() throws DataException {
-        if (!this.showClosedProcesses) {
-            if (!this.showInactiveProjects) {
-                processDTOS = serviceManager.getProcessService().findAllOpenAndActiveTemplates(sortList());
-            } else {
-                processDTOS = serviceManager.getProcessService().findAllNotClosedTemplates(sortList());
-            }
-        } else {
-            if (!this.showInactiveProjects) {
-                processDTOS = serviceManager.getProcessService().findTemplatesOfActiveProjects(sortList());
-            } else {
-                processDTOS = serviceManager.getTemplateService().findAllTemplates(sortList());
-            }
-        }
-    }
-
-    private String sortList() {
-        String sort = SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
-        if (this.sortierung.equals("titelAsc")) {
-            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("titelDesc")) {
-            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("batchAsc")) {
-            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("batchDesc")) {
-            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("projektAsc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("projektDesc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("vorgangsdatumAsc")) {
-            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("vorgangsdatumDesc")) {
-            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("fortschrittAsc")) {
-            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("fortschrittDesc")) {
-            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.DESC).toString();
-        }
-        return sort;
     }
 
     /**
@@ -644,19 +522,10 @@ public class ProzessverwaltungForm extends BasisForm {
     }
 
     /**
-     * Take task.
+     * Save task.
      */
     public void saveTask() {
-        this.task.setEditTypeEnum(TaskEditType.ADMIN);
-        this.task.setProcessingTime(new Date());
-        User user = getUser();
-        serviceManager.getTaskService().replaceProcessingUser(this.task, user);
-
-        try {
-            serviceManager.getTaskService().save(this.task);
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
-        }
+        saveTask(this.task);
     }
 
     /**
@@ -748,15 +617,8 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String deleteUser() {
-        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            User user = serviceManager.getUserService().getById(userId);
-            this.task.getUsers().remove(user);
-            return null;
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
-            return null;
-        }
+        deleteUser(this.task);
+        return null;
     }
 
     /**
@@ -765,15 +627,8 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String deleteUserGroup() {
-        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
-            this.task.getUserGroups().remove(userGroup);
-            return null;
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
-            return null;
-        }
+        deleteUserGroup(this.task);
+        return null;
     }
 
     /**
@@ -782,20 +637,8 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String addUserGroup() {
-        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
-            for (UserGroup taskUserGroup : this.task.getUserGroups()) {
-                if (taskUserGroup.equals(userGroup)) {
-                    return null;
-                }
-            }
-            this.task.getUserGroups().add(userGroup);
-            return null;
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
-            return null;
-        }
+        addUserGroup(this.task);
+        return null;
     }
 
     /**
@@ -804,19 +647,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String addUser() {
-        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            User user = serviceManager.getUserService().getById(userId);
-            for (User taskUser : this.task.getUsers()) {
-                if (taskUser.equals(user)) {
-                    return null;
-                }
-            }
-            this.task.getUsers().add(user);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
-            return null;
-        }
+        addUser(this.task);
         return null;
     }
 
@@ -1227,14 +1058,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return String
      */
     public String setOrderingUp() {
-        List<Task> tasks = this.process.getTasks();
-        Integer ordering = this.task.getOrdering() - 1;
-        for (Task task : tasks) {
-            if (task.getOrdering().equals(ordering)) {
-                task.setOrdering(ordering + 1);
-            }
-        }
-        this.task.setOrdering(ordering);
+        setOrderingUp(this.process.getTasks(), this.task);
         return save();
     }
 
@@ -1244,14 +1068,7 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return String
      */
     public String setOrderingDown() {
-        List<Task> tasks = this.process.getTasks();
-        Integer ordering = this.task.getOrdering() + 1;
-        for (Task task : tasks) {
-            if (task.getOrdering().equals(ordering)) {
-                task.setOrdering(ordering - 1);
-            }
-        }
-        this.task.setOrdering(ordering);
+        setOrderingUp(this.process.getTasks(), this.task);
         return save();
     }
 
@@ -1261,70 +1078,34 @@ public class ProzessverwaltungForm extends BasisForm {
      * @return String
      */
     public String reload() {
-        if (this.task != null && this.task.getId() != null) {
-            try {
-                Helper.getHibernateSession().refresh(this.task);
-            } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("arbeitsschritt") },
-                        logger, e);
-                }
-            }
-        }
-        if (this.process != null && this.process.getId() != null) {
-            try {
-                Helper.getHibernateSession().refresh(this.process);
-            } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("prozess") }, logger,
-                        e);
-                }
-            }
-        }
+        reload(this.task, "arbeitsschritt");
+        reload(this.process, "prozess");
         return null;
     }
 
     /**
-     * Get choice of project.
+     * Get selected project.
      *
      * @return Integer
      */
-    public Integer getProjektAuswahl() {
-        if (this.process.getProject() != null) {
-            return this.process.getProject().getId();
-        } else {
-            return 0;
-        }
+    public Integer getProjectSelect() {
+        return getProjectSelect(this.process.getProject());
     }
 
     /**
-     * Set choice of project.
+     * Set selected project.
      *
-     * @param inProjektAuswahl
+     * @param projectSelect
      *            Integer
      */
-    public void setProjektAuswahl(Integer inProjektAuswahl) {
-        if (inProjektAuswahl != 0) {
+    public void setProjectSelect(Integer projectSelect) {
+        if (projectSelect != 0) {
             try {
-                this.process.setProject(serviceManager.getProjectService().getById(inProjektAuswahl));
+                this.process.setProject(serviceManager.getProjectService().getById(projectSelect));
             } catch (DAOException e) {
                 Helper.setErrorMessage("Error assigning project", logger, e);
             }
         }
-    }
-
-    /**
-     * Get list of projects.
-     *
-     * @return list of SelectItem objects
-     */
-    public List<SelectItem> getProjektAuswahlListe() {
-        List<SelectItem> projects = new ArrayList<>();
-        List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
-        for (Project project : temp) {
-            projects.add(new SelectItem(project.getId(), project.getTitle(), null));
-        }
-        return projects;
     }
 
     /**
@@ -2041,11 +1822,7 @@ public class ProzessverwaltungForm extends BasisForm {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));
             } else {
-                if (Objects.nonNull(this.process) && this.process.isTemplate()) {
-                    newTemplate();
-                } else {
-                    newProcess();
-                }
+                newProcess();
             }
             setSaveDisabled(true);
         } catch (DAOException e) {

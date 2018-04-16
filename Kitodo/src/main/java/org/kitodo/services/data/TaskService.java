@@ -95,7 +95,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            currently logged in user
      * @return query to retrieve tasks for which the user eligible.
      */
-    private BoolQueryBuilder createUserTaskQuery(User user) throws DataException {
+    private BoolQueryBuilder createUserTaskQuery(User user) {
 
         BoolQueryBuilder subquery = new BoolQueryBuilder();
         subquery.should(createSimpleQuery("processingUser", user.getId(), true));
@@ -108,8 +108,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(subquery);
         query.must(createSimpleQuery("processingStatus", TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery("processingStatus", TaskStatus.DONE.getValue(), false));
+        query.must(createSimpleQuery("templateForTask.id", 0, true));
 
-        query.must(createOnlyTasksInProcessQuery());
         // TODO: find other way than retrieving the form bean to access
         // "hideCorrectionTasks" and "showAutomaticTasks"
         // e.g. which tasks should be returned!
@@ -127,19 +127,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return query;
     }
 
-    private BoolQueryBuilder createOnlyTasksInProcessQuery() throws DataException {
-        BoolQueryBuilder subquery = new BoolQueryBuilder();
-        List<JsonObject> templateProcesses = serviceManager.getTemplateService().findByTemplate(true, null);
-        if (templateProcesses.size() > 0) {
-            Set<Integer> templates = new HashSet<>();
-            for (JsonObject jsonObject : templateProcesses) {
-                templates.add(getIdFromJSONObject(jsonObject));
-            }
-            subquery.mustNot(createSetQuery("processForTask.id", templates, true));
-        }
-        return subquery;
-    }
-
     @Override
     public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         User user = Helper.getCurrentUser();
@@ -151,7 +138,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     @Override
-    public String createCountQuery(Map filters) throws DataException {
+    public String createCountQuery(Map filters) {
         User user = Helper.getCurrentUser();
         if (user == null) {
             return "";
@@ -318,7 +305,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createOnlyTasksInProcessQuery());
+        boolQuery.must(createSimpleQuery("templateForTask.id", 0, true));
+
         return count(boolQuery.toString());
     }
 
@@ -466,7 +454,13 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "users"));
         taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, "userGroups"));
         Integer process = taskJSONObject.getInt("processForTask.id");
-        taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
+        if (process > 0) {
+            taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
+        }
+        Integer template = taskJSONObject.getInt("templateForTask.id");
+        if (template > 0) {
+            taskDTO.setTemplate(serviceManager.getTemplateService().findById(template, true));
+        }
         if (!related) {
             taskDTO = convertRelatedJSONObjects(taskJSONObject, taskDTO);
         }

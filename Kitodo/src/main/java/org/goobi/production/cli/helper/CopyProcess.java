@@ -51,6 +51,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -66,7 +67,7 @@ public class CopyProcess extends ProzesskopieForm {
     private String opacSuchfeld = "12";
     private String opacSuchbegriff;
     private String opacKatalog;
-    private Process prozessVorlage = new Process();
+    private Template template = new Template();
     private Process prozessKopie = new Process();
     /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
     private boolean useOpac;
@@ -93,12 +94,12 @@ public class CopyProcess extends ProzesskopieForm {
      * @return page or empty String
      */
     public String prepare(ImportObject io) {
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
+        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             return "";
         }
 
         clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -107,20 +108,12 @@ public class CopyProcess extends ProzesskopieForm {
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(false);
-        this.prozessKopie.setInChoiceListShown(false);
-        this.prozessKopie.setProject(this.prozessVorlage.getProject());
-        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
-        this.prozessKopie.setDocket(this.prozessVorlage.getDocket());
+        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setRuleset(this.template.getRuleset());
+        this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
-        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie);
 
         return this.naviFirstPage;
     }
@@ -128,13 +121,13 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public String prepare(int id) {
         try {
-            this.prozessVorlage = serviceManager.getProcessService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
             return null;
         }
-        if (serviceManager.getProcessService().getContainsUnreachableSteps(this.prozessVorlage)) {
-            for (Task s : this.prozessVorlage.getTasks()) {
+        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
+            for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
                     Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
@@ -144,7 +137,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         clearValues();
-        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.prozessVorlage.getRuleset());
+        PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
         try {
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -153,19 +146,11 @@ public class CopyProcess extends ProzesskopieForm {
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
-        this.prozessKopie.setTemplate(false);
-        this.prozessKopie.setInChoiceListShown(false);
-        this.prozessKopie.setProject(this.prozessVorlage.getProject());
-        this.prozessKopie.setRuleset(this.prozessVorlage.getRuleset());
+        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setRuleset(this.template.getRuleset());
         this.digitalCollections = new ArrayList<>();
 
-        /*
-         * Kopie der Prozessvorlage anlegen
-         */
-        BeanHelper.copyTasks(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyScanTemplates(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyWorkpieces(this.prozessVorlage, this.prozessKopie);
-        BeanHelper.copyProperties(this.prozessVorlage, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie);
 
         initializePossibleDigitalCollections();
 
@@ -178,7 +163,7 @@ public class CopyProcess extends ProzesskopieForm {
          */
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+            cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
@@ -253,8 +238,7 @@ public class CopyProcess extends ProzesskopieForm {
         clearValues();
         readProjectConfigs();
         try {
-            PrefsInterface myPrefs = serviceManager.getRulesetService()
-                    .getPreferences(this.prozessVorlage.getRuleset());
+            PrefsInterface myPrefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
             /* den Opac abfragen und ein RDF draus bauen lassen */
             this.myRdf = UghImplementation.INSTANCE.createMetsMods(myPrefs);
             this.myRdf.read(this.metadataFile.getPath());
@@ -709,8 +693,8 @@ public class CopyProcess extends ProzesskopieForm {
             for (Property templateProperty : io.getTemplateProperties()) {
                 addPropertyForTemplate(this.prozessKopie, templateProperty);
             }
-            BeanHelper.addPropertyForProcess(prozessKopie, "Template", prozessVorlage.getTitle());
-            BeanHelper.addPropertyForProcess(prozessKopie, "TemplateID", String.valueOf(prozessVorlage.getId()));
+            BeanHelper.addPropertyForProcess(prozessKopie, "Template", this.template.getTitle());
+            BeanHelper.addPropertyForProcess(prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
         }
     }
 
@@ -725,13 +709,13 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public Process getProzessVorlage() {
-        return this.prozessVorlage;
+    public Template getTemplate() {
+        return this.template;
     }
 
     @Override
-    public void setProzessVorlage(Process prozessVorlage) {
-        this.prozessVorlage = prozessVorlage;
+    public void setTemplate(Template template) {
+        this.template = template;
     }
 
     @Override
@@ -912,7 +896,7 @@ public class CopyProcess extends ProzesskopieForm {
         String titeldefinition = "";
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+            cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
@@ -1027,7 +1011,7 @@ public class CopyProcess extends ProzesskopieForm {
         String tifDefinition;
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.prozessVorlage.getProject().getTitle());
+            cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
             Helper.setFehlerMeldung("IOException", e.getMessage());
             return;
