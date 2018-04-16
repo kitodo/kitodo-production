@@ -30,17 +30,18 @@
                 </p:selectOneMenu>
             </div>
             <div>
-                <h:commandLink action="#{ProzesskopieForm.templateAuswahlAuswerten}"
-                               title="#{msgs.AuswaehlenAusVorhandenenProzessen}">
-                    <h:graphicImage alt="" value="/pages/images/buttons/copy.gif"/>
-                    <h:outputText value="#{msgs.uebernehmen}"/>
-                </h:commandLink>
+                <p:commandButton id="copyProcessData"
+                                 action="#{ProzesskopieForm.templateAuswahlAuswerten}"
+                                 value="#{msgs.uebernehmen}"
+                                 title="#{msgs.AuswaehlenAusVorhandenenProzessen}"
+                                 update="editForm"
+                                 icon="fa fa-download" iconPos="right"/>
             </div>
         </p:row>
         <!-- choose from opac -->
         <p:row rendered="#{ProzesskopieForm.useOpac}">
             <div>
-                <p:outputLabel for="catalogueSelect" value="#{msgs.sucheImOpac}"/>
+                <p:outputLabel for="catalogueSelect" value="#{msgs.queryOPAC}"/>
                 <p:selectOneMenu id="catalogueSelect"
                                  value="#{ProzesskopieForm.opacKatalog}">
                     <f:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}"
@@ -67,9 +68,9 @@
             </div>
             <p:commandButton id="performOpacQuery"
                              action="#{ProzesskopieForm.evaluateOpac}"
-                             value="#{msgs.uebernehmen}"
-                             title="#{msgs.opacAbfragen}"
-                             icon="fa fa-download" iconPos="right"
+                             value="#{msgs.searchOPAC}"
+                             title="#{msgs.searchOPAC}"
+                             icon="fa fa-search" iconPos="right"
                              update="editForm"
                              onclick="PF('notifications').renderMessage({'summary':'#{msgs.searchingOpac}','detail':'','severity':'info'})"
                              rendered="#{ProzesskopieForm.useOpac}" />
