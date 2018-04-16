@@ -70,6 +70,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -387,11 +388,11 @@ public class ProzesskopieForm implements Serializable {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProzessTemplates() {
-        List<Template> templates = new ArrayList<>();
+    public List<SelectItem> getProcessesForChoiceList() {
+        List<Process> processes = new ArrayList<>();
         // TODO Change to check the corresponding authority
         if (serviceManager.getSecurityAccessService().isAdmin()) {
-            templates = serviceManager.getTemplateService().getAll();
+            processes = serviceManager.getProcessService().getAll();
         } else {
             User currentUser = null;
             try {
@@ -400,19 +401,21 @@ public class ProzesskopieForm implements Serializable {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
             if (Objects.nonNull(currentUser)) {
-                ArrayList<Integer> projectIds = new ArrayList<>();
                 for (Project project : currentUser.getProjects()) {
-                    projectIds.add(project.getId());
+                    processes.addAll(project.getProcesses());
                 }
-                templates = serviceManager.getTemplateService().getProcessTemplatesForUser(projectIds);
             }
         }
 
-        List<SelectItem> processTemplates = new ArrayList<>();
-        for (Template template : templates) {
-            processTemplates.add(new SelectItem(template.getId(), template.getTitle(), null));
+        processes = processes.stream()
+                .filter(BaseTemplateBean::getInChoiceListShown)
+                .collect(Collectors.toList());
+
+        List<SelectItem> processSelectItems = new ArrayList<>();
+        for (Process process : processes) {
+            processSelectItems.add(new SelectItem(process.getId(), process.getTitle(), null));
         }
-        return processTemplates;
+        return processSelectItems;
     }
 
     /**
