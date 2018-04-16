@@ -29,7 +29,7 @@
         <p:commandButton value="#{msgs.speichern}"
                          action="#{ProzesskopieForm.createNewProcess}"
                          icon="fa fa-floppy-o fa-lg" iconPos="right"
-                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
