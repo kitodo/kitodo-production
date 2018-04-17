@@ -902,14 +902,14 @@ Metadata Editor
     max-width: 30%;
     vertical-align: top;
     position: relative;
-    padding: 30px 5px 5px 5px;
+    padding: 60px 5px 5px 5px;
     background: #d8d8d8;
 }
 
 .collapsibleWrapper > button {
     position: absolute;
     top: -10px;
-    left: 10px;
+    left: 17px;
     background: #0071bc;
     color: #fff;
     border: solid 1px #fff;
@@ -917,15 +917,24 @@ Metadata Editor
 
 .collapsibleWrapper .columnHeading {
     position: absolute;
-    top: 20px;
+    top: 30px;
     left: 10px;
     font-weight: bold;
 }
 
 .collapsibleWrapper.collapsed .columnHeading {
     transform: rotate(90deg);
-    top: 25px;
+    top: -10px;
     left: 5px;
+    width: 200px;
+    height: 42px;
+    line-height: 42px;
+    z-index: 10;
+    transform-origin: 0 100%;
+}
+
+.collapsibleWrapper.collapsed > .ui-panel {
+    visibility: hidden;
 }
 
 /*----------------------------------------------------------------------
