@@ -18,21 +18,50 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <p:panel id="listWrapper">
-            <p:panel style="height:700px;">
-                <p:layout fullPage="false">
-                    <p:layoutUnit position="north" size="80">
-                        <ui:include src="/pages/incMeta/metadataEditorHeader.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="west" resizable="true" size="200" minSize="100" maxSize="600">
-                        <ui:include src="/pages/incMeta/metadataStructureView.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="center">
-                        <ui:include src="/pages/incMeta/metadataCenter.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="east" size="300" resizable="true" header="#{msgs.metadataShowImage}" collapsible="true">
-                        <ui:include src="/pages/incMeta/imageContol.xhtml" />
-                    </p:layoutUnit>
-                </p:layout>
+            <p:panel>
+                <!-- Header -->
+                <p:panel>
+                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/header.xhtml" />
+                </p:panel>
+                <!-- Content -->
+                <div id="metadataEditorWrapper">
+                    <!-- First Column -->
+                    <div class="collapsibleWrapper" id="firstColumn">
+                        <button type="button"
+                                onclick="PF('firstColumn').toggle();$('#firstColumn').toggleClass('collapsed')"
+                                class="columnExpandButton">
+                            <i class="fa fa-angle-double-left fa-lg"/>
+                        </button>
+                        <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
+                        <p:panel widgetVar="firstColumn" toggleable="true" toggleOrientation="horizontal">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml" />
+                        </p:panel>
+                    </div>
+                    <!-- Second Column -->
+                    <div class="collapsibleWrapper" id="secondColumn">
+                        <button type="button"
+                                onclick="PF('secondColumn').toggle();$('#secondColumn').toggleClass('collapsed')"
+                                class="columnExpandButton">
+                            <i class="fa fa-angle-double-left fa-lg"/>
+                        </button>
+                        <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
+                        <p:panel widgetVar="secondColumn" toggleable="true" toggleOrientation="horizontal">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
+                        </p:panel>
+                    </div>
+                    <!-- Third Column -->
+                    <div class="collapsibleWrapper" id="thirdColumn">
+                        <button type="button"
+                                onclick="PF('thirdColumn').toggle();$('#thirdColumn').toggleClass('collapsed')"
+                                class="columnExpandButton">
+                            <i class="fa fa-angle-double-left fa-lg"/>
+                        </button>
+                        <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                        <p:panel widgetVar="thirdColumn" toggleable="true" toggleOrientation="horizontal">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
+                        </p:panel>
+                    </div>
+                </div>
             </p:panel>
         </p:panel>
     </ui:define>
