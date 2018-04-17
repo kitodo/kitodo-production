@@ -198,9 +198,6 @@
                                     "ignore_above": 256
                                 }
                             }
-                        },
-                        "template": {
-                            "type": "boolean"
                         }
                     }
                 },
@@ -217,9 +214,6 @@
                                     "ignore_above": 256
                                 }
                             }
-                        },
-                        "template": {
-                            "type": "boolean"
                         }
                     }
                 },
@@ -435,7 +429,20 @@
                     }
                 },
                 "template": {
-                    "type": "boolean"
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 },
                 "title": {
                     "type": "text",
