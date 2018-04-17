@@ -11,14 +11,15 @@
 
 package org.kitodo.dataeditor;
 
+import static org.kitodo.dataeditor.MetsModsKitodoUtils.getFirstGenericTypeFromObjectList;
+import static org.kitodo.dataeditor.MetsModsKitodoUtils.getKitodoTypeFromModsDefinition;
+
 import java.io.File;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.StreamFilter;
@@ -27,15 +28,14 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import metsModsKitodo.ExtensionDefinition;
-import metsModsKitodo.KitodoType;
-import metsModsKitodo.MdSecType;
-import metsModsKitodo.Mets;
-import metsModsKitodo.MetsType;
-import metsModsKitodo.ModsDefinition;
-import metsModsKitodo.ObjectFactory;
-import metsModsKitodo.StructLinkType;
 import org.kitodo.dataeditor.exceptions.DataNotFoundException;
+import org.kitodo.metsModsKitodo.KitodoType;
+import org.kitodo.metsModsKitodo.MdSecType;
+import org.kitodo.metsModsKitodo.Mets;
+import org.kitodo.metsModsKitodo.MetsType;
+import org.kitodo.metsModsKitodo.ModsDefinition;
+import org.kitodo.metsModsKitodo.ObjectFactory;
+import org.kitodo.metsModsKitodo.StructLinkType;
 
 public class MetsModsKitodo {
     private Mets mets;
@@ -133,7 +133,7 @@ public class MetsModsKitodo {
      */
     public KitodoType getKitodoTypeByMdSecIndex(int index) throws DataNotFoundException {
 
-        if (getDmdSecs().size() > index) {
+        if (this.getDmdSecs().size() > index) {
 
             //Wrapping null-checks at getter-chain into Optional<T>.class
             Optional<List<Object>> modsData = Optional.ofNullable(getDmdSecs().get(index))
@@ -142,45 +142,11 @@ public class MetsModsKitodo {
                 .map(MdSecType.MdWrap.XmlData::getAny);
 
             if (modsData.isPresent()) {
-                return getKitodoTypeFromModsDefinition(getModsDefinitionFromObjectList(modsData.get()));
+                return getKitodoTypeFromModsDefinition(getFirstGenericTypeFromObjectList(modsData.get(),ModsDefinition.class));
             }
             throw new DataNotFoundException("MdSec element with index: " + index + " does not have MODS-data");
         }
         throw new DataNotFoundException("MdSec element with index: " + index + " does not exist");
-    }
-
-    private ModsDefinition getModsDefinitionFromObjectList(List<Object> objects) throws DataNotFoundException {
-        for (Object object : objects) {
-            if (object instanceof JAXBElement) {
-                JAXBElement modsJaxbElement = (JAXBElement) object;
-                if (modsJaxbElement.getValue() instanceof ModsDefinition) {
-                    return (ModsDefinition) modsJaxbElement.getValue();
-                }
-            }
-        }
-        throw new DataNotFoundException("No ModsDefinition objects found");
-    }
-
-    private KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) throws DataNotFoundException {
-        Optional<Object> extensionData = Optional.ofNullable(modsDefinition)
-            .map(object -> object.getModsGroup().get(0));
-
-        if (extensionData.isPresent() && extensionData.get() instanceof ExtensionDefinition) {
-            ExtensionDefinition extensionDefinition = (ExtensionDefinition) extensionData.get();
-            return getKitodoTypeFromExtensionDefinition(extensionDefinition);
-        }
-        throw new DataNotFoundException("ModsDefinition does not have MODS-extension-elements");
-    }
-
-    private KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) throws DataNotFoundException {
-        Optional<Object> kitodoData = Optional.ofNullable(extensionDefinition)
-            .map(object -> object.getContent().get(0));
-
-        if (kitodoData.isPresent() && kitodoData.get() instanceof JAXBElement) {
-            JAXBElement kitodoJaxbElement = (JAXBElement) kitodoData.get();
-            return (KitodoType) kitodoJaxbElement.getValue();
-        }
-        throw new DataNotFoundException("ExtensionDefinition does not have Kitodo-elements");
     }
 
     /**
