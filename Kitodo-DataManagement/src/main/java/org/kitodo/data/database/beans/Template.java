@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -29,6 +30,9 @@ import javax.persistence.Table;
 public class Template extends BaseTemplateBean {
 
     private static final long serialVersionUID = -6503346767655786275L;
+
+    @Column(name = "workflowName")
+    private String workflowName;
 
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_template_docket_id"))
@@ -53,6 +57,24 @@ public class Template extends BaseTemplateBean {
         this.inChoiceListShown = true;
         this.tasks = new ArrayList<>();
         this.creationDate = new Date();
+    }
+
+    /**
+     * Get workflowName.
+     *
+     * @return value of workflowName
+     */
+    public String getWorkflowName() {
+        return workflowName;
+    }
+
+    /**
+     * Set workflowName.
+     *
+     * @param workflowName as java.lang.String
+     */
+    public void setWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
     }
 
     /**

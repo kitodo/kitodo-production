@@ -98,6 +98,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "batchStep")
     private Boolean batchStep = false;
 
+    @Column(name = "workflowCondition")
+    private String workflowCondition;
+
     /**
      * This field contains information about user, which works on this task.
      */
@@ -470,6 +473,24 @@ public class Task extends BaseIndexedBean {
 
     public void setScriptPath(String scriptPath) {
         this.scriptPath = scriptPath;
+    }
+
+    /**
+     * Get workflowCondition.
+     *
+     * @return value of workflowCondition
+     */
+    public String getWorkflowCondition() {
+        return workflowCondition;
+    }
+
+    /**
+     * Set workflowCondition.
+     *
+     * @param workflowCondition as String
+     */
+    public void setWorkflowCondition(String workflowCondition) {
+        this.workflowCondition = workflowCondition;
     }
 
     public Boolean getBatchStep() {
