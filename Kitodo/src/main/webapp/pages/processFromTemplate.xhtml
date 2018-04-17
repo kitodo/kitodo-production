@@ -26,11 +26,13 @@
         <h3>
             <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.template.title}')"/>
         </h3>
-        <p:commandButton value="#{msgs.speichern}"
+        <p:commandButton id="saveButton"
+                         value="#{msgs.speichern}"
                          action="#{ProzesskopieForm.createNewProcess}"
                          icon="fa fa-floppy-o fa-lg" iconPos="right"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
                          oncomplete="if (args &amp;&amp; !args.validationFailed) PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         update="notifications"/>
+                         update="notifications, sticky-notifications"/>
         <p:button value="#{msgs.abbrechen}" outcome="projects" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 

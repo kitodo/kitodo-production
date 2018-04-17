@@ -64,6 +64,7 @@
                 <p:outputLabel for="fieldValue" value="#{msgs.value}"/>
                 <p:inputText id="fieldValue" value="#{ProzesskopieForm.opacSuchbegriff}"
                              rendered="#{ProzesskopieForm.useOpac}" class="input"
+                             required="#{not empty param['editForm:processFromTemplateTabView:performOpacQuery']}"
                              onkeypress="return checkOpac('OpacRequest',event)"/>
             </div>
             <p:commandButton id="performOpacQuery"
@@ -72,7 +73,7 @@
                              title="#{msgs.searchOPAC}"
                              icon="fa fa-search" iconPos="right"
                              update="editForm"
-                             onclick="PF('notifications').renderMessage({'summary':'#{msgs.searchingOpac}','detail':'','severity':'info'})"
+                             onclick="if (document.forms['editForm']['editForm:processFromTemplateTabView:fieldValue'].value !== '') PF('notifications').renderMessage({'summary':'#{msgs.searchingOpac}','detail':'','severity':'info'})"
                              rendered="#{ProzesskopieForm.useOpac}" />
         </p:row>
     </p:panelGrid>
