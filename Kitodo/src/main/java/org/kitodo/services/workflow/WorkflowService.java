@@ -34,6 +34,7 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -44,6 +45,7 @@ import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
+import org.kitodo.workflow.model.Reader;
 
 public class WorkflowService {
 
@@ -123,6 +125,19 @@ public class WorkflowService {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Save workflow as template.
+     * 
+     * @param diagramName
+     *            from which template is assigned
+     */
+    public void saveWorkflowAsTemplate(String diagramName) throws DAOException, DataException, IOException {
+        Reader reader = new Reader(diagramName);
+        reader.loadProcess();
+        Template template = reader.convertWorkflowToTemplate();
+        serviceManager.getTemplateService().save(template);
     }
 
     /**
@@ -348,6 +363,7 @@ public class WorkflowService {
 
     /**
      * Set Priority equal 10 means correction task.
+     * 
      * @param task
      *            Task object
      * @return correction Task
