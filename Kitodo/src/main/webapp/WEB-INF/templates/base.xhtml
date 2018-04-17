@@ -29,9 +29,9 @@
             <h:outputStylesheet name="css/pattern-library.css"/>
             <p:growl id="notifications" widgetVar="notifications" severity="info"/>
             <p:growl id="sticky-notifications" widgetVar="sticky-notifications" sticky="true" severity="info"/>
-            <div rendered="#{empty indexingForm.serverInformation}" >
+            <h:panelGroup id="indexErrorPanel" layout="block" rendered="#{empty indexingForm.serverInformation}">
                <p:ajax event="click" onclick="PF('sticky-notifications').renderMessage({'summary':'The elastic search server is not running.','detail':'Elastic Search','severity':'info'});"/>
-            </div>
+            </h:panelGroup>
             <div class="flex-container">
                 <header class="flex-item" role="banner" id="portal-header">
                     <ui:insert name="header">
