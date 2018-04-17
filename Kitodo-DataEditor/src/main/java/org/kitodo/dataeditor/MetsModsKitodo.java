@@ -15,6 +15,7 @@ import java.io.File;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -34,6 +35,7 @@ import metsModsKitodo.MetsType;
 import metsModsKitodo.ModsDefinition;
 import metsModsKitodo.ObjectFactory;
 import metsModsKitodo.StructLinkType;
+import org.kitodo.dataeditor.exceptions.DataNotFoundException;
 
 public class MetsModsKitodo {
     private Mets mets;
@@ -129,12 +131,56 @@ public class MetsModsKitodo {
      *            The index as int.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecIndex(int index) {
-        JAXBElement element = (JAXBElement) this.mets.getDmdSec().get(index).getMdWrap().getXmlData().getAny().get(0);
-        ModsDefinition modsType = (ModsDefinition) element.getValue();
-        ExtensionDefinition extensionType = (ExtensionDefinition) modsType.getModsGroup().get(0);
-        element = (JAXBElement) extensionType.getContent().get(0);
-        return (KitodoType) element.getValue();
+    public KitodoType getKitodoTypeByMdSecIndex(int index) throws DataNotFoundException {
+
+        if (getDmdSecs().size() > index) {
+
+            //Wrapping null-checks at getter-chain into Optional<T>.class
+            Optional<List<Object>> modsData = Optional.ofNullable(getDmdSecs().get(index))
+                .map(MdSecType::getMdWrap)
+                .map(MdSecType.MdWrap::getXmlData)
+                .map(MdSecType.MdWrap.XmlData::getAny);
+
+            if (modsData.isPresent()) {
+                return getKitodoTypeFromModsDefinition(getModsDefinitionFromObjectList(modsData.get()));
+            }
+            throw new DataNotFoundException("MdSec element with index: " + index + " does not have MODS-data");
+        }
+        throw new DataNotFoundException("MdSec element with index: " + index + " does not exist");
+    }
+
+    private ModsDefinition getModsDefinitionFromObjectList(List<Object> objects) throws DataNotFoundException {
+        for (Object object : objects) {
+            if (object instanceof JAXBElement) {
+                JAXBElement modsJaxbElement = (JAXBElement) object;
+                if (modsJaxbElement.getValue() instanceof ModsDefinition) {
+                    return (ModsDefinition) modsJaxbElement.getValue();
+                }
+            }
+        }
+        throw new DataNotFoundException("No ModsDefinition objects found");
+    }
+
+    private KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) throws DataNotFoundException {
+        Optional<Object> extensionData = Optional.ofNullable(modsDefinition)
+            .map(object -> object.getModsGroup().get(0));
+
+        if (extensionData.isPresent() && extensionData.get() instanceof ExtensionDefinition) {
+            ExtensionDefinition extensionDefinition = (ExtensionDefinition) extensionData.get();
+            return getKitodoTypeFromExtensionDefinition(extensionDefinition);
+        }
+        throw new DataNotFoundException("ModsDefinition does not have MODS-extension-elements");
+    }
+
+    private KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) throws DataNotFoundException {
+        Optional<Object> kitodoData = Optional.ofNullable(extensionDefinition)
+            .map(object -> object.getContent().get(0));
+
+        if (kitodoData.isPresent() && kitodoData.get() instanceof JAXBElement) {
+            JAXBElement kitodoJaxbElement = (JAXBElement) kitodoData.get();
+            return (KitodoType) kitodoJaxbElement.getValue();
+        }
+        throw new DataNotFoundException("ExtensionDefinition does not have Kitodo-elements");
     }
 
     /**
@@ -144,7 +190,7 @@ public class MetsModsKitodo {
      *            The id as String.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecId(String id) {
+    public KitodoType getKitodoTypeByMdSecId(String id) throws DataNotFoundException {
         int index = 0;
         for (MdSecType mdSecType : getDmdSecs()) {
             if (mdSecType.getID().equals(id)) {
@@ -152,6 +198,6 @@ public class MetsModsKitodo {
             }
             index++;
         }
-        throw new NoSuchElementException("MdSec element with id: " + id + " was not found");
+        throw new DataNotFoundException("MdSec element with id: " + id + " was not found");
     }
 }
