@@ -12,6 +12,8 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.text.DateFormat;
@@ -135,7 +137,7 @@ public class ProcessTypeTest {
         assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
         assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
         assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
-        assertEquals("Key project.active doesn't match to given value!", true, actual.getBoolean("project.active"));
+        assertTrue("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
         assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
         assertEquals("Key ruleset doesn't match to given value!", 1, actual.getInt("ruleset"));
 
@@ -189,7 +191,9 @@ public class ProcessTypeTest {
         assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
         assertEquals("Key project.id doesn't match to given value!", 1, actual.getInt("project.id"));
         assertEquals("Key project.title doesn't match to given value!", "Project", actual.getString("project.title"));
-        assertEquals("Key project.active doesn't match to given value!", true, actual.getBoolean("project.active"));
+        assertTrue("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
+        assertEquals("Key template.id doesn't match to given value!", 0, actual.getInt("template.id"));
+        assertEquals("Key template.title doesn't match to given value!", "", actual.getString("template.title"));
         assertEquals("Key docket doesn't match to given value!", 1, actual.getInt("docket"));
         assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
 
@@ -237,7 +241,9 @@ public class ProcessTypeTest {
         assertEquals("Key sortHelperMetadata doesn't match to given value!", 0, actual.getInt("sortHelperMetadata"));
         assertEquals("Key project.id doesn't match to given value!", 0, actual.getInt("project.id"));
         assertEquals("Key project.title doesn't match to given value!", "", actual.getString("project.title"));
-        assertEquals("Key project.active doesn't match to given value!", false, actual.getBoolean("project.active"));
+        assertFalse("Key project.active doesn't match to given value!", actual.getBoolean("project.active"));
+        assertEquals("Key template.id doesn't match to given value!", 0, actual.getInt("template.id"));
+        assertEquals("Key template.title doesn't match to given value!", "", actual.getString("template.title"));
         assertEquals("Key docket doesn't match to given value!", 0, actual.getInt("docket"));
         assertEquals("Key ruleset doesn't match to given value!", 0, actual.getInt("ruleset"));
 
@@ -265,7 +271,7 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 20, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
 
         JsonArray batches = actual.getJsonArray("batches");
         JsonObject batch = batches.getJsonObject(0);
