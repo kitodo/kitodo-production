@@ -1159,7 +1159,6 @@ public class MockDatabase {
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
-        secondUser.setSessionTimeout(9000);
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
         serviceManager.getUserService().save(secondUser);
 

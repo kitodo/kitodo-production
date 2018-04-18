@@ -30,7 +30,6 @@ import javax.persistence.Table;
 @Table(name = "user")
 public class User extends BaseIndexedBean {
     private static final long serialVersionUID = -7482853955996650586L;
-    private static final int defaultSessionTimeout = 7200;
 
     @Column(name = "name")
     private String name;
@@ -58,9 +57,6 @@ public class User extends BaseIndexedBean {
 
     @Column(name = "tableSize")
     private Integer tableSize = 10;
-
-    @Column(name = "sessionTimeout")
-    private Integer sessionTimeout = defaultSessionTimeout;
 
     @Column(name = "configProductionDateShow")
     private boolean configProductionDateShow = false;
@@ -155,9 +151,6 @@ public class User extends BaseIndexedBean {
         }
 
         // default values
-        if (user.sessionTimeout != null) {
-            this.sessionTimeout = user.sessionTimeout;
-        }
         if (user.tableSize != null) {
             this.tableSize = user.tableSize;
         }
@@ -305,23 +298,6 @@ public class User extends BaseIndexedBean {
         this.ldapLogin = ldapLogin;
     }
 
-    /**
-     * Return session timeout of the user.
-     *
-     * @return sessionTimeout if it is not null or defaultSessionTimeout otherwise
-     */
-    public Integer getSessionTimeout() {
-        if (Objects.nonNull(this.sessionTimeout)) {
-            return this.sessionTimeout;
-        } else {
-            return defaultSessionTimeout;
-        }
-    }
-
-    public void setSessionTimeout(Integer sessionTimeout) {
-        this.sessionTimeout = sessionTimeout;
-    }
-
     public String getCss() {
         if (this.css == null || this.css.length() == 0) {
             this.css = "old/userStyles/default.css";
@@ -398,18 +374,6 @@ public class User extends BaseIndexedBean {
 
     public String getFullName() {
         return this.getSurname() + ", " + this.getName();
-    }
-
-    public Integer getSessionTimeoutInMinutes() {
-        return this.getSessionTimeout() / 60;
-    }
-
-    public void setSessionTimeoutInMinutes(Integer sessionTimeout) {
-        if (sessionTimeout < 5) {
-            this.setSessionTimeout(5 * 60);
-        } else {
-            this.setSessionTimeout(sessionTimeout * 60);
-        }
     }
 
     @Override

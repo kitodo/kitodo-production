@@ -25,8 +25,6 @@ public class UserDTO extends BaseDTO {
     private String location;
     private String ldapLogin;
     private boolean active = true;
-    private Integer sessionTimeout = 7200;
-    private Integer sessionTimeoutInMinutes = 7200;
     private List<FilterDTO> filters;
     private Integer filtersSize;
     private List<UserGroupDTO> userGroups;
@@ -169,44 +167,6 @@ public class UserDTO extends BaseDTO {
      */
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    /**
-     * Get session timeout.
-     * 
-     * @return session timeout as Integer
-     */
-    public Integer getSessionTimeout() {
-        return this.sessionTimeout;
-    }
-
-    /**
-     * Set session timeout.
-     * 
-     * @param sessionTimeout
-     *            as Integer
-     */
-    public void setSessionTimeout(Integer sessionTimeout) {
-        this.sessionTimeout = sessionTimeout;
-    }
-
-    /**
-     * Get session timeout in minutes.
-     * 
-     * @return session timeout in minutes as Integer
-     */
-    public Integer getSessionTimeoutInMinutes() {
-        return this.sessionTimeoutInMinutes;
-    }
-
-    /**
-     * Set session timeout in minutes.
-     * 
-     * @param sessionTimeoutInMinutes
-     *            as Integer
-     */
-    public void setSessionTimeoutInMinutes(Integer sessionTimeoutInMinutes) {
-        this.sessionTimeoutInMinutes = sessionTimeoutInMinutes;
     }
 
     /**

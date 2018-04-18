@@ -333,24 +333,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetSessionTimeout() throws Exception {
-        User user = userService.getById(1);
-        int actual = userService.getSessionTimeout(user);
-        assertEquals("Session timeout is incorrect!", 7200, actual);
-
-        user = userService.getById(2);
-        actual = userService.getSessionTimeout(user);
-        assertEquals("Session timeout is incorrect!", 9000, actual);
-    }
-
-    @Test
-    public void shouldGetSessionTimeoutInMinutes() throws Exception {
-        User user = userService.getById(1);
-        int actual = userService.getSessionTimeoutInMinutes(user);
-        assertEquals("Session timeout in minutes is incorrect!", 120, actual);
-    }
-
-    @Test
     public void shouldGetCss() throws Exception {
         User user = userService.getById(1);
         boolean condition = userService.getCss(user).equals("old/userStyles/classic.css");
