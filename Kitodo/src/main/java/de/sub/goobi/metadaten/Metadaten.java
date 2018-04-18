@@ -135,6 +135,8 @@ public class Metadaten {
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
+    private boolean showPagination = false;
+
     private String paginationValue;
     private int paginationFromPageOrMark;
     private String paginationType;
@@ -3391,5 +3393,23 @@ public class Metadaten {
      */
     public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
         this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
+    }
+
+    /**
+     * Get showPagination.
+     *
+     * @return value of showPagination
+     */
+    public boolean isShowPagination() {
+        return showPagination;
+    }
+
+    /**
+     * Set showPagination.
+     *
+     * @param showPagination as boolean
+     */
+    public void setShowPagination(boolean showPagination) {
+        this.showPagination = showPagination;
     }
 }

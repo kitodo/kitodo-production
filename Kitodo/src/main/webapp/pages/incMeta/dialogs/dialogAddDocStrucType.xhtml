@@ -69,8 +69,9 @@
                             <f:selectItems value="#{Metadaten.allPages}"/>
                         </p:selectOneMenu>
 
+
                         <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
-                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
+                                         update="structureTreeForm"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
                 </h:panelGroup>
@@ -88,8 +89,9 @@
                         <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
                         <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
 
+
                         <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSeveralNodesWithMetadata}"
-                                         update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
+                                         update="structureTreeForm"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
                 </h:panelGroup>

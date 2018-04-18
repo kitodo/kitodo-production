@@ -21,14 +21,18 @@
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
+                         action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
                          value="#{msgs.speichern}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validieren}"
+                         action="#{Metadaten.validate}"
+                         update="metadataEditor"
                          icon="fa fa-check fa-lg"
                          iconPos="right"
                          styleClass="secondary-button"/>
+        <p:button value="#{msgs.abbrechen}" outcome="processes" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </p:panel>
 </ui:composition>

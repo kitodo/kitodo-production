@@ -937,6 +937,22 @@ Metadata Editor
     visibility: hidden;
 }
 
+#structureTreeForm\:actionButtons .ui-panelgrid-cell {
+    padding: 2px;
+}
+
+#structureTreeForm\:actionButtons .ui-button {
+    width: 100%;
+}
+
+.pagination-active {
+    filter: opacity(100%);
+}
+
+.pagination-inactive {
+    filter: opacity(35%);
+}
+
 /*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
