@@ -161,16 +161,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Edit process.
-     *
-     * @return page
-     */
-    public String editProcess() {
-        reload();
-        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
-    }
-
-    /**
      * Save process.
      *
      * @return null
