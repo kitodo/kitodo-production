@@ -50,7 +50,7 @@ public class TemplateForm extends TemplateBaseForm {
 
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
+    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
 
     /**
      * Constructor.
@@ -376,6 +376,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @param template as Template
      */
     public void setTemplate(Template template) {
+        this.title = template.getTitle();
         this.template = template;
     }
 
