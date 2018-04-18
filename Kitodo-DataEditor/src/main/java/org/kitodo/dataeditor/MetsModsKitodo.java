@@ -11,10 +11,8 @@
 
 package org.kitodo.dataeditor;
 
-import static org.kitodo.dataeditor.MetsModsKitodoUtils.getFirstGenericTypeFromObjectList;
-import static org.kitodo.dataeditor.MetsModsKitodoUtils.getKitodoTypeFromModsDefinition;
-
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +26,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.kitodo.dataeditor.exceptions.DataNotFoundException;
 import org.kitodo.metsModsKitodo.KitodoType;
 import org.kitodo.metsModsKitodo.MdSecType;
 import org.kitodo.metsModsKitodo.Mets;
@@ -131,22 +128,21 @@ public class MetsModsKitodo {
      *            The index as int.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecIndex(int index) throws DataNotFoundException {
+    public KitodoType getKitodoTypeByMdSecIndex(int index) throws IOException {
 
         if (this.getDmdSecs().size() > index) {
 
-            //Wrapping null-checks at getter-chain into Optional<T>.class
-            Optional<List<Object>> modsData = Optional.ofNullable(getDmdSecs().get(index))
-                .map(MdSecType::getMdWrap)
-                .map(MdSecType.MdWrap::getXmlData)
-                .map(MdSecType.MdWrap.XmlData::getAny);
+            // Wrapping null-checks at getter-chain into Optional<T>.class
+            Optional<List<Object>> modsData = Optional.ofNullable(getDmdSecs().get(index)).map(MdSecType::getMdWrap)
+                    .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
 
             if (modsData.isPresent()) {
-                return getKitodoTypeFromModsDefinition(getFirstGenericTypeFromObjectList(modsData.get(),ModsDefinition.class));
+                return MetsModsKitodoUtils.getKitodoTypeFromModsDefinition(
+                    MetsModsKitodoUtils.getFirstGenericTypeFromObjectList(modsData.get(), ModsDefinition.class));
             }
-            throw new DataNotFoundException("MdSec element with index: " + index + " does not have MODS-data");
+            throw new IOException("MdSec element with index: " + index + " does not have MODS-data");
         }
-        throw new DataNotFoundException("MdSec element with index: " + index + " does not exist");
+        throw new IOException("MdSec element with index: " + index + " does not exist");
     }
 
     /**
@@ -156,7 +152,7 @@ public class MetsModsKitodo {
      *            The id as String.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecId(String id) throws DataNotFoundException {
+    public KitodoType getKitodoTypeByMdSecId(String id) throws IOException {
         int index = 0;
         for (MdSecType mdSecType : getDmdSecs()) {
             if (mdSecType.getID().equals(id)) {
@@ -164,6 +160,6 @@ public class MetsModsKitodo {
             }
             index++;
         }
-        throw new DataNotFoundException("MdSec element with id: " + id + " was not found");
+        throw new IOException("MdSec element with id: " + id + " was not found");
     }
 }

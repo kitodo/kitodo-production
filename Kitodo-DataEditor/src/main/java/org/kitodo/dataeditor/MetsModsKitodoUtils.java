@@ -11,34 +11,34 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
 
-import org.kitodo.dataeditor.exceptions.DataNotFoundException;
 import org.kitodo.metsModsKitodo.ExtensionDefinition;
 import org.kitodo.metsModsKitodo.KitodoType;
 import org.kitodo.metsModsKitodo.ModsDefinition;
 
 class MetsModsKitodoUtils {
 
-    static <T> T getFirstGenericTypeFromObjectList(List<Object> objects, Class<T> type) throws DataNotFoundException {
+    static <T> T getFirstGenericTypeFromObjectList(List<Object> objects, Class<T> type) throws IOException {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
-                JAXBElement modsJaxbElement = (JAXBElement) object;
-                if (type.isInstance(modsJaxbElement.getValue())) {
-                    return (type.cast(modsJaxbElement.getValue()));
+                JAXBElement jaxbElement = (JAXBElement) object;
+                if (type.isInstance(jaxbElement.getValue())) {
+                    return (type.cast(jaxbElement.getValue()));
                 }
             }
             if (type.isInstance(object)) {
                 return (type.cast(object));
             }
         }
-        throw new DataNotFoundException("No " + type.getName() + " objects found");
+        throw new IOException("No " + type.getName() + " objects found");
     }
 
-    static KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) throws DataNotFoundException {
+    static KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) throws IOException {
         Optional<List<Object>> extensionData = Optional.ofNullable(modsDefinition)
             .map(ModsDefinition::getModsGroup);
 
@@ -46,16 +46,16 @@ class MetsModsKitodoUtils {
             ExtensionDefinition extensionDefinition = getFirstGenericTypeFromObjectList(extensionData.get(),ExtensionDefinition.class);
             return getKitodoTypeFromExtensionDefinition(extensionDefinition);
         }
-        throw new DataNotFoundException("ModsDefinition does not have MODS-extension-elements");
+        throw new IOException("ModsDefinition does not have MODS-extension-elements");
     }
 
-    private static KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) throws DataNotFoundException {
+    private static KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) throws IOException {
         Optional<List<Object>> kitodoData = Optional.ofNullable(extensionDefinition)
             .map(ExtensionDefinition::getContent);
 
         if (kitodoData.isPresent()) {
             return getFirstGenericTypeFromObjectList(kitodoData.get(),KitodoType.class);
         }
-        throw new DataNotFoundException("ExtensionDefinition does not have Kitodo-elements");
+        throw new IOException("ExtensionDefinition does not have Kitodo-elements");
     }
 }

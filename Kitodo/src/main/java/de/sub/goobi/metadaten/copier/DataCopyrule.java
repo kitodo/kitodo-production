@@ -90,7 +90,7 @@ public abstract class DataCopyrule {
     }
 
     /**
-     * When called, the rule must be applied to the given dataeditor.
+     * When called, the rule must be applied to the given fileformat.
      *
      * @param data
      *            data to apply yourself on

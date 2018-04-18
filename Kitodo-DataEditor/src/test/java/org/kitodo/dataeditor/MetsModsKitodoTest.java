@@ -12,19 +12,18 @@
 package org.kitodo.dataeditor;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
-import metsModsKitodo.MdSecType;
-import metsModsKitodo.ObjectFactory;
 import org.junit.Assert;
 import org.junit.Test;
-
-import metsModsKitodo.KitodoType;
-import metsModsKitodo.MetadataType;
-import metsModsKitodo.StructLinkType;
-import org.kitodo.dataeditor.exceptions.DataNotFoundException;
+import org.kitodo.metsModsKitodo.KitodoType;
+import org.kitodo.metsModsKitodo.MdSecType;
+import org.kitodo.metsModsKitodo.MetadataType;
+import org.kitodo.metsModsKitodo.ObjectFactory;
+import org.kitodo.metsModsKitodo.StructLinkType;
 
 public class MetsModsKitodoTest {
 
@@ -60,7 +59,7 @@ public class MetsModsKitodoTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException, DataNotFoundException {
+    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException, IOException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecIndex(0);
 
@@ -72,7 +71,7 @@ public class MetsModsKitodoTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException, DataNotFoundException {
+    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException, IOException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecId("DMDLOG_0002");
 
@@ -83,20 +82,20 @@ public class MetsModsKitodoTest {
             metadataType.getContent().get(0).toString());
     }
 
-    @Test(expected = DataNotFoundException.class)
-    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException, DataNotFoundException {
+    @Test(expected = IOException.class)
+    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException, IOException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         metsModsKitodo.getKitodoTypeByMdSecId("not existing");
     }
 
-    @Test(expected = DataNotFoundException.class)
-    public void shouldNotReadEmptyKitodoMetadataByIndex() throws DataNotFoundException {
+    @Test(expected = IOException.class)
+    public void shouldNotReadNotExistingMdSecByIndex() throws IOException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         metsModsKitodo.getKitodoTypeByMdSecIndex(0);
     }
 
-    @Test(expected = DataNotFoundException.class)
-    public void shouldNotCreateKitodoMetadata() throws DataNotFoundException {
+    @Test(expected = IOException.class)
+    public void shouldNotReadNotExistingKitodoMetadataByIndex() throws IOException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         MdSecType mdSecType = objectFactory.createMdSecType();
         MdSecType.MdWrap mdSecTypeMdWrap = objectFactory.createMdSecTypeMdWrap();
