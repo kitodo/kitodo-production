@@ -253,7 +253,7 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String saveTaskAndRedirect() {
         saveTask();
-        return taskEditPath;
+        return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
     private void filterTemplatesWithFilter() throws DataException {
