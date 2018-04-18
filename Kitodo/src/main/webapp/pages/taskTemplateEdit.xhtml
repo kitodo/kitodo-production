@@ -44,7 +44,7 @@
                          actionListener="#{TemplateForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.abbrechen}" outcome="processEdit?id=#{TemplateForm.template.id}"
+        <p:button id="cancel" value="#{msgs.abbrechen}" outcome="templateEdit?id=#{TemplateForm.template.id}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
