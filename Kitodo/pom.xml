@@ -53,33 +53,6 @@
             <version>3.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>avalon-framework</groupId>
-            <artifactId>avalon-framework</artifactId>
-            <version>4.1.5</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/cglib/cglib -->
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.keypoint</groupId>
-            <artifactId>png-encoder</artifactId>
-            <version>1.5</version>
-        </dependency>
-        <dependency>
-            <groupId>jfree</groupId>
-            <artifactId>jcommon</artifactId>
-            <version>1.0.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>com.lowagie</groupId>
             <artifactId>itext</artifactId>
             <version>2.1.5</version>
@@ -409,33 +382,6 @@
             <artifactId>xmlbeans</artifactId>
             <version>2.4.0</version>
         </dependency>
-        <!--fop-0.9.5-->
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>fop</artifactId>
-            <version>0.95</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>xmlgraphics-commons</artifactId>
-            <version>1.3.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
@@ -456,11 +402,6 @@
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.18.1-GA</version>
-        </dependency>
-        <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -492,11 +433,6 @@
         </dependency>
 
         <!-- Libraries from Slub-Nexus repository -->
-        <dependency>
-            <groupId>de.intranda</groupId>
-            <artifactId>intrandaChart</artifactId>
-            <version>1.4</version>
-        </dependency>
         <dependency>
             <groupId>javax.media</groupId>
             <artifactId>jai_codec</artifactId>
@@ -619,6 +555,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- additional functionality for original primefaces-extensions -->
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>resources-codemirror</artifactId>
