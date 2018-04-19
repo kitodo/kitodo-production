@@ -29,11 +29,13 @@ import javax.xml.transform.stream.StreamSource;
 import org.kitodo.metsModsKitodo.KitodoType;
 import org.kitodo.metsModsKitodo.MdSecType;
 import org.kitodo.metsModsKitodo.Mets;
-import org.kitodo.metsModsKitodo.MetsType;
 import org.kitodo.metsModsKitodo.ModsDefinition;
 import org.kitodo.metsModsKitodo.ObjectFactory;
 import org.kitodo.metsModsKitodo.StructLinkType;
 
+/**
+ * This is a wrapper class for holding and manipulating the content of a serialized mets-mods-kitodo xml file.
+ */
 public class MetsModsKitodo {
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -48,20 +50,23 @@ public class MetsModsKitodo {
     }
 
     /**
-     * Sets mets.
-     *
-     * @param mets
-     *            The mets.
-     */
-    public void setMets(Mets mets) {
-        this.mets = mets;
-    }
-
-    /**
      * Constructor which creates Mets object with corresponding object factory.
      */
     public MetsModsKitodo() {
-        this.mets = objectFactory.createMets();
+        this.mets = createBasicMetsElements(objectFactory.createMets());
+    }
+
+    private Mets createBasicMetsElements(Mets mets) {
+        if (Objects.isNull(mets.getFileSec())) {
+            mets.setFileSec(objectFactory.createMetsTypeFileSec());
+        }
+        if (Objects.isNull(mets.getStructLink())) {
+            mets.setStructLink(objectFactory.createMetsTypeStructLink());
+        }
+        if (Objects.isNull(mets.getMetsHdr())) {
+            mets.setMetsHdr(objectFactory.createMetsTypeMetsHdr());
+        }
+        return mets;
     }
 
     /**
@@ -90,7 +95,7 @@ public class MetsModsKitodo {
             }
         });
 
-        this.mets = (Mets) jaxbUnmarshaller.unmarshal(xsr);
+        this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xsr));
     }
 
     /**
@@ -102,10 +107,6 @@ public class MetsModsKitodo {
      *            The to value.
      */
     public void addSmLink(String from, String to) {
-        if (Objects.isNull(this.mets.getStructLink())) {
-            MetsType.StructLink structLinkType = objectFactory.createMetsTypeStructLink();
-            this.mets.setStructLink(structLinkType);
-        }
         StructLinkType.SmLink structLinkTypeSmLink = objectFactory.createStructLinkTypeSmLink();
         structLinkTypeSmLink.setFrom(from);
         structLinkTypeSmLink.setTo(to);
