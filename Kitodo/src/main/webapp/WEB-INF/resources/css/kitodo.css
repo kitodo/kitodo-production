@@ -309,9 +309,11 @@ body.first-visit #portal-header {
     }
 
 #header-nav .nav-item-col {
-    width: 25%;
+    width: calc(50% - 45px);
     display: inline-block;
     vertical-align: top;
+    text-overflow: ellipsis;
+    overflow: hidden;
     }
 
 #header-nav .nav-item-col:first-child {
@@ -319,9 +321,9 @@ body.first-visit #portal-header {
     width: 55%;
     }
 
-#header-nav .nav-item-col:last-child {
+#header-nav .nav-item-col:nth-child(3) {
     text-align: right;
-    width: 20%;
+    width: 20px;
     }
 
 #header-nav .nav-item-col .nc-info {
