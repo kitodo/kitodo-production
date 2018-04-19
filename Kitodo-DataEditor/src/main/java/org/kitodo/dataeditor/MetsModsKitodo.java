@@ -33,7 +33,8 @@ import org.kitodo.metsmodskitodo.ObjectFactory;
 import org.kitodo.metsmodskitodo.StructLinkType;
 
 /**
- * This is a wrapper class for holding and manipulating the content of a serialized mets-mods-kitodo format xml file.
+ * This is a wrapper class for holding and manipulating the content of a
+ * serialized mets-mods-kitodo format xml file.
  */
 public class MetsModsKitodo {
     private Mets mets;
@@ -73,7 +74,13 @@ public class MetsModsKitodo {
      * mets-mods-kitodo format.
      * 
      * @param xmlFile
-     *            The xml file in mets-mods-kitodo format.
+     *            The xml file in mets-mods-kitodo format as URI.
+     * @throws JAXBException
+     *             Thrown if an error was encountered while creating the
+     *             <tt>Unmarshaller</tt> object.
+     * @throws XMLStreamException
+     *             Thrown if an error was encountered while creating the
+     *             <tt>XMLStreamReader</tt> object.
      */
     public MetsModsKitodo(URI xmlFile) throws JAXBException, XMLStreamException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);

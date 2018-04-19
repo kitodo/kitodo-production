@@ -20,6 +20,9 @@ import org.kitodo.metsmodskitodo.ExtensionDefinition;
 import org.kitodo.metsmodskitodo.KitodoType;
 import org.kitodo.metsmodskitodo.ModsDefinition;
 
+/**
+ * General utilities for handling of generated mets-mods-kitodo class content.
+ */
 class MetsModsKitodoUtils {
 
     /**
