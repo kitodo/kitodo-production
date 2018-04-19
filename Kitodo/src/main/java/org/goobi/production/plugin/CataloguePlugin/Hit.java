@@ -29,7 +29,7 @@ import org.kitodo.api.ugh.FileformatInterface;
  * <code>fileformat</code> holding an instance of {@link ugh.dl.Fileformat} with
  * the record data and a field <code>type</code> holding the DocType.
  * </p>
- * 
+ *
  * <p>
  * The following additional basic bibliographic metadata entries in the map are
  * supported and will be used to display a summary of the hit in bibliographic
@@ -37,7 +37,7 @@ import org.kitodo.api.ugh.FileformatInterface;
  * and String are supported. The field <kbd>format</kbd> is used to pick the
  * appropriate citation formatting style.
  * </p>
- * 
+ *
  * <p>
  * <kbd>accessed</kbd> − Date and time of last access (for internet resources
  * and online journals)<br>
@@ -131,7 +131,7 @@ public class Hit {
         result.setVolume(getVolume());
         result.setVolumeTitle(getVolumeTitle());
         result.setYear(getYearPublished());
-        return result.toHTML();
+        return result.toString();
     }
 
     /**

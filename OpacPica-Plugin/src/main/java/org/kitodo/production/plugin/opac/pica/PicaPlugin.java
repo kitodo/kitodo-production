@@ -33,6 +33,7 @@ import org.jdom.input.DOMBuilder;
 import org.jdom.output.DOMOutputter;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.w3c.dom.Node;
 
@@ -938,8 +939,8 @@ public class PicaPlugin implements Plugin {
      *            the UGH preferences
      * @see org.goobi.production.plugin.CataloguePlugin.CataloguePlugin#setPreferences(Prefs)
      */
-    public void setPreferences(Prefs preferences) {
-        this.preferences = preferences;
+    public void setPreferences(PrefsInterface preferences) {
+        this.preferences = (Prefs) preferences;
     }
 
     /**

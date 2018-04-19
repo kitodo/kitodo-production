@@ -25,7 +25,7 @@
                         <p:outputLabel for="additionalInputField" value="#{field.title}:"/>
                         <p:inputText id="additionalInputField" value="#{field.value}"
                                      styleClass="prozessKopieFeldbreite"
-                                     class="input" required="#{field.required}">
+                                     class="input" required="#{field.required and empty param['editForm:processFromTemplateTabView:performOpacQuery'] and empty param['editForm:processFromTemplateTabView:copyProcessData']}">
                             <p:ajax event="change"/>
                         </p:inputText>
                     </ui:fragment>
@@ -34,7 +34,7 @@
                         <p:outputLabel for="additionalSelectField" value="#{field.title}:"/>
                         <p:selectOneListbox id="additionalSelectField" value="#{field.value}"
                                             styleClass="prozessKopieFeldbreite"
-                                            class="input" required="#{field.required}">
+                                            class="input" required="#{field.required and empty param['editForm:processFromTemplateTabView:performOpacQuery'] and empty param['editForm:processFromTemplateTabView:copyProcessData']}">
                             <f:selectItems value="#{field.selectList}"/>
                             <p:ajax event="change"/>
                         </p:selectOneListbox>

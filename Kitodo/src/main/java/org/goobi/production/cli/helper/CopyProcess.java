@@ -234,7 +234,7 @@ public class CopyProcess extends ProzesskopieForm {
      * OpacAnfrage.
      */
     @Override
-    public String evaluateOpac() {
+    public void evaluateOpac() {
         clearValues();
         readProjectConfigs();
         try {
@@ -253,7 +253,6 @@ public class CopyProcess extends ProzesskopieForm {
             Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
             e.printStackTrace();
         }
-        return "";
     }
 
     /**
