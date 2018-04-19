@@ -24,10 +24,17 @@
         <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost/kitodo?autoReconnect=true&amp;autoReconnectForPools=true
+            jdbc:mysql://localhost/kitodo?useSSL=false
         </property>
         <property name="hibernate.connection.username">kitodo</property>
         <property name="hibernate.connection.password">kitodo</property>
+        <property name="hibernate.connection.autoReconnect">true</property>
+        <property name="hibernate.connection.autoReconnectForPools">true</property>
+
+        <!-- SSL connection properties -->
+        <property name="hibernate.connection.requireSSL">false</property>
+        <property name="hibernate.connection.verifyServerCertificate">false</property>
+        <property name="hibernate.connection.useSSL">false</property>
 
         <!-- connection pool -->
         <property name="hibernate.c3p0.max_size">5000</property>
