@@ -11,8 +11,7 @@
 
 package org.kitodo.dataeditor;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -76,14 +75,15 @@ public class MetsModsKitodo {
      * @param xmlFile
      *            The xml file in mets-mods-kitodo format.
      */
-    public MetsModsKitodo(File xmlFile) throws JAXBException, XMLStreamException {
+    public MetsModsKitodo(URI xmlFile) throws JAXBException, XMLStreamException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
 
         // using a stream filter to prevent accepting white space and new line content
         // in an element that has mixed context
         XMLInputFactory xif = XMLInputFactory.newFactory();
-        XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(xmlFile.getAbsolutePath()));
+
+        XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
         xsr = xif.createFilteredReader(xsr, new StreamFilter() {
 
             @Override
@@ -94,8 +94,8 @@ public class MetsModsKitodo {
                 return true;
             }
         });
-
         this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xsr));
+        xsr.close();
     }
 
     /**

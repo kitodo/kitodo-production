@@ -11,8 +11,7 @@
 
 package org.kitodo.dataeditor;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URI;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -27,7 +26,7 @@ import org.kitodo.metsModsKitodo.StructLinkType;
 
 public class MetsModsKitodoTest {
 
-    private File xmlfile = new File("./src/test/resources/testmeta.xml");
+    private URI xmlfile = URI.create("./src/test/resources/testmeta.xml");
     private ObjectFactory objectFactory = new ObjectFactory();
 
     @Test
