@@ -17,6 +17,10 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
+
+        <!-- JavaScript -->
+        <h:outputScript name="js/resize.js" target="body"/>
+
         <p:panel id="metadataEditor">
             <!-- Header -->
             <p:panel>
@@ -24,22 +28,35 @@
             </p:panel>
             <!-- Content -->
             <div id="metadataEditorWrapper">
+
                 <!-- First Column -->
-                <div class="collapsibleWrapper" id="firstColumn">
+                <div class="collapsibleWrapper" id="firstColumnWrapper">
                     <button type="button"
-                            onclick="PF('firstColumn').toggle();$('#firstColumn').toggleClass('collapsed')"
+                            onclick="PF('firstColumn').toggle();$('#firstColumnWrapper').toggleClass('collapsed')"
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
                     <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
                     <p:panel widgetVar="firstColumn" toggleable="true" toggleOrientation="horizontal">
-                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml" />
+                        <h:form id="structureTreeForm">
+                            <p:panel id="structurePanel">
+                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml" />
+                            </p:panel>
+                            <p:panel id="paginationPanel">
+                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/pagination.xhtml" />
+                            </p:panel>
+                        </h:form>
+
                     </p:panel>
                 </div>
+
+                <!-- Element for resizing first and second column -->
+                <div class="resizer" id="firstResizer"/>
+
                 <!-- Second Column -->
-                <div class="collapsibleWrapper" id="secondColumn">
+                <div class="collapsibleWrapper" id="secondColumnWrapper">
                     <button type="button"
-                            onclick="PF('secondColumn').toggle();$('#secondColumn').toggleClass('collapsed')"
+                            onclick="PF('secondColumn').toggle();$('#secondColumnWrapper').toggleClass('collapsed')"
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
@@ -48,8 +65,12 @@
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
                     </p:panel>
                 </div>
+
+                <!-- Element for resizing second and third column -->
+                <div class="resizer" id="secondResizer"/>
+
                 <!-- Third Column -->
-                <div class="collapsibleWrapper" id="thirdColumn">
+                <div class="collapsibleWrapper" id="thirdColumnWrapper">
                     <button type="button"
                             onclick="PF('thirdColumn').toggle();$('#thirdColumn').toggleClass('collapsed')"
                             class="columnExpandButton">

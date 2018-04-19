@@ -933,8 +933,45 @@ Metadata Editor
     transform-origin: 0 100%;
 }
 
+.collapsibleWrapper > .ui-panel, .collapsibleWrapper > .ui-panel > .ui-panel-content {
+    background: transparent;
+    padding: 0;
+    height: 100%;
+}
+
+#structureTreeForm {
+    height: 100%;
+}
+
+#structureTreeForm\:structurePanel {
+    overflow-y: scroll;
+    height: 70%;
+    box-sizing: border-box;
+}
+
+#structureTreeForm\:paginationPanel {
+    margin-top: 5px;
+    height: calc(30% - 5px);
+    box-sizing: border-box;
+}
+
 .collapsibleWrapper.collapsed > .ui-panel {
     visibility: hidden;
+}
+
+#metadataEditorWrapper .resizer {
+    display: inline-block;
+    height: 100%;
+    width: 5px;
+    cursor: ew-resize;
+}
+
+#ghostResizer {
+    position: absolute;
+    background: black;
+    width: 5px;
+    z-index: 10;
+    opacity: 0.5;
 }
 
 #structureTreeForm\:actionButtons .ui-panelgrid-cell {
