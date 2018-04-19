@@ -14,7 +14,7 @@
               version="2.1">
     <bindings schemaLocation="../xsd/kitodo.xsd">
         <schemaBindings>
-            <package name="org.kitodo.metsModsKitodo"/>
+            <package name="org.kitodo.metsmodskitodo"/>
         </schemaBindings>
     </bindings>
 </jxb:bindings>

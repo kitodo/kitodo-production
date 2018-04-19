@@ -16,9 +16,9 @@ import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
 
-import org.kitodo.metsModsKitodo.ExtensionDefinition;
-import org.kitodo.metsModsKitodo.KitodoType;
-import org.kitodo.metsModsKitodo.ModsDefinition;
+import org.kitodo.metsmodskitodo.ExtensionDefinition;
+import org.kitodo.metsmodskitodo.KitodoType;
+import org.kitodo.metsmodskitodo.ModsDefinition;
 
 class MetsModsKitodoUtils {
 

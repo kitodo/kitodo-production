@@ -25,12 +25,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.kitodo.metsModsKitodo.KitodoType;
-import org.kitodo.metsModsKitodo.MdSecType;
-import org.kitodo.metsModsKitodo.Mets;
-import org.kitodo.metsModsKitodo.ModsDefinition;
-import org.kitodo.metsModsKitodo.ObjectFactory;
-import org.kitodo.metsModsKitodo.StructLinkType;
+import org.kitodo.metsmodskitodo.KitodoType;
+import org.kitodo.metsmodskitodo.MdSecType;
+import org.kitodo.metsmodskitodo.Mets;
+import org.kitodo.metsmodskitodo.ModsDefinition;
+import org.kitodo.metsmodskitodo.ObjectFactory;
+import org.kitodo.metsmodskitodo.StructLinkType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a serialized mets-mods-kitodo format xml file.
