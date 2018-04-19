@@ -28,6 +28,8 @@ public class ProcessType extends BaseType<Process> {
         Integer projectId = process.getProject() != null ? process.getProject().getId() : 0;
         String projectTitle = process.getProject() != null ? process.getProject().getTitle() : "";
         boolean projectActive = process.getProject() != null && process.getProject().isActive();
+        Integer templateId = process.getTemplate() != null ? process.getTemplate().getId() : 0;
+        String templateTitle = process.getTemplate() != null ? process.getTemplate().getTitle() : "";
         Integer ruleset = process.getRuleset() != null ? process.getRuleset().getId() : 0;
         Integer docket = process.getDocket() != null ? process.getDocket().getId() : 0;
 
@@ -45,6 +47,8 @@ public class ProcessType extends BaseType<Process> {
         jsonObjectBuilder.add("project.id", projectId);
         jsonObjectBuilder.add("project.title", projectTitle);
         jsonObjectBuilder.add("project.active", projectActive);
+        jsonObjectBuilder.add("template.id", templateId);
+        jsonObjectBuilder.add("template.title", templateTitle);
         jsonObjectBuilder.add("ruleset", ruleset);
         jsonObjectBuilder.add("docket", docket);
         jsonObjectBuilder.add("batches", addObjectRelation(process.getBatches(), true));
