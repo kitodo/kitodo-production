@@ -34,7 +34,7 @@ import org.kitodo.metsModsKitodo.ObjectFactory;
 import org.kitodo.metsModsKitodo.StructLinkType;
 
 /**
- * This is a wrapper class for holding and manipulating the content of a serialized mets-mods-kitodo xml file.
+ * This is a wrapper class for holding and manipulating the content of a serialized mets-mods-kitodo format xml file.
  */
 public class MetsModsKitodo {
     private Mets mets;
@@ -129,7 +129,7 @@ public class MetsModsKitodo {
      *            The index as int.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecIndex(int index) throws IOException {
+    public KitodoType getKitodoTypeByMdSecIndex(int index) {
 
         if (this.getDmdSecs().size() > index) {
 
@@ -141,9 +141,9 @@ public class MetsModsKitodo {
                 return MetsModsKitodoUtils.getKitodoTypeFromModsDefinition(
                     MetsModsKitodoUtils.getFirstGenericTypeFromObjectList(modsData.get(), ModsDefinition.class));
             }
-            throw new IOException("MdSec element with index: " + index + " does not have MODS-data");
+            throw new IllegalArgumentException("MdSec element with index: " + index + " does not have MODS-data");
         }
-        throw new IOException("MdSec element with index: " + index + " does not exist");
+        throw new IllegalArgumentException("MdSec element with index: " + index + " does not exist");
     }
 
     /**
@@ -153,7 +153,7 @@ public class MetsModsKitodo {
      *            The id as String.
      * @return The KitodoType object.
      */
-    public KitodoType getKitodoTypeByMdSecId(String id) throws IOException {
+    public KitodoType getKitodoTypeByMdSecId(String id) {
         int index = 0;
         for (MdSecType mdSecType : getDmdSecs()) {
             if (mdSecType.getID().equals(id)) {
@@ -161,6 +161,6 @@ public class MetsModsKitodo {
             }
             index++;
         }
-        throw new IOException("MdSec element with id: " + id + " was not found");
+        throw new IllegalArgumentException("MdSec element with id: " + id + " was not found");
     }
 }

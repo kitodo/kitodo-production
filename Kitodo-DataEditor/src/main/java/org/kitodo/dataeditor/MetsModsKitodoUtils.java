@@ -11,7 +11,6 @@
 
 package org.kitodo.dataeditor;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +22,7 @@ import org.kitodo.metsModsKitodo.ModsDefinition;
 
 class MetsModsKitodoUtils {
 
-    static <T> T getFirstGenericTypeFromObjectList(List<Object> objects, Class<T> type) throws IOException {
+    static <T> T getFirstGenericTypeFromObjectList(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
                 JAXBElement jaxbElement = (JAXBElement) object;
@@ -35,10 +34,10 @@ class MetsModsKitodoUtils {
                 return (type.cast(object));
             }
         }
-        throw new IOException("No " + type.getName() + " objects found");
+        throw new IllegalArgumentException("No " + type.getName() + " objects found");
     }
 
-    static KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) throws IOException {
+    static KitodoType getKitodoTypeFromModsDefinition(ModsDefinition modsDefinition) {
         Optional<List<Object>> extensionData = Optional.ofNullable(modsDefinition)
             .map(ModsDefinition::getModsGroup);
 
@@ -46,16 +45,16 @@ class MetsModsKitodoUtils {
             ExtensionDefinition extensionDefinition = getFirstGenericTypeFromObjectList(extensionData.get(),ExtensionDefinition.class);
             return getKitodoTypeFromExtensionDefinition(extensionDefinition);
         }
-        throw new IOException("ModsDefinition does not have MODS-extension-elements");
+        throw new IllegalArgumentException("ModsDefinition does not have MODS-extension-elements");
     }
 
-    private static KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) throws IOException {
+    private static KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) {
         Optional<List<Object>> kitodoData = Optional.ofNullable(extensionDefinition)
             .map(ExtensionDefinition::getContent);
 
         if (kitodoData.isPresent()) {
             return getFirstGenericTypeFromObjectList(kitodoData.get(),KitodoType.class);
         }
-        throw new IOException("ExtensionDefinition does not have Kitodo-elements");
+        throw new IllegalArgumentException("ExtensionDefinition does not have Kitodo-elements");
     }
 }

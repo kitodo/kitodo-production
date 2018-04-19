@@ -59,7 +59,7 @@ public class MetsModsKitodoTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException, IOException {
+    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException{
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecIndex(0);
 
@@ -71,7 +71,7 @@ public class MetsModsKitodoTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException, IOException {
+    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecId("DMDLOG_0002");
 
@@ -82,20 +82,20 @@ public class MetsModsKitodoTest {
             metadataType.getContent().get(0).toString());
     }
 
-    @Test(expected = IOException.class)
-    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException, IOException {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         metsModsKitodo.getKitodoTypeByMdSecId("not existing");
     }
 
-    @Test(expected = IOException.class)
-    public void shouldNotReadNotExistingMdSecByIndex() throws IOException {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotReadNotExistingMdSecByIndex() {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         metsModsKitodo.getKitodoTypeByMdSecIndex(0);
     }
 
-    @Test(expected = IOException.class)
-    public void shouldNotReadNotExistingKitodoMetadataByIndex() throws IOException {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldNotReadNotExistingKitodoMetadataByIndex() {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         MdSecType mdSecType = objectFactory.createMdSecType();
         MdSecType.MdWrap mdSecTypeMdWrap = objectFactory.createMdSecTypeMdWrap();
