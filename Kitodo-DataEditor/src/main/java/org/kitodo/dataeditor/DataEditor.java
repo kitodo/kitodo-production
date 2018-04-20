@@ -20,15 +20,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
-public class DataEditorController implements DataEditorInterface {
+public class DataEditor implements DataEditorInterface {
 
-    private MetsModsKitodo metsModsKitodo;
-    private static final Logger logger = LogManager.getLogger(DataEditorController.class);
+    private MetsKitodoWrap metsKitodoWrap;
+    private static final Logger logger = LogManager.getLogger(DataEditor.class);
 
     @Override
     public void readData(URI xmlFileUri) {
         try {
-            this.metsModsKitodo = new MetsModsKitodo(xmlFileUri);
+            this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
         } catch (JAXBException | XMLStreamException e) {
             // TODO add also message for frontend, when it is ready!
             logger.error(e);
