@@ -32,6 +32,7 @@ import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.dataeditor.DataEditorService;
+import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;

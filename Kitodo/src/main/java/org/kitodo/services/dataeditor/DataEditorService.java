@@ -25,10 +25,10 @@ public class DataEditorService {
      * Reads the data of a given file in xml format. The format of that file needs
      * to be the corresponding to the one which is referenced by the data editor
      * module as data format module.
-     * 
+     *
      * @param xmlFileUri
      *            The path to the metadata file as URI.
-     * 
+     *
      */
     public void readData(URI xmlFileUri) throws IOException {
         DataEditorInterface dataEditor = loadDataEditorModule();
