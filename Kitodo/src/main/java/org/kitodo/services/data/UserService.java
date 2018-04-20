@@ -662,38 +662,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Session timeout.
-     *
-     * @return session timeout
-     */
-    public Integer getSessionTimeout(User user) {
-        if (user.getSessionTimeout() == null) {
-            user.setSessionTimeout(7200);
-        }
-        return user.getSessionTimeout();
-    }
-
-    public Integer getSessionTimeoutInMinutes(User user) {
-        return user.getSessionTimeout() / 60;
-    }
-
-    /**
-     * Convert session timeout to minutes.
-     *
-     * @param user
-     *            object
-     * @param sessionTimeout
-     *            in minutes
-     */
-    public void setSessionTimeoutInMinutes(User user, Integer sessionTimeout) {
-        if (sessionTimeout < 5) {
-            user.setSessionTimeout(5 * 60);
-        } else {
-            user.setSessionTimeout(sessionTimeout * 60);
-        }
-    }
-
-    /**
      * CSS style.
      *
      * @return CSS style

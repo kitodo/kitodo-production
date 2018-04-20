@@ -22,15 +22,6 @@
 
             <p:row>
                 <div>
-                    <!-- session timeout -->
-                    <h:outputLabel for="session-timeout" value="#{msgs.timeoutForSession}"/>
-                    <p:inputText id="session-timeout" value="#{LoginForm.myBenutzer.sessionTimeoutInMinutes}"
-                                 class="input"
-                                 label="'#{msgs.timeoutForSession}'">
-                        <f:convertNumber integerOnly="true"/>
-                    </p:inputText>
-                </div>
-                <div>
                     <!-- table size -->
                     <h:outputLabel for="table-size" value="#{msgs.tableSize}" />
                     <p:inputText id="table-size" value="#{LoginForm.myBenutzer.tableSize}" label="'#{msgs.tableSize}'"
