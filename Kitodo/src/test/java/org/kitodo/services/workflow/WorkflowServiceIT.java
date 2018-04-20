@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,9 +24,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
+import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
@@ -61,6 +65,23 @@ public class WorkflowServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
+    }
+
+    @Test
+    public void shouldWorkflowAsTemplate() throws Exception {
+        serviceManager.getFileService().createDirectory(URI.create(""), "diagrams");
+        FileLoader.createExtendedGatewayDiagramTestFile();
+
+        workflowService.saveWorkflowAsTemplate("gateway");
+
+        Template template = serviceManager.getTemplateService().getByQuery("FROM Template WHERE title = 'test-gateway'").get(0);
+        assertEquals("Tasks of template were not saved correctly!", "Test Gateway", template.getOutputName());
+        assertEquals("Tasks of template were not saved correctly!", 5, template.getTasks().size());
+        Docket docket = serviceManager.getDocketService().getById(1);
+        assertEquals("Tasks of template were not saved correctly!", docket, template.getDocket());
+
+        FileLoader.deleteExtendedGatewayDiagramTestFile();
+        serviceManager.getFileService().delete(URI.create("diagrams"));
     }
 
     @Test
