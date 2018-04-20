@@ -530,35 +530,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Remove task.
-     *
-     * @return page
-     */
-    public String deleteTask() {
-        try {
-            this.process.getTasks().remove(this.task);
-            List<User> users = this.task.getUsers();
-            for (User user : users) {
-                user.getTasks().remove(this.task);
-            }
-
-            List<UserGroup> userGroups = this.task.getUserGroups();
-            for (UserGroup userGroup : userGroups) {
-                userGroup.getTasks().remove(this.task);
-            }
-            deleteSymlinksFromUserHomes();
-            serviceManager.getTaskService().remove(this.task);
-            return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
-            return null;
-        }
-
-    }
-
-    // TODO deleteTask() and removeTask() can be merged, when old templates have been removed
-    /**
-     * Remove task.
-     *
      */
     public void removeTask() {
         try {

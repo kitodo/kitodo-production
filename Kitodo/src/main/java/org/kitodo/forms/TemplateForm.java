@@ -27,6 +27,8 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TemplateDTO;
@@ -237,6 +239,28 @@ public class TemplateForm extends TemplateBaseForm {
         this.task.setTemplate(this.template);
         this.template.getTasks().add(this.task);
         return taskEditPath;
+    }
+
+    /**
+     * Remove task.
+     */
+    public void removeTask() {
+        try {
+            this.template.getTasks().remove(this.task);
+            List<User> users = this.task.getUsers();
+            for (User user : users) {
+                user.getTasks().remove(this.task);
+            }
+
+            List<UserGroup> userGroups = this.task.getUserGroups();
+            for (UserGroup userGroup : userGroups) {
+                userGroup.getTasks().remove(this.task);
+            }
+
+            serviceManager.getTaskService().remove(this.task);
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
