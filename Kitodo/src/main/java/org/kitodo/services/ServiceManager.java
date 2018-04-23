@@ -59,6 +59,7 @@ public class ServiceManager {
     private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
     private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
     private UserService userService;
+    private org.kitodo.services.data.WorkflowService workflowDataService;
     private FileService fileService;
     private CommandService commandService;
     private SchemaService schemaService;
@@ -186,6 +187,12 @@ public class ServiceManager {
     private void initializeUserService() {
         if (userService == null) {
             userService = UserService.getInstance();
+        }
+    }
+
+    private void initializeWorkflowDataService() {
+        if (workflowDataService == null) {
+            workflowDataService = new org.kitodo.services.data.WorkflowService();
         }
     }
 
@@ -441,6 +448,16 @@ public class ServiceManager {
     public UserService getUserService() {
         initializeUserService();
         return userService;
+    }
+
+    /**
+     * Initialize WorkflowService if it is not yet initialized and next return it.
+     *
+     * @return WorkflowService object
+     */
+    public org.kitodo.services.data.WorkflowService getWorkflowDataService() {
+        initializeWorkflowDataService();
+        return workflowDataService;
     }
 
     /**
