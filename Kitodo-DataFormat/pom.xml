@@ -19,7 +19,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>Kitodo - Data Format</name>
-    <artifactId>kitodo-dataformat</artifactId>
+    <artifactId>kitodo-data-format</artifactId>
 
     <dependencies>
         <dependency>
