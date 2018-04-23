@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
@@ -81,19 +82,19 @@ public class MetsModsKitodoTest {
             metadataType.getContent().get(0).toString());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
         metsModsKitodo.getKitodoTypeByMdSecId("not existing");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void shouldNotReadNotExistingMdSecByIndex() {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         metsModsKitodo.getKitodoTypeByMdSecIndex(0);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void shouldNotReadNotExistingKitodoMetadataByIndex() {
         MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
         MdSecType mdSecType = objectFactory.createMdSecType();

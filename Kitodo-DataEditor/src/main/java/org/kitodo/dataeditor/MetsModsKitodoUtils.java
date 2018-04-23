@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
@@ -46,7 +47,7 @@ class MetsModsKitodoUtils {
                 return (type.cast(object));
             }
         }
-        throw new IllegalArgumentException("No " + type.getName() + " objects found");
+        throw new NoSuchElementException("No " + type.getName() + " objects found");
     }
 
     /**
@@ -64,7 +65,7 @@ class MetsModsKitodoUtils {
                 ExtensionDefinition.class);
             return getKitodoTypeFromExtensionDefinition(extensionDefinition);
         }
-        throw new IllegalArgumentException("ModsDefinition does not have MODS-extension-elements");
+        throw new NoSuchElementException("ModsDefinition does not have MODS-extension-elements");
     }
 
     private static KitodoType getKitodoTypeFromExtensionDefinition(ExtensionDefinition extensionDefinition) {
@@ -74,6 +75,6 @@ class MetsModsKitodoUtils {
         if (kitodoData.isPresent()) {
             return getFirstGenericTypeFromObjectList(kitodoData.get(), KitodoType.class);
         }
-        throw new IllegalArgumentException("ExtensionDefinition does not have Kitodo-elements");
+        throw new NoSuchElementException("ExtensionDefinition does not have Kitodo-elements");
     }
 }

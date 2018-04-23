@@ -13,6 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -148,9 +149,9 @@ public class MetsModsKitodo {
                 return MetsModsKitodoUtils.getKitodoTypeFromModsDefinition(
                     MetsModsKitodoUtils.getFirstGenericTypeFromObjectList(modsData.get(), ModsDefinition.class));
             }
-            throw new IllegalArgumentException("MdSec element with index: " + index + " does not have MODS-data");
+            throw new NoSuchElementException("MdSec element with index: " + index + " does not have MODS-data");
         }
-        throw new IllegalArgumentException("MdSec element with index: " + index + " does not exist");
+        throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
     }
 
     /**
@@ -168,6 +169,6 @@ public class MetsModsKitodo {
             }
             index++;
         }
-        throw new IllegalArgumentException("MdSec element with id: " + id + " was not found");
+        throw new NoSuchElementException("MdSec element with id: " + id + " was not found");
     }
 }
