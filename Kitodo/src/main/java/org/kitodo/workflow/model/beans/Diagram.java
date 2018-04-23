@@ -15,12 +15,12 @@ import java.util.Objects;
 
 import org.camunda.bpm.model.bpmn.instance.Process;
 
-public class Workflow {
+public class Diagram {
 
+    private String id;
     private String title;
     private String outputName;
     private Integer docket;
-    private Integer project;
     private Integer ruleset;
     private static final String NAMESPACE = "http://www.kitodo.com/template";
 
@@ -29,11 +29,11 @@ public class Workflow {
      *
      * @param process instance from model
      */
-    public Workflow(Process process) {
+    public Diagram(Process process) {
+        this.id = process.getId();
         this.title = process.getName();
         this.outputName = process.getAttributeValueNs(NAMESPACE, "outputName");
         this.docket = getIntegerValue(process.getAttributeValueNs(NAMESPACE, "docket"));
-        this.project = getIntegerValue(process.getAttributeValueNs(NAMESPACE, "project"));
         this.ruleset = getIntegerValue(process.getAttributeValueNs(NAMESPACE, "ruleset"));
     }
 
@@ -42,6 +42,24 @@ public class Workflow {
             return Integer.valueOf(value);
         }
         return -1;
+    }
+
+    /**
+     * Get id of diagram.
+     *
+     * @return value of id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Set id of diagram.
+     *
+     * @param id as String
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
@@ -96,24 +114,6 @@ public class Workflow {
      */
     public void setDocket(Integer docket) {
         this.docket = docket;
-    }
-
-    /**
-     * Get project.
-     *
-     * @return value of project
-     */
-    public Integer getProject() {
-        return project;
-    }
-
-    /**
-     * Set project.
-     *
-     * @param project as java.lang.Integer
-     */
-    public void setProject(Integer project) {
-        this.project = project;
     }
 
     /**
