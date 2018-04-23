@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -31,9 +30,6 @@ public class Template extends BaseTemplateBean {
 
     private static final long serialVersionUID = -6503346767655786275L;
 
-    @Column(name = "workflowName")
-    private String workflowName;
-
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_template_docket_id"))
     private Docket docket;
@@ -45,6 +41,10 @@ public class Template extends BaseTemplateBean {
     @ManyToOne
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_template_ruleset_id"))
     private Ruleset ruleset;
+
+    @ManyToOne
+    @JoinColumn(name = "workflow_id", foreignKey = @ForeignKey(name = "FK_template_workflow_id"))
+    private Workflow workflow;
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
@@ -60,21 +60,21 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get workflowName.
+     * Get workflow.
      *
-     * @return value of workflowName
+     * @return value of workflow
      */
-    public String getWorkflowName() {
-        return workflowName;
+    public Workflow getWorkflow() {
+        return workflow;
     }
 
     /**
-     * Set workflowName.
+     * Set workflow.
      *
-     * @param workflowName as java.lang.String
+     * @param workflow as Workflow object
      */
-    public void setWorkflowName(String workflowName) {
-        this.workflowName = workflowName;
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
     }
 
     /**
