@@ -19,11 +19,11 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kitodo.metsmodskitodo.KitodoType;
-import org.kitodo.metsmodskitodo.MdSecType;
-import org.kitodo.metsmodskitodo.MetadataType;
-import org.kitodo.metsmodskitodo.ObjectFactory;
-import org.kitodo.metsmodskitodo.StructLinkType;
+import org.kitodo.dataformat.metsmodskitodo.KitodoType;
+import org.kitodo.dataformat.metsmodskitodo.MdSecType;
+import org.kitodo.dataformat.metsmodskitodo.MetadataType;
+import org.kitodo.dataformat.metsmodskitodo.ObjectFactory;
+import org.kitodo.dataformat.metsmodskitodo.StructLinkType;
 
 public class MetsModsKitodoTest {
 

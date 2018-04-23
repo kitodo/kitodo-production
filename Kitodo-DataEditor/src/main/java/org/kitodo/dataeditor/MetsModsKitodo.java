@@ -26,12 +26,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.kitodo.metsmodskitodo.KitodoType;
-import org.kitodo.metsmodskitodo.MdSecType;
-import org.kitodo.metsmodskitodo.Mets;
-import org.kitodo.metsmodskitodo.ModsDefinition;
-import org.kitodo.metsmodskitodo.ObjectFactory;
-import org.kitodo.metsmodskitodo.StructLinkType;
+import org.kitodo.dataformat.metsmodskitodo.KitodoType;
+import org.kitodo.dataformat.metsmodskitodo.MdSecType;
+import org.kitodo.dataformat.metsmodskitodo.Mets;
+import org.kitodo.dataformat.metsmodskitodo.ModsDefinition;
+import org.kitodo.dataformat.metsmodskitodo.ObjectFactory;
+import org.kitodo.dataformat.metsmodskitodo.StructLinkType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a

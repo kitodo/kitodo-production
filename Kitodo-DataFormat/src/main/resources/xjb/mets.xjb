@@ -15,7 +15,7 @@
               version="2.1">
     <bindings schemaLocation="../xsd/mets.xsd">
         <schemaBindings>
-            <package name="org.kitodo.metsmodskitodo"/>
+            <package name="org.kitodo.dataformat.metsmodskitodo"/>
         </schemaBindings>
         <bindings node="//xsd:complexType[@name='divType']">
             <bindings node="//xsd:attribute[@ref='xlink:label']">
