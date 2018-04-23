@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,6 +36,7 @@ import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -75,14 +77,14 @@ public class Reader {
      * 
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate() throws DAOException {
+    public Template convertWorkflowToTemplate() throws DAOException, DataException {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
         Diagram workflow = getWorkflow();
 
         Template template = new Template();
-        template.setWorkflow(new Workflow(workflow.getId(), this.diagramName));
+        template.setWorkflow(determineWorkflow(workflow.getId(), this.diagramName));
         template.setTitle(workflow.getTitle());
         template.setOutputName(workflow.getOutputName());
 
@@ -105,6 +107,20 @@ public class Reader {
         }
 
         return template;
+    }
+
+    private Workflow determineWorkflow(String title, String file) throws DataException {
+        List<Workflow> workflows = serviceManager.getWorkflowService().getWorkflowsForTitleAndFile(title, file);
+
+        if (workflows.size() > 0) {
+            if (workflows.size() == 1) {
+                return workflows.get(0);
+            } else {
+                throw new DataException("There is more than one entry with given data!");
+            }
+        }
+
+        return new Workflow(title, file);
     }
 
     private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) {
