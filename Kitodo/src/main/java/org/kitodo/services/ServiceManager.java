@@ -30,6 +30,7 @@ import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
 import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
+import org.kitodo.services.data.WorkflowService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
@@ -37,7 +38,7 @@ import org.kitodo.services.security.SessionService;
 import org.kitodo.services.validation.FileStructureValidationService;
 import org.kitodo.services.validation.LongTimePreservationValidationService;
 import org.kitodo.services.validation.MetadataValidationService;
-import org.kitodo.services.workflow.WorkflowService;
+import org.kitodo.services.workflow.WorkflowControllerService;
 
 public class ServiceManager {
 
@@ -59,7 +60,7 @@ public class ServiceManager {
     private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
     private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
     private UserService userService;
-    private org.kitodo.services.data.WorkflowService workflowDataService;
+    private WorkflowService workflowService;
     private FileService fileService;
     private CommandService commandService;
     private SchemaService schemaService;
@@ -68,7 +69,7 @@ public class ServiceManager {
     private LongTimePreservationValidationService longTimePreservationValidationService;
     private MetadataValidationService metadataValidationService;
     private SessionService sessionService;
-    private WorkflowService workflowService;
+    private WorkflowControllerService workflowControllerService;
 
     private void initializeAuthorizationService() {
         if (authorityService == null) {
@@ -190,9 +191,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeWorkflowDataService() {
-        if (workflowDataService == null) {
-            workflowDataService = new org.kitodo.services.data.WorkflowService();
+    private void initializeWorkflowService() {
+        if (workflowService == null) {
+            workflowService = new WorkflowService();
         }
     }
 
@@ -232,9 +233,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeWorkflowService() {
-        if (workflowService == null) {
-            workflowService = new WorkflowService();
+    private void initializeWorkflowControllerService() {
+        if (workflowControllerService == null) {
+            workflowControllerService = new WorkflowControllerService();
         }
     }
 
@@ -455,9 +456,9 @@ public class ServiceManager {
      *
      * @return WorkflowService object
      */
-    public org.kitodo.services.data.WorkflowService getWorkflowDataService() {
-        initializeWorkflowDataService();
-        return workflowDataService;
+    public WorkflowService getWorkflowService() {
+        initializeWorkflowService();
+        return workflowService;
     }
 
     /**
@@ -521,12 +522,12 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize WorkflowService if it is not yet initialized and next return it.
+     * Initialize WorkflowControllerService if it is not yet initialized and next return it.
      *
-     * @return WorkflowService object
+     * @return WorkflowControllerService object
      */
-    public WorkflowService getWorkflowService() {
-        initializeWorkflowService();
-        return workflowService;
+    public WorkflowControllerService getWorkflowControllerService() {
+        initializeWorkflowControllerService();
+        return workflowControllerService;
     }
 }

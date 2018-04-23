@@ -852,7 +852,7 @@ public class MockDatabase {
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
-        secondTask = serviceManager.getWorkflowService().setCorrectionTask(secondTask);
+        secondTask = serviceManager.getWorkflowControllerService().setCorrectionTask(secondTask);
         secondTask.setOrdering(1);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);
@@ -1259,10 +1259,10 @@ public class MockDatabase {
 
     public static void insertWorkflows() throws DAOException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
-        serviceManager.getWorkflowDataService().saveToDatabase(firstWorkflow);
+        serviceManager.getWorkflowService().saveToDatabase(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
-        serviceManager.getWorkflowDataService().saveToDatabase(secondWorkflow);
+        serviceManager.getWorkflowService().saveToDatabase(secondWorkflow);
     }
 
     /**

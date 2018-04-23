@@ -20,21 +20,21 @@ import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
 
-public class WorkflowServiceTest {
+public class WorkflowControllerServiceTest {
 
-    private static final WorkflowService workflowService = new ServiceManager().getWorkflowService();
+    private static final WorkflowControllerService workflowControllerService = new ServiceManager().getWorkflowControllerService();
 
     @BeforeClass
     public static void prepareUser() {
         User user = new User();
-        workflowService.setUser(user);
+        workflowControllerService.setUser(user);
     }
 
     @Test
     public void shouldSetTaskStatusUp() throws Exception {
         Task task = new Task();
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        task = workflowService.setTaskStatusUp(task);
+        task = workflowControllerService.setTaskStatusUp(task);
         assertEquals("Task status was not set up!", TaskStatus.INWORK, task.getProcessingStatusEnum());
     }
 
@@ -42,7 +42,7 @@ public class WorkflowServiceTest {
     public void shouldSetTaskStatusDown() {
         Task task = new Task();
         task.setProcessingStatusEnum(TaskStatus.OPEN);
-        task = workflowService.setTaskStatusDown(task);
+        task = workflowControllerService.setTaskStatusDown(task);
         assertEquals("Task status was not set down!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
     }
 }

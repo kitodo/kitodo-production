@@ -39,12 +39,12 @@ import org.kitodo.workflow.Solution;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class WorkflowServiceIT {
+public class WorkflowControllerServiceIT {
 
     private static final File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final TaskService taskService = serviceManager.getTaskService();
-    private static final WorkflowService workflowService = serviceManager.getWorkflowService();
+    private static final WorkflowControllerService workflowService = serviceManager.getWorkflowControllerService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {

@@ -715,7 +715,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
                 automaticExportWithOcr);
             if (validate) {
-                serviceManager.getWorkflowService().close(task);
+                serviceManager.getWorkflowControllerService().close(task);
             } else {
                 abortTask(task);
             }
