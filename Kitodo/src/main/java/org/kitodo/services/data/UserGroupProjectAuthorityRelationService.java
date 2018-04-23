@@ -69,34 +69,4 @@ public class UserGroupProjectAuthorityRelationService
         }
         return authorities;
     }
-
-    /**
-     * Saves UserGroupProjectAuthorityRelation to database.
-     *
-     * @param userGroupProjectAuthorityRelation
-     *            The UserGroupProjectAuthorityRelation.
-     */
-    public void save(UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation) throws DAOException {
-        dao.save(userGroupProjectAuthorityRelation);
-    }
-
-    /**
-     * Removes UserGroupProjectAuthorityRelation from database.
-     *
-     * @param userGroupProjectAuthorityRelation
-     *            The UserGroupProjectAuthorityRelation.
-     */
-    public void remove(UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation) throws DAOException {
-        dao.remove(userGroupProjectAuthorityRelation);
-    }
-
-    /**
-     * Removes UserGroupProjectAuthorityRelation from database by id.
-     *
-     * @param id
-     *            The UserGroupProjectAuthorityRelation id.
-     */
-    public void remove(Integer id) throws DAOException {
-        dao.remove(id);
-    }
 }
