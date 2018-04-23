@@ -129,7 +129,7 @@ public class BenutzergruppenForm extends BasisForm {
                     relation.setAuthority(null);
                     relation.setClient(null);
                     relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupClientAuthorityRelationService().remove(relation);
+                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
                 }
                 this.userGroupClientAuthorityRelationsToDelete.clear();
                 this.clientAuthoritiesChanged = false;
@@ -140,7 +140,7 @@ public class BenutzergruppenForm extends BasisForm {
                     relation.setAuthority(null);
                     relation.setProject(null);
                     relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupProjectAuthorityRelationService().remove(relation);
+                    this.serviceManager.getUserGroupProjectAuthorityRelationService().removeFromDatabase(relation);
                 }
                 this.userGroupProjectAuthorityRelationsToDelete.clear();
                 this.projectAuthoritiesChanged = false;
@@ -177,7 +177,7 @@ public class BenutzergruppenForm extends BasisForm {
                     relation.setAuthority(null);
                     relation.setClient(null);
                     relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupClientAuthorityRelationService().remove(relation);
+                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
                 }
             }
             if (this.userGroup.getGlobalAuthorities().size() > 0) {
