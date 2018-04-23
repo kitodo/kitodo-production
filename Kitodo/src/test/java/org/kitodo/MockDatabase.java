@@ -68,6 +68,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -1254,6 +1255,14 @@ public class MockDatabase {
         workpiece.getWorkpieces().add(firstWorkpieceProperty);
         workpiece.getWorkpieces().add(secondWorkpieceProperty);
         serviceManager.getProcessService().save(workpiece);
+    }
+
+    public static void insertWorkflows() throws DAOException {
+        Workflow firstWorkflow = new Workflow("say-hello", "test");
+        serviceManager.getWorkflowDataService().saveToDatabase(firstWorkflow);
+
+        Workflow secondWorkflow = new Workflow("gateway", "gateway");
+        serviceManager.getWorkflowDataService().saveToDatabase(secondWorkflow);
     }
 
     /**
