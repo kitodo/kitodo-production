@@ -32,15 +32,15 @@ import org.camunda.bpm.model.bpmn.instance.ScriptTask;
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.kitodo.workflow.model.beans.Diagram;
 import org.kitodo.workflow.model.beans.KitodoScriptTask;
 import org.kitodo.workflow.model.beans.KitodoTask;
 import org.kitodo.workflow.model.beans.TaskInfo;
-import org.kitodo.workflow.model.beans.Workflow;
 
 public class Reader {
 
@@ -79,19 +79,12 @@ public class Reader {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
-        Workflow workflow = getWorkflow();
+        Diagram workflow = getWorkflow();
 
         Template template = new Template();
-        template.setWorkflowName(this.diagramName);
+        template.setWorkflow(new Workflow(workflow.getId(), this.diagramName));
         template.setTitle(workflow.getTitle());
         template.setOutputName(workflow.getOutputName());
-
-        Integer projectId = workflow.getProject();
-        if (projectId > 0) {
-            Project project = serviceManager.getProjectService().getById(projectId);
-            template.setProject(project);
-            project.getTemplates().add(template);
-        }
 
         Integer docketId = workflow.getDocket();
         if (docketId > 0) {
@@ -142,9 +135,9 @@ public class Reader {
      * Get workflow.
      *
      */
-    public Workflow getWorkflow() {
+    public Diagram getWorkflow() {
         Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
-        return new Workflow(process);
+        return new Diagram(process);
     }
 
     private void getWorkflowTasks() {
