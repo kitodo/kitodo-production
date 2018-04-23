@@ -30,6 +30,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
@@ -77,8 +78,12 @@ public class WorkflowControllerServiceIT {
         Template template = serviceManager.getTemplateService().getByQuery("FROM Template WHERE title = 'test-gateway'").get(0);
         assertEquals("Tasks of template were not saved correctly!", "Test Gateway", template.getOutputName());
         assertEquals("Tasks of template were not saved correctly!", 5, template.getTasks().size());
+
         Docket docket = serviceManager.getDocketService().getById(1);
         assertEquals("Tasks of template were not saved correctly!", docket, template.getDocket());
+
+        List<Workflow> workflows = serviceManager.getWorkflowService().getByQuery("FROM Workflow WHERE title = 'Process_1'");
+        assertEquals("Workflow of template was not saved correctly!", 1, workflows.size());
 
         FileLoader.deleteExtendedGatewayDiagramTestFile();
         serviceManager.getFileService().delete(URI.create("diagrams"));

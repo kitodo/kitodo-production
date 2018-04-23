@@ -27,7 +27,7 @@ public class WorkflowServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertProcessesFull();
+        MockDatabase.insertWorkflows();
     }
 
     @AfterClass
@@ -53,4 +53,11 @@ public class WorkflowServiceIT {
         assertEquals("Workflows were not found in database!", 2, workflows.size());
     }
 
+    @Test
+    public void shouldGetWorkflowsForTitleAndFile() {
+        WorkflowService workflowService = new WorkflowService();
+
+        List<Workflow> workflows = workflowService.getWorkflowsForTitleAndFile("say-hello", "test");
+        assertEquals("Workflows were not found in database!", 1, workflows.size());
+    }
 }
