@@ -945,13 +945,13 @@ Metadata Editor
 
 #structureTreeForm\:structurePanel {
     overflow-y: scroll;
-    height: 70%;
+    height: 50%;
     box-sizing: border-box;
 }
 
 #structureTreeForm\:paginationPanel {
     margin-top: 5px;
-    height: calc(30% - 5px);
+    height: calc(50% - 5px);
     box-sizing: border-box;
 }
 
