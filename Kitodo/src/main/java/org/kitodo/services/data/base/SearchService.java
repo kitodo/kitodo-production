@@ -190,16 +190,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Method saves object to database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public T saveToDatabase(T baseIndexedBean) throws DAOException {
-        return dao.save(baseIndexedBean);
-    }
-
-    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean
@@ -228,26 +218,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             baseIndexedBean.setIndexAction(IndexAction.DONE);
             dao.save(baseIndexedBean);
         }
-    }
-
-    /**
-     * Method removes object from database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
-    public void removeFromDatabase(T baseIndexedBean) throws DAOException {
-        dao.remove(baseIndexedBean);
-    }
-
-    /**
-     * Method removes object from database by given id.
-     *
-     * @param id
-     *            of object
-     */
-    public void removeFromDatabase(Integer id) throws DAOException {
-        dao.remove(id);
     }
 
     /**
