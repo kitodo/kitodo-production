@@ -915,6 +915,10 @@ Metadata Editor
     border: solid 1px #fff;
 }
 
+.collapsibleWrapper.collapsed .columnExpandButton {
+    transform: scaleX(-1);
+}
+
 .collapsibleWrapper .columnHeading {
     position: absolute;
     top: 30px;
