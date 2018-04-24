@@ -88,6 +88,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return page or empty String
      */
+    //TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             return "";
@@ -108,7 +109,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie, null);
 
         return this.naviFirstPage;
     }
@@ -145,7 +146,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie, null);
 
         initializePossibleDigitalCollections();
 
