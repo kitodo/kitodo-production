@@ -108,7 +108,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set activeTabId.
      *
-     * @param activeTabId as int
+     * @param activeTabId
+     *            as int
      */
     public void setActiveTabId(int activeTabId) {
         this.activeTabId = activeTabId;
@@ -117,7 +118,7 @@ public class ProzesskopieForm implements Serializable {
     /**
      * The class SelectableHit represents a hit on the hit list that shows up if
      * a catalogue search yielded more than one result. We need an inner class
-     * for this because Faces is striclty object oriented and the always
+     * for this because Faces is strictly object oriented and the always
      * argument-less actions can only be executed relatively to the list entry
      * in question this way if they are concerning elements that are rendered by
      * iterating along a list.
@@ -268,6 +269,8 @@ public class ProzesskopieForm implements Serializable {
     private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
+    protected static String INCOMPLETE_DATA = "UnvollstaendigeDaten";
+
     /**
      * Prepare.
      *
@@ -326,7 +329,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         this.docType = cp.getParamString("createNewProcess.defaultdoctype",
-            ConfigOpac.getAllDoctypes().get(0).getTitle());
+                ConfigOpac.getAllDoctypes().get(0).getTitle());
         this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
         this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
         if (this.opacKatalog.equals("")) {
@@ -407,9 +410,7 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        processes = processes.stream()
-                .filter(BaseTemplateBean::getInChoiceListShown)
-                .collect(Collectors.toList());
+        processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
 
         List<SelectItem> processSelectItems = new ArrayList<>();
         for (Process process : processes) {
@@ -437,7 +438,8 @@ public class ProzesskopieForm implements Serializable {
                 hitlist = importCatalogue.find(query, timeout);
                 hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 
-                String message = MessageFormat.format(Helper.getTranslation("newProcess.catalogueSearch.results"), hits);
+                String message = MessageFormat.format(Helper.getTranslation("newProcess.catalogueSearch.results"),
+                        hits);
 
                 switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
                     case 0:
@@ -471,10 +473,8 @@ public class ProzesskopieForm implements Serializable {
      * plugin, otherwise an error message will be set to be shown.
      *
      * @param catalogue
-     *            identifier string for the catalogue that the plugin shall
-     *            support
-     * @return whether a plugin is available in the global varibale
-     *         importCatalogue
+     *            identifier string for the catalogue that the plugin shall support
+     * @return whether a plugin is available in the global variable importCatalogue
      */
     private boolean pluginAvailableFor(String catalogue) {
         if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
@@ -571,27 +571,12 @@ public class ProzesskopieForm implements Serializable {
                     /* welches Metadatum */
                     try {
                         if (field.getMetadata().equals("ListOfCreators")) {
-                            /* bei Autoren die Namen zusammenstellen */
-                            StringBuilder authors = new StringBuilder();
-                            if (myTempStruct.getAllPersons() != null) {
-                                for (PersonInterface p : myTempStruct.getAllPersons()) {
-                                    authors.append(p.getLastName());
-                                    if (StringUtils.isNotBlank(p.getFirstName())) {
-                                        authors.append(", ");
-                                        authors.append(p.getFirstName());
-                                    }
-                                    authors.append("; ");
-                                }
-                                if (authors.toString().endsWith("; ")) {
-                                    authors.setLength(authors.length() - 2);
-                                }
-                            }
-                            field.setValue(authors.toString());
+                            field.setValue(getAuthors(myTempStruct.getAllPersons()));
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                field.getMetadata());
+                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                    field.getMetadata());
                             MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
                             if (md != null) {
                                 field.setValue(md.getValue());
@@ -608,6 +593,33 @@ public class ProzesskopieForm implements Serializable {
                 } // end if ughbinding
             } // end for
         } // end if myrdf==null
+    }
+
+    /**
+     * Get together authors' names.
+     *
+     * @param persons
+     *            list of persons
+     * @return authors' names as String
+     */
+    protected String getAuthors(List<PersonInterface> persons) {
+        StringBuilder authors = new StringBuilder();
+
+        if (persons != null) {
+            for (PersonInterface p : persons) {
+                authors.append(p.getLastName());
+                if (StringUtils.isNotBlank(p.getFirstName())) {
+                    authors.append(", ");
+                    authors.append(p.getFirstName());
+                }
+                authors.append("; ");
+            }
+            if (authors.toString().endsWith("; ")) {
+                authors.setLength(authors.length() - 2);
+            }
+        }
+
+        return authors.toString();
     }
 
     /**
@@ -655,9 +667,9 @@ public class ProzesskopieForm implements Serializable {
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
             DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-            removeCollections(colStruct);
+            removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
-            removeCollections(colStruct);
+            removeCollections(colStruct, this.prozessKopie);
         } catch (PreferencesException e) {
             Helper.setFehlerMeldung("Error on creating process", e);
             logger.error("Error on creating process", e);
@@ -681,43 +693,10 @@ public class ProzesskopieForm implements Serializable {
     }
 
     boolean isContentValid(boolean criticiseEmptyTitle) {
-        boolean valide = true;
+        boolean valid = true;
 
         if (criticiseEmptyTitle) {
-
-            /*
-             * grundsätzlich den Vorgangstitel prüfen
-             */
-            /* kein Titel */
-            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-            }
-
-            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
-            }
-
-            /* prüfen, ob der Prozesstitel schon verwendet wurde */
-            if (this.prozessKopie.getTitle() != null) {
-                long amount = 0;
-                try {
-                    amount = serviceManager.getProcessService()
-                            .findNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
-                } catch (DataException e) {
-                    Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
-                    valide = false;
-                }
-                if (amount > 0) {
-                    valide = false;
-                    Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
-                            + Helper.getTranslation("ProcessCreationErrorTitleAllreadyInUse"));
-                }
-            }
-
+            valid = isProcessTitleCorrect(this.prozessKopie);
         }
 
         /*
@@ -725,8 +704,8 @@ public class ProzesskopieForm implements Serializable {
          */
         /* keine Collektion ausgewählt */
         if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
-            valide = false;
-            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+            valid = false;
+            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
                     + Helper.getTranslation("ProcessCreationErrorNoCollection"));
         }
 
@@ -736,13 +715,58 @@ public class ProzesskopieForm implements Serializable {
         for (AdditionalField field : this.additionalFields) {
             if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
                     && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle() + " "
+                valid = false;
+                Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
                         + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
 
             }
         }
-        return valide;
+        return valid;
+    }
+
+    protected boolean isProcessTitleCorrect(Process process) {
+        boolean valid = true;
+
+        if (process.getTitle() == null || process.getTitle().equals("")) {
+            valid = false;
+            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
+                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+        }
+
+        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        if (!process.getTitle().matches(validateRegEx)) {
+            valid = false;
+            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+        }
+
+        if (process.getTitle() != null) {
+            valid = isProcessTitleAvailable(process.getTitle());
+        }
+        return valid;
+    }
+
+    /**
+     * Checks if process title is available. If yes, return true, if no, return
+     * false.
+     *
+     * @param title
+     *            of process
+     * @return boolean
+     */
+    protected boolean isProcessTitleAvailable(String title) {
+        long amount;
+        try {
+            amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
+        } catch (DataException e) {
+            Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+            return false;
+        }
+        if (amount > 0) {
+            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA)
+                    + Helper.getTranslation("ProcessCreationErrorTitleAlreadyInUse"));
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -757,7 +781,7 @@ public class ProzesskopieForm implements Serializable {
         }
         addProperties();
 
-        updateTasks();
+        updateTasks(this.prozessKopie);
 
         try {
             this.prozessKopie.setSortHelperImages(this.guessedImages);
@@ -803,16 +827,16 @@ public class ProzesskopieForm implements Serializable {
                             .getPreferences(prozessKopie.getRuleset());
                     while (populizer.getDocStructType().getAnchorClass() != null) {
                         populizer = populizer.createChild(
-                            populizer.getDocStructType().getAllAllowedDocStructTypes().get(0), rdf.getDigitalDocument(),
-                            ruleset);
+                                populizer.getDocStructType().getAllAllowedDocStructTypes().get(0), rdf.getDigitalDocument(),
+                                ruleset);
                     }
                 }
             } catch (NullPointerException | IndexOutOfBoundsException e) { // if
                 // getAllAllowedDocStructTypes()
                 // returns null
                 Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
-                    populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
-                            : null);
+                        populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
+                                : null);
             } catch (UGHException catchAll) {
                 Helper.setErrorMessage(catchAll.getMessage(), logger, catchAll);
             }
@@ -827,8 +851,8 @@ public class ProzesskopieForm implements Serializable {
                             tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
                         } catch (RuntimeException e) {
                             Helper.setErrorMessage(
-                                e.getMessage() + " The first child below the top structure could not be determined!",
-                                logger, e);
+                                    e.getMessage() + " The first child below the top structure could not be determined!",
+                                    logger, e);
                         }
                     }
                     /*
@@ -853,8 +877,8 @@ public class ProzesskopieForm implements Serializable {
                          */
                         if (!field.getMetadata().equals("ListOfCreators")) {
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                field.getMetadata());
+                                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                                    field.getMetadata());
                             MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
                             if (metadata != null) {
                                 metadata.setStringValue(field.getValue());
@@ -893,8 +917,8 @@ public class ProzesskopieForm implements Serializable {
                     addCollections(colStruct);
                 } catch (RuntimeException e) {
                     Helper.setErrorMessage(
-                        e.getMessage() + " The first child below the top structure could not be determined!", logger,
-                        e);
+                            e.getMessage() + " The first child below the top structure could not be determined!", logger,
+                            e);
                 }
             }
 
@@ -913,12 +937,12 @@ public class ProzesskopieForm implements Serializable {
                 MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {
                     newMetadata.setStringValue(
-                        "file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                                + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                            "file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 } else {
                     newMetadata.setStringValue(
-                        "file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                                + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
+                            "file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
                 }
                 this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
 
@@ -945,17 +969,17 @@ public class ProzesskopieForm implements Serializable {
         return processListPath;
     }
 
-    private void updateTasks() {
-        for (Task task : this.prozessKopie.getTasks()) {
+    protected void updateTasks(Process process) {
+        for (Task task : process.getTasks()) {
             // always save date and user for each step
-            task.setProcessingTime(this.prozessKopie.getCreationDate());
+            task.setProcessingTime(process.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
             User user = Helper.getCurrentUser();
             serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             // only if its done, set edit start and end date
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                task.setProcessingBegin(this.prozessKopie.getCreationDate());
+                task.setProcessingBegin(process.getCreationDate());
                 // this concerns steps, which are set as done right on creation
                 // bearbeitungsbeginn is set to creation timestamp of process
                 // because the creation of it is basically begin of work
@@ -982,8 +1006,8 @@ public class ProzesskopieForm implements Serializable {
                 for (MetadataInterface available : allMetadata) {
                     Map<String, MetadataInterface> availableMetadata = higherLevelMetadata
                             .containsKey(available.getMetadataType().getName())
-                                    ? higherLevelMetadata.get(available.getMetadataType().getName())
-                                    : new HashMap<>();
+                            ? higherLevelMetadata.get(available.getMetadataType().getName())
+                            : new HashMap<>();
                     if (!availableMetadata.containsKey(available.getValue())) {
                         availableMetadata.put(available.getValue(), available);
                     }
@@ -1025,8 +1049,8 @@ public class ProzesskopieForm implements Serializable {
                             try {
                                 enricher.addMetadata(higherElement.getValue());
                             } catch (UGHException didNotWork) {
-                                Helper.setErrorMessage("errorAdding",
-                                    new Object[] {Helper.getTranslation("metadata") }, logger, didNotWork);
+                                Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") },
+                                        logger, didNotWork);
                             }
                         }
                     }
@@ -1052,8 +1076,8 @@ public class ProzesskopieForm implements Serializable {
         for (String s : this.digitalCollections) {
             try {
                 MetadataInterface md = UghImplementation.INSTANCE.createMetadata(UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                    "singleDigCollection"));
+                        serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                        "singleDigCollection"));
                 md.setStringValue(s);
                 md.setDocStruct(colStruct);
                 colStruct.addMetadata(md);
@@ -1066,11 +1090,11 @@ public class ProzesskopieForm implements Serializable {
     /**
      * alle Kollektionen eines übergebenen DocStructs entfernen.
      */
-    private void removeCollections(DocStructInterface colStruct) {
+    protected void removeCollections(DocStructInterface colStruct, Process process) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                "singleDigCollection");
+                    serviceManager.getRulesetService().getPreferences(process.getRuleset()),
+                    "singleDigCollection");
             ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             if (myCollections.size() > 0) {
                 for (MetadataInterface md : myCollections) {
@@ -1148,19 +1172,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void addProperties() {
-        for (AdditionalField field : this.additionalFields) {
-            if (field.getShowDependingOnDoctype()) {
-                if (field.getFrom().equals("werk")) {
-                    BeanHelper.addPropertyForWorkpiece(this.prozessKopie, field.getTitle(), field.getValue());
-                }
-                if (field.getFrom().equals("vorlage")) {
-                    BeanHelper.addPropertyForTemplate(this.prozessKopie, field.getTitle(), field.getValue());
-                }
-                if (field.getFrom().equals("prozess")) {
-                    BeanHelper.addPropertyForProcess(this.prozessKopie, field.getTitle(), field.getValue());
-                }
-            }
-        }
+        addAdditionalFields(this.additionalFields, this.prozessKopie);
 
         for (String col : digitalCollections) {
             BeanHelper.addPropertyForProcess(this.prozessKopie, "digitalCollection", col);
@@ -1168,10 +1180,26 @@ public class ProzesskopieForm implements Serializable {
 
         BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
         BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-            this.tifHeaderImageDescription);
+                this.tifHeaderImageDescription);
         BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         BeanHelper.addPropertyForProcess(this.prozessKopie, "Template", this.template.getTitle());
         BeanHelper.addPropertyForProcess(this.prozessKopie, "TemplateID", String.valueOf(this.template.getId()));
+    }
+
+    protected void addAdditionalFields(List<AdditionalField> additionalFields, Process process) {
+        for (AdditionalField field : additionalFields) {
+            if (field.getShowDependingOnDoctype()) {
+                if (field.getFrom().equals("werk")) {
+                    BeanHelper.addPropertyForWorkpiece(process, field.getTitle(), field.getValue());
+                }
+                if (field.getFrom().equals("vorlage")) {
+                    BeanHelper.addPropertyForTemplate(process, field.getTitle(), field.getValue());
+                }
+                if (field.getFrom().equals("prozess")) {
+                    BeanHelper.addPropertyForProcess(process, field.getTitle(), field.getValue());
+                }
+            }
+        }
     }
 
     public String getDocType() {
@@ -1213,13 +1241,13 @@ public class ProzesskopieForm implements Serializable {
                             // new has a child, but old not
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.copy(true, false),
-                                newLogicalDocstruct.getAllChildren().get(0));
+                                    newLogicalDocstruct.getAllChildren().get(0));
                         } else if (oldLogicalDocstruct.getAllChildren() != null
                                 && newLogicalDocstruct.getAllChildren() != null) {
                             // both have children
                             copyMetadata(oldLogicalDocstruct, newLogicalDocstruct);
                             copyMetadata(oldLogicalDocstruct.getAllChildren().get(0),
-                                newLogicalDocstruct.getAllChildren().get(0));
+                                    newLogicalDocstruct.getAllChildren().get(0));
                         }
                     }
                 } catch (PreferencesException e) {
@@ -1280,7 +1308,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set template.
      *
-     * @param template as Template object
+     * @param template
+     *            as Template object
      */
     public void setTemplate(Template template) {
         this.template = template;
@@ -1299,11 +1328,14 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The method getVisibleAdditionalFields returns a list of visible additional fields
+     * The method getVisibleAdditionalFields returns a list of visible additional
+     * fields.
+     *
      * @return list of AdditionalField
      */
     public List<AdditionalField> getVisibleAdditionalFields() {
-        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype()).collect(Collectors.toList());
+        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -1415,9 +1447,10 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    /*
-     * changed, so that on first request list gets set if there is only one
-     * choice
+    /**
+     * Changed, so that on first request list gets set if there is only one choice.
+     *
+     * @return list of digital collections
      */
     public List<String> getDigitalCollections() {
         return this.digitalCollections;
@@ -1577,19 +1610,17 @@ public class ProzesskopieForm implements Serializable {
         StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
         /* jetzt den Bandtitel parsen */
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
+            String token = tokenizer.nextToken();
             /*
              * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
              * übernehmen
              */
-            if (myString.startsWith("'") && myString.endsWith("'")) {
-                newTitle.append(myString.substring(1, myString.length() - 1));
-            } else if (myString.startsWith("#")) {
-                /*
-                 * resolve strings beginning with # from generic fields
-                 */
+            if (token.startsWith("'") && token.endsWith("'")) {
+                newTitle.append(token.substring(1, token.length() - 1));
+            } else if (token.startsWith("#")) {
+                // resolve strings beginning with # from generic fields
                 if (genericFields != null) {
-                    String genericValue = genericFields.get(myString);
+                    String genericValue = genericFields.get(token);
                     if (genericValue != null) {
                         newTitle.append(genericValue);
                     }
@@ -1611,10 +1642,10 @@ public class ProzesskopieForm implements Serializable {
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         newTitle.append(
-                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                                calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
                 }
             }
@@ -1644,10 +1675,10 @@ public class ProzesskopieForm implements Serializable {
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
                     Helper.setErrorMessage(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Bandnummer ist keine gültige Zahl", logger, e);
+                            Helper.getTranslation(INCOMPLETE_DATA) + "Bandnummer ist keine gültige Zahl", logger, e);
                 } else {
                     Helper.setErrorMessage(
-                        Helper.getTranslation("UngueltigeDaten: ") + "Volume number is not a valid number", logger, e);
+                            Helper.getTranslation(INCOMPLETE_DATA) + "Volume number is not a valid number", logger, e);
                 }
             }
             if (rueckgabe != null && rueckgabe.length() < 4) {
@@ -1683,14 +1714,14 @@ public class ProzesskopieForm implements Serializable {
         // jetzt den Tiffheader parsen
         String title = "";
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
+            String token = tokenizer.nextToken();
             /*
              * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
              * übernehmen
              */
-            if (myString.startsWith("'") && myString.endsWith("'") && myString.length() > 2) {
-                this.tifHeaderImageDescription += myString.substring(1, myString.length() - 1);
-            } else if (myString.equals("$Doctype")) {
+            if (token.startsWith("'") && token.endsWith("'") && token.length() > 2) {
+                this.tifHeaderImageDescription += token.substring(1, token.length() - 1);
+            } else if (token.equals("$Doctype")) {
                 /* wenn der Doctype angegeben werden soll */
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
@@ -1716,10 +1747,10 @@ public class ProzesskopieForm implements Serializable {
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         this.tifHeaderImageDescription += calculateProcessTitleCheck(additionalField.getTitle(),
-                            additionalField.getValue());
+                                additionalField.getValue());
                     }
 
                 }
@@ -1835,8 +1866,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getHitlist returns the hits for the currently showing page
-     * of the hitlist as read-only property "hitlist".
+     * The function getHitlist returns the hits for the currently showing page of
+     * the hitlist as read-only property "hitlist".
      *
      * @return a list of hits to render in the hitlist
      */
