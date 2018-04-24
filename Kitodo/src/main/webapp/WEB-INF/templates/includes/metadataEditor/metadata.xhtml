@@ -28,34 +28,35 @@
                 </f:facet>
 
                 <p:column>
-                    <p:panelGrid columns="2" styleClass="ui-noborder">
+                    <p:panelGrid>
 
-                        <h:outputText value="#{msgs.role}:"/>
-                        <p:selectOneMenu value="#{person.rolle}" style="width: 350px;">
+                        <p:outputLabel for="role" value="#{msgs.rolle}:"/>
+                        <p:selectOneMenu id="role" value="#{person.rolle}" style="width: 210px;">
                             <f:selectItems value="#{person.addableRollen}"/>
                             <f:ajax event="mouseup"/>
                         </p:selectOneMenu>
 
-                        <h:outputText value="#{msgs.normDataRecord}:"/>
-                        <h:inputText value="#{person.record}"
-                                     style="width: 350px;"
+                        <p:outputLabel for="record" value="#{msgs.normDataRecord}:"/>
+                        <p:inputText value="#{person.record}"
+                                     style="width: 242px;"
+                                     class="input"
                                      id="record">
                             <p:ajax event="blur"/>
-                        </h:inputText>
+                        </p:inputText>
 
-                        <h:outputText value="#{msgs.firstName}:"/>
-                        <h:inputText value="#{person.vorname}"
-                                     style="width: 350px;"
+                        <p:outputLabel value="#{msgs.firstName}:"/>
+                        <p:inputText value="#{person.vorname}"
+                                     style="width: 242px;"
                                      id="firstname">
                             <p:ajax event="blur"/>
-                        </h:inputText>
+                        </p:inputText>
 
-                        <h:outputText value="#{msgs.surname}:"/>
-                        <h:inputText value="#{person.nachname}"
-                                     style="width: 350px;"
+                        <p:outputLabel value="#{msgs.surname}:"/>
+                        <p:inputText value="#{person.nachname}"
+                                     style="width: 242px;"
                                      id="lastname">
                             <p:ajax event="blur"/>
-                        </h:inputText>
+                        </p:inputText>
                     </p:panelGrid>
 
                 </p:column>
@@ -75,6 +76,13 @@
                 </p:column>
 
             </p:dataTable>
+            <p:commandButton icon="fa fa-plus" value="#{msgs.neuePersonAnlegen}"
+                             update="dialogAddPersonForm:selectTempPersonRoll, dialogAddPersonForm:addPersonRecord"
+                             title="#{msgs.docstructTypeAendern}"
+                             action="#{Metadaten.addPerson}"
+                             style="margin-bottom: 40px"
+                             onclick="PF('dialogAddPerson').show();">
+            </p:commandButton>
         </h:panelGroup>
 
         <p:dataTable id="metadataTable" rendered="#{!empty Metadaten.myMetadaten}" value="#{Metadaten.myMetadaten}"
@@ -83,17 +91,14 @@
                 #{msgs.metadata}
             </f:facet>
 
-            <p:column style="width:20%;">
-                <h:outputText value="#{item.typ}"/>
-            </p:column>
-
-            <p:column>
-                <p:inputTextarea value="#{item.value}" rows="2" style="width:98%;">
+            <p:column style="width: 75%">
+                <p:outputLabel value="#{item.typ}"/>
+                <p:inputTextarea value="#{item.value}" rows="2" style="width:100%;">
                     <p:ajax event="blur"/>
                 </p:inputTextarea>
             </p:column>
 
-            <p:column style="width:64px;text-align: center">
+            <p:column style="width: 25%; text-align: center">
 
                 <p:commandButton update="metadata:metadataTable, metadata:messagesMetadata"
                                  icon="fa fa-clipboard" immediate="true"
@@ -115,30 +120,18 @@
 
         <p:panelGrid style="width:100%;margin-top:10px" styleClass="ui-noborder">
             <p:row>
-                <p:column style="width:20%;">
-                    <p:selectOneMenu id="metadataTypeSelection" value="#{Metadaten.tempTyp}">
-                        <f:selectItems value="#{Metadaten.addableMetadataTypes}"/>
-                    </p:selectOneMenu>
-                </p:column>
-
-                <p:column>
-                    <p:inputTextarea value="#{Metadaten.metadatum.value}" rows="2" style="width:98%;"/>
-                </p:column>
-
-                <p:column style="width:64px;text-align: center">
-                    <p:commandButton update="metadata:metadataTable" icon="fa fa-plus"
-                                     title="#{msgs.neueMetadatenHinzufuegen}" action="#{Metadaten.save}">
-                    </p:commandButton>
-                </p:column>
+                <p:selectOneMenu id="metadataTypeSelection" value="#{Metadaten.tempTyp}">
+                    <f:selectItems value="#{Metadaten.addableMetadataTypes}"/>
+                </p:selectOneMenu>
+            </p:row>
+            <p:row>
+                <p:inputTextarea value="#{Metadaten.metadatum.value}" rows="2" style="width:83%;"/>
+                <p:commandButton update="metadata:metadataTable" icon="fa fa-plus"
+                                 style="vertical-align: top; margin-left: 10px"
+                                 title="#{msgs.neueMetadatenHinzufuegen}" action="#{Metadaten.save}">
+                </p:commandButton>
             </p:row>
         </p:panelGrid>
-
-        <p:commandButton icon="fa fa-plus" value="#{msgs.neuePersonAnlegen}"
-                         update="dialogAddPersonForm:selectTempPersonRoll, dialogAddPersonForm:addPersonRecord"
-                         title="#{msgs.docstructTypeAendern}"
-                         action="#{Metadaten.addPerson}"
-                         onclick="PF('dialogAddPerson').show();">
-        </p:commandButton>
     </h:form>
 
     <p:dialog id="dialogAddPersonId" header="#{msgs.neuePersonAnlegen}" resizable="false"
@@ -148,24 +141,24 @@
 
             <p:panelGrid columns="2" styleClass="ui-noborder">
 
-                <h:outputText value="#{msgs.role}:"/>
+                <p:outputLabel value="#{msgs.rolle}:"/>
                 <p:selectOneMenu value="#{Metadaten.tempPersonRolle}" style="width: 350px;"
                                  id="selectTempPersonRoll">
                     <f:selectItems value="#{Metadaten.addableRollen}"/>
                 </p:selectOneMenu>
 
-                <h:outputText value="#{msgs.normDataRecord}:"/>
-                <h:inputText value="#{Metadaten.tempPersonRecord}"
+                <p:outputLabel value="#{msgs.normDataRecord}:"/>
+                <p:inputText value="#{Metadaten.tempPersonRecord}"
                              style="width: 350px;"
                              id="addPersonRecord"/>
 
-                <h:outputText value="#{msgs.firstName}:"/>
-                <h:inputText value="#{Metadaten.tempPersonVorname}"
+                <p:outputLabel value="#{msgs.firstName}:"/>
+                <p:inputText value="#{Metadaten.tempPersonVorname}"
                              style="width: 350px;"
                              id="addPersonFirstname"/>
 
-                <h:outputText value="#{msgs.surname}:"/>
-                <h:inputText value="#{Metadaten.tempPersonNachname}"
+                <p:outputLabel value="#{msgs.surname}:"/>
+                <p:inputText value="#{Metadaten.tempPersonNachname}"
                              style="width: 350px;"
                              id="addPersonLastname"/>
             </p:panelGrid>
