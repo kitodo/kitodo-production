@@ -56,12 +56,12 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
         <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
             <li><a href="">#{msgs.prozessBearbeiten}</a></li>
         </ui:fragment>
         <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+            <li><a href="">#{msgs.createNewProcessFromTemplate}</a></li>
         </ui:fragment>
     </ui:define>
 

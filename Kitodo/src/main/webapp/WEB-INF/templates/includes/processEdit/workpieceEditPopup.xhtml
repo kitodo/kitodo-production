@@ -19,28 +19,37 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editWorkpieceDialog"
-              header="#{empty ProzessverwaltungForm.workpieceProperty.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
+              header="#{empty ProzessverwaltungForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
               dynamic="true"
               styleClass="editDialog">
         <h:form id="workpiecePropertyForm">
-            <!-- title -->
-            <p:inputText id="workpiecePropertyTitle" value="#{ProzessverwaltungForm.workpieceProperty.title}"
-                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
-
-            <!-- value: text -->
-            <p:inputText id="workpiecePropertyValue" value="#{ProzessverwaltungForm.workpieceProperty.value}"
-                         styleClass="editDialog"/>
-
-            <p:commandButton action="#{ProzessverwaltungForm.saveWorkpieceProperty}"
-                             id="save"
-                             update="editForm"
-                             oncomplete="PF('editWorkpieceDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
-                             value="#{msgs.uebernehmen}">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
-                                             value="#{objectMode.NONE}"/>
-            </p:commandButton>
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <div>
+                        <!-- title -->
+                        <p:outputLabel for="workpiecePropertyTitle" value="#{msgs.titel}" />
+                        <p:inputText id="workpiecePropertyTitle" value="#{ProzessverwaltungForm.workpieceProperty.title}"
+                                     placeholder="#{msgs.titel}" required="true" styleClass="input editDialog"/>
+                    </div>
+                    <div>
+                        <!-- value: text -->
+                        <p:outputLabel for="workpiecePropertyValue" value="#{msgs.value}" />
+                        <p:inputText id="workpiecePropertyValue" value="#{ProzessverwaltungForm.workpieceProperty.value}"
+                                     styleClass="input editDialog"/>
+                    </div>
+                    <p:commandButton action="#{ProzessverwaltungForm.saveWorkpieceProperty}"
+                                     id="save"
+                                     update="editForm"
+                                     oncomplete="PF('editWorkpieceDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
+                                     value="#{msgs.uebernehmen}"
+                                     styleClass="button-filled-blue right">
+                        <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
+                                                     value="#{objectMode.NONE}"/>
+                    </p:commandButton>
+                </p:row>
+            </p:panelGrid>
         </h:form>
     </p:dialog>
 </ui:composition>
