@@ -22,18 +22,6 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
         super(new LdapGroupDAO());
     }
 
-    public void save(LdapGroup ldapGroup) throws DAOException {
-        dao.save(ldapGroup);
-    }
-
-    public void remove(LdapGroup ldapGroup) throws DAOException {
-        dao.remove(ldapGroup);
-    }
-
-    public void remove(Integer id) throws DAOException {
-        dao.remove(id);
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM LdapGroup");

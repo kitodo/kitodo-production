@@ -43,7 +43,7 @@ public class ProjectFileGroupServiceIT {
     public void shouldFindProjectFileGroup() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
-        ProjectFileGroup projectFileGroup = projectFileGroupService.find(1);
+        ProjectFileGroup projectFileGroup = projectFileGroupService.getById(1);
         boolean condition = projectFileGroup.getName().equals("MAX")
                 && projectFileGroup.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
@@ -53,7 +53,7 @@ public class ProjectFileGroupServiceIT {
     public void shouldFindAllProjectFileGroups() {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
-        List<ProjectFileGroup> projectFileGroups = projectFileGroupService.findAll();
+        List<ProjectFileGroup> projectFileGroups = projectFileGroupService.getAll();
         assertEquals("Project file group was not found in database!", 5, projectFileGroups.size());
     }
 }
