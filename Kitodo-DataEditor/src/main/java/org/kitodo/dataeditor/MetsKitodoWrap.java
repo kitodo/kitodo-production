@@ -26,18 +26,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.kitodo.dataformat.metsmodskitodo.KitodoType;
-import org.kitodo.dataformat.metsmodskitodo.MdSecType;
-import org.kitodo.dataformat.metsmodskitodo.Mets;
-import org.kitodo.dataformat.metsmodskitodo.ModsDefinition;
-import org.kitodo.dataformat.metsmodskitodo.ObjectFactory;
-import org.kitodo.dataformat.metsmodskitodo.StructLinkType;
+import org.kitodo.dataformat.metskitodo.KitodoType;
+import org.kitodo.dataformat.metskitodo.MdSecType;
+import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.ObjectFactory;
+import org.kitodo.dataformat.metskitodo.StructLinkType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a
- * serialized mets-mods-kitodo format xml file.
+ * serialized mets-kitodo format xml file.
  */
-public class MetsModsKitodo {
+public class MetsKitodoWrap {
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
 
@@ -53,7 +52,7 @@ public class MetsModsKitodo {
     /**
      * Constructor which creates Mets object with corresponding object factory.
      */
-    public MetsModsKitodo() {
+    public MetsKitodoWrap() {
         this.mets = createBasicMetsElements(objectFactory.createMets());
     }
 
@@ -72,10 +71,10 @@ public class MetsModsKitodo {
 
     /**
      * Constructor which creates Mets object by unmarshalling given xml file of
-     * mets-mods-kitodo format.
+     * mets-kitodo format.
      * 
      * @param xmlFile
-     *            The xml file in mets-mods-kitodo format as URI.
+     *            The xml file in mets-kitodo format as URI.
      * @throws JAXBException
      *             Thrown if an error was encountered while creating the
      *             <tt>Unmarshaller</tt> object.
@@ -83,7 +82,7 @@ public class MetsModsKitodo {
      *             Thrown if an error was encountered while creating the
      *             <tt>XMLStreamReader</tt> object.
      */
-    public MetsModsKitodo(URI xmlFile) throws JAXBException, XMLStreamException {
+    public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
 
@@ -138,18 +137,15 @@ public class MetsModsKitodo {
      * @return The KitodoType object.
      */
     public KitodoType getKitodoTypeByMdSecIndex(int index) {
-
         if (this.getDmdSecs().size() > index) {
-
             // Wrapping null-checks at getter-chain into Optional<T>.class
-            Optional<List<Object>> modsData = Optional.ofNullable(getDmdSecs().get(index)).map(MdSecType::getMdWrap)
+            Optional<List<Object>> xmlData = Optional.ofNullable(getDmdSecs().get(index)).map(MdSecType::getMdWrap)
                     .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
 
-            if (modsData.isPresent()) {
-                return MetsModsKitodoUtils.getKitodoTypeFromModsDefinition(
-                    MetsModsKitodoUtils.getFirstGenericTypeFromObjectList(modsData.get(), ModsDefinition.class));
+            if (xmlData.isPresent()) {
+                return MetsKitodoUtils.getFirstGenericTypeFromObjectList(xmlData.get(), KitodoType.class);
             }
-            throw new NoSuchElementException("MdSec element with index: " + index + " does not have MODS-data");
+            throw new NoSuchElementException("MdSec element with index: " + index + " does not have Metadata");
         }
         throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
     }

@@ -14,7 +14,7 @@
               version="2.1">
     <bindings schemaLocation="../../../../target/downloaded-sources/xsd/kitodo.xsd">
         <schemaBindings>
-            <package name="org.kitodo.dataformat.metsmodskitodo"/>
+            <package name="org.kitodo.dataformat.metskitodo"/>
         </schemaBindings>
     </bindings>
 </jxb:bindings>

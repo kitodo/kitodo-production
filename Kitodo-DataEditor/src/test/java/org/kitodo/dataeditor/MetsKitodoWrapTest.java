@@ -19,13 +19,13 @@ import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.kitodo.dataformat.metsmodskitodo.KitodoType;
-import org.kitodo.dataformat.metsmodskitodo.MdSecType;
-import org.kitodo.dataformat.metsmodskitodo.MetadataType;
-import org.kitodo.dataformat.metsmodskitodo.ObjectFactory;
-import org.kitodo.dataformat.metsmodskitodo.StructLinkType;
+import org.kitodo.dataformat.metskitodo.KitodoType;
+import org.kitodo.dataformat.metskitodo.MdSecType;
+import org.kitodo.dataformat.metskitodo.MetadataType;
+import org.kitodo.dataformat.metskitodo.ObjectFactory;
+import org.kitodo.dataformat.metskitodo.StructLinkType;
 
-public class MetsModsKitodoTest {
+public class MetsKitodoWrapTest {
 
     private URI xmlfile = URI.create("./src/test/resources/testmeta.xml");
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -35,10 +35,10 @@ public class MetsModsKitodoTest {
         String from = "from test";
         String to = "to test";
 
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
-        metsModsKitodo.addSmLink(from, to);
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap();
+        metsKitodoWrap.addSmLink(from, to);
 
-        StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsModsKitodo.getMets().getStructLink()
+        StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsKitodoWrap.getMets().getStructLink()
                 .getSmLinkOrSmLinkGrp().get(0);
 
         Assert.assertEquals("'from' value of smLink was wrong", from, smLink.getFrom());
@@ -47,21 +47,21 @@ public class MetsModsKitodoTest {
 
     @Test
     public void shouldCreateMetsByFile() throws JAXBException, XMLStreamException {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
-        Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsModsKitodo.getDmdSecs().size());
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsKitodoWrap.getDmdSecs().size());
     }
 
     @Test
     public void shouldReadValues() throws JAXBException, XMLStreamException {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
-        String id = metsModsKitodo.getMets().getDmdSec().get(0).getID();
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        String id = metsKitodoWrap.getMets().getDmdSec().get(0).getID();
         Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_0000", id);
     }
 
     @Test
     public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException{
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
-        KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecIndex(0);
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
@@ -72,8 +72,8 @@ public class MetsModsKitodoTest {
 
     @Test
     public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
-        KitodoType kitodoType = metsModsKitodo.getKitodoTypeByMdSecId("DMDLOG_0002");
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecId("DMDLOG_0002");
 
         MetadataType metadataType = kitodoType.getMetadata().get(0);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "TitleDocMain",
@@ -84,24 +84,24 @@ public class MetsModsKitodoTest {
 
     @Test(expected = NoSuchElementException.class)
     public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo(xmlfile);
-        metsModsKitodo.getKitodoTypeByMdSecId("not existing");
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        metsKitodoWrap.getKitodoTypeByMdSecId("not existing");
     }
 
     @Test(expected = NoSuchElementException.class)
     public void shouldNotReadNotExistingMdSecByIndex() {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
-        metsModsKitodo.getKitodoTypeByMdSecIndex(0);
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap();
+        metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
     }
 
     @Test(expected = NoSuchElementException.class)
     public void shouldNotReadNotExistingKitodoMetadataByIndex() {
-        MetsModsKitodo metsModsKitodo = new MetsModsKitodo();
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap();
         MdSecType mdSecType = objectFactory.createMdSecType();
         MdSecType.MdWrap mdSecTypeMdWrap = objectFactory.createMdSecTypeMdWrap();
         mdSecTypeMdWrap.setXmlData(objectFactory.createMdSecTypeMdWrapXmlData());
         mdSecType.setMdWrap(mdSecTypeMdWrap);
-        metsModsKitodo.getMets().getDmdSec().add(mdSecType);
-        metsModsKitodo.getKitodoTypeByMdSecIndex(0);
+        metsKitodoWrap.getMets().getDmdSec().add(mdSecType);
+        metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
     }
 }

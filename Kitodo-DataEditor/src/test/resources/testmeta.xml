@@ -17,52 +17,40 @@
         </mets:agent>
     </mets:metsHdr>
     <mets:dmdSec ID="DMDLOG_0000">
-        <mets:mdWrap MDTYPE="MODS">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
-                <mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
-                    <mods:extension>
-                        <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                            <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
-                            <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
-                            <kitodo:metadata name="TypeOfResource" type="group">
-                                <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
-                                <kitodo:metadata name="typIdentifierPPN">10457187X</kitodo:metadata>
-                                <kitodo:metadata name="typIdentifierURI">http://d-nb.info/gnd/4023287-6</kitodo:metadata>
-                            </kitodo:metadata>
-                            <kitodo:metadata type="group" name="FormerOwner">
-                                <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
-                                <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/</kitodo:metadata>
-                                <kitodo:metadata name="displayName">, </kitodo:metadata>
-                            </kitodo:metadata>
-                        </kitodo:kitodo>
-                    </mods:extension>
-                </mods:mods>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
+                    <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
+                    <kitodo:metadata name="TypeOfResource" type="group">
+                        <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
+                        <kitodo:metadata name="typIdentifierPPN">10457187X</kitodo:metadata>
+                        <kitodo:metadata name="typIdentifierURI">http://d-nb.info/gnd/4023287-6</kitodo:metadata>
+                    </kitodo:metadata>
+                    <kitodo:metadata type="group" name="FormerOwner">
+                        <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
+                        <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/</kitodo:metadata>
+                        <kitodo:metadata name="displayName">, </kitodo:metadata>
+                    </kitodo:metadata>
+                </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
     <mets:dmdSec ID="DMDLOG_0001">
-        <mets:mdWrap MDTYPE="MODS">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
-                <mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
-                    <mods:extension>
-                        <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                            <kitodo:metadata name="TitleDocMain">[Seite 134r-156v]</kitodo:metadata>
-                        </kitodo:kitodo>
-                    </mods:extension>
-                </mods:mods>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 134r-156v]</kitodo:metadata>
+                </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
     <mets:dmdSec ID="DMDLOG_0002">
-        <mets:mdWrap MDTYPE="MODS">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
-                <mods:mods xmlns:mods="http://www.loc.gov/mods/v3">
-                    <mods:extension>
-                        <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                            <kitodo:metadata name="TitleDocMain">[Seite 157r-181v]</kitodo:metadata>
-                        </kitodo:kitodo>
-                    </mods:extension>
-                </mods:mods>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 157r-181v]</kitodo:metadata>
+                </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
