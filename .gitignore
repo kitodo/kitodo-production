@@ -4,3 +4,6 @@
 **/target/
 # Tests
 /Kitodo/modules
+# Javadoc
+/javadoc
+/site

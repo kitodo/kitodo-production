@@ -9,7 +9,7 @@
 
 # Commits
 
-* in englischer Sprache, Orientierung an bspw. http://chris.beams.io/posts/git-commit/
+* in englischer Sprache, Orientierung an bspw. <http://chris.beams.io/posts/git-commit/>
 * Commits sollten nur die Änderungen enthalten, die auch in der Commit Nachricht beschrieben sind
 * eher viele kleine Commits mit jeweils wenigen Änderungen als wenige, große / umfangreiche Commits
 
@@ -23,9 +23,3 @@
 * Unterscheidung bezieht sich auf die GitHub Projekte [Kitodo.ContentServer](https://github.com/kitodo/kitodo-contentserver), [Kitodo.Production](https://github.com/kitodo/kitodo-production) und [Kitodo.UGH](https://github.com/kitodo/kitodo-ugh)
 * **Branch 2.x**: ist die Weiterentwicklung der alten Goobi.Production Community Edition (Version 1.11.x) unter dem neuen Namen Kitodo.Production und wird als Version 2.x weiter geführt
 * **Branch master**: die unter dem DFG Projekt geförderten Weiterentwicklung von Kitodo.Production findet hier statt und enthält auch die darauf basierenden betriebenen Entwicklungen
-
-# Spezifisch für DFG-basierende Weiterentwicklung
-
-* Scrum / Jira Tickets mit Bezug auf Code-Entwicklung sollten nach dem Start des Sprints als Issue auf GitHub veröffentlicht werden. Die JIRA Tickets sollten eine Verlinkung auf das jeweilige Issue in GitHub enthalten.
-* In die Scrum Planung sollten auch die Reaktionen auf Issues / Commits / Pull-Requests der Scrum-Issues der Community mit einfließen
-* Issues aus der Community, die vor der Sprint Planung erstellt werden, sollten in der Scrum Planung bedacht werden
