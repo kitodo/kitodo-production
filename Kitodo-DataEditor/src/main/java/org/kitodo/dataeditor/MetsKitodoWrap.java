@@ -111,7 +111,7 @@ public class MetsKitodoWrap {
             });
             this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader));
         } catch (Exception e) {
-            logger.error(e.getMessage(),e);
+            logger.error(e.getMessage(), e);
         } finally {
             if (Objects.nonNull(xmlStreamReader)) {
                 xmlStreamReader.close();
@@ -160,7 +160,8 @@ public class MetsKitodoWrap {
                 try {
                     return MetsKitodoUtils.getFirstGenericTypeFromJaxbObjectList(xmlData.get(), KitodoType.class);
                 } catch (NoSuchElementException e) {
-                    throw new NoSuchElementException("MdSec element with index: " + index + " does not have kitodo metadata");
+                    throw new NoSuchElementException(
+                            "MdSec element with index: " + index + " does not have kitodo metadata");
                 }
             }
             throw new NoSuchElementException("MdSec element with index: " + index + " does not have data");

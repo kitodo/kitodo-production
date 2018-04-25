@@ -22,7 +22,8 @@ import javax.xml.bind.JAXBElement;
 class MetsKitodoUtils {
 
     /**
-     * Gets the first object of the specified type from a given object list of JAXB elements.
+     * Gets the first object of the specified type from a given object list of JAXB
+     * elements.
      * 
      * @param objects
      *            The list of objects.

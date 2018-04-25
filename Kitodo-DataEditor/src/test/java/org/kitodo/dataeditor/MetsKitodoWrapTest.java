@@ -61,7 +61,7 @@ public class MetsKitodoWrapTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException{
+    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
 
