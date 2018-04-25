@@ -57,10 +57,10 @@
     <mets:fileSec>
         <mets:fileGrp USE="LOCAL">
             <mets:file ID="FILE_0001" MIMETYPE="image/tiff">
-                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000001.tif"/>
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000001.tif"/>
             </mets:file>
             <mets:file ID="FILE_0002" MIMETYPE="image/tiff">
-                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/opt/goobi/production/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
             </mets:file>
         </mets:fileGrp>
     </mets:fileSec>
@@ -84,10 +84,6 @@
     <mets:structLink>
         <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0000"/>
         <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0001"/>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0002" xlink:from="LOG_0001"/>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0005" xlink:from="LOG_0002"/>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0006" xlink:from="LOG_0002"/>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0007" xlink:from="LOG_0002"/>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0051" xlink:from="LOG_0003"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0002" xlink:from="LOG_0003"/>
     </mets:structLink>
 </mets:mets>
