@@ -22,7 +22,7 @@ import javax.xml.bind.JAXBElement;
 class MetsKitodoUtils {
 
     /**
-     * Gets the first object of the specified type from a given object list.
+     * Gets the first object of the specified type from a given object list of JAXB elements.
      * 
      * @param objects
      *            The list of objects.
@@ -30,16 +30,13 @@ class MetsKitodoUtils {
      *            The type of object to return.
      * @return The first object that corresponds to the given type.
      */
-    static <T> T getFirstGenericTypeFromObjectList(List<Object> objects, Class<T> type) {
+    static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
                 JAXBElement jaxbElement = (JAXBElement) object;
                 if (type.isInstance(jaxbElement.getValue())) {
                     return (type.cast(jaxbElement.getValue()));
                 }
-            }
-            if (type.isInstance(object)) {
-                return (type.cast(object));
             }
         }
         throw new NoSuchElementException("No " + type.getName() + " objects found");

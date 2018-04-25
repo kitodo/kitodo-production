@@ -26,6 +26,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -37,6 +39,9 @@ import org.kitodo.dataformat.metskitodo.StructLinkType;
  * serialized mets-kitodo format xml file.
  */
 public class MetsKitodoWrap {
+
+    private static final Logger logger = LogManager.getLogger(MetsKitodoWrap.class);
+
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
 
@@ -90,19 +95,28 @@ public class MetsKitodoWrap {
         // in an element that has mixed context
         XMLInputFactory xif = XMLInputFactory.newFactory();
 
-        XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
-        xsr = xif.createFilteredReader(xsr, new StreamFilter() {
+        XMLStreamReader xmlStreamReader = null;
 
-            @Override
-            public boolean accept(XMLStreamReader reader) {
-                if (reader.getEventType() == XMLStreamReader.CHARACTERS) {
-                    return reader.getText().trim().length() > 0;
+        try {
+            xmlStreamReader = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
+            xmlStreamReader = xif.createFilteredReader(xmlStreamReader, new StreamFilter() {
+
+                @Override
+                public boolean accept(XMLStreamReader reader) {
+                    if (reader.getEventType() == XMLStreamReader.CHARACTERS) {
+                        return reader.getText().trim().length() > 0;
+                    }
+                    return true;
                 }
-                return true;
+            });
+            this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader));
+        } catch (Exception e) {
+            logger.error(e.getMessage(),e);
+        } finally {
+            if (Objects.nonNull(xmlStreamReader)) {
+                xmlStreamReader.close();
             }
-        });
-        this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xsr));
-        xsr.close();
+        }
     }
 
     /**
@@ -144,7 +158,7 @@ public class MetsKitodoWrap {
 
             if (xmlData.isPresent()) {
                 try {
-                    return MetsKitodoUtils.getFirstGenericTypeFromObjectList(xmlData.get(), KitodoType.class);
+                    return MetsKitodoUtils.getFirstGenericTypeFromJaxbObjectList(xmlData.get(), KitodoType.class);
                 } catch (NoSuchElementException e) {
                     throw new NoSuchElementException("MdSec element with index: " + index + " does not have kitodo metadata");
                 }
