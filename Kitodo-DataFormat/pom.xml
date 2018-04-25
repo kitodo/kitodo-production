@@ -58,7 +58,7 @@
                 <version>3.0.2</version>
                 <executions>
                     <execution>
-                        <id>copy-files-on-build</id>
+                        <id>copy-kitodo-xsd</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>copy-resources</goal>
@@ -84,7 +84,7 @@
                 <executions>
                     <execution>
                         <phase>process-sources</phase>
-                        <id>metsKitodo</id>
+                        <id>generate-metsKitodo-classes</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
