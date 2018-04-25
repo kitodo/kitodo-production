@@ -143,9 +143,13 @@ public class MetsKitodoWrap {
                     .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
 
             if (xmlData.isPresent()) {
-                return MetsKitodoUtils.getFirstGenericTypeFromObjectList(xmlData.get(), KitodoType.class);
+                try {
+                    return MetsKitodoUtils.getFirstGenericTypeFromObjectList(xmlData.get(), KitodoType.class);
+                } catch (NoSuchElementException e) {
+                    throw new NoSuchElementException("MdSec element with index: " + index + " does not have kitodo metadata");
+                }
             }
-            throw new NoSuchElementException("MdSec element with index: " + index + " does not have Metadata");
+            throw new NoSuchElementException("MdSec element with index: " + index + " does not have data");
         }
         throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
     }

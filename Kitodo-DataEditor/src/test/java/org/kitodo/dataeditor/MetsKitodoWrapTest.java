@@ -18,7 +18,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.MetadataType;
@@ -82,19 +84,26 @@ public class MetsKitodoWrapTest {
             metadataType.getContent().get(0).toString());
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    @Test
     public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
+        expectedException.expect(NoSuchElementException.class);
+        expectedException.expectMessage("MdSec element with id: not existing was not found");
         metsKitodoWrap.getKitodoTypeByMdSecId("not existing");
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void shouldNotReadNotExistingMdSecByIndex() {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap();
+        expectedException.expect(NoSuchElementException.class);
+        expectedException.expectMessage("MdSec element with index: 0 does not exist");
         metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
     }
 
-    @Test(expected = NoSuchElementException.class)
+    @Test
     public void shouldNotReadNotExistingKitodoMetadataByIndex() {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap();
         MdSecType mdSecType = objectFactory.createMdSecType();
@@ -102,6 +111,8 @@ public class MetsKitodoWrapTest {
         mdSecTypeMdWrap.setXmlData(objectFactory.createMdSecTypeMdWrapXmlData());
         mdSecType.setMdWrap(mdSecTypeMdWrap);
         metsKitodoWrap.getMets().getDmdSec().add(mdSecType);
+        expectedException.expect(NoSuchElementException.class);
+        expectedException.expectMessage("MdSec element with index: 0 does not have kitodo metadata");
         metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
     }
 }
