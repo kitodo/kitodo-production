@@ -13,7 +13,7 @@
               xmlns:xsd="http://www.w3.org/2001/XMLSchema"
               xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
               version="2.1">
-    <bindings schemaLocation="../xsd/mets.xsd">
+    <bindings schemaLocation="../../../../target/downloaded-sources/xsd/mets.xsd">
         <schemaBindings>
             <package name="org.kitodo.dataformat.metsmodskitodo"/>
         </schemaBindings>

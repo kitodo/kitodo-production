@@ -12,7 +12,7 @@
 <jxb:bindings xmlns="http://java.sun.com/xml/ns/jaxb"
               xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
               version="2.1">
-    <bindings schemaLocation="../xsd/kitodo.xsd">
+    <bindings schemaLocation="../../../../target/downloaded-sources/xsd/kitodo.xsd">
         <schemaBindings>
             <package name="org.kitodo.dataformat.metsmodskitodo"/>
         </schemaBindings>
