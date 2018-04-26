@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Rectangle;
@@ -28,6 +29,7 @@ import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.WebDav;
+import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,6 +63,11 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
 import org.jdom.transform.XSLTransformException;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -220,7 +227,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * @return String
      */
     public String deleteContent() {
-        // deleteMetadataDirectory();
         try {
             URI ocr = fileService.getOcrDirectory(this.process);
             if (fileService.fileExist(ocr)) {
@@ -230,8 +236,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (fileService.fileExist(images)) {
                 fileService.delete(images);
             }
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Can not delete metadata directory", e);
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage("Can not delete metadata directory", logger, e);
         }
 
         Helper.setMeldung("Content deleted");
@@ -272,7 +278,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 renameImageDirectories();
                 renameOcrDirectories();
                 renameDefinedDirectories();
-            } catch (Exception e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage("errorRenaming", new Object[] {Helper.getTranslation("directory") }, logger, e);
             }
 
@@ -335,7 +341,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (fileService.fileExist(ocrDirectory)) {
                 fileService.delete(ocrDirectory);
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("Can not delete metadata directory", logger, e);
         }
     }
@@ -622,7 +628,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
-        } catch (Exception e) {
+        } catch (TypeNotAllowedForParentException | ReadException | ExportFileException
+                | MetadataTypeNotAllowedException | WriteException | PreferencesException | IOException
+                | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -638,7 +646,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
-        } catch (Exception e) {
+        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
+                | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -654,7 +663,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
-        } catch (Exception e) {
+        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
+                | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -666,21 +676,17 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void exportDMSPage() {
         ExportDms export = new ExportDms();
-        Boolean flagError = false;
         for (ProcessDTO processDTO : (List<ProcessDTO>) this.page.getListReload()) {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
-            } catch (Exception e) {
+                Helper.setMeldung(null, "ExportFinished", "");
+            } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
+                    | ReadException | TypeNotAllowedForParentException | IOException | ExportFileException
+                    | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("prozess"), processDTO.getId() }, logger, e);
-                flagError = true;
             }
-        }
-        if (flagError) {
-            Helper.setFehlerMeldung("ExportFinishedWithErrors");
-        } else {
-            Helper.setMeldung(null, "ExportFinished", "");
         }
     }
 
@@ -693,11 +699,13 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             try {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
-            } catch (Exception e) {
+                Helper.setMeldung(null, "ExportFinished", "");
+            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
+                    | TypeNotAllowedForParentException | IOException | ExportFileException | DAOException
+                    | RuntimeException e) {
                 Helper.setErrorMessage("ExportError", logger, e);
             }
         }
-        Helper.setMeldung(null, "ExportFinished", "");
     }
 
     /**
@@ -709,7 +717,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (Process proz : (List<Process>) this.page.getCompleteList()) {
             try {
                 export.startExport(proz);
-            } catch (Exception e) {
+            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
+                    | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("ExportError", logger, e);
             }
         }
@@ -756,10 +765,10 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             myDav.downloadToHome(this.process, false);
         } else {
             Helper.setMeldung(null,
-                    Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
-                            + Helper.getTranslation("isInUse"),
-                    serviceManager.getUserService()
-                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
+                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
+                        + Helper.getTranslation("isInUse"),
+                serviceManager.getUserService()
+                        .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, true);
         }
@@ -796,10 +805,10 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 webDav.downloadToHome(process, false);
             } else {
                 Helper.setMeldung(null,
-                        Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
-                                + Helper.getTranslation("isInUse"),
-                        serviceManager.getUserService()
-                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
+                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    serviceManager.getUserService()
+                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         } catch (DAOException e) {
@@ -818,10 +827,10 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 webDav.downloadToHome(process, false);
             } else {
                 Helper.setMeldung(null,
-                        Helper.getTranslation("directory ") + " " + process.getTitle() + " "
-                                + Helper.getTranslation("isInUse"),
-                        serviceManager.getUserService()
-                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
+                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    serviceManager.getUserService()
+                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         }
@@ -1189,7 +1198,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         GoobiScript gs = new GoobiScript();
         try {
             gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getCompleteList()),
-                    this.kitodoScript);
+                this.kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1483,7 +1492,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 document.close();
                 out.flush();
                 facesContext.responseComplete();
-            } catch (Exception e) {
+            } catch (IOException | DocumentException | RuntimeException e) {
                 Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
             }
         }
@@ -1518,10 +1527,12 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         }
     }
 
+    @Override
     public boolean isShowClosedProcesses() {
         return this.showClosedProcesses;
     }
 
+    @Override
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
     }
@@ -1533,6 +1544,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      *            boolean flag signaling whether inactive projects should be
      *            displayed or not
      */
+    @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
     }
@@ -1543,6 +1555,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * @return parameter controlling whether inactive projects should be displayed
      *         or not
      */
+    @Override
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }
@@ -1581,7 +1594,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(getUser()) + ")";
             this.process.setWikiField(
-                    WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
+                WikiFieldHelper.getWikiMessage(this.process, this.process.getWikiField(), "user", message));
             this.addToWikiField = "";
             try {
                 serviceManager.getProcessService().save(process);

@@ -14,6 +14,7 @@ package de.sub.goobi.helper;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.forms.AktuelleSchritteForm;
+import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
@@ -27,6 +28,11 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -140,8 +146,7 @@ public class BatchStepHelper extends BatchHelper {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
                 Helper.setMeldung("Property saved");
             } catch (DataException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("Properties could not be saved");
+                Helper.setErrorMessage("Properties could not be saved", logger, e);
             }
         }
     }
@@ -150,7 +155,6 @@ public class BatchStepHelper extends BatchHelper {
      * Save current property for all.
      */
     public void saveCurrentPropertyForAll() {
-        boolean error = false;
         List<Property> ppList = getProperties();
         for (Property pp : ppList) {
             this.property = pp;
@@ -178,15 +182,12 @@ public class BatchStepHelper extends BatchHelper {
 
                 try {
                     this.serviceManager.getProcessService().save(process);
+                    Helper.setMeldung("propertySaved");
                 } catch (DataException e) {
-                    error = true;
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung("Properties for process " + process.getTitle() + " could not be saved");
+                    Helper.setErrorMessage("Properties for process " + process.getTitle() + " could not be saved",
+                        logger, e);
                 }
             }
-        }
-        if (!error) {
-            Helper.setMeldung("propertySaved");
         }
     }
 
@@ -219,8 +220,7 @@ public class BatchStepHelper extends BatchHelper {
             this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
-            Helper.setFehlerMeldung("correctionReportProblem");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("correctionReportProblem", logger, e);
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
         this.problemTask = "";
@@ -241,8 +241,7 @@ public class BatchStepHelper extends BatchHelper {
                 setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
-                Helper.setFehlerMeldung("correctionReportProblem");
-                logger.error(e.getMessage(), e);
+                Helper.setErrorMessage("correctionReportProblem", logger, e);
             }
         }
         setProblem(serviceManager.getWorkflowService().getProblem());
@@ -294,8 +293,7 @@ public class BatchStepHelper extends BatchHelper {
             setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
             saveStep();
         } catch (DAOException | DataException e) {
-            Helper.setFehlerMeldung("correctionSolveProblem");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
         this.solutionTask = "";
@@ -318,8 +316,7 @@ public class BatchStepHelper extends BatchHelper {
                 setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
-                Helper.setFehlerMeldung("correctionSolveProblem");
-                logger.error(e.getMessage(), e);
+                Helper.setErrorMessage("correctionSolveProblem", logger, e);
             }
         }
         setSolution(serviceManager.getWorkflowService().getSolution());
@@ -332,7 +329,7 @@ public class BatchStepHelper extends BatchHelper {
     /**
      * Temporal method to unify reportProblem and solveProblem methods in
      * WorkflowService.
-     * 
+     *
      * @return id of task to set for problem/solution
      */
     private Integer getIdForCorrection(String taskTitle) {
@@ -512,9 +509,9 @@ public class BatchStepHelper extends BatchHelper {
             ExportDms export = new ExportDms();
             try {
                 export.startExport(step.getProcess());
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Error on export", e.getMessage());
-                logger.error(e.getMessage(), e);
+            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
+                    | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
+                Helper.setErrorMessage("Error on export", logger, e);
             }
         }
     }
@@ -570,9 +567,8 @@ public class BatchStepHelper extends BatchHelper {
                             serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()))) {
                             error = true;
                         }
-                    } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
-                        Helper.setFehlerMeldung("Error on image validation: ", e);
+                    } catch (RuntimeException e) {
+                        Helper.setErrorMessage("Error on image validation: ", logger, e);
                     }
                 }
 

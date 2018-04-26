@@ -40,6 +40,8 @@ import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
@@ -69,9 +71,8 @@ public class MetadataValidationService {
         FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(Helper.getTranslation("MetadataReadError") + process.getTitle(), e.getMessage());
+        } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
+            Helper.setErrorMessage(Helper.getTranslation("MetadataReadError") + process.getTitle(), logger, e);
             return false;
         }
         return validate(gdzfile, prefs, process);
@@ -96,10 +97,9 @@ public class MetadataValidationService {
         DigitalDocumentInterface dd;
         try {
             dd = gdzfile.getDigitalDocument();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(),
-                e.getMessage());
+        } catch (PreferencesException | RuntimeException e) {
+            Helper.setErrorMessage(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(), logger,
+                e);
             return false;
         }
 
@@ -168,8 +168,7 @@ public class MetadataValidationService {
         try {
             seitenOhneDocstructs = checkSeitenOhneDocstructs(gdzfile);
         } catch (PreferencesException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("[" + process.getTitle() + "] Can not check pages without docstructs: ");
+            Helper.setErrorMessage("[" + process.getTitle() + "] Can not check pages without docstructs: ", logger, e);
             result = false;
         }
         if (isStringListIncorrect(seitenOhneDocstructs, "MetadataPaginationPages")) {
@@ -201,8 +200,8 @@ public class MetadataValidationService {
                 serviceManager.getProcessService().getImagesTifDirectory(true, process))) {
                 result = false;
             }
-        } catch (Exception e) {
-            Helper.setFehlerMeldung(process.getTitle() + ": ", e);
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage(process.getTitle() + ": ", logger, e);
             result = false;
         }
 
@@ -218,8 +217,7 @@ public class MetadataValidationService {
                 return false;
             }
         } catch (InvalidImagesException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(process.getTitle() + ": ", e);
+            Helper.setErrorMessage(process.getTitle() + ": ", logger, e);
             result = false;
         }
 
@@ -264,8 +262,8 @@ public class MetadataValidationService {
                 return false;
             }
         } catch (UghHelperException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(this.process.getTitle() + ": " + "Verify aborted, error: ", e.getMessage());
+            Helper.setErrorMessage(this.process.getTitle() + ": " + "Verify aborted, error: ", e.getMessage(), logger,
+                e);
             return false;
         }
     }
@@ -369,8 +367,7 @@ public class MetadataValidationService {
         try {
             cp = new ConfigProjects(this.process.getProject().getTitle());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "IOException", e.getMessage());
+            Helper.setErrorMessage(process.getTitle(), logger, e);
             return errorList;
         }
         int count = cp.getParamList("validate.metadata").size();
@@ -386,9 +383,8 @@ public class MetadataValidationService {
             try {
                 mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
             } catch (UghHelperException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("[" + this.process.getTitle() + "] " + "Metadatatype does not exist: ",
-                    propMetadatatype);
+                Helper.setErrorMessage("[" + this.process.getTitle() + "] " + "Metadatatype does not exist: ",
+                    propMetadatatype, logger, e);
             }
             /*
              * wenn das Metadatum des FirstChilds überprüfen werden soll, dann
@@ -444,9 +440,8 @@ public class MetadataValidationService {
             if (this.autoSave) {
                 serviceManager.getFileService().writeMetadataFile(gdzfile, process);
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("Error while writing metadata: " + process.getTitle(), e);
+        } catch (PreferencesException | WriteException | IOException | RuntimeException e) {
+            Helper.setErrorMessage("Error while writing metadata: ", process.getTitle(), logger, e);
         }
     }
 

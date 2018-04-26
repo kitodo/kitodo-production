@@ -35,6 +35,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
@@ -111,13 +112,14 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (Exception e) {
+        } catch (WriteException | PreferencesException | TypeNotAllowedForParentException | ReadException | IOException
+                | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
+                logger.error("Export abgebrochen, xml-LeseFehler", e);
             } else {
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
+                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
             }
-            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
     }
@@ -152,16 +154,14 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
                 }
                 return false;
             } catch (RuntimeException e) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+                    Helper.setErrorMessage("dataCopier.runtimeException", e.getMessage(), logger, e);
                 }
                 return false;
             }
@@ -261,14 +261,13 @@ public class ExportDms extends ExportMets {
 
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
-        } catch (Exception e) {
+        } catch (PreferencesException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
+                logger.error("Export abgebrochen, xml-LeseFehler", e);
             } else {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
+                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
             }
-            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return null;
         }
     }
@@ -283,12 +282,11 @@ public class ExportDms extends ExportMets {
             }
             directoryDownload(process, destinationDirectory);
             return true;
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
+                Helper.setErrorMessage("Export canceled, Process: " + process.getTitle(), logger, e);
             }
             return false;
         }
@@ -329,11 +327,10 @@ public class ExportDms extends ExportMets {
             } catch (InterruptedException e) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
+                    logger.error(processTitle + ": error on export", e);
                 } else {
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung(processTitle + ": error on export - ", e.getMessage());
+                    Helper.setErrorMessage(processTitle + ": error on export - ", e.getMessage(), logger, e);
                 }
-                logger.error(processTitle + ": error on export", e);
             }
             if (asyncThread.result.length() > 0) {
                 if (exportDmsTask != null) {
@@ -509,9 +506,8 @@ public class ExportDms extends ExportMets {
                 } catch (IOException e) {
                     handleException(e);
                     throw e;
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     handleException(e);
-                    logger.error("could not create destination directory", e);
                 }
             }
 
@@ -539,11 +535,10 @@ public class ExportDms extends ExportMets {
     private void handleException(Exception e) {
         if (exportDmsTask != null) {
             exportDmsTask.setException(e);
+            logger.error("could not create destination directory", e);
         } else {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+            Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger, e);
         }
-        logger.error("could not create destination directory", e);
     }
 
     /**

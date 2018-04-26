@@ -62,7 +62,7 @@ public class HibernateHelper implements Serializable {
             if (session == null) {
                 session = HibernateUtil.getSession();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             session = HibernateUtil.getSession();
         }
         if (!session.isOpen()) {

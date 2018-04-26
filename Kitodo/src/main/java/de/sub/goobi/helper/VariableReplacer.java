@@ -291,8 +291,7 @@ public class VariableReplacer {
             try {
                 mdt = UghHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e.toString(), logger, e);
                 return "";
             }
 

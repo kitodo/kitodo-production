@@ -220,7 +220,7 @@ public class TemplateBaseForm extends BasisForm {
 
     /**
      * Save task.
-     * 
+     *
      * @param task
      *            to save
      */
@@ -241,11 +241,8 @@ public class TemplateBaseForm extends BasisForm {
         if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
             try {
                 Helper.getHibernateSession().refresh(baseBean);
-            } catch (Exception e) {
-                if (logger.isDebugEnabled()) {
-                    Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) },
-                            logger, e);
-                }
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
             }
         }
     }

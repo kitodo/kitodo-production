@@ -62,7 +62,8 @@ import org.hibernate.LazyInitializationException;
  *
  * @author Kevin Chipalowsky and Ivelin Ivanov
  */
-@WebFilter(filterName = "RequestControlFilter", urlPatterns = "*.jsf", initParams = {@WebInitParam(name = "excludePattern", value = ".*\\.(js|css|svg)\\.jsf") })
+@WebFilter(filterName = "RequestControlFilter", urlPatterns = "*.jsf", initParams = {
+        @WebInitParam(name = "excludePattern", value = ".*\\.(js|css|svg)\\.jsf") })
 public class RequestControlFilter implements Filter {
     private static final Logger logger = LogManager.getLogger(RequestControlFilter.class);
 
@@ -160,8 +161,7 @@ public class RequestControlFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (LazyInitializationException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(Helper.getTranslation("aLazyInitializationErrorOcurred"));
+            Helper.setErrorMessage(Helper.getTranslation("aLazyInitializationErrorOcurred"), logger, e);
         } finally {
             releaseQueuedRequest(httpRequest);
         }

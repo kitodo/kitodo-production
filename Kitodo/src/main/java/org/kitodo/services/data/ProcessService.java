@@ -188,8 +188,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false,
-                false);
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false);
             if (!form.isShowClosedProcesses()) {
                 query.must(getQuerySortHelperStatus(false));
             }
@@ -663,14 +662,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setCreationDate(processJSONObject.getString("creationDate"));
         processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, "properties"));
         processDTO.setProperties(
-                convertRelatedJSONObjectToDTO(processJSONObject, "properties", serviceManager.getPropertyService()));
+            convertRelatedJSONObjectToDTO(processJSONObject, "properties", serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setSortHelperArticles(processJSONObject.getInt("sortHelperArticles"));
         processDTO.setSortHelperDocstructs(processJSONObject.getInt("sortHelperDocstructs"));
         processDTO.setSortHelperImages(processJSONObject.getInt("sortHelperImages"));
         processDTO.setSortHelperMetadata(processJSONObject.getInt("sortHelperMetadata"));
         processDTO.setTifDirectoryExists(
-                checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+            checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
@@ -693,7 +692,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject,
         // "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
-        //TODO: leave it for now - right now it displays only status
+        // TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
@@ -743,9 +742,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
+            } catch (DataException | RuntimeException e) {
+                Helper.setErrorMessage(Helper.getTranslation("userNotFound"), logger, e);
             }
         }
         return result;
@@ -762,9 +760,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
                 result = serviceManager.getUserService().getById(Integer.valueOf(userID));
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(Helper.getTranslation("userNotFound"), e);
+            } catch (DAOException | RuntimeException e) {
+                Helper.setErrorMessage(Helper.getTranslation("userNotFound"), logger, e);
             }
         }
         return result;
@@ -861,7 +858,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
-                        processBaseURI, ProcessSubType.IMAGE, "");
+                    processBaseURI, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifDirectory = folder;
@@ -874,7 +871,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         tifDirectory = getImageDirectory(useFallBack, dir, tifDirectory);
 
         URI result = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE,
-                null);
+            null);
 
         if (tifDirectory == null) {
             tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
@@ -1211,21 +1208,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (Object task : tasks) {
             if (task instanceof Task) {
-                if (((Task)task).getProcessingStatusEnum() == TaskStatus.DONE) {
+                if (((Task) task).getProcessingStatusEnum() == TaskStatus.DONE) {
                     closed++;
-                } else if (((Task)task).getProcessingStatusEnum() == TaskStatus.OPEN) {
+                } else if (((Task) task).getProcessingStatusEnum() == TaskStatus.OPEN) {
                     open++;
-                } else if (((Task)task).getProcessingStatusEnum() == TaskStatus.LOCKED) {
+                } else if (((Task) task).getProcessingStatusEnum() == TaskStatus.LOCKED) {
                     locked++;
                 } else {
                     inProcessing++;
                 }
             } else if (task instanceof TaskDTO) {
-                if (((TaskDTO)task).getProcessingStatus() == TaskStatus.DONE) {
+                if (((TaskDTO) task).getProcessingStatus() == TaskStatus.DONE) {
                     closed++;
-                } else if (((TaskDTO)task).getProcessingStatus() == TaskStatus.OPEN) {
+                } else if (((TaskDTO) task).getProcessingStatus() == TaskStatus.OPEN) {
                     open++;
-                } else if (((TaskDTO)task).getProcessingStatus() == TaskStatus.LOCKED) {
+                } else if (((TaskDTO) task).getProcessingStatus() == TaskStatus.LOCKED) {
                     locked++;
                 } else {
                     inProcessing++;
@@ -1281,8 +1278,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             ff.read(serviceManager.getFileService().getFile(metadataFileUri).toString());
         } catch (ReadException e) {
             if (e.getMessage().startsWith("Parse error at line -1")) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("metadataCorrupt");
+                Helper.setErrorMessage("metadataCorrupt", logger, e);
             } else {
                 throw e;
             }
@@ -1434,7 +1430,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             DocketInterface module = initialiseDocketModule();
             File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
-                    xsltFile);
+                xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
         }
@@ -1587,7 +1583,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
-                    processDir.replace("(processtitle)", process.getTitle()));
+                processDir.replace("(processtitle)", process.getTitle()));
         }
     }
 
@@ -1746,9 +1742,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             newfile.setDigitalDocument(gdzfile.getDigitalDocument());
             gdzfile = newfile;
-        } catch (Exception e) {
-            Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
-            logger.error("Export abgebrochen, xml-LeseFehler", e);
+        } catch (ReadException | RuntimeException e) {
+            Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
             return false;
         }
 
@@ -1774,21 +1769,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             // remove old import folder
             if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                        "Import folder could not be cleared");
+                    "Import folder could not be cleared");
                 return false;
             }
             // remove old success folder
             File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
             if (!fileService.delete(successFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                        "Success folder could not be cleared");
+                    "Success folder could not be cleared");
                 return false;
             }
             // remove old error folder
             File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
             if (!fileService.delete(errorFile.toURI())) {
                 Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
-                        "Error folder could not be cleared");
+                    "Error folder could not be cleared");
                 return false;
             }
 
@@ -1807,9 +1802,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             directoryDownload(process, targetDirectory);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage("Export canceled, Process: " + process.getTitle(), logger, e);
             return false;
         }
 
@@ -1860,12 +1854,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 new DataCopier(rules).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+                Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
                 return false;
             } catch (RuntimeException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+                Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
                 return false;
             }
         }
@@ -1992,9 +1984,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     } else {
                         throw new IOException("No logged user!");
                     }
-                } catch (Exception e) {
-                    Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
-                    logger.error("could not create destination directory", e);
+                } catch (RuntimeException e) {
+                    Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger,
+                        e);
                 }
             }
 
@@ -2184,7 +2176,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI dir;
         try {
             dir = getImagesTifDirectory(true, process);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }
 
@@ -2213,7 +2205,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
                     + processDir.replace("(processtitle)", myProcess.getTitle()));
             URI destinationDirectory = URI.create(
-                    targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
+                targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
 
             if (fileService.isDirectory(sourceDirectory)) {
                 fileService.copyFile(sourceDirectory, destinationDirectory);
@@ -2311,8 +2303,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return the list of sorted processes as ProcessDTO objects
      */
     public List<ProcessDTO> findOpenAndActiveProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActive(false, true, sort),
-                false);
+        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActive(false, true, sort), false);
     }
 
     /**

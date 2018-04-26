@@ -192,12 +192,12 @@ public class LocalMetadataSelector extends MetadataSelector {
             // copy rules aren’t related to the rule set but depend on it, so
             // copy rules that don’t work with the current rule set are ignored
             logger.debug("Cannot create metadata element {}: The type isn’t defined by the rule set used.",
-                    selector.getName());
+                selector.getName());
             return;
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             // copy rule failed, skip it
             logger.debug("Cannot create metadata element {}: Accessing the rule set failed with exception: {}",
-                    selector.getName(), e.getMessage());
+                selector.getName(), e.getMessage());
             return;
         }
         try {

@@ -138,9 +138,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
                 throw new RuntimeException();
             }
             logger.info("Created new process: {}", id);
-        } catch (Exception exited) {
-            logger.error("Failed to create new process: " + id, exited);
-            throw exited;
+        } catch (RuntimeException e) {
+            logger.error("Failed to create new process: " + id, e);
+            throw e;
         }
     }
 

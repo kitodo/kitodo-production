@@ -568,7 +568,7 @@ public class MetadatenImagesHelper {
         URI dir;
         try {
             dir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */

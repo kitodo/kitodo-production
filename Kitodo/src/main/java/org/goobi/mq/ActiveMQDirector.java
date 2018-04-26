@@ -105,7 +105,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             connection.start();
             connection.setExceptionListener(this); // ActiveMQDirector.onException()
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        } catch (Exception e) {
+        } catch (JMSException | RuntimeException e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
         }
         return null;
@@ -130,7 +130,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
                     messageChecker = session.createConsumer(queue);
                     messageChecker.setMessageListener(processor);
                     processor.saveChecker(messageChecker);
-                } catch (Exception e) {
+                } catch (JMSException | RuntimeException e) {
                     logger.fatal("Error setting up monitoring for \"" + processor.getQueueName() + "\": Giving up.", e);
                 }
             }
@@ -160,7 +160,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             result.setDeliveryMode(DeliveryMode.PERSISTENT);
             result.setTimeToLive(ConfigCore.getLongParameter("activeMQ.results.timeToLive", 604800000));
             return result;
-        } catch (Exception e) {
+        } catch (JMSException | RuntimeException e) {
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);
         }
         return null;

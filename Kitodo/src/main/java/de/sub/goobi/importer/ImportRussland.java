@@ -347,7 +347,7 @@ public class ImportRussland {
             // if (md.getValue().equals(zblID)) {
             // logger.info("------------ Artikel gefunden -------------");
             inStruct.addMetadata(md);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Import fehlgeschlagen: " + inDetail, e);
         }
     }

@@ -111,7 +111,7 @@ public class ExportPdf extends ExportMets {
                     completeResponse(context, kitodoContentServerUrl, process);
                 }
                 fileService.delete(metaFile);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 String text = "error while pdf creation: " + e.getMessage();
                 URI uri = userHome.resolve(process.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {

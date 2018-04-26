@@ -25,7 +25,6 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Task;
 
@@ -59,7 +58,8 @@ public class Import {
         this.importMessage = "";
         try {
             read();
-        } catch (Exception e) {
+        } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException | ReadException | PreferencesException
+                | WriteException | IOException | WrongImportFileException | RuntimeException e) {
             this.importError = "An error occurred: " + e.getMessage();
             logger.error(e.getMessage(), e);
         }
@@ -96,7 +96,7 @@ public class Import {
 
     /**
      * Get message with import error.
-     * 
+     *
      * @return import error as String
      */
     public String getImportError() {
@@ -105,7 +105,7 @@ public class Import {
 
     /**
      * Get message with import information.
-     * 
+     *
      * @return import message as String
      */
     public String getImportMessage() {
@@ -114,7 +114,7 @@ public class Import {
 
     /**
      * Get uploaded file.
-     * 
+     *
      * @return uploaded file
      */
     public UploadedFile getUploadedFile() {
@@ -123,7 +123,7 @@ public class Import {
 
     /**
      * Set uploaded file.
-     * 
+     *
      * @param uploadedFile
      *            as UploadedFile
      */
@@ -133,7 +133,7 @@ public class Import {
 
     /**
      * Get task for import.
-     * 
+     *
      * @return Task object
      */
     public Task getTask() {
@@ -142,7 +142,7 @@ public class Import {
 
     /**
      * Set task for import.
-     * 
+     *
      * @param task
      *            as Task object
      */

@@ -660,8 +660,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 }
             }
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("IOException: ", e.getMessage());
+            Helper.setErrorMessage("IOException: ", logger, e);
         }
         return executedSuccessful;
     }

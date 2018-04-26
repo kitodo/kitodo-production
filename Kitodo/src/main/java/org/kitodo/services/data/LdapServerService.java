@@ -19,16 +19,23 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 import java.util.Objects;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -87,7 +94,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
     /**
      * Saves ldap server to database.
-     * 
+     *
      * @param ldapServer
      *            The ldap server.
      */
@@ -97,7 +104,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
     /**
      * Removes ldap server from database.
-     * 
+     *
      * @param ldapServer
      *            The ldap server.
      */
@@ -107,7 +114,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
     /**
      * Removes ldap server from database by id.
-     * 
+     *
      * @param id
      *            The ldap server id.
      */
@@ -440,7 +447,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
     private String getStringForAttribute(Attributes attrs, String identifier) {
         try {
             return attrs.get(identifier).toString();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return " ";
         }
     }
@@ -461,8 +468,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             rueckgabe = (String) la.get(0);
             ctx.close();
         } catch (NamingException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(e.getMessage());
+            Helper.setErrorMessage(e.getMessage(), logger, e);
         }
         return rueckgabe;
     }
@@ -557,7 +563,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             return new BasicAttribute(identifier, LdapUser.toHexString(hash));
             // TODO: Don't catch super class exception, make sure that
             // the password isn't logged here
-        } catch (Exception e) {
+        } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchAlgorithmException | NoSuchPaddingException
+                | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
             logger.error(e.getMessage(), e);
             return null;
         }
@@ -589,7 +596,8 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 ks.setCertificateEntry("ROOTCERT", cacert);
                 ks.setCertificateEntry("PDC", servercert);
                 ks.store(ksos, password);
-            } catch (Exception e) {
+            } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException
+                    | RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
 

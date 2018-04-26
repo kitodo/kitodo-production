@@ -109,7 +109,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     logger.error(e.getMessage(), e);
                     logger.trace("17");
                     Thread.currentThread().interrupt();
-                } catch (Exception e) {
+                } catch (IOException | DAOException | RuntimeException e) {
                     logger.error(e.getMessage(), e);
                 }
             }
@@ -170,7 +170,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return int
      */
     public static int generateProcess(String processTitle, Template template, URI dir, String digitalCollection,
-                                      String updateStrategy) throws IOException {
+            String updateStrategy) throws IOException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -186,7 +186,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
@@ -208,7 +208,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
@@ -346,7 +346,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             }
             try {
                 fileService.delete(metsfilename);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }

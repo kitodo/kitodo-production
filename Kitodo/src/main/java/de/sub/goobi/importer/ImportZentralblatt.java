@@ -35,7 +35,6 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
@@ -172,8 +171,7 @@ public class ImportZentralblatt {
             // save file in the right place
             gdzfile.write(ConfigCore.getKitodoDataDirectory() + processId + File.separator + "meta.xml");
         } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("Import aborted: ", e.getMessage());
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage("Import aborted: ", logger, e);
         }
         logger.debug("ParsenZentralblatt() - Ende");
     }

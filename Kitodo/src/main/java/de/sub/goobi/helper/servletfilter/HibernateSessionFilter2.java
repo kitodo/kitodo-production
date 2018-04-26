@@ -13,6 +13,8 @@ package de.sub.goobi.helper.servletfilter;
 
 import de.sub.goobi.helper.exceptions.GUIExceptionWrapper;
 
+import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -46,12 +48,12 @@ public class HibernateSessionFilter2 implements Filter {
             session = hsl.getSession();
         }
         if (session != null && !session.isConnected()) {
-            //TODO: check why is it empty
+            // TODO: check why is it empty
         }
 
         try {
             chain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             throw new ServletException(new GUIExceptionWrapper("Unexpected Error.", e));
         } finally {
 
@@ -75,7 +77,7 @@ public class HibernateSessionFilter2 implements Filter {
 
     /**
      * Destroy.
-    */
+     */
     @Override
     public void destroy() {
         // Nothing necessary

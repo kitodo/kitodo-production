@@ -108,7 +108,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set activeTabId.
      *
-     * @param activeTabId as int
+     * @param activeTabId
+     *            as int
      */
     public void setActiveTabId(int activeTabId) {
         this.activeTabId = activeTabId;
@@ -201,8 +202,8 @@ public class ProzesskopieForm implements Serializable {
         public void selectClick() {
             try {
                 importHit(hit);
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Error on reading opac ", e);
+            } catch (PreferencesException | RuntimeException e) {
+                Helper.setErrorMessage("Error on reading opac ", logger, e);
             } finally {
                 hitlistPage = -1;
             }
@@ -321,7 +322,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage("IOException", logger, e);
             return;
         }
 
@@ -456,7 +457,7 @@ public class ProzesskopieForm implements Serializable {
             } else {
                 Helper.setFehlerMeldung("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
-        } catch (Exception e) {
+        } catch (FileNotFoundException | PreferencesException | RuntimeException e) {
             Helper.setErrorMessage("Error on reading OPAC '" + opacKatalog + "'", logger, e);
         }
     }
@@ -536,12 +537,12 @@ public class ProzesskopieForm implements Serializable {
             try {
                 new DataCopier(rules).process(data);
             } catch (ConfigurationException e) {
-                Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
-            } catch (RuntimeException exception) {
-                if (RuntimeException.class.equals(exception.getClass())) {
-                    Helper.setFehlerMeldung("dataCopier.runtimeException", exception.getMessage());
+                Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
+            } catch (RuntimeException e) {
+                if (RuntimeException.class.equals(e.getClass())) {
+                    Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
                 } else {
-                    throw exception;
+                    throw e;
                 }
             }
         }
@@ -599,8 +600,7 @@ public class ProzesskopieForm implements Serializable {
                             }
                         }
                     } catch (UghHelperException e) {
-                        logger.error(e.getMessage(), e);
-                        Helper.setFehlerMeldung(e.getMessage(), "");
+                        Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
                     if (field.getValue() != null && !field.getValue().equals("")) {
                         field.setValue(field.getValue().replace("&amp;", "&"));
@@ -648,8 +648,8 @@ public class ProzesskopieForm implements Serializable {
         }
         try {
             this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Error on reading template-metadata ", e);
+        } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
+            Helper.setErrorMessage("Error on reading template-metadata ", logger, e);
         }
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
@@ -659,15 +659,10 @@ public class ProzesskopieForm implements Serializable {
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
         } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("Error on creating process", e);
-            logger.error("Error on creating process", e);
+            Helper.setErrorMessage("Error on creating process", logger, e);
         } catch (RuntimeException e) {
-            /*
-             * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
-             * werden
-             */
+            logger.debug("das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden", e);
         }
-
         return null;
     }
 
@@ -708,7 +703,7 @@ public class ProzesskopieForm implements Serializable {
                     amount = serviceManager.getProcessService()
                             .findNumberOfProcessesWithTitle(this.prozessKopie.getTitle());
                 } catch (DataException e) {
-                    Helper.setFehlerMeldung("Error on reading process information", e.getMessage());
+                    Helper.setErrorMessage("Error on reading process information", logger, e);
                     valide = false;
                 }
                 if (amount > 0) {
@@ -807,14 +802,15 @@ public class ProzesskopieForm implements Serializable {
                             ruleset);
                     }
                 }
-            } catch (NullPointerException | IndexOutOfBoundsException e) { // if
-                // getAllAllowedDocStructTypes()
-                // returns null
-                Helper.setFehlerMeldung("DocStrctType is configured as anchor but has no allowedchildtype.",
+            } catch (NullPointerException // if getAllAllowedDocStructTypes()
+                    // returns null
+                    | IndexOutOfBoundsException e) {
+                Helper.setErrorMessage("DocStrctType is configured as anchor but has no allowedchildtype.",
                     populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
-                            : null);
-            } catch (UGHException catchAll) {
-                Helper.setErrorMessage(catchAll.getMessage(), logger, catchAll);
+                            : null,
+                    logger, e);
+            } catch (UGHException e) {
+                Helper.setErrorMessage(e.getMessage(), logger, e);
             }
 
             for (AdditionalField field : this.additionalFields) {
@@ -870,7 +866,7 @@ public class ProzesskopieForm implements Serializable {
                                 }
                             }
                         }
-                    } catch (Exception e) {
+                    } catch (UghHelperException | RuntimeException e) {
                         Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
@@ -1024,9 +1020,9 @@ public class ProzesskopieForm implements Serializable {
                             }
                             try {
                                 enricher.addMetadata(higherElement.getValue());
-                            } catch (UGHException didNotWork) {
-                                Helper.setErrorMessage("errorAdding",
-                                    new Object[] {Helper.getTranslation("metadata") }, logger, didNotWork);
+                            } catch (UGHException e) {
+                                Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") },
+                                    logger, e);
                             }
                         }
                     }
@@ -1280,7 +1276,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set template.
      *
-     * @param template as Template object
+     * @param template
+     *            as Template object
      */
     public void setTemplate(Template template) {
         this.template = template;
@@ -1299,7 +1296,9 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The method getVisibleAdditionalFields returns a list of visible additional fields
+     * The method getVisibleAdditionalFields returns a list of visible
+     * additional fields.
+     *
      * @return list of AdditionalField
      */
     public List<AdditionalField> getVisibleAdditionalFields() {
@@ -1393,9 +1392,8 @@ public class ProzesskopieForm implements Serializable {
     public List<String> getAllOpacCatalogues() {
         try {
             return ConfigOpac.getAllCatalogueTitles();
-        } catch (Exception e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
             return new ArrayList<>();
         }
     }
@@ -1408,9 +1406,8 @@ public class ProzesskopieForm implements Serializable {
     public List<ConfigOpacDoctype> getAllDoctypes() {
         try {
             return ConfigOpac.getAllDoctypes();
-        } catch (Exception e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
             return new ArrayList<>();
         }
     }
@@ -1694,9 +1691,8 @@ public class ProzesskopieForm implements Serializable {
                 /* wenn der Doctype angegeben werden soll */
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
-                } catch (Exception e) {
-                    logger.error("Error while reading von opac-config", e);
-                    Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+                } catch (FileNotFoundException | RuntimeException e) {
+                    Helper.setErrorMessage("Error while reading von opac-config", logger, e);
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */

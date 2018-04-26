@@ -140,14 +140,8 @@ public class FileManipulation {
             }
 
             Helper.setMeldung(Helper.getTranslation("metsEditorFileUploadSuccessful"));
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (MetadataTypeNotAllowedException e) {
-            logger.error(e.getMessage(), e);
+        } catch (IOException | TypeNotAllowedForParentException | MetadataTypeNotAllowedException e) {
+            Helper.setErrorMessage("uploadFailed", logger, e);
         } finally {
             if (inputStream != null) {
                 try {

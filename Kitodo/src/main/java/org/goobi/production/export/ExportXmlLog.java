@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -105,8 +106,8 @@ public class ExportXmlLog {
             outp.output(doc, os);
             os.close();
 
-        } catch (Exception e) {
-            throw new IOException(e);
+        } catch (IOException | RuntimeException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -504,7 +505,8 @@ public class ExportXmlLog {
                     fields.put(name, value);
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
             fields = new HashMap<>();
         }
         return fields;
@@ -526,7 +528,8 @@ public class ExportXmlLog {
                     nss.put(name, value);
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
             nss = new HashMap<>();
         }
         return nss;

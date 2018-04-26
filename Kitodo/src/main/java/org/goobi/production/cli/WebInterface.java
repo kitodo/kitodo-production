@@ -32,7 +32,7 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
-@WebServlet(name = "WebInterface", urlPatterns = {"/wi"})
+@WebServlet(name = "WebInterface", urlPatterns = {"/wi" })
 public class WebInterface extends HttpServlet {
     private static final Logger logger = LogManager.getLogger(WebInterface.class);
     private static final long serialVersionUID = 6187229284187412768L;
@@ -55,7 +55,7 @@ public class WebInterface extends HttpServlet {
                 Map<String, String[]> map = req.getParameterMap();
                 String[] pwMap = map.get("token");
                 password = pwMap[0];
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 resp.setContentType("");
                 generateAnswer(resp, 401, "Internal error", "Missing credentials");
                 return;
@@ -77,7 +77,7 @@ public class WebInterface extends HttpServlet {
             if (command == null) {
                 // error, no command found
                 generateAnswer(resp, 400, "Empty command",
-                        "No command given. Use help as command to get more information.");
+                    "No command given. Use help as command to get more information.");
                 return;
             }
             logger.debug("command: {}", command);
@@ -98,7 +98,7 @@ public class WebInterface extends HttpServlet {
 
             // get correct plugin from list
             ICommandPlugin myCommandPlugin = (ICommandPlugin) PluginLoader.getPluginByTitle(PluginType.COMMAND,
-                    command);
+                command);
             if (myCommandPlugin == null) {
                 generateAnswer(resp, 400, "invalid command", "command not found in list of command plugins");
                 return;

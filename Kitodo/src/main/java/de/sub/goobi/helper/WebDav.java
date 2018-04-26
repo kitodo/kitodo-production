@@ -63,15 +63,15 @@ public class WebDav implements Serializable {
 
         try {
             if (currentUser != null) {
-                URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
+                URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser)
+                        .resolve(inVerzeichnis);
                 files = fileService.getSubUris(filter, directoryName);
             } else {
                 Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", Helper.getTranslation("noUser"));
                 return files;
             }
-        } catch (IOException ioe) {
-            logger.error("Exception uploadFromHomeAlle()", ioe);
-            Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", ioe.getMessage());
+        } catch (IOException e) {
+            Helper.setErrorMessage("uploadFromHomeAlle abgebrochen, Fehler", logger, e);
             return files;
         }
 
@@ -81,7 +81,7 @@ public class WebDav implements Serializable {
                 data = URI.create(dataString.substring(0, dataString.length() - 1));
             }
             if (data.toString().contains("/")) {
-                //TODO: check what happens here
+                // TODO: check what happens here
                 data = URI.create(dataString.substring(dataString.lastIndexOf('/')));
             }
         }
@@ -92,25 +92,25 @@ public class WebDav implements Serializable {
     /**
      * Remove Folders from Directory.
      *
-     * @param uris list of URI
-     * @param directory URI
+     * @param uris
+     *            list of URI
+     * @param directory
+     *            URI
      */
     public void removeAllFromHome(List<URI> uris, URI directory) {
         URI verzeichnisAlle;
         User currentUser = Helper.getCurrentUser();
         try {
             if (currentUser != null) {
-                verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser)
-                        .resolve(directory);
+                verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(directory);
                 for (URI name : uris) {
                     fileService.deleteSymLink(verzeichnisAlle.resolve(name));
                 }
             } else {
                 Helper.setFehlerMeldung("Upload stopped, error - no logged user");
             }
-        } catch (Exception ioe) {
-            logger.error("Exception RemoveFromHomeAlle()", ioe);
-            Helper.setFehlerMeldung("Upload stopped, error", ioe.getMessage());
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage("Upload stopped, error", logger, e);
         }
     }
 
@@ -154,9 +154,8 @@ public class WebDav implements Serializable {
                 destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
                 fileService.deleteSymLink((destination));
             }
-        } catch (IOException ioe) {
-            logger.error("Exception uploadFromHome(...)", ioe);
-            Helper.setFehlerMeldung("Aborted upload from home, error", ioe.getMessage());
+        } catch (IOException e) {
+            Helper.setErrorMessage("Aborted upload from home, error", logger, e);
         }
     }
 
@@ -180,8 +179,8 @@ public class WebDav implements Serializable {
                 userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
                 /*
-                 * bei Massendownload muss auch das Projekt- und Fertig-Verzeichnis
-                 * existieren
+                 * bei Massendownload muss auch das Projekt- und
+                 * Fertig-Verzeichnis existieren
                  */
                 if (currentUser.isWithMassDownload()) {
                     URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
@@ -201,9 +200,8 @@ public class WebDav implements Serializable {
             } else {
                 Helper.setFehlerMeldung("Aborted download to home, error - there is not current user");
             }
-        } catch (IOException ioe) {
-            logger.error("Exception downloadToHome()", ioe);
-            Helper.setFehlerMeldung("Aborted download to home, error", ioe.getMessage());
+        } catch (IOException e) {
+            Helper.setErrorMessage("Aborted download to home, error", logger, e);
         }
     }
 
@@ -229,7 +227,7 @@ public class WebDav implements Serializable {
     /**
      * Method checks if tiff header already exists. If yes method breaks, if not
      * method creates it and saves to it.
-     * 
+     *
      * @param inProcess
      *            process object
      */
@@ -245,9 +243,8 @@ public class WebDav implements Serializable {
                     new OutputStreamWriter(fileService.write(tiffWriterURI), StandardCharsets.UTF_8))) {
                 outfile.write(tif.getTiffAlles());
             }
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("Download aborted", e);
-            logger.error(e.getMessage(), e);
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage("Download aborted", logger, e);
         }
     }
 }

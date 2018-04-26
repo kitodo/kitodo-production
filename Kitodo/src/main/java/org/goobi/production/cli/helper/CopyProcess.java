@@ -165,8 +165,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage("IOException", logger, e);
             return;
         }
 
@@ -250,10 +249,8 @@ public class CopyProcess extends ProzesskopieForm {
 
             fillFieldsFromConfig();
 
-        } catch (Exception e) {
-            logger.error("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-            Helper.setFehlerMeldung("Fehler beim Einlesen des Opac-Ergebnisses ", e);
-            e.printStackTrace();
+        } catch (PreferencesException | ReadException | RuntimeException e) {
+            Helper.setErrorMessage("Fehler beim Einlesen des Opac-Ergebnisses ", logger, e);
         }
     }
 
@@ -309,8 +306,7 @@ public class CopyProcess extends ProzesskopieForm {
                             }
                         }
                     } catch (UghHelperException e) {
-                        logger.error(e.getMessage(), e);
-                        Helper.setFehlerMeldung(e.getMessage(), "");
+                        Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
                 } // end if ughbinding
             } // end for
@@ -375,9 +371,8 @@ public class CopyProcess extends ProzesskopieForm {
 
         try {
             this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
-        } catch (Exception e) {
-            logger.error("Fehler beim Einlesen der Template-Metadaten ", e);
-            Helper.setFehlerMeldung("Fehler beim Einlesen der Template-Metadaten ", e);
+        } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
+            Helper.setErrorMessage("Fehler beim Einlesen der Template-Metadaten ", logger, e);
         }
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
@@ -387,8 +382,7 @@ public class CopyProcess extends ProzesskopieForm {
             colStruct = colStruct.getAllChildren().get(0);
             removeCollections(colStruct);
         } catch (PreferencesException e) {
-            Helper.setFehlerMeldung("Fehler beim Anlegen des Vorgangs", e);
-            logger.error("Fehler beim Anlegen des Vorgangs", e);
+            Helper.setErrorMessage("Fehler beim Anlegen des Vorgangs", logger, e);
         } catch (RuntimeException e) {
             /*
              * das Firstchild unterhalb des Topstructs konnte nicht ermittelt
@@ -499,8 +493,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
-            logger.error("Fehler beim Einlesen der Vorgaenge", e);
-            Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+            Helper.setErrorMessage("Fehler beim Einlesen der Vorgaenge", logger, e);
             return false;
         }
         if (amount > 0) {
@@ -527,7 +520,6 @@ public class CopyProcess extends ProzesskopieForm {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            e.printStackTrace();
             logger.error("error on save: ", e);
             return this.prozessKopie;
         }
@@ -582,7 +574,6 @@ public class CopyProcess extends ProzesskopieForm {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            e.printStackTrace();
             logger.error("error on save: ", e);
             return this.prozessKopie;
         }
@@ -644,8 +635,7 @@ public class CopyProcess extends ProzesskopieForm {
                 }
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
-            Helper.setFehlerMeldung(e.getMessage(), "");
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage(e.getMessage(), logger, e);
         }
     }
 
@@ -904,8 +894,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage("IOException", logger, e);
             return;
         }
 
@@ -1004,8 +993,7 @@ public class CopyProcess extends ProzesskopieForm {
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl");
+                Helper.setErrorMessage("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl", logger, e);
             }
             if (result != null && result.length() < 4) {
                 result = "0000".substring(result.length()) + result;
@@ -1021,8 +1009,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung("IOException", e.getMessage());
+            Helper.setErrorMessage("IOException", logger, e);
             return;
         }
 

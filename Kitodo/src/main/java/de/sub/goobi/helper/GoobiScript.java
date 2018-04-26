@@ -179,13 +179,8 @@ public class GoobiScript {
                 rdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(rdf, process);
                 Helper.setMeldung(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
-            } catch (DocStructHasNoTypeException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung("DocStructHasNoTypeException", e.getMessage());
-
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while updating content files", e);
+            } catch (PreferencesException | IOException | ReadException | WriteException | RuntimeException e) {
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
             }
         }
         Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");
@@ -205,9 +200,8 @@ public class GoobiScript {
                         fileService.delete(images);
                     }
                     Helper.setMeldung("Content deleted for " + title);
-                } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung("Can not delete content for " + title, e);
+                } catch (IOException | RuntimeException e) {
+                    Helper.setErrorMessage("Can not delete content for " + title, logger, e);
                 }
             }
             if (!contentOnly) {
@@ -216,8 +210,7 @@ public class GoobiScript {
                     serviceManager.getProcessService().remove(process);
                     Helper.setMeldung("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
-                    logger.error(e.getMessage(), e);
-                    Helper.setFehlerMeldung("could not delete process " + title, e);
+                    Helper.setErrorMessage("could not delete process " + title, logger, e);
                 }
             }
         }
@@ -284,8 +277,7 @@ public class GoobiScript {
                 }
             }
         } catch (IOException e) {
-            Helper.setFehlerMeldung(e);
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage(e.toString(), logger, e);
         }
     }
 
@@ -313,7 +305,7 @@ public class GoobiScript {
                 process.setRuleset(ruleset);
                 serviceManager.getProcessService().save(process);
             }
-        } catch (Exception e) {
+        } catch (DataException | RuntimeException e) {
             Helper.setFehlerMeldung(e);
             logger.error(e.getMessage(), e);
         }
@@ -702,9 +694,8 @@ public class GoobiScript {
                     tiffHeaderFile.delete();
                 }
                 Helper.setMeldung(KITODO_SCRIPT_FIELD, "TiffHeaderFile deleted: ", process.getTitle());
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while deleting TiffHeader", e);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while deleting TiffHeader", logger, e);
             }
         }
         Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
@@ -739,18 +730,12 @@ public class GoobiScript {
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
                 serviceManager.getFileService().writeMetadataFile(rdf, process);
                 Helper.setMeldung(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
-
-            } catch (DocStructHasNoTypeException | UghHelperException | MetadataTypeNotAllowedException e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(e.getMessage());
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while updating imagepath", e);
+            } catch (UghHelperException | MetadataTypeNotAllowedException | PreferencesException | IOException
+                    | ReadException | WriteException | RuntimeException e) {
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
             }
-
         }
         Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "updateImagePath finished");
-
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
@@ -790,8 +775,7 @@ public class GoobiScript {
         try {
             serviceManager.getProcessService().save(process);
         } catch (DataException e) {
-            logger.error(KITODO_SCRIPT_FIELD + "Error while saving process: " + process.getTitle(), e);
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), e);
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving process: " + process.getTitle(), logger, e);
         }
     }
 
@@ -799,8 +783,7 @@ public class GoobiScript {
         try {
             serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            logger.error(KITODO_SCRIPT_FIELD + "Error while saving - " + processTitle, e);
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, e);
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while saving - " + processTitle, logger, e);
         }
     }
 }

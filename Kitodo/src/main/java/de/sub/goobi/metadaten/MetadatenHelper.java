@@ -105,7 +105,7 @@ public class MetadatenHelper implements Comparator<Object> {
                     if (!match) {
                         try {
                             newDocstruct.addMetadata(old);
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
                             logger.error(e.getMessage(), e);
                             Helper.setFehlerMeldung("Metadata " + old.getMetadataType().getName()
                                     + " is not allowed in new element " + newDocstruct.getDocStructType().getName());

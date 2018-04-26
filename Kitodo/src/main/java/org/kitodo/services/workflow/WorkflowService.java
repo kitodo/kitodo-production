@@ -307,9 +307,7 @@ public class WorkflowService {
             }
             this.flagWait = false;
         } catch (DataException e) {
-            logger.error(e.getMessage(), e);
-            Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-            logger.error("Task couldn't get saved", e);
+            Helper.setErrorMessage(Helper.getTranslation("stepSaveError"), logger, e);
         } finally {
             this.flagWaitLock.unlock();
         }
