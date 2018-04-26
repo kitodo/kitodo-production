@@ -9,10 +9,7 @@
   * For the full copyright and license information, please read the
   * GPL3-License.txt file that was distributed with this source code.
   -->
-
-<mets:mets
-        xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mix/v10 http://www.loc.gov/standards/mix/mix10/mix10.xsd"
-        xmlns:mets="http://www.loc.gov/METS/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
     <mets:metsHdr CREATEDATE="2018-02-14T10:01:44">
         <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
             <mets:name>Kitodo - kitodo-ugh-2.1.0-kitodo-ugh-2.1.0 - 22−May−2017</mets:name>
@@ -28,7 +25,7 @@
                             <goobi:metadata name="PublicationYear">2016</goobi:metadata>
                             <goobi:metadata name="PlaceOfPublication">Hamburg</goobi:metadata>
                             <goobi:metadata name="TitleDocMain">Otsar ha-kavod</goobi:metadata>
-                            <goobi:metadata name="PublisherName">Staats- und Universitätsbibliothek Hamburg Carl von Ossietzky</goobi:metadata>
+                            <goobi:metadata name="PublisherName">Test Publisher</goobi:metadata>
                             <goobi:metadata name="TypeOfResource" type="group">
                                 <goobi:metadata name="typDisplayForm">Handschrift</goobi:metadata>
                                 <goobi:metadata name="typIdentifierPPN">10457187X</goobi:metadata>

@@ -11,6 +11,7 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -24,8 +25,11 @@ import javax.xml.stream.StreamFilter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -38,6 +42,8 @@ import org.kitodo.dataformat.metskitodo.StructLinkType;
  */
 public class MetsKitodoWrap {
 
+    private static final Logger logger = LogManager.getLogger(MetsKitodoWrap.class);
+
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
 
@@ -48,6 +54,16 @@ public class MetsKitodoWrap {
      */
     public Mets getMets() {
         return mets;
+    }
+
+    /**
+     * Constructor in which the Mets object can be directly injected.
+     * 
+     * @param mets
+     *            The Mets object.
+     */
+    public MetsKitodoWrap(Mets mets) {
+        this.mets = mets;
     }
 
     /**
@@ -83,7 +99,7 @@ public class MetsKitodoWrap {
      *             Thrown if an error was encountered while creating the
      *             <tt>XMLStreamReader</tt> object.
      */
-    public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException {
+    public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException, TransformerException, IOException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
 
@@ -105,7 +121,17 @@ public class MetsKitodoWrap {
                     return true;
                 }
             });
-            this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader));
+
+            Mets temporaryMets = (Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader);
+
+            if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
+                logger.warn("Not supported format detected. Trying to convert from old goobi format now!");
+                temporaryMets = MetsKitodoUtils.readFromOldFormat(xmlFile);
+            }
+            if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
+                throw new IOException("Can not read data because of not supported format!");
+            }
+            this.mets = createBasicMetsElements(temporaryMets);
         } finally {
             if (Objects.nonNull(xmlStreamReader)) {
                 xmlStreamReader.close();
@@ -130,7 +156,7 @@ public class MetsKitodoWrap {
 
     /**
      * Gets all dmdSec elements.
-     * 
+     *
      * @return All dmdSec elements as list of MdSecType objects.
      */
     public List<MdSecType> getDmdSecs() {
@@ -145,22 +171,27 @@ public class MetsKitodoWrap {
      * @return The KitodoType object.
      */
     public KitodoType getKitodoTypeByMdSecIndex(int index) {
-        if (this.getDmdSecs().size() > index) {
-            // Wrapping null-checks at getter-chain into Optional<T>.class
-            Optional<List<Object>> xmlData = Optional.ofNullable(getDmdSecs().get(index)).map(MdSecType::getMdWrap)
-                    .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
-
-            if (xmlData.isPresent()) {
-                try {
-                    return MetsKitodoUtils.getFirstGenericTypeFromJaxbObjectList(xmlData.get(), KitodoType.class);
-                } catch (NoSuchElementException e) {
-                    throw new NoSuchElementException(
-                            "MdSec element with index: " + index + " does not have kitodo metadata");
-                }
+        if (this.mets.getDmdSec().size() > index) {
+            List<Object> xmlData = getXmlDataByMdSecIndex(index);
+            try {
+                return MetsKitodoUtils.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
+            } catch (NoSuchElementException e) {
+                throw new NoSuchElementException(
+                    "MdSec element with index: " + index + " does not have kitodo metadata");
             }
-            throw new NoSuchElementException("MdSec element with index: " + index + " does not have data");
         }
         throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
+    }
+
+    /**
+     * Gets xml data object of specified MdSec index.
+     *
+     * @param index
+     *            The index as int.
+     * @return The KitodoType object.
+     */
+    public List<Object> getXmlDataByMdSecIndex(int index) {
+        return MetsKitodoUtils.getXmlDataOfMetsByMdSecIndex(this.mets,index);
     }
 
     /**
@@ -172,7 +203,7 @@ public class MetsKitodoWrap {
      */
     public KitodoType getKitodoTypeByMdSecId(String id) {
         int index = 0;
-        for (MdSecType mdSecType : getDmdSecs()) {
+        for (MdSecType mdSecType : this.mets.getDmdSec()) {
             if (mdSecType.getID().equals(id)) {
                 return getKitodoTypeByMdSecIndex(index);
             }

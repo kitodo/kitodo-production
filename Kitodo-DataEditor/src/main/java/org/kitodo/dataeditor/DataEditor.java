@@ -16,6 +16,7 @@ import java.net.URI;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerException;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
@@ -27,7 +28,7 @@ public class DataEditor implements DataEditorInterface {
     public void readData(URI xmlFileUri) throws IOException {
         try {
             this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
-        } catch (JAXBException | XMLStreamException e) {
+        } catch (JAXBException | XMLStreamException | TransformerException e) {
             // TODO add also message for modul frontend, when it is ready!
             // For now we wrap exceptions in an IOExecption so that we dont need to
             // implement JAXB to core

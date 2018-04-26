@@ -11,11 +11,13 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerException;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -48,20 +50,20 @@ public class MetsKitodoWrapTest {
     }
 
     @Test
-    public void shouldCreateMetsByFile() throws JAXBException, XMLStreamException {
+    public void shouldCreateMetsByFile() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsKitodoWrap.getDmdSecs().size());
     }
 
     @Test
-    public void shouldReadValues() throws JAXBException, XMLStreamException {
+    public void shouldReadValues() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         String id = metsKitodoWrap.getMets().getDmdSec().get(0).getID();
         Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_0000", id);
     }
 
     @Test
-    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException {
+    public void shouldReadKitodoMetadata() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
 
@@ -73,7 +75,7 @@ public class MetsKitodoWrapTest {
     }
 
     @Test
-    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException {
+    public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecId("DMDLOG_0002");
 
@@ -88,7 +90,7 @@ public class MetsKitodoWrapTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException {
+    public void shouldNotReadKitodoMetadataByNotExistingId() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("MdSec element with id: not existing was not found");
