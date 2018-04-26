@@ -9,10 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.workflow;
+package org.kitodo.workflow.model;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.Objects;
 
 import org.junit.AfterClass;
@@ -23,7 +24,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
 
 import static org.junit.Assert.assertEquals;
@@ -73,6 +73,7 @@ public class ReaderTest {
         reader.loadProcess();
 
         Template template = reader.convertWorkflowToTemplate();
+        template.getTasks().sort(Comparator.comparing(Task::getOrdering));
 
         assertEquals("Process definition - workflow was read incorrectly!", template.getTitle(), "say-hello");
         assertEquals("Process definition - workflow was read incorrectly!", template.getOutputName(), "Say Hello");
