@@ -50,7 +50,16 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
         removeObject(Workflow.class, id);
     }
 
-    public List<Workflow> getByTitleAndFile(String title, String file) {
-        return getByQuery("FROM Workflow WHERE title = '" + title + "' AND file = '" + file + "'");
+    /**
+     * Get workflow by given title and file name.
+     *
+     * @param title
+     *            workflow title
+     * @param fileName
+     *            workflow file name
+     * @return list of Workflow objects - expected is that list will have length 0 or 1
+     */
+    public List<Workflow> getByTitleAndFile(String title, String fileName) {
+        return getByQuery("FROM Workflow WHERE title = '" + title + "' AND fileName = '" + fileName + "'");
     }
 }

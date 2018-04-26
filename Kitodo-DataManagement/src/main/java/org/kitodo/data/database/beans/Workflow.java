@@ -23,20 +23,20 @@ public class Workflow extends BaseBean {
     @Column(name = "title")
     private String title;
 
-    @Column(name = "file")
-    private String file;
+    @Column(name = "fileName")
+    private String fileName;
 
     /**
      * Public constructor.
      * 
      * @param title
      *            of workflow
-     * @param file
+     * @param fileName
      *            in which diagram is stored
      */
-    public Workflow(String title, String file) {
+    public Workflow(String title, String fileName) {
         this.title = title;
-        this.file = file;
+        this.fileName = fileName;
     }
 
     /**
@@ -59,21 +59,21 @@ public class Workflow extends BaseBean {
     }
 
     /**
-     * Get file.
+     * Get file name of file in which diagram workflow is stored.
      *
-     * @return value of file
+     * @return value of file name
      */
-    public String getFile() {
-        return file;
+    public String getFileName() {
+        return fileName;
     }
 
     /**
-     * Set file.
+     * Set file name of file in which diagram workflow is stored.
      *
-     * @param file
+     * @param fileName
      *            as String
      */
-    public void setFile(String file) {
-        this.file = file;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

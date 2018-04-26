@@ -41,7 +41,7 @@ public class WorkflowServiceIT {
         WorkflowService workflowService = new WorkflowService();
 
         Workflow workflow = workflowService.getById(1);
-        boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFile().equals("test");
+        boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFileName().equals("test");
         assertTrue("Workflow was not found in database!", condition);
     }
 
