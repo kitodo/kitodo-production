@@ -11,27 +11,26 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.IOException;
 import java.net.URI;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.stream.XMLStreamException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
 public class DataEditor implements DataEditorInterface {
 
     private MetsKitodoWrap metsKitodoWrap;
-    private static final Logger logger = LogManager.getLogger(DataEditor.class);
 
     @Override
-    public void readData(URI xmlFileUri) {
+    public void readData(URI xmlFileUri) throws IOException {
         try {
             this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
         } catch (JAXBException | XMLStreamException e) {
-            // TODO add also message for frontend, when it is ready!
-            logger.error(e);
+            // TODO add also message for modul frontend, when it is ready!
+            // For now we wrap exceptions in an IOExecption so that we dont need to implement JAXB to core
+            throw new IOException("Unable to read file",e);
         }
     }
 

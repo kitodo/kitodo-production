@@ -26,8 +26,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -39,8 +37,6 @@ import org.kitodo.dataformat.metskitodo.StructLinkType;
  * serialized mets-kitodo format xml file.
  */
 public class MetsKitodoWrap {
-
-    private static final Logger logger = LogManager.getLogger(MetsKitodoWrap.class);
 
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -110,8 +106,6 @@ public class MetsKitodoWrap {
                 }
             });
             this.mets = createBasicMetsElements((Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
         } finally {
             if (Objects.nonNull(xmlStreamReader)) {
                 xmlStreamReader.close();
