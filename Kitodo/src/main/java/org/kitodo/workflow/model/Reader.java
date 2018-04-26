@@ -182,13 +182,16 @@ public class Reader {
      */
     private void getFlowingFlowNodes(FlowNode node) {
         Collection<SequenceFlow> sequenceFlow = node.getOutgoing();
-        FlowNode flowNode = sequenceFlow.iterator().next().getTarget();
 
-        if (flowNode instanceof Gateway) {
-            getFlowingFlowNodesWithConditions((Gateway) flowNode);
-        } else if (flowNode instanceof Task) {
-            this.followingFlowNodes.add(flowNode);
-            getFlowingFlowNodes(flowNode);
+        if (sequenceFlow.iterator().hasNext()) {
+            FlowNode flowNode = sequenceFlow.iterator().next().getTarget();
+
+            if (flowNode instanceof Gateway) {
+                getFlowingFlowNodesWithConditions((Gateway) flowNode);
+            } else if (flowNode instanceof Task) {
+                this.followingFlowNodes.add(flowNode);
+                getFlowingFlowNodes(flowNode);
+            }
         }
     }
 
