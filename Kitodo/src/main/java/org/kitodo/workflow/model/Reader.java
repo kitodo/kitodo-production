@@ -77,7 +77,7 @@ public class Reader {
      * 
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate() throws DAOException, DataException {
+    public Template convertWorkflowToTemplate() throws DAOException, DataException, IOException {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
@@ -151,8 +151,12 @@ public class Reader {
      * Get workflow.
      *
      */
-    public Diagram getWorkflow() {
+    public Diagram getWorkflow() throws IOException {
         Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
+
+        if (Objects.isNull(process)) {
+            throw new IOException("It looks that given file contains invalid BPMN diagram!");
+        }
         return new Diagram(process);
     }
 
