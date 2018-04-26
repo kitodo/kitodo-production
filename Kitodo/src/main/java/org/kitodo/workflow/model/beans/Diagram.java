@@ -22,7 +22,7 @@ public class Diagram {
     private String outputName;
     private Integer docket;
     private Integer ruleset;
-    private static final String NAMESPACE = "http://www.kitodo.com/template";
+    private static final String NAMESPACE = "http://www.kitodo.org/template";
 
     /**
      * Constructor.

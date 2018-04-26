@@ -32,7 +32,7 @@ public class KitodoTask {
     private Boolean typeCloseVerify;
     private Boolean batchStep;
 
-    static final String NAMESPACE = "http://www.kitodo.com/template";
+    static final String NAMESPACE = "http://www.kitodo.org/template";
 
     /**
      * Constructor.
