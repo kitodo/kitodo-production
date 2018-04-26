@@ -25,21 +25,30 @@
               dynamic="true"
               styleClass="editDialog">
         <h:form id="propertyForm">
-            <!-- title -->
-            <p:inputText id="propertyTitle" value="#{ProzessverwaltungForm.property.title}"
-                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
-
-            <!-- value: text -->
-            <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}" styleClass="editDialog"/>
-
-            <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
-                             id="save"
-                             update="editForm"
-                             oncomplete="PF('editPropertyDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
-                             value="#{msgs.uebernehmen}">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
-                                             value="#{objectMode.NONE}"/>
-            </p:commandButton>
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <div>
+                        <!-- title -->
+                        <p:outputLabel for="propertyTitle" value="#{msgs.titel}" />
+                        <p:inputText id="propertyTitle" value="#{ProzessverwaltungForm.property.title}"
+                                     placeholder="#{msgs.titel}" required="true" styleClass="input editDialog"/>
+                    </div>
+                    <div>
+                        <!-- value: text -->
+                        <p:outputLabel for="propertyValue" value="#{msgs.value}" />
+                        <p:inputText id="propertyValue" value="#{ProzessverwaltungForm.property.value}" styleClass="input editDialog"/>
+                    </div>
+                    <p:commandButton action="#{ProzessverwaltungForm.saveCurrentProperty}"
+                                     id="save"
+                                     update="editForm"
+                                     oncomplete="PF('editPropertyDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
+                                     value="#{msgs.uebernehmen}"
+                                     styleClass="button-filled-blue right">
+                        <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}"
+                                                     value="#{objectMode.NONE}"/>
+                    </p:commandButton>
+                </p:row>
+            </p:panelGrid>
         </h:form>
     </p:dialog>
 </ui:composition>
