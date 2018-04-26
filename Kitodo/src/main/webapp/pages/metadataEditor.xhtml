@@ -30,9 +30,9 @@
             <div id="metadataEditorWrapper">
 
                 <!-- First Column -->
-                <div class="collapsibleWrapper" id="firstColumnWrapper">
+                <div class="collapsibleWrapper" id="firstColumnWrapper" data-min-width="200">
                     <button type="button"
-                            onclick="PF('firstColumn').toggle();$('#firstColumnWrapper').toggleClass('collapsed')"
+                            onclick="PF('firstColumn').toggle();$('#firstColumnWrapper').toggleClass('collapsed');toggleFirstColumn()"
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
@@ -54,9 +54,9 @@
                 <div class="resizer" id="firstResizer"/>
 
                 <!-- Second Column -->
-                <div class="collapsibleWrapper" id="secondColumnWrapper">
+                <div class="collapsibleWrapper" id="secondColumnWrapper" data-min-width="200">
                     <button type="button"
-                            onclick="PF('secondColumn').toggle();$('#secondColumnWrapper').toggleClass('collapsed')"
+                            onclick="PF('secondColumn').toggle();$('#secondColumnWrapper').toggleClass('collapsed');toggleSecondColumn()"
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
@@ -70,9 +70,9 @@
                 <div class="resizer" id="secondResizer"/>
 
                 <!-- Third Column -->
-                <div class="collapsibleWrapper" id="thirdColumnWrapper">
+                <div class="collapsibleWrapper" id="thirdColumnWrapper" data-min-width="400">
                     <button type="button"
-                            onclick="PF('thirdColumn').toggle();$('#thirdColumn').toggleClass('collapsed')"
+                            onclick="PF('thirdColumn').toggle();$('#thirdColumnWrapper').toggleClass('collapsed');toggleThirdColumn()"
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>

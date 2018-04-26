@@ -9,49 +9,173 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-var i = 0;
+var SEPARATOR_WIDTH = 14.5;
+var COLLAPSED_COL_WIDTH = 42;
 var dragging = false;
+var target;
+
+var wrapper;
+var wrapperPositionX;
+var firstColumn;
+var secondColumn;
+var thirdColumn;
+var firstColumnChild;
+var secondColumnChild;
+var thirdColumnChild;
+
 
 $(document).ready(function() {
     $('#firstResizer').mousedown(function(e) {handleMouseDown(e)});
     $('#secondResizer').mousedown(function(e) {handleMouseDown(e)});
+    setSizes();
 });
 
+$(document).mouseup(function(e) {
+    if (dragging) {
+        $(document).unbind('mousemove');
+        dragging = false;
+    }
+});
 
 function handleMouseDown(e) {
     e.preventDefault();
     dragging = true;
-    var firstColumn;
-    var secondColumn;
-
-    if (e.target.id == 'firstResizer') {
-        firstColumn = $('#firstColumnWrapper');
-        secondColumn = $('#secondColumnWrapper');
-    } else {
-        firstColumn = $('#secondColumn');
-        secondColumn = $('#thirdColumn');
-    }
-
-    var ghostResizer = $('<div>', {
-        id:'ghostResizer',
-        css: {
-            height: e.target.offsetHeight,
-            top: e.target.getBoundingClientRect().top + window.scrollY,
-            left: e.pageX
-        }
-    }).appendTo($('body'));
+    target = e.target;
+    getElements();
 
     $(document).mousemove(function(e) {
-       ghostResizer.css('left', e.pageX);
+        if (target.id == 'firstResizer') {
+            if (secondColumn.hasClass('collapsed')) {
+                resizeFirstAndThird(e);
+            } else {
+                resizeFirstAndSecond(e);
+            }
+        } else {
+            if (secondColumn.hasClass('collapsed')) {
+                resizeFirstAndThird(e);
+            } else {
+                resizeSecondAndThird(e);
+            }
+        }
     });
 
 }
 
-$(document).mouseup(function(e) {
-   if (dragging) {
-       // do resizing
-       $('#ghostResizer').remove();
-       $(document).unbind('mousemove');
-       dragging = false;
-   }
-});
+function resizeFirstAndSecond(e) {
+    if (e.pageX >= wrapperPositionX + firstColumn.data('min-width')
+        && e.pageX <= wrapperPositionX + wrapper.width() - secondColumn.data('min-width') - SEPARATOR_WIDTH - thirdColumn.width()) {
+        firstColumnChild.width(e.pageX - firstColumn.offset().left);
+        secondColumnChild.width(wrapperPositionX + wrapper.width() - thirdColumn.width() - 2 * SEPARATOR_WIDTH - e.pageX);
+    }
+}
+
+function resizeFirstAndThird(e) {
+    if (e.pageX >= wrapperPositionX + firstColumn.data('min-width')
+        && e.pageX <= wrapperPositionX + wrapper.width() - thirdColumn.data('min-width')) {
+        firstColumnChild.width(e.pageX - firstColumn.offset().left);
+        thirdColumnChild.width(wrapperPositionX + wrapper.width() - 2 * SEPARATOR_WIDTH - secondColumn.width() - e.pageX);
+    }
+}
+
+function resizeSecondAndThird(e) {
+    if (e.pageX >= wrapperPositionX + firstColumn.width() + SEPARATOR_WIDTH + secondColumn.data('min-width')
+        && e.pageX <= wrapperPositionX + wrapper.width() - SEPARATOR_WIDTH - thirdColumn.data('min-width')) {
+        secondColumnChild.width(e.pageX - secondColumn.offset().left);
+        thirdColumnChild.width(wrapperPositionX + wrapper.width() - SEPARATOR_WIDTH - e.pageX);
+    }
+}
+
+function getElements() {
+    wrapper = $('#metadataEditorWrapper');
+    wrapperPositionX = wrapper.offset().left;
+    firstColumn = $('#firstColumnWrapper');
+    secondColumn = $('#secondColumnWrapper');
+    thirdColumn = $('#thirdColumnWrapper');
+    firstColumnChild = $('#firstColumnWrapper > .ui-panel');
+    secondColumnChild = $('#secondColumnWrapper > .ui-panel');
+    thirdColumnChild = $('#thirdColumnWrapper >  .ui-panel');
+}
+
+function setSizes() {
+    getElements();
+
+    firstColumnChild.width(firstColumn.data('min-width'));
+    secondColumnChild.width(secondColumn.data('min-width'));
+    thirdColumnChild.width(wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+}
+
+function toggleFirstColumn() {
+    getElements();
+
+    if (firstColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass('collapsed')) {
+            thirdColumnChild.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+        } else {
+            secondColumnChild.animate({width:  wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
+        }
+    } else {
+        var neededWidth = firstColumn.data('min-width') - (secondColumn.width() - secondColumn.data('min-width'));
+        if (secondColumn.hasClass('collapsed')) {
+            thirdColumnChild.animate({width: wrapper.width() - firstColumn.data('min-width') - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+            firstColumnChild.animate({width: firstColumn.data('min-width')});
+        } else if (neededWidth > 0) {
+            secondColumnChild.animate({width: secondColumn.data('min-width')});
+            thirdColumnChild.animate({width: thirdColumnChild.width() - neededWidth});
+            firstColumnChild.animate({width: firstColumn.data('min-width')});
+        } else {
+            secondColumnChild.animate({width: wrapper.width() - firstColumn.data('min-width') - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
+            firstColumnChild.animate({width: firstColumn.data('min-width')});
+        }
+
+    }
+}
+
+function toggleSecondColumn() {
+    getElements();
+
+    if (secondColumn.hasClass('collapsed')) {
+        if (thirdColumn.hasClass('collapsed')) {
+            firstColumnChild.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+        } else {
+            thirdColumnChild.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - firstColumn.width() - 2 * SEPARATOR_WIDTH});
+        }
+    } else {
+        var neededWidth = secondColumn.data('min-width') - (thirdColumn.width() - thirdColumn.data('min-width'));
+        if (thirdColumn.hasClass('collapsed')) {
+            firstColumnChild.animate({width: wrapper.width() - secondColumn.data('min-width') - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+            secondColumnChild.animate({width: secondColumn.data('min-width')});
+        } else if (neededWidth > 0) {
+            thirdColumnChild.animate({width: thirdColumn.data('min-width')});
+            firstColumnChild.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            secondColumnChild.animate({width: secondColumn.data('min-width')});
+        } else {
+            thirdColumnChild.animate({width: wrapper.width() - firstColumn.width() - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            secondColumnChild.animate({width: secondColumn.data('min-width')});
+        }
+    }
+}
+
+function toggleThirdColumn() {
+    getElements();
+
+    if (thirdColumn.hasClass('collapsed')) {
+        if (secondColumn.hasClass('collapsed')) {
+            firstColumnChild.animate({width: wrapper.width() - 2 * COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+        } else {
+            secondColumnChild.animate({width: wrapper.width() - firstColumn.width() - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+        }
+    } else {
+        var neededWidth = thirdColumn.data('min-width') - (secondColumn.width() - secondColumn.data('min-width'));
+        if (secondColumn.hasClass('collapsed')) {
+            firstColumnChild.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            thirdColumnChild.animate({width: thirdColumn.data('min-width')});
+        } else if (neededWidth > 0) {
+            firstColumnChild.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            secondColumnChild.animate({width: secondColumn.data('min-width')});
+            thirdColumnChild.animate({width: thirdColumn.data('min-width')});
+        } else {
+            secondColumnChild.animate({width: wrapper.width() - firstColumn.width() - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            thirdColumnChild.animate({width: thirdColumn.data('min-width')});
+        }
+    }
+}
