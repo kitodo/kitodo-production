@@ -4,6 +4,7 @@
 **/target/
 # Tests
 /Kitodo/modules
-# Javadoc
+# local build of Javadoc (cf. docs/javadoc/README.md)
 /javadoc
+# local build of docs with mkdocs
 /site
