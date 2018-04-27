@@ -17,18 +17,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.stream.StreamFilter;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamSource;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -40,8 +32,6 @@ import org.kitodo.dataformat.metskitodo.StructLinkType;
  * serialized mets-kitodo format xml file.
  */
 public class MetsKitodoWrap {
-
-    private static final Logger logger = LogManager.getLogger(MetsKitodoWrap.class);
 
     private Mets mets;
     private ObjectFactory objectFactory = new ObjectFactory();
@@ -99,38 +89,7 @@ public class MetsKitodoWrap {
      *             <tt>XMLStreamReader</tt> object.
      */
     public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException, TransformerException, IOException {
-        JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
-        Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
-
-        // using a stream filter to prevent accepting white space and new line content
-        // in an element that has mixed context
-        XMLInputFactory xif = XMLInputFactory.newFactory();
-        XMLStreamReader xmlStreamReader = null;
-
-        try {
-            xmlStreamReader = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
-            xmlStreamReader = xif.createFilteredReader(xmlStreamReader, new XmlStreamFilter());
-
-            Mets temporaryMets = (Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader);
-            if (MetsKitodoUtils.metsContainsMetadataAtMdSecIndex(temporaryMets, 0)) {
-                if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
-                    logger.warn("Not supported format detected. Trying to convert from old goobi format now!");
-                    temporaryMets = MetsKitodoUtils.readFromOldFormat(xmlFile);
-                }
-                if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
-                    throw new IOException("Can not read data because of not supported format!");
-                } else {
-                    logger.info("Successfully converted metadata to kitodo format!");
-                }
-            } else {
-                logger.warn("Metadata file does not contain any metadata");
-            }
-            this.mets = createBasicMetsElements(temporaryMets);
-        } finally {
-            if (Objects.nonNull(xmlStreamReader)) {
-                xmlStreamReader.close();
-            }
-        }
+        this.mets = createBasicMetsElements(MetsKitodoUtils.readAndValidateUriToMets(xmlFile));
     }
 
     /**
