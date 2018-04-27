@@ -29,8 +29,9 @@ public class DataEditor implements DataEditorInterface {
             this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
         } catch (JAXBException | XMLStreamException e) {
             // TODO add also message for modul frontend, when it is ready!
-            // For now we wrap exceptions in an IOExecption so that we dont need to implement JAXB to core
-            throw new IOException("Unable to read file",e);
+            // For now we wrap exceptions in an IOExecption so that we dont need to
+            // implement JAXB to core
+            throw new IOException("Unable to read file", e);
         }
     }
 

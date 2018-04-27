@@ -23,7 +23,7 @@ public class DataEditorServiceTest {
 
     @Test
     public void shouldReadMetadata() throws IOException {
-        dataEditorService.readData(URI.create("../Kitodo-DataEditor/src/test/resources/testmeta.xml"));
+        dataEditorService.readData(URI.create("./src/test/resources/metadata/testmeta.xml"));
     }
 
     @Test(expected = IOException.class)
