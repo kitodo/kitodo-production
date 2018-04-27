@@ -17,6 +17,7 @@ import org.camunda.bpm.model.bpmn.instance.Task;
 
 public class KitodoTask {
 
+    private String workflowId;
     private String title;
     private Integer priority;
     private Integer ordering;
@@ -43,6 +44,7 @@ public class KitodoTask {
      *            * determined out of sequence flow
      */
     public KitodoTask(Task task, int ordering) {
+        this.workflowId = task.getId();
         this.title = task.getName();
         this.priority = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "priority"));
         this.ordering = ordering;
@@ -71,6 +73,24 @@ public class KitodoTask {
             return Integer.valueOf(value);
         }
         return -1;
+    }
+
+    /**
+     * Get workflow id.
+     *
+     * @return workflow id as String
+     */
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+    /**
+     * Set workflow id.
+     *
+     * @param workflowId as String
+     */
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
     }
 
     /**
