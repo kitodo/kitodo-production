@@ -89,7 +89,7 @@ public class MetsKitodoWrap {
      *             <tt>XMLStreamReader</tt> object.
      */
     public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException, TransformerException, IOException {
-        this.mets = createBasicMetsElements(MetsKitodoUtils.readAndValidateUriToMets(xmlFile));
+        this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile));
     }
 
     /**
