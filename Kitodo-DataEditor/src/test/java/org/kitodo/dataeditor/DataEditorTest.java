@@ -31,8 +31,20 @@ public class DataEditorTest {
     }
 
     @Test
+    public void shouldReadEmptyMetadata() throws IOException {
+        dataEditor.readData(URI.create("./src/test/resources/testmetaEmpty.xml"));
+    }
+
+    @Test
     public void shouldReadOldMetadata() throws IOException {
         dataEditor.readData(URI.create("./src/test/resources/testmetaOldFormat.xml"));
+    }
+
+    @Test
+    public void shouldNotReadInvalidMetadata() throws IOException {
+        expectedException.expect(IOException.class);
+        expectedException.expectMessage("Unable to read file");
+        dataEditor.readData(URI.create("./src/test/resources/testmetaInvalid.xml"));
     }
 
     @Test

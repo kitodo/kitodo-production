@@ -75,6 +75,19 @@ public class MetsKitodoWrapTest {
     }
 
     @Test
+    public void shouldReadGoobiMetadata() throws JAXBException, XMLStreamException, TransformerException, IOException {
+        URI oldXmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(oldXmlfile);
+        KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
+
+        MetadataType metadataType = kitodoType.getMetadata().get(1);
+        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
+            metadataType.getName());
+        Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Test Publisher",
+            metadataType.getContent().get(0).toString());
+    }
+
+    @Test
     public void shouldReadKitodoMetadataById() throws JAXBException, XMLStreamException, TransformerException, IOException {
         MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(xmlfile);
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecId("DMDLOG_0002");

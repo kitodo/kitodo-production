@@ -15,12 +15,5 @@
             <mets:name>Kitodo - kitodo-dataeditor-3.0 - 22−May−2017</mets:name>
             <mets:note>Kitodo</mets:note>
         </mets:agent>
-    </mets:metsHdr>
-    <mets:dmdSec ID="DMDLOG_0000">
-        <mets:mdWrap MDTYPE="MODS">
-            <mets:xmlData>
-                <notSupported/>
-            </mets:xmlData>
-        </mets:mdWrap>
-    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0001">
 </mets:mets>

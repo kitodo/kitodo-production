@@ -91,12 +91,25 @@ class MetsKitodoUtils {
         }
     }
 
+    static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
+        // Wrapping null-checks at getter-chain into Optional<T>.class
+        return Optional.ofNullable(mdSecType).map(MdSecType::getMdWrap)
+            .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
+    }
+
+    static boolean metsContainsMetadataAtMdSecIndex(Mets mets, int index) {
+        if (mets.getDmdSec().size() > index) {
+            Optional<List<Object>> xmlData = getXmlDataOfMdSec(mets.getDmdSec().get(index));
+            if (xmlData.isPresent()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static List<Object> getXmlDataOfMetsByMdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
-            // Wrapping null-checks at getter-chain into Optional<T>.class
-            Optional<List<Object>> xmlData = Optional.ofNullable(mets.getDmdSec().get(index)).map(MdSecType::getMdWrap)
-                    .map(MdSecType.MdWrap::getXmlData).map(MdSecType.MdWrap.XmlData::getAny);
-
+            Optional<List<Object>> xmlData = getXmlDataOfMdSec(mets.getDmdSec().get(index));
             if (xmlData.isPresent()) {
                 return xmlData.get();
             }

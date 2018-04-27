@@ -16,7 +16,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -106,7 +105,6 @@ public class MetsKitodoWrap {
         // using a stream filter to prevent accepting white space and new line content
         // in an element that has mixed context
         XMLInputFactory xif = XMLInputFactory.newFactory();
-
         XMLStreamReader xmlStreamReader = null;
 
         try {
@@ -123,13 +121,18 @@ public class MetsKitodoWrap {
             });
 
             Mets temporaryMets = (Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader);
-
-            if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
-                logger.warn("Not supported format detected. Trying to convert from old goobi format now!");
-                temporaryMets = MetsKitodoUtils.readFromOldFormat(xmlFile);
-            }
-            if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
-                throw new IOException("Can not read data because of not supported format!");
+            if (MetsKitodoUtils.metsContainsMetadataAtMdSecIndex(temporaryMets, 0)) {
+                if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
+                    logger.warn("Not supported format detected. Trying to convert from old goobi format now!");
+                    temporaryMets = MetsKitodoUtils.readFromOldFormat(xmlFile);
+                }
+                if (!MetsKitodoUtils.checkValidMetsKitodoFormat(temporaryMets)) {
+                    throw new IOException("Can not read data because of not supported format!");
+                } else {
+                    logger.info("Successfully converted metadata to kitodo format!");
+                }
+            } else {
+                logger.warn("Metadata file does not contain any metadata");
             }
             this.mets = createBasicMetsElements(temporaryMets);
         } finally {

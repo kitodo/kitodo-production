@@ -30,9 +30,9 @@ public class MetsKitodoUtilsTest {
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PlaceOfPublication",
+        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
             metadataType.getName());
-        Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Hamburg",
+        Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Test Publisher",
             metadataType.getContent().get(0).toString());
     }
 
