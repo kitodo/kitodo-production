@@ -25,6 +25,7 @@ public class FileLoader {
 
     private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
     private static String diagramReaderGatewayPath = ConfigCore.getKitodoDiagramDirectory() + "gateway.bpmn20.xml";
+    private static String diagramUpdateGatewayPath = ConfigCore.getKitodoDiagramDirectory() + "gateway-update.bpmn20.xml";
     private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
@@ -141,6 +142,69 @@ public class FileLoader {
         Files.write(Paths.get(diagramReaderGatewayPath), content);
     }
 
+    public static void createUpdatedGatewayDiagramTestFile() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:template=\"http://www.kitodo.org/template\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\">");
+        content.add("<bpmn2:process id=\"Process_1\" name=\"test-gateway\" template:docket=\"2\" template:outputName=\"Test Gateway\" isExecutable=\"false\">");
+        content.add("<bpmn2:startEvent id=\"StartEvent_1\">");
+        content.add("<bpmn2:outgoing>SequenceFlow_0651lvf</bpmn2:outgoing>");
+        content.add("</bpmn2:startEvent>");
+        content.add("<bpmn2:task id=\"Task_0q73jg6\" name=\"First task\">");
+        content.add("<bpmn2:incoming>SequenceFlow_0651lvf</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_1uym1c8</bpmn2:outgoing>");
+        content.add("</bpmn2:task>");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_0651lvf\" sourceRef=\"StartEvent_1\" targetRef=\"Task_0q73jg6\" />");
+        content.add("<bpmn2:task id=\"Task_02rdayp\" name=\"Some normal task\">");
+        content.add("<bpmn2:incoming>SequenceFlow_0k77eji</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_08oilfh</bpmn2:outgoing>");
+        content.add("</bpmn2:task>");
+        content.add("<bpmn2:task id=\"Task_2m88bz0\" name=\"Added task\">");
+        content.add("<bpmn2:incoming>SequenceFlow_08oilfh</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_10opxw7</bpmn2:outgoing>");
+        content.add("</bpmn2:task>");
+        content.add("<bpmn2:task id=\"Task_1m88bz0\" name=\"Some other normal\">");
+        content.add("<bpmn2:incoming>SequenceFlow_10opxw7</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_20opxw7</bpmn2:outgoing>");
+        content.add("</bpmn2:task>");
+        content.add("<bpmn2:task id=\"Task_0dzgqnz\" name=\"Ending task\">");
+        content.add("<bpmn2:incoming>SequenceFlow_20opxw7</bpmn2:incoming>");
+        content.add("<bpmn2:incoming>SequenceFlow_171r48b</bpmn2:incoming>");
+        content.add("<bpmn2:incoming>SequenceFlow_035iml6</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_1ntrtjs</bpmn2:outgoing>");
+        content.add("</bpmn2:task>");
+        content.add("<bpmn2:endEvent id=\"EndEvent_1jlzp4p\">");
+        content.add("<bpmn2:incoming>SequenceFlow_1ntrtjs</bpmn2:incoming>");
+        content.add("</bpmn2:endEvent>");
+        content.add("<bpmn2:exclusiveGateway id=\"ExclusiveGateway_0dclvs2\" default=\"SequenceFlow_035iml6\">");
+        content.add("<bpmn2:incoming>SequenceFlow_1uym1c8</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_0w0rghc</bpmn2:outgoing>");
+        content.add("<bpmn2:outgoing>SequenceFlow_035iml6</bpmn2:outgoing>");
+        content.add("<bpmn2:outgoing>SequenceFlow_0k77eji</bpmn2:outgoing>");
+        content.add("</bpmn2:exclusiveGateway>");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_0w0rghc\" sourceRef=\"ExclusiveGateway_0dclvs2\" targetRef=\"Task_0w8342u\" name=\"${type==1}\">");
+        content.add("<bpmn2:conditionExpression xsi:type=\"bpmn2:tFormalExpression\">${type == 1}</bpmn2:conditionExpression>");
+        content.add("</bpmn2:sequenceFlow>");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_0k77eji\" sourceRef=\"ExclusiveGateway_0dclvs2\" targetRef=\"Task_02rdayp\" name=\"${type==2}\">");
+        content.add("<bpmn2:conditionExpression xsi:type=\"bpmn2:tFormalExpression\">${type == 2}</bpmn2:conditionExpression>");
+        content.add("</bpmn2:sequenceFlow>");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_035iml6\" sourceRef=\"ExclusiveGateway_0dclvs2\" targetRef=\"Task_0dzgqnz\" name=\"else\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_1uym1c8\" sourceRef=\"Task_0q73jg6\" targetRef=\"ExclusiveGateway_0dclvs2\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_08oilfh\" sourceRef=\"Task_02rdayp\" targetRef=\"Task_2m88bz0\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_10opxw7\" sourceRef=\"Task_2m88bz0\" targetRef=\"Task_1m88bz0\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_20opxw7\" sourceRef=\"Task_1m88bz0\" targetRef=\"Task_0dzgqnz\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_171r48b\" sourceRef=\"Task_0w8342u\" targetRef=\"Task_0dzgqnz\" />");
+        content.add("<bpmn2:sequenceFlow id=\"SequenceFlow_1ntrtjs\" sourceRef=\"Task_0dzgqnz\" targetRef=\"EndEvent_1jlzp4p\" />");
+        content.add("<bpmn2:scriptTask id=\"Task_0w8342u\" name=\"Script task\">");
+        content.add("<bpmn2:incoming>SequenceFlow_0w0rghc</bpmn2:incoming>");
+        content.add("<bpmn2:outgoing>SequenceFlow_171r48b</bpmn2:outgoing>");
+        content.add("</bpmn2:scriptTask>");
+        content.add("</bpmn2:process>");
+        content.add("</bpmn2:definitions>");
+
+        Files.write(Paths.get(diagramUpdateGatewayPath), content);
+    }
+
     public static void createMetadataFile() throws IOException {
         Files.write(Paths.get(metadataPath), getMetadataTemplate());
     }
@@ -222,6 +286,10 @@ public class FileLoader {
 
     public static void deleteExtendedGatewayDiagramTestFile() throws IOException {
         Files.deleteIfExists(Paths.get(diagramReaderGatewayPath));
+    }
+
+    public static void deleteUpdatedGatewayDiagramTestFile() throws IOException {
+        Files.deleteIfExists(Paths.get(diagramUpdateGatewayPath));
     }
 
     public static void deleteDigitalCollectionsFile() throws IOException {

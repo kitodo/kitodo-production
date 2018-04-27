@@ -30,7 +30,8 @@ import static org.junit.Assert.assertTrue;
 
 public class ReaderIT {
 
-    private static FileService fileService = new ServiceManager().getFileService();
+    private static ServiceManager serviceManager = new ServiceManager();
+    private static FileService fileService = serviceManager.getFileService();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -40,6 +41,7 @@ public class ReaderIT {
         fileService.createDirectory(URI.create(""), "diagrams");
 
         FileLoader.createExtendedGatewayDiagramTestFile();
+        FileLoader.createUpdatedGatewayDiagramTestFile();
     }
 
     @AfterClass
@@ -48,6 +50,7 @@ public class ReaderIT {
         MockDatabase.cleanDatabase();
 
         FileLoader.deleteExtendedGatewayDiagramTestFile();
+        FileLoader.deleteUpdatedGatewayDiagramTestFile();
 
         fileService.delete(URI.create("diagrams"));
     }
@@ -77,5 +80,23 @@ public class ReaderIT {
                 tasks.get(4).getWorkflowCondition().contains("default")
                         && tasks.get(4).getWorkflowCondition().contains("${type == 1}")
                         && tasks.get(4).getWorkflowCondition().contains("${type == 2}"));
+    }
+
+    @Test
+    public void shouldUpdateTemplatesAssignedToWorkflowAfterDiagramChange() throws Exception {
+        Reader reader = new Reader("gateway");
+
+        Template template = reader.convertWorkflowToTemplate();
+        serviceManager.getWorkflowService().saveToDatabase(template.getWorkflow());
+        serviceManager.getTemplateService().save(template);
+
+        reader = new Reader("gateway-update");
+        reader.updateTemplatesAssignedToWorkflowAfterDiagramChange(template.getWorkflow());
+
+        Template updatedTemplate = serviceManager.getTemplateService().getById(template.getId());
+        assertEquals("Docket was not updated in template!", serviceManager.getDocketService().getById(2),
+                updatedTemplate.getDocket());
+        assertEquals("Tasks' list was not updated correctly!", 6, template.getTasks().size());
+
     }
 }
