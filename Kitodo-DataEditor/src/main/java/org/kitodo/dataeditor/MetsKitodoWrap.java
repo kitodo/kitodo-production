@@ -109,16 +109,7 @@ public class MetsKitodoWrap {
 
         try {
             xmlStreamReader = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
-            xmlStreamReader = xif.createFilteredReader(xmlStreamReader, new StreamFilter() {
-
-                @Override
-                public boolean accept(XMLStreamReader reader) {
-                    if (reader.getEventType() == XMLStreamReader.CHARACTERS) {
-                        return reader.getText().trim().length() > 0;
-                    }
-                    return true;
-                }
-            });
+            xmlStreamReader = xif.createFilteredReader(xmlStreamReader, new XmlStreamFilter());
 
             Mets temporaryMets = (Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader);
             if (MetsKitodoUtils.metsContainsMetadataAtMdSecIndex(temporaryMets, 0)) {
