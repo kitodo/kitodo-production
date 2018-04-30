@@ -25,7 +25,7 @@
                          value="#{msgs.speichern}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validieren}"
                          action="#{Metadaten.validate}"

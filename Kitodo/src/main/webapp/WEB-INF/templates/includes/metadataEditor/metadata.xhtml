@@ -21,24 +21,22 @@
 
         <p:messages id="messagesMetadata" closable="true"/>
 
-        <h:panelGroup id="personTable" rendered="#{!empty Metadaten.metaPersonList}">
-            <p:dataTable value="#{Metadaten.metaPersonList}" var="person" style="margin-bottom:30px">
+        <h:panelGroup rendered="#{!empty Metadaten.metaPersonList}">
+            <p:dataTable id="personTable" value="#{Metadaten.metaPersonList}" var="person" style="margin-bottom:30px">
                 <f:facet name="header">
                     #{msgs.personen}
                 </f:facet>
 
                 <p:column>
                     <p:panelGrid>
-
                         <p:outputLabel for="role" value="#{msgs.rolle}:"/>
-                        <p:selectOneMenu id="role" value="#{person.rolle}" style="width: 210px;">
+                        <p:selectOneMenu id="role" value="#{person.rolle}" style="width: calc(100% - 32px)">
                             <f:selectItems value="#{person.addableRollen}"/>
                             <f:ajax event="mouseup"/>
                         </p:selectOneMenu>
 
                         <p:outputLabel for="record" value="#{msgs.normDataRecord}:"/>
                         <p:inputText value="#{person.record}"
-                                     style="width: 242px;"
                                      class="input"
                                      id="record">
                             <p:ajax event="blur"/>
@@ -46,14 +44,12 @@
 
                         <p:outputLabel value="#{msgs.firstName}:"/>
                         <p:inputText value="#{person.vorname}"
-                                     style="width: 242px;"
                                      id="firstname">
                             <p:ajax event="blur"/>
                         </p:inputText>
 
                         <p:outputLabel value="#{msgs.surname}:"/>
                         <p:inputText value="#{person.nachname}"
-                                     style="width: 242px;"
                                      id="lastname">
                             <p:ajax event="blur"/>
                         </p:inputText>
@@ -61,7 +57,7 @@
 
                 </p:column>
 
-                <p:column style="width:64px;text-align: center">
+                <p:column style="width:64px;text-align: center; padding: 8px 0" id="actionButtons">
                     <p:commandButton update="metadata:personTable, metadata:messagesMetadata"
                                      icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
                                      title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
