@@ -18,11 +18,11 @@ class MetsKitodoValidator {
 
     /**
      * Validates the mets-kitodo-format of a given Mets object by checking if the
-     * first metadate element is instance of KitodoType.
+     * first metadate element is an instance of KitodoType.
      * 
      * @param mets
      *            The Mets object.
-     * @return True if the first metadate element of given Mets object is instance
+     * @return True if the first metadate element of given Mets object is an instance
      *         of KitodoType
      */
     static boolean checkValidMetsKitodoFormat(Mets mets) {

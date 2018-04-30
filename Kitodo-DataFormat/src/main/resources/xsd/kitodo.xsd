@@ -18,15 +18,25 @@
     <xs:complexType name="kitodoType">
         <xs:choice>
             <xs:element name="metadata" type="metadataType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="metadataGroup" type="metadataGroupType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:choice>
         <xs:attribute type="xs:string" name="version"/>
     </xs:complexType>
-    <xs:complexType name="metadataType" mixed="true">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
+
+    <xs:complexType name="metadataType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="name"/>
+                <xs:attribute type="xs:boolean" name="anchorId"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="metadataGroupType">
+        <xs:choice>
             <xs:element name="metadata" type="metadataType" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="metadataGroup" type="metadataGroupType" maxOccurs="unbounded" minOccurs="0"/>
         </xs:choice>
         <xs:attribute type="xs:string" name="name"/>
-        <xs:attribute type="xs:string" name="type"/>
-        <xs:attribute type="xs:boolean" name="anchorId"/>
     </xs:complexType>
 </xs:schema>

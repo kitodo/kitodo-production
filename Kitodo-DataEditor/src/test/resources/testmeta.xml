@@ -22,16 +22,21 @@
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
                     <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
                     <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
-                    <kitodo:metadata name="TypeOfResource" type="group">
+                    <kitodo:metadataGroup name="TypeOfResource">
                         <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
                         <kitodo:metadata name="typIdentifierPPN">10457187X</kitodo:metadata>
                         <kitodo:metadata name="typIdentifierURI">http://d-nb.info/gnd/4023287-6</kitodo:metadata>
-                    </kitodo:metadata>
-                    <kitodo:metadata type="group" name="FormerOwner">
+                        <kitodo:metadataGroup name="subGroup">
+                            <kitodo:metadata name="subTypDisplayForm">subHandschrift</kitodo:metadata>
+                            <kitodo:metadata name="subTypIdentifierPPN">sub10457187X</kitodo:metadata>
+                            <kitodo:metadata name="subTypIdentifierURI">subhttp://d-nb.info/gnd/4023287-6</kitodo:metadata>
+                        </kitodo:metadataGroup>
+                    </kitodo:metadataGroup>
+                    <kitodo:metadataGroup name="FormerOwner">
                         <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
                         <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/</kitodo:metadata>
                         <kitodo:metadata name="displayName">, </kitodo:metadata>
-                    </kitodo:metadata>
+                    </kitodo:metadataGroup>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>

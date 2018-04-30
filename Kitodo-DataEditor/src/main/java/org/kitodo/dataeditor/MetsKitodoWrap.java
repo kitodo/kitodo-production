@@ -81,14 +81,8 @@ public class MetsKitodoWrap {
      * 
      * @param xmlFile
      *            The xml file in mets-kitodo format as URI.
-     * @throws JAXBException
-     *             Thrown if an error was encountered while creating the
-     *             <tt>Unmarshaller</tt> object.
-     * @throws XMLStreamException
-     *             Thrown if an error was encountered while creating the
-     *             <tt>XMLStreamReader</tt> object.
      */
-    public MetsKitodoWrap(URI xmlFile) throws JAXBException, XMLStreamException, TransformerException, IOException {
+    public MetsKitodoWrap(URI xmlFile) throws JAXBException, TransformerException, IOException {
         this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile));
     }
 

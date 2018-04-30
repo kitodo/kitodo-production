@@ -71,22 +71,48 @@ class MetsKitodoUtils {
         return false;
     }
 
+    /**
+     * Gets an optional list of objects which holds the xml data of an mets objets
+     * mdSec element.
+     * 
+     * @param mdSecType
+     *            The mdSec element.
+     * @return A list of objects wraped in Optional class.
+     */
     static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
         // Wrapping null-checks at getter-chain into Optional<T>.class
         return Optional.ofNullable(mdSecType).map(MdSecType::getMdWrap).map(MdSecType.MdWrap::getXmlData)
                 .map(MdSecType.MdWrap.XmlData::getAny);
     }
 
+    /**
+     * Checks if the specified mdSec element of an mets object contains any metdata.
+     * 
+     * @param mets
+     *            The Mets object.
+     * @param index
+     *            The mdSec element index.
+     * @return {@code true} if the specified mdSec element contains any metadata.
+     *         {@code false} if not or if the mdSec element with the specified index
+     *         does not exist.
+     */
     static boolean metsContainsMetadataAtMdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
             Optional<List<Object>> xmlData = getXmlDataOfMdSec(mets.getDmdSec().get(index));
-            if (xmlData.isPresent()) {
-                return true;
-            }
+            return xmlData.isPresent();
         }
         return false;
     }
 
+    /**
+     * Gets the xml metadata of the specified mets objects mdSec element.
+     * 
+     * @param mets
+     *            The Mets object.
+     * @param index
+     *            The mdSec element index.
+     * @return
+     */
     static List<Object> getXmlDataOfMetsByMdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
             Optional<List<Object>> xmlData = getXmlDataOfMdSec(mets.getDmdSec().get(index));

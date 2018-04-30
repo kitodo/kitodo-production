@@ -26,14 +26,14 @@ public class MetsKitodoUtilsTest {
 
     @Test
     public void shouldReadKitodoMetadataFormOldFormatFile() throws JAXBException, TransformerException, IOException {
-        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(MetsKitodoUtils.readFromOldFormat(xmlfile));
+        MetsKitodoWrap metsKitodoWrap = new MetsKitodoWrap(MetsKitodoReader.readUriToMetsFromOldFormat(xmlfile));
         KitodoType kitodoType = metsKitodoWrap.getKitodoTypeByMdSecIndex(0);
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
             metadataType.getName());
         Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Test Publisher",
-            metadataType.getContent().get(0).toString());
+            metadataType.getValue());
     }
 
 }

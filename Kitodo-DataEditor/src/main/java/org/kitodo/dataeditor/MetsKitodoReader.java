@@ -34,12 +34,28 @@ public class MetsKitodoReader {
 
     private static final Logger logger = LogManager.getLogger(MetsKitodoReader.class);
 
-    static Mets readFromOldFormat(URI file) throws TransformerException, IOException, JAXBException {
+    /**
+     * Reads an old mets-mods-goobi formated xml file by transforming it to the
+     * current used mets-kitodo format.
+     * 
+     * @param xmlFile
+     *            The file as URI object.
+     * @return The Mets object in mets-kitodo format.
+     */
+    static Mets readUriToMetsFromOldFormat(URI xmlFile) throws TransformerException, IOException, JAXBException {
         URI xslFile = URI.create("./src/main/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl");
-        String convertedData = XmlUtils.transformXmlByXslt(file, xslFile);
+        String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xslFile);
         return readStringToMets(convertedData);
     }
 
+    /**
+     * Reads a mets-kitodo formated xml String to a Mets object.
+     * 
+     * @param xmlString
+     *            The mets-kitodo formated xml String.
+     * 
+     * @return The Mets object in mets-kitodo format.
+     */
     private static Mets readStringToMets(String xmlString) throws JAXBException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
@@ -48,36 +64,38 @@ public class MetsKitodoReader {
         }
     }
 
-    private static Mets readUriToMets(URI xmlFile) throws JAXBException, XMLStreamException {
+    /**
+     * Reads an URI mets-kitodo formated xml file to a Mets object.
+     * 
+     * @param xmlFile
+     *            The file as URI object.
+     * @return The Mets object in mets-kitodo format.
+     */
+    private static Mets readUriToMets(URI xmlFile) throws JAXBException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
-
-        // using a stream filter to prevent accepting white space and new line content
-        // in an element that has mixed context
-        XMLInputFactory xif = XMLInputFactory.newFactory();
-        XMLStreamReader xmlStreamReader = null;
-
-        try {
-            xmlStreamReader = xif.createXMLStreamReader(new StreamSource(xmlFile.getPath()));
-            xmlStreamReader = xif.createFilteredReader(xmlStreamReader, new XmlStreamFilter());
-
-            return (Mets) jaxbUnmarshaller.unmarshal(xmlStreamReader);
-        } finally {
-            if (Objects.nonNull(xmlStreamReader)) {
-                xmlStreamReader.close();
-            }
-        }
+        return (Mets) jaxbUnmarshaller.unmarshal(new StreamSource(xmlFile.getPath()));
     }
 
+    /**
+     * Reads an URI mets-kitodo formated xml file to a Mets object and checking if
+     * the file contains metadata. If yes, it is also checked if the first metadata
+     * is in kitodo format. If not, it is tried to convert to kitodo format,
+     * assuming that the file contains old goobi format metadata.
+     * 
+     * @param xmlFile
+     *            The file as URI object.
+     * @return The Mets object in mets-kitodo format.
+     */
     static Mets readAndValidateUriToMets(URI xmlFile)
-            throws JAXBException, XMLStreamException, TransformerException, IOException {
+            throws JAXBException, TransformerException, IOException {
 
         Mets mets = readUriToMets(xmlFile);
 
         if (MetsKitodoUtils.metsContainsMetadataAtMdSecIndex(mets, 0)) {
             if (!MetsKitodoValidator.checkValidMetsKitodoFormat(mets)) {
                 logger.warn("Not supported format detected. Trying to convert from old goobi format now!");
-                mets = readFromOldFormat(xmlFile);
+                mets = readUriToMetsFromOldFormat(xmlFile);
             }
             if (!MetsKitodoValidator.checkValidMetsKitodoFormat(mets)) {
                 throw new IOException("Can not read data because of not supported format!");

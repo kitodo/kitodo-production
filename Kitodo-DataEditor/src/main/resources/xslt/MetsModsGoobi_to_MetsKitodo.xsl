@@ -50,8 +50,7 @@
     </xsl:template>
     <!--This replaces the person metadata element by metadata group element-->
     <xsl:template match="goobi:metadata[@type='person']" mode="pass2">
-        <kitodo:metadata>
-            <xsl:attribute name="type">group</xsl:attribute>
+        <kitodo:metadataGroup>
             <xsl:attribute name="name">
                 <xsl:value-of select="@name"/>
             </xsl:attribute>
@@ -63,6 +62,16 @@
                     <xsl:value-of select="current()"/>
                 </kitodo:metadata>
             </xsl:for-each>
-        </kitodo:metadata>
+        </kitodo:metadataGroup>
+    </xsl:template>
+
+    <!--This replaces the metadata of type group element by metadata group element-->
+    <xsl:template match="goobi:metadata[@type='group']" mode="pass2">
+        <kitodo:metadataGroup>
+            <xsl:attribute name="name">
+                <xsl:value-of select="@name"/>
+            </xsl:attribute>
+            <xsl:apply-templates mode="pass2"/>
+        </kitodo:metadataGroup>
     </xsl:template>
 </xsl:stylesheet>
