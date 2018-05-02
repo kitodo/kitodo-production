@@ -128,9 +128,30 @@ function toggleResizers() {
     }
 }
 
+function toggleCollapseButtons() {
+    var firstButton = $('#firstColumnWrapper .columnExpandButton');
+    var secondButton = $('#secondColumnWrapper .columnExpandButton');
+    var thirdButton = $('#thirdColumnWrapper .columnExpandButton');
+
+    if (collapsedColumns >= 2) {
+        if (!firstColumn.hasClass('collapsed')) {
+            firstButton.prop('disabled', true);
+        } else if (!secondColumn.hasClass('collapsed')) {
+            secondButton.prop('disabled', true);
+        } else {
+            thirdButton.prop('disabled', true);
+        }
+    } else {
+        firstButton.prop('disabled', false);
+        secondButton.prop('disabled', false);
+        thirdButton.prop('disabled', false);
+    }
+}
+
 function toggleFirstColumn() {
     getElements();
     toggleResizers();
+    toggleCollapseButtons();
 
     if (firstColumn.hasClass('collapsed')) {
         if (secondColumn.hasClass('collapsed')) {
@@ -158,6 +179,7 @@ function toggleFirstColumn() {
 function toggleSecondColumn() {
     getElements();
     toggleResizers();
+    toggleCollapseButtons();
 
     if (secondColumn.hasClass('collapsed')) {
         if (thirdColumn.hasClass('collapsed')) {
@@ -184,6 +206,7 @@ function toggleSecondColumn() {
 function toggleThirdColumn() {
     getElements();
     toggleResizers();
+    toggleCollapseButtons();
 
     if (thirdColumn.hasClass('collapsed')) {
         if (secondColumn.hasClass('collapsed')) {
