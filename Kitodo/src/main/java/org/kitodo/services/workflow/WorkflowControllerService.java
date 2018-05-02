@@ -34,6 +34,7 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -44,8 +45,9 @@ import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
+import org.kitodo.workflow.model.Reader;
 
-public class WorkflowService {
+public class WorkflowControllerService {
 
     private int openTasksWithTheSameOrdering;
     private List<Task> automaticTasks;
@@ -57,8 +59,8 @@ public class WorkflowService {
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final WebDav webDav = new WebDav();
-    private static final Logger logger = LogManager.getLogger(WorkflowService.class);
-    private static WorkflowService instance = null;
+    private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
+    private static WorkflowControllerService instance = null;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -66,11 +68,11 @@ public class WorkflowService {
      *
      * @return unique instance of TaskService
      */
-    public static WorkflowService getInstance() {
+    public static WorkflowControllerService getInstance() {
         if (Objects.equals(instance, null)) {
-            synchronized (WorkflowService.class) {
+            synchronized (WorkflowControllerService.class) {
                 if (Objects.equals(instance, null)) {
-                    instance = new WorkflowService();
+                    instance = new WorkflowControllerService();
                 }
             }
         }
@@ -123,6 +125,20 @@ public class WorkflowService {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Save workflow as template.
+     * 
+     * @param diagramName
+     *            from which template is assigned
+     */
+    public void saveWorkflowAsTemplate(String diagramName) throws DAOException, DataException, IOException {
+        Reader reader = new Reader(diagramName);
+        reader.loadProcess();
+        Template template = reader.convertWorkflowToTemplate();
+        serviceManager.getWorkflowService().saveToDatabase(template.getWorkflow());
+        serviceManager.getTemplateService().save(template);
     }
 
     /**
@@ -348,6 +364,7 @@ public class WorkflowService {
 
     /**
      * Set Priority equal 10 means correction task.
+     * 
      * @param task
      *            Task object
      * @return correction Task

@@ -224,7 +224,8 @@ public class TaskServiceIT {
     @Test
     public void shouldGetCorrectionStep() throws Exception {
         Task task = taskService.getById(2);
-        assertTrue("Task is not correction task!", new ServiceManager().getWorkflowService().isCorrectionTask(task));
+        boolean result = new ServiceManager().getWorkflowControllerService().isCorrectionTask(task);
+        assertTrue("Task is not correction task!", result);
     }
 
     @Test

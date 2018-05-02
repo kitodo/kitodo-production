@@ -78,7 +78,7 @@ import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import org.kitodo.services.workflow.WorkflowService;
+import org.kitodo.services.workflow.WorkflowControllerService;
 
 @Named("ProzessverwaltungForm")
 @SessionScoped
@@ -107,7 +107,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private List<ProcessDTO> processDTOS = new ArrayList<>();
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
-    private transient WorkflowService workflowService = serviceManager.getWorkflowService();
+    private transient WorkflowControllerService workflowControllerService = serviceManager.getWorkflowControllerService();
     private static String DONEDIRECTORYNAME = "fertig/";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
@@ -835,7 +835,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusUpForPage() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
-            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
+            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -845,7 +845,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusUpForSelection() throws DAOException, DataException, IOException {
         List<ProcessDTO> processDTOS = this.getSelectedProcesses();
         for (ProcessDTO processDTO : processDTOS) {
-            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
+            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -856,7 +856,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusUpForHits() throws DAOException, DataException, IOException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
-            workflowService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
+            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -867,7 +867,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusDownForPage() throws DAOException, DataException {
         List<ProcessDTO> processes = this.page.getListReload();
         for (ProcessDTO process : processes) {
-            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
+            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -877,7 +877,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusDownForSelection() throws DAOException, DataException {
         List<ProcessDTO> processDTOS = this.getSelectedProcesses();
         for (ProcessDTO processDTO : processDTOS) {
-            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
+            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
         }
     }
 
@@ -888,7 +888,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void setTaskStatusDownForHits() throws DAOException, DataException {
         List<ProcessDTO> processes = this.page.getCompleteList();
         for (ProcessDTO process : processes) {
-            workflowService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
+            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
     }
 
@@ -896,7 +896,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Task status up.
      */
     public void setTaskStatusUp() throws DataException, IOException {
-        setTask(workflowService.setTaskStatusUp(this.task));
+        setTask(workflowControllerService.setTaskStatusUp(this.task));
         save();
         deleteSymlinksFromUserHomes();
     }
@@ -905,7 +905,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Task status down.
      */
     public void setTaskStatusDown() {
-        setTask(workflowService.setTaskStatusDown(this.task));
+        setTask(workflowControllerService.setTaskStatusDown(this.task));
         save();
         deleteSymlinksFromUserHomes();
     }
