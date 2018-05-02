@@ -503,7 +503,7 @@ public class ProcessServiceIT {
         FileformatInterface fileFormat = processService.readMetadataAsTemplateFile(process);
         assertTrue("Read template file has incorrect file format!", fileFormat instanceof MetsModsInterface);
         int metadataSize = fileFormat.getDigitalDocument().getLogicalDocStruct().getAllMetadata().size();
-        assertEquals("It was not possible to read metadata as template file!", metadataSize, 1);
+        assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
 
         FileLoader.deleteMetadataTemplateFile();
         FileLoader.deleteRulesetFile();
@@ -614,20 +614,18 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindNotClosedProcessesWithoutTemplates() throws Exception {
         List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcessesWithoutTemplates(null);
-        assertTrue("Found " + notClosedProcesses.size() + " processes, instead of 3", notClosedProcesses.size() == 3);
+        assertEquals("Found incorrect amount of processes!", 3, notClosedProcesses.size());
     }
 
     @Test
     public void shouldFindProcessesOfOpenAndActiveProjectsWithoutTemplates() throws Exception {
         List<ProcessDTO> openAndActiveProcesses = processService.findOpenAndActiveProcessesWithoutTemplates(null);
-        assertTrue("Found " + openAndActiveProcesses.size() + " processes, instead of 2",
-            openAndActiveProcesses.size() == 2);
+        assertEquals("Found incorrect amount of processes!", 2, openAndActiveProcesses.size());
     }
 
     @Test
     public void shouldFindAllActiveWithoutTemplates() throws Exception {
         List<ProcessDTO> activeProcessesWithoutTemplates = processService.findAllActiveWithoutTemplates(null);
-        assertTrue("Found " + activeProcessesWithoutTemplates.size() + " processes, instead of 2",
-            activeProcessesWithoutTemplates.size() == 2);
+        assertEquals("Found incorrect amount of processes!", 2, activeProcessesWithoutTemplates.size());
     }
 }

@@ -46,10 +46,10 @@ public class DigitalCollectionsTest {
         DigitalCollections.possibleDigitalCollectionsForProcess(process);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
-        assertEquals("Incorrect amount of digital collections!", digitalCollections.size(), 1);
+        assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
         List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
-        assertEquals("Incorrect amount of possible digital collections!", possibleDigitalCollection.size(), 3);
+        assertEquals("Incorrect amount of possible digital collections!", 3, possibleDigitalCollection.size());
     }
 
     @Test
@@ -63,10 +63,10 @@ public class DigitalCollectionsTest {
         DigitalCollections.possibleDigitalCollectionsForProcess(process);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
-        assertEquals("Incorrect amount of digital collections!", digitalCollections.size(), 1);
+        assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
         List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
-        assertEquals("Incorrect amount of possible digital collections!", possibleDigitalCollection.size(), 5);
+        assertEquals("Incorrect amount of possible digital collections!", 5, possibleDigitalCollection.size());
     }
 
     @Test
@@ -80,9 +80,9 @@ public class DigitalCollectionsTest {
         DigitalCollections.possibleDigitalCollectionsForProcess(process);
 
         List<String> digitalCollections = DigitalCollections.getDigitalCollections();
-        assertEquals("Incorrect amount of digital collections!", digitalCollections.size(), 1);
+        assertEquals("Incorrect amount of digital collections!", 1, digitalCollections.size());
 
         List<String> possibleDigitalCollection = DigitalCollections.getPossibleDigitalCollection();
-        assertEquals("Incorrect amount of possible digital collections!", possibleDigitalCollection.size(), 1);
+        assertEquals("Incorrect amount of possible digital collections!", 1, possibleDigitalCollection.size());
     }
 }

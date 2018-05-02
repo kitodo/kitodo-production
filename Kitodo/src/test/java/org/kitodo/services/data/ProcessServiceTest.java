@@ -19,6 +19,7 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class ProcessServiceTest {
 
@@ -65,9 +66,7 @@ public class ProcessServiceTest {
         List<PropertyDTO> propertiesDTO = new ServiceManager().getProcessService().getSortedCorrectionSolutionMessages(processDTO);
 
         assertEquals("Size of sorted correction messages is not equal to given size!", 4, propertiesDTO.size());
-
-        assertEquals("Sorted correction messages are not sorted correctly!", null, propertiesDTO.get(0).getCreationDate());
-
+        assertNull("Sorted correction messages are not sorted correctly!", propertiesDTO.get(0).getCreationDate());
         assertEquals("Sorted correction messages are not sorted correctly!", "2017-12-05", propertiesDTO.get(3).getCreationDate());
     }
 }

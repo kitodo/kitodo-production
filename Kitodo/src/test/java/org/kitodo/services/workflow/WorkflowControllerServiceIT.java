@@ -38,6 +38,7 @@ import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class WorkflowControllerServiceIT {
@@ -159,7 +160,7 @@ public class WorkflowControllerServiceIT {
         Task task = taskService.getById(5);
 
         workflowService.unassignTaskFromUser(task);
-        assertEquals("User was not unassigned from the task!", null, task.getProcessingUser());
+        assertNull("User was not unassigned from the task!", task.getProcessingUser());
         assertEquals("Task was not set up to open after unassing of the user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
     }
 
