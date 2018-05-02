@@ -42,7 +42,6 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
@@ -143,9 +142,6 @@ public class FileManipulation {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             Helper.setFehlerMeldung("uploadFailed", e);
-        } catch (TypeNotAllowedForParentException e) {
-            logger.error(e);
-            Helper.setFehlerMeldung("uploadFailed", e);
         } catch (MetadataTypeNotAllowedException e) {
             logger.error(e);
         } finally {
@@ -176,8 +172,7 @@ public class FileManipulation {
         this.uploadedFileName = uploadedFileName;
     }
 
-    private void updatePagination(URI filename)
-            throws TypeNotAllowedForParentException, IOException, MetadataTypeNotAllowedException {
+    private void updatePagination(URI filename) throws IOException, MetadataTypeNotAllowedException {
         if (!matchesFileConfiguration(filename)) {
             return;
         }
@@ -518,7 +513,7 @@ public class FileManipulation {
                     insertPage = String.valueOf(++indexToImport);
                 }
             }
-        } catch (TypeNotAllowedForParentException | MetadataTypeNotAllowedException | IOException e) {
+        } catch (MetadataTypeNotAllowedException | IOException e) {
             logger.error(e);
         }
 

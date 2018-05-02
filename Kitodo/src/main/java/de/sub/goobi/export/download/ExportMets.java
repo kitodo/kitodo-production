@@ -127,8 +127,7 @@ public class ExportMets {
      * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFileGroup)
-            throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
+            boolean writeLocalFileGroup) throws PreferencesException, WriteException, IOException {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
