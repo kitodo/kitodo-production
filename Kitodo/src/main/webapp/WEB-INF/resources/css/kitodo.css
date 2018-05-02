@@ -969,12 +969,8 @@ Metadata Editor
     cursor: ew-resize;
 }
 
-#ghostResizer {
-    position: absolute;
-    background: black;
-    width: 5px;
-    z-index: 10;
-    opacity: 0.5;
+#metadataEditorWrapper .resizer.disabled {
+    pointer-events: none;
 }
 
 #structureTreeForm\:actionButtons .ui-panelgrid-cell {

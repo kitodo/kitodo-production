@@ -22,6 +22,9 @@ var thirdColumn;
 var firstColumnChild;
 var secondColumnChild;
 var thirdColumnChild;
+var collapsedColumns;
+var firstResizer;
+var secondResizer;
 
 
 $(document).ready(function() {
@@ -94,6 +97,10 @@ function getElements() {
     firstColumnChild = $('#firstColumnWrapper > .ui-panel');
     secondColumnChild = $('#secondColumnWrapper > .ui-panel');
     thirdColumnChild = $('#thirdColumnWrapper >  .ui-panel');
+    collapsedColumns = $('#metadataEditorWrapper .collapsed').length;
+    var resizers = $('.resizer');
+    firstResizer = resizers.first();
+    secondResizer = resizers.last();
 }
 
 function setSizes() {
@@ -104,8 +111,26 @@ function setSizes() {
     thirdColumnChild.width(wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
 }
 
+function toggleResizers() {
+    if (collapsedColumns >= 2) {
+        $('.resizer').addClass('disabled');
+    } else if (collapsedColumns > 0) {
+        if (firstColumn.hasClass('collapsed')) {
+            firstResizer.addClass('disabled');
+            secondResizer.removeClass('disabled');
+        } else if (thirdColumn.hasClass('collapsed')) {
+            firstResizer.removeClass('disabled');
+            secondResizer.addClass('disabled');
+        }
+    } else {
+        firstResizer.removeClass('disabled');
+        secondResizer.removeClass('disabled');
+    }
+}
+
 function toggleFirstColumn() {
     getElements();
+    toggleResizers();
 
     if (firstColumn.hasClass('collapsed')) {
         if (secondColumn.hasClass('collapsed')) {
@@ -132,6 +157,7 @@ function toggleFirstColumn() {
 
 function toggleSecondColumn() {
     getElements();
+    toggleResizers();
 
     if (secondColumn.hasClass('collapsed')) {
         if (thirdColumn.hasClass('collapsed')) {
@@ -157,6 +183,7 @@ function toggleSecondColumn() {
 
 function toggleThirdColumn() {
     getElements();
+    toggleResizers();
 
     if (thirdColumn.hasClass('collapsed')) {
         if (secondColumn.hasClass('collapsed')) {
