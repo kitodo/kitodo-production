@@ -15,19 +15,21 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
 public class DataEditor implements DataEditorInterface {
 
-    private MetsKitodoWrap metsKitodoWrap;
+    private MetsKitodoWrapper metsKitodoWrapper;
+    private MetsKitodoWriter metsKitodoWriter = new MetsKitodoWriter();
 
     @Override
     public void readData(URI xmlFileUri) throws IOException {
         try {
-            this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
-        } catch (JAXBException  | TransformerException e) {
+            this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri);
+        } catch (JAXBException  | TransformerException | DatatypeConfigurationException e) {
             // TODO add also message for modul frontend, when it is ready!
             // For now we wrap exceptions in an IOExecption so that we dont need to
             // implement JAXB to core
@@ -38,5 +40,17 @@ public class DataEditor implements DataEditorInterface {
     @Override
     public boolean editData(URI xmlFileUri, URI rulesetFileUri) {
         return false;
+    }
+
+    public void writeData(URI file) throws IOException {
+        try {
+            metsKitodoWriter.save(this.metsKitodoWrapper.getMets(),file);
+        } catch (Exception e) {
+            // TODO add also message for modul frontend, when it is ready!
+            // For now we wrap exceptions in an IOExecption so that we dont need to
+            // implement JAXB to core
+            throw new IOException("Unable to write file", e);
+        }
+
     }
 }

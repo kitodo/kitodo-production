@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
                 xmlns:goobi="http://meta.goobi.org/v1.5.1/"
                 xmlns:kitodo="http://meta.kitodo.org/v1/"
@@ -31,6 +32,13 @@
         <kitodo:kitodo version="1.0">
             <xsl:copy-of select="mods:extension/goobi:goobi/node()"/>
         </kitodo:kitodo>
+    </xsl:template>
+
+    <!-- This replaces the mdWrap attribute mdtype -->
+    <xsl:template match="mets:mdWrap">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <xsl:apply-templates select="node()"/>
+        </mets:mdWrap>
     </xsl:template>
 
     <!--Transformation pass 2-->

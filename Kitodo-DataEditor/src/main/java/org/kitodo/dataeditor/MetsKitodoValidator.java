@@ -11,22 +11,48 @@
 
 package org.kitodo.dataeditor;
 
+import java.util.List;
+import java.util.Optional;
+
+import javax.xml.bind.JAXBElement;
+
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
+/**
+ * This class provides methods for checking or validating Mets objects.
+ */
 class MetsKitodoValidator {
 
     /**
-     * Validates the mets-kitodo-format of a given Mets object by checking if the
-     * first metadate element is an instance of KitodoType.
+     * Checks if the first metadate element of a Mets object is an instance of KitodoType.
      * 
      * @param mets
      *            The Mets object.
      * @return True if the first metadate element of given Mets object is an instance
      *         of KitodoType
      */
-    static boolean checkValidMetsKitodoFormat(Mets mets) {
-        return MetsKitodoUtils.jaxbObjectListContainsType(MetsKitodoUtils.getXmlDataOfMetsByMdSecIndex(mets, 0),
+    static boolean checkMetsKitodoFormatOfMets(Mets mets) {
+        return XmlUtils.objectListContainsType(MetsKitodoHandler.getXmlDataOfMetsByMdSecIndex(mets, 0),
             KitodoType.class);
+    }
+
+    /**
+     * Checks if the specified mdSec element of an mets object contains any metdata.
+     *
+     * @param mets
+     *            The Mets object.
+     * @param index
+     *            The index of the mdSec element.
+     * @return {@code true} if the specified mdSec element contains any metadata.
+     *         {@code false} if not or if the mdSec element with the specified index
+     *         does not exist.
+     */
+    static boolean metsContainsMetadataAtMdSecIndex(Mets mets, int index) {
+        if (mets.getDmdSec().size() > index) {
+            Optional<List<Object>> xmlData = MetsKitodoHandler.getXmlDataOfMdSec(mets.getDmdSec().get(index));
+            return xmlData.isPresent();
+        }
+        return false;
     }
 }

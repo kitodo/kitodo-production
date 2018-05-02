@@ -13,17 +13,22 @@ package org.kitodo.dataeditor;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
+import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.joda.time.DateTime;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType;
 
 /**
  * General utilities for handling of generated mets-kitodo class content.
  */
-class MetsKitodoUtils {
+class MetsKitodoHandler {
+    private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
 
     /**
      * Gets the first object of the specified type from a given object list of JAXB
@@ -36,7 +41,7 @@ class MetsKitodoUtils {
      * @return The first object that corresponds to the given type.
      */
     static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
-        if (jaxbObjectListContainsType(objects, type)) {
+        if (XmlUtils.objectListContainsType(objects, type)) {
             for (Object object : objects) {
                 if (object instanceof JAXBElement) {
                     JAXBElement jaxbElement = (JAXBElement) object;
@@ -49,27 +54,7 @@ class MetsKitodoUtils {
         throw new NoSuchElementException("No " + type.getName() + " objects found");
     }
 
-    /**
-     * Checks if a List of Jaxb-Object elements contain objects of given type.
-     *
-     * @param objects
-     *            The list of objects.
-     * @param type
-     *            The type of object to check.
-     * @return {@code true} if the list of Jaxb-Object elements contain objects of
-     *         given type. {@code false} if not.
-     */
-    static <T> boolean jaxbObjectListContainsType(List<Object> objects, Class<T> type) {
-        for (Object object : objects) {
-            if (object instanceof JAXBElement) {
-                JAXBElement jaxbElement = (JAXBElement) object;
-                if (type.isInstance(jaxbElement.getValue())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+
 
     /**
      * Gets an optional list of objects which holds the xml data of an mets objets
@@ -86,32 +71,13 @@ class MetsKitodoUtils {
     }
 
     /**
-     * Checks if the specified mdSec element of an mets object contains any metdata.
+     * Gets the xml metadata of the specified mdSec element of an Mets object.
      * 
      * @param mets
      *            The Mets object.
      * @param index
-     *            The mdSec element index.
-     * @return {@code true} if the specified mdSec element contains any metadata.
-     *         {@code false} if not or if the mdSec element with the specified index
-     *         does not exist.
-     */
-    static boolean metsContainsMetadataAtMdSecIndex(Mets mets, int index) {
-        if (mets.getDmdSec().size() > index) {
-            Optional<List<Object>> xmlData = getXmlDataOfMdSec(mets.getDmdSec().get(index));
-            return xmlData.isPresent();
-        }
-        return false;
-    }
-
-    /**
-     * Gets the xml metadata of the specified mets objects mdSec element.
-     * 
-     * @param mets
-     *            The Mets object.
-     * @param index
-     *            The mdSec element index.
-     * @return
+     *            The index of the mdSec element.
+     * @return The list of objects which contains the xml data.
      */
     static List<Object> getXmlDataOfMetsByMdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
@@ -122,5 +88,23 @@ class MetsKitodoUtils {
             throw new NoSuchElementException("MdSec element with index: " + index + " does not have data");
         }
         throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
+    }
+
+    /**
+     * Adds a note to the first {@code agent} element in mets header. Does nothing
+     * if no {@code agent} element exists.
+     * 
+     * @param noteMessage
+     *            The note message.
+     * @param mets
+     *            The Mets object.
+     * @return The Mets object with added note.
+     */
+    public static Mets addNoteToMetsHeader(String noteMessage, Mets mets) {
+        List<MetsType.MetsHdr.Agent> agents = mets.getMetsHdr().getAgent();
+        if (agents.size() > 0) {
+            mets.getMetsHdr().getAgent().get(0).getNote().add(noteMessage);
+        }
+        return mets;
     }
 }

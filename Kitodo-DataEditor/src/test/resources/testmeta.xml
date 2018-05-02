@@ -20,7 +20,7 @@
         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                    <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">TestTitle</kitodo:metadata>
                     <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
                     <kitodo:metadataGroup name="TypeOfResource">
                         <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>

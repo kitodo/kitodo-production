@@ -18,51 +18,41 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
-import org.kitodo.dataformat.metskitodo.ObjectFactory;
 import org.kitodo.dataformat.metskitodo.StructLinkType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a
  * serialized mets-kitodo format xml file.
  */
-public class MetsKitodoWrap {
+public class MetsKitodoWrapper {
 
     private Mets mets;
-    private ObjectFactory objectFactory = new ObjectFactory();
+    private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
 
     /**
-     * Gets mets.
+     * Gets the mets object.
      *
-     * @return The mets.
+     * @return The mets object.
      */
     public Mets getMets() {
         return mets;
     }
 
     /**
-     * Constructor in which the Mets object can be directly injected.
-     * 
-     * @param mets
-     *            The Mets object.
+     * Constructor which creates a Mets object with corresponding object factory and
+     * also inserts the basic mets elements (FileSec, StructLink, MetsHdr).
      */
-    public MetsKitodoWrap(Mets mets) {
-        this.mets = mets;
-    }
-
-    /**
-     * Constructor which creates Mets object with corresponding object factory.
-     */
-    public MetsKitodoWrap() {
+    public MetsKitodoWrapper() throws DatatypeConfigurationException {
         this.mets = createBasicMetsElements(objectFactory.createMets());
     }
 
-    private Mets createBasicMetsElements(Mets mets) {
+    private Mets createBasicMetsElements(Mets mets) throws DatatypeConfigurationException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
         }
@@ -71,6 +61,7 @@ public class MetsKitodoWrap {
         }
         if (Objects.isNull(mets.getMetsHdr())) {
             mets.setMetsHdr(objectFactory.createMetsTypeMetsHdr());
+            mets.getMetsHdr().setCREATEDATE(XmlUtils.getXmlTime());
         }
         return mets;
     }
@@ -82,7 +73,8 @@ public class MetsKitodoWrap {
      * @param xmlFile
      *            The xml file in mets-kitodo format as URI.
      */
-    public MetsKitodoWrap(URI xmlFile) throws JAXBException, TransformerException, IOException {
+    public MetsKitodoWrapper(URI xmlFile)
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile));
     }
 
@@ -121,10 +113,10 @@ public class MetsKitodoWrap {
         if (this.mets.getDmdSec().size() > index) {
             List<Object> xmlData = getXmlDataByMdSecIndex(index);
             try {
-                return MetsKitodoUtils.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
+                return MetsKitodoHandler.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException(
-                    "MdSec element with index: " + index + " does not have kitodo metadata");
+                        "MdSec element with index: " + index + " does not have kitodo metadata");
             }
         }
         throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
@@ -138,7 +130,7 @@ public class MetsKitodoWrap {
      * @return The KitodoType object.
      */
     public List<Object> getXmlDataByMdSecIndex(int index) {
-        return MetsKitodoUtils.getXmlDataOfMetsByMdSecIndex(this.mets,index);
+        return MetsKitodoHandler.getXmlDataOfMetsByMdSecIndex(this.mets, index);
     }
 
     /**

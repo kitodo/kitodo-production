@@ -18,7 +18,7 @@
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="warn">
+        <Root level="info">
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
