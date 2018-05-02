@@ -26,7 +26,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
@@ -135,9 +134,6 @@ public class Task extends BaseIndexedBean {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
-
-    @Transient
-    private boolean panelShown = false;
 
     @Transient
     private String localizedTitle;
@@ -323,14 +319,6 @@ public class Task extends BaseIndexedBean {
      */
     public void setTemplate(Template template) {
         this.template = template;
-    }
-
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 
     /**
@@ -575,17 +563,4 @@ public class Task extends BaseIndexedBean {
     public int getProcessingTimeNow() {
         return 1;
     }
-
-    /**
-     * Get script names for displaying in the frontend.
-     * 
-     * @return script name as String
-     */
-    public String getListOfPaths() {
-        if (!StringUtils.isBlank(this.scriptName)) {
-            return this.scriptName;
-        }
-        return "";
-    }
-
 }
