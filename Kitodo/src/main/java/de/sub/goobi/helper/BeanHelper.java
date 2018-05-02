@@ -20,8 +20,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 
 public class BeanHelper {
 
@@ -105,62 +103,33 @@ public class BeanHelper {
      */
     public static void copyTasks(Template processTemplate, Process processCopy, List<String> workflowConditions) {
         List<Task> tasks = new ArrayList<>();
+
         for (Task templateTask : processTemplate.getTasks()) {
             String taskWorkflowCondition = templateTask.getWorkflowCondition();
             if (Objects.isNull(workflowConditions) || workflowConditions.isEmpty()) {
                 // tasks created before workflow functionality was introduced has null value
                 if (Objects.isNull(taskWorkflowCondition) || taskWorkflowCondition.contains("default")) {
-                    Task task = getCopiedTask(templateTask);
+                    Task task = new Task(templateTask);
                     task.setProcess(processCopy);
                     tasks.add(task);
                 }
             } else {
                 for (String workflowCondition : workflowConditions) {
                     if (taskWorkflowCondition.contains("default")) {
-                        Task task = getCopiedTask(templateTask);
+                        Task task = new Task(templateTask);
                         task.setProcess(processCopy);
                         tasks.add(task);
                     } else if (taskWorkflowCondition.contains(workflowCondition)) {
-                        Task task = getCopiedTask(templateTask);
+                        Task task = new Task(templateTask);
                         task.setProcess(processCopy);
                         tasks.add(task);
                     }
                 }
             }
         }
+
         adjustTaskOrdering(tasks);
         processCopy.setTasks(tasks);
-    }
-
-    private static Task getCopiedTask(Task templateTask) {
-        Task task = new Task();
-        task.setTypeAutomatic(templateTask.isTypeAutomatic());
-        task.setScriptName(templateTask.getScriptName());
-        task.setScriptPath(templateTask.getScriptPath());
-        task.setBatchStep(templateTask.isBatchStep());
-        task.setTypeAcceptClose(templateTask.isTypeAcceptClose());
-        task.setTypeCloseVerify(templateTask.isTypeCloseVerify());
-        task.setTypeExportDMS(templateTask.isTypeExportDMS());
-        task.setTypeExportRussian(templateTask.isTypeExportRussian());
-        task.setTypeImagesRead(templateTask.isTypeImagesRead());
-        task.setTypeImagesWrite(templateTask.isTypeImagesWrite());
-        task.setTypeImportFileUpload(templateTask.isTypeImportFileUpload());
-        task.setTypeMetadata(templateTask.isTypeMetadata());
-        task.setPriority(templateTask.getPriority());
-        task.setProcessingStatusEnum(templateTask.getProcessingStatusEnum());
-        task.setOrdering(templateTask.getOrdering());
-        task.setTitle(templateTask.getTitle());
-        task.setHomeDirectory(templateTask.getHomeDirectory());
-
-        // necessary to create new ArrayList in other case session problem!
-        ArrayList<User> users = new ArrayList<>(templateTask.getUsers());
-        task.setUsers(users);
-
-        // necessary to create new ArrayList in other case session problem!
-        ArrayList<UserGroup> userGroups = new ArrayList<>(templateTask.getUserGroups());
-        task.setUserGroups(userGroups);
-
-        return task;
     }
 
     /**
