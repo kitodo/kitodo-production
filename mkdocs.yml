@@ -1,3 +1,16 @@
-site_name: Developer's documentation
+site_name: Kitodo.Production
 pages:
+- Home: 'index.md'
+- Getting started:
+    - 'Building': 'gettingstarted/README.md'
+    - 'Eclipse on Windows': 'gettingstarted/eclipse-windows.md'
+- 'Guidelines': 'guidelines/README.md'
+- 'System architecture': 'architecture/README.md'
+- API documentation:
+    - 'Application Programming Interface (API)': 'api/README.md'
+    - 'Active MQ webservices': 'api/activemq_jms_api.md'
+    - 'Jersey WebAPI': 'api/jersey_jaxrs_api.md'
+- Tests: 'tests/README.md'
+- Javadoc: 'javadoc/README.md'
 theme: readthedocs
+repo_url: https://github.com/kitodo/kitodo-production
