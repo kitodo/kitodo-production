@@ -30,7 +30,7 @@
                 </p:selectOneMenu>
 
                 <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram" action="#{ModelerForm.readXMLDiagram}"
-                                 update="xmlDiagram" style="top:-8px"/>
+                                 update="xmlDiagram projectsTabView:xmlDiagramSaveForm:xmlDiagramName" style="top:-8px"/>
                 <h:inputHidden value="#{ModelerForm.xmlDiagram}" id="xmlDiagram" />
             </h:form>
         </div>
@@ -64,7 +64,7 @@
                 <p:inputText id="xmlDiagramName" placeholder="#{msgs.titel}" class="input" value="#{ModelerForm.xmlDiagramName}"/>
 
                 <p:remoteCommand name="xmlContent" actionListener="#{ModelerForm.save}" />
-                <p:commandButton id="btnSaveXmlDiagram" value="Save XML diagram" />
+                <p:commandButton id="btnSaveXmlDiagram" value="Save XML diagram" update="projectsTabView:xmlDiagramReadForm" />
             </h:form>
         </div>
     </div>
