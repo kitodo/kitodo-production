@@ -88,7 +88,7 @@ public class CopyProcess extends ProzesskopieForm {
      *            import object
      * @return page or empty String
      */
-    //TODO: why this not used ImportObject here?
+    // TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             return "";
@@ -154,7 +154,8 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void readProjectConfigs() {
-        // depending on the project configuration display the correct fields in the GUI
+        // depending on the project configuration display the correct fields in
+        // the GUI
         ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
@@ -287,7 +288,7 @@ public class CopyProcess extends ProzesskopieForm {
                     } catch (UghHelperException e) {
                         Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
-    }
+                }
             }
         }
     }
@@ -296,8 +297,8 @@ public class CopyProcess extends ProzesskopieForm {
         for (AdditionalField field : this.additionalFields) {
             if (!field.isUghbinding() && field.getShowDependingOnDoctype() && Objects.nonNull(field.getSelectList())
                     && field.getSelectList().size() > 0) {
-                    field.setValue((String) field.getSelectList().get(0).getValue());
-                }
+                field.setValue((String) field.getSelectList().get(0).getValue());
+            }
         }
         calculateTiffHeader();
 
@@ -419,7 +420,6 @@ public class CopyProcess extends ProzesskopieForm {
         return valid;
     }
 
-
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
@@ -530,11 +530,13 @@ public class CopyProcess extends ProzesskopieForm {
             addAdditionalFields(this.additionalFields, this.prozessKopie);
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
+                this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
