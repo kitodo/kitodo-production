@@ -23,7 +23,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.joda.time.DateTime;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.xml.sax.InputSource;
 
@@ -76,7 +75,7 @@ class MetsKitodoReader {
     static Mets readUriToMets(URI xmlFile) throws JAXBException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
-        return (Mets) jaxbUnmarshaller.unmarshal(new StreamSource(xmlFile.getPath()));
+        return (Mets) jaxbUnmarshaller.unmarshal(new StreamSource(xmlFile.getRawPath()));
     }
 
     /**

@@ -14,8 +14,6 @@ package org.kitodo.dataeditor;
 import java.util.List;
 import java.util.Optional;
 
-import javax.xml.bind.JAXBElement;
-
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
@@ -25,11 +23,11 @@ import org.kitodo.dataformat.metskitodo.Mets;
 class MetsKitodoValidator {
 
     /**
-     * Checks if the first metadate element of a Mets object is an instance of KitodoType.
+     * Checks if the first metadata element of a Mets object is an instance of KitodoType.
      * 
      * @param mets
      *            The Mets object.
-     * @return True if the first metadate element of given Mets object is an instance
+     * @return True if the first metadata element of given Mets object is an instance
      *         of KitodoType
      */
     static boolean checkMetsKitodoFormatOfMets(Mets mets) {
@@ -38,7 +36,7 @@ class MetsKitodoValidator {
     }
 
     /**
-     * Checks if the specified mdSec element of an mets object contains any metdata.
+     * Checks if the specified mdSec element of an mets object contains any metadata.
      *
      * @param mets
      *            The Mets object.

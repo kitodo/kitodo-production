@@ -54,9 +54,9 @@ public class XmlUtils {
     }
 
     /**
-     *
-     * @return
-     * @throws DatatypeConfigurationException
+     * Gets current time as XMLGregorianCalender.
+     * 
+     * @return The current time as XMLGregorianCalender object.
      */
     static XMLGregorianCalendar getXmlTime() throws DatatypeConfigurationException {
         return DatatypeFactory.newInstance().newXMLGregorianCalendar(new DateTime().toGregorianCalendar());

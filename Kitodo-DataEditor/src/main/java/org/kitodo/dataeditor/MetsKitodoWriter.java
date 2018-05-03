@@ -14,7 +14,6 @@ package org.kitodo.dataeditor;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Objects;
 
 import javax.xml.bind.JAXBContext;
@@ -22,10 +21,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 
-import org.joda.time.DateTime;
 import org.kitodo.dataformat.metskitodo.Mets;
-import org.kitodo.dataformat.metskitodo.MetsType;
-import org.kitodo.dataformat.metskitodo.ObjectFactory;
 
 /**
  * This class provides methods for writing Mets objects to xml files.

@@ -12,11 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.kitodo.dataformat.metskitodo.MetsType;

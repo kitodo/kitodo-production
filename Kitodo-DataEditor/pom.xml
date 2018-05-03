@@ -22,6 +22,10 @@
     <name>Kitodo - Data Editor</name>
     <artifactId>kitodo-data-editor</artifactId>
 
+    <properties>
+        <jaxb.version>2.3.0</jaxb.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.kitodo</groupId>
@@ -54,12 +58,12 @@
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-core</artifactId>
-            <version>2.3.0</version>
+            <version>${jaxb.version}</version>
         </dependency>
     </dependencies>
 
