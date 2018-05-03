@@ -83,6 +83,15 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
                 <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
+                        </manifestEntries>
+                    </archive>
                     <outputDirectory>../Kitodo/modules/</outputDirectory>
                 </configuration>
             </plugin>

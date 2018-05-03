@@ -14,7 +14,6 @@ package org.kitodo.dataeditor;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.List;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -26,7 +25,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.kitodo.dataformat.metskitodo.Mets;
-import org.kitodo.dataformat.metskitodo.MetsType;
 import org.xml.sax.InputSource;
 
 /**
@@ -48,7 +46,7 @@ class MetsKitodoReader {
         URI xslFile = URI.create("./src/main/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl");
         String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xslFile);
         Mets mets = readStringToMets(convertedData);
-        mets = MetsKitodoHandler.addNoteToMetsHeader("Converted by Kitodo.Production Data-Editor at " + new DateTime().toString(),mets);
+        mets = MetsKitodoHandler.addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"),mets);
         return mets;
     }
 
@@ -98,7 +96,7 @@ class MetsKitodoReader {
 
         Mets mets = readUriToMets(xmlFile);
 
-        if (MetsKitodoValidator.metsContainsMetadataAtMdSecIndex(mets, 0)) {
+        if (MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 0)) {
             if (!MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
                 logger.warn("Not supported metadata format detected. Trying to convert from old goobi format now!");
                 mets = readUriToMetsFromOldFormat(xmlFile);

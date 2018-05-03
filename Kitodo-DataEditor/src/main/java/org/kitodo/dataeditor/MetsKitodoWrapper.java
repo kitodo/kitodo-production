@@ -48,11 +48,11 @@ public class MetsKitodoWrapper {
      * Constructor which creates a Mets object with corresponding object factory and
      * also inserts the basic mets elements (FileSec, StructLink, MetsHdr).
      */
-    public MetsKitodoWrapper() throws DatatypeConfigurationException {
+    public MetsKitodoWrapper() throws DatatypeConfigurationException, IOException {
         this.mets = createBasicMetsElements(objectFactory.createMets());
     }
 
-    private Mets createBasicMetsElements(Mets mets) throws DatatypeConfigurationException {
+    private Mets createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
         }
@@ -60,8 +60,7 @@ public class MetsKitodoWrapper {
             mets.setStructLink(objectFactory.createMetsTypeStructLink());
         }
         if (Objects.isNull(mets.getMetsHdr())) {
-            mets.setMetsHdr(objectFactory.createMetsTypeMetsHdr());
-            mets.getMetsHdr().setCREATEDATE(XmlUtils.getXmlTime());
+            mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
         }
         return mets;
     }

@@ -48,7 +48,7 @@ class MetsKitodoValidator {
      *         {@code false} if not or if the mdSec element with the specified index
      *         does not exist.
      */
-    static boolean metsContainsMetadataAtMdSecIndex(Mets mets, int index) {
+    static boolean metsContainsMetadataAtDmdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
             Optional<List<Object>> xmlData = MetsKitodoHandler.getXmlDataOfMdSec(mets.getDmdSec().get(index));
             return xmlData.isPresent();

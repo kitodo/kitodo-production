@@ -32,4 +32,11 @@ public class MetsKitodoValidatorTest {
         Mets mets = MetsKitodoReader.readUriToMets(URI.create("./src/test/resources/testmetaOldFormat.xml"));
         Assert.assertFalse("Result of validation of Mets object was not false!",MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets));
     }
+
+    @Test
+    public void shouldMetsContainsMetadataAtMdSecIndex() throws JAXBException {
+        Mets mets = MetsKitodoReader.readUriToMets(URI.create("./src/test/resources/testmeta.xml"));
+        Assert.assertTrue("Result of checking if mets contains metadata at dmdSec index was wrong!",MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets,2));
+        Assert.assertFalse("Result of checking if mets contains metadata at dmdSec index which does not exist was wrong!",MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets,3));
+    }
 }

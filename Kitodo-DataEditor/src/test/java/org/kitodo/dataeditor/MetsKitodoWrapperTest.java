@@ -11,15 +11,20 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -34,9 +39,36 @@ public class MetsKitodoWrapperTest {
 
     private URI xmlfile = URI.create("./src/test/resources/testmeta.xml");
     private ObjectFactory objectFactory = new ObjectFactory();
+    private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
+
+    @BeforeClass
+    public static void setUp() throws IOException {
+
+        String manifest =
+            "Manifest-Version: 1.0\n" +
+            "Archiver-Version: Plexus Archiver\n" +
+            "Created-By: Apache Maven\n" +
+            "Built-By: tester\n" +
+            "Build-Jdk: 1.8.0_144\n" +
+            "Specification-Title: Kitodo - Data Editor\n" +
+            "Specification-Version: 3.0-SNAPSHOT\n" +
+            "Specification-Vendor: kitodo.org\n" +
+            "Implementation-Title: Kitodo - Data Editor\n" +
+            "Implementation-Version: 3.0-SNAPSHOT\n" +
+            "Implementation-Vendor-Id: org.kitodo\n" +
+            "Implementation-Vendor: kitodo.org\n" +
+            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+
+        FileUtils.write(manifestFile,manifest,"UTF-8");
+    }
+
+    @AfterClass
+    public static void tearDown() throws IOException {
+        Files.deleteIfExists(manifestFile.toPath());
+    }
 
     @Test
-    public void shouldAddSmLink() throws DatatypeConfigurationException {
+    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException {
         String from = "from test";
         String to = "to test";
 
@@ -48,6 +80,21 @@ public class MetsKitodoWrapperTest {
 
         Assert.assertEquals("'from' attribute of smLink was wrong", from, smLink.getFrom());
         Assert.assertEquals("'to' attribute of smLink was wrong", to, smLink.getTo());
+    }
+
+    @Test
+    public void shouldAddMetsHeader() throws DatatypeConfigurationException, IOException {
+
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        String role = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getROLE();
+        String name = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getName();
+        String type = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getTYPE();
+        String otherType = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getOTHERTYPE();
+
+        Assert.assertEquals("Role of mets header agent was inserted wrong", "CREATOR", role);
+        Assert.assertEquals("Type of mets header agent was inserted wrong", "OTHER", type);
+        Assert.assertEquals("OtherType of mets header agent was inserted wrong", "SOFTWARE", otherType);
+        Assert.assertTrue("Name of mets header agent was inserted wrong", name.contains("Kitodo"));
     }
 
     @Test
@@ -139,7 +186,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldNotReadNotExistingMdSecByIndex() throws DatatypeConfigurationException {
+    public void shouldNotReadNotExistingMdSecByIndex() throws DatatypeConfigurationException, IOException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("MdSec element with index: 0 does not exist");
@@ -147,7 +194,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldNotReadNotExistingKitodoMetadataByIndex() throws DatatypeConfigurationException {
+    public void shouldNotReadNotExistingKitodoMetadataByIndex() throws DatatypeConfigurationException, IOException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
         MdSecType mdSecType = objectFactory.createMdSecType();
         MdSecType.MdWrap mdSecTypeMdWrap = objectFactory.createMdSecTypeMdWrap();

@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
@@ -33,10 +34,20 @@ public class MetsKitodoWriter {
 
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
 
-    public void save(Mets mets, URI file) throws JAXBException, DatatypeConfigurationException {
+    /**
+     * Updating Mets header by inserting a new header if no one exists, updating
+     * last modification date and writing the Mets object to specified file path as
+     * in xml format.
+     * 
+     * @param mets
+     *            The Mets object.
+     * @param filePath
+     *            The file path to write the xml file.
+     */
+    public void save(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
         mets = insertMetsHeaderIfNotExist(mets);
         mets = updateLastModDate(mets);
-        writeMetsData(mets, file);
+        writeMetsData(mets, filePath);
     }
 
     private void writeMetsData(Mets mets, URI file) throws JAXBException {
@@ -46,14 +57,9 @@ public class MetsKitodoWriter {
         jaxbMetsMarshaller.marshal(mets, new File(file));
     }
 
-    private Mets insertMetsHeaderIfNotExist(Mets mets) throws DatatypeConfigurationException {
+    private Mets insertMetsHeaderIfNotExist(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getMetsHdr())) {
-
-            mets.setMetsHdr(objectFactory.createMetsTypeMetsHdr());
-            mets.getMetsHdr().setCREATEDATE(XmlUtils.getXmlTime());
-
-            MetsType.MetsHdr.Agent metsAgent = objectFactory.createKitodoMetsAgent();
-            mets.getMetsHdr().getAgent().add(metsAgent);
+            mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
         }
         return mets;
     }

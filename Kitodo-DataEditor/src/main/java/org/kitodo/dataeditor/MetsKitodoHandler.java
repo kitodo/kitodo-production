@@ -28,7 +28,6 @@ import org.kitodo.dataformat.metskitodo.MetsType;
  * General utilities for handling of generated mets-kitodo class content.
  */
 class MetsKitodoHandler {
-    private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
 
     /**
      * Gets the first object of the specified type from a given object list of JAXB
