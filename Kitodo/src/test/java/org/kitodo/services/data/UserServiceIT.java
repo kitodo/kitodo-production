@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import de.sub.goobi.config.ConfigCore;
@@ -140,7 +141,7 @@ public class UserServiceIT {
 
         userService.remove(foundUser);
         foundUser = userService.getById(foundUser.getId());
-        assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
+        assertNull("Additional user was not removed from database!", foundUser.getLogin());
 
         user = new User();
         user.setLogin("remove");
@@ -151,7 +152,7 @@ public class UserServiceIT {
 
         userService.remove(foundUser.getId());
         foundUser = userService.getById(foundUser.getId());
-        assertEquals("Additional user was not removed from database!", null, foundUser.getLogin());
+        assertNull("Additional user was not removed from database!", foundUser.getLogin());
     }
 
     @Test
@@ -468,7 +469,7 @@ public class UserServiceIT {
         assertEquals("Size of users is incorrect!", expected, actual);
 
         allActiveUsers = userService.findActiveUsersByName("owa");
-        assertTrue(allActiveUsers.size() == 2);
+        assertEquals(2, allActiveUsers.size());
         actual = allActiveUsers.get(0).getId();
         expected = 1;
         assertEquals("Id of first user is incorrect!", expected, actual);

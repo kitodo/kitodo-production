@@ -11,7 +11,7 @@
 
 package org.kitodo.encryption;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +35,8 @@ public class SecurityPasswordEncoderTest {
     public void encryptTest() {
         for (String clearText : testData.keySet()) {
             String encrypted = new SecurityPasswordEncoder().encrypt(clearText);
-            assertTrue("Encrypted Password doesn't match the precomputed one!",
-                    encrypted.equals(testData.get(clearText)));
+            assertEquals("Encrypted Password doesn't match the precomputed one!", testData.get(clearText),
+                    encrypted);
         }
     }
 
@@ -44,7 +44,7 @@ public class SecurityPasswordEncoderTest {
     public void decryptTest() {
         for (String clearText : testData.keySet()) {
             String decrypted = new SecurityPasswordEncoder().decrypt(testData.get(clearText));
-            assertTrue("Decrypted Password doesn't match the given plain text", decrypted.equals(clearText));
+            assertEquals("Decrypted Password doesn't match the given plain text", clearText, decrypted);
         }
     }
 

@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -128,8 +127,7 @@ public class ExportMets {
      * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFileGroup)
-            throws PreferencesException, WriteException, IOException, TypeNotAllowedForParentException {
+            boolean writeLocalFileGroup) throws PreferencesException, WriteException, IOException {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);
