@@ -18,25 +18,32 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editTemplateDialog"
-              header="#{empty ProzessverwaltungForm.templateProperty.title ? msgs.eigenschaftHinzufuegen : msgs.eigenschaftBearbeiten}"
+              header="#{empty ProzessverwaltungForm.templateProperty.title ? msgs.addTemplateProperty : msgs.eigenschaftBearbeiten}"
               width="700px"
               modal="true"
               dynamic="true"
               styleClass="editDialog">
         <h:form id="templatePropertyForm">
-            <!-- title -->
-            <p:inputText id="templatePropertyTitle" value="#{ProzessverwaltungForm.templateProperty.title}"
-                         placeholder="#{msgs.titel}" required="true" styleClass="editDialog"/>
-
-            <!-- value: text -->
-            <p:inputText id="templatePropertyValue" value="#{ProzessverwaltungForm.templateProperty.value}"
-                         styleClass="editDialog"/>
-
-            <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
-                             id="save"
-                             update="editForm"
-                             oncomplete="PF('editTemplateDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
-                             value="#{msgs.uebernehmen}"/>
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <div>
+                        <p:outputLabel for="templatePropertyTitle" value="#{msgs.titel}" />
+                        <p:inputText id="templatePropertyTitle" value="#{ProzessverwaltungForm.templateProperty.title}"
+                                     placeholder="#{msgs.titel}" required="true" styleClass="input editDialog"/>
+                    </div>
+                    <div>
+                        <p:outputLabel for="templatePropertyValue" value="#{msgs.value}" />
+                        <p:inputText id="templatePropertyValue" value="#{ProzessverwaltungForm.templateProperty.value}"
+                                     placeholder="#{msgs.value}" styleClass="input editDialog"/>
+                    </div>
+                    <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
+                                     id="save"
+                                     update="editForm"
+                                     oncomplete="PF('editTemplateDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
+                                     value="#{msgs.uebernehmen}"
+                                     styleClass="button-filled-blue right"/>
+                </p:row>
+            </p:panelGrid>
         </h:form>
     </p:dialog>
 </ui:composition>

@@ -32,6 +32,36 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
+     * Method saves object to database.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public T saveToDatabase(T baseIndexedBean) throws DAOException {
+        return dao.save(baseIndexedBean);
+    }
+
+    /**
+     * Method removes object from database.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public void removeFromDatabase(T baseIndexedBean) throws DAOException {
+        dao.remove(baseIndexedBean);
+    }
+
+    /**
+     * Method removes object from database by given id.
+     *
+     * @param id
+     *            of object
+     */
+    public void removeFromDatabase(Integer id) throws DAOException {
+        dao.remove(id);
+    }
+
+    /**
      * Count all rows in database.
      *
      * @return amount of all rows

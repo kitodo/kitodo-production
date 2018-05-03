@@ -26,9 +26,9 @@ import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.faces.model.SelectItem;
@@ -42,9 +42,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
-import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
@@ -52,10 +50,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.TaskEditType;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
@@ -76,7 +71,7 @@ public class CopyProcess extends ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private List<AdditionalField> additionalFields;
     private List<String> digitalCollections;
-    private StringBuilder tifHeaderImageDescription = new StringBuilder("");
+    private StringBuilder tifHeaderImageDescription = new StringBuilder();
     private String tifHeaderDocumentName = "";
     private String naviFirstPage;
     private Integer auswahl;
@@ -158,9 +153,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     private void readProjectConfigs() {
-        /*
-         * projektabhängig die richtigen Felder in der Gui anzeigen
-         */
+        // depending on the project configuration display the correct fields in the GUI
         ConfigProjects cp;
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
@@ -279,22 +272,7 @@ public class CopyProcess extends ProzesskopieForm {
                     /* welches Metadatum */
                     try {
                         if (field.getMetadata().equals("ListOfCreators")) {
-                            /* bei Autoren die Namen zusammenstellen */
-                            StringBuilder authors = new StringBuilder();
-                            if (myTempStruct.getAllPersons() != null) {
-                                for (PersonInterface p : myTempStruct.getAllPersons()) {
-                                    authors.append(p.getLastName());
-                                    if (StringUtils.isNotBlank(p.getFirstName())) {
-                                        authors.append(", ");
-                                        authors.append(p.getFirstName());
-                                    }
-                                    authors.append("; ");
-                                }
-                                if (authors.toString().endsWith("; ")) {
-                                    authors.substring(0, authors.length() - 2);
-                                }
-                            }
-                            field.setValue(authors.toString());
+                            field.setValue(getAuthors(myTempStruct.getAllPersons()));
                         } else {
                             /* bei normalen Feldern die Inhalte auswerten */
                             MetadataTypeInterface mdt = UghHelper.getMetadataType(
@@ -308,26 +286,24 @@ public class CopyProcess extends ProzesskopieForm {
                     } catch (UghHelperException e) {
                         Helper.setErrorMessage(e.getMessage(), logger, e);
                     }
-                } // end if ughbinding
-            } // end for
-        } // end if myrdf==null
+    }
+            }
+        }
     }
 
     private void fillFieldsFromConfig() {
         for (AdditionalField field : this.additionalFields) {
-            if (!field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                if (field.getSelectList() != null && field.getSelectList().size() > 0) {
+            if (!field.isUghbinding() && field.getShowDependingOnDoctype() && Objects.nonNull(field.getSelectList())
+                    && field.getSelectList().size() > 0) {
                     field.setValue((String) field.getSelectList().get(0).getValue());
                 }
-
-            }
         }
         calculateTiffHeader();
 
     }
 
     /**
-     * alle Konfigurationseigenschaften und Felder zurücksetzen.
+     * Reset all configuration properties and fields.
      */
     private void clearValues() {
         if (this.opacKatalog == null) {
@@ -339,7 +315,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.standardFields.put("regelsatz", true);
         this.additionalFields = new ArrayList<>();
         this.tifHeaderDocumentName = "";
-        this.tifHeaderImageDescription = new StringBuilder("");
+        this.tifHeaderImageDescription = new StringBuilder();
     }
 
     /**
@@ -378,9 +354,9 @@ public class CopyProcess extends ProzesskopieForm {
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
         try {
             DocStructInterface colStruct = this.myRdf.getDigitalDocument().getLogicalDocStruct();
-            removeCollections(colStruct);
+            removeCollections(colStruct, this.prozessKopie);
             colStruct = colStruct.getAllChildren().get(0);
-            removeCollections(colStruct);
+            removeCollections(colStruct, this.prozessKopie);
         } catch (PreferencesException e) {
             Helper.setErrorMessage("Fehler beim Anlegen des Vorgangs", logger, e);
         } catch (RuntimeException e) {
@@ -402,35 +378,15 @@ public class CopyProcess extends ProzesskopieForm {
         /*
          * Vorbedingungen prüfen
          */
-        boolean valide = true;
-
-        /*
-         * grundsätzlich den Vorgangstitel prüfen
-         */
-        /* kein Titel */
-        if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-            valide = false;
-            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-        }
-
-        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-        if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-            valide = false;
-            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-        }
-
-        if (this.prozessKopie.getTitle() != null) {
-            valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
-        }
+        boolean valid = isProcessTitleCorrect(this.prozessKopie);
 
         /*
          * Prüfung der standard-Eingaben, die angegeben werden müssen
          */
         /* keine Collektion ausgewählt */
         if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
-            valide = false;
-            Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
+            valid = false;
+            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
                     + Helper.getTranslation("ProcessCreationErrorNoCollection"));
         }
 
@@ -440,12 +396,12 @@ public class CopyProcess extends ProzesskopieForm {
         for (AdditionalField field : this.additionalFields) {
             if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
                     && (StringUtils.isBlank(field.getValue()))) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " " + field.getTitle() + " "
+                valid = false;
+                Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
                         + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
             }
         }
-        return valide;
+        return valid;
     }
 
     /**
@@ -454,55 +410,14 @@ public class CopyProcess extends ProzesskopieForm {
      * @return boolean
      */
     public boolean testTitle() {
-        boolean valide = true;
+        boolean valid = true;
 
         if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
-            /*
-             * grundsätzlich den Vorgangstitel prüfen
-             */
-            /* kein Titel */
-            if (this.prozessKopie.getTitle() == null || this.prozessKopie.getTitle().equals("")) {
-                valide = false;
-                Helper.setFehlerMeldung(Helper.getTranslation("UnvollstaendigeDaten") + " "
-                        + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
-            }
-
-            String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
-            if (!this.prozessKopie.getTitle().matches(validateRegEx)) {
-                valide = false;
-                Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
-            }
-
-            if (this.prozessKopie.getTitle() != null) {
-                valide = isProcessTitleAvailable(this.prozessKopie.getTitle());
-            }
+            valid = isProcessTitleCorrect(this.prozessKopie);
         }
-        return valide;
+        return valid;
     }
 
-    /**
-     * Checks if process title is available. If yes, return true, if no, return
-     * false.
-     *
-     * @param title
-     *            of process
-     * @return boolean
-     */
-    private boolean isProcessTitleAvailable(String title) {
-        long amount;
-        try {
-            amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
-        } catch (DataException e) {
-            Helper.setErrorMessage("Fehler beim Einlesen der Vorgaenge", logger, e);
-            return false;
-        }
-        if (amount > 0) {
-            Helper.setFehlerMeldung(Helper.getTranslation("UngueltigeDaten:")
-                    + Helper.getTranslation("ProcessCreationErrorTitleAlreadyInUse"));
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Anlegen des Prozesses und save der Metadaten.
@@ -514,7 +429,7 @@ public class CopyProcess extends ProzesskopieForm {
         this.prozessKopie.setId(null);
 
         addProperties(null);
-        prepareTasksForProcess();
+        updateTasks(this.prozessKopie);
 
         try {
             serviceManager.getProcessService().save(this.prozessKopie);
@@ -565,7 +480,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         this.prozessKopie.setId(null);
         addProperties(io);
-        prepareTasksForProcess();
+        updateTasks(this.prozessKopie);
 
         if (!io.getBatches().isEmpty()) {
             this.prozessKopie.getBatches().addAll(io.getBatches());
@@ -595,50 +510,6 @@ public class CopyProcess extends ProzesskopieForm {
         return this.prozessKopie;
     }
 
-    private void prepareTasksForProcess() {
-        for (Task task : this.prozessKopie.getTasks()) {
-            /*
-             * always save date and user for each task
-             */
-            task.setProcessingTime(this.prozessKopie.getCreationDate());
-            task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            User user = Helper.getCurrentUser();
-            serviceManager.getTaskService().replaceProcessingUser(task, user);
-
-            /*
-             * only if its done, set edit start and end date
-             */
-            if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
-                task.setProcessingBegin(this.prozessKopie.getCreationDate());
-                // this concerns steps, which are set as done right on creation
-                // bearbeitungsbeginn is set to creation timestamp of process
-                // because the creation of it is basically begin of work
-                Date date = new Date();
-                task.setProcessingTime(date);
-                task.setProcessingEnd(date);
-            }
-        }
-    }
-
-    /**
-     * alle Kollektionen eines übergebenen DocStructs entfernen.
-     */
-    private void removeCollections(DocStructInterface colStruct) {
-        try {
-            MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                "singleDigCollection");
-            ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
-            if (myCollections.size() > 0) {
-                for (MetadataInterface md : myCollections) {
-                    colStruct.removeMetadata(md);
-                }
-            }
-        } catch (UghHelperException | DocStructHasNoTypeException e) {
-            Helper.setErrorMessage(e.getMessage(), logger, e);
-        }
-    }
-
     @Override
     public void createNewFileformat() {
 
@@ -655,28 +526,14 @@ public class CopyProcess extends ProzesskopieForm {
 
     private void addProperties(ImportObject io) {
         if (io == null) {
-            for (AdditionalField field : this.additionalFields) {
-                if (field.getShowDependingOnDoctype()) {
-                    if (field.getFrom().equals("werk")) {
-                        BeanHelper.addPropertyForWorkpiece(this.prozessKopie, field.getTitle(), field.getValue());
-                    }
-                    if (field.getFrom().equals("vorlage")) {
-                        BeanHelper.addPropertyForTemplate(this.prozessKopie, field.getTitle(), field.getValue());
-                    }
-                    if (field.getFrom().equals("prozess")) {
-                        BeanHelper.addPropertyForProcess(this.prozessKopie, field.getTitle(), field.getValue());
-                    }
-                }
-            }
+            addAdditionalFields(this.additionalFields, this.prozessKopie);
 
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
         } else {
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "DocType", this.docType);
-            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription",
-                this.tifHeaderImageDescription.toString());
+            BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderImagedescription", this.tifHeaderImageDescription.toString());
             BeanHelper.addPropertyForWorkpiece(this.prozessKopie, "TifHeaderDocumentname", this.tifHeaderDocumentName);
 
             for (Property processProperty : io.getProcessProperties()) {
@@ -878,15 +735,10 @@ public class CopyProcess extends ProzesskopieForm {
         this.opacSuchbegriff = opacSuchbegriff;
     }
 
-    /*
-     * Helper
-     */
-
     /**
-     * Prozesstitel und andere Details generieren.
+     * Generate process titles and other details.
      */
     @Override
-    @SuppressWarnings("rawtypes")
     public void calculateProcessTitle() {
         StringBuilder newTitle = new StringBuilder();
         String titeldefinition = "";
@@ -937,14 +789,10 @@ public class CopyProcess extends ProzesskopieForm {
         StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
         /* jetzt den Bandtitel parsen */
         while (tokenizer.hasMoreTokens()) {
-            String myString = tokenizer.nextToken();
-            // System.out.println(myString);
-            /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
-             */
-            if (myString.startsWith("'") && myString.endsWith("'")) {
-                newTitle.append(myString.substring(1, myString.length() - 1));
+            String token = tokenizer.nextToken();
+            // if the string begins and ends with ', then take over the content
+            if (token.startsWith("'") && token.endsWith("'")) {
+                newTitle.append(token.substring(1, token.length() - 1));
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {
@@ -955,11 +803,11 @@ public class CopyProcess extends ProzesskopieForm {
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
                             && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                        additionalField.setValue(this.atstsl);
+                        additionalField.setValue(CopyProcess.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(myString) && additionalField.getShowDependingOnDoctype()
+                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                             && additionalField.getValue() != null) {
                         newTitle.append(calcProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
                     }
@@ -981,19 +829,16 @@ public class CopyProcess extends ProzesskopieForm {
         return value;
     }
 
-    private String calcProcessTitleCheck(String fieldName, String fieldvalue) {
-        String result = fieldvalue;
+    private String calcProcessTitleCheck(String fieldName, String fieldValue) {
+        String result = fieldValue;
 
-        /*
-         * Bandnummer
-         */
         if (fieldName.equals("Bandnummer")) {
             try {
-                int bandInt = Integer.parseInt(fieldvalue);
+                int bandInt = Integer.parseInt(fieldValue);
                 java.text.DecimalFormat df = new java.text.DecimalFormat("#0000");
                 result = df.format(bandInt);
             } catch (NumberFormatException e) {
-                Helper.setErrorMessage("Ungültige Daten: ", "Bandnummer ist keine gültige Zahl", logger, e);
+                Helper.setErrorMessage(INCOMPLETE_DATA, "Bandnummer ist keine gültige Zahl", logger, e);
             }
             if (result != null && result.length() < 4) {
                 result = "0000".substring(result.length()) + result;
@@ -1015,9 +860,7 @@ public class CopyProcess extends ProzesskopieForm {
 
         tifDefinition = cp.getParamString("tifheader." + this.docType.toLowerCase(), "blabla");
 
-        /*
-         * evtuelle Ersetzungen
-         */
+        // possible replacements
         tifDefinition = tifDefinition.replaceAll("\\[\\[", "<");
         tifDefinition = tifDefinition.replaceAll("\\]\\]", ">");
 
@@ -1025,18 +868,14 @@ public class CopyProcess extends ProzesskopieForm {
          * Documentname ist im allgemeinen = Prozesstitel
          */
         this.tifHeaderDocumentName = this.prozessKopie.getTitle();
-        this.tifHeaderImageDescription = new StringBuilder("");
-        /*
-         * Imagedescription
-         */
+        this.tifHeaderImageDescription = new StringBuilder();
+
+        // image description
         StringTokenizer tokenizer = new StringTokenizer(tifDefinition, "+");
         /* jetzt den Tiffheader parsen */
         while (tokenizer.hasMoreTokens()) {
             String string = tokenizer.nextToken();
-            /*
-             * wenn der String mit ' anfängt und mit ' endet, dann den Inhalt so
-             * übernehmen
-             */
+            // if the string begins and ends with ', then take over the content
             if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
                 this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
             } else if (string.equals("$Doctype")) {
@@ -1052,7 +891,7 @@ public class CopyProcess extends ProzesskopieForm {
                     if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                             && additionalField.getShowDependingOnDoctype()
                             && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                        additionalField.setValue(this.atstsl);
+                        additionalField.setValue(CopyProcess.atstsl);
                     }
 
                     /* den Inhalt zum Titel hinzufügen */

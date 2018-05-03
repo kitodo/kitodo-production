@@ -92,36 +92,6 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         super(new LdapServerDAO());
     }
 
-    /**
-     * Saves ldap server to database.
-     *
-     * @param ldapServer
-     *            The ldap server.
-     */
-    public void save(LdapServer ldapServer) throws DAOException {
-        dao.save(ldapServer);
-    }
-
-    /**
-     * Removes ldap server from database.
-     *
-     * @param ldapServer
-     *            The ldap server.
-     */
-    public void remove(LdapServer ldapServer) throws DAOException {
-        dao.remove(ldapServer);
-    }
-
-    /**
-     * Removes ldap server from database by id.
-     *
-     * @param id
-     *            The ldap server id.
-     */
-    public void remove(Integer id) throws DAOException {
-        dao.remove(id);
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM LdapServer");

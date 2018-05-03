@@ -215,14 +215,14 @@ public class BatchStepHelper extends BatchHelper {
     public String reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         this.problem.setId(getIdForCorrection(this.problemTask));
-        serviceManager.getWorkflowService().setProblem(getProblem());
+        serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            this.currentStep = serviceManager.getWorkflowService().reportProblem(this.currentStep);
+            this.currentStep = serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionReportProblem", logger, e);
         }
-        setProblem(serviceManager.getWorkflowService().getProblem());
+        setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -236,15 +236,15 @@ public class BatchStepHelper extends BatchHelper {
             this.currentStep = task;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
             this.problem.setId(getIdForCorrection(this.problemTask));
-            serviceManager.getWorkflowService().setProblem(getProblem());
+            serviceManager.getWorkflowControllerService().setProblem(getProblem());
             try {
-                setCurrentStep(serviceManager.getWorkflowService().reportProblem(this.currentStep));
+                setCurrentStep(serviceManager.getWorkflowControllerService().reportProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionReportProblem", logger, e);
             }
         }
-        setProblem(serviceManager.getWorkflowService().getProblem());
+        setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
@@ -288,14 +288,14 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String solveProblemForSingle() {
         this.solution.setId(getIdForCorrection(this.solutionTask));
-        serviceManager.getWorkflowService().setSolution(getSolution());
+        serviceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
+            setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
-        setSolution(serviceManager.getWorkflowService().getSolution());
+        setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
@@ -311,15 +311,15 @@ public class BatchStepHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.currentStep = task;
             this.solution.setId(getIdForCorrection(this.solutionTask));
-            serviceManager.getWorkflowService().setSolution(getSolution());
+            serviceManager.getWorkflowControllerService().setSolution(getSolution());
             try {
-                setCurrentStep(serviceManager.getWorkflowService().solveProblem(this.currentStep));
+                setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
                 saveStep();
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("correctionSolveProblem", logger, e);
             }
         }
-        setSolution(serviceManager.getWorkflowService().getSolution());
+        setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
@@ -526,7 +526,7 @@ public class BatchStepHelper extends BatchHelper {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
             task.setProcessingStatusEnum(TaskStatus.OPEN);
-            if (serviceManager.getWorkflowService().isCorrectionTask(task)) {
+            if (serviceManager.getWorkflowControllerService().isCorrectionTask(task)) {
                 task.setProcessingBegin(null);
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
@@ -589,7 +589,7 @@ public class BatchStepHelper extends BatchHelper {
                 TaskDAO taskDAO = new TaskDAO();
                 Task task = taskDAO.getById(s.getId());
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                serviceManager.getWorkflowService().close(s);
+                serviceManager.getWorkflowControllerService().close(s);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");

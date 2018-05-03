@@ -29,7 +29,8 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.projektBearbeiten} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
-            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.title}"/>
+            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.projectFileGroups}"/>
+            <h:outputText value="#{msgs.duplicateProject}" rendered="#{empty ProjekteForm.myProjekt.title and not empty ProjekteForm.myProjekt.projectFileGroups}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -69,8 +70,11 @@
                 <ui:fragment rendered="#{not empty ProjekteForm.myProjekt.title}">
                     #{msgs.projektBearbeiten}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.title}">
+                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.projectFileGroups}">
                     #{msgs.newProject}
+                </ui:fragment>
+                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.title and not empty ProjekteForm.myProjekt.projectFileGroups}">
+                    #{msgs.duplicateProject}
                 </ui:fragment>
             </a>
         </li>

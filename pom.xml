@@ -42,7 +42,6 @@
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
         <commons-codec.version>1.11</commons-codec.version>
-        <commons-compress.version>1.4</commons-compress.version>
         <commons-configuration.version>1.6</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.5</commons-io.version>
@@ -111,6 +110,8 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-DataAccess</module>
         <module>Kitodo-API</module>
+        <module>Kitodo-DataEditor</module>
+        <module>Kitodo-DataFormat</module>
         <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>

@@ -42,6 +42,10 @@ public class Template extends BaseTemplateBean {
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_template_ruleset_id"))
     private Ruleset ruleset;
 
+    @ManyToOne
+    @JoinColumn(name = "workflow_id", foreignKey = @ForeignKey(name = "FK_template_workflow_id"))
+    private Workflow workflow;
+
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
@@ -53,6 +57,24 @@ public class Template extends BaseTemplateBean {
         this.inChoiceListShown = true;
         this.tasks = new ArrayList<>();
         this.creationDate = new Date();
+    }
+
+    /**
+     * Get workflow.
+     *
+     * @return value of workflow
+     */
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    /**
+     * Set workflow.
+     *
+     * @param workflow as Workflow object
+     */
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
     }
 
     /**

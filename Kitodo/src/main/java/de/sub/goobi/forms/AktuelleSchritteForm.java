@@ -137,7 +137,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("stepInWorkError");
             return null;
         } else {
-            this.setMySchritt(serviceManager.getWorkflowService().assignTaskToUser(this.getMySchritt()));
+            this.setMySchritt(serviceManager.getWorkflowControllerService().assignTaskToUser(this.getMySchritt()));
         }
         return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
     }
@@ -263,7 +263,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String schrittDurchBenutzerZurueckgeben() {
         try {
-            setMySchritt(serviceManager.getWorkflowService().unassignTaskFromUser(this.mySchritt));
+            setMySchritt(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
         }
@@ -276,7 +276,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
-        setMySchritt(serviceManager.getWorkflowService().closeTaskByUser(this.mySchritt));
+        setMySchritt(serviceManager.getWorkflowControllerService().closeTaskByUser(this.mySchritt));
         return taskListPath;
     }
 
@@ -303,13 +303,13 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return problem as String
      */
     public String reportProblem() {
-        serviceManager.getWorkflowService().setProblem(getProblem());
+        serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            setMySchritt(serviceManager.getWorkflowService().reportProblem(this.mySchritt));
+            setMySchritt(serviceManager.getWorkflowControllerService().reportProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        setProblem(serviceManager.getWorkflowService().getProblem());
+        setProblem(serviceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
     }
 
@@ -331,13 +331,13 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return String
      */
     public String solveProblem() {
-        serviceManager.getWorkflowService().setSolution(getSolution());
+        serviceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            setMySchritt(serviceManager.getWorkflowService().solveProblem(this.mySchritt));
+            setMySchritt(serviceManager.getWorkflowControllerService().solveProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        setSolution(serviceManager.getWorkflowService().getSolution());
+        setSolution(serviceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
     }
 

@@ -24,26 +24,6 @@ public class ProjectFileGroupService extends SearchDatabaseService<ProjectFileGr
         super(new ProjectFileGroupDAO());
     }
 
-    public void save(ProjectFileGroup projectFileGroup) throws DAOException {
-        dao.save(projectFileGroup);
-    }
-
-    public ProjectFileGroup find(Integer id) throws DAOException {
-        return dao.getById(id);
-    }
-
-    public List<ProjectFileGroup> findAll() {
-        return dao.getAll();
-    }
-
-    public void remove(ProjectFileGroup projectFileGroup) throws DAOException {
-        dao.remove(projectFileGroup);
-    }
-
-    public void remove(Integer id) throws DAOException {
-        dao.remove(id);
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("FROM Process");

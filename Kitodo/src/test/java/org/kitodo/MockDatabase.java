@@ -68,6 +68,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
@@ -261,37 +262,37 @@ public class MockDatabase {
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().save(userGroupClientAuthorityRelation);
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
     }
 
     private static void insertUserGroupProjectAuthorityRelations() throws DAOException {
@@ -300,43 +301,43 @@ public class MockDatabase {
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
 
         userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
         userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
         userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(3));
         userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().save(userGroupProjectAuthorityRelation);
+        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
     }
 
     private static void insertAuthorities() throws DataException {
@@ -432,7 +433,7 @@ public class MockDatabase {
         ldapServer.setPasswordEncryptionEnum(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
-        serviceManager.getLdapServerService().save(ldapServer);
+        serviceManager.getLdapServerService().saveToDatabase(ldapServer);
     }
 
     public static void insertLdapGroups() throws DAOException {
@@ -446,7 +447,7 @@ public class MockDatabase {
         firstLdapGroup.setDisplayName("Name");
         firstLdapGroup.setLdapServer(serviceManager.getLdapServerService().getById(1));
 
-        serviceManager.getLdapGroupService().save(firstLdapGroup);
+        serviceManager.getLdapGroupService().saveToDatabase(firstLdapGroup);
     }
 
     private static void insertProcesses() throws DAOException, DataException {
@@ -757,7 +758,7 @@ public class MockDatabase {
         firstProjectFileGroup.setSuffix("jpg");
         firstProjectFileGroup.setPreviewImage(false);
         firstProjectFileGroup.setProject(project);
-        serviceManager.getProjectFileGroupService().save(firstProjectFileGroup);
+        serviceManager.getProjectFileGroupService().saveToDatabase(firstProjectFileGroup);
 
         ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
         secondProjectFileGroup.setName("DEFAULT");
@@ -766,7 +767,7 @@ public class MockDatabase {
         secondProjectFileGroup.setSuffix("jpg");
         secondProjectFileGroup.setPreviewImage(false);
         secondProjectFileGroup.setProject(project);
-        serviceManager.getProjectFileGroupService().save(secondProjectFileGroup);
+        serviceManager.getProjectFileGroupService().saveToDatabase(secondProjectFileGroup);
 
         ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
         thirdProjectFileGroup.setName("THUMBS");
@@ -775,7 +776,7 @@ public class MockDatabase {
         thirdProjectFileGroup.setSuffix("jpg");
         thirdProjectFileGroup.setPreviewImage(false);
         thirdProjectFileGroup.setProject(project);
-        serviceManager.getProjectFileGroupService().save(thirdProjectFileGroup);
+        serviceManager.getProjectFileGroupService().saveToDatabase(thirdProjectFileGroup);
 
         ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
         fourthProjectFileGroup.setName("FULLTEXT");
@@ -784,7 +785,7 @@ public class MockDatabase {
         fourthProjectFileGroup.setSuffix("xml");
         fourthProjectFileGroup.setPreviewImage(false);
         fourthProjectFileGroup.setProject(project);
-        serviceManager.getProjectFileGroupService().save(fourthProjectFileGroup);
+        serviceManager.getProjectFileGroupService().saveToDatabase(fourthProjectFileGroup);
 
         ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
         fifthProjectFileGroup.setName("DOWNLOAD");
@@ -793,7 +794,7 @@ public class MockDatabase {
         fifthProjectFileGroup.setSuffix("pdf");
         fifthProjectFileGroup.setPreviewImage(false);
         fifthProjectFileGroup.setProject(project);
-        serviceManager.getProjectFileGroupService().save(fifthProjectFileGroup);
+        serviceManager.getProjectFileGroupService().saveToDatabase(fifthProjectFileGroup);
 
         project.getProjectFileGroups().add(fifthProjectFileGroup);
         project.getProjectFileGroups().add(fifthProjectFileGroup);
@@ -851,7 +852,7 @@ public class MockDatabase {
 
         Task secondTask = new Task();
         secondTask.setTitle("Blocking");
-        secondTask = serviceManager.getWorkflowService().setCorrectionTask(secondTask);
+        secondTask = serviceManager.getWorkflowControllerService().setCorrectionTask(secondTask);
         secondTask.setOrdering(1);
         secondTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         localDate = new LocalDate(2016, 9, 25);
@@ -1254,6 +1255,14 @@ public class MockDatabase {
         workpiece.getWorkpieces().add(firstWorkpieceProperty);
         workpiece.getWorkpieces().add(secondWorkpieceProperty);
         serviceManager.getProcessService().save(workpiece);
+    }
+
+    public static void insertWorkflows() throws DAOException {
+        Workflow firstWorkflow = new Workflow("say-hello", "test");
+        serviceManager.getWorkflowService().saveToDatabase(firstWorkflow);
+
+        Workflow secondWorkflow = new Workflow("gateway", "gateway");
+        serviceManager.getWorkflowService().saveToDatabase(secondWorkflow);
     }
 
     /**

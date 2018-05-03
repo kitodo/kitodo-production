@@ -34,6 +34,7 @@ public class ConfigCore extends ConfigMain {
     private static ServiceManager serviceManager = new ServiceManager();
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
+    private static final String DIAGRAM_DIR = "diagramsFolder";
     public static final String IMAGES_TEMP = "/pages/imagesTemp/";
 
     /**
@@ -108,5 +109,14 @@ public class ConfigCore extends ConfigMain {
      */
     public static String getKitodoConfigDirectory() {
         return getParameter(CONFIG_DIR);
+    }
+
+    /**
+     * Get Kitodo diagram directory.
+     *
+     * @return String
+     */
+    public static String getKitodoDiagramDirectory() {
+        return getParameter(DIAGRAM_DIR);
     }
 }
