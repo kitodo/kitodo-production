@@ -12,7 +12,9 @@
 package de.sub.goobi.helper;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -96,43 +98,84 @@ public class BeanHelper {
      *            template object
      * @param processCopy
      *            new object
+     * @param workflowConditions
+     *            list of string values for workflow gateways, if list is null or
+     *            empty only tasks with default workflow conditions will be inserted
+     *            to newly created process
      */
-    public static void copyTasks(Template processTemplate, Process processCopy) {
+    public static void copyTasks(Template processTemplate, Process processCopy, List<String> workflowConditions) {
         List<Task> tasks = new ArrayList<>();
-        for (Task task : processTemplate.getTasks()) {
-
-            Task taskNew = new Task();
-            taskNew.setTypeAutomatic(task.isTypeAutomatic());
-            taskNew.setScriptName(task.getScriptName());
-            taskNew.setScriptPath(task.getScriptPath());
-            taskNew.setBatchStep(task.isBatchStep());
-            taskNew.setTypeAcceptClose(task.isTypeAcceptClose());
-            taskNew.setTypeCloseVerify(task.isTypeCloseVerify());
-            taskNew.setTypeExportDMS(task.isTypeExportDMS());
-            taskNew.setTypeExportRussian(task.isTypeExportRussian());
-            taskNew.setTypeImagesRead(task.isTypeImagesRead());
-            taskNew.setTypeImagesWrite(task.isTypeImagesWrite());
-            taskNew.setTypeImportFileUpload(task.isTypeImportFileUpload());
-            taskNew.setTypeMetadata(task.isTypeMetadata());
-            taskNew.setPriority(task.getPriority());
-            taskNew.setProcessingStatusEnum(task.getProcessingStatusEnum());
-            taskNew.setOrdering(task.getOrdering());
-            taskNew.setTitle(task.getTitle());
-            taskNew.setHomeDirectory(task.getHomeDirectory());
-            taskNew.setProcess(processCopy);
-
-            // set up the users - necessary to create new ArrayList in other case session problem!
-            ArrayList<User> users = new ArrayList<>(task.getUsers());
-            taskNew.setUsers(users);
-
-            // set up user's groups - necessary to create new ArrayList in other case session problem!
-            ArrayList<UserGroup> userGroups = new ArrayList<>(task.getUserGroups());
-            taskNew.setUserGroups(userGroups);
-
-            // save task
-            tasks.add(taskNew);
+        for (Task templateTask : processTemplate.getTasks()) {
+            String taskWorkflowCondition = templateTask.getWorkflowCondition();
+            if (Objects.isNull(workflowConditions) || workflowConditions.isEmpty()) {
+                // tasks created before workflow functionality was introduced has null value
+                if (Objects.isNull(taskWorkflowCondition) || taskWorkflowCondition.contains("default")) {
+                    Task task = getCopiedTask(templateTask);
+                    task.setProcess(processCopy);
+                    tasks.add(task);
+                }
+            } else {
+                for (String workflowCondition : workflowConditions) {
+                    if (taskWorkflowCondition.contains("default")) {
+                        Task task = getCopiedTask(templateTask);
+                        task.setProcess(processCopy);
+                        tasks.add(task);
+                    } else if (taskWorkflowCondition.contains(workflowCondition)) {
+                        Task task = getCopiedTask(templateTask);
+                        task.setProcess(processCopy);
+                        tasks.add(task);
+                    }
+                }
+            }
         }
+        adjustTaskOrdering(tasks);
         processCopy.setTasks(tasks);
+    }
+
+    private static Task getCopiedTask(Task templateTask) {
+        Task task = new Task();
+        task.setTypeAutomatic(templateTask.isTypeAutomatic());
+        task.setScriptName(templateTask.getScriptName());
+        task.setScriptPath(templateTask.getScriptPath());
+        task.setBatchStep(templateTask.isBatchStep());
+        task.setTypeAcceptClose(templateTask.isTypeAcceptClose());
+        task.setTypeCloseVerify(templateTask.isTypeCloseVerify());
+        task.setTypeExportDMS(templateTask.isTypeExportDMS());
+        task.setTypeExportRussian(templateTask.isTypeExportRussian());
+        task.setTypeImagesRead(templateTask.isTypeImagesRead());
+        task.setTypeImagesWrite(templateTask.isTypeImagesWrite());
+        task.setTypeImportFileUpload(templateTask.isTypeImportFileUpload());
+        task.setTypeMetadata(templateTask.isTypeMetadata());
+        task.setPriority(templateTask.getPriority());
+        task.setProcessingStatusEnum(templateTask.getProcessingStatusEnum());
+        task.setOrdering(templateTask.getOrdering());
+        task.setTitle(templateTask.getTitle());
+        task.setHomeDirectory(templateTask.getHomeDirectory());
+
+        // necessary to create new ArrayList in other case session problem!
+        ArrayList<User> users = new ArrayList<>(templateTask.getUsers());
+        task.setUsers(users);
+
+        // necessary to create new ArrayList in other case session problem!
+        ArrayList<UserGroup> userGroups = new ArrayList<>(templateTask.getUserGroups());
+        task.setUserGroups(userGroups);
+
+        return task;
+    }
+
+    /**
+     * First order tasks by ids read from templates and next assign correct
+     * ordering.
+     * 
+     * @param tasks
+     *            as List of Task objects
+     */
+    private static void adjustTaskOrdering(List<Task> tasks) {
+        tasks.sort(Comparator.comparing(Task::getOrdering));
+
+        for (int i = 0; i < tasks.size(); i++) {
+            tasks.get(i).setOrdering(i + 1);
+        }
     }
 
     /**
