@@ -62,7 +62,12 @@
                     </button>
                     <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
                     <p:panel id="secondColumnPanel" style="overflow: scroll">
-                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
+                        <p:panel id="metaDataPanel">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
+                        </p:panel>
+                        <p:panel id="commentPanel">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/comment.xhtml" />
+                        </p:panel>
                     </p:panel>
                 </div>
 

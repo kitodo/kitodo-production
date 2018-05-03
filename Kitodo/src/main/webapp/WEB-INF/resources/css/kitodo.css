@@ -955,13 +955,15 @@ Metadata Editor
     height: 100%;
 }
 
-#structureTreeForm\:structurePanel {
+#structureTreeForm\:structurePanel,
+#metaDataPanel {
     overflow-y: scroll;
     height: 50%;
     box-sizing: border-box;
 }
 
-#structureTreeForm\:paginationPanel {
+#structureTreeForm\:paginationPanel,
+#commentPanel {
     margin-top: 5px;
     height: calc(50% - 5px);
     box-sizing: border-box;
