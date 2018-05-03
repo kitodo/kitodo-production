@@ -98,6 +98,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "batchStep")
     private Boolean batchStep = false;
 
+    @Column(name = "workflowId")
+    private String workflowId;
+
     @Column(name = "workflowCondition")
     private String workflowCondition;
 
@@ -476,6 +479,26 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
+     * Get workflow id - id of task object in diagram - by this id we can
+     * identify change done to task.
+     *
+     * @return workflow id as String
+     */
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+    /**
+     * Set workflow id.
+    *
+     * @param workflowId
+     *          id of task object in diagram - by this id we can identify change done to task
+     */
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    /**
      * Get workflowCondition.
      *
      * @return value of workflowCondition
@@ -487,7 +510,8 @@ public class Task extends BaseIndexedBean {
     /**
      * Set workflowCondition.
      *
-     * @param workflowCondition as String
+     * @param workflowCondition
+     *          as String
      */
     public void setWorkflowCondition(String workflowCondition) {
         this.workflowCondition = workflowCondition;

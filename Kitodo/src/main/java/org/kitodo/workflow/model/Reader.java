@@ -126,6 +126,7 @@ public class Reader {
     private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) {
         org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
         KitodoTask kitodoTask = new KitodoTask(workflowTask, taskInfo.getOrdering());
+        task.setWorkflowId(kitodoTask.getWorkflowId());
         task.setTitle(kitodoTask.getTitle());
         task.setOrdering(kitodoTask.getOrdering());
         task.setPriority(kitodoTask.getPriority());
