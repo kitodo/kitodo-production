@@ -19,6 +19,9 @@ var wrapperPositionX;
 var firstColumn = $('#firstColumnWrapper');
 var secondColumn = $('#secondColumnWrapper');
 var thirdColumn = $('#thirdColumnWrapper');
+var firstColumnWidth;
+var secondColumnWidth;
+var thirdColumnWidth;
 var collapsedColumns;
 var firstResizer;
 var secondResizer;
@@ -66,7 +69,8 @@ function resizeFirstAndSecond(e) {
         && e.pageX <= wrapperPositionX + wrapper.width() - secondColumn.data('min-width') - SEPARATOR_WIDTH - thirdColumn.width()) {
         firstColumn.width(e.pageX - firstColumn.offset().left);
         secondColumn.width(wrapperPositionX + wrapper.width() - thirdColumn.width() - 2 * SEPARATOR_WIDTH - e.pageX);
-        // TODO save width
+        firstColumnWidth = firstColumn.width();
+        secondColumnWidth = secondColumn.width();
     }
 }
 
@@ -75,7 +79,8 @@ function resizeFirstAndThird(e) {
         && e.pageX <= wrapperPositionX + wrapper.width() - thirdColumn.data('min-width')) {
         firstColumn.width(e.pageX - firstColumn.offset().left);
         thirdColumn.width(wrapperPositionX + wrapper.width() - 2 * SEPARATOR_WIDTH - secondColumn.width() - e.pageX);
-        // TODO save width
+        firstColumnWidth = firstColumn.width();
+        thirdColumnWidth = thirdColumn.width();
     }
 }
 
@@ -84,7 +89,8 @@ function resizeSecondAndThird(e) {
         && e.pageX <= wrapperPositionX + wrapper.width() - SEPARATOR_WIDTH - thirdColumn.data('min-width')) {
         secondColumn.width(e.pageX - secondColumn.offset().left);
         thirdColumn.width(wrapperPositionX + wrapper.width() - SEPARATOR_WIDTH - e.pageX);
-        // TODO save width
+        secondColumnWidth = secondColumn.width();
+        thirdColumnWidth = thirdColumn.width();
     }
 }
 
@@ -106,8 +112,6 @@ function setSizes() {
 }
 
 function toggleResizers() {
-    console.log(collapsedColumns);
-    console.log(thirdColumn.hasClass('collapsed'));
     if (collapsedColumns >= 2) {
         $('.resizer').addClass('disabled');
     } else if (collapsedColumns > 0) {
@@ -145,6 +149,9 @@ function toggleCollapseButtons() {
 }
 
 function toggleFirstColumn() {
+    if (!firstColumn.hasClass('collapsed')) {
+        firstColumnWidth = firstColumn.width();
+    }
     firstColumn.toggleClass('collapsed');
     getElements();
     toggleResizers();
@@ -158,23 +165,26 @@ function toggleFirstColumn() {
             secondColumn.animate({width:  wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
         }
     } else {
-        var neededWidth = firstColumn.data('min-width') - (secondColumn.width() - secondColumn.data('min-width'));
+        var neededWidth = firstColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
         if (secondColumn.hasClass('collapsed')) {
-            thirdColumn.animate({width: wrapper.width() - firstColumn.data('min-width') - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
-            firstColumn.animate({width: firstColumn.data('min-width')});
+            thirdColumn.animate({width: wrapper.width() - firstColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+            firstColumn.animate({width: firstColumnWidth});
         } else if (neededWidth > 0) {
             secondColumn.animate({width: secondColumn.data('min-width')});
-            thirdColumn.animate({width: thirdColumn.width() - neededWidth});
-            firstColumn.animate({width: firstColumn.data('min-width')});
+            thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            firstColumn.animate({width: firstColumnWidth});
         } else {
-            secondColumn.animate({width: wrapper.width() - firstColumn.data('min-width') - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
-            firstColumn.animate({width: firstColumn.data('min-width')});
+            secondColumn.animate({width: wrapper.width() - firstColumnWidth - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
+            firstColumn.animate({width: firstColumnWidth});
         }
 
     }
 }
 
 function toggleSecondColumn() {
+    if (!secondColumn.hasClass('collapsed')) {
+        secondColumnWidth = secondColumn.width();
+    }
     secondColumn.toggleClass('collapsed');
     getElements();
     toggleResizers();
@@ -188,22 +198,25 @@ function toggleSecondColumn() {
             thirdColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - firstColumn.width() - 2 * SEPARATOR_WIDTH});
         }
     } else {
-        var neededWidth = secondColumn.data('min-width') - (thirdColumn.width() - thirdColumn.data('min-width'));
+        var neededWidth = secondColumnWidth - COLLAPSED_COL_WIDTH - (thirdColumn.width() - thirdColumn.data('min-width'));
         if (thirdColumn.hasClass('collapsed')) {
-            firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
-            secondColumn.animate({width: secondColumn.data('min-width')});
+            firstColumn.animate({width: wrapper.width() - secondColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
+            secondColumn.animate({width: secondColumnWidth});
         } else if (neededWidth > 0) {
             thirdColumn.animate({width: thirdColumn.data('min-width')});
-            firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            secondColumn.animate({width: secondColumn.data('min-width')});
+            firstColumn.animate({width: wrapper.width() - secondColumnWidth - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            secondColumn.animate({width: secondColumnWidth});
         } else {
-            thirdColumn.animate({width: wrapper.width() - firstColumn.width() - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            secondColumn.animate({width: secondColumn.data('min-width')});
+            thirdColumn.animate({width: wrapper.width() - firstColumn.width() - secondColumnWidth - 2 * SEPARATOR_WIDTH});
+            secondColumn.animate({width: secondColumnWidth});
         }
     }
 }
 
 function toggleThirdColumn() {
+    if (!thirdColumn.hasClass('collapsed')) {
+        thirdColumnWidth = thirdColumn.width();
+    }
     thirdColumn.toggleClass('collapsed');
     getElements();
     toggleResizers();
@@ -218,17 +231,17 @@ function toggleThirdColumn() {
             secondColumn.animate({width: wrapper.width() - firstColumn.width() - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
         }
     } else {
-        var neededWidth = thirdColumn.data('min-width') - (secondColumn.width() - secondColumn.data('min-width'));
+        var neededWidth = thirdColumnWidth - COLLAPSED_COL_WIDTH - (secondColumn.width() - secondColumn.data('min-width'));
         if (secondColumn.hasClass('collapsed')) {
-            firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            thirdColumn.animate({width: thirdColumn.data('min-width')});
+            firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
+            thirdColumn.animate({width: thirdColumnWidth});
         } else if (neededWidth > 0) {
-            firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+            firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
             secondColumn.animate({width: secondColumn.data('min-width')});
-            thirdColumn.animate({width: thirdColumn.data('min-width')});
+            thirdColumn.animate({width: thirdColumnWidth});
         } else {
-            secondColumn.animate({width: wrapper.width() - firstColumn.width() - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            thirdColumn.animate({width: thirdColumn.data('min-width')});
+            secondColumn.animate({width: wrapper.width() - firstColumn.width() - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
+            thirdColumn.animate({width: thirdColumnWidth});
         }
     }
 }

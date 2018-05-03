@@ -903,6 +903,7 @@ Metadata Editor
     position: relative;
     padding: 60px 0 0 0;
     background: #d8d8d8;
+    overflow: visible !important;
 }
 
 .collapsibleWrapper > button {
