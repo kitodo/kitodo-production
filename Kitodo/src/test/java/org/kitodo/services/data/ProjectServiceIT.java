@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -84,11 +85,11 @@ public class ProjectServiceIT {
         ProjectDTO project = projectService.findById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in index!", condition);
-        assertTrue("Project was not found in index!", project.isActive().equals(true));
+        assertTrue("Project was not found in index!", project.isActive());
         assertEquals("Project was not found in index!", 1, project.getTemplates().size());
 
         project = projectService.findById(3);
-        assertTrue("Project was not found in index!", project.isActive().equals(false));
+        assertFalse("Project was not found in index!", project.isActive());
     }
 
     @Test

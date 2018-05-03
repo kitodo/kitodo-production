@@ -263,13 +263,13 @@ public class ProzesskopieForm implements Serializable {
     private HashMap<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
-
-    private static String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
+    private List<String> workflowConditions = new ArrayList<>();
+    private static final String REDIRECT_PATH = "/pages/{0}?" + "faces-redirect=true";
 
     private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
-    protected static String INCOMPLETE_DATA = "UnvollstaendigeDaten";
+    protected static final String INCOMPLETE_DATA = "UnvollstaendigeDaten";
 
     /**
      * Prepare.
@@ -311,7 +311,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie);
+        BeanHelper.copyTasks(this.template, this.prozessKopie, this.workflowConditions);
 
         initializePossibleDigitalCollections();
 
@@ -1977,5 +1977,23 @@ public class ProzesskopieForm implements Serializable {
      */
     public FileformatInterface getFileformat() {
         return rdf;
+    }
+
+    /**
+     * Get workflow conditions.
+     *
+     * @return value of workflowConditions
+     */
+    public List<String> getWorkflowConditions() {
+        return workflowConditions;
+    }
+
+    /**
+     * Set workflow conditions.
+     *
+     * @param workflowConditions as List of Strings
+     */
+    public void setWorkflowConditions(List<String> workflowConditions) {
+        this.workflowConditions = workflowConditions;
     }
 }

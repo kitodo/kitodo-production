@@ -26,7 +26,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang.StringUtils;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 
@@ -98,6 +97,9 @@ public class Task extends BaseIndexedBean {
     @Column(name = "batchStep")
     private Boolean batchStep = false;
 
+    @Column(name = "workflowId")
+    private String workflowId;
+
     @Column(name = "workflowCondition")
     private String workflowCondition;
 
@@ -135,9 +137,6 @@ public class Task extends BaseIndexedBean {
             @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
-
-    @Transient
-    private boolean panelShown = false;
 
     @Transient
     private String localizedTitle;
@@ -325,14 +324,6 @@ public class Task extends BaseIndexedBean {
         this.template = template;
     }
 
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
-    }
-
     /**
      * Get list of users.
      * 
@@ -476,6 +467,26 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
+     * Get workflow id - id of task object in diagram - by this id we can
+     * identify change done to task.
+     *
+     * @return workflow id as String
+     */
+    public String getWorkflowId() {
+        return workflowId;
+    }
+
+    /**
+     * Set workflow id.
+    *
+     * @param workflowId
+     *          id of task object in diagram - by this id we can identify change done to task
+     */
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    /**
      * Get workflowCondition.
      *
      * @return value of workflowCondition
@@ -487,7 +498,8 @@ public class Task extends BaseIndexedBean {
     /**
      * Set workflowCondition.
      *
-     * @param workflowCondition as String
+     * @param workflowCondition
+     *          as String
      */
     public void setWorkflowCondition(String workflowCondition) {
         this.workflowCondition = workflowCondition;
@@ -575,17 +587,4 @@ public class Task extends BaseIndexedBean {
     public int getProcessingTimeNow() {
         return 1;
     }
-
-    /**
-     * Get script names for displaying in the frontend.
-     * 
-     * @return script name as String
-     */
-    public String getListOfPaths() {
-        if (!StringUtils.isBlank(this.scriptName)) {
-            return this.scriptName;
-        }
-        return "";
-    }
-
 }

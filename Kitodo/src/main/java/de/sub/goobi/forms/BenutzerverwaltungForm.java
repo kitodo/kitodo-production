@@ -47,7 +47,6 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
-import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.SecurityPasswordEncoder;
@@ -106,14 +105,6 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String filterAll() {
         return userListPath;
-    }
-
-    private List<UserDTO> getUsers() throws DataException {
-        if (this.hideInactiveUsers) {
-            return serviceManager.getUserService().findAllActiveUsers();
-        } else {
-            return serviceManager.getUserService().findAllVisibleUsers();
-        }
     }
 
     /**

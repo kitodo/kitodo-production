@@ -126,32 +126,32 @@
                         </div>
                     </p:row>
                 </p:panelGrid>
-                <!-- user groups -->
-                <p:panel>
-                    <p:dataTable var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
-                        <p:column headerText="#{msgs.benutzergruppen}">
-                            <h:outputText value="#{item.title}"/>
-                        </p:column>
-                        <p:column styleClass="actionsColumn">
-                            <p:commandLink id="delete"
-                                           action="#{BenutzerverwaltungForm.deleteFromGroup}"
-                                           title="#{msgs.ausGruppeLoeschen}"
-                                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
-                                           update="@form">
-                                <i class="fa fa-trash-o fa-lg"/>
-                                <f:param name="ID" value="#{item.id}"/>
-                            </p:commandLink>
-                        </p:column>
-                    </p:dataTable>
-                    <button onclick="PF('addUserGroupDialog').show()"
-                            id="addUserGroupButton"
-                            type="button"
-                            class="ui-button ui-widget ui-corner-all button-filled-green"
-                            style="padding:.7em;border:none;">
-                        #{msgs.benutzergruppenHinzufuegen}
-                        <i class="fa fa-plus-circle fa-lg"/>
-                    </button>
-                </p:panel>
+            </p:tab>
+            <!-- user groups -->
+            <p:tab id="usergroupTab" title="#{msgs.benutzergruppen}">
+                <p:dataTable id="usergroupDatatable" var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
+                    <p:column headerText="#{msgs.benutzergruppe}">
+                        <h:outputText value="#{item.title}"/>
+                    </p:column>
+                    <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+                        <p:commandLink id="delete"
+                                       action="#{BenutzerverwaltungForm.deleteFromGroup}"
+                                       title="#{msgs.ausGruppeLoeschen}"
+                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                       update="@form">
+                            <i class="fa fa-trash-o fa-lg"/>
+                            <f:param name="ID" value="#{item.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <button onclick="PF('addUserGroupDialog').show()"
+                        id="addUserGroupButton"
+                        type="button"
+                        class="ui-button ui-widget ui-corner-all button-filled-green"
+                        style="padding:.7em;border:none;">
+                    #{msgs.benutzergruppenHinzufuegen}
+                    <i class="fa fa-plus-circle fa-lg"/>
+                </button>
             </p:tab>
         </p:tabView>
     </ui:define>

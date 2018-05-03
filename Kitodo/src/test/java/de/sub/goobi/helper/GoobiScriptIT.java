@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -165,7 +167,7 @@ public class GoobiScriptIT {
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(2);
-        assertEquals("Task property was not set!", true, task.isTypeCloseVerify());
+        assertTrue("Task property was not set!", task.isTypeCloseVerify());
     }
 
     @Test
@@ -191,6 +193,6 @@ public class GoobiScriptIT {
         goobiScript.execute(processes, script);
 
         Task task = serviceManager.getTaskService().getById(2);
-        assertEquals("Task property was set - default value is false!", false, task.isTypeCloseVerify());
+        assertFalse("Task property was set - default value is false!", task.isTypeCloseVerify());
     }
 }

@@ -13,7 +13,6 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

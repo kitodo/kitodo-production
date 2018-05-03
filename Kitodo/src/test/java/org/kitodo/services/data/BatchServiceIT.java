@@ -257,6 +257,6 @@ public class BatchServiceIT {
     public void shouldOverrideToString() throws Exception {
         Batch batch = batchService.getById(1);
         String toString = batchService.toString(batch);
-        assertTrue("Override toString method is incorrect!", toString.equals("First batch (1 processes) [logistics]"));
+        assertEquals("Override toString method is incorrect!", "First batch (1 processes) [logistics]", toString);
     }
 }

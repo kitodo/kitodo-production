@@ -12,6 +12,7 @@
 package org.kitodo.services.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -97,7 +98,7 @@ public class CommandServiceTest {
         expectedMessages.add("Hello World");
 
         assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertEquals("successful booleans are not matching", true, result.isSuccessful());
+        assertTrue("successful booleans are not matching", result.isSuccessful());
     }
 
     @Test
@@ -117,7 +118,7 @@ public class CommandServiceTest {
         expectedMessages.add("HelloWorld");
 
         assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertEquals("successful booleans are not matching", true, result.isSuccessful());
+        assertTrue("successful booleans are not matching", result.isSuccessful());
     }
 
     @Test(expected = IOException.class)
@@ -156,8 +157,8 @@ public class CommandServiceTest {
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
         CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertEquals("result message should contain IOException",
-                commandResult.getMessages().get(0).contains("IOException"), true);
+        assertTrue("result message should contain IOException",
+                commandResult.getMessages().get(0).contains("IOException"));
     }
 
     @Test
@@ -179,7 +180,7 @@ public class CommandServiceTest {
         expectedMessages.add("HelloWorld");
 
         assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertEquals("successful booleans are not identical", true, result.isSuccessful());
+        assertTrue("successful booleans are not identical", result.isSuccessful());
     }
 
     /**
