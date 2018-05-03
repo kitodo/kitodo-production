@@ -139,7 +139,7 @@ public class VariableReplacer {
             inString = replaceForProcessProperty(inString);
 
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         return inString;
@@ -214,7 +214,7 @@ public class VariableReplacer {
 
     /**
      * Replace WerkstueckEigenschaft, usage: (product.PROPERTYTITLE).
-     * 
+     *
      * @param input
      *            String for replacement
      * @return replaced String
@@ -291,7 +291,7 @@ public class VariableReplacer {
             try {
                 mdt = UghHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e.toString(), logger, e);
                 return "";
             }
 

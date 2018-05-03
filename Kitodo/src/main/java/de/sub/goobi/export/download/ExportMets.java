@@ -42,7 +42,7 @@ public class ExportMets {
     protected Helper help = new Helper();
     protected PrefsInterface myPrefs;
 
-    protected static final Logger logger = LogManager.getLogger(ExportMets.class);
+    private static final Logger logger = LogManager.getLogger(ExportMets.class);
 
     /**
      * DMS-Export in das Benutzer-Homeverzeichnis.
@@ -107,8 +107,9 @@ public class ExportMets {
         if (user != null) {
             try {
                 fileService.createDirectoryForUser(targetFolder, user.getLogin());
-            } catch (Exception e) {
-                Helper.setFehlerMeldung("Export canceled, could not create destination directory: " + targetFolder, e);
+            } catch (IOException | RuntimeException e) {
+                Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder,
+                    logger, e);
             }
         }
     }

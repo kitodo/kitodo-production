@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 /**
  * This class provides xml logfile generation. After the generation the file
  * will be written to user home directory
- * 
+ *
  * @author Robert Sehr
  * @author Steffen Hankiewicz
- * 
+ *
  */
 public class ExportXmlLog {
     private static final Logger logger = LoggerFactory.getLogger(ExportXmlLog.class);
@@ -58,7 +58,7 @@ public class ExportXmlLog {
             outp.output(doc, os);
             os.close();
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             logger.error("Document creation failed.");
             throw new IOException(e);
         }

@@ -13,6 +13,7 @@ package org.goobi.mq;
 
 import de.sub.goobi.helper.enums.ReportLevel;
 
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
 import org.apache.logging.log4j.Level;
@@ -73,8 +74,8 @@ public class WebServiceResult {
 
             // If reporting to ActiveMQ is disabled, write log message
             logger.log(level == ReportLevel.SUCCESS ? Level.INFO : Level.WARN,
-                    "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
-                            + (message != null ? " (" + message + ")" : ""));
+                "Processing message \"" + id + '@' + queueName + "\" reports " + level.toLowerCase() + "."
+                        + (message != null ? " (" + message + ")" : ""));
         } else {
             try {
                 MapMessage report = ActiveMQDirector.getSession().createMapMessage();
@@ -91,9 +92,9 @@ public class WebServiceResult {
 
                 ActiveMQDirector.getResultsTopic().send(report);
 
-            } catch (Exception exce) {
+            } catch (JMSException | RuntimeException e) {
                 logger.fatal("Error sending report  for \"" + id + '@' + queueName + "\" (" + level.toLowerCase()
-                        + (message != null ? ": " + message : "") + "): Giving up.", exce);
+                        + (message != null ? ": " + message : "") + "): Giving up.", e);
             }
         }
     }

@@ -32,6 +32,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -43,6 +45,7 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
 public class ExportPdf extends ExportMets {
+    private static final Logger logger = LogManager.getLogger(ExportPdf.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static final String AND_TARGET_FILE_NAME_IS = "&targetFileName=";
     private static final String PDF_EXTENSION = ".pdf";
@@ -85,7 +88,8 @@ public class ExportPdf extends ExportMets {
 
                 // using mets file
                 if (serviceManager.getMetadataValidationService().validate(process)) {
-                    // if no contentServerUrl defined use internal goobiContentServerServlet
+                    // if no contentServerUrl defined use internal
+                    // goobiContentServerServlet
                     if (contentServerUrl == null || contentServerUrl.length() == 0) {
                         contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
                     }
@@ -107,7 +111,7 @@ public class ExportPdf extends ExportMets {
                     completeResponse(context, kitodoContentServerUrl, process);
                 }
                 fileService.delete(metaFile);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 String text = "error while pdf creation: " + e.getMessage();
                 URI uri = userHome.resolve(process.getTitle() + ".PDF-ERROR.log");
                 try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {

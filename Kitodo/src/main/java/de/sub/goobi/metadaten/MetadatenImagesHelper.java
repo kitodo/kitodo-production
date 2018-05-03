@@ -138,7 +138,7 @@ public class MetadatenImagesHelper {
                             page.removeContentFile(page.getAllContentFiles().get(0));
                             pageElementsWithoutImages.add(page);
                         } catch (ContentFileNotLinkedException e) {
-                            logger.error(e);
+                            logger.error(e.getMessage(), e);
                         }
                     }
                 } else {
@@ -178,7 +178,7 @@ public class MetadatenImagesHelper {
                     dsPage.addContentFile(createContentFile(process, newImage));
 
                 } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                 }
             }
         } else {
@@ -215,7 +215,7 @@ public class MetadatenImagesHelper {
                         // image name
                         dsPage.addContentFile(createContentFile(process, newImage));
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
 
@@ -251,7 +251,7 @@ public class MetadatenImagesHelper {
             mdForPath.setStringValue(pathString);
             physicalStructure.addMetadata(mdForPath);
         } catch (MetadataTypeNotAllowedException | DocStructHasNoTypeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         return physicalStructure;
@@ -568,7 +568,7 @@ public class MetadatenImagesHelper {
         URI dir;
         try {
             dir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             throw new InvalidImagesException(e);
         }
         /* Verzeichnis einlesen */

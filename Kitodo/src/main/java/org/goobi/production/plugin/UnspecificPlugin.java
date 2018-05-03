@@ -32,7 +32,7 @@ import org.kitodo.production.exceptions.UnreachableCodeException;
  * upon instantiation. If one of the methods is missing a NoSuchMethodException
  * will be thrown. The methods defined in this class are shared across all
  * plug-ins and must be provided by all of them:
- * 
+ *
  * <p>
  * <code>void configure(Map)</code><br>
  * The function configure() will be called by the {@link PluginLoader} right
@@ -40,7 +40,7 @@ import org.kitodo.production.exceptions.UnreachableCodeException;
  * {@link PluginLoader#getPluginConfiguration()}. The plug-in may or may not
  * implement this method.
  * </p>
- * 
+ *
  * <p>
  * <code>String getDescription(Locale)</code><br>
  * When being called, the function getDescription() shall return a
@@ -49,7 +49,7 @@ import org.kitodo.production.exceptions.UnreachableCodeException;
  * the Locale is null or doesn’t denote a language, the plug-in shall return a
  * human-readable description in English.
  * </p>
- * 
+ *
  * <p>
  * <code>String getTitle(Locale)</code><br>
  * When being called, the function getTitle() shall return a human-readable name
@@ -58,7 +58,7 @@ import org.kitodo.production.exceptions.UnreachableCodeException;
  * doesn’t denote a language, the plug-in shall return its human-readable name
  * in English.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public abstract class UnspecificPlugin {
@@ -470,7 +470,7 @@ public abstract class UnspecificPlugin {
             } else {
                 throw new RuntimeException(wrappedException.getMessage(), wrappedException);
             }
-        } catch (Exception e) {
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }

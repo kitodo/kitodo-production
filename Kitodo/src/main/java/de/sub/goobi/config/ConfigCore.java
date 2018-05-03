@@ -14,6 +14,7 @@ package de.sub.goobi.config;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
@@ -39,7 +40,7 @@ public class ConfigCore extends ConfigMain {
     /**
      * Return the absolute path for the temporary images directory. Method
      * creates also this folder in case it doesn't exist.
-     * 
+     *
      * @return the path for the temporary images directory as URI
      */
     public static URI getTempImagesPathAsCompleteDirectory() {
@@ -53,9 +54,8 @@ public class ConfigCore extends ConfigMain {
             fileName = session.getServletContext().getRealPath("/pages") + File.separator;
             try {
                 uri = serviceManager.getFileService().createDirectory(Paths.get(fileName).toUri(), "imagesTemp");
-            } catch (Exception ioe) {
-                logger.error("IO error: " + ioe);
-                Helper.setFehlerMeldung(Helper.getTranslation("couldNotCreateImageFolder"), ioe.getMessage());
+            } catch (IOException | RuntimeException e) {
+                Helper.setErrorMessage(Helper.getTranslation("couldNotCreateImageFolder"), logger, e);
             }
         }
         return uri;

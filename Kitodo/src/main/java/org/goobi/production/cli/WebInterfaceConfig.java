@@ -16,6 +16,7 @@ import de.sub.goobi.config.ConfigCore;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
@@ -49,7 +50,7 @@ public class WebInterfaceConfig {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
             allowed = new ArrayList<>();
         }
         return allowed;

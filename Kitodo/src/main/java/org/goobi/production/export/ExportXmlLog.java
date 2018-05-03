@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -105,8 +106,8 @@ public class ExportXmlLog {
             outp.output(doc, os);
             os.close();
 
-        } catch (Exception e) {
-            throw new IOException(e);
+        } catch (RuntimeException e) {
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -146,7 +147,7 @@ public class ExportXmlLog {
 
             outp.output(answer, outputStream);
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         } finally {
             if (outputStream != null) {
                 try {
@@ -370,7 +371,7 @@ public class ExportXmlLog {
             processElements.add(metsElement);
 
         } catch (IOException | JDOMException | JaxenException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         processElm.setContent(processElements);
         return doc;
@@ -434,8 +435,8 @@ public class ExportXmlLog {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new window
-     * with the output file.
+     * This method transforms the xml log using a xslt file and opens a new
+     * window with the output file.
      *
      * @param out
      *            ServletOutputStream
@@ -504,7 +505,8 @@ public class ExportXmlLog {
                     fields.put(name, value);
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
             fields = new HashMap<>();
         }
         return fields;
@@ -526,7 +528,8 @@ public class ExportXmlLog {
                     nss.put(name, value);
                 }
             }
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
             nss = new HashMap<>();
         }
         return nss;

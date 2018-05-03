@@ -46,7 +46,7 @@ public class BatchProcessHelper extends BatchHelper {
 
     /**
      * Get list of process' names.
-     * 
+     *
      * @return list of process' names as list of String objects
      */
     public List<String> getProcessNameList() {
@@ -55,7 +55,7 @@ public class BatchProcessHelper extends BatchHelper {
 
     /**
      * Set list of process' names.
-     * 
+     *
      * @param processNameList
      *            as list of String objects
      */
@@ -65,7 +65,7 @@ public class BatchProcessHelper extends BatchHelper {
 
     /**
      * Get process name.
-     * 
+     *
      * @return process name as String
      */
     public String getProcessName() {
@@ -113,8 +113,7 @@ public class BatchProcessHelper extends BatchHelper {
                 serviceManager.getProcessService().save(this.currentProcess);
                 Helper.setMeldung("propertySaved");
             } catch (DataException e) {
-                logger.error(e);
-                Helper.setFehlerMeldung("propertyNotSaved");
+                Helper.setErrorMessage("propertyNotSaved", logger, e);
             }
         }
     }
@@ -152,7 +151,7 @@ public class BatchProcessHelper extends BatchHelper {
                     serviceManager.getProcessService().save(process);
                 } catch (DataException e) {
                     error = true;
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     List<String> param = new ArrayList<>();
                     param.add(process.getTitle());
                     String value = Helper.getTranslation("propertiesForProcessNotSaved", param);

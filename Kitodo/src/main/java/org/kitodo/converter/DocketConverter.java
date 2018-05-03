@@ -35,7 +35,7 @@ public class DocketConverter implements Converter {
             try {
                 return new DocketDAO().getById(Integer.valueOf(value));
             } catch (DAOException | NumberFormatException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
                 return "0";
             }
         }

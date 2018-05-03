@@ -86,7 +86,7 @@ public class FileServiceTest {
         try {
             fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         File file = fileService.getFile(URI.create("fileServiceTestMissing/testMeta"));
 

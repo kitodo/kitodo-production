@@ -51,7 +51,7 @@ public class Config {
         try {
             return getConfig().getString(parameter);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return "No configuration found!";
         }
     }

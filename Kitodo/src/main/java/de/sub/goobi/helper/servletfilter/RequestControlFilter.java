@@ -28,6 +28,8 @@ import javax.servlet.annotation.WebInitParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.LazyInitializationException;
 
 /**
@@ -63,6 +65,7 @@ import org.hibernate.LazyInitializationException;
 @WebFilter(filterName = "RequestControlFilter", urlPatterns = "*.jsf", initParams = {
         @WebInitParam(name = "excludePattern", value = ".*\\.(js|css|svg)\\.jsf") })
 public class RequestControlFilter implements Filter {
+    private static final Logger logger = LogManager.getLogger(RequestControlFilter.class);
 
     /**
      * Initialize this filter by reading its configuration parameters.
@@ -158,7 +161,7 @@ public class RequestControlFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (LazyInitializationException e) {
-            Helper.setFehlerMeldung(de.sub.goobi.helper.Helper.getTranslation("aLazyInitializationErrorOcurred"));
+            Helper.setErrorMessage(Helper.getTranslation("aLazyInitializationErrorOcurred"), logger, e);
         } finally {
             releaseQueuedRequest(httpRequest);
         }

@@ -105,7 +105,8 @@ public class MetadatenHelper implements Comparator<Object> {
                     if (!match) {
                         try {
                             newDocstruct.addMetadata(old);
-                        } catch (Exception e) {
+                        } catch (RuntimeException e) {
+                            logger.error(e.getMessage(), e);
                             Helper.setFehlerMeldung("Metadata " + old.getMetadataType().getName()
                                     + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
                             return inOldDocstruct;
@@ -230,7 +231,7 @@ public class MetadatenHelper implements Comparator<Object> {
                     alleDS = new ArrayList<>();
                 }
             } catch (IndexOutOfBoundsException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
 
             /*
@@ -453,7 +454,7 @@ public class MetadatenHelper implements Comparator<Object> {
                             // element
                         }
                     } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
@@ -577,8 +578,8 @@ public class MetadatenHelper implements Comparator<Object> {
                 firstName = firstMetadataType.getNameByLanguage(this.language);
                 secondName = secondMetadataType.getNameByLanguage(this.language);
             } catch (java.lang.NullPointerException e) {
-                logger.debug("Language {} for metadata {} or {} is missing in ruleset",
-                        this.language, firstMetadata.getMetadataType(), secondMetadata.getMetadataType());
+                logger.debug("Language {} for metadata {} or {} is missing in ruleset", this.language,
+                    firstMetadata.getMetadataType(), secondMetadata.getMetadataType());
                 return 0;
             }
             if (firstName == null || firstName.length() == 0) {

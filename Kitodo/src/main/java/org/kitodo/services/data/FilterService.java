@@ -283,7 +283,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * Prepare list of values for given filter. Regexp checks if it contains only
      * numbers and white spaces. In that case it treats it as list of ids. If value
      * contains words and white spaces or single word it treats it as text search.
-     * 
+     *
      * @param filter
      *            full filter String
      * @param filterName
@@ -305,7 +305,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     /**
      * Filters for properties are special type. They can contain two times : e.g.
      * 'processproperty:title:value'.
-     * 
+     *
      * @param filter
      *            full filter String
      * @param filterString
@@ -328,7 +328,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     /**
      * Prepare list of values in format property title and property value or only
      * property value.
-     * 
+     *
      * @param filter
      *            full filter String
      * @param filterName
@@ -351,7 +351,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     /**
      * Prepare list of single filters from given one long filter. Filters are
      * delimited by ".
-     * 
+     *
      * @param filter
      *            as String
      * @return list of single filters
@@ -371,7 +371,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     /**
      * Evaluate FilterString objects in both possible languages.
-     * 
+     *
      * @param stringFilterString
      *            full filter String
      * @param filterString
@@ -403,7 +403,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         try {
             currentUser = serviceManager.getUserService().findAuthenticatedUser();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         // TODO Change to check the corresponding authority
         if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
@@ -452,7 +452,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             userDTO = serviceManager.getUserService().findById(user.getId());
             assignedProjects = userDTO.getProjects();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         // only processes which are not templates and are part of assigned projects
@@ -461,7 +461,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                     .findByProjectIds(collectIds(assignedProjects), true);
             taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
@@ -569,10 +569,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskExact(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (DataException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -581,10 +581,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskMax(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (DataException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -593,10 +593,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskMin(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (DataException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -606,10 +606,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskTitle(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (DataException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -618,21 +618,22 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 try {
                     return filterTaskRange(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.error("stepdone is preset, don't use 'step' filters");
                 } catch (NumberFormatException e) {
+                    logger.debug(e.getMessage(), e);
                     try {
                         return filterTaskTitle(parameters, taskStatus, negate, objectType);
                     } catch (NullPointerException e1) {
-                        logger.error(e);
+                        logger.error(e1.getMessage(), e1);
                         logger.error("stepdone is preset, don't use 'step' filters");
-                    } catch (Exception e1) {
-                        logger.error(e1);
+                    } catch (DataException | RuntimeException e1) {
+                        logger.error(e1.getMessage(), e1);
                         logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                                 + "' caused an error\n");
                     }
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (DataException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                     logger.error("filterpart '" + filter.substring(filter.indexOf(':') + 1) + "' in '" + filter
                             + "' caused an error\n");
                 }
@@ -830,7 +831,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             UserDTO userDTO = serviceManager.getUserService().convertJSONObjectToDTO(user, false);
             taskDTOS = userDTO.getProcessingTasks();
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         if (objectType == ObjectType.PROCESS) {

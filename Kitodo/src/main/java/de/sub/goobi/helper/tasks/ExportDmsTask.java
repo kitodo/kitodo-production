@@ -23,7 +23,7 @@ import org.kitodo.data.database.beans.Process;
  * for a process and provides the ability to run the export in the background
  * this way. This is especially valuable if the export has a big load of images
  * to copy.
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class ExportDmsTask extends EmptyTask {
@@ -84,7 +84,7 @@ public class ExportDmsTask extends EmptyTask {
     public void run() {
         try {
             exportDms.startExport(process, userHome, this);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             setException(e);
         }
     }

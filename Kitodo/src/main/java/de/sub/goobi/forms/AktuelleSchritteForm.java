@@ -17,6 +17,7 @@ import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
+import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
 import java.io.File;
@@ -35,6 +36,11 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -195,8 +201,8 @@ public class AktuelleSchritteForm extends BasisForm {
                 if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                     try {
                         new File(serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()));
-                    } catch (Exception e1) {
-                        Helper.setErrorMessage("Error retrieving image directory: ", logger, e1);
+                    } catch (IOException | RuntimeException e) {
+                        Helper.setErrorMessage("Error retrieving image directory: ", logger, e);
                     }
                     task.setProcessingTime(new Date());
 
@@ -621,7 +627,8 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Set selected tasks: Set tasks in old list to false and set new list to true.
+     * Set selected tasks: Set tasks in old list to false and set new list to
+     * true.
      *
      * @param selectedTasks
      *            provided by data table
@@ -653,7 +660,8 @@ public class AktuelleSchritteForm extends BasisForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.mySchritt.getProcess());
-        } catch (Exception e) {
+        } catch (TypeNotAllowedForParentException | ReadException | PreferencesException | WriteException
+                | MetadataTypeNotAllowedException | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("Error on export", logger, e);
         }
     }

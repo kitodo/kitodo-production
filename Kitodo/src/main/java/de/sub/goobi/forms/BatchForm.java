@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
+import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -35,6 +36,11 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.goobi.production.constants.Parameters;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -64,7 +70,7 @@ public class BatchForm extends BasisForm {
     private String batchTitle;
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    // TODO; for what is it needed  - right now it is used only in new tests
+    // TODO; for what is it needed - right now it is used only in new tests
     public List<Process> getCurrentProcesses() {
         return this.currentProcesses;
     }
@@ -102,7 +108,7 @@ public class BatchForm extends BasisForm {
                 processes.addAll(serviceManager.getBatchService().getById(b).getProcesses());
             }
             currentProcesses = new ArrayList<>(processes);
-        } catch (Exception e) { // NumberFormatException, DAOException
+        } catch (NumberFormatException | DAOException e) {
             Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
         }
     }
@@ -127,10 +133,10 @@ public class BatchForm extends BasisForm {
         try {
             if (batchMaxSize > 0) {
                 processDTOS = serviceManager.getProcessService().findByQuery(query,
-                        serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
+                    serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
             } else {
                 processDTOS = serviceManager.getProcessService().findByQuery(query,
-                        serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
+                    serviceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -249,7 +255,7 @@ public class BatchForm extends BasisForm {
         } else if (this.selectedBatches.size() == 1) {
             try {
                 serviceManager.getProcessService().downloadDocket(
-                        serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
+                    serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                 return null;
@@ -300,7 +306,7 @@ public class BatchForm extends BasisForm {
                 if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                                Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
+                            Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
                     }
                     this.serviceManager.getProcessService().saveList(this.selectedProcesses);
                 }
@@ -331,12 +337,8 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : this.selectedProcesses) {
-                    serviceManager.getProcessService()
-                            .addToWikiField(
-                                    Helper.getTranslation("removeFromBatch",
-                                            Arrays.asList(
-                                                    new String[] {serviceManager.getBatchService().getLabel(batch) })),
-                                    p);
+                    serviceManager.getProcessService().addToWikiField(Helper.getTranslation("removeFromBatch",
+                        Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
                 }
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
@@ -383,12 +385,8 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : selectedProcesses) {
-                    serviceManager.getProcessService()
-                            .addToWikiField(
-                                    Helper.getTranslation("addToBatch",
-                                            Arrays.asList(
-                                                    new String[] {serviceManager.getBatchService().getLabel(batch) })),
-                                    p);
+                    serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
+                        Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
                 }
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
@@ -493,7 +491,9 @@ public class BatchForm extends BasisForm {
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
-            } catch (Exception e) {
+            } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
+                    | ReadException | TypeNotAllowedForParentException | IOException | ExportFileException
+                    | RuntimeException e) {
                 Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                 return null;
             }

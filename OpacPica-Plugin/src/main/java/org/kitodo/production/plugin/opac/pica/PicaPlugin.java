@@ -497,7 +497,7 @@ public class PicaPlugin implements Plugin {
             try {
                 topstructChild = (DocStruct) topstruct.getAllChildren().get(0);
             } catch (RuntimeException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
             mySecondHit = (Element) myFirstHit.getParentElement().getChildren().get(1);
         }
@@ -792,7 +792,7 @@ public class PicaPlugin implements Plugin {
             LocalDate date = toRecentLocalDate(accessed, today);
             result.put("accessed", date.toDateTime(date.isEqual(today) ? new LocalTime() : DAY_END).toString());
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         String lastName = getElementFieldValue(hit, "028A", "a");
@@ -829,7 +829,7 @@ public class PicaPlugin implements Plugin {
             LocalDate localDate = toRecentLocalDate(date, today);
             result.put("date", localDate.toString());
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         result.put("edition", getElementFieldValue(hit, "032@", "a"));

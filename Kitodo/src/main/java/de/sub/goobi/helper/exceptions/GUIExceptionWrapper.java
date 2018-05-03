@@ -94,7 +94,7 @@ public class GUIExceptionWrapper extends Exception {
             if (ConfigCore.getBooleanParameter("err_userHandling")) {
                 this.errLinkText = Helper.getTranslation("err_linkText");
                 this.errLinkText = this.errLinkText.replace("{0}",
-                        ConfigCore.getParameter("err_linkToPage", "./start.jsf"));
+                    ConfigCore.getParameter("err_linkToPage", "./start.jsf"));
 
                 if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
 
@@ -124,7 +124,7 @@ public class GUIExceptionWrapper extends Exception {
                 this.userSeenErrorMessage = this.fallBackErrorMessage;
             }
 
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             this.internalErrorMsg = this.internalErrorMsg + "Error on loading Config items:<br/>" + e.getMessage()
                     + "<br/><br/>";
             this.userSeenErrorMessage = this.fallBackErrorMessage;
@@ -161,9 +161,9 @@ public class GUIExceptionWrapper extends Exception {
         // only elaborate email part if
         if (this.emailAddresses.size() > 0) {
             emailPart = this.errEmailMessage.replace("{0}",
-                    mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.errSubjectLine + mailtoLinkBody
-                            + this.errEmailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()
-                            + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
+                mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.errSubjectLine + mailtoLinkBody
+                        + this.errEmailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()
+                        + htmlLineFeed + getStackTrace(this.getCause().getStackTrace()));
 
         } else {
             // if no address a general text will be provided by this class

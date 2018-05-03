@@ -22,6 +22,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -107,10 +108,6 @@ public class Helper extends HibernateHelper implements Observer {
         setFehlerMeldung("Error (" + e.getClass().getName() + "): ", getExceptionMessage(e));
     }
 
-    public static void setFehlerMeldung(String message, Exception e) {
-        setFehlerMeldung(message, '(' + e.getClass().getSimpleName() + ": " + getExceptionMessage(e) + ')');
-    }
-
     public static void setFehlerMeldung(String control, String message, Exception e) {
         setFehlerMeldung(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
     }
@@ -149,7 +146,11 @@ public class Helper extends HibernateHelper implements Observer {
      */
     public static void setErrorMessage(String title, Logger logger, Exception exception) {
         logger.error(title, exception);
-        setFehlerMeldung(title);
+        if (Objects.isNull(exception.getMessage()) || exception.getMessage().equals(title)) {
+            setFehlerMeldung(title);
+        } else {
+            setFehlerMeldung(title, exception.getMessage());
+        }
     }
 
     /**
@@ -346,7 +347,7 @@ public class Helper extends HibernateHelper implements Observer {
             if (sessionMap.containsKey(name)) {
                 sessionMap.remove(name);
             }
-        } catch (Exception nothingToDo) {
+        } catch (RuntimeException nothingToDo) {
             logger.error(nothingToDo);
         }
     }
@@ -381,8 +382,8 @@ public class Helper extends HibernateHelper implements Observer {
                             localMessages.put(language, localBundle);
                         }
 
-                    } catch (Exception e) {
-                        logger.error(e);
+                    } catch (RuntimeException | MalformedURLException e) {
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }
@@ -466,7 +467,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Get current logged in user.
-     * 
+     *
      * @return current logged in user
      */
     public static User getCurrentUser() {
@@ -477,11 +478,12 @@ public class Helper extends HibernateHelper implements Observer {
         return currentUser;
     }
 
-    //TODO: find way to test without this method - faces
+    // TODO: find way to test without this method - faces
     /**
      * Set current logged in user. Used for test purpose.
      *
-     * @param user current logged in user as User
+     * @param user
+     *            current logged in user as User
      */
     public static void setCurrentUser(User user) {
         currentUser = user;

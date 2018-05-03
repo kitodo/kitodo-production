@@ -24,7 +24,7 @@ public class ConfigMain {
 
     /**
      * Get properties from configuration file.
-     * 
+     *
      * @return PropertiesConfiguration object
      */
     public static PropertiesConfiguration getConfig() {
@@ -37,7 +37,7 @@ public class ConfigMain {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
                         logger.warn("Loading of {} failed. Trying to start with empty configuration. Exception: {}",
-                                CONFIG_FILE, e);
+                            CONFIG_FILE, e);
                         initialized = new PropertiesConfiguration();
                     }
                     initialized.setListDelimiter('&');
@@ -58,7 +58,7 @@ public class ConfigMain {
         try {
             return getConfig().getString(inParameter);
         } catch (RuntimeException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return "- keine Konfiguration gefunden -";
         }
     }
@@ -111,7 +111,7 @@ public class ConfigMain {
     public static int getIntParameter(String inParameter, int inDefault) {
         try {
             return getConfig().getInt(inParameter, inDefault);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return 0;
         }
     }
