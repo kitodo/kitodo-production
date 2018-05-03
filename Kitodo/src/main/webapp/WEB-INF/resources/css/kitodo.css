@@ -946,6 +946,10 @@ Metadata Editor
     height: 100%;
 }
 
+.collapsibleWrapper.collapsed > .ui-panel {
+    visibility: hidden;
+}
+
 #structureTreeForm {
     height: 100%;
 }
@@ -960,10 +964,6 @@ Metadata Editor
     margin-top: 5px;
     height: calc(50% - 5px);
     box-sizing: border-box;
-}
-
-.collapsibleWrapper.collapsed > .ui-panel {
-    visibility: hidden;
 }
 
 #metadataEditorWrapper .resizer {
