@@ -34,7 +34,7 @@ They are directly mapped from task columns in Task table.
 ### BPMN ScriptTask
 
 It is extended by TemplateScriptTask which contains two additional custom properties:
- 
+
 *  scriptName - string
 *  scriptPath - string
 
@@ -48,4 +48,4 @@ Diagrams are stored in user local directory, which is defined in kitodo_config.p
 diagramsFolder = path/to/diagram/directory
 ```
 
-Additionaly there was added Workflow table wjhich has two columns - title and file. Title is id of Process defined in this diagram and file is a file name of this diagram.
+Additionaly there was added Workflow table which has two columns - title and file. Title is id of Process defined in this diagram and file is a file name of this diagram.

@@ -1,19 +1,12 @@
 # Workflow
 
-This document contains documents explaining the Workflow functionality in Kitodo. 
-
-## Modeler
-[Read more](/docs/HOWTO/Software-Structure/Kitodo-Core/Workflow/Modeler "Modeler")
-
-## Diagram - template processing
-[Read more](/docs/HOWTO/Software-Structure/Kitodo-Core/Workflow/Diagram_template_processing "Diagram - template processing")
-
-## Create process out of template
-[Read more](/docs/HOWTO/Software-Structure/Kitodo-Core/Workflow/Template_process_creation "Create process out of template")
+* [Modeler](Modeler/README.md)
+* [Diagram template processing](Diagram_template_processing/README.md)
+* [Create process out of template](Template_process_creation/README.md)
 
 ## Example diagram
 
-<img alt='Diagram' src='/docs/HOWTO/Software-Structure/Kitodo-Core/Workflow/diagram.png' >
+<img alt='Diagram' src='diagram.png' >
 
 XML file which represents above displayed image:
 ```xml

@@ -6,6 +6,11 @@ pages:
     - 'Eclipse on Windows': 'gettingstarted/eclipse-windows.md'
 - 'Guidelines': 'guidelines/README.md'
 - 'System architecture': 'architecture/README.md'
+- Workflow:
+    - 'Overview': 'architecture/workflow/README.md'
+    - 'Modeler': 'architecture/workflow/Modeler/README.md'
+    - 'Diagram template processing': 'architecture/workflow/Diagram_template_processing/README.md'
+    - 'Create process out of template': 'architecture/workflow/Template_process_creation/README.md'
 - API documentation:
     - 'Application Programming Interface (API)': 'api/README.md'
     - 'Active MQ webservices': 'api/activemq_jms_api.md'
