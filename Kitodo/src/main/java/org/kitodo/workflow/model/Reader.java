@@ -13,8 +13,8 @@ package org.kitodo.workflow.model;
 
 import de.sub.goobi.config.ConfigCore;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,27 +54,30 @@ public class Reader {
     private Map<Task, TaskInfo> tasks;
 
     /**
-     * Constructor.
-     * 
+     * Constructor with diagram name as parameter. It loads modelInstance from file
+     * for given name.
+     *
      * @param diagramName
      *            as String
+     * @throws IOException
+     *             in case if file for given name doesn't exist
      */
-    public Reader(String diagramName) {
+    public Reader(String diagramName) throws IOException {
         this.diagramName = diagramName;
+        loadProcess();
     }
 
     /**
      * Read the workflow from diagram.
      */
-    public void loadProcess() throws IOException {
+    private void loadProcess() throws IOException {
         String diagramPath = ConfigCore.getKitodoDiagramDirectory() + this.diagramName + ".bpmn20.xml";
-
-        modelInstance = Bpmn.readModelFromStream(fileService.read(new File(diagramPath).toURI()));
+        modelInstance = Bpmn.readModelFromStream(fileService.read(Paths.get(diagramPath).toUri()));
     }
 
     /**
      * Convert BPMN process (workflow) to template stored in database.
-     * 
+     *
      * @return Template bean
      */
     public Template convertWorkflowToTemplate() throws DAOException, DataException, IOException {
@@ -217,7 +220,7 @@ public class Reader {
 
     /**
      * Add all tasks in exact branch - following given gateway.
-     * 
+     *
      * @param gateway
      *            which is followed by tasks
      * @param sequenceFlowIterator

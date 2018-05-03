@@ -57,7 +57,6 @@ public class BeanHelperIT {
     @Test
     public void shouldCopyTasksWithoutWorkflowConditions() throws Exception {
         Reader reader = new Reader("gateway");
-        reader.loadProcess();
 
         Template template = reader.convertWorkflowToTemplate();
         Process process = new Process();
@@ -70,7 +69,6 @@ public class BeanHelperIT {
     @Test
     public void shouldCopyTasksWithWorkflowConditions() throws Exception {
         Reader reader = new Reader("gateway");
-        reader.loadProcess();
 
         Template template = reader.convertWorkflowToTemplate();
         Process process = new Process();

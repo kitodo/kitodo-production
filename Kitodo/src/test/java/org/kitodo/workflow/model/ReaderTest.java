@@ -51,18 +51,16 @@ public class ReaderTest {
     @Test
     public void shouldLoadProcess() throws Exception {
         Reader reader = new Reader("test");
-        reader.loadProcess();
-        boolean result = Objects.nonNull(reader.getModelInstance());
 
+        boolean result = Objects.nonNull(reader.getModelInstance());
         assertTrue("Process definition was not loaded!", result);
     }
 
     @Test
     public void shouldGetWorkflow() throws Exception {
         Reader reader = new Reader("test");
-        reader.loadProcess();
-        Diagram workflow = reader.getWorkflow();
 
+        Diagram workflow = reader.getWorkflow();
         assertEquals("Process definition - workflow was read incorrectly!", workflow.getTitle(), "say-hello");
         assertEquals("Process definition - workflow was read incorrectly!", workflow.getOutputName(), "Say Hello");
     }
@@ -70,7 +68,6 @@ public class ReaderTest {
     @Test
     public void shouldConvertWorkflowToTemplate() throws Exception {
         Reader reader = new Reader("test");
-        reader.loadProcess();
 
         Template template = reader.convertWorkflowToTemplate();
         template.getTasks().sort(Comparator.comparing(Task::getOrdering));
