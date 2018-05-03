@@ -12,6 +12,8 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -141,19 +143,19 @@ public class TaskTypeTest {
             actual.getString(TaskTypeField.PROCESSING_TIME.getName()));
         assertEquals("Key homeDirectory doesn't match to given value!", "1",
             actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
-        assertEquals("Key batchStep doesn't match to given value!", true,
+        assertTrue("Key batchStep doesn't match to given value!",
             actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+        assertFalse("Key typeAutomatic doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
-        assertEquals("Key typeMetadata doesn't match to given value!", true,
+        assertTrue("Key typeMetadata doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+        assertFalse("Key typeImportFileUpload doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+        assertFalse("Key typeImagesWrite doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+        assertFalse("Key typeImagesRead doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+        assertFalse("Key typeExportRussian doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
         assertEquals("Key processForTask.id doesn't match to given value!", 1,
             actual.getInt(TaskTypeField.PROCESS_ID.getName()));
@@ -207,19 +209,19 @@ public class TaskTypeTest {
             actual.getString(TaskTypeField.PROCESSING_TIME.getName()));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
-        assertEquals("Key batchStep doesn't match to given value!", false,
+        assertFalse("Key batchStep doesn't match to given value!",
             actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+        assertFalse("Key typeAutomatic doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
-        assertEquals("Key typeMetadata doesn't match to given value!", false,
+        assertFalse("Key typeMetadata doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+        assertFalse("Key typeImportFileUpload doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+        assertFalse("Key typeImagesWrite doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+        assertFalse("Key typeImagesRead doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+        assertFalse("Key typeExportRussian doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
         assertEquals("Key processForTask.id doesn't match to given value!", 0,
             actual.getInt(TaskTypeField.PROCESS_ID.getName()));
@@ -273,19 +275,19 @@ public class TaskTypeTest {
             actual.get(TaskTypeField.PROCESSING_TIME.getName()));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             actual.getString(TaskTypeField.HOME_DIRECTORY.getName()));
-        assertEquals("Key batchStep doesn't match to given value!", false,
+        assertFalse("Key batchStep doesn't match to given value!",
             actual.getBoolean(TaskTypeField.BATCH_STEP.getName()));
-        assertEquals("Key typeAutomatic doesn't match to given value!", false,
+        assertFalse("Key typeAutomatic doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
-        assertEquals("Key typeMetadata doesn't match to given value!", false,
+        assertFalse("Key typeMetadata doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
-        assertEquals("Key typeImportFileUpload doesn't match to given value!", false,
+        assertFalse("Key typeImportFileUpload doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
-        assertEquals("Key typeImagesWrite doesn't match to given value!", false,
+        assertFalse("Key typeImagesWrite doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
-        assertEquals("Key typeImagesRead doesn't match to given value!", false,
+        assertFalse("Key typeImagesRead doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
-        assertEquals("Key typeExportRussian doesn't match to given value!", false,
+        assertFalse("Key typeExportRussian doesn't match to given value!",
             actual.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
         assertEquals("Key processForTask.id doesn't match to given value!", 0,
             actual.getInt(TaskTypeField.PROCESS_ID.getName()));
