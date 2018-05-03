@@ -106,7 +106,7 @@ public class ExportXmlLog {
             outp.output(doc, os);
             os.close();
 
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             throw new IOException(e.getMessage(), e);
         }
     }
@@ -435,8 +435,8 @@ public class ExportXmlLog {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new window
-     * with the output file.
+     * This method transforms the xml log using a xslt file and opens a new
+     * window with the output file.
      *
      * @param out
      *            ServletOutputStream
