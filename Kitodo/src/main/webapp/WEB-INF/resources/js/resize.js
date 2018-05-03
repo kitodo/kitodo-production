@@ -19,9 +19,9 @@ var wrapperPositionX;
 var firstColumn = $('#firstColumnWrapper');
 var secondColumn = $('#secondColumnWrapper');
 var thirdColumn = $('#thirdColumnWrapper');
-var firstColumnWidth;
-var secondColumnWidth;
-var thirdColumnWidth;
+var firstColumnWidth = firstColumn.width();
+var secondColumnWidth = secondColumn.width();
+var thirdColumnWidth = thirdColumn.width();
 var collapsedColumns;
 var firstResizer;
 var secondResizer;
@@ -170,9 +170,16 @@ function toggleFirstColumn() {
             thirdColumn.animate({width: wrapper.width() - firstColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
             firstColumn.animate({width: firstColumnWidth});
         } else if (neededWidth > 0) {
-            secondColumn.animate({width: secondColumn.data('min-width')});
-            thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            firstColumn.animate({width: firstColumnWidth});
+            var substractFromWidth = firstColumnWidth - (wrapper.width() - secondColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+            if (substractFromWidth > 0) {
+                firstColumn.animate({width: firstColumnWidth - substractFromWidth});
+                secondColumn.animate({width: secondColumn.data('min-width')});
+                thirdColumn.animate({width: thirdColumnWidth.data('min-width')});
+            } else {
+                secondColumn.animate({width: secondColumn.data('min-width')});
+                thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+                firstColumn.animate({width: firstColumnWidth});
+            }
         } else {
             secondColumn.animate({width: wrapper.width() - firstColumnWidth - thirdColumn.width() - 2 * SEPARATOR_WIDTH});
             firstColumn.animate({width: firstColumnWidth});
@@ -203,9 +210,16 @@ function toggleSecondColumn() {
             firstColumn.animate({width: wrapper.width() - secondColumnWidth - COLLAPSED_COL_WIDTH - 2 * SEPARATOR_WIDTH});
             secondColumn.animate({width: secondColumnWidth});
         } else if (neededWidth > 0) {
-            thirdColumn.animate({width: thirdColumn.data('min-width')});
-            firstColumn.animate({width: wrapper.width() - secondColumnWidth - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
-            secondColumn.animate({width: secondColumnWidth});
+            var substractFromWidth = secondColumnWidth - (wrapper.width() - firstColumn.data('min-width') - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+            if (substractFromWidth > 0) {
+                firstColumn.animate({width: firstColumn.data('min-width')});
+                secondColumn.animate({width: secondColumnWidth - substractFromWidth});
+                thirdColumn.animate({width: thirdColumn.data('min-width')});
+            } else {
+                thirdColumn.animate({width: thirdColumn.data('min-width')});
+                firstColumn.animate({width: wrapper.width() - secondColumnWidth - thirdColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
+                secondColumn.animate({width: secondColumnWidth});
+            }
         } else {
             thirdColumn.animate({width: wrapper.width() - firstColumn.width() - secondColumnWidth - 2 * SEPARATOR_WIDTH});
             secondColumn.animate({width: secondColumnWidth});
@@ -236,9 +250,16 @@ function toggleThirdColumn() {
             firstColumn.animate({width: wrapper.width() - COLLAPSED_COL_WIDTH - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
             thirdColumn.animate({width: thirdColumnWidth});
         } else if (neededWidth > 0) {
-            firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
-            secondColumn.animate({width: secondColumn.data('min-width')});
-            thirdColumn.animate({width: thirdColumnWidth});
+            var substractFromWidth = thirdColumnWidth - (wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+            if (substractFromWidth > 0) {
+                firstColumn.animate({width: firstColumn.data('min-width')});
+                secondColumn.animate({width: secondColumn.data('min-width')});
+                thirdColumn.animate({width: thirdColumnWidth - substractFromWidth});
+            } else {
+                firstColumn.animate({width: wrapper.width() - secondColumn.data('min-width') - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
+                secondColumn.animate({width: secondColumn.data('min-width')});
+                thirdColumn.animate({width: thirdColumnWidth});
+            }
         } else {
             secondColumn.animate({width: wrapper.width() - firstColumn.width() - thirdColumnWidth - 2 * SEPARATOR_WIDTH});
             thirdColumn.animate({width: thirdColumnWidth});
