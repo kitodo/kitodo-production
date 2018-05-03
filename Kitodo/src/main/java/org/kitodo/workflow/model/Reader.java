@@ -52,6 +52,7 @@ public class Reader {
     private FileService fileService = serviceManager.getFileService();
     private Collection<FlowNode> followingFlowNodes;
     private Map<Task, TaskInfo> tasks;
+    private Diagram workflow;
 
     /**
      * Constructor with diagram name as parameter. It loads modelInstance from file
@@ -68,35 +69,25 @@ public class Reader {
     }
 
     /**
-     * Read the workflow from diagram.
-     */
-    private void loadProcess() throws IOException {
-        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + this.diagramName + ".bpmn20.xml";
-        modelInstance = Bpmn.readModelFromStream(fileService.read(Paths.get(diagramPath).toUri()));
-    }
-
-    /**
      * Convert BPMN process (workflow) to template stored in database.
      *
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate() throws DAOException, DataException, IOException {
+    public Template convertWorkflowToTemplate() throws DAOException, DataException {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
-        Diagram workflow = getWorkflow();
-
         Template template = new Template();
-        template.setWorkflow(determineWorkflow(workflow.getId(), this.diagramName));
-        template.setTitle(workflow.getTitle());
-        template.setOutputName(workflow.getOutputName());
+        template.setWorkflow(determineWorkflow(this.workflow.getId(), this.diagramName));
+        template.setTitle(this.workflow.getTitle());
+        template.setOutputName(this.workflow.getOutputName());
 
-        Integer docketId = workflow.getDocket();
+        Integer docketId = this.workflow.getDocket();
         if (docketId > 0) {
             template.setDocket(serviceManager.getDocketService().getById(docketId));
         }
 
-        Integer rulesetId = workflow.getRuleset();
+        Integer rulesetId = this.workflow.getRuleset();
         if (rulesetId > 0) {
             template.setRuleset(serviceManager.getRulesetService().getById(rulesetId));
         }
@@ -110,6 +101,27 @@ public class Reader {
         }
 
         return template;
+    }
+
+    /**
+     * Read the workflow from diagram.
+     */
+    private void loadProcess() throws IOException {
+        String diagramPath = ConfigCore.getKitodoDiagramDirectory() + this.diagramName + ".bpmn20.xml";
+        modelInstance = Bpmn.readModelFromStream(fileService.read(Paths.get(diagramPath).toUri()));
+        getWorkflowFromProcess();
+    }
+
+    /**
+     * Get workflow from process inside the given file.
+     */
+    private void getWorkflowFromProcess() throws IOException {
+        Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
+
+        if (Objects.isNull(process)) {
+            throw new IOException("It looks that given file contains invalid BPMN diagram!");
+        }
+        this.workflow = new Diagram(process);
     }
 
     private Workflow determineWorkflow(String title, String file) throws DataException {
@@ -149,19 +161,6 @@ public class Reader {
         }
 
         return task;
-    }
-
-    /**
-     * Get workflow.
-     *
-     */
-    public Diagram getWorkflow() throws IOException {
-        Process process = modelInstance.getModelElementsByType(Process.class).iterator().next();
-
-        if (Objects.isNull(process)) {
-            throw new IOException("It looks that given file contains invalid BPMN diagram!");
-        }
-        return new Diagram(process);
     }
 
     private void getWorkflowTasks() {
@@ -259,41 +258,12 @@ public class Reader {
     }
 
     /**
-     * Get diagramName.
-     *
-     * @return value of diagramName
-     */
-    public String getDiagramName() {
-        return diagramName;
-    }
-
-    /**
-     * Set diagramName.
-     *
-     * @param diagramName
-     *            as java.lang.String
-     */
-    public void setDiagramName(String diagramName) {
-        this.diagramName = diagramName;
-    }
-
-    /**
      * Get modelInstance.
      *
      * @return value of modelInstance
      */
     public BpmnModelInstance getModelInstance() {
         return modelInstance;
-    }
-
-    /**
-     * Set modelInstance.
-     *
-     * @param modelInstance
-     *            as BpmnModelInstance
-     */
-    public void setModelInstance(BpmnModelInstance modelInstance) {
-        this.modelInstance = modelInstance;
     }
 
     /**
@@ -313,5 +283,14 @@ public class Reader {
      */
     public void setTasks(Map<Task, TaskInfo> tasks) {
         this.tasks = tasks;
+    }
+
+    /**
+     * Get workflow.
+     *
+     * @return value of workflow
+     */
+    public Diagram getWorkflow() {
+        return workflow;
     }
 }
