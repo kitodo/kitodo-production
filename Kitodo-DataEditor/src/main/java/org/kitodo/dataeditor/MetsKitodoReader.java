@@ -50,8 +50,6 @@ class MetsKitodoReader {
         return mets;
     }
 
-
-
     /**
      * Reads a mets-kitodo formated xml String to a Mets object.
      * 

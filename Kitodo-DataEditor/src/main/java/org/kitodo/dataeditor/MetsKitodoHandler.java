@@ -53,8 +53,6 @@ class MetsKitodoHandler {
         throw new NoSuchElementException("No " + type.getName() + " objects found");
     }
 
-
-
     /**
      * Gets an optional list of objects which holds the xml data of an mets objets
      * mdSec element.
