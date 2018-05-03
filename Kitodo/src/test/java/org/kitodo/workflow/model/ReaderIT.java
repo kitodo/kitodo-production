@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.workflow;
+package org.kitodo.workflow.model;
 
 import java.net.URI;
 import java.util.Comparator;
@@ -24,7 +24,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-import org.kitodo.workflow.model.Reader;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

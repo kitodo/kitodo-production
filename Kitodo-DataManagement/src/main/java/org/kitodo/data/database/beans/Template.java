@@ -47,6 +47,9 @@ public class Template extends BaseTemplateBean {
     private Workflow workflow;
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Process> processes;
+
+    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
     /**
@@ -120,6 +123,27 @@ public class Template extends BaseTemplateBean {
      */
     public Docket getDocket() {
         return docket;
+    }
+
+    /**
+     * Get processes.
+     *
+     * @return value of processes
+     */
+    public List<Process> getProcesses() {
+        if (Objects.isNull(this.processes)) {
+            this.processes = new ArrayList<>();
+        }
+        return this.processes;
+    }
+
+    /**
+     * Set processes.
+     *
+     * @param processes as Lis of Process
+     */
+    public void setProcesses(List<Process> processes) {
+        this.processes = processes;
     }
 
     /**
