@@ -44,7 +44,7 @@ public class MetsKitodoWriter {
      * @param filePath
      *            The file path to write the xml file.
      */
-    public void save(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
+    public void write(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
         mets = insertMetsHeaderIfNotExist(mets);
         mets = updateLastModDate(mets);
         writeMetsData(mets, filePath);
