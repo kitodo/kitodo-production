@@ -37,7 +37,7 @@
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
                     <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
-                    <p:panel>
+                    <p:panel id="firstColumnPanel">
                         <h:form id="structureTreeForm">
                             <p:panel id="structurePanel">
                                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml" />
@@ -61,7 +61,7 @@
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
                     <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
-                    <p:panel style="overflow: scroll">
+                    <p:panel id="secondColumnPanel" style="overflow: scroll">
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
                     </p:panel>
                 </div>
@@ -77,7 +77,7 @@
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
-                    <p:panel>
+                    <p:panel id="thirdColumnPanel">
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
                     </p:panel>
                 </div>

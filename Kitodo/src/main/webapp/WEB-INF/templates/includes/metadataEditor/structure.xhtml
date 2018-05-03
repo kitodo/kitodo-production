@@ -21,9 +21,9 @@
             selection="#{Metadaten.selectedTreeNode}"
             draggable="true" droppable="true" dragdropScope="DocStructTree">
         <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
-                update="metadataEditor"/>
+                update="firstColumnPanel,secondColumnPanel,thirdColumnPanel"/>
         <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
-                update="metadataEditor"/>
+                update="firstColumnPanel,secondColumnPanel,thirdColumnPanel"/>
         <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
             <h:outputText value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
         </p:treeNode>
