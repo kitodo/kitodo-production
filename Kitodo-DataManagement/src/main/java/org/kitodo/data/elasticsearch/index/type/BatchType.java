@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 
 /**
  * Implementation of Batch Type.
@@ -27,9 +28,9 @@ public class BatchType extends BaseType<Batch> {
         String type = batch.getType() != null ? batch.getType().toString() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(batch.getTitle()));
-        jsonObjectBuilder.add("type", type);
-        jsonObjectBuilder.add("processes", addObjectRelation(batch.getProcesses(), true));
+        jsonObjectBuilder.add(BatchTypeField.TITLE.getName(), preventNull(batch.getTitle()));
+        jsonObjectBuilder.add(BatchTypeField.TYPE.getName(), type);
+        jsonObjectBuilder.add(BatchTypeField.PROCESSES.getName(), addObjectRelation(batch.getProcesses(), true));
         return jsonObjectBuilder.build();
     }
 }

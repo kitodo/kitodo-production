@@ -26,6 +26,7 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
 
 /**
  * Test class for FilterType.
@@ -63,8 +64,9 @@ public class FilterTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key value doesn't match to given value!", "\"id:1\"", actual.getString("value"));
-        assertEquals("Key user doesn't match to given value!", 1, actual.getInt("user"));
+        assertEquals("Key value doesn't match to given value!", "\"id:1\"",
+            actual.getString(FilterTypeField.VALUE.getName()));
+        assertEquals("Key user doesn't match to given value!", 1, actual.getInt(FilterTypeField.USER.getName()));
     }
 
     @Test
@@ -76,8 +78,9 @@ public class FilterTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key value doesn't match to given value!", "\"id:2\"", actual.getString("value"));
-        assertEquals("Key user doesn't match to given value!", 1, actual.getInt("user"));
+        assertEquals("Key value doesn't match to given value!", "\"id:2\"",
+            actual.getString(FilterTypeField.VALUE.getName()));
+        assertEquals("Key user doesn't match to given value!", 1, actual.getInt(FilterTypeField.USER.getName()));
     }
 
     @Test

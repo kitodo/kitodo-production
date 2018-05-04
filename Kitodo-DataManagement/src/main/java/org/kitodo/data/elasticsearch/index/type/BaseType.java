@@ -38,6 +38,14 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.elasticsearch.api.TypeInterface;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
  * Abstract class for Type class.
@@ -76,26 +84,26 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         if (objects != null) {
             for (F property : objects) {
                 JsonObjectBuilder jsonObject = Json.createObjectBuilder();
-                jsonObject.add("id", property.getId());
+                jsonObject.add(AuthorityTypeField.ID.getName(), property.getId());
                 if (title) {
                     if (property instanceof Batch) {
-                        jsonObject.add("title", preventNull(((Batch) property).getTitle()));
+                        jsonObject.add(BatchTypeField.TITLE.getName(), preventNull(((Batch) property).getTitle()));
                     } else if (property instanceof BaseTemplateBean) {
-                        jsonObject.add("title", preventNull(((BaseTemplateBean) property).getTitle()));
+                        jsonObject.add(ProcessTypeField.TITLE.getName(), preventNull(((BaseTemplateBean) property).getTitle()));
                     } else if (property instanceof Project) {
-                        jsonObject.add("title", preventNull(((Project) property).getTitle()));
+                        jsonObject.add(ProjectTypeField.TITLE.getName(), preventNull(((Project) property).getTitle()));
                     } else if (property instanceof User) {
-                        jsonObject.add("login", preventNull(((User) property).getLogin()));
-                        jsonObject.add("name", preventNull(((User) property).getName()));
-                        jsonObject.add("surname", preventNull(((User) property).getSurname()));
+                        jsonObject.add(UserTypeField.LOGIN.getName(), preventNull(((User) property).getLogin()));
+                        jsonObject.add(UserTypeField.NAME.getName(), preventNull(((User) property).getName()));
+                        jsonObject.add(UserTypeField.SURNAME.getName(), preventNull(((User) property).getSurname()));
                     } else if (property instanceof UserGroup) {
-                        jsonObject.add("title", preventNull(((UserGroup) property).getTitle()));
+                        jsonObject.add(UserGroupTypeField.TITLE.getName(), preventNull(((UserGroup) property).getTitle()));
                     } else if (property instanceof Task) {
-                        jsonObject.add("title", preventNull(((Task) property).getTitle()));
+                        jsonObject.add(TaskTypeField.TITLE.getName(), preventNull(((Task) property).getTitle()));
                     } else if (property instanceof Filter) {
-                        jsonObject.add("value", preventNull(((Filter) property).getValue()));
+                        jsonObject.add(FilterTypeField.VALUE.getName(), preventNull(((Filter) property).getValue()));
                     } else if (property instanceof Authority) {
-                        jsonObject.add("title", preventNull(((Authority) property).getTitle()));
+                        jsonObject.add(AuthorityTypeField.TITLE.getName(), preventNull(((Authority) property).getTitle()));
                     }
                 }
                 result.add(jsonObject.build());
