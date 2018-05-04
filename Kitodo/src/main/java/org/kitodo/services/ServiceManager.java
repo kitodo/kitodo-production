@@ -31,6 +31,7 @@ import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
+import org.kitodo.services.dataeditor.DataEditorService;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.schema.SchemaService;
 import org.kitodo.services.security.SecurityAccessService;
@@ -45,6 +46,7 @@ public class ServiceManager {
     private AuthorityService authorityService;
     private BatchService batchService;
     private ClientService clientService;
+    private DataEditorService dataEditorService;
     private DocketService docketService;
     private FilterService filterService;
     private LdapGroupService ldapGroupService;
@@ -86,6 +88,12 @@ public class ServiceManager {
     private void initializeClientService() {
         if (clientService == null) {
             clientService = ClientService.getInstance();
+        }
+    }
+
+    private void initializeDataEditorService() {
+        if (dataEditorService == null) {
+            dataEditorService = new DataEditorService();
         }
     }
 
@@ -267,6 +275,16 @@ public class ServiceManager {
     public ClientService getClientService() {
         initializeClientService();
         return clientService;
+    }
+
+    /**
+     * Initialize DataEditorService if it is not yet initialized and next return it.
+     *
+     * @return DataEditorService object
+     */
+    public DataEditorService getDataEditorService() {
+        initializeDataEditorService();
+        return dataEditorService;
     }
 
     /**
