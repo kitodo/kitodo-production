@@ -78,7 +78,33 @@ public class Reader {
         this.followingFlowNodes = new ArrayList<>();
 
         Template template = new Template();
-        template.setWorkflow(determineWorkflow(this.workflow.getId(), this.diagramName));
+        Workflow workflow = determineWorkflow(this.workflow.getId(), this.diagramName);
+        workflow.getTemplates().add(template);
+        template.setWorkflow(workflow);
+
+        return prepareTemplate(template);
+    }
+
+    /**
+     * Update all templates assigned to workflow after diagram was changed.
+     *
+     * @param changedWorkflow
+     *            Workflow bean - instance assigned to diagram which was changed
+     */
+    public void updateTemplatesAssignedToWorkflowAfterDiagramChange(Workflow changedWorkflow)
+            throws DAOException, DataException {
+        this.tasks = new HashMap<>();
+        this.followingFlowNodes = new ArrayList<>();
+        List<Template> templatesToUpdate = changedWorkflow.getTemplates();
+
+        for (Template template : templatesToUpdate) {
+            template.getTasks().clear();
+            template = prepareTemplate(template);
+            serviceManager.getTemplateService().save(template);
+        }
+    }
+
+    private Template prepareTemplate(Template template) throws DAOException {
         template.setTitle(this.workflow.getTitle());
         template.setOutputName(this.workflow.getOutputName());
 
@@ -150,6 +176,10 @@ public class Reader {
         task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
         task.setTypeExportDMS(kitodoTask.getTypeExportDms());
         task.setTypeExportRussian(kitodoTask.getTypeExportRussian());
+        task.setTypeMetadata(kitodoTask.getTypeMetadata());
+        task.setTypeImportFileUpload(kitodoTask.getTypeImportFileUpload());
+        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
+        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
@@ -189,9 +219,10 @@ public class Reader {
      */
     private void getFlowingFlowNodes(FlowNode node) {
         Collection<SequenceFlow> sequenceFlow = node.getOutgoing();
+        Iterator<SequenceFlow> sequenceFlowIterator = sequenceFlow.iterator();
 
-        if (sequenceFlow.iterator().hasNext()) {
-            FlowNode flowNode = sequenceFlow.iterator().next().getTarget();
+        if (sequenceFlowIterator.hasNext()) {
+            FlowNode flowNode = sequenceFlowIterator.next().getTarget();
 
             if (flowNode instanceof Gateway) {
                 getFlowingFlowNodesWithConditions((Gateway) flowNode);
