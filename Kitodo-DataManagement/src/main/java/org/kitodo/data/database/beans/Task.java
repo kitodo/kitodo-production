@@ -152,6 +152,38 @@ public class Task extends BaseIndexedBean {
         this.ordering = 0;
     }
 
+    /**
+     * Copy constructor.
+     * 
+     * @param templateTask
+     *            task to copy
+     */
+    public Task(Task templateTask) {
+        this.title = templateTask.getTitle();
+        this.ordering = templateTask.getOrdering();
+        this.priority = templateTask.getPriority();
+        this.typeAutomatic = templateTask.isTypeAutomatic();
+        this.scriptName = templateTask.getScriptName();
+        this.scriptPath = templateTask.getScriptPath();
+        this.batchStep = templateTask.isBatchStep();
+        this.typeAcceptClose = templateTask.isTypeAcceptClose();
+        this.typeCloseVerify = templateTask.isTypeCloseVerify();
+        this.typeExportDMS = templateTask.isTypeExportDMS();
+        this.typeExportRussian = templateTask.isTypeExportRussian();
+        this.typeImagesRead = templateTask.isTypeImagesRead();
+        this.typeImagesWrite = templateTask.isTypeImagesWrite();
+        this.typeImportFileUpload = templateTask.isTypeImportFileUpload();
+        this.typeMetadata = templateTask.isTypeMetadata();
+        this.processingStatus = templateTask.getProcessingStatus();
+        this.homeDirectory = templateTask.getHomeDirectory();
+
+        // necessary to create new ArrayList in other case session problem!
+        this.users = new ArrayList<>(templateTask.getUsers());
+
+        // necessary to create new ArrayList in other case session problem!
+        this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+    }
+
     public String getTitle() {
         return this.title;
     }
@@ -318,7 +350,8 @@ public class Task extends BaseIndexedBean {
     /**
      * Set template.
      *
-     * @param template as Template
+     * @param template
+     *            as Template
      */
     public void setTemplate(Template template) {
         this.template = template;
@@ -467,8 +500,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can
-     * identify change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can identify
+     * change done to task.
      *
      * @return workflow id as String
      */
@@ -478,9 +511,10 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set workflow id.
-    *
+     *
      * @param workflowId
-     *          id of task object in diagram - by this id we can identify change done to task
+     *            id of task object in diagram - by this id we can identify change
+     *            done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
@@ -499,7 +533,7 @@ public class Task extends BaseIndexedBean {
      * Set workflowCondition.
      *
      * @param workflowCondition
-     *          as String
+     *            as String
      */
     public void setWorkflowCondition(String workflowCondition) {
         this.workflowCondition = workflowCondition;
