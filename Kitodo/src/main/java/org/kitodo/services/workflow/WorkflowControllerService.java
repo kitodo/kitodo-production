@@ -135,7 +135,6 @@ public class WorkflowControllerService {
      */
     public void saveWorkflowAsTemplate(String diagramName) throws DAOException, DataException, IOException {
         Reader reader = new Reader(diagramName);
-        reader.loadProcess();
         Template template = reader.convertWorkflowToTemplate();
         serviceManager.getWorkflowService().saveToDatabase(template.getWorkflow());
         serviceManager.getTemplateService().save(template);
