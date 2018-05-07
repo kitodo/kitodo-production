@@ -13,8 +13,11 @@ package org.goobi.production.flow.helper;
 
 import de.sub.goobi.helper.Helper;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -113,12 +116,10 @@ public class SearchResultGeneration {
         titleCell5.setCellValue("");
         HSSFCell titleCell6 = title.createCell(5);
         titleCell6.setCellValue("");
-
         HSSFCell titleCell7 = title.createCell(6);
         titleCell7.setCellValue("");
         HSSFCell titleCell8 = title.createCell(7);
         titleCell8.setCellValue("");
-
         HSSFCell titleCell9 = title.createCell(8);
         titleCell9.setCellValue("");
 
@@ -137,31 +138,30 @@ public class SearchResultGeneration {
         headercell5.setCellValue(Helper.getTranslation("Project"));
         HSSFCell headercell6 = row0.createCell(6);
         headercell6.setCellValue(Helper.getTranslation("Status"));
-
         HSSFCell headercell7 = row0.createCell(7);
         headercell7.setCellValue(Helper.getTranslation("AltRefNo"));
-
         HSSFCell headercell8 = row0.createCell(8);
         headercell8.setCellValue(Helper.getTranslation("b-number"));
 
-        int rowcounter = 2;
+        int rowCounter = 2;
         for (Process p : processes) {
-            HSSFRow row = sheet.createRow(rowcounter);
+            HSSFRow row = sheet.createRow(rowCounter);
             HSSFCell cell0 = row.createCell(0);
             cell0.setCellValue(p.getTitle());
             HSSFCell cell1 = row.createCell(1);
             cell1.setCellValue(p.getId());
             HSSFCell cell2 = row.createCell(2);
-            cell2.setCellValue(p.getCreationDate().toGMTString());
+            DateFormat df = new SimpleDateFormat("dd MMM yyyy kk:mm:ss z");
+            df.setTimeZone(TimeZone.getTimeZone("GMT"));
+            String gmtCreationDate = df.format(p.getCreationDate());
+            cell2.setCellValue(gmtCreationDate);
             HSSFCell cell3 = row.createCell(3);
             cell3.setCellValue(p.getSortHelperImages());
             HSSFCell cell4 = row.createCell(4);
             cell4.setCellValue(p.getSortHelperDocstructs());
             HSSFCell cell5 = row.createCell(5);
             cell5.setCellValue(p.getProject().getTitle());
-
             HSSFCell cell6 = row.createCell(6);
-
             cell6.setCellValue(p.getSortHelperStatus().substring(0, 3) + " / " + p.getSortHelperStatus().substring(3, 6)
                     + " / " + p.getSortHelperStatus().substring(6));
             HSSFCell cell7 = row.createCell(7);
@@ -177,7 +177,7 @@ public class SearchResultGeneration {
                     }
                 }
             }
-            rowcounter++;
+            rowCounter++;
         }
         return wb;
     }
