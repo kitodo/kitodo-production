@@ -1245,35 +1245,9 @@ public class CalendarForm implements Serializable {
             if (blockShowing != null) {
                 if (blockChangerUnchanged) {
                     if (firstAppearanceIsToChange == null) {
-                        if (blockShowing.getLastAppearance() == null
-                                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
-                            if (blockShowing.getFirstAppearance() != null
-                                    && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
-                                Helper.setFehlerMeldung("calendar.block.negative");
-                                return;
-                            }
-                            blockShowing.setLastAppearance(newLastAppearance);
-                            checkBlockPlausibility();
-                            navigate();
-                        }
+                        executeForFirstAppearanceToChangeNull(newLastAppearance);
                     } else {
-                        if (blockShowing.getLastAppearance() == null
-                                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
-                            if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
-                                Helper.setFehlerMeldung("calendar.block.negative");
-                                return;
-                            }
-                            blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
-                        } else {
-                            if (blockShowing.getLastAppearance() != null
-                                    && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
-                                Helper.setFehlerMeldung("calendar.block.negative");
-                                return;
-                            }
-                            blockShowing.setFirstAppearance(firstAppearanceIsToChange);
-                        }
-                        checkBlockPlausibility();
-                        navigate();
+                        executeForFirstAppearanceToChange(newLastAppearance);
                     }
                 }
             } else {
@@ -1288,6 +1262,40 @@ public class CalendarForm implements Serializable {
         } finally {
             firstAppearanceIsToChange = null;
         }
+    }
+
+    private void executeForFirstAppearanceToChangeNull(LocalDate newLastAppearance) {
+        if (blockShowing.getLastAppearance() == null
+                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+            if (blockShowing.getFirstAppearance() != null
+                    && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
+                Helper.setFehlerMeldung("calendar.block.negative");
+                return;
+            }
+            blockShowing.setLastAppearance(newLastAppearance);
+            checkBlockPlausibility();
+            navigate();
+        }
+    }
+
+    private void executeForFirstAppearanceToChange(LocalDate newLastAppearance) {
+        if (blockShowing.getLastAppearance() == null
+                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+            if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
+                Helper.setFehlerMeldung("calendar.block.negative");
+                return;
+            }
+            blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
+        } else {
+            if (blockShowing.getLastAppearance() != null
+                    && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
+                Helper.setFehlerMeldung("calendar.block.negative");
+                return;
+            }
+            blockShowing.setFirstAppearance(firstAppearanceIsToChange);
+        }
+        checkBlockPlausibility();
+        navigate();
     }
 
     /**
