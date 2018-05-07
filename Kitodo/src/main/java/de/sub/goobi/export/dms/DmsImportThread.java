@@ -12,11 +12,11 @@
 package de.sub.goobi.export.dms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import org.apache.logging.log4j.LogManager;
@@ -50,8 +50,8 @@ public class DmsImportThread extends Thread {
     public DmsImportThread(Process process, String ats) {
         setDaemon(true);
         /*
-         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter
-         * Stelle, ansonsten lieber in neuem FehlerOrdner
+         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle,
+         * ansonsten lieber in neuem FehlerOrdner
          */
         if (process.getProject().getDmsImportErrorPath() == null
                 || process.getProject().getDmsImportErrorPath().length() == 0) {
@@ -86,32 +86,46 @@ public class DmsImportThread extends Thread {
                     if (this.fileError.exists()
                             && this.fileError.getAbsoluteFile().lastModified() > this.timeFileError) {
                         this.stop = true;
-                        /* die Logdatei mit der Fehlerbeschreibung einlesen */
-                        StringBuffer myBuf = new StringBuffer();
-                        myBuf.append("Beim Import ist ein Importfehler aufgetreten: ");
-                        try (BufferedReader r = new BufferedReader(
-                                new InputStreamReader(serviceManager.getFileService().read(this.fileError.toURI())))) {
-                            String aLine = r.readLine();
-                            while (aLine != null) {
-                                myBuf.append(aLine);
-                                myBuf.append(" ");
-                                aLine = r.readLine();
-                            }
-                        }
-                        this.result = myBuf.toString();
-
+                        this.result = readErrorFile();
                     }
                     if (this.fileSuccess.exists()
                             && this.fileSuccess.getAbsoluteFile().lastModified() > this.timeFileSuccess) {
                         this.stop = true;
                     }
                 }
-            } catch (InterruptedException | IOException | RuntimeException e) {
-                Helper.setErrorMessage("Unexpected exception", logger, e);
+            } catch (IOException e) {
+                logger.error("Problem with file processing!", e);
+            } catch (InterruptedException e) {
+                logger.error("Current thread was interrupted!", e);
+                Thread.currentThread().interrupt();
             }
         }
+
+        removeImages();
+    }
+
+    void stopThread() {
+        this.result = "Import wurde wegen Zeitüberschreitung abgebrochen";
+        this.stop = true;
+    }
+
+    private String readErrorFile() throws IOException {
+        StringBuilder errorMessage = new StringBuilder();
+        errorMessage.append("Beim Import ist ein Importfehler aufgetreten: ");
+        try (InputStream inputStream = serviceManager.getFileService().read(this.fileError.toURI());
+                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line = r.readLine();
+            while (line != null) {
+                errorMessage.append(line);
+                errorMessage.append(" ");
+                line = r.readLine();
+            }
+        }
+        return errorMessage.toString();
+    }
+
+    private void removeImages() {
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
-            /* Images wieder löschen */
             try {
                 serviceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {
@@ -119,10 +133,4 @@ public class DmsImportThread extends Thread {
             }
         }
     }
-
-    public void stopThread() {
-        this.result = "Import wurde wegen Zeitüberschreitung abgebrochen";
-        this.stop = true;
-    }
-
 }
