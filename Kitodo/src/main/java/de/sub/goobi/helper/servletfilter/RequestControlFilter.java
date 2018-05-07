@@ -213,7 +213,7 @@ public class RequestControlFilter implements Filter {
             // release the lock
             if (session.getAttribute(REQUEST_IN_PROCESS) == request) {
                 session.removeAttribute(REQUEST_IN_PROCESS);
-                getSynchronizationObject(session).notify();
+                getSynchronizationObject(session).notifyAll();
             }
         }
     }
@@ -270,7 +270,7 @@ public class RequestControlFilter implements Filter {
 
         // if another request was waiting, notify it so it can discover that
         // it was replaced
-        getSynchronizationObject(session).notify();
+        getSynchronizationObject(session).notifyAll();
     }
 
     /**
