@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -152,10 +153,9 @@ class ConfigOpac {
 
         // falls der Katalog kein spezielles Mapping für den Doctype hat, jetzt
         // in den Doctypes suchen
-
         for (String title : getAllDoctypeTitles()) {
             ConfigOpacDoctype tempType = getDoctypeByName(title);
-            if (tempType.getMappings().contains(inMapping)) {
+            if (Objects.nonNull(tempType) && tempType.getMappings().contains(inMapping)) {
                 return tempType;
             }
         }

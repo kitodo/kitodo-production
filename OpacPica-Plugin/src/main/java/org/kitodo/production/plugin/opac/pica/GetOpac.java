@@ -14,6 +14,7 @@ package org.kitodo.production.plugin.opac.pica;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -193,8 +194,12 @@ class GetOpac {
      */
     Node retrievePicaNode(Query query, int start, int end, long timeout)
             throws IOException, SAXException, ParserConfigurationException {
-        return getParsedDocument(new InputSource(new StringReader(retrievePica(query, start, end, timeout))))
-                .getDocumentElement();
+        StringReader picaReader = new StringReader(retrievePica(query, start, end, timeout));
+        Document document = getParsedDocument(new InputSource(picaReader));
+        if (Objects.nonNull(document)) {
+            return document.getDocumentElement();
+        }
+        return null;
     }
 
     /**
