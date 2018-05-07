@@ -20,7 +20,6 @@ import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -176,10 +175,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             return schrittDurchBenutzerUebernehmen();
         }
-        // if only one step is assigned for this batch, use the single
 
-        // Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements
-        // in batch");
         if (currentStepsOfBatch.size() == 0) {
             return null;
         }
@@ -188,38 +184,45 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         for (Task task : currentStepsOfBatch) {
-            if (task.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
-                task.setProcessingStatusEnum(TaskStatus.INWORK);
-                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                task.setProcessingTime(new Date());
-                User user = getUser();
-                serviceManager.getTaskService().replaceProcessingUser(task, user);
-                if (task.getProcessingBegin() == null) {
-                    task.setProcessingBegin(new Date());
-                }
-
-                if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
-                    try {
-                        new File(serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()));
-                    } catch (IOException | RuntimeException e) {
-                        Helper.setErrorMessage("Error retrieving image directory: ", logger, e);
-                    }
-                    task.setProcessingTime(new Date());
-
-                    serviceManager.getTaskService().replaceProcessingUser(task, user);
-                    this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
-                }
-            }
-
-            try {
-                this.serviceManager.getProcessService().save(task.getProcess());
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
-            }
+            processTask(task);
         }
 
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
+    }
+
+    private void processTask(Task task) {
+        if (task.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
+            task.setProcessingStatusEnum(TaskStatus.INWORK);
+            task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+            task.setProcessingTime(new Date());
+            User user = getUser();
+            serviceManager.getTaskService().replaceProcessingUser(task, user);
+            if (task.getProcessingBegin() == null) {
+                task.setProcessingBegin(new Date());
+            }
+
+            if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+                try {
+                    URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
+                    if (! serviceManager.getFileService().fileExist(imagesOrigDirectory)) {
+                        Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory});
+                    }
+                } catch (Exception e) {
+                    Helper.setErrorMessage("Error retrieving image directory: ", logger, e);
+                }
+                task.setProcessingTime(new Date());
+
+                serviceManager.getTaskService().replaceProcessingUser(task, user);
+                this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
+            }
+        }
+
+        try {
+            this.serviceManager.getProcessService().save(task.getProcess());
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+        }
     }
 
     /**
