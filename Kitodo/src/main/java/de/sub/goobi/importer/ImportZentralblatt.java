@@ -184,9 +184,7 @@ public class ImportZentralblatt {
 
             if (!isValidXMLChar(c)) {
                 result = maskHtmlTags(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
-                if (length > i) {
-                    result += maskHtmlTags(text.substring(i + 1, length));
-                }
+                result += maskHtmlTags(text.substring(i + 1, length));
                 break;
             }
         }
