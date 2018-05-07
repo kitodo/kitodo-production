@@ -12,16 +12,12 @@
 
 package org.goobi.production.model.bibliography.course;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.goobi.production.model.bibliography.course.metadata.CountableMetadata;
 import org.joda.time.*;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.*;
 
 import com.sharkysoft.util.UnreachableCodeException;
 
@@ -62,6 +58,11 @@ public class IndividualIssue {
     private static final DateTimeFormatter YEAR4 = DateTimeFormat.forPattern("YYYY");
 
     /**
+     * Metadata key to store the sorting number.
+     */
+    public static final String RULESET_ORDER_NAME = "CurrentNoSorting";
+
+    /**
      * Date of this issue
      */
     protected final LocalDate date;
@@ -70,6 +71,11 @@ public class IndividualIssue {
      * The issue this is an issue from
      */
     protected final Issue issue;
+
+    /**
+     * The sorting number of the issue.
+     */
+    private Integer sortingNumber;
 
     /**
      * Block that the issue this is an issue from is in
@@ -85,11 +91,14 @@ public class IndividualIssue {
      *            Issue type that this issue is of
      * @param date
      *            Date of appearance
+     * @param sortingNumber
+     *            sorting number
      */
-    IndividualIssue(Block block, Issue issue, LocalDate date) {
+    IndividualIssue(Block block, Issue issue, LocalDate date, Integer sortingNumber) {
         this.block = block;
         this.issue = issue;
         this.date = date;
+        this.sortingNumber = sortingNumber;
     }
 
     /**
@@ -248,6 +257,32 @@ public class IndividualIssue {
     }
 
     /**
+     * Returns the list of issues before this issue.
+     *
+     * @return the list of issues before this
+     */
+    public List<String> getIssuesBefore() {
+        List<String> result = new ArrayList<>();
+        for (Issue issue : block.getIssues()) {
+            String heading = issue.getHeading();
+            if (heading.equals(this.issue.getHeading())) {
+                break;
+            }
+            result.add(heading);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the sorting number of the issue.
+     *
+     * @return the sorting number
+     */
+    public Integer getSortingNumber() {
+        return sortingNumber;
+    }
+
+    /**
      * The function indexIn() returns the index of the first occurrence of the
      * block of this issue in the given course, or -1 if the course does not
      * contain the element.
@@ -259,6 +294,16 @@ public class IndividualIssue {
      */
     int indexIn(Course course) {
         return course.indexOf(block);
+    }
+
+    /**
+     * Sets the sorting number of the issue.
+     *
+     * @param sortingNumber
+     *            the sorting number to set
+     */
+    public void setSortingNumber(Integer sortingNumber) {
+        this.sortingNumber = sortingNumber;
     }
 
     /**

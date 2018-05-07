@@ -12,26 +12,16 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
+import java.util.regex.*;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.goobi.production.model.bibliography.course.metadata.CountableMetadata;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.joda.time.MonthDay;
+import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.helper.XMLUtils;
@@ -159,6 +149,30 @@ public class Course extends ArrayList<Block> {
     private static final String ATTRIBUTE_YEAR_TERM = "yearTerm";
 
     /**
+     * Attribute <code>after="…"</code> used in the XML representation of a
+     * course of appearance.
+     *
+     * <p>
+     * Newspapers, especially bigger ones, can have several issues that, e.g.,
+     * may differ in time of publication (morning issue, evening issue, …) or
+     * geographic distribution (Edinburgh issue, London issue, …). Normally,
+     * when parsing the XML file, the issues are created in their order of first
+     * appearance. However, if you want to enforce a different order, you can
+     * define it here.
+     *
+     * <p>
+     * The attribute <code>after="…"</code> holds the names of issues that shall
+     * be ordered before this issue. Several issues are to be separated by white
+     * space. Issue names containing white space must be enclosed in double
+     * quotes ("<code>"</code>", U+0022). Double quotes in issue names must be
+     * replaced by two subsequent apostrophes ("<code>''</code>", 2× U+0027).
+     *
+     * <p>
+     * Not-yet-mentioned issues are created before, though maybe empty.
+     */
+    private static final String ATTRIBUTE_AFTER = "after";
+
+    /**
      * Element <code>&lt;appeared&gt;</code> used in the XML representation of a
      * course of appearance.
      *
@@ -281,7 +295,7 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
-     * Constructor to create a course from an xml source
+     * Constructor to create a course from an XML source.
      *
      * @param xml
      *            XML document data structure
@@ -310,6 +324,7 @@ public class Course extends ArrayList<Block> {
         yearName = rootNode.getAttribute(ATTRIBUTE_YEAR_TERM);
         Element processesNode = XMLUtils.getFirstChildWithTagName(rootNode, ELEMENT_PROCESSES);
         int initialCapacity = 10;
+        Map<LocalDate, IndividualIssue> lastIssueForDate = new HashMap<>();
         List<RecoveredMetadata> recoveredMetadata = new LinkedList<>();
         for (Node processNode = processesNode.getFirstChild(); processNode != null; processNode = processNode
                 .getNextSibling()) {
@@ -333,7 +348,19 @@ public class Course extends ArrayList<Block> {
                     if (date == null) {
                         throw new NullPointerException(ATTRIBUTE_DATE);
                     }
-                    IndividualIssue individualIssue = addAddition(variant, issue, LocalDate.parse(date));
+                    String after = ((Element) issueNode).getAttribute(ATTRIBUTE_AFTER);
+                    List<String> before = after != null ? splitAtSpaces(after): Collections.<String>emptyList();
+                    LocalDate localDate = LocalDate.parse(date);
+                    IndividualIssue individualIssue = addAddition(variant, before, issue, localDate);
+                    IndividualIssue previousIssue = lastIssueForDate.get(localDate);
+                    if(previousIssue != null){
+                        Integer sortingNumber = previousIssue.getSortingNumber();
+                        if(sortingNumber == null){
+                            previousIssue.setSortingNumber(sortingNumber = 1);
+                        }
+                        individualIssue.setSortingNumber(sortingNumber + 1);
+                    }
+                    lastIssueForDate.put(localDate, individualIssue);
                     process.add(individualIssue);
                     for (Node metadataNode = issueNode
                             .getFirstChild(); metadataNode != null; metadataNode = metadataNode.getNextSibling()) {
@@ -433,6 +460,8 @@ public class Course extends ArrayList<Block> {
      *
      * @param variant
      *            block identifier (may be null)
+     * @param beforeIssues
+     *            issues to be existing before this one
      * @param issueHeading
      *            heading of the issue this issue is of
      * @param date
@@ -442,7 +471,9 @@ public class Course extends ArrayList<Block> {
      *             if the date would cause the block to overlap with another
      *             block
      */
-    private IndividualIssue addAddition(String variant, String issueHeading, LocalDate date) {
+    private IndividualIssue addAddition(String variant, List<String> beforeIssues, String issueHeading,
+            LocalDate date) {
+
         Block block = get(variant);
         if (block == null) {
             block = new Block(this, variant);
@@ -461,13 +492,20 @@ public class Course extends ArrayList<Block> {
                 block.setLastAppearance(date);
             }
         }
+        for (String issueBefore : beforeIssues) {
+            Issue issue = block.getIssue(issueBefore);
+            if (issue == null) {
+                issue = new Issue(this, issueBefore);
+                block.addIssue(issue);
+            }
+        }
         Issue issue = block.getIssue(issueHeading);
         if (issue == null) {
             issue = new Issue(this, issueHeading);
             block.addIssue(issue);
         }
         issue.addAddition(date);
-        return new IndividualIssue(block, issue, date);
+        return new IndividualIssue(block, issue, date, null);
     }
 
     /**
@@ -672,6 +710,35 @@ public class Course extends ArrayList<Block> {
     }
 
     /**
+     * Joins a list of strings to a string of whitespace-separated tokens,
+     * surrounding tokens containing spaces with quotes.
+     *
+     * @param input
+     *            string to tokenize
+     * @return list of split strings
+     */
+    private static final String joinQuoting(Collection<String> input) {
+        StringBuilder result = new StringBuilder(16 * input.size());
+        boolean first = true;
+        for (String item : input) {
+            if (first) {
+                first = false;
+            } else {
+                result.append(' ');
+            }
+            boolean hasSpace = item.indexOf(' ') > -1;
+            if (hasSpace) {
+                result.append('"');
+            }
+            result.append(item.replaceAll("\"", "''"));
+            if (hasSpace) {
+                result.append('"');
+            }
+        }
+        return result.toString();
+    }
+
+    /**
      * The method recalculateRegularityOfIssues() recalculates for all blocks of
      * this Course for each Issue the daysOfWeek of its regular appearance
      * within the interval of time of the block. This is especially sensible to
@@ -711,6 +778,23 @@ public class Course extends ArrayList<Block> {
             processes.clear();
         }
         return block;
+    }
+
+    /**
+     * Splits a string of whitespace-separated tokens, considering tokens
+     * surrounded by quotes as one.
+     *
+     * @param input
+     *            string to tokenize
+     * @return list of split strings
+     */
+    private static final List<String> splitAtSpaces(String input) {
+        List<String> result = new ArrayList<>();
+        Matcher matcher = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
+        while (matcher.find()) {
+            result.add(matcher.group(1).replaceFirst("^\"(.*)\"$", "$1").replaceAll("''", "\""));
+        }
+        return result;
     }
 
     /**
@@ -765,6 +849,7 @@ public class Course extends ArrayList<Block> {
         courseNode.appendChild(description);
 
         Element processesNode = result.createElement(ELEMENT_PROCESSES);
+        Set<Pair<Integer,String>> afterDeclarations = new HashSet<>();
         for (List<IndividualIssue> process : processes) {
             Element processNode = result.createElement(ELEMENT_PROCESS);
             Element blockNode = null;
@@ -811,6 +896,14 @@ public class Course extends ArrayList<Block> {
                     issueNode.appendChild(metadataNode);
                 }
 
+                Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
+                if (!afterDeclarations.contains(afterDeclaration)) {
+                    List<String> issuesBefore = issue.getIssuesBefore();
+                    if (!issuesBefore.isEmpty()) {
+                        issueNode.setAttribute(ATTRIBUTE_AFTER, joinQuoting(issuesBefore));
+                    }
+                    afterDeclarations.add(afterDeclaration);
+                }
                 blockNode.appendChild(issueNode);
                 previous = index;
             }

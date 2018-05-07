@@ -11,6 +11,7 @@
 
 package de.sub.goobi.helper.tasks;
 
+import org.joda.time.LocalDate;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
@@ -67,6 +68,15 @@ class LocallyDefinedDate {
     }
 
     /**
+     * Returns the date of the locally defined date.
+     * 
+     * @return the date
+     */
+    public LocalDate getDate() {
+        return date;
+    }
+
+    /**
      * Returns the day component of the date.
      *
      * @return the day
@@ -93,4 +103,9 @@ class LocallyDefinedDate {
         return ISODateTimeFormat.yearMonthDay().print(date);
     }
 
+    @Override
+    public String toString() {
+        return compoundYear + ':' + getYearMonthDay();
+    }
+    
 }

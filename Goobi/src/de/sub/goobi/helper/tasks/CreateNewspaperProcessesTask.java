@@ -398,9 +398,13 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             if ((heading != null) && (heading.trim().length() > 0)) {
                 addMetadatum(issue, issue.getType().getName(), heading, true);
             }
+            Integer sortingNumber = individualIssue.getSortingNumber();
             addMetadatum(issue, year.getType().getName(), theYear, false);
             addMetadatum(issue, month.getType().getName(), Integer.toString(date.getMonthOfYear()), false);
             addMetadatum(issue, day.getType().getName(), Integer.toString(date.getDayOfMonth()), false);
+            if(sortingNumber != null){
+                addMetadatum(issue, IndividualIssue.RULESET_ORDER_NAME, sortingNumber.toString(), false);
+            }
             addMetadatum(issue, MetsModsImportExport.CREATE_LABEL_ATTRIBUTE_TYPE, heading, false);
             for (Pair<String, String> metaDatum : individualIssue.getMetadata(seasonBegin)) {
                 addMetadatum(issue, metaDatum.getKey(), metaDatum.getValue(), true);

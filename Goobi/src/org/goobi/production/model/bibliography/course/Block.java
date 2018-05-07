@@ -237,10 +237,16 @@ public class Block {
             return Collections.emptyList();
         }
         ArrayList<IndividualIssue> result = new ArrayList<IndividualIssue>(issues.size());
+
+        List<Issue> issues = new ArrayList<Issue>();
         for (Issue issue : getIssues()) {
             if (issue.isMatch(date)) {
-                result.add(new IndividualIssue(this, issue, date));
+                issues.add(issue);
             }
+        }
+        Integer sorting = issues.size() > 1 ? 1 : null;
+        for (Issue issue : issues) {
+            result.add(new IndividualIssue(this, issue, date, sorting != null ? sorting++ : null));
         }
         return result;
     }
