@@ -80,9 +80,6 @@ public class WorkflowControllerServiceIT {
         assertEquals("Tasks of template were not saved correctly!", "Test Gateway", template.getOutputName());
         assertEquals("Tasks of template were not saved correctly!", 5, template.getTasks().size());
 
-        Docket docket = serviceManager.getDocketService().getById(1);
-        assertEquals("Tasks of template were not saved correctly!", docket, template.getDocket());
-
         List<Workflow> workflows = serviceManager.getWorkflowService().getByQuery("FROM Workflow WHERE title = 'Process_1'");
         assertEquals("Workflow of template was not saved correctly!", 1, workflows.size());
 

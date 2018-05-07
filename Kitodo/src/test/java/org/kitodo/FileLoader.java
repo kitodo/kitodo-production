@@ -87,7 +87,7 @@ public class FileLoader {
         List<String> content = new ArrayList<>();
         content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         content.add("<bpmn2:definitions xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:bpmn2=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:template=\"http://www.kitodo.org/template\" id=\"sample-diagram\" targetNamespace=\"http://bpmn.io/schema/bpmn\" xsi:schemaLocation=\"http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd\">");
-        content.add("<bpmn2:process id=\"Process_1\" name=\"test-gateway\" template:docket=\"1\" template:outputName=\"Test Gateway\" isExecutable=\"false\">");
+        content.add("<bpmn2:process id=\"Process_1\" name=\"test-gateway\" template:outputName=\"Test Gateway\" isExecutable=\"false\">");
         content.add("<bpmn2:startEvent id=\"StartEvent_1\">");
         content.add("<bpmn2:outgoing>SequenceFlow_0651lvf</bpmn2:outgoing>");
         content.add("</bpmn2:startEvent>");

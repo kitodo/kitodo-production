@@ -11,8 +11,6 @@
 
 package org.kitodo.workflow.model.beans;
 
-import java.util.Objects;
-
 import org.camunda.bpm.model.bpmn.instance.Process;
 
 public class Diagram {
@@ -20,8 +18,6 @@ public class Diagram {
     private String id;
     private String title;
     private String outputName;
-    private Integer docket;
-    private Integer ruleset;
     private static final String NAMESPACE = "http://www.kitodo.org/template";
 
     /**
@@ -33,15 +29,6 @@ public class Diagram {
         this.id = process.getId();
         this.title = process.getName();
         this.outputName = process.getAttributeValueNs(NAMESPACE, "outputName");
-        this.docket = getIntegerValue(process.getAttributeValueNs(NAMESPACE, "docket"));
-        this.ruleset = getIntegerValue(process.getAttributeValueNs(NAMESPACE, "ruleset"));
-    }
-
-    private Integer getIntegerValue(String value) {
-        if (Objects.nonNull(value)) {
-            return Integer.valueOf(value);
-        }
-        return -1;
     }
 
     /**
@@ -96,41 +83,5 @@ public class Diagram {
      */
     public void setOutputName(String outputName) {
         this.outputName = outputName;
-    }
-
-    /**
-     * Get docket.
-     *
-     * @return value of docket
-     */
-    public Integer getDocket() {
-        return docket;
-    }
-
-    /**
-     * Set docket.
-     *
-     * @param docket as java.lang.Integer
-     */
-    public void setDocket(Integer docket) {
-        this.docket = docket;
-    }
-
-    /**
-     * Get ruleset.
-     *
-     * @return value of ruleset
-     */
-    public Integer getRuleset() {
-        return ruleset;
-    }
-
-    /**
-     * Set ruleset.
-     *
-     * @param ruleset as java.lang.Integer
-     */
-    public void setRuleset(Integer ruleset) {
-        this.ruleset = ruleset;
     }
 }

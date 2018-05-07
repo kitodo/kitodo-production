@@ -40,9 +40,6 @@ public class Updater {
         List<Process> processes = this.template.getProcesses();
 
         for (Process process : processes) {
-            process.setDocket(this.template.getDocket());
-            process.setRuleset(this.template.getRuleset());
-
             serviceManager.getProcessService().save(process);
         }
     }
