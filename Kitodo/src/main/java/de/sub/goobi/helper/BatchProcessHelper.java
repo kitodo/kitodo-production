@@ -123,7 +123,7 @@ public class BatchProcessHelper extends BatchHelper {
      */
     public void saveCurrentPropertyForAll() {
         List<Property> ppList = getProperties();
-        boolean error = false;
+
         for (Property pp : ppList) {
             this.property = pp;
 
@@ -149,18 +149,14 @@ public class BatchProcessHelper extends BatchHelper {
 
                 try {
                     serviceManager.getProcessService().save(process);
+                    Helper.setMeldung("propertiesSaved");
                 } catch (DataException e) {
-                    error = true;
-                    logger.error(e.getMessage(), e);
                     List<String> param = new ArrayList<>();
                     param.add(process.getTitle());
                     String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
-                    Helper.setFehlerMeldung(value);
+                    Helper.setErrorMessage(value, logger, e);
                 }
             }
-        }
-        if (!error) {
-            Helper.setMeldung("propertiesSaved");
         }
     }
 
