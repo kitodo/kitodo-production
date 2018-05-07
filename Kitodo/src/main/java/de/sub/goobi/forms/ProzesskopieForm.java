@@ -553,45 +553,48 @@ public class ProzesskopieForm implements Serializable {
      */
     private void fillFieldsFromMetadataFile() throws PreferencesException {
         if (this.rdf != null) {
-
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                    /* welches Docstruct */
-                    DocStructInterface myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-                    if (field.getDocstruct().equals("firstchild")) {
-                        try {
-                            myTempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-                        } catch (RuntimeException e) {
-                            logger.error(e.getMessage(), e);
-                        }
-                    }
-                    if (field.getDocstruct().equals("boundbook")) {
-                        myTempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
-                    }
-                    /* welches Metadatum */
-                    try {
-                        if (field.getMetadata().equals("ListOfCreators")) {
-                            field.setValue(getAuthors(myTempStruct.getAllPersons()));
-                        } else {
-                            /* bei normalen Feldern die Inhalte auswerten */
-                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                field.getMetadata());
-                            MetadataInterface md = UghHelper.getMetadata(myTempStruct, mdt);
-                            if (md != null) {
-                                field.setValue(md.getValue());
-                                md.setStringValue(field.getValue().replace("&amp;", "&"));
-                            }
-                        }
-                    } catch (UghHelperException e) {
-                        Helper.setErrorMessage(e.getMessage(), logger, e);
-                    }
+                    proceedField(field);
                     if (field.getValue() != null && !field.getValue().equals("")) {
                         field.setValue(field.getValue().replace("&amp;", "&"));
                     }
-                } // end if ughbinding
-            } // end for
-        } // end if myrdf==null
+                }
+            }
+        }
+    }
+
+    private void proceedField(AdditionalField field) throws PreferencesException {
+        DocStructInterface docStruct = getDocStruct(field);
+        try {
+            if (field.getMetadata().equals("ListOfCreators")) {
+                field.setValue(getAuthors(docStruct.getAllPersons()));
+            } else {
+                // evaluate the content in normal fields
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(
+                        serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                        field.getMetadata());
+                MetadataInterface md = UghHelper.getMetadata(docStruct, mdt);
+                if (md != null) {
+                    field.setValue(md.getValue());
+                    md.setStringValue(field.getValue().replace("&amp;", "&"));
+                }
+            }
+        } catch (UghHelperException e) {
+            Helper.setErrorMessage("", logger, e);
+        }
+    }
+
+    private DocStructInterface getDocStruct(AdditionalField field) throws PreferencesException {
+        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
+        DocStructInterface docStruct = digitalDocument.getLogicalDocStruct();
+        if (field.getDocstruct().equals("firstchild")) {
+            docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
+        }
+        if (field.getDocstruct().equals("boundbook")) {
+            docStruct = digitalDocument.getPhysicalDocStruct();
+        }
+        return docStruct;
     }
 
     /**
@@ -657,13 +660,21 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         }
+
         try {
             this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage("Error on reading template-metadata ", logger, e);
         }
 
-        /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
+        removeCollectionsForChildren();
+        return null;
+    }
+
+    /**
+     * If there is a first child, the collections are for it.
+     */
+    private void removeCollectionsForChildren() {
         try {
             DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
             removeCollections(colStruct, this.prozessKopie);
@@ -674,7 +685,6 @@ public class ProzesskopieForm implements Serializable {
         } catch (RuntimeException e) {
             logger.debug("das Firstchild unterhalb des Topstructs konnte nicht ermittelt werden", e);
         }
-        return null;
     }
 
     /**
@@ -810,31 +820,7 @@ public class ProzesskopieForm implements Serializable {
          * oder frisch angelegt), dann diese ergänzen
          */
         if (this.rdf != null) {
-
-            // there must be at least one non-anchor level doc struct
-            // if missing, insert logical doc structs until you reach it
-            DocStructInterface populizer = null;
-            try {
-                populizer = rdf.getDigitalDocument().getLogicalDocStruct();
-                if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                    PrefsInterface ruleset = serviceManager.getRulesetService()
-                            .getPreferences(prozessKopie.getRuleset());
-                    while (populizer.getDocStructType().getAnchorClass() != null) {
-                        populizer = populizer.createChild(
-                            populizer.getDocStructType().getAllAllowedDocStructTypes().get(0), rdf.getDigitalDocument(),
-                            ruleset);
-                    }
-                }
-            } catch (NullPointerException // if getAllAllowedDocStructTypes()
-                    // returns null
-                    | IndexOutOfBoundsException e) {
-                Helper.setErrorMessage("DocStrctType is configured as anchor but has no allowedchildtype.",
-                    populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
-                            : null,
-                    logger, e);
-            } catch (UGHException e) {
-                Helper.setErrorMessage(e.getMessage(), logger, e);
-            }
+            insertLogicalDocStruct();
 
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
@@ -896,72 +882,95 @@ public class ProzesskopieForm implements Serializable {
             }
 
             updateMetadata();
-
-            /*
-             * Collectionen hinzufügen
-             */
-            DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-            if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
-                    && colStruct.getAllChildren().size() > 0) {
-                try {
-                    addCollections(colStruct);
-                    /*
-                     * falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
-                     */
-                    colStruct = colStruct.getAllChildren().get(0);
-                    addCollections(colStruct);
-                } catch (RuntimeException e) {
-                    Helper.setErrorMessage(
-                        e.getMessage() + " The first child below the top structure could not be determined!", logger,
-                        e);
-                }
-            }
-
-            /*
-             * Imagepfad hinzufügen (evtl. vorhandene zunächst löschen)
-             */
-            try {
-                MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
-                List<? extends MetadataInterface> allImagePaths = this.rdf.getDigitalDocument().getPhysicalDocStruct()
-                        .getAllMetadataByType(mdt);
-                if (allImagePaths != null && allImagePaths.size() > 0) {
-                    for (MetadataInterface metadata : allImagePaths) {
-                        this.rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(metadata);
-                    }
-                }
-                MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
-                if (SystemUtils.IS_OS_WINDOWS) {
-                    newMetadata.setStringValue(
-                        "file:/" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                                + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
-                } else {
-                    newMetadata.setStringValue(
-                        "file://" + serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                                + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX);
-                }
-                this.rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
-
-                // write Rdf file
-                serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
-
-            } catch (DocStructHasNoTypeException e) {
-                Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
-            } catch (UghHelperException e) {
-                Helper.setErrorMessage("UghHelperException", logger, e);
-            } catch (MetadataTypeNotAllowedException e) {
-                Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
-            }
-
+            insertCollections();
+            insertImagePath();
         }
 
         // Create configured directories
         serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
-
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         startTaskScriptThreads();
 
         return processListPath;
+    }
+
+    /**
+     * There must be at least one non-anchor level doc struct,
+     * if missing, insert logical doc structures until you reach it.
+     */
+    private void insertLogicalDocStruct() {
+        DocStructInterface populizer = null;
+        try {
+            populizer = rdf.getDigitalDocument().getLogicalDocStruct();
+            if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
+                PrefsInterface ruleset = serviceManager.getRulesetService()
+                        .getPreferences(prozessKopie.getRuleset());
+                DocStructTypeInterface docStructType = populizer.getDocStructType();
+                while (docStructType.getAnchorClass() != null) {
+                    populizer = populizer.createChild(
+                            docStructType.getAllAllowedDocStructTypes().get(0), rdf.getDigitalDocument(), ruleset);
+                }
+            }
+        } catch (NullPointerException | IndexOutOfBoundsException e) {
+            String name = populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
+                    : null;
+            Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.", logger, e);
+        } catch (UGHException catchAll) {
+            Helper.setErrorMessage(catchAll.getMessage(), logger, catchAll);
+        }
+    }
+
+    private void insertCollections() throws PreferencesException {
+        DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
+                && colStruct.getAllChildren().size() > 0) {
+            try {
+                addCollections(colStruct);
+                // falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
+                colStruct = colStruct.getAllChildren().get(0);
+                addCollections(colStruct);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage(
+                        "The first child below the top structure could not be determined!", logger,
+                        e);
+            }
+        }
+    }
+
+    /**
+     * Insert image path and delete any existing ones first.
+     */
+    private void insertImagePath() throws IOException, PreferencesException, WriteException {
+        DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
+        try {
+            MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
+            List<? extends MetadataInterface> allImagePaths = digitalDocument.getPhysicalDocStruct()
+                    .getAllMetadataByType(mdt);
+            if (allImagePaths != null && allImagePaths.size() > 0) {
+                for (MetadataInterface metadata : allImagePaths) {
+                    digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
+                }
+            }
+            MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
+            String path = serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
+                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX;
+            if (SystemUtils.IS_OS_WINDOWS) {
+                newMetadata.setStringValue("file:/" + path);
+            } else {
+                newMetadata.setStringValue("file://" + path);
+            }
+            digitalDocument.getPhysicalDocStruct().addMetadata(newMetadata);
+
+            // write Rdf file
+            serviceManager.getFileService().writeMetadataFile(this.rdf, this.prozessKopie);
+        } catch (DocStructHasNoTypeException e) {
+            Helper.setErrorMessage("DocStructHasNoTypeException", logger, e);
+        } catch (UghHelperException e) {
+            Helper.setErrorMessage("UghHelperException", logger, e);
+        } catch (MetadataTypeNotAllowedException e) {
+            Helper.setErrorMessage("MetadataTypeNotAllowedException", logger, e);
+        }
     }
 
     protected void updateTasks(Process process) {
