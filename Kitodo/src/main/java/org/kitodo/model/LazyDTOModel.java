@@ -14,6 +14,7 @@ package org.kitodo.model;
 import static java.lang.Math.toIntExact;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     private SearchService searchService;
     private static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     private static IndexRestClient indexRestClient = IndexRestClient.getInstance();
+    private List entities = new ArrayList();
 
     /**
      * Creates a LazyDTOModel instance that allows fetching data from the data
@@ -80,7 +82,6 @@ public class LazyDTOModel extends LazyDataModel<Object> {
             try {
                 setRowCount(toIntExact(searchService.count(searchService.createCountQuery(filters))));
 
-                List entities;
                 if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
                     entities = searchService.findAll("{\"" + sortField + "\":\"asc\" }", first, pageSize, filters);
                 } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
@@ -119,5 +120,14 @@ public class LazyDTOModel extends LazyDataModel<Object> {
             logger.error(e.getMessage());
             return false;
         }
+    }
+
+    /**
+     * Get entities.
+     *
+     * @return value of entities
+     */
+    public List getEntities() {
+        return entities;
     }
 }

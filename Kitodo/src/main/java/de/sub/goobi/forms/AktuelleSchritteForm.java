@@ -361,11 +361,11 @@ public class AktuelleSchritteForm extends BasisForm {
             String id = element.toString()
                     .substring(element.toString().indexOf('[') + 1, element.toString().indexOf(']')).trim();
 
-            for (Task step : (Iterable<Task>) this.page.getCompleteList()) {
+            for (Task task : (List<Task>) lazyDTOModel.getEntities()) {
                 // only when the task is already in edit mode, complete it
-                if (step.getProcess().getId() == Integer.parseInt(id)
-                        && step.getProcessingStatusEnum() == TaskStatus.INWORK) {
-                    this.mySchritt = step;
+                if (task.getProcess().getId() == Integer.parseInt(id)
+                        && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
+                    this.mySchritt = task;
                     if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
                         geprueft.add(element);
                     }
@@ -387,7 +387,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String downloadToHomePage() {
         download();
         // calcHomeImages();
-        Helper.setMeldung(null, "Created directies in user home", "");
+        Helper.setMeldung(null, "Created directories in user home", "");
         return null;
     }
 
@@ -405,7 +405,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     @SuppressWarnings("unchecked")
     private void download() {
-        for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getListReload()) {
+        for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
             Task task = new Task();
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
@@ -459,7 +459,7 @@ public class AktuelleSchritteForm extends BasisForm {
         this.gesamtAnzahlImages = 0;
         User user = getUser();
         if (user != null && user.isWithMassDownload()) {
-            for (TaskDTO taskDTO : (List<TaskDTO>) this.page.getCompleteList()) {
+            for (TaskDTO taskDTO : (List<TaskDTO>) lazyDTOModel.getEntities()) {
                 try {
                     Task task = serviceManager.getTaskService().getById(taskDTO.getId());
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
