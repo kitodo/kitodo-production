@@ -69,7 +69,7 @@ public class ExportXmlLog {
 
     public void startExport(Process p, String destination) throws IOException {
         try (FileOutputStream ostream = new FileOutputStream(destination)) {
-            startExport(p, ostream, null);
+            startExport(p, ostream);
         }
     }
 
@@ -83,7 +83,7 @@ public class ExportXmlLog {
      */
     public void startExport(Process p, File dest) throws IOException {
         try (FileOutputStream ostream = new FileOutputStream(dest)) {
-            startExport(p, ostream, null);
+            startExport(p, ostream);
         }
     }
 
@@ -95,7 +95,7 @@ public class ExportXmlLog {
      * @param os
      *            the OutputStream to write the contents to
      */
-    public void startExport(Process process, OutputStream os, String xslt) throws IOException {
+    public void startExport(Process process, OutputStream os) throws IOException {
         try {
             Document doc = createDocument(process, true);
 
@@ -434,8 +434,8 @@ public class ExportXmlLog {
     }
 
     /**
-     * This method transforms the xml log using a xslt file and opens a new window
-     * with the output file.
+     * This method transforms the xml log using a xslt file and opens a new
+     * window with the output file.
      *
      * @param out
      *            ServletOutputStream
