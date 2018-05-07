@@ -164,7 +164,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @Transient
     @XmlElement(name = "template")
-    public List<Process> template; // The ‘template’ variable is populated from
+    public List<Template> template; // The ‘template’ variable is populated from
                                    // org.goobi.webapi.resources.Projects
     // when calling ${SERVLET_CONTEXT}/rest/projects to output the templates
     // available within a project as XML child

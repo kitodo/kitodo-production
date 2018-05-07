@@ -11,8 +11,6 @@
 
 package org.goobi.webapi.resources;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,10 +24,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.goobi.webapi.beans.ProjectsRootNode;
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.services.ServiceManager;
 
 /**
  * The CatalogueConfiguration class provides the Jersey API URL pattern
@@ -49,19 +46,17 @@ public class Projects {
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
     public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() {
-        Map<Project, Set<Process>> data = new HashMap<>();
+        Map<Project, Set<Template>> data = new HashMap<>();
 
-        Criteria query = Helper.getHibernateSession().createCriteria(Process.class);
-        @SuppressWarnings("unchecked")
-        List<Process> processTemplates = query.add(Restrictions.eq("template", Boolean.TRUE)).list();
-        for (Process processTemplate : processTemplates) {
+        List<Template> processTemplates = new ServiceManager().getTemplateService().getAll();
+        for (Template processTemplate : processTemplates) {
             Project project = processTemplate.getProject();
-            Set<Process> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
+            Set<Template> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
             templates.add(processTemplate);
             data.put(project, templates);
         }
         List<Project> result = new ArrayList<>();
-        for (Map.Entry<Project, Set<Process>> entry : data.entrySet()) {
+        for (Map.Entry<Project, Set<Template>> entry : data.entrySet()) {
             Project key = entry.getKey();
             key.template = new ArrayList<>(entry.getValue());
             result.add(key);

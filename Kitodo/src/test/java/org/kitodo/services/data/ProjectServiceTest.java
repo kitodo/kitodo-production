@@ -25,8 +25,8 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 
 public class ProjectServiceTest {
@@ -61,8 +61,8 @@ public class ProjectServiceTest {
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
         // Add templates, still not complete
-        Process process = new Process();
-        project.template = new ArrayList<>(Arrays.asList(process));
+        Template template = new Template();
+        project.template = new ArrayList<>(Arrays.asList(template));
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
         // Add xmls to complete project
