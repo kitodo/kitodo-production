@@ -247,6 +247,7 @@ public class RequestControlFilter implements Filter {
         try {
             getSynchronizationObject(session).wait(getMaxWaitTime(request));
         } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
             return false;
         }
 
