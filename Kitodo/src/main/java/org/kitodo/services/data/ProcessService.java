@@ -182,7 +182,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("#{ProzessverwaltungForm}");
+        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("ProzessverwaltungForm");
         if (Objects.isNull(form)) {
             form = new ProzessverwaltungForm();
         }

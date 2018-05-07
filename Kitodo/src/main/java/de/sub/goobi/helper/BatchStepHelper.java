@@ -13,7 +13,6 @@ package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
@@ -222,8 +221,7 @@ public class BatchStepHelper extends BatchHelper {
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     /**
@@ -244,8 +242,7 @@ public class BatchStepHelper extends BatchHelper {
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     /**
@@ -296,8 +293,7 @@ public class BatchStepHelper extends BatchHelper {
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     /**
@@ -320,8 +316,7 @@ public class BatchStepHelper extends BatchHelper {
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     /**
@@ -538,8 +533,7 @@ public class BatchStepHelper extends BatchHelper {
                 logger.error(e.getMessage(), e);
             }
         }
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     /**
@@ -581,8 +575,8 @@ public class BatchStepHelper extends BatchHelper {
                 serviceManager.getWorkflowControllerService().close(task);
             }
         }
-        AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        return asf.filterAll();
+
+        return Helper.getCurrentTaskForm().filterAll();
     }
 
     private boolean isPropertyInvalid(Property property, Task task) {

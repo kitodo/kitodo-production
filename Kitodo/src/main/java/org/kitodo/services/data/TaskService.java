@@ -114,10 +114,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         // TODO: find other way than retrieving the form bean to access
         // "hideCorrectionTasks" and "showAutomaticTasks"
         // e.g. which tasks should be returned!
-        AktuelleSchritteForm form = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
-        if (Objects.equals(form, null)) {
-            form = new AktuelleSchritteForm();
-        }
+        AktuelleSchritteForm form = Helper.getCurrentTaskForm();
+
         if (form.getHideCorrectionTasks()) {
             query.must(createSimpleQuery(TaskTypeField.PRIORITY.getName(), 10, true));
         }

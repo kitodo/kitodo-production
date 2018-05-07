@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
@@ -235,7 +236,7 @@ public class Helper extends HibernateHelper implements Observer {
         description = description.replaceAll(">", "&gt;");
 
         Locale language = Locale.ENGLISH;
-        SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("#{SpracheForm}");
+        SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("SpracheForm");
         if (sf != null) {
             language = sf.getLocale();
         }
@@ -472,7 +473,7 @@ public class Helper extends HibernateHelper implements Observer {
      */
     public static User getCurrentUser() {
         if (Objects.isNull(currentUser)) {
-            LoginForm login = (LoginForm) Helper.getManagedBeanValue("#{LoginForm}");
+            LoginForm login = (LoginForm) Helper.getManagedBeanValue("LoginForm");
             currentUser = login != null ? login.getMyBenutzer() : null;
         }
         return currentUser;
@@ -495,7 +496,21 @@ public class Helper extends HibernateHelper implements Observer {
      * @return metadata language as String
      */
     public static String getMetadataLanguageForCurrentUser() {
-        return (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadataLanguage}");
+        return Helper.getCurrentUser().getMetadataLanguage();
+    }
+
+    /**
+     * Get current task form.
+     *
+     * @return AktuelleSchritteForm
+     */
+    public static AktuelleSchritteForm getCurrentTaskForm() {
+        AktuelleSchritteForm currentTaskForm = (AktuelleSchritteForm) Helper
+                .getManagedBeanValue("AktuelleSchritteForm");
+        if (Objects.isNull(currentTaskForm)) {
+            currentTaskForm = new AktuelleSchritteForm();
+        }
+        return currentTaskForm;
     }
 
     public static final FilenameFilter imageNameFilter = new FilenameFilter() {

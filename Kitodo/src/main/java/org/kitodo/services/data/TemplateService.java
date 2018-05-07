@@ -112,7 +112,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        TemplateForm form = (TemplateForm) Helper.getManagedBeanValue("#{TemplateForm}");
+        TemplateForm form = (TemplateForm) Helper.getManagedBeanValue("TemplateForm");
         if (Objects.isNull(form)) {
             form = new TemplateForm();
         }
