@@ -281,14 +281,14 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      * @return int
      */
     public int compareTo(Property property) {
-        int title = this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
-        int value = this.getValue().toLowerCase().compareTo(property.getValue().toLowerCase());
-        if (title == 0 && value == 0) {
+        int titleMatch = this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
+        int valueMatch = this.getValue().toLowerCase().compareTo(property.getValue().toLowerCase());
+        if (titleMatch == 0 && valueMatch == 0) {
             return 0;
-        } else if (value == 0) {
-            return title;
+        } else if (valueMatch == 0) {
+            return titleMatch;
         } else {
-            return value;
+            return valueMatch;
         }
     }
 }
