@@ -91,6 +91,7 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
@@ -409,7 +410,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery("project.id", id, true);
+        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getName(), id, true);
     }
 
     /**
@@ -420,7 +421,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return QueryBuilder object
      */
     public QueryBuilder getQueryProjectTitle(String title) {
-        return createSimpleQuery("project.title", title, true, Operator.AND);
+        return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getName(), title, true, Operator.AND);
     }
 
     /**
@@ -431,7 +432,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific docket
      */
     public List<JsonObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery("docket", docket.getId(), true);
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getName(), docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -443,7 +444,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific ruleset
      */
     public List<JsonObject> findByRuleset(Ruleset ruleset) throws DataException {
-        QueryBuilder query = createSimpleQuery("ruleset", ruleset.getId(), true);
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getName(), ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -597,8 +598,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQuerySortHelperStatus(boolean closed) {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery("sortHelperStatus", "100000000", closed));
-        query.should(createSimpleQuery("sortHelperStatus", "100000000000", closed));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getName(), "100000000", closed));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getName(), "100000000000", closed));
         return query;
     }
 
@@ -611,7 +612,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectActive(boolean active) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByActive(active, true);
-        return createSetQuery("project.id", serviceManager.getFilterService().collectIds(projects), true);
+        return createSetQuery(ProcessTypeField.PROJECT_ID.getName(), serviceManager.getFilterService().collectIds(projects), true);
     }
 
     /**
@@ -622,7 +623,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return sort
      */
     public String sortByCreationDate(SortOrder sortOrder) {
-        return SortBuilders.fieldSort("creationDate").order(sortOrder).toString();
+        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getName()).order(sortOrder).toString();
     }
 
     /**
@@ -656,34 +657,35 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject processJSONObject = jsonObject.getJsonObject("_source");
-        processDTO.setTitle(processJSONObject.getString("title"));
-        processDTO.setOutputName(processJSONObject.getString("outputName"));
-        processDTO.setWikiField(processJSONObject.getString("wikiField"));
-        processDTO.setCreationDate(processJSONObject.getString("creationDate"));
-        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, "properties"));
+        processDTO.setTitle(processJSONObject.getString(ProcessTypeField.TITLE.getName()));
+        processDTO.setOutputName(processJSONObject.getString(ProcessTypeField.OUTPUT_NAME.getName()));
+        processDTO.setWikiField(processJSONObject.getString(ProcessTypeField.WIKI_FIELD.getName()));
+        processDTO.setCreationDate(processJSONObject.getString(ProcessTypeField.CREATION_DATE.getName()));
+        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName()));
         processDTO.setProperties(
-            convertRelatedJSONObjectToDTO(processJSONObject, "properties", serviceManager.getPropertyService()));
+                convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName(),
+                        serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(processJSONObject.getInt("sortHelperArticles"));
-        processDTO.setSortHelperDocstructs(processJSONObject.getInt("sortHelperDocstructs"));
-        processDTO.setSortHelperImages(processJSONObject.getInt("sortHelperImages"));
-        processDTO.setSortHelperMetadata(processJSONObject.getInt("sortHelperMetadata"));
+        processDTO.setSortHelperArticles(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
+        processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
+        processDTO.setSortHelperImages(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
+        processDTO.setSortHelperMetadata(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
             processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(processJSONObject.getInt("project.id"));
-            projectDTO.setTitle(processJSONObject.getString("project.title"));
-            projectDTO.setActive(processJSONObject.getBoolean("project.active"));
+            projectDTO.setId(processJSONObject.getInt(ProcessTypeField.PROJECT_ID.getName()));
+            projectDTO.setTitle(processJSONObject.getString(ProcessTypeField.PROJECT_TITLE.getName()));
+            projectDTO.setActive(processJSONObject.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
     }
 
     private ProcessDTO convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = jsonObject.getInt("project.id");
+        Integer project = jsonObject.getInt(ProcessTypeField.PROJECT_ID.getName());
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
@@ -693,7 +695,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // "batches", serviceManager.getBatchService()));
         processDTO.setBatchID(getBatchID(processDTO));
         // TODO: leave it for now - right now it displays only status
-        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
+        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getName(), serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
@@ -1669,7 +1671,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return amount as Long
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-        return count(createSimpleQuery("title", title, true, Operator.AND).toString());
+        return count(createSimpleQuery(ProcessTypeField.TITLE.getName(), title, true, Operator.AND).toString());
     }
 
     /**

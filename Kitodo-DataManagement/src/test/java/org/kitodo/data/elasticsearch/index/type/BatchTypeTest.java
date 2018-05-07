@@ -27,6 +27,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
 /**
  * Test class for BatchType.
@@ -78,19 +80,25 @@ public class BatchTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Batch1", actual.getString("title"));
-        assertEquals("Key type doesn't match to given value!", "LOGISTIC", actual.getString("type"));
+        assertEquals("Key title doesn't match to given value!", "Batch1",
+            actual.getString(BatchTypeField.TITLE.getName()));
+        assertEquals("Key type doesn't match to given value!", "LOGISTIC",
+            actual.getString(BatchTypeField.TYPE.getName()));
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 1, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "First", process.getString("title"));
+        assertEquals("Key processes.id doesn't match to given value!", 1,
+            process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.title doesn't match to given value!", "First",
+            process.getString(ProcessTypeField.TITLE.getName()));
 
         process = processes.getJsonObject(1);
-        assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
+        assertEquals("Key processes.id doesn't match to given value!", 2,
+            process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.title doesn't match to given value!", "Second",
+            process.getString(ProcessTypeField.TITLE.getName()));
     }
 
     @Test
@@ -102,10 +110,11 @@ public class BatchTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Batch2", actual.getString("title"));
-        assertEquals("Key type doesn't match to given value!", "", actual.getString("type"));
+        assertEquals("Key title doesn't match to given value!", "Batch2",
+            actual.getString(BatchTypeField.TITLE.getName()));
+        assertEquals("Key type doesn't match to given value!", "", actual.getString(BatchTypeField.TYPE.getName()));
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
     }
 
@@ -119,7 +128,7 @@ public class BatchTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
     }

@@ -36,6 +36,9 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.FilterType;
+import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
@@ -99,7 +102,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return list of JSON objects with properties
      */
     List<JsonObject> findByValue(String value, boolean contains) throws DataException {
-        QueryBuilder query = createSimpleQuery("value", value, contains, Operator.AND);
+        QueryBuilder query = createSimpleQuery(FilterTypeField.VALUE.getName(), value, contains, Operator.AND);
         return searcher.findDocuments(query.toString());
     }
 
@@ -108,7 +111,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         FilterDTO filterDTO = new FilterDTO();
         filterDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject filterJSONObject = jsonObject.getJsonObject("_source");
-        filterDTO.setValue(filterJSONObject.getString("value"));
+        filterDTO.setValue(filterJSONObject.getString(FilterTypeField.VALUE.getName()));
         return filterDTO;
     }
 
@@ -225,7 +228,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         if (onlyOpenTasks && onlyUserAssignedTasks) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findAll();
-            taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
+            taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getName(), collectIds(processDTOS), true));
         }
         return taskQuery;
     }
@@ -408,7 +411,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         // TODO Change to check the corresponding authority
         if (currentUser != null && !serviceManager.getSecurityAccessService().isAdmin()) {
             List<ProjectDTO> projects = currentUser.getProjects();
-            query.must(createSetQuery("project.id", collectIds(projects), true));
+            query.must(createSetQuery(ProcessTypeField.PROJECT_ID.getName(), collectIds(projects), true));
         }
         return query;
     }
@@ -433,14 +436,14 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder taskQuery = new BoolQueryBuilder();
 
         if (onlyOpenTask) {
-            taskQuery.must(createSimpleQuery("processingStatus", 1, true));
+            taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 1, true));
         } else if (onlyUserAssignedTask) {
-            taskQuery.must(createSimpleQuery("processingStatus", 1, true));
-            taskQuery.must(createSimpleQuery("processingUser", user.getId(), true));
+            taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 1, true));
+            taskQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), user.getId(), true));
         } else {
             BoolQueryBuilder processingStatus = new BoolQueryBuilder();
-            processingStatus.should(createSimpleQuery("processingStatus", 1, true));
-            processingStatus.should(createSimpleQuery("processingStatus", 2, true));
+            processingStatus.should(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 1, true));
+            processingStatus.should(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 2, true));
             taskQuery.must(processingStatus);
         }
 
@@ -459,7 +462,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         try {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService()
                     .findByProjectIds(collectIds(assignedProjects), true);
-            taskQuery.must(createSetQuery("processForTask.id", collectIds(processDTOS), true));
+            taskQuery.must(createSetQuery(TaskTypeField.PROCESS_ID.getName(), collectIds(processDTOS), true));
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -493,17 +496,17 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 taskOrdering = Integer.parseInt(taskTitle);
             } catch (NumberFormatException e) {
                 taskTitle = filterPart.substring(filterPart.indexOf(':') + 1);
-                historicFilter.must(createSimpleCompareQuery("processingStatus", TaskStatus.OPEN.getValue(),
-                    SearchCondition.EQUAL_OR_BIGGER));
+                historicFilter.must(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.OPEN.getValue(),
+                        SearchCondition.EQUAL_OR_BIGGER));
                 if (taskTitle.startsWith("-")) {
                     taskTitle = taskTitle.substring(1);
-                    historicFilter.mustNot(createSimpleWildcardQuery("title", taskTitle));
+                    historicFilter.mustNot(createSimpleWildcardQuery(TaskTypeField.TITLE.getName(), taskTitle));
                 } else {
-                    historicFilter.must(createSimpleWildcardQuery("title", taskTitle));
+                    historicFilter.must(createSimpleWildcardQuery(TaskTypeField.TITLE.getName(), taskTitle));
                 }
             }
         }
-        historicFilter.must(createSimpleQuery("ordering", taskOrdering, true));
+        historicFilter.must(createSimpleQuery(TaskTypeField.ORDERING.getName(), taskOrdering, true));
         return historicFilter;
     }
 
@@ -511,7 +514,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("_id", filterValuesAsStrings(filter, FilterString.ID), true);
         } else if (objectType == ObjectType.TASK) {
-            return createSetQuery("processForTask.id", filterValuesAsIntegers(filter, FilterString.ID), true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getName(), filterValuesAsIntegers(filter, FilterString.ID), true);
         }
         return new BoolQueryBuilder();
     }
@@ -521,7 +524,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return serviceManager.getProcessService().getQueryTitle(processTitle, true);
         } else if (objectType == ObjectType.TASK) {
-            return createSimpleQuery("processForTask.title", processTitle, true, Operator.AND);
+            return createSimpleQuery(TaskTypeField.PROCESS_TITLE.getName(), processTitle, true, Operator.AND);
         }
         return new BoolQueryBuilder();
     }
@@ -531,8 +534,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true);
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(
-                createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
-            return createSetQuery("processForTask.id", collectIds(processDTOS), true);
+                    createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getName(), collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
     }
@@ -712,17 +715,18 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder taskRange = new BoolQueryBuilder();
         if (!negate) {
             taskRange.must(
-                createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
+                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
             taskRange.must(
-                createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
-            taskRange.must(createSimpleCompareQuery("processingStatus", taskStatus.getValue(), SearchCondition.EQUAL));
+                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
+            taskRange.must(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(),
+                    SearchCondition.EQUAL));
         } else {
             taskRange.mustNot(
-                createSimpleCompareQuery("ordering", getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
+                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
             taskRange.mustNot(
-                createSimpleCompareQuery("ordering", getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
+                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
             taskRange.mustNot(
-                createSimpleCompareQuery("processingStatus", taskStatus.getValue(), SearchCondition.EQUAL));
+                    createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), SearchCondition.EQUAL));
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskRange);
     }
@@ -743,8 +747,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterTaskTitle(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
         BoolQueryBuilder taskTitle = new BoolQueryBuilder();
-        taskTitle.must(createSimpleQuery("title", parameters, !negate));
-        taskTitle.must(createSimpleQuery("processingStatus", taskStatus.getValue(), !negate));
+        taskTitle.must(createSimpleQuery(TaskTypeField.TITLE.getName(), parameters, !negate));
+        taskTitle.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), !negate));
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskTitle);
     }
 
@@ -764,8 +768,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterTaskMin(String parameters, TaskStatus taskStatus, boolean negate, ObjectType objectType)
             throws DataException {
         BoolQueryBuilder taskMin = new BoolQueryBuilder();
-        taskMin.must(createSimpleQuery("ordering", getTaskStart(parameters), !negate));
-        taskMin.must(createSimpleQuery("processingStatus", taskStatus.getValue(), !negate));
+        taskMin.must(createSimpleQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), !negate));
+        taskMin.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), !negate));
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskMin);
     }
 
@@ -785,8 +789,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterTaskMax(String parameters, TaskStatus taskStatus, boolean negate, ObjectType objectType)
             throws DataException {
         BoolQueryBuilder taskMax = new BoolQueryBuilder();
-        taskMax.must(createSimpleQuery("ordering", getTaskEnd(parameters), !negate));
-        taskMax.must(createSimpleQuery("processingStatus", taskStatus.getValue(), !negate));
+        taskMax.must(createSimpleQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters), !negate));
+        taskMax.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), !negate));
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskMax);
     }
 
@@ -806,8 +810,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder filterTaskExact(String parameters, TaskStatus taskStatus, boolean negate,
             ObjectType objectType) throws DataException {
         BoolQueryBuilder taskExact = new BoolQueryBuilder();
-        taskExact.must(createSimpleQuery("ordering", getTaskStart(parameters), !negate));
-        taskExact.must(createSimpleQuery("processingStatus", taskStatus.getValue(), !negate));
+        taskExact.must(createSimpleQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), !negate));
+        taskExact.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), !negate));
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskExact);
     }
 
@@ -855,11 +859,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder typeAutomatic = new BoolQueryBuilder();
         String value = getFilterValueFromFilterString(filter, FilterString.TASKAUTOMATIC);
         if (value != null) {
-            if (value.equalsIgnoreCase("true")) {
-                typeAutomatic.must(createSimpleQuery("typeAutomatic", true, true));
-            } else {
-                typeAutomatic.must(createSimpleQuery("typeAutomatic", false, true));
-            }
+            typeAutomatic.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), value.equalsIgnoreCase("true"), true));
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, typeAutomatic);
     }
@@ -1037,7 +1037,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return query;
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(query, true);
-            return createSetQuery("processForTask.id", collectIds(processDTOS), true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getName(), collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
     }

@@ -33,6 +33,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BatchType;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
@@ -98,9 +99,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * The function removeAll() removes all elements that are contained in the
-     * given collection from this batch. TODO: Not sure if this method is
-     * needed, check it
+     * The function removeAll() removes all elements that are contained in the given
+     * collection from this batch. TODO: Not sure if this method is needed, check it
      *
      * @param processes
      *            collection containing elements to be removed from this set
@@ -111,8 +111,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Find batches with exact type. Necessary to assure that user pickup type
-     * from the list which contains enums.
+     * Find batches with exact type. Necessary to assure that user pickup type from
+     * the list which contains enums.
      *
      * @param type
      *            of the searched batches
@@ -124,8 +124,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Find batches with exact title and type. Necessary to assure that user
-     * pickup type from the list which contains enums.
+     * Find batches with exact title and type. Necessary to assure that user pickup
+     * type from the list which contains enums.
      *
      * @param title
      *            of the searched batches
@@ -135,8 +135,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public List<JsonObject> findByTitleAndType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, true, Operator.AND));
-        query.must(createSimpleQuery("type", type.toString(), true));
+        query.must(createSimpleQuery(BatchTypeField.TITLE.getName(), title, true, Operator.AND));
+        query.must(createSimpleQuery(BatchTypeField.TYPE.getName(), type.toString(), true));
         return searcher.findDocuments(query.toString());
     }
 
@@ -151,8 +151,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public List<JsonObject> findByTitleOrType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery("title", title, true, Operator.AND));
-        query.should(createSimpleQuery("type", type.toString(), true));
+        query.should(createSimpleQuery(BatchTypeField.TITLE.getName(), title, true, Operator.AND));
+        query.should(createSimpleQuery(BatchTypeField.TYPE.getName(), type.toString(), true));
         return searcher.findDocuments(query.toString());
     }
 
@@ -185,8 +185,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         BatchDTO batchDTO = new BatchDTO();
         batchDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject batchJSONObject = jsonObject.getJsonObject("_source");
-        batchDTO.setTitle(batchJSONObject.getString("title"));
-        batchDTO.setType(batchJSONObject.getString("type"));
+        batchDTO.setTitle(batchJSONObject.getString(BatchTypeField.TITLE.getName()));
+        batchDTO.setType(batchJSONObject.getString(BatchTypeField.TYPE.getName()));
         if (!related) {
             batchDTO = convertRelatedJSONObjects(batchJSONObject, batchDTO);
         }
@@ -194,7 +194,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     private BatchDTO convertRelatedJSONObjects(JsonObject jsonObject, BatchDTO batchDTO) throws DataException {
-        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, "processes", serviceManager.getProcessService()));
+        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getName(),
+            serviceManager.getProcessService()));
         return batchDTO;
     }
 

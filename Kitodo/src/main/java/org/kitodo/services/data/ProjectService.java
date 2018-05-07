@@ -42,6 +42,8 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProjectType;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
@@ -166,7 +168,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
-        QueryBuilder query = createSimpleQuery("active", active, true);
+        QueryBuilder query = createSimpleQuery(ProjectTypeField.ACTIVE.getName(), active, true);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 
@@ -256,19 +258,19 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setId(getIdFromJSONObject(jsonObject));
 
         JsonObject projectJSONObject = jsonObject.getJsonObject("_source");
-        projectDTO.setTitle(projectJSONObject.getString("title"));
-        projectDTO.setStartDate(projectJSONObject.getString("startDate"));
-        projectDTO.setEndDate(projectJSONObject.getString("endDate"));
-        projectDTO.setFileFormatDmsExport(projectJSONObject.getString("fileFormatDmsExport"));
-        projectDTO.setFileFormatInternal(projectJSONObject.getString("fileFormatInternal"));
-        projectDTO.setMetsRightsOwner(projectJSONObject.getString("metsRightsOwner"));
-        projectDTO.setNumberOfPages(projectJSONObject.getInt("numberOfPages"));
-        projectDTO.setNumberOfVolumes(projectJSONObject.getInt("numberOfVolumes"));
-        projectDTO.setActive(projectJSONObject.getBoolean("active"));
+        projectDTO.setTitle(projectJSONObject.getString(ProjectTypeField.TITLE.getName()));
+        projectDTO.setStartDate(projectJSONObject.getString(ProjectTypeField.START_DATE.getName()));
+        projectDTO.setEndDate(projectJSONObject.getString(ProjectTypeField.END_DATE.getName()));
+        projectDTO.setFileFormatDmsExport(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
+        projectDTO.setFileFormatInternal(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
+        projectDTO.setMetsRightsOwner(projectJSONObject.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
+        projectDTO.setNumberOfPages(projectJSONObject.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
+        projectDTO.setNumberOfVolumes(projectJSONObject.getInt(ProjectTypeField.NUMBER_OF_VOLUMES.getName()));
+        projectDTO.setActive(projectJSONObject.getBoolean(ProjectTypeField.ACTIVE.getName()));
         projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(projectJSONObject.getInt("client.id"));
-        clientDTO.setName(projectJSONObject.getString("client.clientName"));
+        clientDTO.setId(projectJSONObject.getInt(ProjectTypeField.CLIENT_ID.getName()));
+        clientDTO.setName(projectJSONObject.getString(ProjectTypeField.CLIENT_NAME.getName()));
         projectDTO.setClient(clientDTO);
         if (!related) {
             projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
@@ -278,13 +280,13 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
         List<TemplateDTO> templateDTOS = new ArrayList<>();
-        JsonArray jsonArray = jsonObject.getJsonArray("templates");
+        JsonArray jsonArray = jsonObject.getJsonArray(ProjectTypeField.TEMPLATES.getName());
 
         for (JsonValue singleObject : jsonArray) {
             JsonObject processJson = singleObject.asJsonObject();
             TemplateDTO templateDTO = new TemplateDTO();
-            templateDTO.setId(processJson.getInt("id"));
-            templateDTO.setTitle(processJson.getString("title"));
+            templateDTO.setId(processJson.getInt(TemplateTypeField.ID.getName()));
+            templateDTO.setTitle(processJson.getString(TemplateTypeField.TITLE.getName()));
             templateDTOS.add(templateDTO);
         }
         return templateDTOS;

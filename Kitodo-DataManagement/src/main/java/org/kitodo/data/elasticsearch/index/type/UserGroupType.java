@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
 
 /**
  * Implementation of UserGroup Type.
@@ -25,9 +26,9 @@ public class UserGroupType extends BaseType<UserGroup> {
     @Override
     JsonObject getJsonObject(UserGroup userGroup) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(userGroup.getTitle()));
-        jsonObjectBuilder.add("authorities", addObjectRelation(userGroup.getGlobalAuthorities(), true));
-        jsonObjectBuilder.add("users", addObjectRelation(userGroup.getUsers(), true));
+        jsonObjectBuilder.add(UserGroupTypeField.TITLE.getName(), preventNull(userGroup.getTitle()));
+        jsonObjectBuilder.add(UserGroupTypeField.AUTHORITIES.getName(), addObjectRelation(userGroup.getGlobalAuthorities(), true));
+        jsonObjectBuilder.add(UserGroupTypeField.USERS.getName(), addObjectRelation(userGroup.getUsers(), true));
         return jsonObjectBuilder.build();
     }
 }

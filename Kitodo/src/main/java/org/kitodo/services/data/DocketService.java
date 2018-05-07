@@ -26,6 +26,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.DocketType;
+import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.DocketDTO;
@@ -72,7 +73,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      * @return search result
      */
     JsonObject findByFile(String file) throws DataException {
-        QueryBuilder query = createSimpleQuery("file", file, true, Operator.AND);
+        QueryBuilder query = createSimpleQuery(DocketTypeField.FILE.getName(), file, true, Operator.AND);
         return searcher.findDocument(query.toString());
     }
 
@@ -87,8 +88,8 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      */
     JsonObject findByTitleAndFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery("title", title, true, Operator.AND));
-        query.must(createSimpleQuery("file", file, true, Operator.AND));
+        query.must(createSimpleQuery(DocketTypeField.TITLE.getName(), title, true, Operator.AND));
+        query.must(createSimpleQuery(DocketTypeField.FILE.getName(), file, true, Operator.AND));
         return searcher.findDocument(query.toString());
     }
 
@@ -103,8 +104,8 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
      */
     List<JsonObject> findByTitleOrFile(String title, String file) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery("title", title, true, Operator.AND));
-        query.should(createSimpleQuery("file", file, true, Operator.AND));
+        query.should(createSimpleQuery(DocketTypeField.TITLE.getName(), title, true, Operator.AND));
+        query.should(createSimpleQuery(DocketTypeField.FILE.getName(), file, true, Operator.AND));
         return searcher.findDocuments(query.toString());
     }
 
@@ -113,8 +114,8 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
         DocketDTO docketDTO = new DocketDTO();
         docketDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
-        docketDTO.setTitle(docketJSONObject.getString("title"));
-        docketDTO.setFile(docketJSONObject.getString("file"));
+        docketDTO.setTitle(docketJSONObject.getString(DocketTypeField.TITLE.getName()));
+        docketDTO.setFile(docketJSONObject.getString(DocketTypeField.FILE.getName()));
         return docketDTO;
     }
 }

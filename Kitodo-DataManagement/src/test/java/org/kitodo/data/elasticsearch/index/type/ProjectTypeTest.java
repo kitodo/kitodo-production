@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.text.DateFormat;
@@ -34,6 +35,10 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
  * Test class for ProjectType.
@@ -164,90 +169,136 @@ public class ProjectTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Testing", actual.getString("title"));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-01", actual.getString("startDate"));
-        assertEquals("Key endDate doesn't match to given value!", "2017-03-01", actual.getString("endDate"));
-        assertEquals("Key active doesn't match to given value!", true, actual.getBoolean("active"));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "", actual.getString("metsRightsOwner"));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 10, actual.getInt("numberOfVolumes"));
-        assertEquals("Key numberOfPages doesn't match to given value!", 100, actual.getInt("numberOfPages"));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream", actual.getString("fileFormatInternal"));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream", actual.getString("fileFormatDmsExport"));
+        assertEquals("Key title doesn't match to given value!", "Testing",
+            actual.getString(ProjectTypeField.TITLE.getName()));
+        assertEquals("Key startDate doesn't match to given value!", "2017-01-01",
+            actual.getString(ProjectTypeField.START_DATE.getName()));
+        assertEquals("Key endDate doesn't match to given value!", "2017-03-01",
+            actual.getString(ProjectTypeField.END_DATE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(ProjectTypeField.ACTIVE.getName()));
+        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
+            actual.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
+        assertEquals("Key numberOfVolumes doesn't match to given value!", 10,
+            actual.getInt(ProjectTypeField.NUMBER_OF_VOLUMES.getName()));
+        assertEquals("Key numberOfPages doesn't match to given value!", 100,
+            actual.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
+        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
+        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
 
-        assertEquals("Key client.id doesn't match to given value!", 1, actual.getInt("client.id"));
-        assertEquals("Key client.clientName doesn't match to given value!", "TestClient", actual.getString("client.clientName"));
+        assertEquals("Key client.id doesn't match to given value!", 1,
+            actual.getInt(ProjectTypeField.CLIENT_ID.getName()));
+        assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
+            actual.getString(ProjectTypeField.CLIENT_NAME.getName()));
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
+        assertEquals("Key processes.id doesn't match to given value!", 2,
+                process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.title doesn't match to given value!", "Second",
+                process.getString(ProcessTypeField.TITLE.getName()));
 
-        JsonArray templates = actual.getJsonArray("templates");
-        assertEquals("Size templates doesn't match to given value!", 1, processes.size());
+        JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
+        assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
-        assertEquals("Key templates.id doesn't match to given value!", 1, template.getInt("id"));
-        assertEquals("Key templates.title doesn't match to given value!", "First", template.getString("title"));
+        assertEquals("Key templates.id doesn't match to given value!", 1,
+                template.getInt(TemplateTypeField.ID.getName()));
+        assertEquals("Key templates.title doesn't match to given value!", "First",
+                template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
 
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(1);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(2);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(3);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(4);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Tic", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Tac", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "first", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Tic",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Tac",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "first",
+            user.getString(UserTypeField.LOGIN.getName()));
 
         user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Ted", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Barney", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "second", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Ted",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Barney",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "second",
+            user.getString(UserTypeField.LOGIN.getName()));
     }
 
     @Test
@@ -259,90 +310,136 @@ public class ProjectTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Rendering", actual.getString("title"));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-10", actual.getString("startDate"));
-        assertEquals("Key endDate doesn't match to given value!", "2017-09-10", actual.getString("endDate"));
-        assertEquals("Key active doesn't match to given value!", true, actual.getBoolean("active"));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "", actual.getString("metsRightsOwner"));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 20, actual.getInt("numberOfVolumes"));
-        assertEquals("Key numberOfPages doesn't match to given value!", 2000, actual.getInt("numberOfPages"));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream", actual.getString("fileFormatInternal"));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream", actual.getString("fileFormatDmsExport"));
+        assertEquals("Key title doesn't match to given value!", "Rendering",
+            actual.getString(ProjectTypeField.TITLE.getName()));
+        assertEquals("Key startDate doesn't match to given value!", "2017-01-10",
+            actual.getString(ProjectTypeField.START_DATE.getName()));
+        assertEquals("Key endDate doesn't match to given value!", "2017-09-10",
+            actual.getString(ProjectTypeField.END_DATE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(ProjectTypeField.ACTIVE.getName()));
+        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
+            actual.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
+        assertEquals("Key numberOfVolumes doesn't match to given value!", 20,
+            actual.getInt(ProjectTypeField.NUMBER_OF_VOLUMES.getName()));
+        assertEquals("Key numberOfPages doesn't match to given value!", 2000,
+            actual.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
+        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
+        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
 
-        assertEquals("Key client.id doesn't match to given value!", 0, actual.getInt("client.id"));
-        assertEquals("Key client.clientName doesn't match to given value!", "", actual.getString("client.clientName"));
+        assertEquals("Key client.id doesn't match to given value!", 0,
+            actual.getInt(ProjectTypeField.CLIENT_ID.getName()));
+        assertEquals("Key client.clientName doesn't match to given value!", "",
+            actual.getString(ProjectTypeField.CLIENT_NAME.getName()));
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 2, process.getInt("id"));
-        assertEquals("Key processes.title doesn't match to given value!", "Second", process.getString("title"));
+        assertEquals("Key processes.id doesn't match to given value!", 2,
+                process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.title doesn't match to given value!", "Second",
+                process.getString(ProcessTypeField.TITLE.getName()));
 
-        JsonArray templates = actual.getJsonArray("templates");
+        JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
-        assertEquals("Key templates.id doesn't match to given value!", 1, template.getInt("id"));
-        assertEquals("Key templates.title doesn't match to given value!", "First", template.getString("title"));
+        assertEquals("Key templates.id doesn't match to given value!", 1,
+                template.getInt(TemplateTypeField.ID.getName()));
+        assertEquals("Key templates.title doesn't match to given value!", "First",
+                template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
 
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(1);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(2);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(3);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(4);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD", projectFileGroup.getString("name"));
+        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
+            projectFileGroup.getString(ProjectTypeField.PFG_NAME.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path, projectFileGroup.getString("path"));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "", projectFileGroup.getString("folder"));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf", projectFileGroup.getString("mimeType"));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf", projectFileGroup.getString("suffix"));
+        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
+            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
+        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
+            projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
+        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
+            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf",
+            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Tic", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Tac", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "first", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Tic",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Tac",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "first",
+            user.getString(UserTypeField.LOGIN.getName()));
 
         user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Ted", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Barney", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "second", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Ted",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Barney",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "second",
+            user.getString(UserTypeField.LOGIN.getName()));
     }
 
     @Test
@@ -355,26 +452,36 @@ public class ProjectTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete", actual.getString("title"));
-        assertEquals("Key startDate doesn't match to given value!", dateFormat.format(project.getStartDate()), actual.getString("startDate"));
-        assertEquals("Key endDate doesn't match to given value!", dateFormat.format(project.getEndDate()), actual.getString("endDate"));
-        assertEquals("Key active doesn't match to given value!", true, actual.getBoolean("active"));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "", actual.getString("metsRightsOwner"));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 0, actual.getInt("numberOfVolumes"));
-        assertEquals("Key numberOfPages doesn't match to given value!", 0, actual.getInt("numberOfPages"));
-        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream", actual.getString("fileFormatInternal"));
-        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream", actual.getString("fileFormatDmsExport"));
+        assertEquals("Key title doesn't match to given value!", "Incomplete",
+            actual.getString(ProjectTypeField.TITLE.getName()));
+        assertEquals("Key startDate doesn't match to given value!", dateFormat.format(project.getStartDate()),
+            actual.getString(ProjectTypeField.START_DATE.getName()));
+        assertEquals("Key endDate doesn't match to given value!", dateFormat.format(project.getEndDate()),
+            actual.getString(ProjectTypeField.END_DATE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(ProjectTypeField.ACTIVE.getName()));
+        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
+            actual.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
+        assertEquals("Key numberOfVolumes doesn't match to given value!", 0,
+            actual.getInt(ProjectTypeField.NUMBER_OF_VOLUMES.getName()));
+        assertEquals("Key numberOfPages doesn't match to given value!", 0,
+            actual.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
+        assertEquals("Key fileFormatInternal doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
+        assertEquals("Key fileFormatDmsExport doesn't match to given value!", "XStream",
+            actual.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
 
-        assertEquals("Key client.id doesn't match to given value!", 0, actual.getInt("client.id"));
-        assertEquals("Key client.clientName doesn't match to given value!", "", actual.getString("client.clientName"));
+        assertEquals("Key client.id doesn't match to given value!", 0,
+            actual.getInt(ProjectTypeField.CLIENT_ID.getName()));
+        assertEquals("Key client.clientName doesn't match to given value!", "",
+            actual.getString(ProjectTypeField.CLIENT_NAME.getName()));
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
         assertEquals("Size projectFileGroups doesn't match to given value!", 0, projectFileGroups.size());
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 0, users.size());
     }
 
@@ -388,7 +495,7 @@ public class ProjectTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
 
-        JsonArray processes = actual.getJsonArray("processes");
+        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
 
@@ -396,11 +503,11 @@ public class ProjectTypeTest {
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
-        JsonArray projectFileGroups = actual.getJsonArray("projectFileGroups");
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
         assertEquals("Amount of keys in projectFileGroups is incorrect!", 5, projectFileGroup.keySet().size());
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }

@@ -24,6 +24,8 @@ import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
 
 import static org.junit.Assert.assertEquals;
 
@@ -62,14 +64,17 @@ public class AuthorityTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "First", actual.getString("title"));
+        assertEquals("Key title doesn't match to given value!", "First",
+            actual.getString(AuthorityTypeField.TITLE.getName()));
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
         assertEquals("Size userGroups doesn't match to given value!", 1, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
-        assertEquals("Key userGroups.id doesn't match to given value!", 1, userGroup.getInt("id"));
-        assertEquals("Key userGroups.title doesn't match to given value!", "First", userGroup.getString("title"));
+        assertEquals("Key userGroups.id doesn't match to given value!", 1,
+            userGroup.getInt(UserGroupTypeField.ID.getName()));
+        assertEquals("Key userGroups.title doesn't match to given value!", "First",
+            userGroup.getString(UserGroupTypeField.TITLE.getName()));
     }
 
     @Test
@@ -81,9 +86,10 @@ public class AuthorityTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Second", actual.getString("title"));
+        assertEquals("Key title doesn't match to given value!", "Second",
+            actual.getString(AuthorityTypeField.TITLE.getName()));
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
     }
 
@@ -97,7 +103,7 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray("userGroups");
+        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in userGroups is incorrect!", 2, userGroup.keySet().size());
     }

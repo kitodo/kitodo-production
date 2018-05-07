@@ -28,6 +28,9 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.elasticsearch.index.type.enums.AuthorityTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserGroupTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
 
 /**
  * Test class for UserGroupType.
@@ -97,37 +100,50 @@ public class UserGroupTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Administrator", actual.getString("title"));
+        assertEquals("Key title doesn't match to given value!", "Administrator",
+            actual.getString(UserGroupTypeField.TITLE.getName()));
 
-        JsonArray authorities = actual.getJsonArray("authorities");
+        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
-        assertEquals("Key authorities.id doesn't match to given value!", 1, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "admin", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 1,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "admin",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
 
         authority = authorities.getJsonObject(1);
-        assertEquals("Key authorities.id doesn't match to given value!", 2, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "manager", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 2,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "manager",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
 
         authority = authorities.getJsonObject(2);
-        assertEquals("Key authorities.id doesn't match to given value!", 3, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "user", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 3,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "user",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Tic", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Tac", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "first", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 1, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Tic",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Tac",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "first",
+            user.getString(UserTypeField.LOGIN.getName()));
 
         user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt("id"));
-        assertEquals("Key users.name doesn't match to given value!", "Ted", user.getString("name"));
-        assertEquals("Key users.surname doesn't match to given value!", "Barney", user.getString("surname"));
-        assertEquals("Key users.login doesn't match to given value!", "second", user.getString("login"));
+        assertEquals("Key users.id doesn't match to given value!", 2, user.getInt(UserTypeField.ID.getName()));
+        assertEquals("Key users.name doesn't match to given value!", "Ted",
+            user.getString(UserTypeField.NAME.getName()));
+        assertEquals("Key users.surname doesn't match to given value!", "Barney",
+            user.getString(UserTypeField.SURNAME.getName()));
+        assertEquals("Key users.login doesn't match to given value!", "second",
+            user.getString(UserTypeField.LOGIN.getName()));
     }
 
     @Test
@@ -139,25 +155,32 @@ public class UserGroupTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "Random", actual.getString("title"));
+        assertEquals("Key title doesn't match to given value!", "Random",
+            actual.getString(UserGroupTypeField.TITLE.getName()));
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray authorities = actual.getJsonArray("authorities");
+        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
-        assertEquals("Key authorities.id doesn't match to given value!", 1, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "admin", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 1,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "admin",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
 
         authority = authorities.getJsonObject(1);
-        assertEquals("Key authorities.id doesn't match to given value!", 2, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "manager", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 2,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "manager",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
 
         authority = authorities.getJsonObject(2);
-        assertEquals("Key authorities.id doesn't match to given value!", 3, authority.getInt("id"));
-        assertEquals("Key authorities.title doesn't match to given value!", "user", authority.getString("title"));
+        assertEquals("Key authorities.id doesn't match to given value!", 3,
+            authority.getInt(AuthorityTypeField.ID.getName()));
+        assertEquals("Key authorities.title doesn't match to given value!", "user",
+            authority.getString(AuthorityTypeField.TITLE.getName()));
     }
 
     @Test
@@ -170,11 +193,11 @@ public class UserGroupTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
 
-        JsonArray authorities = actual.getJsonArray("authorities");
+        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
         JsonObject authority = authorities.getJsonObject(0);
         assertEquals("Amount of keys in authorities is incorrect!", 2, authority.keySet().size());
 
-        JsonArray users = actual.getJsonArray("users");
+        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }

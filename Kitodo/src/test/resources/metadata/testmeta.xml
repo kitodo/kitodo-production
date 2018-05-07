@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2018-02-14T10:01:44">
+        <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+            <mets:name>Kitodo - kitodo-ugh-2.1.0-kitodo-ugh-2.1.0 - 22−May−2017</mets:name>
+            <mets:note>Kitodo</mets:note>
+        </mets:agent>
+    </mets:metsHdr>
+    <mets:dmdSec ID="DMDLOG_0000">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Otsar ha-kavod</kitodo:metadata>
+                    <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
+                    <kitodo:metadata name="TypeOfResource" type="group">
+                        <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
+                        <kitodo:metadata name="typIdentifierPPN">10457187X</kitodo:metadata>
+                        <kitodo:metadata name="typIdentifierURI">http://d-nb.info/gnd/4023287-6</kitodo:metadata>
+                    </kitodo:metadata>
+                    <kitodo:metadata type="group" name="FormerOwner">
+                        <kitodo:metadata name="authorityURI">http://d-nb.info/gnd/</kitodo:metadata>
+                        <kitodo:metadata name="authorityValue">http://d-nb.info/gnd/</kitodo:metadata>
+                        <kitodo:metadata name="displayName">, </kitodo:metadata>
+                    </kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0001">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 134r-156v]</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0002">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">[Seite 157r-181v]</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec>
+        <mets:fileGrp USE="LOCAL">
+            <mets:file ID="FILE_0001" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000001.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0002" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
+            </mets:file>
+        </mets:fileGrp>
+    </mets:fileSec>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Manuscript">
+            <mets:div ID="LOG_0001" TYPE="Cover"/>
+            <mets:div DMDID="DMDLOG_0001" ID="LOG_0002" TYPE="Text"/>
+            <mets:div DMDID="DMDLOG_0002" ID="LOG_0003" TYPE="Text"/>
+        </mets:div>
+    </mets:structMap>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="BoundBook">
+            <mets:div ID="PHYS_0001" ORDER="1" ORDERLABEL="uncounted" TYPE="page">
+                <mets:fptr FILEID="FILE_0001"/>
+            </mets:div>
+            <mets:div ID="PHYS_0002" ORDER="2" ORDERLABEL="uncounted" TYPE="page">
+                <mets:fptr FILEID="FILE_0002"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+    <mets:structLink>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0000"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0001"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0002" xlink:from="LOG_0003"/>
+    </mets:structLink>
+</mets:mets>

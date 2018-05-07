@@ -25,6 +25,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 
 /**
  * Test class for DocketType.
@@ -59,10 +60,14 @@ public class RulesetTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key title doesn't match to given value!", "SLUBDD", actual.getString("title"));
-        assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml", actual.getString("file"));
-        assertEquals("Key orderMetadataByRuleset doesn't match to given value!", false, actual.getBoolean("orderMetadataByRuleset"));
-        assertEquals("Key fileContent doesn't match to given value!", "", actual.getString("fileContent"));
+        assertEquals("Key title doesn't match to given value!", "SLUBDD",
+            actual.getString(RulesetTypeField.TITLE.getName()));
+        assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml",
+            actual.getString(RulesetTypeField.FILE.getName()));
+        assertEquals("Key orderMetadataByRuleset doesn't match to given value!", false,
+            actual.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
+        assertEquals("Key fileContent doesn't match to given value!", "",
+            actual.getString(RulesetTypeField.FILE_CONTENT.getName()));
     }
 
     @Test

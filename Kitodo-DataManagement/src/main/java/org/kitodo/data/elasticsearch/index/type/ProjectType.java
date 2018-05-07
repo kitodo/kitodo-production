@@ -21,6 +21,7 @@ import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 
 /**
  * Implementation of Project Type.
@@ -29,40 +30,39 @@ public class ProjectType extends BaseType<Project> {
 
     @Override
     JsonObject getJsonObject(Project project) {
+
         JsonArrayBuilder projectFileGroups = Json.createArrayBuilder();
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
         for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
             JsonObject projectFileGroupObject = Json.createObjectBuilder()
-                    .add("name", preventNull(projectFileGroup.getName()))
-                    .add("path", preventNull(projectFileGroup.getPath()))
-                    .add("mimeType", preventNull(projectFileGroup.getMimeType()))
-                    .add("suffix", preventNull(projectFileGroup.getSuffix()))
-                    .add("folder", preventNull(projectFileGroup.getFolder()))
+                    .add(ProjectTypeField.PFG_NAME.getName(), preventNull(projectFileGroup.getName()))
+                    .add(ProjectTypeField.PFG_PATH.getName(), preventNull(projectFileGroup.getPath()))
+                    .add(ProjectTypeField.PFG_MIME_TYPE.getName(), preventNull(projectFileGroup.getMimeType()))
+                    .add(ProjectTypeField.PFG_SUFFIX.getName(), preventNull(projectFileGroup.getSuffix()))
+                    .add(ProjectTypeField.PFG_FOLDER.getName(), preventNull(projectFileGroup.getFolder()))
                     .build();
             projectFileGroups.add(projectFileGroupObject);
         }
 
+        Integer clientId = Objects.nonNull(project.getClient()) ? project.getClient().getId() : 0;
+        String clientName = Objects.nonNull(project.getClient()) ? project.getClient().getName() : "";
+
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(project.getTitle()));
-        jsonObjectBuilder.add("startDate", getFormattedDate(project.getStartDate()));
-        jsonObjectBuilder.add("endDate", getFormattedDate(project.getEndDate()));
-        jsonObjectBuilder.add("numberOfPages", project.getNumberOfPages());
-        jsonObjectBuilder.add("numberOfVolumes", project.getNumberOfVolumes());
-        jsonObjectBuilder.add("fileFormatDmsExport", project.getFileFormatDmsExport());
-        jsonObjectBuilder.add("fileFormatInternal", project.getFileFormatInternal());
-        jsonObjectBuilder.add("metsRightsOwner", project.getMetsRightsOwner());
-        jsonObjectBuilder.add("active", project.isActive());
-        jsonObjectBuilder.add("processes", addObjectRelation(project.getProcesses(), true));
-        jsonObjectBuilder.add("templates", addObjectRelation(project.getTemplates(), true));
-        jsonObjectBuilder.add("users", addObjectRelation(project.getUsers(), true));
-        if (Objects.nonNull(project.getClient())) {
-            jsonObjectBuilder.add("client.id", project.getClient().getId());
-            jsonObjectBuilder.add("client.clientName", project.getClient().getName());
-        } else {
-            jsonObjectBuilder.add("client.id", 0);
-            jsonObjectBuilder.add("client.clientName", "");
-        }
-        jsonObjectBuilder.add("projectFileGroups", projectFileGroups.build());
+        jsonObjectBuilder.add(ProjectTypeField.TITLE.getName(), preventNull(project.getTitle()));
+        jsonObjectBuilder.add(ProjectTypeField.START_DATE.getName(), getFormattedDate(project.getStartDate()));
+        jsonObjectBuilder.add(ProjectTypeField.END_DATE.getName(), getFormattedDate(project.getEndDate()));
+        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_PAGES.getName(), project.getNumberOfPages());
+        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_VOLUMES.getName(), project.getNumberOfVolumes());
+        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName(), project.getFileFormatDmsExport());
+        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_INTERNAL.getName(), project.getFileFormatInternal());
+        jsonObjectBuilder.add(ProjectTypeField.METS_RIGTS_OWNER.getName(), project.getMetsRightsOwner());
+        jsonObjectBuilder.add(ProjectTypeField.ACTIVE.getName(), project.isActive());
+        jsonObjectBuilder.add(ProjectTypeField.PROCESSES.getName(), addObjectRelation(project.getProcesses(), true));
+        jsonObjectBuilder.add(ProjectTypeField.TEMPLATES.getName(), addObjectRelation(project.getTemplates(), true));
+        jsonObjectBuilder.add(ProjectTypeField.USERS.getName(), addObjectRelation(project.getUsers(), true));
+        jsonObjectBuilder.add(ProjectTypeField.CLIENT_ID.getName(), clientId);
+        jsonObjectBuilder.add(ProjectTypeField.CLIENT_NAME.getName(), clientName);
+        jsonObjectBuilder.add(ProjectTypeField.PROJECT_FILE_GROUPS.getName(), projectFileGroups.build());
         return jsonObjectBuilder.build();
     }
 }

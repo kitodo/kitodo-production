@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 
 /**
  * Implementation of Ruleset Type.
@@ -25,10 +26,10 @@ public class RulesetType extends BaseType<Ruleset> {
     @Override
     JsonObject getJsonObject(Ruleset ruleset) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add("title", preventNull(ruleset.getTitle()));
-        jsonObjectBuilder.add("file", preventNull(ruleset.getFile()));
-        jsonObjectBuilder.add("orderMetadataByRuleset", ruleset.isOrderMetadataByRuleset());
-        jsonObjectBuilder.add("fileContent", "");
+        jsonObjectBuilder.add(RulesetTypeField.TITLE.getName(), preventNull(ruleset.getTitle()));
+        jsonObjectBuilder.add(RulesetTypeField.FILE.getName(), preventNull(ruleset.getFile()));
+        jsonObjectBuilder.add(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName(), ruleset.isOrderMetadataByRuleset());
+        jsonObjectBuilder.add(RulesetTypeField.FILE_CONTENT.getName(), "");
         return jsonObjectBuilder.build();
     }
 }

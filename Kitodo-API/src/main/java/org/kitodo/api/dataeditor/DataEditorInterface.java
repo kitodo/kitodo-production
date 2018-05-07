@@ -11,6 +11,7 @@
 
 package org.kitodo.api.dataeditor;
 
+import java.io.IOException;
 import java.net.URI;
 
 /**
@@ -24,7 +25,7 @@ public interface DataEditorInterface {
      * @param xmlFileUri
      *            The URI to the xml file to read.
      */
-    void readData(URI xmlFileUri);
+    void readData(URI xmlFileUri) throws IOException;
 
     /**
      * Opens an editor to edit an xmlfile.
