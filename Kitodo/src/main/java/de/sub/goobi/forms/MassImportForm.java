@@ -127,7 +127,7 @@ public class MassImportForm implements Serializable {
     }
 
     /**
-     * generate a list with all possible collections for given project.
+     * Generate a list with all possible collections for given project.
      */
     @SuppressWarnings("unchecked")
     private void initializePossibleDigitalCollections() {
@@ -159,21 +159,7 @@ public class MassImportForm implements Serializable {
                         defaultCollections.add(digitalCollection.getText());
                     }
                 } else {
-                    // run through the projects
-                    List<Element> projectNames = project.getChildren("name");
-                    for (Element projectName : projectNames) {
-                        // all all collections to list
-                        if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
-                            List<Element> myCols = project.getChildren("DigitalCollection");
-                            for (Element digitalCollection : myCols) {
-                                if (digitalCollection.getAttribute(defaultString) != null
-                                        && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
-                                    digitalCollections.add(digitalCollection.getText());
-                                }
-                                this.possibleDigitalCollections.add(digitalCollection.getText());
-                            }
-                        }
-                    }
+                    runThroughProject(project);
                 }
             }
         } catch (JDOMException | IOException e1) {
@@ -182,6 +168,26 @@ public class MassImportForm implements Serializable {
 
         if (this.possibleDigitalCollections.size() == 0) {
             this.possibleDigitalCollections = defaultCollections;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void runThroughProject(Element project) {
+        final String defaultString = "default";
+
+        List<Element> projectNames = project.getChildren("name");
+        for (Element projectName : projectNames) {
+            // all all collections to list
+            if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
+                List<Element> myCols = project.getChildren("DigitalCollection");
+                for (Element digitalCollection : myCols) {
+                    if (digitalCollection.getAttribute(defaultString) != null
+                            && digitalCollection.getAttributeValue(defaultString).equalsIgnoreCase("true")) {
+                        digitalCollections.add(digitalCollection.getText());
+                    }
+                    this.possibleDigitalCollections.add(digitalCollection.getText());
+                }
+            }
         }
     }
 
@@ -218,7 +224,6 @@ public class MassImportForm implements Serializable {
         }
         if (testForData()) {
             List<ImportObject> answer = new ArrayList<>();
-            Batch batch = null;
 
             // found list with ids
             PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
@@ -239,21 +244,8 @@ public class MassImportForm implements Serializable {
                 answer = getAnswer(this.plugin.generateRecordsFromFilenames(this.selectedFilenames));
             }
 
-            if (answer.size() > 1) {
-                batch = getBatch();
-            }
+            iterateOverAnswer(answer);
 
-            for (ImportObject io : answer) {
-                if (batch != null) {
-                    io.getBatches().add(batch);
-                }
-
-                if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
-                    addProcessToList(io);
-                } else {
-                    removeImportFileNameFromSelectedFileNames(io);
-                }
-            }
             if (answer.size() != this.processList.size()) {
                 // some error on process generation, don't go to next page
                 return null;
@@ -262,16 +254,42 @@ public class MassImportForm implements Serializable {
             Helper.setFehlerMeldung("missingData");
             return null;
         }
+
+        removeFiles();
+
         this.idList = null;
+        this.records = "";
+        return "/pages/MassImportFormPage3";
+    }
+
+    private void iterateOverAnswer(List<ImportObject> answer) throws DataException, IOException {
+        Batch batch = null;
+        if (answer.size() > 1) {
+            batch = getBatch();
+        }
+
+        for (ImportObject io : answer) {
+            if (batch != null) {
+                io.getBatches().add(batch);
+            }
+
+            if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
+                addProcessToList(io);
+            } else {
+                removeImportFileNameFromSelectedFileNames(io);
+            }
+        }
+    }
+
+    private void removeFiles() {
         if (this.importFile != null) {
-            this.importFile.delete();
-            this.importFile = null;
+            if (this.importFile.delete()) {
+                this.importFile = null;
+            }
         }
         if (selectedFilenames != null && !selectedFilenames.isEmpty()) {
             this.plugin.deleteFiles(this.selectedFilenames);
         }
-        this.records = "";
-        return "/pages/MassImportFormPage3";
     }
 
     /**
