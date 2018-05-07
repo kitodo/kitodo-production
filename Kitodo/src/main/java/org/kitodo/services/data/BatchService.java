@@ -361,15 +361,4 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
             return super.toString();
         }
     }
-
-    /**
-     * Kitodo does not keep objects around from Hibernate session to Hibernate
-     * session, so this is the working approach here.
-     *
-     * @see "https://developer.jboss.org/wiki/EqualsandHashCode"
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
 }

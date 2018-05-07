@@ -39,11 +39,6 @@ public class HelperComparator implements Comparator<Object>, Serializable {
         return rueckgabe;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return this == obj;
-    }
-
     public void setSortType(String sortType) {
         this.sortType = sortType;
     }
