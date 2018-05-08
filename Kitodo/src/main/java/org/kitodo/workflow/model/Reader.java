@@ -35,7 +35,6 @@ import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -73,7 +72,7 @@ public class Reader {
      *
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate() throws DAOException, DataException {
+    public Template convertWorkflowToTemplate() throws DataException {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
@@ -81,16 +80,6 @@ public class Reader {
         template.setWorkflow(determineWorkflow(this.workflow.getId(), this.diagramName));
         template.setTitle(this.workflow.getTitle());
         template.setOutputName(this.workflow.getOutputName());
-
-        Integer docketId = this.workflow.getDocket();
-        if (docketId > 0) {
-            template.setDocket(serviceManager.getDocketService().getById(docketId));
-        }
-
-        Integer rulesetId = this.workflow.getRuleset();
-        if (rulesetId > 0) {
-            template.setRuleset(serviceManager.getRulesetService().getById(rulesetId));
-        }
 
         getWorkflowTasks();
 
