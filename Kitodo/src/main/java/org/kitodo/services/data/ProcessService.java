@@ -116,6 +116,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static ProcessService instance = null;
     private static String DIRECTORY_PREFIX = "orig";
     private static String DIRECTORY_SUFFIX = "images";
+    private static final String EXPORT_ERROR = "exportError";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -1770,21 +1771,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             targetDirectory = userHome.resolve(File.separator + process.getTitle());
             // remove old import folder
             if (!fileService.delete(userHome)) {
-                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                     "Import folder could not be cleared");
                 return false;
             }
             // remove old success folder
             File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
             if (!fileService.delete(successFile.toURI())) {
-                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                     "Success folder could not be cleared");
                 return false;
             }
             // remove old error folder
             File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
             if (!fileService.delete(errorFile.toURI())) {
-                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                     "Error folder could not be cleared");
                 return false;
             }
@@ -1805,7 +1806,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             directoryDownload(process, targetDirectory);
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("Export canceled, Process: " + process.getTitle(), logger, e);
+            Helper.setErrorMessage(EXPORT_ERROR, new Object[]{process.getTitle()}, logger, e);
             return false;
         }
 

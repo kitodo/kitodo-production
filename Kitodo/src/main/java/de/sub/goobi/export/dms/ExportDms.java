@@ -24,6 +24,7 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +53,7 @@ public class ExportDms extends ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
+    private static final String EXPORT_ERROR = "exportError";
 
     /**
      * The field exportDmsTask holds an optional task instance. Its progress and
@@ -114,9 +116,9 @@ public class ExportDms extends ExportMets {
         } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
-                logger.error("Export abgebrochen, xml-LeseFehler", e);
+                logger.error(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())), e);
             } else {
-                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
+                Helper.setErrorMessage(EXPORT_ERROR, new Object[]{process.getTitle()}, logger, e);
             }
             return false;
         }
@@ -189,7 +191,7 @@ public class ExportDms extends ExportMets {
                 zielVerzeichnis = userHomeProcess;
                 // delete old import folder
                 if (!fileService.delete(userHomeProcess)) {
-                    Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                         "Import folder could not be cleared");
                     return false;
                 }
@@ -197,14 +199,14 @@ public class ExportDms extends ExportMets {
                 URI successFolder = URI
                         .create(process.getProject().getDmsImportSuccessPath() + "/" + process.getTitle());
                 if (!fileService.delete(successFolder)) {
-                    Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                         "Success folder could not be cleared");
                     return false;
                 }
                 // delete old error folder
                 URI errorFolder = URI.create(process.getProject().getDmsImportErrorPath() + "/" + process.getTitle());
                 if (!fileService.delete(errorFolder)) {
-                    Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(),
+                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
                         "Error folder could not be cleared");
                     return false;
                 }
@@ -218,7 +220,8 @@ public class ExportDms extends ExportMets {
             // if the home exists, first delete and then create again
             userHome = zielVerzeichnis;
             if (!fileService.delete(userHome)) {
-                Helper.setFehlerMeldung("Export canceled: " + process.getTitle(), "could not delete home directory");
+                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                        "Could not delete home directory");
                 return false;
             }
             prepareUserDirectory(zielVerzeichnis);
@@ -262,9 +265,9 @@ public class ExportDms extends ExportMets {
         } catch (PreferencesException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
-                logger.error("Export abgebrochen, xml-LeseFehler", e);
+                logger.error(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())), e);
             } else {
-                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
+                Helper.setErrorMessage(EXPORT_ERROR, new Object[]{process.getTitle()}, logger, e);
             }
             return null;
         }
@@ -284,7 +287,7 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setErrorMessage("Export canceled, Process: " + process.getTitle(), logger, e);
+                Helper.setErrorMessage(EXPORT_ERROR, new Object[]{process.getTitle()}, logger, e);
             }
             return false;
         }
@@ -325,9 +328,9 @@ public class ExportDms extends ExportMets {
             } catch (InterruptedException e) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
-                    logger.error(processTitle + ": error on export", e);
+                    logger.error(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)));
                 } else {
-                    Helper.setErrorMessage(processTitle + ": error on export - ", logger, e);
+                    Helper.setErrorMessage(EXPORT_ERROR, new Object[]{processTitle}, logger, e);
                 }
                 Thread.currentThread().interrupt();
             }
@@ -534,7 +537,7 @@ public class ExportDms extends ExportMets {
     private void handleException(Exception e) {
         if (exportDmsTask != null) {
             exportDmsTask.setException(e);
-            logger.error("could not create destination directory", e);
+            logger.error("Could not create destination directory", e);
         } else {
             Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger, e);
         }
