@@ -84,6 +84,7 @@ public class MassImportForm implements Serializable {
     private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
+    private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
 
     /**
      * Constructor.
@@ -696,7 +697,7 @@ public class MassImportForm implements Serializable {
     public boolean getHasNextPage() {
         java.lang.reflect.Method method;
         try {
-            method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+            method = this.plugin.getClass().getMethod(GET_CURRENT_DOC_STRUCTS);
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
@@ -732,7 +733,7 @@ public class MassImportForm implements Serializable {
         }
         java.lang.reflect.Method method;
         try {
-            method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+            method = this.plugin.getClass().getMethod(GET_CURRENT_DOC_STRUCTS);
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
@@ -792,7 +793,7 @@ public class MassImportForm implements Serializable {
     public List<? extends DocstructElement> getDocstructs() {
         java.lang.reflect.Method method;
         try {
-            method = this.plugin.getClass().getMethod("getCurrentDocStructs");
+            method = this.plugin.getClass().getMethod(GET_CURRENT_DOC_STRUCTS);
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<? extends DocstructElement> list = (List<? extends DocstructElement>) o;
