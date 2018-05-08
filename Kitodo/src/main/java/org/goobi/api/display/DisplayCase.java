@@ -26,6 +26,7 @@ public class DisplayCase {
     private Process myProcess;
     private String metaName;
     private BindState myBindState;
+    private static final String TEXT_AREA = "textarea";
 
     /**
      * gets items with current bind state.
@@ -49,12 +50,12 @@ public class DisplayCase {
                     myBindState.getTitle(), metaName, displayType);
             } else {
                 // no ruleset file
-                displayType = DisplayType.getByTitle("textarea");
+                displayType = DisplayType.getByTitle(TEXT_AREA);
                 itemList.add(new Item(metaName, "", false));
             }
         } catch (RuntimeException e) {
             // incorrect ruleset file
-            displayType = DisplayType.getByTitle("textarea");
+            displayType = DisplayType.getByTitle(TEXT_AREA);
             itemList.add(new Item(metaName, "", false));
         }
     }
@@ -81,12 +82,12 @@ public class DisplayCase {
                     displayType);
             } else {
                 // no ruleset file
-                displayType = DisplayType.getByTitle("textarea");
+                displayType = DisplayType.getByTitle(TEXT_AREA);
                 itemList.add(new Item(metaName, "", false));
             }
         } catch (RuntimeException e) {
             // incorrect ruleset file
-            displayType = DisplayType.getByTitle("textarea");
+            displayType = DisplayType.getByTitle(TEXT_AREA);
             itemList.add(new Item(metaName, "", false));
         }
     }
