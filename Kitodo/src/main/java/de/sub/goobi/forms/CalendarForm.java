@@ -58,6 +58,9 @@ import org.xml.sax.SAXException;
 @SessionScoped
 public class CalendarForm implements Serializable {
     private static final long serialVersionUID = -1267629887357681855L;
+    private static final String BLOCK = "calendar.block.";
+    private static final String BLOCK_NEGATIVE = BLOCK + "negative";
+    private static final String UPLOAD_ERROR = "calendar.upload.error";
 
     /**
      * The class Cell represents a single table cell on the calendar sheet.
@@ -723,22 +726,22 @@ public class CalendarForm implements Serializable {
     private void checkBlockPlausibility() {
         if (blockShowing.getFirstAppearance() != null && blockShowing.getLastAppearance() != null) {
             if (blockShowing.getFirstAppearance().plusYears(100).isBefore(blockShowing.getLastAppearance())) {
-                Helper.setMeldung("calendar.block.long");
+                Helper.setMeldung(BLOCK + "long");
             }
             if (blockShowing.getFirstAppearance().isAfter(blockShowing.getLastAppearance())) {
-                Helper.setFehlerMeldung("calendar.block.negative");
+                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
             }
             if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
-                Helper.setMeldung("calendar.block.firstAppearance.early");
+                Helper.setMeldung(BLOCK + "firstAppearance.early");
             }
             if (blockShowing.getFirstAppearance().isAfter(TODAY)) {
-                Helper.setMeldung("calendar.block.firstAppearance.fiction");
+                Helper.setMeldung(BLOCK + "firstAppearance.fiction");
             }
             if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
-                Helper.setMeldung("calendar.block.lastAppearance.early");
+                Helper.setMeldung(BLOCK + "lastAppearance.early");
             }
             if (blockShowing.getLastAppearance().isAfter(TODAY)) {
-                Helper.setMeldung("calendar.block.lastAppearance.fiction");
+                Helper.setMeldung(BLOCK + "lastAppearance.fiction");
             }
         }
     }
@@ -1093,7 +1096,7 @@ public class CalendarForm implements Serializable {
             } catch (IllegalFieldValueException invalidDate) {
                 try {
                     LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
-                    Helper.setMeldung("calendar.block." + input + ".swapped");
+                    Helper.setMeldung(BLOCK + input + ".swapped");
                     return swapped;
                 } catch (IllegalFieldValueException stillInvalid) {
                     Helper.setErrorMessage(invalidDate.getLocalizedMessage(), logger, stillInvalid);
@@ -1101,7 +1104,7 @@ public class CalendarForm implements Serializable {
             }
         }
         if (!uploadShowing && !value.contains("\u00A0")) {
-            Helper.setFehlerMeldung("calendar.block." + input + ".invalid");
+            Helper.setFehlerMeldung(BLOCK + input + ".invalid");
         }
         return null;
     }
@@ -1219,7 +1222,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage("calendar.block.firstAppearance.rejected", logger, e);
+            Helper.setErrorMessage(BLOCK + "firstAppearance.rejected", logger, e);
         }
     }
 
@@ -1258,7 +1261,7 @@ public class CalendarForm implements Serializable {
                 }
             }
         } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage("calendar.block.lastAppearance.rejected", logger, e);
+            Helper.setErrorMessage(BLOCK + "lastAppearance.rejected", logger, e);
         } finally {
             firstAppearanceIsToChange = null;
         }
@@ -1269,7 +1272,7 @@ public class CalendarForm implements Serializable {
                 || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (blockShowing.getFirstAppearance() != null
                     && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
-                Helper.setFehlerMeldung("calendar.block.negative");
+                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setLastAppearance(newLastAppearance);
@@ -1282,14 +1285,14 @@ public class CalendarForm implements Serializable {
         if (blockShowing.getLastAppearance() == null
                 || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
-                Helper.setFehlerMeldung("calendar.block.negative");
+                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
         } else {
             if (blockShowing.getLastAppearance() != null
                     && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
-                Helper.setFehlerMeldung("calendar.block.negative");
+                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setFirstAppearance(firstAppearanceIsToChange);
@@ -1329,7 +1332,7 @@ public class CalendarForm implements Serializable {
     public void uploadClick() {
         try {
             if (uploadedFile == null) {
-                Helper.setMeldung("calendar.upload.error", "calendar.upload.isEmpty");
+                Helper.setMeldung(UPLOAD_ERROR, "calendar.upload.isEmpty");
                 return;
             }
             Document xml = XMLUtils.load(uploadedFile.getInputStream());
@@ -1338,16 +1341,16 @@ public class CalendarForm implements Serializable {
             Helper.removeManagedBean("GranularityForm");
             navigate();
         } catch (SAXException e) {
-            Helper.setErrorMessage("calendar.upload.error", "error.SAXException", logger, e);
+            Helper.setErrorMessage(UPLOAD_ERROR, "error.SAXException", logger, e);
             neglectEmptyBlock();
         } catch (IOException e) {
-            Helper.setErrorMessage("calendar.upload.error", "error.IOException", logger, e);
+            Helper.setErrorMessage(UPLOAD_ERROR, "error.IOException", logger, e);
             neglectEmptyBlock();
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
             neglectEmptyBlock();
         } catch (NoSuchElementException e) {
-            Helper.setErrorMessage("calendar.upload.error", "calendar.upload.missingMandatoryElement", logger, e);
+            Helper.setErrorMessage(UPLOAD_ERROR, "calendar.upload.missingMandatoryElement", logger, e);
             neglectEmptyBlock();
         } catch (NullPointerException e) {
             Helper.setErrorMessage("calendar.upload.missingMandatoryValue", logger, e);
