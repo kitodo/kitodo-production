@@ -43,6 +43,7 @@ public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
+    private static  final String USER_GROUP = "benutzergruppe";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     @Inject
@@ -148,7 +149,7 @@ public class BenutzergruppenForm extends BasisForm {
 
             return usergroupListPath;
         } catch (DataException | DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
     }
@@ -186,7 +187,7 @@ public class BenutzergruppenForm extends BasisForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException | DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("benutzergruppe") }, logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
         return usergroupListPath;
@@ -205,7 +206,7 @@ public class BenutzergruppenForm extends BasisForm {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("benutzergruppe"), id },
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(USER_GROUP), id },
                 logger, e);
         }
         setSaveDisabled(true);
