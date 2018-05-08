@@ -161,65 +161,65 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setErrorMessage("IOException", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
-        this.docType = cp.getParamString("createNewProcess.defaultdoctype",
+        this.docType = cp.getParamString(CREATE_NEW_PROCESS + ".defaultdoctype",
             ConfigOpac.getAllDoctypes().get(0).getTitle());
-        this.useOpac = cp.getParamBoolean("createNewProcess.opac[@use]");
-        this.useTemplates = cp.getParamBoolean("createNewProcess.templates[@use]");
+        this.useOpac = cp.getParamBoolean(CREATE_NEW_PROCESS + ".opac[@use]");
+        this.useTemplates = cp.getParamBoolean(CREATE_NEW_PROCESS + ".templates[@use]");
         this.naviFirstPage = "NewProcess/Page1";
         if (this.opacKatalog.equals("")) {
-            this.opacKatalog = cp.getParamString("createNewProcess.opac.catalogue");
+            this.opacKatalog = cp.getParamString(CREATE_NEW_PROCESS + ".opac.catalogue");
         }
 
         /*
          * die auszublendenden Standard-Felder ermitteln
          */
-        for (String t : cp.getParamList("createNewProcess.itemlist.hide")) {
+        for (String t : cp.getParamList(ITEM_LIST + ".hide")) {
             this.standardFields.put(t, false);
         }
 
         /*
          * die einzublendenen (zusätzlichen) Eigenschaften ermitteln
          */
-        int count = cp.getParamList("createNewProcess.itemlist.item").size();
+        int count = cp.getParamList(ITEM_LIST_ITEM).size();
         for (int i = 0; i < count; i++) {
             AdditionalField fa = new AdditionalField(this);
-            fa.setFrom(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@from]"));
-            fa.setTitle(cp.getParamString("createNewProcess.itemlist.item(" + i + ")"));
-            fa.setRequired(cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@required]"));
-            fa.setIsdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isdoctype]"));
-            fa.setIsnotdoctype(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@isnotdoctype]"));
+            fa.setFrom(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@from]"));
+            fa.setTitle(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")"));
+            fa.setRequired(cp.getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@required]"));
+            fa.setIsdoctype(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isdoctype]"));
+            fa.setIsnotdoctype(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@isnotdoctype]"));
 
             // attributes added 30.3.09
-            String test = (cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initStart]"));
+            String test = (cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initStart]"));
             fa.setInitStart(test);
 
-            fa.setInitEnd(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@initEnd]"));
+            fa.setInitEnd(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@initEnd]"));
 
             /*
              * Bindung an ein Metadatum eines Docstructs
              */
-            if (cp.getParamBoolean("createNewProcess.itemlist.item(" + i + ")[@ughbinding]")) {
+            if (cp.getParamBoolean(ITEM_LIST_ITEM + "(" + i + ")[@ughbinding]")) {
                 fa.setUghbinding(true);
-                fa.setDocstruct(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@docstruct]"));
-                fa.setMetadata(cp.getParamString("createNewProcess.itemlist.item(" + i + ")[@metadata]"));
+                fa.setDocstruct(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@docstruct]"));
+                fa.setMetadata(cp.getParamString(ITEM_LIST_ITEM + "(" + i + ")[@metadata]"));
             }
 
             /*
              * prüfen, ob das aktuelle Item eine Auswahlliste werden soll
              */
-            int selectItemCount = cp.getParamList("createNewProcess.itemlist.item(" + i + ").select").size();
+            int selectItemCount = cp.getParamList(ITEM_LIST_ITEM + "(" + i + ").select").size();
             /* Children durchlaufen und SelectItems erzeugen */
             if (selectItemCount > 0) {
                 fa.setSelectList(new ArrayList<>());
             }
             for (int j = 0; j < selectItemCount; j++) {
                 String svalue = cp
-                        .getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")[@label]");
-                String sid = cp.getParamString("createNewProcess.itemlist.item(" + i + ").select(" + j + ")");
+                        .getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
+                String sid = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")");
                 fa.getSelectList().add(new SelectItem(sid, svalue, null));
             }
             this.additionalFields.add(fa);
@@ -246,7 +246,7 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromConfig();
 
         } catch (PreferencesException | ReadException | RuntimeException e) {
-            Helper.setErrorMessage("Fehler beim Einlesen des Opac-Ergebnisses ", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"Opac-Ergebnisses"}, logger, e);
         }
     }
 
@@ -351,7 +351,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
-            Helper.setErrorMessage("Fehler beim Einlesen der Template-Metadaten ", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"Template-Metadaten"}, logger, e);
         }
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
@@ -750,15 +750,15 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setErrorMessage("IOException", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
-        int count = cp.getParamList("createNewProcess.itemlist.processtitle").size();
+        int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
         for (int i = 0; i < count; i++) {
-            String title = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")");
-            String isDocType = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isdoctype]");
-            String isNotDocType = cp.getParamString("createNewProcess.itemlist.processtitle(" + i + ")[@isnotdoctype]");
+            String title = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")");
+            String isDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
+            String isNotDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
 
             title = processNullValues(title);
             isDocType = processNullValues(isDocType);
@@ -858,7 +858,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setErrorMessage("IOException", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
