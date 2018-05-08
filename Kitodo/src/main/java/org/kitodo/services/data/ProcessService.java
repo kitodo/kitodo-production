@@ -116,6 +116,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static ProcessService instance = null;
     private static String DIRECTORY_PREFIX = "orig";
     private static String DIRECTORY_SUFFIX = "images";
+    private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String EXPORT_ERROR = "exportError";
 
     /**
@@ -1772,21 +1773,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             // remove old import folder
             if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                    "Import folder could not be cleared");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
                 return false;
             }
             // remove old success folder
             File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
             if (!fileService.delete(successFile.toURI())) {
                 Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                    "Success folder could not be cleared");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
                 return false;
             }
             // remove old error folder
             File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
             if (!fileService.delete(errorFile.toURI())) {
                 Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                    "Error folder could not be cleared");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
                 return false;
             }
 

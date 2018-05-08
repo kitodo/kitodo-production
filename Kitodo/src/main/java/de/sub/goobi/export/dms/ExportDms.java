@@ -53,6 +53,7 @@ public class ExportDms extends ExportMets {
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
+    private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String EXPORT_ERROR = "exportError";
 
     /**
@@ -192,7 +193,7 @@ public class ExportDms extends ExportMets {
                 // delete old import folder
                 if (!fileService.delete(userHomeProcess)) {
                     Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        "Import folder could not be cleared");
+                            Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
                     return false;
                 }
                 // delete old success folder
@@ -200,14 +201,14 @@ public class ExportDms extends ExportMets {
                         .create(process.getProject().getDmsImportSuccessPath() + "/" + process.getTitle());
                 if (!fileService.delete(successFolder)) {
                     Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        "Success folder could not be cleared");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
                     return false;
                 }
                 // delete old error folder
                 URI errorFolder = URI.create(process.getProject().getDmsImportErrorPath() + "/" + process.getTitle());
                 if (!fileService.delete(errorFolder)) {
                     Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        "Error folder could not be cleared");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
                     return false;
                 }
 
@@ -221,7 +222,7 @@ public class ExportDms extends ExportMets {
             userHome = zielVerzeichnis;
             if (!fileService.delete(userHome)) {
                 Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        "Could not delete home directory");
+                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
                 return false;
             }
             prepareUserDirectory(zielVerzeichnis);
