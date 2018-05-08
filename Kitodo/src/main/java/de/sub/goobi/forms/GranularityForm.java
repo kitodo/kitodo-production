@@ -234,8 +234,7 @@ public class GranularityForm {
             return null;
         }
         double perIssue = (double) perProcess * getNumberOfProcesses() / course.countIndividualIssues();
-        List<String> args = Arrays
-                .asList(new String[] {Long.toString(perProcess), Long.toString((long) Math.ceil(perIssue)) });
+        List<String> args = Arrays.asList(Long.toString(perProcess), Long.toString((long) Math.ceil(perIssue)));
         return Helper.getTranslation("granularity.numberOfPages.tooSmall", args).replaceAll("\"", "″").replaceAll("'",
             "′");
     }

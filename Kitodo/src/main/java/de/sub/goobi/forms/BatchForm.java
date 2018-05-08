@@ -22,7 +22,6 @@ import de.sub.goobi.helper.tasks.TaskManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -305,7 +304,7 @@ public class BatchForm extends BasisForm {
                 if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                            Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
+                            serviceManager.getBatchService().getLabel(batch)), p);
                     }
                     this.serviceManager.getProcessService().saveList(this.selectedProcesses);
                 }
@@ -337,7 +336,7 @@ public class BatchForm extends BasisForm {
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(Helper.getTranslation("removeFromBatch",
-                        Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
+                        serviceManager.getBatchService().getLabel(batch)), p);
                 }
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
@@ -385,7 +384,7 @@ public class BatchForm extends BasisForm {
             if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
                 for (Process p : selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                        Arrays.asList(new String[] {serviceManager.getBatchService().getLabel(batch) })), p);
+                        serviceManager.getBatchService().getLabel(batch)), p);
                 }
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
