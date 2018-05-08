@@ -53,6 +53,16 @@ public class GoobiScript {
     private final FileService fileService = serviceManager.getFileService();
     private static final String DIRECTORY_SUFFIX = "_tif";
     private static final String KITODO_SCRIPT_FIELD = "kitodoScriptfield";
+    private static final String NUMBER = "number";
+    private static final String RULESET = "ruleset";
+    private static final String SCRIPT = "script";
+    private static final String SOURCE_FOLDER = "sourcefolder";
+    private static final String STATUS = "status";
+    private static final String SWAP_1_NR = "swap1nr";
+    private static final String SWAP_2_NR = "swap2nr";
+    private static final String TASK_TITLE = "steptitle";
+    private static final String USER_GROUP = "group";
+    private static final String USER_NAME = "username";
 
     /**
      * Start the script execution.
@@ -138,14 +148,14 @@ public class GoobiScript {
                     Boolean.valueOf(this.parameters.get("exportOcr")));
                 break;
             case "doit":
-                exportDms(processes, "false", false);
+                exportDms(processes, String.valueOf(Boolean.FALSE), false);
                 break;
             case "doit2":
-                exportDms(processes, "false", true);
+                exportDms(processes, String.valueOf(Boolean.FALSE), true);
                 break;
             case "runscript":
                 String taskName = this.parameters.get("stepname");
-                String scriptName = this.parameters.get("script");
+                String scriptName = this.parameters.get(SCRIPT);
                 if (scriptName == null) {
                     Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "", "Missing parameter");
                 } else {
@@ -155,7 +165,7 @@ public class GoobiScript {
             case "deleteProcess":
                 String value = parameters.get("contentOnly");
                 boolean contentOnly = true;
-                if (value != null && value.equalsIgnoreCase("false")) {
+                if (value != null && value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
                     contentOnly = false;
                 }
                 deleteProcess(processes, contentOnly);
@@ -243,15 +253,15 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void importFromFileSystem(List<Process> processes) {
-        if (isActionParameterInvalid("sourcefolder")) {
+        if (isActionParameterInvalid(SOURCE_FOLDER)) {
             return;
         }
 
-        URI sourceFolder = new File(this.parameters.get("sourcefolder")).toURI();
+        URI sourceFolder = new File(this.parameters.get(SOURCE_FOLDER)).toURI();
         try {
             if (!fileService.isDirectory(sourceFolder)) {
                 Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD,
-                    "Directory " + this.parameters.get("sourcefolder") + " does not exisist");
+                    "Directory " + this.parameters.get(SOURCE_FOLDER) + " does not exisist");
                 return;
             }
             for (Process process : processes) {
@@ -287,15 +297,15 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void setRuleset(List<Process> processes) {
-        if (isActionParameterInvalid("ruleset")) {
+        if (isActionParameterInvalid(RULESET)) {
             return;
         }
 
         try {
             List<Ruleset> rulesets = serviceManager.getRulesetService()
-                    .getByQuery("from Ruleset where title='" + this.parameters.get("ruleset") + "'");
+                    .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
             if (rulesets == null || rulesets.size() == 0) {
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", "ruleset");
+                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
                 return;
             }
             Ruleset ruleset = rulesets.get(0);
@@ -317,7 +327,7 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void swapTasks(List<Process> processes) {
-        if (isActionParameterInvalid("swap1nr") || isActionParameterInvalid("swap2nr")
+        if (isActionParameterInvalid(SWAP_1_NR) || isActionParameterInvalid(SWAP_2_NR)
                 || isActionParameterInvalid("swap1title") || isActionParameterInvalid("swap2title")) {
             return;
         }
@@ -325,11 +335,11 @@ public class GoobiScript {
         int firstOrder;
         int secondOrder;
         try {
-            firstOrder = Integer.parseInt(this.parameters.get("swap1nr"));
-            secondOrder = Integer.parseInt(this.parameters.get("swap2nr"));
+            firstOrder = Integer.parseInt(this.parameters.get(SWAP_1_NR));
+            secondOrder = Integer.parseInt(this.parameters.get(SWAP_2_NR));
         } catch (NumberFormatException e1) {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Invalid order number used: ",
-                this.parameters.get("swap1nr") + " - " + this.parameters.get("swap2nr"));
+                this.parameters.get(SWAP_1_NR) + " - " + this.parameters.get(SWAP_2_NR));
             return;
         }
 
@@ -378,7 +388,7 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void deleteTask(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle")) {
+        if (isActionParameterInvalid(TASK_TITLE)) {
             return;
         }
 
@@ -390,7 +400,7 @@ public class GoobiScript {
         for (Process process : processes) {
             if (process.getTasks() != null) {
                 for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get("steptitle"))) {
+                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                         process.getTasks().remove(task);
                         saveProcess(process);
                         Helper.setMeldung(KITODO_SCRIPT_FIELD, "Removed step from process: ", process.getTitle());
@@ -408,7 +418,7 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void addTask(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("number")
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
                 || isActionParameterInvalidNumber()) {
             return;
         }
@@ -420,8 +430,8 @@ public class GoobiScript {
     private void executeActionForAddTask(List<Process> processes) {
         for (Process process : processes) {
             Task task = new Task();
-            task.setTitle(this.parameters.get("steptitle"));
-            task.setOrdering(Integer.parseInt(this.parameters.get("number")));
+            task.setTitle(this.parameters.get(TASK_TITLE));
+            task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
             task.setProcess(process);
             process.getTasks().add(task);
             saveProcess(process);
@@ -436,8 +446,8 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void addShellScriptToStep(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("label")
-                || isActionParameterInvalid("script")) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid("label")
+                || isActionParameterInvalid(SCRIPT)) {
             return;
         }
 
@@ -449,8 +459,8 @@ public class GoobiScript {
         for (Process process : processes) {
             if (process.getTasks() != null) {
                 for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get("steptitle"))) {
-                        task.setScriptPath(this.parameters.get("script"));
+                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
+                        task.setScriptPath(this.parameters.get(SCRIPT));
                         task.setScriptName(this.parameters.get("label"));
                         saveProcess(process);
                         Helper.setMeldung(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
@@ -468,7 +478,7 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void setTaskProperty(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("property")
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid("property")
                 || isActionParameterInvalid("value")) {
             return;
         }
@@ -485,7 +495,7 @@ public class GoobiScript {
             return;
         }
 
-        if (!value.equals("true") && !value.equals("false")) {
+        if (!value.equals("true") && !value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "wrong parameter 'value'; possible " + "values: true, false");
             return;
         }
@@ -498,7 +508,7 @@ public class GoobiScript {
         for (Process process : processes) {
             if (process.getTasks() != null) {
                 for (Task task : process.getTasks()) {
-                    if (task.getTitle().equals(this.parameters.get("steptitle"))) {
+                    if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
 
                         if (property.equals("metadata")) {
                             task.setTypeMetadata(Boolean.parseBoolean(value));
@@ -538,12 +548,12 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void setTaskStatus(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("status")) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(STATUS)) {
             return;
         }
 
-        if (!this.parameters.get("status").equals("0") && !this.parameters.get("status").equals("1")
-                && !this.parameters.get("status").equals("2") && !this.parameters.get("status").equals("3")) {
+        if (!this.parameters.get(STATUS).equals("0") && !this.parameters.get(STATUS).equals("1")
+                && !this.parameters.get(STATUS).equals("2") && !this.parameters.get(STATUS).equals("3")) {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Wrong status parameter: status ",
                 "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
@@ -556,9 +566,9 @@ public class GoobiScript {
     private void executeActionForSetTaskStatus(List<Process> processes) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("steptitle"))) {
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                     task.setProcessingStatus(
-                        serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get("status")));
+                        serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
                     saveTask(process.getTitle(), task);
                     Helper.setMeldung(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
                     break;
@@ -574,7 +584,7 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void setTaskNumber(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("number")
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(NUMBER)
                 || isActionParameterInvalidNumber()) {
             return;
         }
@@ -586,8 +596,8 @@ public class GoobiScript {
     private void executeActionForSetTaskNumber(List<Process> processes) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("steptitle"))) {
-                    task.setOrdering(Integer.parseInt(this.parameters.get("number")));
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
+                    task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
                     saveTask(process.getTitle(), task);
                     Helper.setMeldung(KITODO_SCRIPT_FIELD, "step order changed in process: ", process.getTitle());
                     break;
@@ -603,18 +613,18 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void addUser(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("username")) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_NAME)) {
             return;
         }
 
         // checks if user exists
         User user;
         List<User> foundUsers = serviceManager.getUserService()
-                .getByQuery("from User where login='" + this.parameters.get("username") + "'");
+                .getByQuery("from User where login='" + this.parameters.get(USER_NAME) + "'");
         if (foundUsers != null && foundUsers.size() > 0) {
             user = foundUsers.get(0);
         } else {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get("username"));
+            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
             return;
         }
 
@@ -625,7 +635,7 @@ public class GoobiScript {
     private void executeActionForAddUser(List<Process> processes, User user) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("steptitle"))) {
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                     List<User> users = task.getUsers();
                     if (!users.contains(user)) {
                         users.add(user);
@@ -644,18 +654,18 @@ public class GoobiScript {
      *            list of Process objects
      */
     private void addUserGroup(List<Process> processes) {
-        if (isActionParameterInvalid("steptitle") || isActionParameterInvalid("group")) {
+        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_GROUP)) {
             return;
         }
 
         // check if user group exists
         UserGroup userGroup;
         List<UserGroup> foundUserGroups = serviceManager.getUserGroupService()
-                .getByQuery("from UserGroup where title='" + this.parameters.get("group") + "'");
+                .getByQuery("from UserGroup where title='" + this.parameters.get(USER_GROUP) + "'");
         if (foundUserGroups != null && foundUserGroups.size() > 0) {
             userGroup = foundUserGroups.get(0);
         } else {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get("group"));
+            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
             return;
         }
 
@@ -666,7 +676,7 @@ public class GoobiScript {
     private void executeActionForAddUserGroup(List<Process> processes, UserGroup userGroup) {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get("steptitle"))) {
+                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                     List<UserGroup> userGroups = task.getUserGroups();
                     if (!userGroups.contains(userGroup)) {
                         userGroups.add(userGroup);
@@ -738,7 +748,7 @@ public class GoobiScript {
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
-        boolean withoutImages = exportImages != null && exportImages.equals("false");
+        boolean withoutImages = exportImages != null && exportImages.equalsIgnoreCase(String.valueOf(Boolean.FALSE));
         for (Process process : processes) {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
@@ -762,7 +772,7 @@ public class GoobiScript {
     }
 
     private boolean isActionParameterInvalidNumber() {
-        if (!StringUtils.isNumeric(this.parameters.get("number"))) {
+        if (!StringUtils.isNumeric(this.parameters.get(NUMBER))) {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Wrong number parameter", "(only numbers allowed)");
             return true;
         }
