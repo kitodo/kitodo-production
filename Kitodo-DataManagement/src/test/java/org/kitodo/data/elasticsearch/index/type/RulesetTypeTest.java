@@ -16,8 +16,8 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -87,7 +87,7 @@ public class RulesetTypeTest {
         RulesetType rulesetType = new RulesetType();
 
         List<Ruleset> rulesets = prepareData();
-        HashMap<Integer, HttpEntity> documents = rulesetType.createDocuments(rulesets);
+        Map<Integer, HttpEntity> documents = rulesetType.createDocuments(rulesets);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

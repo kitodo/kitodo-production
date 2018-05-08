@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -367,9 +368,8 @@ public final class ConfigDispayRules {
      * @return ArrayList with all values of given element
      */
 
-    public ArrayList<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName,
-            DisplayType mydisplayType) {
-        ArrayList<Item> values = new ArrayList<>();
+    public List<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName, DisplayType mydisplayType) {
+        List<Item> values = new ArrayList<>();
         synchronized (this.allValues) {
             if (this.allValues.isEmpty() && config != null) {
                 getDisplayItems();

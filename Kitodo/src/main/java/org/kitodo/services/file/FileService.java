@@ -400,7 +400,7 @@ public class FileService {
      *            the URI, to get the sub URIs from
      * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(URI uri) {
+    public List<URI> getSubUris(URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(null, uri);
     }
@@ -414,7 +414,7 @@ public class FileService {
      *            the URI, to get the sub URIs from
      * @return a List of sub URIs
      */
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
+    public List<URI> getSubUris(FilenameFilter filter, URI uri) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
         return fileManagementModule.getSubUris(filter, uri);
     }
@@ -711,7 +711,7 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
+    public List<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
                                                URI processDataDirectory, ProcessSubType processSubType,
                                                String resourceName) throws DAOException {
         URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType, resourceName);
@@ -731,7 +731,7 @@ public class FileService {
      *            as String
      * @return unmapped URI
      */
-    public ArrayList<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
+    public List<URI> getSubUrisForProcess(FilenameFilter filter, Process process, ProcessSubType processSubType,
             String resourceName) {
         URI processSubTypeURI = getProcessSubTypeURI(process, processSubType, resourceName);
         return getSubUris(filter, processSubTypeURI);

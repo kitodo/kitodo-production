@@ -12,6 +12,7 @@
 package org.kitodo.docket;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.Property;
@@ -27,7 +28,7 @@ public class DocketDataGenerator {
         docketdata.setRulesetName("RulesetTitle");
         docketdata.setComment("A comment");
 
-        ArrayList<Property> templateProperties = new ArrayList<>();
+        List<Property> templateProperties = new ArrayList<>();
         Property propertyForDocket = new Property();
         propertyForDocket.setId(12345);
         propertyForDocket.setTitle("Signatur");
@@ -37,7 +38,7 @@ public class DocketDataGenerator {
 
         docketdata.setTemplateProperties(templateProperties);
 
-        ArrayList<Property> workpieceProperties = new ArrayList<>();
+        List<Property> workpieceProperties = new ArrayList<>();
         Property workpiecePropertyForDocket = new Property();
         workpiecePropertyForDocket.setId(12345);
         workpiecePropertyForDocket.setTitle("docType");
@@ -47,7 +48,7 @@ public class DocketDataGenerator {
 
         docketdata.setWorkpieceProperties(workpieceProperties);
 
-        ArrayList<org.kitodo.api.docket.Property> processProperties = new ArrayList<>();
+        List<org.kitodo.api.docket.Property> processProperties = new ArrayList<>();
         org.kitodo.api.docket.Property processPropertyForDocket = new org.kitodo.api.docket.Property();
         processPropertyForDocket.setId(12345);
         processPropertyForDocket.setTitle("digitalCollection");
@@ -59,8 +60,8 @@ public class DocketDataGenerator {
         return docketdata;
     }
 
-    public ArrayList<DocketData> createDocketData(ArrayList<String> processIds) {
-        ArrayList<DocketData> docketDatas = new ArrayList<>();
+    public List<DocketData> createDocketData(List<String> processIds) {
+        List<DocketData> docketDatas = new ArrayList<>();
         for (String processId : processIds) {
             docketDatas.add(createDocketData(processId, "AZ-234", "manuscript"));
         }

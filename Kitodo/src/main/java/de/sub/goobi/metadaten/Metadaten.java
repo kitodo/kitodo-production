@@ -34,6 +34,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
@@ -132,7 +133,6 @@ public class Metadaten {
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
-
     private String paginationValue;
     private int paginationFromPageOrMark;
     private String paginationType;
@@ -141,11 +141,9 @@ public class Metadaten {
     // 3=nur jede zweite Seite hat
     // Seitennummer
     private boolean fictitious = false;
-
     private SelectItem[] structSeiten;
     private MetadatumImpl[] structSeitenNeu;
     private DocStructInterface logicalTopstruct;
-
     private boolean modeAdd = false;
     private boolean modeAddPerson = false;
     private boolean modeMoveStructureElement = false;
@@ -153,13 +151,11 @@ public class Metadaten {
     private String modeView = "Metadaten";
     private TreeNodeStruct3 treeNodeStruct;
     private URI image;
-
     private int imageNumber = 0;
     private int lastImage = 0;
     private int imageCounter = 0;
     private int imageSize = 30;
     private int imageRotation = 0;
-
     private boolean displayImage = true;
     private boolean imageToStructuralElement = false;
     private String addFirstDocStructType;
@@ -170,12 +166,11 @@ public class Metadaten {
     private String additionalOpacPpns;
     private String opacSearchField = "12";
     private String opacCatalog;
-
     private String ajaxPageStart = "";
     private String ajaxPageEnd = "";
     private String pagesStart = "";
     private String pagesEnd = "";
-    private HashMap<String, Boolean> treeProperties;
+    private Map<String, Boolean> treeProperties;
     private final ReentrantLock xmlReadingLock = new ReentrantLock();
     private FileManipulation fileManipulation = null;
     private boolean addMetadataGroupMode = false;
@@ -1554,7 +1549,7 @@ public class Metadaten {
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         FilenameFilter filterDirectory = new IsDirectoryFilter();
-        ArrayList<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE,
+        List<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE,
             "");
         this.allTifFolders.addAll(subUris);
 
@@ -2752,11 +2747,11 @@ public class Metadaten {
         this.treeReloaded = treeReloaded;
     }
 
-    public HashMap<String, Boolean> getTreeProperties() {
+    public Map<String, Boolean> getTreeProperties() {
         return this.treeProperties;
     }
 
-    public void setTreeProperties(HashMap<String, Boolean> treeProperties) {
+    public void setTreeProperties(Map<String, Boolean> treeProperties) {
         this.treeProperties = treeProperties;
     }
 
@@ -2988,12 +2983,12 @@ public class Metadaten {
             return;
         }
 
-        List<URI> oldfilenames = new ArrayList<>();
+        List<URI> oldFileNames = new ArrayList<>();
         for (DocStructInterface page : digitalDocument.getPhysicalDocStruct().getAllChildren()) {
-            oldfilenames.add(URI.create(page.getImageName()));
+            oldFileNames.add(URI.create(page.getImageName()));
         }
 
-        for (URI imagename : oldfilenames) {
+        for (URI imagename : oldFileNames) {
             for (URI folder : allTifFolders) {
                 URI filename = imageDirectory.resolve(folder).resolve(imagename);
                 String newFileName = filename + "_bak";
@@ -3001,7 +2996,7 @@ public class Metadaten {
             }
             URI ocrFolder = fileService.getProcessSubTypeURI(process, ProcessSubType.OCR, null);
             if (fileService.fileExist(ocrFolder)) {
-                ArrayList<URI> allOcrFolder = fileService.getSubUris(ocrFolder);
+                List<URI> allOcrFolder = fileService.getSubUris(ocrFolder);
                 for (URI folder : allOcrFolder) {
                     URI filename = folder.resolve(imagename);
                     String newFileName = filename + "_bak";
@@ -3010,10 +3005,10 @@ public class Metadaten {
             }
 
             int counter = 1;
-            for (URI oldImagename : oldfilenames) {
+            for (URI oldImageName : oldFileNames) {
                 String newfilenamePrefix = generateFileName(counter);
                 for (URI folder : allTifFolders) {
-                    URI fileToSort = imageDirectory.resolve(folder).resolve(oldImagename);
+                    URI fileToSort = imageDirectory.resolve(folder).resolve(oldImageName);
                     String fileExtension = Metadaten
                             .getFileExtension(fileService.getFileName(fileToSort).replace("_bak", ""));
                     URI tempFileName = imageDirectory.resolve(folder)
@@ -3025,7 +3020,7 @@ public class Metadaten {
                 try {
                     URI ocr = fileService.getProcessSubTypeURI(process, ProcessSubType.OCR, null);
                     if (fileService.fileExist(ocr)) {
-                        ArrayList<URI> allOcrFolder = fileService.getSubUris(ocr);
+                        List<URI> allOcrFolder = fileService.getSubUris(ocr);
                         for (URI folder : allOcrFolder) {
                             URI fileToSort = folder.resolve(imagename);
                             String fileExtension = Metadaten
@@ -3056,7 +3051,7 @@ public class Metadaten {
 
         URI ocr = serviceManager.getFileService().getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
-            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0) {
                     removeFiles(dir, fileToDeletePrefix);
@@ -3066,7 +3061,7 @@ public class Metadaten {
     }
 
     private void removeFiles(URI directory, String fileToDeletePrefix) throws IOException {
-        ArrayList<URI> filesInFolder = fileService.getSubUris(directory);
+        List<URI> filesInFolder = fileService.getSubUris(directory);
         for (URI currentFile : filesInFolder) {
             String fileName = fileService.getFileName(currentFile);
             if (fileName.equals(fileToDeletePrefix)) {

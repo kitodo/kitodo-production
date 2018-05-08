@@ -12,6 +12,7 @@
 package org.goobi.api.display;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
@@ -20,7 +21,7 @@ import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {
     private DisplayType displayType;
-    private ArrayList<Item> itemList = new ArrayList<>();
+    private List<Item> itemList = new ArrayList<>();
     private ConfigDispayRules configDisplay;
     private Process myProcess;
     private String metaName;
@@ -105,7 +106,7 @@ public class DisplayCase {
      * @param itemList
      *            ArrayList with items for metadata
      */
-    public void setItemList(ArrayList<Item> itemList) {
+    public void setItemList(List<Item> itemList) {
         this.itemList = itemList;
     }
 
@@ -115,7 +116,7 @@ public class DisplayCase {
      * @return ArrayList with items for metadata
      */
 
-    public ArrayList<Item> getItemList() {
+    public List<Item> getItemList() {
         return itemList;
     }
 }

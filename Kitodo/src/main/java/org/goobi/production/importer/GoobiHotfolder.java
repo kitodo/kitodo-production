@@ -85,7 +85,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
 
     @Override
     public List<URI> getFilesByName(String name) {
-        ArrayList<URI> files = fileService.getSubUris(this.folder);
+        List<URI> files = fileService.getSubUris(this.folder);
         List<URI> answer = new ArrayList<>();
         for (URI file : files) {
             if (file.toString().contains(name) && !file.toString().contains("anchor")) {

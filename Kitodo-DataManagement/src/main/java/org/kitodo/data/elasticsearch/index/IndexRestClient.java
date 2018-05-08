@@ -14,7 +14,6 @@ package org.kitodo.data.elasticsearch.index;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -84,7 +83,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    public void addType(HashMap<Integer, HttpEntity> documentsToIndex)
+    public void addType(Map<Integer, HttpEntity> documentsToIndex)
             throws InterruptedException, CustomResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final ArrayList<String> output = new ArrayList<>();

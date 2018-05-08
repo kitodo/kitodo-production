@@ -24,7 +24,7 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -424,13 +424,13 @@ public class ExportDms extends ExportMets {
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            ArrayList<URI> files = fileService.getSubUris(sources);
+            List<URI> files = fileService.getSubUris(sources);
             copyFiles(files, destination);
         }
 
         URI ocr = serviceManager.getFileService().getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
-            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
@@ -440,7 +440,7 @@ public class ExportDms extends ExportMets {
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    List<URI> files = fileService.getSubUris(dir);
                     copyFiles(files, destination);
                 }
             }
@@ -450,7 +450,7 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void copyFiles(ArrayList<URI> files, URI destination) throws IOException {
+    private void copyFiles(List<URI> files, URI destination) throws IOException {
         for (URI file : files) {
             if (fileService.isFile(file)) {
                 if (exportDmsTask != null) {
@@ -512,7 +512,7 @@ public class ExportDms extends ExportMets {
             }
 
             /* jetzt den eigentlichen Kopiervorgang */
-            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            List<URI> files = fileService.getSubUris(Helper.dataFilter, tifOrdner);
             for (int i = 0; i < files.size(); i++) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));

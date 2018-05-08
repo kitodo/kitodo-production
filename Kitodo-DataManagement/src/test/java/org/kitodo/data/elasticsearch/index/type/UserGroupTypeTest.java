@@ -15,8 +15,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -207,7 +207,7 @@ public class UserGroupTypeTest {
         UserGroupType UserGroupType = new UserGroupType();
 
         List<UserGroup> batches = prepareData();
-        HashMap<Integer, HttpEntity> documents = UserGroupType.createDocuments(batches);
+        Map<Integer, HttpEntity> documents = UserGroupType.createDocuments(batches);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

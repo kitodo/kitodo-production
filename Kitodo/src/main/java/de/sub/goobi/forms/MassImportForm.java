@@ -83,8 +83,7 @@ public class MassImportForm implements Serializable {
     private File importFile = null;
     private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
-
-    private ArrayList<Process> processList;
+    private List<Process> processList;
 
     /**
      * Constructor.
@@ -741,11 +740,11 @@ public class MassImportForm implements Serializable {
         return new ArrayList<>();
     }
 
-    public ArrayList<Process> getProcessList() {
+    public List<Process> getProcessList() {
         return this.processList;
     }
 
-    public void setProcessList(ArrayList<Process> processList) {
+    public void setProcessList(List<Process> processList) {
         this.processList = processList;
     }
 

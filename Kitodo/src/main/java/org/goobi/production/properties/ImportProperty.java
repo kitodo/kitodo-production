@@ -111,7 +111,7 @@ public class ImportProperty implements IProperty {
     }
 
     @Override
-    public ArrayList<ShowStepCondition> getShowStepConditions() {
+    public List<ShowStepCondition> getShowStepConditions() {
         throw new UnsupportedOperationException();
     }
 

@@ -23,7 +23,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeSet;
 
 import javax.faces.context.FacesContext;
@@ -144,7 +144,7 @@ public class ExportPdf extends ExportMets {
     private String prepareKitodoContentServerURL(Process process, String contentServerUrl) throws IOException {
         FilenameFilter filter = new FileNameMatchesFilter("\\d*\\.tif");
         URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, process);
-        ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
+        List<URI> meta = fileService.getSubUris(filter, imagesDir);
         int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                 + process.getTitle().length() + PDF_EXTENSION.length();
         TreeSet<String> fileNames = new TreeSet<>(new MetadatenHelper(null, null));

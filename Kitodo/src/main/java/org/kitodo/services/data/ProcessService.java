@@ -644,8 +644,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            list of DTO objects
      * @return list of beans
      */
-    public ArrayList<Process> convertDtosToBeans(List<ProcessDTO> dtos) throws DAOException {
-        ArrayList<Process> processes = new ArrayList<>();
+    public List<Process> convertDtosToBeans(List<ProcessDTO> dtos) throws DAOException {
+        List<Process> processes = new ArrayList<>();
         for (ProcessDTO processDTO : dtos) {
             processes.add(convertDtoToBean(processDTO));
         }
@@ -794,7 +794,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifDirectory = null;
-        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+        List<URI> directories = fileService.getSubUris(filterDirectory, dir);
         for (URI directory : directories) {
             tifDirectory = directory;
         }
@@ -802,7 +802,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (tifDirectory == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
+                List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
                         tifDirectory = folder;
@@ -851,7 +851,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
         URI tifDirectory = null;
-        ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+        List<URI> directories = fileService.getSubUris(filterDirectory, dir);
         for (URI directory : directories) {
             tifDirectory = directory;
         }
@@ -859,7 +859,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (tifDirectory == null && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
-                ArrayList<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
+                List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
                     processBaseURI, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
                     if (folder.toString().endsWith(suffix)) {
@@ -926,7 +926,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
                     "_" + DIRECTORY_SUFFIX);
             URI origDirectory = null;
-            ArrayList<URI> directories = fileService.getSubUris(filterDirectory, dir);
+            List<URI> directories = fileService.getSubUris(filterDirectory, dir);
             for (URI directory : directories) {
                 origDirectory = directory;
             }
@@ -934,7 +934,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (origDirectory == null && useFallBack) {
                 String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
                 if (!suffix.equals("")) {
-                    ArrayList<URI> folderList = fileService.getSubUris(dir);
+                    List<URI> folderList = fileService.getSubUris(dir);
                     for (URI folder : folderList) {
                         if (folder.toString().endsWith(suffix)) {
                             origDirectory = folder;
@@ -968,9 +968,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 URI tif = imageDirectory;
-                ArrayList<URI> files = fileService.getSubUris(tif);
+                List<URI> files = fileService.getSubUris(tif);
                 if (files == null || files.size() == 0) {
-                    ArrayList<URI> folderList = fileService.getSubUris(directory);
+                    List<URI> folderList = fileService.getSubUris(directory);
                     for (URI folder : folderList) {
                         if (folder.toString().endsWith(suffix) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
                             imageDirectory = folder;
@@ -1908,7 +1908,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            ArrayList<URI> dateien = fileService.getSubUris(sources);
+            List<URI> dateien = fileService.getSubUris(sources);
             for (URI aDateien : dateien) {
                 if (fileService.isFile(aDateien)) {
                     URI meinZiel = destination.resolve(File.separator + fileService.getFileNameWithExtension(aDateien));
@@ -1919,7 +1919,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
-            ArrayList<URI> folder = fileService.getSubUris(ocr);
+            List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
                 if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
                         && fileService.getFileName(dir).contains("_")) {
@@ -1929,7 +1929,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     if (!fileService.fileExist(destination)) {
                         fileService.createDirectory(userHome, atsPpnBand + suffix);
                     }
-                    ArrayList<URI> files = fileService.getSubUris(dir);
+                    List<URI> files = fileService.getSubUris(dir);
                     for (URI file : files) {
                         if (fileService.isFile(file)) {
                             URI target = destination
@@ -1993,7 +1993,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             // jetzt den eigentlichen Kopiervorgang
-            ArrayList<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
+            List<URI> dateien = fileService.getSubUris(Helper.dataFilter, tifOrdner);
             for (URI file : dateien) {
                 if (fileService.isFile(file)) {
                     URI target = zielTif.resolve(File.separator + fileService.getFileNameWithExtension(file));
@@ -2182,8 +2182,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throw new InvalidImagesException(e);
         }
 
-        ArrayList<URI> dataList = new ArrayList<>();
-        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        List<URI> dataList = new ArrayList<>();
+        List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         if (files.size() > 0) {
             dataList.addAll(files);
             Collections.sort(dataList);
@@ -2220,14 +2220,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *
      * @param processes
      *            the process to create the docket data for.
-     * @return A List of docketdata
+     * @return A List of DocketData objects
      */
-    public ArrayList<DocketData> getDocketData(List<Process> processes) {
-        ArrayList<DocketData> docketdata = new ArrayList<>();
+    public List<DocketData> getDocketData(List<Process> processes) {
+        List<DocketData> docketData = new ArrayList<>();
         for (Process process : processes) {
-            docketdata.add(getDocketData(process));
+            docketData.add(getDocketData(process));
         }
-        return docketdata;
+        return docketData;
     }
 
     /**

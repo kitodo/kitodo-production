@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -101,7 +102,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private ObjectMode displayMode = ObjectMode.PROCESS;
     private ObjectMode editMode = ObjectMode.NONE;
     private String kitodoScript;
-    private HashMap<String, Boolean> anzeigeAnpassen;
+    private Map<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
     private String selectedXslt = "";
     private boolean showClosedProcesses = false;
@@ -306,7 +307,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     private void renameDirectories(URI directory) throws IOException {
         if (fileService.isDirectory(directory)) {
-            ArrayList<URI> subDirs = fileService.getSubUris(directory);
+            List<URI> subDirs = fileService.getSubUris(directory);
             for (URI imageDir : subDirs) {
                 if (fileService.isDirectory(imageDir)) {
                     fileService.renameFile(imageDir, fileService.getFileName(imageDir)
@@ -1182,7 +1183,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.counterSummary.put("averageDocstructs", averageDocstructs);
     }
 
-    public HashMap<String, Integer> getCounterSummary() {
+    public Map<String, Integer> getCounterSummary() {
         return this.counterSummary;
     }
 
@@ -1258,11 +1259,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.kitodoScript = kitodoScript;
     }
 
-    public HashMap<String, Boolean> getAnzeigeAnpassen() {
+    public Map<String, Boolean> getAnzeigeAnpassen() {
         return this.anzeigeAnpassen;
     }
 
-    public void setAnzeigeAnpassen(HashMap<String, Boolean> anzeigeAnpassen) {
+    public void setAnzeigeAnpassen(Map<String, Boolean> anzeigeAnpassen) {
         this.anzeigeAnpassen = anzeigeAnpassen;
     }
 
@@ -1403,7 +1404,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             URI folder = fileService.createDirectory(null, "xsltFolder");
             if (fileService.isDirectory(folder) && fileService.fileExist(folder)) {
-                ArrayList<URI> files = fileService.getSubUris(folder);
+                List<URI> files = fileService.getSubUris(folder);
 
                 for (URI uri : files) {
                     if (uri.toString().endsWith(".xslt") || uri.toString().endsWith(".xsl")) {

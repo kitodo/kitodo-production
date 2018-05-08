@@ -20,6 +20,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.AfterClass;
@@ -71,7 +72,7 @@ public class CommandTest {
         String commandString = "src/test/resources/working_script" + scriptExtension;
         CommandResult commandResult = command.runCommand(processId, commandString);
 
-        ArrayList<String> expectedMessages = new ArrayList<>();
+        List<String> expectedMessages = new ArrayList<>();
         if (windows) {
             expectedMessages.add("");
             expectedMessages.add(Paths.get("").toAbsolutePath().normalize() + ">echo Hello World ");

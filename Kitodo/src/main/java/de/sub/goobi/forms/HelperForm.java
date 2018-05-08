@@ -219,7 +219,7 @@ public class HelperForm implements Serializable {
     public List<SelectItem> getCssFiles() {
         List<SelectItem> list = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
+        List<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
         for (URI uri : uris) {
             list.add(new SelectItem(uri.toString(), uri.toString()));
         }
@@ -237,7 +237,7 @@ public class HelperForm implements Serializable {
      */
     public String getCssLinkIfExists(String cssFileName) {
         FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        ArrayList<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
+        List<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
         for (URI uri : uris) {
             if (uri.toString().equals(cssFileName)) {
                 return cssFileName;

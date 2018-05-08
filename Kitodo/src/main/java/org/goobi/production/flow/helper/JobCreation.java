@@ -203,10 +203,10 @@ public class JobCreation {
             // new folder structure for process imports
             URI importFolder = basepath;
             if (fileService.isDirectory(importFolder)) {
-                ArrayList<URI> folderList = fileService.getSubUris(importFolder);
+                List<URI> folderList = fileService.getSubUris(importFolder);
                 for (URI directory : folderList) {
                     if (fileService.getFileName(directory).contains("images")) {
-                        ArrayList<URI> imageList = fileService.getSubUris(directory);
+                        List<URI> imageList = fileService.getSubUris(directory);
                         for (URI imageDir : imageList) {
                             if (fileService.isDirectory(imageDir)) {
                                 for (URI file : fileService.getSubUris(imageDir)) {
@@ -224,7 +224,7 @@ public class JobCreation {
                         if (!fileService.fileExist(ocr)) {
                             fileService.createDirectory(ocr, null);
                         }
-                        ArrayList<URI> ocrList = fileService.getSubUris(directory);
+                        List<URI> ocrList = fileService.getSubUris(directory);
                         for (URI ocrDir : ocrList) {
                             moveDirectory(ocrDir, fileService.createResource(ocr, fileService.getFileName(ocrDir)));
                         }
@@ -233,7 +233,7 @@ public class JobCreation {
                         if (!fileService.fileExist(i)) {
                             fileService.createResource(i.getPath());
                         }
-                        ArrayList<URI> importList = fileService.getSubUris(directory);
+                        List<URI> importList = fileService.getSubUris(directory);
                         for (URI importDir : importList) {
                             moveDirectory(importDir, fileService.createResource(i, fileService.getFileName(importDir)));
                         }

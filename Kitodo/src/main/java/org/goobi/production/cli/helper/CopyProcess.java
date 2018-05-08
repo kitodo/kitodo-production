@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
@@ -664,7 +665,7 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public HashMap<String, Boolean> getStandardFields() {
+    public Map<String, Boolean> getStandardFields() {
         return this.standardFields;
     }
 

@@ -16,8 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -259,7 +259,7 @@ public class UserTypeTest {
         UserType userType = new UserType();
 
         List<User> users = prepareData();
-        HashMap<Integer, HttpEntity> documents = userType.createDocuments(users);
+        Map<Integer, HttpEntity> documents = userType.createDocuments(users);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }

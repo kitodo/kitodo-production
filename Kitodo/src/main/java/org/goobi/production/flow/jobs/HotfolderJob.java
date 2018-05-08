@@ -180,7 +180,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
-                        ArrayList<URI> files = fileService.getSubUris(images);
+                        List<URI> files = fileService.getSubUris(images);
                         imageDir.addAll(files);
                         fileService.delete(images);
                     }
@@ -202,7 +202,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                         processTitle.substring(0, processTitle.length() - 4) + File.separator);
                     List<URI> imageDir = new ArrayList<>();
                     if (fileService.isDirectory(images)) {
-                        ArrayList<URI> files = fileService.getSubUris(images);
+                        List<URI> files = fileService.getSubUris(images);
                         imageDir.addAll(files);
                         fileService.delete(images);
                     }
@@ -244,7 +244,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                             processTitle.substring(0, processTitle.length() - 4) + File.separator);
                         List<URI> imageDir = new ArrayList<>();
                         if (fileService.isDirectory(images)) {
-                            ArrayList<URI> files = fileService.getSubUris(images);
+                            List<URI> files = fileService.getSubUris(images);
                             imageDir.addAll(files);
                             for (URI file : imageDir) {
                                 URI image = fileService.createResource(images, fileService.getFileName(file));

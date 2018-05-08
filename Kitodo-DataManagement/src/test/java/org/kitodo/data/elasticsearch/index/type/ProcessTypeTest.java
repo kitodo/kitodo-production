@@ -19,8 +19,8 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -343,7 +343,7 @@ public class ProcessTypeTest {
         ProcessType processType = new ProcessType();
 
         List<Process> processes = prepareData();
-        HashMap<Integer, HttpEntity> documents = processType.createDocuments(processes);
+        Map<Integer, HttpEntity> documents = processType.createDocuments(processes);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }
