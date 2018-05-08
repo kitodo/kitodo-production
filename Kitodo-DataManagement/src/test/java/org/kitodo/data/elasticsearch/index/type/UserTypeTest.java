@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -113,8 +114,7 @@ public class UserTypeTest {
             actual.getString(UserTypeField.LOCATION.getName()));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
-        assertEquals("Key active doesn't match to given value!", true,
-            actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
         assertEquals("Size filters doesn't match to given value!", 0, filters.size());
@@ -152,8 +152,7 @@ public class UserTypeTest {
             actual.getString(UserTypeField.LOCATION.getName()));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
-        assertEquals("Key active doesn't match to given value!", true,
-            actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
         assertEquals("Size filters doesn't match to given value!", 2, filters.size());
@@ -208,8 +207,7 @@ public class UserTypeTest {
             actual.getString(UserTypeField.LOCATION.getName()));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
-        assertEquals("Key active doesn't match to given value!", true,
-            actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
         assertEquals("Size filters doesn't match to given value!", 2, filters.size());

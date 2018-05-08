@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class RulesetTypeTest {
             actual.getString(RulesetTypeField.TITLE.getName()));
         assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml",
             actual.getString(RulesetTypeField.FILE.getName()));
-        assertEquals("Key orderMetadataByRuleset doesn't match to given value!", false,
+        assertFalse("Key orderMetadataByRuleset doesn't match to given value!",
             actual.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
         assertEquals("Key fileContent doesn't match to given value!", "",
             actual.getString(RulesetTypeField.FILE_CONTENT.getName()));
