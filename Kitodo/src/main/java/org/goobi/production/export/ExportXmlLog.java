@@ -58,6 +58,12 @@ import org.kitodo.services.ServiceManager;
 public class ExportXmlLog {
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ExportXmlLog.class);
+    private static final String LABEL = "label";
+    private static final String NAMESPACE = "http://www.kitodo.org/logfile";
+    private static final String PROPERTIES = "properties";
+    private static final String PROPERTY = "property";
+    private static final String PROPERTY_IDENTIFIER = "propertyIdentifier";
+    private static final String VALUE = "value";
 
     /**
      * This method exports the production metadata as xml to a given directory.
@@ -125,12 +131,12 @@ public class ExportXmlLog {
         Document answer = new Document();
         Element root = new Element("processes");
         answer.setRootElement(root);
-        Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
+        Namespace xmlns = Namespace.getNamespace(NAMESPACE);
 
         Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
         root.addNamespaceDeclaration(xsi);
         root.setNamespace(xmlns);
-        Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+        Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
                 xsi);
         root.setAttribute(attSchema);
         for (Process p : processList) {
@@ -174,14 +180,14 @@ public class ExportXmlLog {
 
         processElm.setAttribute("processID", String.valueOf(process.getId()));
 
-        Namespace xmlns = Namespace.getNamespace("http://www.kitodo.org/logfile");
+        Namespace xmlns = Namespace.getNamespace(NAMESPACE);
         processElm.setNamespace(xmlns);
         // namespace declaration
         if (addNamespace) {
 
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             processElm.addNamespaceDeclaration(xsi);
-            Attribute attSchema = new Attribute("schemaLocation", "http://www.kitodo.org/logfile" + " XML-logfile.xsd",
+            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
                     xsi);
             processElm.setAttribute(attSchema);
         }
@@ -229,7 +235,7 @@ public class ExportXmlLog {
         List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
 
         if (processProperties.size() != 0) {
-            Element properties = new Element("properties", xmlns);
+            Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(processProperties);
             processElements.add(properties);
         }
@@ -282,12 +288,12 @@ public class ExportXmlLog {
 
         ArrayList<Element> templateProperties = new ArrayList<>();
         for (Property prop : process.getTemplates()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
+            Element property = new Element(PROPERTY, xmlns);
+            property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
             if (prop.getValue() != null) {
-                property.setAttribute("value", replacer(prop.getValue()));
+                property.setAttribute(VALUE, replacer(prop.getValue()));
             } else {
-                property.setAttribute("value", "");
+                property.setAttribute(VALUE, "");
             }
 
             Element label = new Element("label", xmlns);
@@ -297,11 +303,11 @@ public class ExportXmlLog {
 
             templateProperties.add(property);
             if (prop.getTitle().equals("Signatur")) {
-                Element secondProperty = new Element("property", xmlns);
-                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+                Element secondProperty = new Element(PROPERTY, xmlns);
+                secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
                 if (prop.getValue() != null) {
-                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
-                    Element secondLabel = new Element("label", xmlns);
+                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element(LABEL, xmlns);
                     secondLabel.setText(prop.getTitle());
                     secondProperty.addContent(secondLabel);
                     templateProperties.add(secondProperty);
@@ -309,7 +315,7 @@ public class ExportXmlLog {
             }
         }
         if (templateProperties.size() != 0) {
-            Element properties = new Element("properties", xmlns);
+            Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(templateProperties);
             template.addContent(properties);
         }
@@ -327,7 +333,7 @@ public class ExportXmlLog {
         List<Element> docProperties = prepareProperties(process.getWorkpieces(), xmlns);
 
         if (docProperties.size() != 0) {
-            Element properties = new Element("properties", xmlns);
+            Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(docProperties);
             dd.addContent(properties);
         }
@@ -380,15 +386,15 @@ public class ExportXmlLog {
     private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
         ArrayList<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
-            Element propertyElement = new Element("property", xmlns);
-            propertyElement.setAttribute("propertyIdentifier", property.getTitle());
+            Element propertyElement = new Element(PROPERTY, xmlns);
+            propertyElement.setAttribute(PROPERTY_IDENTIFIER, property.getTitle());
             if (property.getValue() != null) {
-                propertyElement.setAttribute("value", replacer(property.getValue()));
+                propertyElement.setAttribute(VALUE, replacer(property.getValue()));
             } else {
-                propertyElement.setAttribute("value", "");
+                propertyElement.setAttribute(VALUE, "");
             }
 
-            Element label = new Element("label", xmlns);
+            Element label = new Element(LABEL, xmlns);
 
             label.setText(property.getTitle());
             propertyElement.addContent(label);
@@ -403,7 +409,7 @@ public class ExportXmlLog {
             String key = entry.getKey();
             List<Element> metsValues = getMetsValues(entry.getValue(), document, namespaces);
             for (Element element : metsValues) {
-                Element ele = new Element("property", xmlns);
+                Element ele = new Element(PROPERTY, xmlns);
                 ele.setAttribute("name", key);
                 ele.addContent(element.getTextTrim());
                 metadataElements.add(ele);
@@ -485,9 +491,9 @@ public class ExportXmlLog {
     }
 
     private HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
-        String xmlpath = "mets.property";
+        String xmlpath = "mets." + PROPERTY;
         if (useAnchor) {
-            xmlpath = "anchor.property";
+            xmlpath = "anchor." + PROPERTY;
         }
 
         HashMap<String, String> fields = new HashMap<>();
