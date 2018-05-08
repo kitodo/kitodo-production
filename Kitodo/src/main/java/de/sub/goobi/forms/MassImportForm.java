@@ -486,7 +486,7 @@ public class MassImportForm implements Serializable {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage("errorReading", new Object[]{"opac-config"}, logger, e);
         }
         return allOpacCatalogues;
     }

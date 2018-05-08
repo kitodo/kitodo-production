@@ -28,6 +28,7 @@ import org.kitodo.services.ServiceManager;
 public class StatistikForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(StatistikForm.class);
+    private static final String ERROR_READ = "errorReading";
 
     /**
      * The function getAmountUsers() counts the number of user accounts in
@@ -43,7 +44,7 @@ public class StatistikForm {
         try {
             return serviceManager.getUserService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("users")}, logger, e);
             return null;
         }
     }
@@ -57,7 +58,7 @@ public class StatistikForm {
         try {
             return serviceManager.getUserGroupService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage(null, "fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("benutzergruppe")}, logger, e);
             return null;
         }
     }
@@ -71,7 +72,7 @@ public class StatistikForm {
         try {
             return serviceManager.getProcessService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("prozess")}, logger, e);
             return null;
         }
     }
@@ -85,7 +86,7 @@ public class StatistikForm {
         try {
             return serviceManager.getTaskService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("schritte")}, logger, e);
             return null;
         }
     }
@@ -99,7 +100,7 @@ public class StatistikForm {
         try {
             return serviceManager.getTemplateService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("vorlagen")}, logger, e);
             return null;
         }
     }
@@ -127,7 +128,7 @@ public class StatistikForm {
         try {
             amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, processing, user);
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("schritte")}, logger, e);
         }
         return amount.intValue();
     }

@@ -94,6 +94,7 @@ public class ProzesskopieForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final long serialVersionUID = -4512865679353743L;
     private static final String CREATE_NEW_PROCESS = "createNewProcess";
+    private static final String ERROR_READ = "errorReading";
     private static final String ITEM_LIST = CREATE_NEW_PROCESS + ".itemlist";
     private static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
     private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
@@ -1176,7 +1177,7 @@ public class ProzesskopieForm implements Serializable {
         } catch (TypeNotAllowedAsChildException | PreferencesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
         }
     }
 
@@ -1433,7 +1434,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1447,7 +1448,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1731,7 +1732,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
                 } catch (FileNotFoundException | RuntimeException e) {
-                    Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+                    Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
@@ -1976,7 +1977,7 @@ public class ProzesskopieForm implements Serializable {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
             return false;
         }
     }

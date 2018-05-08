@@ -66,10 +66,10 @@ public class BatchForm extends BasisForm {
     private String processfilter;
     private ObjectMode editMode = ObjectMode.NONE;
     private String batchTitle;
-    private static  final String ERROR_BY_READ = "fehlerBeimEinlesen";
-    private static  final String NO_BATCH_SELECTED = "noBatchSelected";
-    private static  final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
-    private static  final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
+    private static final String ERROR_READ = "errorReading";
+    private static final String NO_BATCH_SELECTED = "noBatchSelected";
+    private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
+    private static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     // TODO; for what is it needed - right now it is used only in new tests
@@ -111,7 +111,7 @@ public class BatchForm extends BasisForm {
             }
             currentProcesses = new ArrayList<>(processes);
         } catch (NumberFormatException | DAOException e) {
-            Helper.setErrorMessage(ERROR_BY_READ, logger, e);
+            Helper.setErrorMessage(ERROR_READ, logger, e);
         }
     }
 
@@ -259,7 +259,7 @@ public class BatchForm extends BasisForm {
                 serviceManager.getProcessService().downloadDocket(
                     serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_BY_READ, logger, e);
+                Helper.setErrorMessage(ERROR_READ, logger, e);
                 return null;
             }
         } else {
@@ -421,7 +421,7 @@ public class BatchForm extends BasisForm {
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/pages/BatchProperties";
                 } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_BY_READ, logger, e);
+                    Helper.setErrorMessage(ERROR_READ, logger, e);
                     return null;
                 }
             } else {
@@ -495,7 +495,7 @@ public class BatchForm extends BasisForm {
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage(ERROR_BY_READ, logger, e);
+                Helper.setErrorMessage(ERROR_READ, logger, e);
                 return null;
             }
         }
@@ -540,7 +540,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_BY_READ, logger, e);
+            Helper.setErrorMessage(ERROR_READ, logger, e);
         }
     }
 }
