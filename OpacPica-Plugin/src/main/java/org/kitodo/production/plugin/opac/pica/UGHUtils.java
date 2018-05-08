@@ -72,7 +72,7 @@ class UGHUtils {
             md.setValue(inValue);
             inStruct.addMetadata(md);
         } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -189,7 +189,7 @@ class UGHUtils {
             }
         } catch (IOException e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, e.getLocalizedMessage(), ""));
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return inLanguage;
     }

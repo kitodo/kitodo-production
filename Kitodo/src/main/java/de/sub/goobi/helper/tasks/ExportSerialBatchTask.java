@@ -31,6 +31,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -160,14 +161,13 @@ public class ExportSerialBatchTask extends EmptyTask {
                     setProgress(100 * stepcounter / maxsize);
                 }
             }
-        } catch (Exception e) {
-            // PreferencesException, ReadException, SwapException, DAOException,
-            // IOException, InterruptedException
-            // and some runtime exceptions
+        } catch (PreferencesException | ReadException | IOException | MetadataTypeNotAllowedException
+                | TypeNotAllowedForParentException | TypeNotAllowedAsChildException | WriteException
+                | RuntimeException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
     }
 
@@ -209,7 +209,7 @@ public class ExportSerialBatchTask extends EmptyTask {
         try {
             type = root.getAllChildren().get(0).getDocStructType().getName();
         } catch (NullPointerException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         String ownPointer = ExportNewspaperBatchTask.getMetsPointerURL(process);
         PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());

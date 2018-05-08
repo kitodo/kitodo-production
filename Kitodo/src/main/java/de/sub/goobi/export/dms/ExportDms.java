@@ -35,6 +35,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
@@ -54,8 +55,8 @@ public class ExportDms extends ExportMets {
     private static final String DIRECTORY_SUFFIX = "_tif";
 
     /**
-     * The field exportDmsTask holds an optional task instance. Its progress and its
-     * errors will be passed to the task manager screen (if available) for
+     * The field exportDmsTask holds an optional task instance. Its progress and
+     * its errors will be passed to the task manager screen (if available) for
      * visualisation.
      */
     public EmptyTask exportDmsTask = null;
@@ -94,9 +95,9 @@ public class ExportDms extends ExportMets {
 
     /**
      * The function startExport() performs a DMS export to a desired place. In
-     * addition, it accepts an optional ExportDmsTask object. If that is passed in,
-     * the progress in it will be updated during processing and occurring errors
-     * will be passed to it to be visible in the task manager screen.
+     * addition, it accepts an optional ExportDmsTask object. If that is passed
+     * in, the progress in it will be updated during processing and occurring
+     * errors will be passed to it to be visible in the task manager screen.
      *
      * @param process
      *            process to export
@@ -111,13 +112,14 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (Exception e) {
+        } catch (WriteException | PreferencesException | TypeNotAllowedForParentException | ReadException | IOException
+                | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
+                logger.error("Export abgebrochen, xml-LeseFehler", e);
             } else {
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
+                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
             }
-            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return false;
         }
     }
@@ -152,14 +154,14 @@ public class ExportDms extends ExportMets {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
-                    Helper.setFehlerMeldung("dataCopier.syntaxError", e.getMessage());
+                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
                 }
                 return false;
             } catch (RuntimeException e) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
                 } else {
-                    Helper.setFehlerMeldung("dataCopier.runtimeException", e.getMessage());
+                    Helper.setErrorMessage("dataCopier.runtimeException", e.getMessage(), logger, e);
                 }
                 return false;
             }
@@ -174,7 +176,8 @@ public class ExportDms extends ExportMets {
         }
 
         // prepare and download save location
-        // TODO: why create again zielVerzeichnis if it is already given as an input??
+        // TODO: why create again zielVerzeichnis if it is already given as an
+        // input??
         URI zielVerzeichnis;
         URI userHome;
         if (process.getProject().isUseDmsImport()) {
@@ -232,8 +235,8 @@ public class ExportDms extends ExportMets {
         }
 
         /*
-         * export the file to the desired location, either directly into the import
-         * folder or into the user's home, then start the import thread
+         * export the file to the desired location, either directly into the
+         * import folder or into the user's home, then start the import thread
          */
         if (process.getProject().isUseDmsImport()) {
             asyncExportWithImport(process, gdzfile, userHome);
@@ -258,13 +261,13 @@ public class ExportDms extends ExportMets {
 
             gdzfile.setDigitalDocument(newFile);
             return gdzfile;
-        } catch (Exception e) {
+        } catch (PreferencesException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
+                logger.error("Export abgebrochen, xml-LeseFehler", e);
             } else {
-                Helper.setFehlerMeldung(Helper.getTranslation("exportError") + process.getTitle(), e);
+                Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
             }
-            logger.error("Export abgebrochen, xml-LeseFehler", e);
             return null;
         }
     }
@@ -279,11 +282,11 @@ public class ExportDms extends ExportMets {
             }
             directoryDownload(process, destinationDirectory);
             return true;
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setFehlerMeldung("Export canceled, Process: " + process.getTitle(), e);
+                Helper.setErrorMessage("Export canceled, Process: " + process.getTitle(), logger, e);
             }
             return false;
         }
@@ -324,10 +327,10 @@ public class ExportDms extends ExportMets {
             } catch (InterruptedException e) {
                 if (exportDmsTask != null) {
                     exportDmsTask.setException(e);
+                    logger.error(processTitle + ": error on export", e);
                 } else {
-                    Helper.setFehlerMeldung(processTitle + ": error on export - ", e.getMessage());
+                    Helper.setErrorMessage(processTitle + ": error on export - ", e.getMessage(), logger, e);
                 }
-                logger.error(processTitle + ": error on export", e);
             }
             if (asyncThread.result.length() > 0) {
                 if (exportDmsTask != null) {
@@ -367,8 +370,8 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Setter method to pass in a task thread to whom progress and error messages
-     * shall be reported.
+     * Setter method to pass in a task thread to whom progress and error
+     * messages shall be reported.
      *
      * @param task
      *            task implementation
@@ -378,8 +381,8 @@ public class ExportDms extends ExportMets {
     }
 
     /**
-     * Run through all metadata and children of given docstruct to trim the strings
-     * calls itself recursively.
+     * Run through all metadata and children of given docstruct to trim the
+     * strings calls itself recursively.
      */
     private void trimAllMetadata(DocStructInterface inStruct) {
         // trim all metadata values
@@ -491,7 +494,8 @@ public class ExportDms extends ExportMets {
                     fileService.createDirectory(userHome, atsPpnBand + ordnerEndung);
                 }
             } else {
-                // if no async import, then create the folder with user authorization again
+                // if no async import, then create the folder with user
+                // authorization again
                 User user = Helper.getCurrentUser();
                 try {
                     if (user != null) {
@@ -502,9 +506,8 @@ public class ExportDms extends ExportMets {
                 } catch (IOException e) {
                     handleException(e);
                     throw e;
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     handleException(e);
-                    logger.error("could not create destination directory", e);
                 }
             }
 
@@ -532,10 +535,10 @@ public class ExportDms extends ExportMets {
     private void handleException(Exception e) {
         if (exportDmsTask != null) {
             exportDmsTask.setException(e);
+            logger.error("could not create destination directory", e);
         } else {
-            Helper.setFehlerMeldung("Export canceled, error", "could not create destination directory");
+            Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger, e);
         }
-        logger.error("could not create destination directory", e);
     }
 
     /**

@@ -177,16 +177,16 @@ public class MetadataPathSelector extends MetadataSelector {
                 // ignored
                 String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";
                 logger.debug("Cannot create structural element {} as child of {} because it isn’t allowed by the rule set.",
-                        docStructType, nodeName);
+                    docStructType, nodeName);
                 return;
             } catch (TypeNotAllowedForParentException e) {
                 // see https://github.com/kitodo/kitodo-ugh/issues/2
                 throw new UnreachableCodeException("TypeNotAllowedForParentException is never thrown");
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 // copy rule failed, skip it
                 String nodeName = logicalNode.getDocStructType() != null ? logicalNode.getDocStructType().getName() : "without type";
                 logger.debug("Cannot create structural element {} as child of {}: Accessing the rule set failed with exception: {}",
-                        docStructType, nodeName, e.getMessage());
+                    docStructType, nodeName, e.getMessage());
                 return;
             }
         }
@@ -304,7 +304,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     private DocStructInterface getSubnode(DocStructInterface logicalNode) {
         List<DocStructInterface> children = logicalNode.getAllChildrenByTypeAndMetadataType(docStructType,
-                ANY_METADATA_TYPE_SYMBOL);
+            ANY_METADATA_TYPE_SYMBOL);
         if (children == null) {
             children = Collections.emptyList();
         }

@@ -106,11 +106,11 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
 
                 } catch (InterruptedException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     logger.trace("17");
                     Thread.currentThread().interrupt();
-                } catch (Exception e) {
-                    logger.error(e);
+                } catch (IOException | DAOException | RuntimeException e) {
+                    logger.error(e.getMessage(), e);
                 }
             }
 
@@ -170,7 +170,7 @@ public class HotfolderJob extends AbstractGoobiJob {
      * @return int
      */
     public static int generateProcess(String processTitle, Template template, URI dir, String digitalCollection,
-                                      String updateStrategy) throws IOException {
+            String updateStrategy) throws IOException {
         // wenn keine anchor Datei, dann Vorgang anlegen
         if (!processTitle.contains("anchor") && processTitle.endsWith("xml")) {
             if (!updateStrategy.equals("ignore")) {
@@ -186,7 +186,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
@@ -208,7 +208,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                     }
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         logger.error("Can not delete file " + processTitle, e);
                         return 30;
                     }
@@ -281,19 +281,19 @@ public class HotfolderJob extends AbstractGoobiJob {
                         runThreads(tasks);
                     }
                 } catch (ReadException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 20;
                 } catch (PreferencesException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 21;
                 } catch (DAOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 22;
                 } catch (WriteException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 23;
                 } catch (IOException e) {
-                    logger.error(e);
+                    logger.error(e.getMessage(), e);
                     return 24;
                 }
             }
@@ -346,7 +346,7 @@ public class HotfolderJob extends AbstractGoobiJob {
             }
             try {
                 fileService.delete(metsfilename);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
@@ -372,7 +372,7 @@ public class HotfolderJob extends AbstractGoobiJob {
 
             } catch (ReadException | PreferencesException | WriteException | IOException e) {
                 Helper.setFehlerMeldung(e);
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
         } else {
             logger.trace("title is invalid");

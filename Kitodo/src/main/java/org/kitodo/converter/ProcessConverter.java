@@ -36,7 +36,7 @@ public class ProcessConverter implements Converter {
             try {
                 return serviceManager.getProcessService().getById(Integer.valueOf(value));
             } catch (NumberFormatException | DAOException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
                 return "0";
             }
         }

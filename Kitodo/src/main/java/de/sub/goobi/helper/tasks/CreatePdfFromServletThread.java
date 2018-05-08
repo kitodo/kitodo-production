@@ -173,7 +173,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 File tempMets = new File(this.metsURL.toString());
                 tempMets.delete();
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             logger.error("Error while creating pdf for " + this.getProcess().getTitle(), e);
             setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: " + e.getMessage());
             setStatusProgress(-1);
@@ -187,7 +187,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 uri = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".PDF-ERROR.log");
             } catch (MalformedURLException e1) {
                 logger.error("URI " + this.targetFolder + this.getProcess().getTitle() + ".PDF-ERROR.log is malformed",
-                        e1);
+                    e1);
             } catch (IOException e1) {
                 logger.error("Ressource " + uri + " could not be created", e);
             }

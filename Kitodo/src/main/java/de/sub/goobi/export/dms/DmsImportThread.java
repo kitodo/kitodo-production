@@ -12,6 +12,7 @@
 package de.sub.goobi.export.dms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -105,8 +106,8 @@ public class DmsImportThread extends Thread {
                         this.stop = true;
                     }
                 }
-            } catch (Exception e) {
-                logger.error("Unexpected exception", e);
+            } catch (InterruptedException | IOException | RuntimeException e) {
+                Helper.setErrorMessage("Unexpected exception", logger, e);
             }
         }
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {

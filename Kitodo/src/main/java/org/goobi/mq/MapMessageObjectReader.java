@@ -167,8 +167,8 @@ public class MapMessageObjectReader {
         Object mapObject = null;
         try {
             mapObject = ticket.getObject(key);
-        } catch (Exception e) {
-            logger.error(e);
+        } catch (JMSException | RuntimeException e) {
+            logger.error(e.getMessage(), e);
         }
         if (mapObject == null) {
             return null;

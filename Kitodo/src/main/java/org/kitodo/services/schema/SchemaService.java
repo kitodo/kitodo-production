@@ -254,7 +254,7 @@ public class SchemaService {
                 }
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             return true;
         }
         return false;
@@ -525,7 +525,7 @@ public class SchemaService {
             int bandInt = Integer.parseInt(bandNumber) * 10;
             mdSorting.setStringValue(String.valueOf(bandInt));
         } catch (MetadataTypeNotAllowedException | NumberFormatException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
 
         /*

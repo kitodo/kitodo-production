@@ -14,6 +14,7 @@ package de.sub.goobi.helper.tasks;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,7 +35,12 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -227,13 +233,11 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             setProgress(((100 * nextProcessToCreate) + 1) / (numberOfProcesses + 2));
             saveFullBatch(currentTitle);
             setProgress(100);
-        } catch (Exception e) {
-            // ReadException, PreferencesException, SwapException, DAOException,
-            // WriteException, IOException,
-            // InterruptedException from ProzesskopieForm.createNewProcess()
+        } catch (IOException | ReadException | PreferencesException | WriteException | DataException
+                | RuntimeException e) {
             String message = currentTitle != null
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
-                            Arrays.asList(new String[] {currentTitle }))
+                        Arrays.asList(new String[] {currentTitle }))
                     : e.getClass().getSimpleName() + getMessagePart(currentTitle);
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
         }
@@ -262,7 +266,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         try {
             firstAddable = docStruct.getDocStructType().getAllAllowedDocStructTypes().get(0);
             return docStruct.createChild(firstAddable, document, ruleset);
-        } catch (Exception e) {
+        } catch (TypeNotAllowedAsChildException | TypeNotAllowedForParentException | RuntimeException e) {
             StringBuilder message = new StringBuilder();
             message.append("Could not add child ");
             if (firstAddable != null) {
@@ -341,12 +345,12 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             if (!days.containsKey(date)) {
                 DocStructInterface newDay = createFirstChild(month, document, ruleset);
                 addMetadatum(newDay, MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE,
-                        Integer.toString(date.getDayOfMonth()), true);
+                    Integer.toString(date.getDayOfMonth()), true);
                 addMetadatum(newDay, year.getDocStructType().getName(), theYear, false);
                 addMetadatum(newDay, month.getDocStructType().getName(), Integer.toString(date.getMonthOfYear()),
                     false);
                 addMetadatum(newDay, MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE,
-                        Integer.toString(date.getDayOfMonth()), false);
+                    Integer.toString(date.getDayOfMonth()), false);
                 days.put(date, newDay);
             }
             DocStructInterface day = days.get(date);
@@ -380,13 +384,13 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
     private void addMetadatum(DocStructInterface level, String key, String value, boolean fail) {
         try {
             level.addMetadata(key, value);
-        } catch (Exception e) {
+        } catch (MetadataTypeNotAllowedException | RuntimeException e) {
             if (fail) {
                 throw new RuntimeException("Could not create metadatum " + key + " in "
                         + (level.getDocStructType() != null ? "DocStrctType " + level.getDocStructType().getName()
                                 : "anonymous DocStrctType")
                         + ": " + e.getClass().getSimpleName().replace("NullPointerException",
-                                "No metadata types are associated with that DocStructType."),
+                            "No metadata types are associated with that DocStructType."),
                         e);
             }
         }

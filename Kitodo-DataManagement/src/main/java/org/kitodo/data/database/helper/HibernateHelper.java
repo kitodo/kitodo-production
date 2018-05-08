@@ -62,7 +62,7 @@ public class HibernateHelper implements Serializable {
             if (session == null) {
                 session = HibernateUtil.getSession();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             session = HibernateUtil.getSession();
         }
         if (!session.isOpen()) {
@@ -91,7 +91,7 @@ public class HibernateHelper implements Serializable {
                     try {
                         value = vb.getValue(context);
                     } catch (EvaluationException e) {
-                        logger.error(e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

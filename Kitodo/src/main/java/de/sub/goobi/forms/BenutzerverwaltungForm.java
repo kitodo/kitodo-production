@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -33,6 +34,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
+import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
@@ -338,8 +340,9 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public String writeUserAtLdapServer() {
         try {
-            serviceManager.getLdapServerService().createNewUser(this.userObject, passwordEncoder.decrypt(this.userObject.getPassword()));
-        } catch (Exception e) {
+            serviceManager.getLdapServerService().createNewUser(this.userObject,
+                passwordEncoder.decrypt(this.userObject.getPassword()));
+        } catch (NoSuchAlgorithmException | NamingException | IOException | RuntimeException e) {
             Helper.setErrorMessage("Could not generate ldap entry", logger, e);
         }
         return null;

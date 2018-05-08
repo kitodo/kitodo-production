@@ -81,7 +81,7 @@ public class WorkflowControllerService {
 
     /**
      * Get problem.
-     * 
+     *
      * @return Problem object
      */
     public Problem getProblem() {
@@ -90,7 +90,7 @@ public class WorkflowControllerService {
 
     /**
      * Set problem.
-     * 
+     *
      * @param problem
      *            object
      */
@@ -100,7 +100,7 @@ public class WorkflowControllerService {
 
     /**
      * Get solution.
-     * 
+     *
      * @return Solution object
      */
     public Solution getSolution() {
@@ -109,7 +109,7 @@ public class WorkflowControllerService {
 
     /**
      * Set solution.
-     * 
+     *
      * @param solution
      *            object
      */
@@ -129,7 +129,7 @@ public class WorkflowControllerService {
 
     /**
      * Save workflow as template.
-     * 
+     *
      * @param diagramName
      *            from which template is assigned
      */
@@ -177,7 +177,7 @@ public class WorkflowControllerService {
 
     /**
      * Change Task status up for list of tasks assigned to given Process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -191,7 +191,7 @@ public class WorkflowControllerService {
 
     /**
      * Change Task status down for list of tasks assigned to given Process.
-     * 
+     *
      * @param process
      *            object
      */
@@ -216,7 +216,8 @@ public class WorkflowControllerService {
      * @return closed Task
      */
     public Task closeTaskByUser(Task task) throws DataException, IOException {
-        // if the result of the task is to be verified first, then if necessary, cancel
+        // if the result of the task is to be verified first, then if necessary,
+        // cancel
         // the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
@@ -237,7 +238,8 @@ public class WorkflowControllerService {
                 }
             }
         }
-        // if the result of the verification is ok, then continue, otherwise it is not
+        // if the result of the verification is ok, then continue, otherwise it
+        // is not
         // reached
         this.webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
@@ -310,7 +312,8 @@ public class WorkflowControllerService {
 
                 updateProcessSortHelperStatus(task.getProcess());
 
-                // if it is an image task, then download the images into the user home directory
+                // if it is an image task, then download the images into the
+                // user home directory
                 if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                     downloadToHome(task);
                 }
@@ -319,8 +322,7 @@ public class WorkflowControllerService {
             }
             this.flagWait = false;
         } catch (DataException e) {
-            Helper.setFehlerMeldung(Helper.getTranslation("stepSaveError"), e);
-            logger.error("Task couldn't get saved", e);
+            Helper.setErrorMessage(Helper.getTranslation("stepSaveError"), logger, e);
         } finally {
             this.flagWaitLock.unlock();
         }
@@ -329,7 +331,7 @@ public class WorkflowControllerService {
 
     /**
      * Unassing user from task.
-     * 
+     *
      * @param task
      *            object
      * @return Task object
@@ -363,7 +365,7 @@ public class WorkflowControllerService {
 
     /**
      * Set Priority equal 10 means correction task.
-     * 
+     *
      * @param task
      *            Task object
      * @return correction Task
@@ -614,7 +616,7 @@ public class WorkflowControllerService {
 
     /**
      * Download to user home directory.
-     * 
+     *
      * @param task
      *            object
      */

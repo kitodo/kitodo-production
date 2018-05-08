@@ -237,7 +237,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 templateProperties.add(prepareProperty("Bandnummer", volumeNumber));
             }
 
-                MetadataTypeInterface identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
+            MetadataTypeInterface identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
             mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
             if (mdList != null && mdList.size() > 0) {
                 String analog = mdList.get(0).getValue();
@@ -247,7 +247,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (child != null) {
                 mdList = child.getAllMetadataByType(identifierType);
                 if (mdList != null && mdList.size() > 0) {
-                        MetadataInterface identifier = mdList.get(0);
+                    MetadataInterface identifier = mdList.get(0);
                     workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
                 }
             }
@@ -341,7 +341,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
         } catch (RuntimeException | ImportPluginException e) {
             throw e;
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | JDOMException | IOException e) {
             throw new ImportPluginException(e.getMessage(), e);
         }
         return volumeRecord;
@@ -378,7 +378,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
      * @param attributeValue
      *            attribute to locate
      * @return value, or "" if not found
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     private static String getSubelementValue(Element inElement, String attributeValue) {
@@ -511,42 +511,8 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 }
             }
         } catch (IOException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
-
-        //
-        // Workbook w = Workbook.getWorkbook(importFile);
-        // // Get the first sheet
-        // Sheet sheet = w.getSheet(0);
-        // // loop over all rows in first column
-        // for (int i = 0; i < sheet.getRows(); i++) {
-        // Cell cell = sheet.getCell(0, i);
-        // // get content
-        // String value = cell.getContents();
-        // // test if content is a valid PPN
-        // if (cell.getType().equals(CellType.NUMBER)) {
-        // // found numbers only
-        // Record r = new Record();
-        // r.setId(value.trim());
-        // r.setData(value.trim());
-        // records.add(r);
-        // } else if (cell.getType().equals(CellType.LABEL)) {
-        // // found letters in it
-        // if (value != null && value.trim().matches(PPN_PATTERN)) {
-        // logger.debug("matched: " + value);
-        // // found numbers and character 'X' as last sign
-        // Record r = new Record();
-        // r.setId(value.trim());
-        // r.setData(value.trim());
-        // records.add(r);
-        // }
-        // }
-        // }
-        // } catch (BiffException e) {
-        // logger.error(e);
-        // } catch (IOException e) {
-        // logger.error(e);
-        // }
         return records;
     }
 

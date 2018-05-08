@@ -46,7 +46,7 @@ public class ConfigOpac {
             return config;
         }
         String configPfad = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
-                FileNames.OPAC_CONFIGURATION_FILE);
+            FileNames.OPAC_CONFIGURATION_FILE);
 
         if (!new File(configPfad).exists()) {
             throw new FileNotFoundException("File not found: " + configPfad);
@@ -54,7 +54,7 @@ public class ConfigOpac {
         try {
             config = new XMLConfiguration(configPfad);
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             config = new XMLConfiguration();
         }
         config.setListDelimiter('&');
@@ -75,9 +75,8 @@ public class ConfigOpac {
                 String title = getConfig().getString("catalogue(" + i + ")[@title]");
                 myList.add(title);
             }
-        } catch (Exception e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+        } catch (FileNotFoundException | RuntimeException e) {
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
         return myList;
     }
@@ -93,9 +92,8 @@ public class ConfigOpac {
                 String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
                 myList.add(title);
             }
-        } catch (Exception e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+        } catch (FileNotFoundException | RuntimeException e) {
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
         return myList;
     }
@@ -111,9 +109,8 @@ public class ConfigOpac {
             for (String title : getAllDoctypeTitles()) {
                 myList.add(getDoctypeByName(title));
             }
-        } catch (Exception e) {
-            logger.error("Error while reading von opac-config", e);
-            Helper.setFehlerMeldung("Error while reading von opac-config", e.getMessage());
+        } catch (FileNotFoundException | RuntimeException e) {
+            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
         return myList;
     }

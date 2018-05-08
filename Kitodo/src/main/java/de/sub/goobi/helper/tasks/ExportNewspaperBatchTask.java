@@ -45,9 +45,11 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -214,7 +216,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
                     }
                     aggregation.addAll(getIssueDates(serviceManager.getProcessService().getDigitalDocument(process)),
-                            getMetsPointerURL(process));
+                        getMetsPointerURL(process));
                     setProgress(++dividend / divisor);
                 }
                 action = 2;
@@ -233,14 +235,13 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 
                     new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
                         process, serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()),
-                                    extendedData.getDigitalDocument());
+                        extendedData.getDigitalDocument());
                     setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
                 }
             }
-        } catch (Exception e) {
-            // PreferencesException, ReadException, SwapException, DAOException,
-            // IOException, InterruptedException
-            // and some runtime exceptions
+        } catch (DAOException | ReadException | PreferencesException | IOException | TypeNotAllowedForParentException
+                | MetadataTypeNotAllowedException | TypeNotAllowedAsChildException | WriteException
+                | RuntimeException e) {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
@@ -281,7 +282,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         } catch (NumberFormatException uber) {
             throw new ReadException(
                     "Could not get date year: " + MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE
-                    + " value from " + yearLevelName + " cannot be interpeted as whole number.");
+                            + " value from " + yearLevelName + " cannot be interpeted as whole number.");
         }
     }
 
@@ -305,7 +306,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             if (metaDataTypeName.equals(metadataType.getName())) {
                 return Integer
                         .parseInt(new HashSet<MetadataInterface>(structureTypeName.getAllMetadataByType(metadataType))
-                        .iterator().next().getValue());
+                                .iterator().next().getValue());
             }
         }
         throw new NoSuchElementException();
@@ -466,7 +467,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
 
         DigitalDocumentInterface caudexDigitalis = result.getDigitalDocument();
         int ownYear = getMetadataIntValueByName(
-                caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator().next(),
+            caudexDigitalis.getLogicalDocStruct().getAllChildren().iterator().next(),
             MetsModsImportExportInterface.CREATE_LABEL_ATTRIBUTE_TYPE);
         String ownMetsPointerURL = getMetsPointerURL(process);
 
@@ -553,7 +554,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 child.addMetadata(optionalField, identifier);
             } catch (MetadataTypeNotAllowedException e) {
                 logger.info("Exception: {}",
-                        e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
+                    e.getMessage().replaceFirst("^Couldn’t add ([^:]+):", "Couldn’t add optional field $1."));
             }
 
             Integer rank = null;
@@ -607,9 +608,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                                     && aforeborn.getDocStructType().getName() != null
                                     ? aforeborn.getDocStructType().getName() : "cross-reference";
                             logger.warn(
-                                    "Cannot determine position to place {} correctly because the sorting criterion "
-                                            + "of one of its siblings is \"{}\", but must be numeric.",
-                                    typeName, metadataElement.getValue());
+                                "Cannot determine position to place {} correctly because the sorting criterion "
+                                        + "of one of its siblings is \"{}\", but must be numeric.",
+                                typeName, metadataElement.getValue());
                         }
                     }
                 }

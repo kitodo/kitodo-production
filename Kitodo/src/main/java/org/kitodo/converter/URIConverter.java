@@ -34,7 +34,7 @@ public class URIConverter implements Converter {
             try {
                 return new URI(value);
             } catch (URISyntaxException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
                 return null;
             }
         }

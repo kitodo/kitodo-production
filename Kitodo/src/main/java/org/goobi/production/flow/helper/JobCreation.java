@@ -70,7 +70,7 @@ public class JobCreation {
             removeImages(basepath);
             try {
                 fileService.delete(metsfile);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 logger.error("Can not delete file " + processTitle, e);
                 return null;
             }
@@ -190,7 +190,7 @@ public class JobCreation {
 
             try {
                 fileService.delete(metsfile);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 logger.error("Can not delete file " + metsfile + " after importing " + p.getTitle() + " into kitodo",
                     e);
 

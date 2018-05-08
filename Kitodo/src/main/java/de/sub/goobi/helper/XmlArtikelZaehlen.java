@@ -11,6 +11,8 @@
 
 package de.sub.goobi.helper;
 
+import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -19,6 +21,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -47,8 +50,8 @@ public class XmlArtikelZaehlen {
         FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
-        } catch (Exception e) {
-            Helper.setFehlerMeldung("xml error", e.getMessage());
+        } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
+            Helper.setErrorMessage("xml error", logger, e);
             return -1;
         }
 
@@ -58,9 +61,9 @@ public class XmlArtikelZaehlen {
             document = gdzfile.getDigitalDocument();
             DocStructInterface logicalTopstruct = document.getLogicalDocStruct();
             rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
-        } catch (PreferencesException e1) {
-            Helper.setFehlerMeldung("[" + myProcess.getId() + "] Can not get DigitalDocument: ", e1.getMessage());
-            logger.error(e1);
+        } catch (PreferencesException e) {
+            Helper.setErrorMessage("[" + myProcess.getId() + "] " + Helper.getTranslation("cannotGetDigitalDocument")
+                    + ": " + e.getMessage(), logger, e);
             rueckgabe = 0;
         }
 
@@ -71,7 +74,7 @@ public class XmlArtikelZaehlen {
         try {
             serviceManager.getProcessService().save(myProcess);
         } catch (DataException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
         }
         return rueckgabe;
     }

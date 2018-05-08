@@ -120,14 +120,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             user = getByLogin(username);
         } catch (DAOException e) {
             Helper.setFehlerMeldung(e);
-            throw new UsernameNotFoundException(e.getMessage());
+            throw new UsernameNotFoundException(e.getMessage(), e);
         }
         return new SecurityUserDetails(user);
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save project, if false only re-save project object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save project, if false only re-save project object.
      *
      * @param user
      *            object
@@ -146,8 +146,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove filter from the index, if
-     * false re-save filter object.
+     * Check if IndexAction flag is delete. If true remove filter from the
+     * index, if false re-save filter object.
      *
      * @param user
      *            object
@@ -165,8 +165,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save task, if false only re-save task object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save task, if false only re-save task object.
      *
      * @param user
      *            object
@@ -192,8 +192,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Check if IndexAction flag is delete. If true remove user from list of users
-     * and re-save group, if false only re-save group object.
+     * Check if IndexAction flag is delete. If true remove user from list of
+     * users and re-save group, if false only re-save group object.
      *
      * @param user
      *            object
@@ -302,14 +302,15 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Get amount of users with exactly the same login like given but different id.
+     * Get amount of users with exactly the same login like given but different
+     * id.
      *
      * @param id
      *            of user
      * @param login
      *            of user
-     * @return amount of users with exactly the same login like given but different
-     *         id
+     * @return amount of users with exactly the same login like given but
+     *         different id
      */
     public Long getAmountOfUsersWithExactlyTheSameLogin(String id, String login) throws DataException {
         BoolQueryBuilder boolQuery = new BoolQueryBuilder();
@@ -846,8 +847,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user and that
-     * are neither "DONE" nor "LOCKED".
+     * Retrieve and return the list of tasks that are assigned to the user and
+     * that are neither "DONE" nor "LOCKED".
      *
      * @return list of tasks that are currently assigned to the user and neither
      *         "DONE" nor "LOCKED".

@@ -18,6 +18,7 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -466,7 +467,7 @@ public class MassImportForm implements Serializable {
         List<String> allOpacCatalogues = new ArrayList<>();
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             Helper.setErrorMessage("Error while reading von opac-config", logger, e);
         }
         return allOpacCatalogues;
@@ -685,7 +686,7 @@ public class MassImportForm implements Serializable {
             if (list != null) {
                 return true;
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
@@ -696,7 +697,7 @@ public class MassImportForm implements Serializable {
             if (list.size() > 0) {
                 return true;
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return false;
@@ -721,7 +722,7 @@ public class MassImportForm implements Serializable {
             if (list != null) {
                 return "/pages/MultiMassImportPage2";
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return "/pages/MassImportFormPage2";
@@ -781,7 +782,7 @@ public class MassImportForm implements Serializable {
             if (list != null) {
                 return list;
             }
-        } catch (Exception e) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return new ArrayList<>();

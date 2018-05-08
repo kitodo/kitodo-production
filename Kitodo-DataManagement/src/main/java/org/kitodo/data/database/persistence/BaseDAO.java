@@ -101,7 +101,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 session.delete(merged);
                 session.flush();
                 transaction.commit();
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
@@ -180,7 +180,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 session.flush();
                 transaction.commit();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -308,7 +308,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
             }
@@ -332,7 +332,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (transaction != null) {
                 transaction.rollback();
             }

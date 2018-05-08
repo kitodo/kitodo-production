@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -200,7 +201,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             }
             logger.trace("config 18");
 
-        } catch (Exception e) {
+        } catch (ConfigurationException | RuntimeException e) {
             logger.trace("config 19 {}", e.getMessage());
             return new ArrayList<>();
         }

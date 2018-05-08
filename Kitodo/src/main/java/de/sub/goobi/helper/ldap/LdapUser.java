@@ -13,13 +13,17 @@ package de.sub.goobi.helper.ldap;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import javax.naming.Binding;
 import javax.naming.Context;
@@ -123,15 +127,16 @@ public class LdapUser implements DirContext {
             /* LanMgr */
             try {
                 this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
-            } catch (Exception e) {
-                logger.error(e);
+            } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchPaddingException
+                    | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
+                logger.error(e.getMessage(), e);
             }
             /* NTLM */
             try {
                 byte[] hmm = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
                 this.myAttrs.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
-                logger.error(e);
+                logger.error(e.getMessage(), e);
             }
 
             /*
@@ -181,7 +186,9 @@ public class LdapUser implements DirContext {
      * @return The LM Hash of the given password, used in the calculation of the LM
      *         Response.
      */
-    public static byte[] lmHash(String password) throws Exception {
+    public static byte[] lmHash(String password) throws UnsupportedEncodingException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+
         byte[] oemPassword = password.toUpperCase().getBytes("US-ASCII");
         int length = Math.min(oemPassword.length, 14);
         byte[] keyBytes = new byte[14];
