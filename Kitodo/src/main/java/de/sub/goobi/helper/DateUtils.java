@@ -33,6 +33,13 @@ public class DateUtils {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern("dd.MM.yyyy");
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private DateUtils() {
+
+    }
+
+    /**
      * The function lastMonthForYear() returns from an ordered set of dates for
      * a given year the last month which a date can be found for in that year.
      *

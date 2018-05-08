@@ -24,6 +24,13 @@ import org.kitodo.data.database.beans.Template;
 public class BeanHelper {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private BeanHelper() {
+
+    }
+
+    /**
      * Add property for process.
      *
      * @param process

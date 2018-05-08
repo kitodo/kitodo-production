@@ -29,6 +29,13 @@ import javax.ws.rs.core.MediaType;
 public class FacesUtils {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private FacesUtils() {
+
+    }
+
+    /**
      * The procedure sendDownload() sends a byte[] of data in the HTTP response
      * of a user interaction as a file download. Calling this procedure is only
      * sensible during the invoke application phase of the JSF life cycle, i.e.
