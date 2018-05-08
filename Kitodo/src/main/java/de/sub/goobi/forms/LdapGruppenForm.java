@@ -36,7 +36,7 @@ public class LdapGruppenForm extends BasisForm {
     private LdapGroup myLdapGruppe = new LdapGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
-
+    private static final String LDAP_GROUP = "ldapgruppe";
     private String ldapgrouopListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapgrouopEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
@@ -64,7 +64,7 @@ public class LdapGruppenForm extends BasisForm {
             this.serviceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
             return ldapgrouopListPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
     }
@@ -78,7 +78,7 @@ public class LdapGruppenForm extends BasisForm {
         try {
             this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ldapgruppe") }, logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
         return ldapgrouopListPath;
@@ -107,7 +107,7 @@ public class LdapGruppenForm extends BasisForm {
                 setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("ldapgruppe"), id }, logger,
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(LDAP_GROUP), id }, logger,
                 e);
         }
         setSaveDisabled(true);
