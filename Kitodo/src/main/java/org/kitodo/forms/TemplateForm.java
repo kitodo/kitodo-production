@@ -66,6 +66,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return true or false
      */
+    @Override
     public boolean isShowClosedProcesses() {
         return this.showClosedProcesses;
     }
@@ -76,6 +77,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @param showClosedProcesses
      *            true or false
      */
+    @Override
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
     }
@@ -85,6 +87,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return true or false
      */
+    @Override
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }
@@ -95,6 +98,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @param showInactiveProjects
      *            true or false
      */
+    @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
     }
