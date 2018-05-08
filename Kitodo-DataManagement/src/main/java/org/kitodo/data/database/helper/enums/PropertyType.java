@@ -53,7 +53,7 @@ public enum PropertyType {
      */
     public static PropertyType getByName(String name) {
         for (PropertyType p : PropertyType.values()) {
-            if (p.getName().equals(name.toLowerCase())) {
+            if (p.getName().equalsIgnoreCase(name)) {
                 return p;
             }
         }
