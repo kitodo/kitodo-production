@@ -29,6 +29,14 @@ public class DigitalCollections {
 
     private static List<String> digitalCollections;
     private static List<String> possibleDigitalCollection;
+    private static final String DEFAULT = "default";
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private DigitalCollections() {
+
+    }
 
     /**
      * Get list of digital collections.
@@ -73,11 +81,11 @@ public class DigitalCollections {
         List<Element> projects = root.getChildren();
         for (Element project : projects) {
             // collect default collections
-            if (project.getName().equals("default")) {
+            if (project.getName().equals(DEFAULT)) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
-                    if (digitalCollection.getAttribute("default") != null
-                            && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                    if (digitalCollection.getAttribute(DEFAULT) != null
+                            && digitalCollection.getAttributeValue(DEFAULT).equalsIgnoreCase("true")) {
                         digitalCollections.add(digitalCollection.getText());
                     }
                     defaultCollections.add(digitalCollection.getText());
@@ -114,8 +122,8 @@ public class DigitalCollections {
             if (projectName.getText().equalsIgnoreCase(process.getProject().getTitle())) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
-                    if (digitalCollection.getAttribute("default") != null
-                            && digitalCollection.getAttributeValue("default").equalsIgnoreCase("true")) {
+                    if (digitalCollection.getAttribute(DEFAULT) != null
+                            && digitalCollection.getAttributeValue(DEFAULT).equalsIgnoreCase("true")) {
                         digitalCollections.add(digitalCollection.getText());
                     }
                     possibleDigitalCollection.add(digitalCollection.getText());
