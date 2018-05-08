@@ -32,6 +32,13 @@ public class UghUtils {
     private static final Logger logger = LogManager.getLogger(UghUtils.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private UghUtils() {
+
+    }
+
+    /**
      * In einem String die Umlaute auf den Grundbuchstaben reduzieren.
      */
     // TODO: Try to replace this with an external library

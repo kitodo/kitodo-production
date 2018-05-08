@@ -40,8 +40,14 @@ import org.kitodo.services.file.FileService;
 public class JobCreation {
     private static final Logger logger = LogManager.getLogger(JobCreation.class);
     private static final ServiceManager serviceManager = new ServiceManager();
-
     private static final FileService fileService = serviceManager.getFileService();
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private JobCreation() {
+
+    }
 
     /**
      * Generate process.

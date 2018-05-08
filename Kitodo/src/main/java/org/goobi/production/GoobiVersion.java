@@ -21,6 +21,13 @@ public class GoobiVersion {
     private static String builddate = "N/A";
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private GoobiVersion() {
+
+    }
+
+    /**
      * Setup GoobiVersion form manifest.
      *
      * @param manifest as Manifest

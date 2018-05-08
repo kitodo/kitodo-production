@@ -17,4 +17,11 @@ import ugh.LegacyUghImplementation;
 
 public class UghImplementation {
     public static final FactoryInterface INSTANCE = new LegacyUghImplementation();
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private UghImplementation() {
+
+    }
 }

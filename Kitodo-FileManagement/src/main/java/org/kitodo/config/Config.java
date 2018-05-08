@@ -25,6 +25,13 @@ public class Config {
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private Config() {
+
+    }
+
+    /**
      * Get Kitodo data directory.
      *
      * @return String

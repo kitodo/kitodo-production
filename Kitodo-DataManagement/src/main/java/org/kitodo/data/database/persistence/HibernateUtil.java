@@ -34,6 +34,13 @@ public class HibernateUtil {
     private static final ThreadLocal<Session> threadSession = new ThreadLocal<>();
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private HibernateUtil() {
+
+    }
+
+    /**
      * Retrieves the current Session.
      *
      * @return Session

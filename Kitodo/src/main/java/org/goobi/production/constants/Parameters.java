@@ -115,4 +115,11 @@ public class Parameters {
      * clicking the link “Read in pagination from images”.
      */
     public static final String WITH_AUTOMATIC_PAGINATION = "MetsEditorWithAutomaticPagination";
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private Parameters() {
+
+    }
 }
