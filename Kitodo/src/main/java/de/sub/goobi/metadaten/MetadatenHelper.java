@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -52,6 +53,7 @@ public class MetadatenHelper implements Comparator<Object> {
     private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
+    private static final String METADATA_NOT_ALLOWED = "metadataNotAllowed";
     private static ServiceManager serviceManager = new ServiceManager();
     private PrefsInterface prefs;
     private DigitalDocumentInterface digitalDocument;
@@ -106,17 +108,19 @@ public class MetadatenHelper implements Comparator<Object> {
                         try {
                             newDocstruct.addMetadata(old);
                         } catch (RuntimeException e) {
-                            logger.error(e.getMessage(), e);
-                            Helper.setFehlerMeldung("Metadata " + old.getMetadataType().getName()
-                                    + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                            Helper.setErrorMessage(METADATA_NOT_ALLOWED,
+                                new Object[] {Helper.getTranslation("metadata"), old.getMetadataType().getName(),
+                                              newDocstruct.getDocStructType().getName() },
+                                logger, e);
                             return inOldDocstruct;
                         }
                     } else {
                         newDocstruct.addMetadata(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung("Metadata " + old.getMetadataType().getName()
-                            + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                    Helper.setFehlerMeldung(
+                        Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("metadata"),
+                            old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
                 }
             }
@@ -129,14 +133,16 @@ public class MetadatenHelper implements Comparator<Object> {
                         && newDocstruct.getPossibleMetadataTypes().size() > 0) {
                     boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
-                        Helper.setFehlerMeldung("Person " + old.getMetadataType().getName()
-                                + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                        Helper.setFehlerMeldung(
+                                Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("person"),
+                                        old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     } else {
                         newDocstruct.addPerson(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung("Person " + old.getMetadataType().getName()
-                            + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                    Helper.setFehlerMeldung(
+                            Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("person"),
+                                    old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
                 }
             }
@@ -157,15 +163,17 @@ public class MetadatenHelper implements Comparator<Object> {
 
                     if (!newDocstruct.getDocStructType().getAllAllowedDocStructTypes()
                             .contains(old.getDocStructType().getName())) {
-                        Helper.setFehlerMeldung("Child element " + old.getDocStructType().getName()
-                                + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                        Helper.setFehlerMeldung(
+                                Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
+                                        old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
                         return inOldDocstruct;
                     } else {
                         newDocstruct.addChild(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung("Child element " + old.getDocStructType().getName()
-                            + " is not allowed in new element " + newDocstruct.getDocStructType().getName());
+                    Helper.setFehlerMeldung(
+                            Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
+                                    old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
                 }
             }

@@ -52,18 +52,16 @@ public class FileManipulation {
     private Metadaten metadataBean;
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
-
-    public FileManipulation(Metadaten metadataBean) {
-        this.metadataBean = metadataBean;
-    }
-
+    private static final String FILE_UPLOAD = "fileupload";
+    private static final String NO_FILE_SELECTED = "noFileSelected";
+    private static final String UNCOUNTED = "uncounted";
     // insert new file after this page
     private String insertPage = "";
 
     private String imageSelection = "";
 
     // mode of insert (uncounted or into pagination sequence)
-    private String insertMode = "uncounted";
+    private String insertMode = UNCOUNTED;
 
     private File uploadedFile = null;
 
@@ -78,6 +76,15 @@ public class FileManipulation {
     private String currentFolder = "";
 
     /**
+     * Constructor with parameter.
+     *
+     * @param metadataBean as Metadaten
+     */
+    public FileManipulation(Metadaten metadataBean) {
+        this.metadataBean = metadataBean;
+    }
+
+    /**
      * File upload with binary copying.
      */
     public void uploadFile() {
@@ -85,7 +92,7 @@ public class FileManipulation {
         OutputStream outputStream = null;
         try {
             if (this.uploadedFile == null) {
-                Helper.setFehlerMeldung("noFileSelected");
+                Helper.setFehlerMeldung(NO_FILE_SELECTED);
                 return;
             }
 
@@ -210,8 +217,8 @@ public class FileManipulation {
                     // prefs.getMetadataTypeByName("logicalPageNumber");
                     mdTemp = UghImplementation.INSTANCE.createMetadata(logicalPageNoType);
 
-                    if (insertMode.equalsIgnoreCase("uncounted")) {
-                        mdTemp.setStringValue("uncounted");
+                    if (insertMode.equalsIgnoreCase(UNCOUNTED)) {
+                        mdTemp.setStringValue(UNCOUNTED);
                     } else {
                         // set new logical no. for new and old page
                         MetadataInterface oldPageNo = oldPage.getAllMetadataByType(logicalPageNoType).get(0);
@@ -221,7 +228,7 @@ public class FileManipulation {
                                     .getAllMetadataByType(logicalPageNoType).get(0);
                             oldPageNo.setStringValue(pageNoOfFollowingElement.getValue());
                         } else {
-                            oldPageNo.setStringValue("uncounted");
+                            oldPageNo.setStringValue(UNCOUNTED);
                         }
                     }
 
@@ -239,9 +246,9 @@ public class FileManipulation {
                     // check if element is last element
                     currentPage.getAllMetadataByType(physicalPageNoType).get(0)
                             .setStringValue(String.valueOf(index + 2));
-                    if (!insertMode.equalsIgnoreCase("uncounted")) {
+                    if (!insertMode.equalsIgnoreCase(UNCOUNTED)) {
                         if (index + 1 == pageList.size()) {
-                            currentPage.getAllMetadataByType(logicalPageNoType).get(0).setStringValue("uncounted");
+                            currentPage.getAllMetadataByType(logicalPageNoType).get(0).setStringValue(UNCOUNTED);
                         } else {
                             DocStructInterface followingPage = pageList.get(index + 1);
                             currentPage.getAllMetadataByType(logicalPageNoType).get(0).setStringValue(
@@ -351,7 +358,7 @@ public class FileManipulation {
      */
     public void exportFiles() throws IOException {
         if (selectedFiles == null || selectedFiles.isEmpty()) {
-            Helper.setFehlerMeldung("noFileSelected");
+            Helper.setFehlerMeldung(NO_FILE_SELECTED);
             return;
         }
         List<DocStructInterface> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
@@ -366,7 +373,7 @@ public class FileManipulation {
             }
         }
         URI tempDirectory = fileService.getTemporalDirectory();
-        URI fileuploadFolder = fileService.createDirectory(tempDirectory, "fileupload");
+        URI fileuploadFolder = fileService.createDirectory(tempDirectory, FILE_UPLOAD);
 
         URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getProcess().getTitle());
         if (!fileService.fileExist(destination)) {
@@ -441,7 +448,7 @@ public class FileManipulation {
      */
     public List<URI> getAllImportFolder() {
         URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toURI();
-        URI fileuploadFolder = tempDirectory.resolve("fileupload");
+        URI fileuploadFolder = tempDirectory.resolve(FILE_UPLOAD);
 
         allImportFolder = new ArrayList<>();
         if (fileService.isDirectory(fileuploadFolder)) {
@@ -462,7 +469,7 @@ public class FileManipulation {
     public void importFiles() throws IOException {
 
         if (selectedFiles == null || selectedFiles.isEmpty()) {
-            Helper.setFehlerMeldung("noFileSelected");
+            Helper.setFehlerMeldung(NO_FILE_SELECTED);
             return;
         }
         String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
@@ -517,7 +524,7 @@ public class FileManipulation {
         // delete folder
 
         for (String importName : selectedFiles) {
-            File importFolder = new File(tempDirectory + "fileupload" + File.separator + importName);
+            File importFolder = new File(tempDirectory + FILE_UPLOAD + File.separator + importName);
             fileService.delete(importFolder.toURI());
         }
         metadataBean.retrieveAllImages();
