@@ -52,7 +52,7 @@ public class ProjekteForm extends BasisForm {
     private boolean lockedDetail;
     private boolean lockedMets;
     private boolean lockedTechnical;
-
+    private static final String PROJECT = "projekt";
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
@@ -167,7 +167,7 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return projectListPath;
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
                 return null;
             }
         }
@@ -190,7 +190,7 @@ public class ProjekteForm extends BasisForm {
                 Helper.setMeldung("Project saved!");
                 return null;
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("projekt") }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
                 return null;
             }
         }
@@ -375,7 +375,7 @@ public class ProjekteForm extends BasisForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("projekt"), id }, logger, e);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(PROJECT), id }, logger, e);
         }
 
     }
