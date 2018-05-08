@@ -27,6 +27,8 @@ public class MapMessageObjectReader {
 
     private MapMessage ticket;
     private static final Logger logger = LogManager.getLogger(MapMessageObjectReader.class);
+    private static final String MISSING_ARGUMENT = "Missing mandatory argument: \"";
+    private static final String WRONG_TYPE = "\" was not found to be of type ";
 
     /**
      * This instantiates a new MapMessageObjectReader which is attached to a
@@ -67,22 +69,22 @@ public class MapMessageObjectReader {
 
         Object collectionObject = ticket.getObject(key);
         if (collectionObject == null) {
-            throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         if (!(collectionObject instanceof Collection<?>)) {
             throw new IllegalArgumentException(
-                    "Incompatible types: \"" + key + "\" was not found to be of type Collection<?>.");
+                    "Incompatible types: \"" + key + WRONG_TYPE + "Collection<?>.");
         }
         for (Object contentObject : (Collection<?>) collectionObject) {
-            if (contentObject == null || !(contentObject instanceof String)) {
+            if (!(contentObject instanceof String)) {
                 throw new IllegalArgumentException(
-                        "Incompatible types: An element of \"" + key + "\" was not found to be of type String.");
+                        "Incompatible types: An element of \"" + key + WRONG_TYPE + "String.");
             }
             result.add((String) contentObject);
             emptiness = false;
         }
         if (emptiness) {
-            throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\" must not be empty.");
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\" must not be empty.");
         }
         return result;
     }
@@ -104,7 +106,7 @@ public class MapMessageObjectReader {
     public String getMandatoryString(String key) throws JMSException {
         String result = ticket.getString(key);
         if (result == null || result.length() == 0) {
-            throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         return result;
     }
@@ -140,7 +142,7 @@ public class MapMessageObjectReader {
      */
     public Integer getMandatoryInteger(String key) throws JMSException {
         if (!ticket.itemExists(key)) {
-            throw new IllegalArgumentException("Missing mandatory argument: \"" + key + "\"");
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         return ticket.getInt(key);
     }
@@ -176,17 +178,17 @@ public class MapMessageObjectReader {
 
         if (!(mapObject instanceof Map<?, ?>)) {
             throw new IllegalArgumentException(
-                    "Incompatible types: \"" + key + "\" was not found to be of type Map<?, ?>.");
+                    "Incompatible types: \"" + key + WRONG_TYPE + "Map<?, ?>.");
         }
         for (Object keyObject : ((Map<?, ?>) mapObject).keySet()) {
             Object valueObject = ((Map<?, ?>) mapObject).get(keyObject);
-            if (keyObject == null || !(keyObject instanceof String)) {
+            if (!(keyObject instanceof String)) {
                 throw new IllegalArgumentException(
-                        "Incompatible types: A key element of \"" + key + "\" was not found to be of type String.");
+                        "Incompatible types: A key element of \"" + key + WRONG_TYPE + "String.");
             }
-            if (valueObject == null || !(valueObject instanceof String)) {
+            if (!(valueObject instanceof String)) {
                 throw new IllegalArgumentException(
-                        "Incompatible types: A value element of \"" + key + "\" was not found to be of type String.");
+                        "Incompatible types: A value element of \"" + key + WRONG_TYPE + "String.");
             }
             result.put((String) keyObject, (String) valueObject);
         }
