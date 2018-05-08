@@ -22,8 +22,8 @@ public enum ImportFormat {
     private String title;
 
     ImportFormat(String inValue, String inTitle) {
-        setValue(inValue);
-        setTitle(inTitle);
+        this.value = inValue;
+        this.title = inTitle;
     }
 
     /**
@@ -63,32 +63,12 @@ public enum ImportFormat {
     }
 
     /**
-     * Set value.
-     *
-     * @param value
-     *            the value to set
-     */
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    /**
      * Get value.
      *
      * @return the value
      */
     public String getValue() {
         return this.value;
-    }
-
-    /**
-     * Set title.
-     *
-     * @param title
-     *            the title to set
-     */
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     /**

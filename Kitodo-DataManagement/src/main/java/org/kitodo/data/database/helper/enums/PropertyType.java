@@ -61,16 +61,6 @@ public enum PropertyType {
     }
 
     /**
-     * Set id.
-     *
-     * @param id
-     *            the id to set
-     */
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    /**
      * Get id.
      *
      * @return the id
