@@ -27,7 +27,6 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -51,7 +50,7 @@ public class ExportMets {
      *            Process object
      */
     public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
+            MetadataTypeNotAllowedException, ExportFileException, ReadException {
         User user = Helper.getCurrentUser();
         if (user != null) {
             URI userHome = serviceManager.getUserService().getHomeDirectory(user);
@@ -69,7 +68,7 @@ public class ExportMets {
      *            String
      */
     public boolean startExport(Process process, URI userHome) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException, TypeNotAllowedForParentException {
+            MetadataTypeNotAllowedException, ExportFileException, ReadException {
 
         /*
          * Read Document

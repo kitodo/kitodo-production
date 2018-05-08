@@ -39,7 +39,6 @@ import org.goobi.production.constants.Parameters;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -492,8 +491,7 @@ public class BatchForm extends BasisForm {
                         throw new UnreachableCodeException("Complete switch statement");
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
-                    | ReadException | TypeNotAllowedForParentException | IOException | ExportFileException
-                    | RuntimeException e) {
+                    | ReadException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
                 return null;
             }

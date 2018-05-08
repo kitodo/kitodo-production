@@ -39,7 +39,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -660,8 +659,8 @@ public class AktuelleSchritteForm extends BasisForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.mySchritt.getProcess());
-        } catch (TypeNotAllowedForParentException | ReadException | PreferencesException | WriteException
-                | MetadataTypeNotAllowedException | IOException | ExportFileException | RuntimeException e) {
+        } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException
+                | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("Error on export", logger, e);
         }
     }

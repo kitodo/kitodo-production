@@ -31,7 +31,6 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -510,7 +509,7 @@ public class BatchStepHelper extends BatchHelper {
             try {
                 export.startExport(step.getProcess());
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
+                    | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("Error on export", logger, e);
             }
         }

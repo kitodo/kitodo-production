@@ -66,7 +66,6 @@ import org.jdom.transform.XSLTransformException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -628,9 +627,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
-        } catch (TypeNotAllowedForParentException | ReadException | ExportFileException
-                | MetadataTypeNotAllowedException | WriteException | PreferencesException | IOException
-                | RuntimeException e) {
+        } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
+                | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -647,7 +645,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
+                | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -664,7 +662,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("prozess"), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
+                | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -682,8 +680,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 export.startExport(process);
                 Helper.setMeldung(null, "ExportFinished", "");
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
-                    | ReadException | TypeNotAllowedForParentException | IOException | ExportFileException
-                    | RuntimeException e) {
+                    | ReadException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation("prozess"), processDTO.getId() }, logger, e);
             }
@@ -701,8 +698,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
                 Helper.setMeldung(null, "ExportFinished", "");
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | TypeNotAllowedForParentException | IOException | ExportFileException | DAOException
-                    | RuntimeException e) {
+                    | IOException | ExportFileException | DAOException | RuntimeException e) {
                 Helper.setErrorMessage("ExportError", logger, e);
             }
         }
@@ -718,7 +714,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 export.startExport(proz);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | TypeNotAllowedForParentException | IOException | ExportFileException | RuntimeException e) {
+                    | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("ExportError", logger, e);
             }
         }

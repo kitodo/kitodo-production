@@ -38,7 +38,6 @@ import org.kitodo.api.filemanagement.filters.FileNameMatchesFilter;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
@@ -53,7 +52,7 @@ public class ExportPdf extends ExportMets {
 
     @Override
     public boolean startExport(Process process, URI userHome)
-            throws ReadException, IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
+            throws ReadException, IOException, PreferencesException, WriteException {
 
         // Read Document
         FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
