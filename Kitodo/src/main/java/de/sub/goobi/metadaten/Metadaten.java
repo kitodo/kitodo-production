@@ -1481,7 +1481,9 @@ public class Metadaten {
      * alle Knoten des Baums expanden oder collapsen.
      */
     public String expandTree() {
-        this.treeNodeStruct.expandNodes(this.treeProperties.get("fullexpanded"));
+        if (this.treeNodeStruct != null) {
+            this.treeNodeStruct.expandNodes(this.treeProperties.get("fullexpanded"));
+        }
         return "Metadaten3links";
     }
 
@@ -1678,7 +1680,7 @@ public class Metadaten {
                     if (temporaryTifFile != null) {
                         FileUtils.copyInputStreamToFile(tifFileInputStream, temporaryTifFile);
                         this.imageHelper.scaleFile(temporaryTifFile.toURI(), pagesDirectory.resolve(currentPngFile),
-                                this.imageSize, this.imageRotation);
+                            this.imageSize, this.imageRotation);
                         logger.trace("scaleFile");
                     }
                 }
@@ -2579,7 +2581,7 @@ public class Metadaten {
      */
     public TreeNode getTreeNodes() {
         TreeNode root = new DefaultTreeNode("root", null);
-        List<DocStructInterface> children = this.logicalTopstruct.getAllChildren();
+        List<DocStructInterface> children = logicalTopstruct != null ? this.logicalTopstruct.getAllChildren() : null;
         TreeNode visibleRoot = new DefaultTreeNode(this.logicalTopstruct, root);
         if (this.selectedTreeNode == null) {
             visibleRoot.setSelected(true);
