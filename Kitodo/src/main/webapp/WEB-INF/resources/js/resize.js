@@ -174,7 +174,7 @@ function toggleFirstColumn() {
             if (substractFromWidth > 0) {
                 firstColumn.animate({width: firstColumnWidth - substractFromWidth});
                 secondColumn.animate({width: secondColumn.data('min-width')});
-                thirdColumn.animate({width: thirdColumnWidth.data('min-width')});
+                thirdColumn.animate({width: thirdColumn.data('min-width')});
             } else {
                 secondColumn.animate({width: secondColumn.data('min-width')});
                 thirdColumn.animate({width: wrapper.width() - firstColumnWidth - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH});
