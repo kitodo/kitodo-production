@@ -34,7 +34,6 @@ import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
@@ -748,8 +747,7 @@ public class GoobiScript {
                 }
                 dms.startExport(process);
             } catch (DocStructHasNoTypeException | PreferencesException | WriteException
-                    | MetadataTypeNotAllowedException | ReadException | TypeNotAllowedForParentException | IOException
-                    | ExportFileException e) {
+                    | MetadataTypeNotAllowedException | ReadException | IOException | ExportFileException e) {
                 logger.error(e.getMessage(), e);
             }
         }

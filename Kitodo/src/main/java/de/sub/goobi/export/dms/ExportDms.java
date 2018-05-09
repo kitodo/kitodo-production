@@ -36,7 +36,6 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -112,8 +111,7 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (WriteException | PreferencesException | TypeNotAllowedForParentException | ReadException | IOException
-                | RuntimeException e) {
+        } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
                 logger.error("Export abgebrochen, xml-LeseFehler", e);
@@ -136,7 +134,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
-            throws IOException, WriteException, PreferencesException, TypeNotAllowedForParentException {
+            throws IOException, WriteException, PreferencesException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = process.getTitle();
@@ -293,7 +291,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
-            throws IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
+            throws IOException, PreferencesException, WriteException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
         String processTitle = process.getTitle();
         if (exportDmsTask != null) {
@@ -358,7 +356,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void exportWithoutImport(Process process, FileformatInterface gdzfile, URI destinationDirectory)
-            throws IOException, PreferencesException, TypeNotAllowedForParentException, WriteException {
+            throws IOException, PreferencesException, WriteException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
             writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile,

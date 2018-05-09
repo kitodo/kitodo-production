@@ -31,8 +31,8 @@ public interface Literal extends AccessibleObject {
      * yet be accessed at creation time of this class.
      */
     static final Set<String> ALLOWED_RELATIONS = new HashSet<>(Arrays.asList(
-        new String[] {"http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/XML/1998/namespace#lang",
-                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#value" }));
+        "http://www.w3.org/1999/02/22-rdf-syntax-ns#type", "http://www.w3.org/XML/1998/namespace#lang",
+                      "http://www.w3.org/1999/02/22-rdf-syntax-ns#value"));
 
     /**
      * Three literal types, not including RDF.LANG_STRING, that may be passed to
@@ -44,9 +44,9 @@ public interface Literal extends AccessibleObject {
      * cannot yet be accessed at creation time of this class.
      */
     static final List<String> LITERAL_TYPES = Arrays
-            .asList(new String[] {"http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",
+            .asList("http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral",
                                   "http://www.w3.org/1999/02/22-rdf-syntax-ns#HTML",
-                                  "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral" });
+                                  "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral");
 
     /**
      * Pattern to check whether a String starts with an URL scheme as specified

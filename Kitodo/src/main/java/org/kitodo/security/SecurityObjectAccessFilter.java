@@ -49,17 +49,15 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
                 return;
             }
 
-            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")) {
-                if (!hasAuthority("editClient", idInt, true)) {
-                    denyAccess(httpServletRequest, httpServletResponse);
-                    return;
-                }
+            if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
+                    && !hasAuthority("editClient", idInt, true)) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
             }
-            if (httpServletRequest.getRequestURI().contains("pages/projectEdit")) {
-                if (!hasAuthority("editProject", idInt, false)) {
-                    denyAccess(httpServletRequest, httpServletResponse);
-                    return;
-                }
+            if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
+                    && !hasAuthority("editProject", idInt, false)) {
+                denyAccess(httpServletRequest, httpServletResponse);
+                return;
             }
         }
         chain.doFilter(request, response);

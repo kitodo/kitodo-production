@@ -139,7 +139,7 @@ public class ExportXmlLog {
         }
         // process information
 
-        ArrayList<Element> processElements = new ArrayList<Element>();
+        ArrayList<Element> processElements = new ArrayList<>();
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(docketData.getProcessName());
         processElements.add(processTitle);

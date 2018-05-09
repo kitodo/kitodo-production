@@ -16,7 +16,6 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -237,14 +236,10 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                 | RuntimeException e) {
             String message = currentTitle != null
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
-                        Arrays.asList(new String[] {currentTitle }))
-                    : e.getClass().getSimpleName() + getMessagePart(currentTitle);
+                        currentTitle)
+                    : e.getClass().getSimpleName();
             setException(new RuntimeException(message + ": " + e.getMessage(), e));
         }
-    }
-
-    private String getMessagePart(String currentTitle) {
-        return currentTitle != null ? " while creating " + currentTitle : " in CreateNewspaperProcessesTask";
     }
 
     /**

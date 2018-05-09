@@ -196,7 +196,6 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             } catch (IOException e1) {
                 logger.error("Error while reporting error to user in file " + uri, e);
             }
-            return;
         } finally {
             if (method != null) {
                 method.releaseConnection();
