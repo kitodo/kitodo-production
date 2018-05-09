@@ -81,26 +81,8 @@ public class ExportPdf extends ExportMets {
             GetMethod method = null;
             try {
                 // define path for mets and pdfs
-                URL kitodoContentServerUrl;
-                String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
                 Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
-
-                // using mets file
-                if (serviceManager.getMetadataValidationService().validate(process)) {
-                    // if no contentServerUrl defined use internal
-                    // goobiContentServerServlet
-                    if (contentServerUrl == null || contentServerUrl.length() == 0) {
-                        contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
-                    }
-                    kitodoContentServerUrl = new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
-                            + process.getTitle() + PDF_EXTENSION);
-                    // mets data does not exist or is invalid
-                } else {
-                    if (contentServerUrl == null || contentServerUrl.length() == 0) {
-                        contentServerUrl = basisUrl + "/cs/cs?action=pdf&images=";
-                    }
-                    kitodoContentServerUrl = new URL(prepareKitodoContentServerURL(process, contentServerUrl));
-                }
+                URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 
                 // get pdf from servlet and forward response to file
                 method = new GetMethod(kitodoContentServerUrl.toString());
@@ -126,6 +108,26 @@ public class ExportPdf extends ExportMets {
             }
         }
         return true;
+    }
+
+    private URL getKitodoContentServerURL(URI metaFile, Process process, String basisUrl) throws IOException {
+        String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
+
+        // using mets file
+        if (serviceManager.getMetadataValidationService().validate(process)) {
+            // if no contentServerUrl defined use internal goobiContentServerServlet
+            if (contentServerUrl == null || contentServerUrl.length() == 0) {
+                contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
+            }
+            return new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
+                    + process.getTitle() + PDF_EXTENSION);
+            // mets data does not exist or is invalid
+        } else {
+            if (contentServerUrl == null || contentServerUrl.length() == 0) {
+                contentServerUrl = basisUrl + "/cs/cs?action=pdf&images=";
+            }
+            return new URL(prepareKitodoContentServerURL(process, contentServerUrl));
+        }
     }
 
     private void useContentServerForPdfCreation(URI metaFile, URI userHome, Process process, String basisUrl)
