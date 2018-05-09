@@ -39,6 +39,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.legacy.UghImplementation;
@@ -147,25 +148,9 @@ public class ExportDms extends ExportMets {
             return false;
         }
 
-        String rules = ConfigCore.getParameter("copyData.onExport");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
-            try {
-                new DataCopier(rules).process(new CopierData(gdzfile, process));
-            } catch (ConfigurationException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                } else {
-                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
-                }
-                return false;
-            } catch (RuntimeException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                } else {
-                    Helper.setErrorMessage("dataCopier.runtimeException", e.getMessage(), logger, e);
-                }
-                return false;
-            }
+        boolean dataCopierResult = executeDataCopierProcess(gdzfile, process);
+        if (!dataCopierResult) {
+            return false;
         }
 
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
@@ -186,34 +171,14 @@ public class ExportDms extends ExportMets {
             zielVerzeichnis = URI.create(process.getProject().getDmsImportImagesPath());
             userHome = zielVerzeichnis;
 
-            /* ggf. noch einen Vorgangsordner anlegen */
+            // if necessary, create process folder
             if (process.getProject().isDmsImportCreateProcessFolder()) {
                 URI userHomeProcess = fileService.createResource(userHome, File.separator + process.getTitle());
                 zielVerzeichnis = userHomeProcess;
-                // delete old import folder
-                if (!fileService.delete(userHomeProcess)) {
-                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                            Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+                boolean createProcessFolderResult = createProcessFolder(userHomeProcess, userHome, process.getProject(),
+                    process.getTitle());
+                if (!createProcessFolderResult) {
                     return false;
-                }
-                // delete old success folder
-                URI successFolder = URI
-                        .create(process.getProject().getDmsImportSuccessPath() + "/" + process.getTitle());
-                if (!fileService.delete(successFolder)) {
-                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-                    return false;
-                }
-                // delete old error folder
-                URI errorFolder = URI.create(process.getProject().getDmsImportErrorPath() + "/" + process.getTitle());
-                if (!fileService.delete(errorFolder)) {
-                    Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
-                    return false;
-                }
-
-                if (!fileService.fileExist(userHomeProcess)) {
-                    fileService.createDirectory(userHome, process.getTitle());
                 }
             }
         } else {
@@ -245,6 +210,60 @@ public class ExportDms extends ExportMets {
         } else {
             exportWithoutImport(process, gdzfile, userHome);
         }
+        return true;
+    }
+
+    private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
+        String rules = ConfigCore.getParameter("copyData.onExport");
+        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+            try {
+                new DataCopier(rules).process(new CopierData(gdzfile, process));
+            } catch (ConfigurationException e) {
+                if (exportDmsTask != null) {
+                    exportDmsTask.setException(e);
+                } else {
+                    Helper.setErrorMessage("dataCopier.syntaxError", e.getMessage(), logger, e);
+                }
+                return false;
+            } catch (RuntimeException e) {
+                if (exportDmsTask != null) {
+                    exportDmsTask.setException(e);
+                } else {
+                    Helper.setErrorMessage("dataCopier.runtimeException", e.getMessage(), logger, e);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean createProcessFolder(URI userHomeProcess, URI userHome, Project project, String processTitle)
+            throws IOException {
+        // delete old import folder
+        if (!fileService.delete(userHomeProcess)) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+            return false;
+        }
+        // delete old success folder
+        URI successFolder = URI.create(project.getDmsImportSuccessPath() + "/" + processTitle);
+        if (!fileService.delete(successFolder)) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
+            return false;
+        }
+        // delete old error folder
+        URI errorFolder = URI.create(project.getDmsImportErrorPath() + "/" + processTitle);
+        if (!fileService.delete(errorFolder)) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
+            return false;
+        }
+
+        if (!fileService.fileExist(userHomeProcess)) {
+            fileService.createDirectory(userHome, processTitle);
+        }
+
         return true;
     }
 
@@ -297,7 +316,7 @@ public class ExportDms extends ExportMets {
     private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
             throws IOException, PreferencesException, WriteException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
-        String processTitle = process.getTitle();
+
         if (exportDmsTask != null) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
@@ -318,44 +337,51 @@ public class ExportDms extends ExportMets {
 
         Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
-            DmsImportThread asyncThread = new DmsImportThread(process, atsPpnBand);
-            asyncThread.start();
-            try {
-                // wait 30 seconds for the thread, possibly kill
-                asyncThread.join(process.getProject().getDmsImportTimeOut().longValue());
-                if (asyncThread.isAlive()) {
-                    asyncThread.stopThread();
-                }
-            } catch (InterruptedException e) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(e);
-                    logger.error(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)));
-                } else {
-                    Helper.setErrorMessage(EXPORT_ERROR, new Object[]{processTitle}, logger, e);
-                }
-                Thread.currentThread().interrupt();
-            }
-            if (asyncThread.result.length() > 0) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setException(new RuntimeException(processTitle + ": " + asyncThread.result));
-                } else {
-                    Helper.setFehlerMeldung(processTitle + ": ", asyncThread.result);
-                }
-            } else {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setProgress(100);
-                } else {
-                    Helper.setMeldung(null, processTitle + ": ", "ExportFinished");
-                }
-                // delete success folder again
-                if (process.getProject().isDmsImportCreateProcessFolder()) {
-                    URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/" + processTitle);
-                    fileService.delete(successFolder);
-                }
-            }
+            exportWithTimeLimit(process);
         }
         if (exportDmsTask != null) {
             exportDmsTask.setProgress(100);
+        }
+    }
+
+    private void exportWithTimeLimit(Process process) throws IOException {
+        DmsImportThread asyncThread = new DmsImportThread(process, atsPpnBand);
+        asyncThread.start();
+        String processTitle = process.getTitle();
+
+        try {
+            // wait 30 seconds for the thread, possibly kill
+            asyncThread.join(process.getProject().getDmsImportTimeOut().longValue());
+            if (asyncThread.isAlive()) {
+                asyncThread.stopThread();
+            }
+        } catch (InterruptedException e) {
+            if (exportDmsTask != null) {
+                exportDmsTask.setException(e);
+                logger.error(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(processTitle)));
+            } else {
+                Helper.setErrorMessage(EXPORT_ERROR, new Object[]{processTitle}, logger, e);
+            }
+            Thread.currentThread().interrupt();
+        }
+
+        if (!asyncThread.result.isEmpty()) {
+            if (exportDmsTask != null) {
+                exportDmsTask.setException(new RuntimeException(processTitle + ": " + asyncThread.result));
+            } else {
+                Helper.setFehlerMeldung(processTitle + ": ", asyncThread.result);
+            }
+        } else {
+            if (exportDmsTask != null) {
+                exportDmsTask.setProgress(100);
+            } else {
+                Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+            }
+            // delete success folder again
+            if (process.getProject().isDmsImportCreateProcessFolder()) {
+                URI successFolder = URI.create(process.getProject().getDmsImportSuccessPath() + "/" + processTitle);
+                fileService.delete(successFolder);
+            }
         }
     }
 
@@ -420,7 +446,15 @@ public class ExportDms extends ExportMets {
     public void fulltextDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException {
 
-        // download sources
+        downloadSources(process, userHome, atsPpnBand);
+        downloadOCR(process, userHome, atsPpnBand);
+
+        if (exportDmsTask != null) {
+            exportDmsTask.setWorkDetail(null);
+        }
+    }
+
+    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI sources = serviceManager.getFileService().getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
@@ -430,7 +464,9 @@ public class ExportDms extends ExportMets {
             List<URI> files = fileService.getSubUris(sources);
             copyFiles(files, destination);
         }
+    }
 
+    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI ocr = serviceManager.getFileService().getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
@@ -447,9 +483,6 @@ public class ExportDms extends ExportMets {
                     copyFiles(files, destination);
                 }
             }
-        }
-        if (exportDmsTask != null) {
-            exportDmsTask.setWorkDetail(null);
         }
     }
 
@@ -480,14 +513,10 @@ public class ExportDms extends ExportMets {
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException {
 
-        /*
-         * dann den Ausgangspfad ermitteln
-         */
+        // determine the source folder
         URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process);
 
-        /*
-         * jetzt die Ausgangsordner in die Zielordner kopieren
-         */
+        // copy the source folder to the destination folder
         if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
             URI zielTif = userHome.resolve(atsPpnBand + ordnerEndung + "/");
 
@@ -514,23 +543,28 @@ public class ExportDms extends ExportMets {
                 }
             }
 
-            /* jetzt den eigentlichen Kopiervorgang */
-            List<URI> files = fileService.getSubUris(Helper.dataFilter, tifOrdner);
-            for (int i = 0; i < files.size(); i++) {
-                if (exportDmsTask != null) {
-                    exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
-                }
+            copyTifFilesForProcess(tifOrdner, zielTif);
 
-                fileService.copyFile(files.get(i), zielTif);
-                if (exportDmsTask != null) {
-                    exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
-                    if (exportDmsTask.isInterrupted()) {
-                        throw new InterruptedException();
-                    }
-                }
-            }
             if (exportDmsTask != null) {
                 exportDmsTask.setWorkDetail(null);
+            }
+        }
+    }
+
+    private void copyTifFilesForProcess(URI tifSourceDirectory, URI tifDestinationDirectory)
+            throws IOException, InterruptedException {
+        List<URI> files = fileService.getSubUris(Helper.dataFilter, tifSourceDirectory);
+        for (int i = 0; i < files.size(); i++) {
+            if (exportDmsTask != null) {
+                exportDmsTask.setWorkDetail(fileService.getFileName(files.get(i)));
+            }
+
+            fileService.copyFile(files.get(i), tifDestinationDirectory);
+            if (exportDmsTask != null) {
+                exportDmsTask.setProgress((int) ((i + 1) * 98d / files.size() + 1));
+                if (exportDmsTask.isInterrupted()) {
+                    throw new InterruptedException();
+                }
             }
         }
     }
