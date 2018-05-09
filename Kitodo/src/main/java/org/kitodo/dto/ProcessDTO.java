@@ -27,11 +27,11 @@ public class ProcessDTO extends BaseDTO {
     private DocketDTO docket;
     private ProjectDTO project;
     private RulesetDTO ruleset;
-    private List<BatchDTO> batches;
-    private List<TaskDTO> tasks;
-    private List<PropertyDTO> properties;
+    private List<BatchDTO> batches = new ArrayList<>();
+    private List<TaskDTO> tasks = new ArrayList<>();
+    private List<PropertyDTO> properties = new ArrayList<>();
     private Integer propertiesSize;
-    private List<PropertyDTO> sortedCorrectionSolutionMessages;
+    private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
     private UserDTO blockedUser;
     private Integer progressClosed;
     private Integer progressInProcessing;

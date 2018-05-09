@@ -11,11 +11,12 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientDTO extends BaseDTO {
     private String name;
-    private List<ProjectDTO> projects;
+    private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
 
     /**

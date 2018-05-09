@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,15 +26,15 @@ public class UserDTO extends BaseDTO {
     private String location;
     private String ldapLogin;
     private boolean active = true;
-    private List<FilterDTO> filters;
+    private List<FilterDTO> filters = new ArrayList<>();
     private Integer filtersSize;
-    private List<UserGroupDTO> userGroups;
+    private List<UserGroupDTO> userGroups = new ArrayList<>();
     private Integer userGroupSize;
-    private List<ProjectDTO> projects;
+    private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
-    private List<TaskDTO> tasks;
+    private List<TaskDTO> tasks = new ArrayList<>();
     private Integer tasksSize;
-    private List<TaskDTO> processingTasks;
+    private List<TaskDTO> processingTasks = new ArrayList<>();
     private Integer processingTasksSize;
 
     /**

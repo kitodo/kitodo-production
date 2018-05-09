@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,9 +20,9 @@ import java.util.List;
 public class UserGroupDTO extends BaseDTO {
 
     private String title;
-    private List<UserDTO> users;
+    private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
-    private List<AuthorityDTO> authorities;
+    private List<AuthorityDTO> authorities = new ArrayList<>();
     private Integer authorizationsSize;
     private boolean panelShown = false;
 

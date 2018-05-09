@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -35,9 +36,9 @@ public class TaskDTO extends BaseDTO {
     private String processingEnd;
     private ProcessDTO process;
     private TemplateDTO template;
-    private List<UserDTO> users;
+    private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
-    private List<UserGroupDTO> userGroups;
+    private List<UserGroupDTO> userGroups = new ArrayList<>();
     private Integer userGroupsSize;
     private boolean typeAutomatic;
     private boolean typeMetadata;

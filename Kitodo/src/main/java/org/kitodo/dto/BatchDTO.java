@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,7 +21,7 @@ public class BatchDTO extends BaseDTO {
 
     private String title;
     private String type;
-    private List<ProcessDTO> processes;
+    private List<ProcessDTO> processes = new ArrayList<>();
 
     /**
      * Get title.
