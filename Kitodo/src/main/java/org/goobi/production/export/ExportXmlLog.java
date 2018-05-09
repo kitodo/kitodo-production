@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -184,7 +185,6 @@ public class ExportXmlLog {
         processElm.setNamespace(xmlns);
         // namespace declaration
         if (addNamespace) {
-
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
             processElm.addNamespaceDeclaration(xsi);
             Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
@@ -241,91 +241,21 @@ public class ExportXmlLog {
         }
 
         // step information
-        Element steps = new Element("steps", xmlns);
-        ArrayList<Element> stepElements = new ArrayList<>();
-        for (Task s : process.getTasks()) {
-            Element stepElement = new Element("step", xmlns);
-            stepElement.setAttribute("stepID", String.valueOf(s.getId()));
-
-            Element steptitle = new Element("title", xmlns);
-            steptitle.setText(s.getTitle());
-            stepElement.addContent(steptitle);
-
-            Element state = new Element("processingstatus", xmlns);
-            state.setText(serviceManager.getTaskService().getProcessingStatusAsString(s));
-            stepElement.addContent(state);
-
-            Element begin = new Element("time", xmlns);
-            begin.setAttribute("type", "start time");
-            begin.setText(String.valueOf(s.getProcessingBegin()));
-            stepElement.addContent(begin);
-
-            Element end = new Element("time", xmlns);
-            end.setAttribute("type", "end time");
-            end.setText(String.valueOf(serviceManager.getTaskService().getProcessingEndAsFormattedString(s)));
-            stepElement.addContent(end);
-
-            if (isNonOpenStateAndHasRegularUser(s)) {
-                Element user = new Element("user", xmlns);
-                user.setText(serviceManager.getUserService().getFullName(s.getProcessingUser()));
-                stepElement.addContent(user);
-            }
-            Element editType = new Element("edittype", xmlns);
-            editType.setText(s.getEditTypeEnum().getTitle());
-            stepElement.addContent(editType);
-
-            stepElements.add(stepElement);
-        }
-        steps.addContent(stepElements);
+        Element steps = getTasksElement(process.getTasks(), xmlns);
         processElements.add(steps);
 
         // template information
         Element templates = new Element("originals", xmlns);
-        ArrayList<Element> templateElements = new ArrayList<>();
+        List<Element> templateElements = new ArrayList<>();
 
-        Element template = new Element("original", xmlns);
-        template.setAttribute("originalID", String.valueOf(process.getId()));
-
-        ArrayList<Element> templateProperties = new ArrayList<>();
-        for (Property prop : process.getTemplates()) {
-            Element property = new Element(PROPERTY, xmlns);
-            property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
-            if (prop.getValue() != null) {
-                property.setAttribute(VALUE, replacer(prop.getValue()));
-            } else {
-                property.setAttribute(VALUE, "");
-            }
-
-            Element label = new Element("label", xmlns);
-
-            label.setText(prop.getTitle());
-            property.addContent(label);
-
-            templateProperties.add(property);
-            if (prop.getTitle().equals("Signatur")) {
-                Element secondProperty = new Element(PROPERTY, xmlns);
-                secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
-                if (prop.getValue() != null) {
-                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
-                    Element secondLabel = new Element(LABEL, xmlns);
-                    secondLabel.setText(prop.getTitle());
-                    secondProperty.addContent(secondLabel);
-                    templateProperties.add(secondProperty);
-                }
-            }
-        }
-        if (!templateProperties.isEmpty()) {
-            Element properties = new Element(PROPERTIES, xmlns);
-            properties.addContent(templateProperties);
-            template.addContent(properties);
-        }
+        Element template = getTemplateElement(process, xmlns);
         templateElements.add(template);
         templates.addContent(templateElements);
         processElements.add(templates);
 
         // digital document information
         Element digdoc = new Element("digitalDocuments", xmlns);
-        ArrayList<Element> docElements = new ArrayList<>();
+        List<Element> docElements = new ArrayList<>();
 
         Element dd = new Element("digitalDocument", xmlns);
         dd.setAttribute("digitalDocumentID", String.valueOf(process.getId()));
@@ -343,7 +273,7 @@ public class ExportXmlLog {
 
         // METS information
         Element metsElement = new Element("metsInformation", xmlns);
-        ArrayList<Element> metadataElements = new ArrayList<>();
+        List<Element> metadataElements = new ArrayList<>();
 
         try {
             URI metadataFilePath = serviceManager.getFileService().getMetadataFilePath(process);
@@ -383,6 +313,85 @@ public class ExportXmlLog {
         return doc;
     }
 
+    private Element getTasksElement(List<Task> tasks, Namespace xmlns) {
+        // step information
+        Element steps = new Element("steps", xmlns);
+        List<Element> stepElements = new ArrayList<>();
+        for (Task task : tasks) {
+            Element stepElement = new Element("step", xmlns);
+            stepElement.setAttribute("stepID", String.valueOf(task.getId()));
+
+            Element stepTitle = new Element("title", xmlns);
+            stepTitle.setText(task.getTitle());
+            stepElement.addContent(stepTitle);
+
+            Element state = new Element("processingstatus", xmlns);
+            state.setText(serviceManager.getTaskService().getProcessingStatusAsString(task));
+            stepElement.addContent(state);
+
+            Element begin = new Element("time", xmlns);
+            begin.setAttribute("type", "start time");
+            begin.setText(String.valueOf(task.getProcessingBegin()));
+            stepElement.addContent(begin);
+
+            Element end = new Element("time", xmlns);
+            end.setAttribute("type", "end time");
+            end.setText(String.valueOf(serviceManager.getTaskService().getProcessingEndAsFormattedString(task)));
+            stepElement.addContent(end);
+
+            if (isNonOpenStateAndHasRegularUser(task)) {
+                Element user = new Element("user", xmlns);
+                user.setText(serviceManager.getUserService().getFullName(task.getProcessingUser()));
+                stepElement.addContent(user);
+            }
+            Element editType = new Element("edittype", xmlns);
+            editType.setText(task.getEditTypeEnum().getTitle());
+            stepElement.addContent(editType);
+
+            stepElements.add(stepElement);
+        }
+        steps.addContent(stepElements);
+        return steps;
+    }
+
+    private Element getTemplateElement(Process process, Namespace xmlns) {
+        Element template = new Element("original", xmlns);
+        template.setAttribute("originalID", String.valueOf(process.getId()));
+
+        List<Element> templateProperties = new ArrayList<>();
+        for (Property prop : process.getTemplates()) {
+            Element property = new Element("property", xmlns);
+            property.setAttribute("propertyIdentifier", prop.getTitle());
+            if (Objects.nonNull(prop.getValue())) {
+                property.setAttribute("value", replacer(prop.getValue()));
+            } else {
+                property.setAttribute("value", "");
+            }
+
+            Element label = new Element("label", xmlns);
+            label.setText(prop.getTitle());
+            property.addContent(label);
+            templateProperties.add(property);
+            if (prop.getTitle().equals("Signatur")) {
+                Element secondProperty = new Element("property", xmlns);
+                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+                if (Objects.nonNull(prop.getValue())) {
+                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element("label", xmlns);
+                    secondLabel.setText(prop.getTitle());
+                    secondProperty.addContent(secondLabel);
+                    templateProperties.add(secondProperty);
+                }
+            }
+        }
+        if (!templateProperties.isEmpty()) {
+            Element properties = new Element("properties", xmlns);
+            properties.addContent(templateProperties);
+            template.addContent(properties);
+        }
+        return template;
+    }
+
     private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
         ArrayList<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
@@ -403,7 +412,7 @@ public class ExportXmlLog {
         return preparedProperties;
     }
 
-    private ArrayList<Element> prepareMetadataElements(ArrayList<Element> metadataElements, Map<String, String> fields,
+    private List<Element> prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields,
             Document document, HashMap<String, Namespace> namespaces, Namespace xmlns) throws JaxenException {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
