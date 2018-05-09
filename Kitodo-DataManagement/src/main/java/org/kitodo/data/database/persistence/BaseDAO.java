@@ -12,7 +12,9 @@
 package org.kitodo.data.database.persistence;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -120,25 +122,41 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
         Session session = HibernateHelper.getHibernateSession();
-        return (List<T>) session.createQuery(query).list();
+        List<T> result = session.createQuery(query).list();
+        if (Objects.isNull(result)) {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
     List<Double> getAverage(String field, String query) {
         Session session = HibernateHelper.getHibernateSession();
-        return (List<Double>) session.createQuery("SELECT AVG(" + field + ") " + query).list();
+        List<Double> result = session.createQuery("SELECT AVG(" + field + ") " + query).list();
+        if (Objects.isNull(result)) {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
     List<Long> getCount(String field, String query) {
         Session session = HibernateHelper.getHibernateSession();
-        return (List<Long>) session.createQuery("SELECT COUNT(" + field + ") " + query).list();
+        List<Long> result = session.createQuery("SELECT COUNT(" + field + ") " + query).list();
+        if (Objects.isNull(result)) {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
     @SuppressWarnings("unchecked")
     List<Long> getSum(String field, String query) {
         Session session = HibernateHelper.getHibernateSession();
-        return (List<Long>) session.createQuery("SELECT SUM(" + field + ") " + query).list();
+        List<Long> result = session.createQuery("SELECT SUM(" + field + ") " + query).list();
+        if (Objects.isNull(result)) {
+            result = new ArrayList<>();
+        }
+        return result;
     }
 
     /**
