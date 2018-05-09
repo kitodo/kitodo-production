@@ -40,7 +40,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
@@ -549,59 +548,52 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DAOException, DataException, IOException {
-        for (Task s : this.steps) {
+    public String batchDurchBenutzerAbschliessen() throws DataException, IOException {
+        for (Task task : this.steps) {
             boolean error = false;
 
-            if (s.isTypeCloseVerify()) {
-                if (s.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+            if (task.isTypeCloseVerify()) {
+                if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
                     serviceManager.getMetadataValidationService().setAutoSave(true);
-                    if (!serviceManager.getMetadataValidationService().validate(s.getProcess())) {
+                    if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
                         error = true;
                     }
                 }
-                if (s.isTypeImagesWrite()) {
+                if (task.isTypeImagesWrite()) {
                     MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-                    try {
-                        if (!mih.checkIfImagesValid(s.getProcess().getTitle(),
-                            serviceManager.getProcessService().getImagesOrigDirectory(false, s.getProcess()))) {
-                            error = true;
-                        }
-                    } catch (RuntimeException e) {
-                        Helper.setErrorMessage("Error on image validation: ", logger, e);
+                    if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
+                            serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
+                        error = true;
+                        Helper.setFehlerMeldung("Error on image validation!");
                     }
                 }
 
-                loadProcessProperties(s);
+                loadProcessProperties(task);
 
                 for (Property prop : this.properties) {
-                    if ((prop.getValue() == null || prop.getValue().equals(""))) {
-                        List<String> parameter = new ArrayList<>();
-                        parameter.add(prop.getTitle());
-                        parameter.add(s.getProcess().getTitle());
-                        Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
+                    if (isPropertyInvalid(prop, task)) {
                         error = true;
                     }
                 }
             }
             if (!error) {
-                this.myDav.uploadFromHome(s.getProcess());
-                TaskDAO taskDAO = new TaskDAO();
-                Task task = taskDAO.getById(s.getId());
+                this.myDav.uploadFromHome(task.getProcess());
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                serviceManager.getWorkflowControllerService().close(s);
+                serviceManager.getWorkflowControllerService().close(task);
             }
         }
         AktuelleSchritteForm asf = (AktuelleSchritteForm) Helper.getManagedBeanValue("#{AktuelleSchritteForm}");
         return asf.filterAll();
     }
 
-    /**
-     * Get script' names.
-     *
-     * @return list of names
-     */
-    public String getScriptName() {
-        return getCurrentStep().getScriptName();
+    private boolean isPropertyInvalid(Property property, Task task) {
+        if (property.getValue() == null || property.getValue().equals("")) {
+            List<String> parameter = new ArrayList<>();
+            parameter.add(property.getTitle());
+            parameter.add(task.getProcess().getTitle());
+            Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
+            return true;
+        }
+        return false;
     }
 }

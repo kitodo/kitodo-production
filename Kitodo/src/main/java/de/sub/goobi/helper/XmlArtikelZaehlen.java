@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,11 +43,9 @@ public class XmlArtikelZaehlen {
      *            process object
      */
     public int getNumberOfUghElements(Process myProcess, CountType inType) {
-        int rueckgabe = 0;
+        int result = 0;
 
-        /*
-         * Dokument einlesen
-         */
+        // read document
         FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(myProcess);
@@ -56,27 +55,24 @@ public class XmlArtikelZaehlen {
         }
 
         // DocStruct rukursiv durchlaufen
-        DigitalDocumentInterface document;
         try {
-            document = gdzfile.getDigitalDocument();
+            DigitalDocumentInterface document = gdzfile.getDigitalDocument();
             DocStructInterface logicalTopstruct = document.getLogicalDocStruct();
-            rueckgabe += getNumberOfUghElements(logicalTopstruct, inType);
+            result += getNumberOfUghElements(logicalTopstruct, inType);
         } catch (PreferencesException e) {
-            Helper.setErrorMessage("[" + myProcess.getId() + "] " + Helper.getTranslation("cannotGetDigitalDocument")
-                    + ": " + e.getMessage(), logger, e);
-            rueckgabe = 0;
+            Helper.setErrorMessage("[" + myProcess.getId() + "] "
+                    + Helper.getTranslation("cannotGetDigitalDocument") + ": ", logger, e);
+            result = 0;
         }
 
-        /*
-         * die ermittelte Zahl im Prozess speichern
-         */
-        myProcess.setSortHelperArticles(rueckgabe);
+        // save the determined number in the process
+        myProcess.setSortHelperArticles(result);
         try {
             serviceManager.getProcessService().save(myProcess);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
-        return rueckgabe;
+        return result;
     }
 
     /**
@@ -89,43 +85,55 @@ public class XmlArtikelZaehlen {
      *            CountType object
      */
     public int getNumberOfUghElements(DocStructInterface inStruct, CountType inType) {
-        int rueckgabe = 0;
+        int result = 0;
         if (inStruct != null) {
             /*
              * increment number of docstructs, or add number of metadata
              * elements
              */
             if (inType == CountType.DOCSTRUCT) {
-                rueckgabe++;
+                result++;
             } else {
-                /* count non-empty persons */
-                if (inStruct.getAllPersons() != null) {
-                    for (PersonInterface p : inStruct.getAllPersons()) {
-                        if (p.getLastName() != null && p.getLastName().trim().length() > 0) {
-                            rueckgabe++;
-                        }
-                    }
-                }
-                /* count non-empty metadata */
-                if (inStruct.getAllMetadata() != null) {
-                    for (MetadataInterface md : inStruct.getAllMetadata()) {
-                        if (md.getValue() != null && md.getValue().trim().length() > 0) {
-                            rueckgabe++;
-                        }
-                    }
-                }
+                result += countNonEmptyPersons(inStruct);
+                result += countNonEmptyMetadata(inStruct);
             }
 
-            /*
-             * call children recursive
-             */
+            // call children recursive
             if (inStruct.getAllChildren() != null) {
                 for (DocStructInterface struct : inStruct.getAllChildren()) {
-                    rueckgabe += getNumberOfUghElements(struct, inType);
+                    result += getNumberOfUghElements(struct, inType);
                 }
             }
         }
-        return rueckgabe;
+        return result;
+    }
+
+    private int countNonEmptyPersons(DocStructInterface inStruct) {
+        int result = 0;
+        List<PersonInterface> persons = inStruct.getAllPersons();
+        if (persons != null) {
+            for (PersonInterface person : persons) {
+                String lastName = person.getLastName();
+                if (lastName != null && lastName.trim().length() > 0) {
+                    result++;
+                }
+            }
+        }
+        return result;
+    }
+
+    private int countNonEmptyMetadata(DocStructInterface inStruct) {
+        int result = 0;
+        List<MetadataInterface> allMetadata = inStruct.getAllMetadata();
+        if (allMetadata != null) {
+            for (MetadataInterface md : allMetadata) {
+                String value = md.getValue();
+                if (value != null && value.trim().length() > 0) {
+                    result++;
+                }
+            }
+        }
+        return result;
     }
 
 }
