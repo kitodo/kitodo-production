@@ -329,8 +329,9 @@ public class ExportDms extends ExportMets {
                     exportDmsTask.setException(e);
                     logger.error(processTitle + ": error on export", e);
                 } else {
-                    Helper.setErrorMessage(processTitle + ": error on export - ", e.getMessage(), logger, e);
+                    Helper.setErrorMessage(processTitle + ": error on export - ", logger, e);
                 }
+                Thread.currentThread().interrupt();
             }
             if (asyncThread.result.length() > 0) {
                 if (exportDmsTask != null) {

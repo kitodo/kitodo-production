@@ -90,14 +90,15 @@ public class ShellScript {
         if (args != null) {
             commandLine.addAll(args);
         }
+
+        String[] callSequence = commandLine.toArray(new String[commandLine.size()]);
         Process process = null;
         try {
-            String[] callSequence = commandLine.toArray(new String[commandLine.size()]);
             process = new ProcessBuilder(callSequence).start();
             outputChannel = inputStreamToLinkedList(process.getInputStream());
             errorChannel = inputStreamToLinkedList(process.getErrorStream());
         } catch (IOException error) {
-            throw new IOException(error.getMessage());
+            throw new IOException(error);
         } finally {
             if (process != null) {
                 closeStream(process.getInputStream());
@@ -106,19 +107,15 @@ public class ShellScript {
             }
         }
         boolean interrupted = true;
-        boolean interrupt = false;
         do {
             try {
                 errorLevel = process.waitFor();
                 interrupted = false;
             } catch (InterruptedException e) {
-                Thread.interrupted();
-                interrupt = true;
+                Thread.currentThread().interrupt();
             }
         } while (interrupted);
-        if (interrupt) {
-            Thread.currentThread().interrupt();
-        }
+
         return errorLevel;
     }
 

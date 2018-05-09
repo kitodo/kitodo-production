@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Objects;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -40,7 +42,10 @@ public class HibernateUtil {
         Session session = threadSession.get();
         try {
             if (session == null) {
-                session = getSessionFactory().openSession();
+                SessionFactory sessionFactory = getSessionFactory();
+                if (Objects.nonNull(sessionFactory)) {
+                    session = sessionFactory.openSession();
+                }
             }
             threadSession.set(session);
         } catch (HibernateException ex) {
@@ -54,7 +59,7 @@ public class HibernateUtil {
      *
      * @return SessionFactory
      */
-    public static SessionFactory getSessionFactory() {
+    private static SessionFactory getSessionFactory() {
         if (sessionFactory == null) {
             try {
                 registry = new StandardServiceRegistryBuilder().configure().build();

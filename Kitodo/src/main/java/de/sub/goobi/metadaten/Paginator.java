@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
@@ -176,10 +177,13 @@ public class Paginator {
     }
 
     private List createPaginationSequence() {
-
         int start = determinePaginationBaseValue();
         int end = determinePaginationEndValue(start);
         List sequence = determineSequenceFromPaginationType(start, end);
+
+        if (Objects.isNull(sequence)) {
+            sequence = new ArrayList();
+        }
 
         if (fictitiousPagination) {
             sequence = addSquareBracketsToEachInSequence(sequence);
