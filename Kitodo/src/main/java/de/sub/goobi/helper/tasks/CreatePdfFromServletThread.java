@@ -90,50 +90,11 @@ public class CreatePdfFromServletThread extends LongRunningTask {
         GetMethod method = null;
         try {
             // define path for mets and pdfs
-            URL kitodoContentServerUrl;
-            String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
             new File("");
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
             URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
-
-            // using mets file
-            if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
-                /*
-                 * if no contentserverurl defined use internal
-                 * goobiContentServerServlet
-                 */
-                if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
-                    contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
-                }
-                kitodoContentServerUrl = new URL(contentServerUrl + this.metsURL);
-
-                /*
-                 * mets data does not exist or is invalid
-                 */
-            } else {
-                if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
-                    contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
-                }
-                StringBuilder url = new StringBuilder();
-                FilenameFilter filter = Helper.imageNameFilter;
-                URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
-                List<URI> meta = fileService.getSubUris(filter, imagesDir);
-                ArrayList<String> fileNames = new ArrayList<>();
-                String basePath = ConfigCore.getKitodoDataDirectory();
-                for (URI data : meta) {
-                    String file = basePath + data.getRawPath();
-                    fileNames.add(file);
-                }
-                Collections.sort(fileNames, new MetadatenHelper(null, null));
-                for (String f : fileNames) {
-                    url.append(f);
-                    url.append("$");
-                }
-                String imageString = url.substring(0, url.length() - 1);
-                String targetFileName = "&targetFileName=" + this.getProcess().getTitle() + ".pdf";
-                kitodoContentServerUrl = new URL(contentServerUrl + imageString + targetFileName);
-            }
+            URL kitodoContentServerUrl = getKitodoContentServerURL();
 
             // get pdf from servlet and forward response to file
             HttpClient httpclient = new HttpClient();
@@ -179,9 +140,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             setStatusMessage("error " + e.getClass().getSimpleName() + " while pdf creation: " + e.getMessage());
             setStatusProgress(-1);
 
-            /*
-             * report Error to User as Error-Log
-             */
+            // report Error to User as Error-Log
             String text = "error while pdf creation: " + e.getMessage();
             URI uri = null;
             try {
@@ -205,6 +164,42 @@ public class CreatePdfFromServletThread extends LongRunningTask {
         }
         setStatusMessage("done");
         setStatusProgress(100);
+    }
+
+    private URL getKitodoContentServerURL() throws IOException {
+        String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
+
+        // using mets file
+        if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
+            // if no contentserverurl defined use internal goobiContentServerServlet
+            if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
+                contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
+            }
+            return new URL(contentServerUrl + this.metsURL);
+            // mets data does not exist or is invalid
+        } else {
+            if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
+                contentServerUrl = this.internalServletPath + "/cs/cs?action=pdf&images=";
+            }
+            StringBuilder url = new StringBuilder();
+            FilenameFilter filter = Helper.imageNameFilter;
+            URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
+            List<URI> meta = fileService.getSubUris(filter, imagesDir);
+            List<String> fileNames = new ArrayList<>();
+            String basePath = ConfigCore.getKitodoDataDirectory();
+            for (URI data : meta) {
+                String file = basePath + data.getRawPath();
+                fileNames.add(file);
+            }
+            Collections.sort(fileNames, new MetadatenHelper(null, null));
+            for (String f : fileNames) {
+                url.append(f);
+                url.append("$");
+            }
+            String imageString = url.substring(0, url.length() - 1);
+            String targetFileName = "&targetFileName=" + this.getProcess().getTitle() + ".pdf";
+            return new URL(contentServerUrl + imageString + targetFileName);
+        }
     }
 
     /**
