@@ -111,6 +111,7 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-DataAccess</module>
         <module>Kitodo-API</module>
+        <module>Kitodo-AlmightyContentModule</module>
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
         <module>Kitodo-PersistentIdentifier</module>
