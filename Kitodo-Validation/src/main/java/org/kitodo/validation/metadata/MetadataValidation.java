@@ -15,11 +15,12 @@ import java.net.URI;
 
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
+import org.kitodo.exceptions.NotImplementedException;
 
 public class MetadataValidation implements MetadataValidationInterface {
 
     @Override
     public ValidationResult validate(URI metsFileUri, URI rulesetFileUri) {
-        throw new RuntimeException("Not implemented yet!");
+        throw new NotImplementedException();
     }
 }

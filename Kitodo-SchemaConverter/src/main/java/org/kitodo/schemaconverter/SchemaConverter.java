@@ -15,6 +15,7 @@ import java.net.URI;
 
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.api.schemaconverter.SchemaFormat;
+import org.kitodo.exceptions.NotImplementedException;
 
 /**
  * Schema converter.
@@ -24,11 +25,11 @@ public class SchemaConverter implements SchemaConverterInterface {
     @Override
     public URI convert(URI inputFileUri, SchemaFormat baseFormat, SchemaFormat resultFormat) {
         if (resultFormat == SchemaFormat.DMS) {
-            throw new RuntimeException("Not implemented yet!");
+            throw new NotImplementedException();
         } else if (resultFormat == SchemaFormat.DMSRUSDML) {
-            throw new RuntimeException("Not implemented yet!");
+            throw new NotImplementedException();
         } else {
-            throw new RuntimeException("Not implemented yet!");
+            throw new NotImplementedException();
         }
     }
 }
