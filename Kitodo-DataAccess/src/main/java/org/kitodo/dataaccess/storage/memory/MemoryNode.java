@@ -719,7 +719,7 @@ public class MemoryNode extends Node {
             String current = RDF.toURL(i);
             Collection<ObjectType> objects = edges.get(current);
             if (objects.remove(object)) {
-                if (objects.size() == 0) {
+                if (objects.isEmpty()) {
                     edges.remove(current);
                     long pos = i;
                     String next;
@@ -751,7 +751,7 @@ public class MemoryNode extends Node {
             String current = RDF.toURL(i);
             Collection<ObjectType> objects = edges.get(current);
             if (objects.remove(object)) {
-                if (objects.size() == 0) {
+                if (objects.isEmpty()) {
                     edges.remove(current);
                     long pos = i;
                     String next;

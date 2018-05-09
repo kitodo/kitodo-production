@@ -422,7 +422,7 @@ public class ExportDms extends ExportMets {
 
         // download sources
         URI sources = serviceManager.getFileService().getSourceDirectory(process);
-        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+        if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
@@ -435,7 +435,7 @@ public class ExportDms extends ExportMets {
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileName(dir)
                             .substring(fileService.getFileName(dir).lastIndexOf('_'));
@@ -488,7 +488,7 @@ public class ExportDms extends ExportMets {
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+        if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
             URI zielTif = userHome.resolve(atsPpnBand + ordnerEndung + "/");
 
             /* bei Agora-Import einfach den Ordner anlegen */

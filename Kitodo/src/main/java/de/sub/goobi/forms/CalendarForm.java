@@ -829,7 +829,7 @@ public class CalendarForm implements Serializable {
      * @return whether there is no block yet
      */
     public boolean getBlank() {
-        return course.size() == 0;
+        return course.isEmpty();
     }
 
     /**

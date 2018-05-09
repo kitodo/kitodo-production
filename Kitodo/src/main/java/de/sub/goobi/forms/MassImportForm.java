@@ -109,14 +109,14 @@ public class MassImportForm implements Serializable {
             return null;
         }
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
-            if (this.template.getTasks().size() == 0) {
+            if (this.template.getTasks().isEmpty()) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");
             }
-            for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
+            for (Task task : this.template.getTasks()) {
+                if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
+                        && serviceManager.getTaskService().getUsersSize(task) == 0) {
                     List<String> param = new ArrayList<>();
-                    param.add(s.getTitle());
+                    param.add(task.getTitle());
                     Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
                 }
             }
@@ -166,7 +166,7 @@ public class MassImportForm implements Serializable {
             Helper.setErrorMessage("Error while parsing digital collections", logger, e1);
         }
 
-        if (this.possibleDigitalCollections.size() == 0) {
+        if (this.possibleDigitalCollections.isEmpty()) {
             this.possibleDigitalCollections = defaultCollections;
         }
     }
@@ -334,7 +334,7 @@ public class MassImportForm implements Serializable {
 
     private boolean testForData() {
         return !(StringUtils.isEmpty(this.idList) && StringUtils.isEmpty(this.records) && (this.importFile == null)
-                && this.selectedFilenames.size() == 0);
+                && this.selectedFilenames.isEmpty());
     }
 
     private List<Record> generateRecordList() {

@@ -234,7 +234,7 @@ public class ExportXmlLog {
 
         List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
 
-        if (processProperties.size() != 0) {
+        if (!processProperties.isEmpty()) {
             Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(processProperties);
             processElements.add(properties);
@@ -314,7 +314,7 @@ public class ExportXmlLog {
                 }
             }
         }
-        if (templateProperties.size() != 0) {
+        if (!templateProperties.isEmpty()) {
             Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(templateProperties);
             template.addContent(properties);
@@ -332,7 +332,7 @@ public class ExportXmlLog {
 
         List<Element> docProperties = prepareProperties(process.getWorkpieces(), xmlns);
 
-        if (docProperties.size() != 0) {
+        if (!docProperties.isEmpty()) {
             Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(docProperties);
             dd.addContent(properties);

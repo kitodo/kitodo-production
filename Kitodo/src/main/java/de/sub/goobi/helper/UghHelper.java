@@ -80,22 +80,18 @@ public class UghHelper {
     public static MetadataInterface getMetadata(DocStructInterface inStruct, MetadataTypeInterface inMetadataType) {
         if (inStruct != null && inMetadataType != null) {
             List<? extends MetadataInterface> all = inStruct.getAllMetadataByType(inMetadataType);
-            if (all.size() == 0) {
+            if (all.isEmpty()) {
                 try {
                     MetadataInterface md = UghImplementation.INSTANCE.createMetadata(inMetadataType);
                     md.setDocStruct(inStruct);
                     inStruct.addMetadata(md);
-
                     return md;
                 } catch (MetadataTypeNotAllowedException e) {
                     logger.debug(e.getMessage());
                     return null;
                 }
-            }
-            if (all.size() != 0) {
-                return all.get(0);
             } else {
-                return null;
+                return all.get(0);
             }
         }
         return null;

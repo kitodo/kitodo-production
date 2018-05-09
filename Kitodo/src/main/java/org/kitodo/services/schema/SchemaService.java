@@ -93,7 +93,7 @@ public class SchemaService {
          */
         DocStructInterface topElement = digitalDocument.getLogicalDocStruct();
         if (prefs.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
-            if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
+            if (topElement.getAllChildren() == null || topElement.getAllChildren().isEmpty()) {
                 throw new PreferencesException(process.getTitle()
                         + ": the topstruct element is marked as anchor, but does not have any children for "
                         + "physical docstrucs");
@@ -102,11 +102,9 @@ public class SchemaService {
             }
         }
 
-        /*
-         * if the top element does not have any image related, set them all
-         */
+        // if the top element does not have any image related, set them all
         if (topElement.getAllToReferences("logical_physical") == null
-                || topElement.getAllToReferences("logical_physical").size() == 0) {
+                || topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (digitalDocument.getPhysicalDocStruct() != null
                     && digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
                 Helper.setMeldung(process.getTitle()
@@ -301,7 +299,7 @@ public class SchemaService {
         checkMetadata(inStruct, prefs);
 
         // if the Docstruct has no pictures, it is taken into the list
-        if (inStruct.getAllToReferences().size() == 0 && inStruct.getDocStructType().getAnchorClass() == null) {
+        if (inStruct.getAllToReferences().isEmpty() && inStruct.getDocStructType().getAnchorClass() == null) {
             docStructsWithoutPages.add(inStruct);
         }
 

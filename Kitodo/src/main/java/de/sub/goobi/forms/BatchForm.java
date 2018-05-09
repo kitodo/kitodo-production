@@ -59,7 +59,7 @@ public class BatchForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BatchForm.class);
 
     private List<Process> currentProcesses;
-    private List<Process> selectedProcesses;
+    private List<Process> selectedProcesses = new ArrayList<>();
     private List<Batch> currentBatches;
     private List<Integer> selectedBatches;
     private String batchfilter;
@@ -85,9 +85,8 @@ public class BatchForm extends BasisForm {
      * Load Batch data.
      */
     public void loadBatchData() {
-        if (selectedProcesses == null || selectedProcesses.size() == 0) {
+        if (this.selectedProcesses.isEmpty()) {
             this.currentBatches = serviceManager.getBatchService().getAll();
-            this.selectedBatches = new ArrayList<>();
         } else {
             selectedBatches = new ArrayList<>();
             List<Batch> batchesToSelect = new ArrayList<>();
@@ -252,7 +251,7 @@ public class BatchForm extends BasisForm {
      */
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
@@ -292,11 +291,11 @@ public class BatchForm extends BasisForm {
      * Add processes to Batch.
      */
     public void addProcessesToBatch() {
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return;
         }
-        if (this.selectedProcesses.size() == 0) {
+        if (this.selectedProcesses.isEmpty()) {
             Helper.setFehlerMeldung("noProcessSelected");
             return;
         }
@@ -324,11 +323,11 @@ public class BatchForm extends BasisForm {
      * Remove processes from Batch.
      */
     public void removeProcessesFromBatch() throws DAOException, DataException {
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return;
         }
-        if (this.selectedProcesses.size() == 0) {
+        if (this.selectedProcesses.isEmpty()) {
             Helper.setFehlerMeldung("noProcessSelected");
             return;
         }
@@ -352,7 +351,7 @@ public class BatchForm extends BasisForm {
      * Rename Batch.
      */
     public void renameBatch() {
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() > 1) {
             Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
@@ -407,7 +406,7 @@ public class BatchForm extends BasisForm {
      * @return page
      */
     public String editProperties() {
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return null;
         } else if (this.selectedBatches.size() > 1) {
@@ -468,7 +467,7 @@ public class BatchForm extends BasisForm {
      *         faces_config.xml
      */
     public String exportBatch() {
-        if (this.selectedBatches.size() == 0) {
+        if (this.selectedBatches.isEmpty()) {
             Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return null;
         }

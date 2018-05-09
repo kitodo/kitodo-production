@@ -226,7 +226,7 @@ public class MetadatenImagesHelper {
         if (physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*") != null) {
             for (DocStructInterface page : physicalStructure.getAllChildrenByTypeAndMetadataType("page", "*")) {
                 List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
-                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
                     break;
                 }
@@ -422,7 +422,7 @@ public class MetadatenImagesHelper {
          */
         if (fileService.fileExist(folder)) {
             List<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
-            if (files.size() == 0) {
+            if (files.isEmpty()) {
                 Helper.setFehlerMeldung("[" + title + "] No objects found");
                 return false;
             }
@@ -502,7 +502,7 @@ public class MetadatenImagesHelper {
         if (finalFiles.size() > 0) {
             List<URI> dataList = new ArrayList<>(finalFiles);
 
-            if (dataList.size() != 0) {
+            if (!dataList.isEmpty()) {
                 List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
 
                 if (orderedFileNameList.size() == dataList.size()) {

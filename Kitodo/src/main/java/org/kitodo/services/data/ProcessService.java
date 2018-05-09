@@ -971,7 +971,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!suffix.equals("")) {
                 URI tif = imageDirectory;
                 List<URI> files = fileService.getSubUris(tif);
-                if (files == null || files.size() == 0) {
+                if (files.isEmpty()) {
                     List<URI> folderList = fileService.getSubUris(directory);
                     for (URI folder : folderList) {
                         if (folder.toString().endsWith(suffix) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
@@ -1012,7 +1012,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return the batches the process is in
      */
     public String getBatchID(ProcessDTO process) {
-        if (process.getBatches() == null || process.getBatches().size() == 0) {
+        if (process.getBatches().isEmpty()) {
             return null;
         }
         StringBuilder result = new StringBuilder();
@@ -1627,7 +1627,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         listOfTranslations.add(Helper.getTranslation("Korrektur notwendig"));
         listOfTranslations.add(Helper.getTranslation("Korrektur durchgefuehrt"));
 
-        if ((lpe == null) || (lpe.size() == 0)) {
+        if (lpe.isEmpty()) {
             return filteredList;
         }
 
@@ -1905,7 +1905,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // download sources
         URI sources = fileService.getSourceDirectory(process);
-        if (fileService.fileExist(sources) && fileService.getSubUris(sources).size() > 0) {
+        if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
             URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
@@ -1923,7 +1923,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0
+                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()
                         && fileService.getFileName(dir).contains("_")) {
                     String suffix = fileService.getFileNameWithExtension(dir)
                             .substring(fileService.getFileNameWithExtension(dir).lastIndexOf('_'));
@@ -1968,7 +1968,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         /*
          * jetzt die Ausgangsordner in die Zielordner kopieren
          */
-        if (fileService.fileExist(tifOrdner) && fileService.getSubUris(tifOrdner).size() > 0) {
+        if (fileService.fileExist(tifOrdner) && !fileService.getSubUris(tifOrdner).isEmpty()) {
             URI zielTif = userHome.resolve(File.separator + atsPpnBand + ordnerEndung);
 
             /* bei Agora-Import einfach den Ordner anlegen */
@@ -2038,7 +2038,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         DocStructInterface topElement = dd.getLogicalDocStruct();
         if (preferences.getDocStrctTypeByName(topElement.getDocStructType().getName()).getAnchorClass() != null) {
-            if (topElement.getAllChildren() == null || topElement.getAllChildren().size() == 0) {
+            if (topElement.getAllChildren() == null || topElement.getAllChildren().isEmpty()) {
                 throw new PreferencesException(process.getTitle()
                         + ": the topstruct element is marked as anchor, but does not have any children for "
                         + "physical docstrucs");
@@ -2051,7 +2051,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          * if the top element does not have any image related, set them all
          */
         if (topElement.getAllToReferences("logical_physical") == null
-                || topElement.getAllToReferences("logical_physical").size() == 0) {
+                || topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
                 Helper.setMeldung(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "

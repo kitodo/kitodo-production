@@ -425,7 +425,7 @@ public class FileManagement implements FileManagementInterface {
         URI sourceFolder = URI.create("");
         try {
             List<URI> directories = getSubUris(filterDirectory, dir);
-            if (directories.size() == 0) {
+            if (directories.isEmpty()) {
                 sourceFolder = dir.resolve(processTitle + "_source");
                 if (Config.getBooleanParameter("createSourceFolder", false)) {
                     createDirectory(dir, processTitle + "_source");
