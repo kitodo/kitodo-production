@@ -21,7 +21,7 @@ import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
-import org.kitodo.production.exceptions.UnreachableCodeException;
+import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
  * Backing bean for a single line input box element to edit a metadatum

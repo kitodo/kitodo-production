@@ -17,7 +17,7 @@ import java.util.Map;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.kitodo.production.exceptions.UnreachableCodeException;
+import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
  * The class IndividualIssue represents a stamping of an Issue, that is one

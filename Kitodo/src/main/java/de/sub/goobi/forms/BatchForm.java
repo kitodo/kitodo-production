@@ -47,7 +47,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.production.exceptions.UnreachableCodeException;
+import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")

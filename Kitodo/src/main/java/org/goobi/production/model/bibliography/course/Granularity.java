@@ -13,7 +13,7 @@ package org.goobi.production.model.bibliography.course;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.ISODateTimeFormat;
-import org.kitodo.production.exceptions.NotImplementedException;
+import org.kitodo.exceptions.NotImplementedException;
 
 /**
  * The Granularity indicates one out of six options how a course of appearance
