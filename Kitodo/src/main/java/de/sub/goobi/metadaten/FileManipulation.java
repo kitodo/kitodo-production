@@ -88,48 +88,44 @@ public class FileManipulation {
      * File upload with binary copying.
      */
     public void uploadFile() {
-        InputStream inputStream = null;
-        OutputStream outputStream = null;
-        try {
-            if (this.uploadedFile == null) {
-                Helper.setFehlerMeldung(NO_FILE_SELECTED);
-                return;
-            }
+        if (this.uploadedFile == null) {
+            Helper.setFehlerMeldung(NO_FILE_SELECTED);
+            return;
+        }
 
-            String baseName = this.uploadedFile.getName();
-            if (baseName.startsWith(".")) {
-                baseName = baseName.substring(1);
-            }
-            if (baseName.contains("/")) {
-                baseName = baseName.substring(baseName.lastIndexOf('/') + 1);
-            }
-            if (baseName.contains("\\")) {
-                baseName = baseName.substring(baseName.lastIndexOf('\\') + 1);
-            }
+        String baseName = this.uploadedFile.getName();
+        if (baseName.startsWith(".")) {
+            baseName = baseName.substring(1);
+        }
+        if (baseName.contains("/")) {
+            baseName = baseName.substring(baseName.lastIndexOf('/') + 1);
+        }
+        if (baseName.contains("\\")) {
+            baseName = baseName.substring(baseName.lastIndexOf('\\') + 1);
+        }
 
-            if (StringUtils.isNotBlank(uploadedFileName)) {
-                String fileExtension = Metadaten.getFileExtension(baseName);
-                if (!fileExtension.isEmpty() && !uploadedFileName.endsWith(fileExtension)) {
-                    uploadedFileName = uploadedFileName + fileExtension;
-                }
-                baseName = uploadedFileName;
-
+        if (StringUtils.isNotBlank(uploadedFileName)) {
+            String fileExtension = Metadaten.getFileExtension(baseName);
+            if (!fileExtension.isEmpty() && !uploadedFileName.endsWith(fileExtension)) {
+                uploadedFileName = uploadedFileName + fileExtension;
             }
-            logger.trace("folder to import: {}", currentFolder);
-            URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                    ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
-            logger.trace("filename to import: {}", filename);
+            baseName = uploadedFileName;
 
-            if (fileService.fileExist(filename)) {
-                List<String> parameterList = new ArrayList<>();
-                parameterList.add(baseName);
-                Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
-                return;
-            }
+        }
+        logger.trace("folder to import: {}", currentFolder);
+        URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
+                ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
+        logger.trace("filename to import: {}", filename);
 
-            inputStream = fileService.read(uploadedFile.toURI());
-            outputStream = fileService.write(filename);
+        if (fileService.fileExist(filename)) {
+            List<String> parameterList = new ArrayList<>();
+            parameterList.add(baseName);
+            Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
+            return;
+        }
 
+        try (InputStream inputStream = fileService.read(uploadedFile.toURI());
+             OutputStream outputStream = fileService.write(filename)) {
             byte[] buf = new byte[1024];
             int len;
             while ((len = inputStream.read(buf)) > 0) {
@@ -144,25 +140,9 @@ public class FileManipulation {
                 logger.trace("update pagination for {}", metadataBean.getProcess().getTitle());
                 updatePagination(filename);
             }
-
             Helper.setMeldung(Helper.getTranslation("metsEditorFileUploadSuccessful"));
         } catch (IOException | MetadataTypeNotAllowedException e) {
             Helper.setErrorMessage("uploadFailed", logger, e);
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
-            if (outputStream != null) {
-                try {
-                    outputStream.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                }
-            }
         }
         metadataBean.retrieveAllImages();
         metadataBean.identifyImage(1);
@@ -184,7 +164,6 @@ public class FileManipulation {
         if (insertPage.equals("lastPage")) {
             metadataBean.createPagination();
         } else {
-
             PrefsInterface prefs = serviceManager.getRulesetService()
                     .getPreferences(metadataBean.getProcess().getRuleset());
             DigitalDocumentInterface doc = metadataBean.getDigitalDocument();
@@ -380,6 +359,22 @@ public class FileManipulation {
             fileService.createDirectory(fileuploadFolder, metadataBean.getProcess().getTitle());
         }
 
+        copyFiles(filenamesToMove, destination);
+
+        if (deleteFilesAfterMove) {
+            String[] pagesArray = new String[selectedFiles.size()];
+            selectedFiles.toArray(pagesArray);
+            metadataBean.setAllPagesSelection(pagesArray);
+            metadataBean.deleteSelectedPages();
+            selectedFiles = new ArrayList<>();
+            deleteFilesAfterMove = false;
+        }
+
+        metadataBean.retrieveAllImages();
+        metadataBean.identifyImage(1);
+    }
+
+    private void copyFiles(List<String> filenamesToMove, URI destination) throws IOException {
         for (String filename : filenamesToMove) {
             String prefix = filename.replace(Metadaten.getFileExtension(filename), "");
             String processTitle = metadataBean.getProcess().getTitle();
@@ -387,7 +382,6 @@ public class FileManipulation {
                 List<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
                         .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, folder.toString()));
                 for (URI currentFile : filesInFolder) {
-
                     String filenameInFolder = fileService.getFileName(currentFile);
                     String filenamePrefix = filenameInFolder.replace(Metadaten.getFileExtension(filenameInFolder), "");
                     if (filenamePrefix.equals(prefix)) {
@@ -405,24 +399,10 @@ public class FileManipulation {
                         fileService.copyFile(currentFile, destinationFile);
                         // }
                         break;
-
                     }
-
                 }
-
             }
         }
-        if (deleteFilesAfterMove) {
-            String[] pagesArray = new String[selectedFiles.size()];
-            selectedFiles.toArray(pagesArray);
-            metadataBean.setAllPagesSelection(pagesArray);
-            metadataBean.deleteSelectedPages();
-            selectedFiles = new ArrayList<>();
-            deleteFilesAfterMove = false;
-        }
-
-        metadataBean.retrieveAllImages();
-        metadataBean.identifyImage(1);
     }
 
     public List<String> getSelectedFiles() {
