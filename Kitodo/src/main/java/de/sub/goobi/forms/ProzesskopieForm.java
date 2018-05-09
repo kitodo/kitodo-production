@@ -81,6 +81,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
@@ -1352,7 +1353,7 @@ public class ProzesskopieForm implements Serializable {
      *            the new value for the AdditionalField
      * @param strict
      *            throw a RuntimeException if the field is unknown
-     * @throws RuntimeException
+     * @throws ProcessCreationException
      *             in case that no field with a matching title was found in the
      *             ProzesskopieForm object
      */
@@ -1365,7 +1366,7 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         if (unknownField && strict) {
-            throw new RuntimeException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+            throw new ProcessCreationException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
         }
     }
 
@@ -1373,22 +1374,20 @@ public class ProzesskopieForm implements Serializable {
         this.additionalFields = additionalFields;
     }
 
-    /*
-     * this is needed for GUI, render multiple select only if this is false if
-     * this is true use the only choice
+    /**
+     * This is needed for GUI, render multiple select only if this is false if
+     * this is true use the only choice.
      *
-     * @author Wulf
+     * @return true or false
      */
     public boolean isSingleChoiceCollection() {
         return (getPossibleDigitalCollections() != null && getPossibleDigitalCollections().size() == 1);
-
     }
 
     /**
-     * This is needed for GUI, render multiple select only if this is false if
-     * isSingleChoiceCollection is true use this choice.
+     * Get possible digital collections if single choice.
      *
-     * @author Wulf
+     * @return possible digital collections if single choice
      */
     public String getDigitalCollectionIfSingleChoice() {
         List<String> pdc = getPossibleDigitalCollections();
