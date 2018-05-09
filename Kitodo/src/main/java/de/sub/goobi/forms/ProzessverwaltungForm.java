@@ -27,7 +27,6 @@ import de.sub.goobi.export.download.Multipage;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.GoobiScript;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
@@ -360,8 +359,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             } else {
                 filterProcessesWithFilter();
             }
-
-            this.page = new Page<>(0, this.processDTOS);
         } catch (DataException e) {
             Helper.setErrorMessage("ProzessverwaltungForm.filterCurrentProcesses", logger, e);
             return null;
@@ -676,7 +673,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void exportDMSPage() {
         ExportDms export = new ExportDms();
-        for (ProcessDTO processDTO : (List<ProcessDTO>) this.page.getListReload()) {
+
+        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
@@ -714,7 +712,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void exportDMSHits() {
         ExportDms export = new ExportDms();
-        for (Process proz : (List<Process>) this.page.getCompleteList()) {
+        for (Process proz : (List<Process>) lazyDTOModel.getEntities()) {
             try {
                 export.startExport(proz);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
@@ -780,7 +778,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomePage() {
         WebDav webDav = new WebDav();
-        for (ProcessDTO process : (List<ProcessDTO>) this.page.getListReload()) {
+        for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             download(webDav, process);
         }
         Helper.setMeldung(null, "createdInUserHome", "");
@@ -822,7 +820,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void downloadToHomeHits() {
         WebDav webDav = new WebDav();
-        for (Process process : (List<Process>) this.page.getCompleteList()) {
+        for (Process process : (List<Process>) lazyDTOModel.getEntities()) {
             if (!serviceManager.getProcessService().isImageFolderInUse(process)) {
                 webDav.downloadToHome(process, false);
             } else {
@@ -842,7 +840,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForPage() throws DAOException, DataException, IOException {
-        List<ProcessDTO> processes = this.page.getListReload();
+        List<ProcessDTO> processes = lazyDTOModel.getEntities();
         for (ProcessDTO process : processes) {
             workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
@@ -863,7 +861,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusUpForHits() throws DAOException, DataException, IOException {
-        List<ProcessDTO> processes = this.page.getCompleteList();
+        List<ProcessDTO> processes = lazyDTOModel.getEntities();
         for (ProcessDTO process : processes) {
             workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
         }
@@ -874,7 +872,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForPage() throws DAOException, DataException {
-        List<ProcessDTO> processes = this.page.getListReload();
+        List<ProcessDTO> processes = lazyDTOModel.getEntities();
         for (ProcessDTO process : processes) {
             workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
@@ -895,7 +893,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void setTaskStatusDownForHits() throws DAOException, DataException {
-        List<ProcessDTO> processes = this.page.getCompleteList();
+        List<ProcessDTO> processes = lazyDTOModel.getEntities();
         for (ProcessDTO process : processes) {
             workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
         }
@@ -1083,7 +1081,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesPage() {
-        calculateMetadataAndImages(this.page.getListReload());
+        calculateMetadataAndImages(lazyDTOModel.getEntities());
     }
 
     /**
@@ -1098,7 +1096,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void calculateMetadataAndImagesHits() {
-        calculateMetadataAndImages(this.page.getCompleteList());
+        calculateMetadataAndImages(lazyDTOModel.getEntities());
     }
 
     private void calculateMetadataAndImages(List<ProcessDTO> processes) {
@@ -1197,8 +1195,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void kitodoScriptHits() {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getCompleteList()),
-                this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(lazyDTOModel.getEntities()),
+                    this.kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -1211,7 +1209,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void kitodoScriptPage() {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.page.getListReload()), this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(lazyDTOModel.getEntities()), this.kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
