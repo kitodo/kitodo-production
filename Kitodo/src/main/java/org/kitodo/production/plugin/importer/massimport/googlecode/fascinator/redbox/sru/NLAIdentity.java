@@ -172,77 +172,86 @@ public class NLAIdentity {
         @SuppressWarnings("unchecked")
         List<Node> names = node.selectNodes("eac:nameEntry");
         for (Node name : names) {
-            Map<String, String> nameMap = new HashMap<>();
-
-            String thisDisplay = null;
-            String thisFirstName = null;
-            String thisSurname = null;
-            String title = null;
-
-            // First name
-            Node firstNameNode = name
-                    .selectSingleNode("eac:part[(@localType=\"forename\") " + "or (@localType=\"givenname\")]");
-            if (firstNameNode != null) {
-                thisFirstName = firstNameNode.getText();
-            }
-
-            // Surname
-            Node surnameNode = name
-                    .selectSingleNode("eac:part[(@localType=\"surname\") " + "or (@localType=\"familyname\")]");
-            if (surnameNode != null) {
-                thisSurname = surnameNode.getText();
-            }
-
-            // Title
-            Node titleNode = name.selectSingleNode("eac:part[@localType=\"title\"]");
-            if (titleNode != null) {
-                title = titleNode.getText();
-            }
-
-            // Display Name
-            if (thisSurname != null) {
-                thisDisplay = thisSurname;
-                nameMap.put("surname", thisSurname);
-                if (thisFirstName != null) {
-                    thisDisplay += ", " + thisFirstName;
-                    nameMap.put("firstName", thisFirstName);
-                }
-                if (title != null) {
-                    thisDisplay += " (" + title + ")";
-                }
-                nameMap.put("displayName", thisDisplay);
-            }
-
-            // Last ditch effort... we couldn't find simple name information
-            // from
-            // recommended values. So just concatenate what we can see.
-            if (thisDisplay == null) {
-                // Find every part
-                @SuppressWarnings("unchecked")
-                List<Node> parts = name.selectNodes("eac:part");
-                for (Node part : parts) {
-                    // Grab the value and type of this value
-                    Element element = (Element) part;
-                    String value = element.getText();
-                    String type = element.attributeValue("localType");
-                    // Build a display value for this part
-                    if (type != null) {
-                        value += " (" + type + ")";
-                    }
-                    // And add to the display name
-                    if (thisDisplay == null) {
-                        thisDisplay = value;
-                    } else {
-                        thisDisplay += ", " + value;
-                    }
-                }
-                nameMap.put("displayName", thisDisplay);
-            }
-
+            Map<String, String> nameMap = getNameMap(name);
             nameList.add(nameMap);
         }
 
         return nameList;
+    }
+
+    private Map<String, String> getNameMap(Node name) {
+        Map<String, String> nameMap = new HashMap<>();
+
+        String thisDisplay = null;
+        String thisFirstName = null;
+        String thisSurname = null;
+        String title = null;
+
+        // First name
+        Node firstNameNode = name
+                .selectSingleNode("eac:part[(@localType=\"forename\") " + "or (@localType=\"givenname\")]");
+        if (Objects.nonNull(firstNameNode)) {
+            thisFirstName = firstNameNode.getText();
+        }
+
+        // Surname
+        Node surnameNode = name
+                .selectSingleNode("eac:part[(@localType=\"surname\") " + "or (@localType=\"familyname\")]");
+        if (Objects.nonNull(surnameNode)) {
+            thisSurname = surnameNode.getText();
+        }
+
+        // Title
+        Node titleNode = name.selectSingleNode("eac:part[@localType=\"title\"]");
+        if (Objects.nonNull(titleNode)) {
+            title = titleNode.getText();
+        }
+
+        // Display Name
+        if (Objects.nonNull(thisSurname)) {
+            thisDisplay = thisSurname;
+            nameMap.put("surname", thisSurname);
+            if (thisFirstName != null) {
+                thisDisplay += ", " + thisFirstName;
+                nameMap.put("firstName", thisFirstName);
+            }
+            if (title != null) {
+                thisDisplay += " (" + title + ")";
+            }
+            nameMap.put("displayName", thisDisplay);
+        }
+
+        // Last ditch effort... we couldn't find simple name information
+        // from recommended values. So just concatenate what we can see.
+        if (Objects.isNull(thisDisplay)) {
+            // Find every part
+            @SuppressWarnings("unchecked")
+            List<Node> parts = name.selectNodes("eac:part");
+            for (Node part : parts) {
+                String value = getValueFromPart((Element) part);
+
+                // And add to the display name
+                if (Objects.isNull(thisDisplay)) {
+                    thisDisplay = value;
+                } else {
+                    thisDisplay += ", " + value;
+                }
+            }
+            nameMap.put("displayName", thisDisplay);
+        }
+
+        return nameMap;
+    }
+
+    private String getValueFromPart(Element part) {
+        // Grab the value and type of this value
+        String value = part.getText();
+        String type = part.attributeValue("localType");
+        // Build a display value for this part
+        if (type != null) {
+            value += " (" + type + ")";
+        }
+        return value;
     }
 
     /**
