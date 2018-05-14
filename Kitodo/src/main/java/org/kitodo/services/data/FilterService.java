@@ -663,7 +663,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         if (parameters.contains("-")) {
             String[] strArray = parameters.split("-");
-            if (!(strArray.length < 2)) {
+            if (strArray.length >= 2) {
                 if (strArray[0].length() == 0) {
                     return TaskFilter.max;
                 } else {
