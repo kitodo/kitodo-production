@@ -365,11 +365,12 @@ public class ExportDms extends ExportMets {
             Thread.currentThread().interrupt();
         }
 
-        if (!asyncThread.result.isEmpty()) {
+        String result = asyncThread.getResult();
+        if (result.length() > 0) {
             if (exportDmsTask != null) {
-                exportDmsTask.setException(new RuntimeException(processTitle + ": " + asyncThread.result));
+                exportDmsTask.setException(new RuntimeException(processTitle + ": " + result));
             } else {
-                Helper.setFehlerMeldung(processTitle + ": ", asyncThread.result);
+                Helper.setFehlerMeldung(processTitle + ": ", result);
             }
         } else {
             if (exportDmsTask != null) {
