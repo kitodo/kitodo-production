@@ -15,14 +15,14 @@ import org.goobi.api.display.enums.BindState;
 
 public class Modes {
 
-    public static BindState myBindState = BindState.create;
+    private static BindState bindState = BindState.create;
 
     public static BindState getBindState() {
-        return myBindState;
+        return bindState;
     }
 
     public static void setBindState(BindState inBindState) {
-        myBindState = inBindState;
+        bindState = inBindState;
     }
 
 }
