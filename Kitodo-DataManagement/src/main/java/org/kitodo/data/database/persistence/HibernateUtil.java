@@ -41,7 +41,7 @@ public class HibernateUtil {
     public static Session getSession() {
         Session session = threadSession.get();
         try {
-            if (session == null) {
+            if (Objects.isNull(session)) {
                 SessionFactory sessionFactory = getSessionFactory();
                 if (Objects.nonNull(sessionFactory)) {
                     session = sessionFactory.openSession();
@@ -60,17 +60,15 @@ public class HibernateUtil {
      * @return SessionFactory
      */
     private static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
+        if (Objects.isNull(sessionFactory)) {
             try {
                 registry = new StandardServiceRegistryBuilder().configure().build();
                 MetadataSources sources = new MetadataSources(registry);
                 Metadata metadata = sources.getMetadataBuilder().build();
                 sessionFactory = metadata.getSessionFactoryBuilder().build();
             } catch (RuntimeException e) {
-                logger.error(e.getMessage(), e);
-                if (registry != null) {
-                    StandardServiceRegistryBuilder.destroy(registry);
-                }
+                shutdown();
+                throw new RuntimeException(e.getMessage(), e);
             }
         }
         return sessionFactory;
@@ -80,7 +78,7 @@ public class HibernateUtil {
      * Destroy session.
      */
     public static void shutdown() {
-        if (registry != null) {
+        if (Objects.nonNull(registry)) {
             StandardServiceRegistryBuilder.destroy(registry);
         }
     }
