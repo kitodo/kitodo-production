@@ -1820,7 +1820,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setWikiField(this.template.getWikiField());
         this.addToWikiField = addToWikiField;
         if (addToWikiField != null && !addToWikiField.equals("")) {
-            User user = (User) Helper.getManagedBeanValue("#{LoginForm.myBenutzer}");
+            User user = Helper.getCurrentUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.prozessKopie
                     .setWikiField(WikiFieldHelper.getWikiMessage(prozessKopie.getWikiField(), "info", message));

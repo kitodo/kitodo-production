@@ -108,7 +108,7 @@ public class GranularityForm {
      *         in faces_config.xml
      */
     public String createProcessesClick() {
-        ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("#{ProzesskopieForm}");
+        ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("ProzesskopieForm");
         if (!prozesskopieForm.isContentValid(false)) {
             return null;
         }

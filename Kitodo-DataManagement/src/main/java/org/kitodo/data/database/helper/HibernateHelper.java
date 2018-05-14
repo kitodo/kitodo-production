@@ -14,15 +14,12 @@ package org.kitodo.data.database.helper;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Map;
+import java.util.Objects;
 
-import javax.faces.application.Application;
+import javax.el.ELContext;
+import javax.el.ELResolver;
 import javax.faces.context.FacesContext;
-import javax.faces.el.EvaluationException;
-import javax.faces.el.ValueBinding;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.persistence.HibernateUtil;
 
@@ -31,7 +28,6 @@ import org.kitodo.data.database.persistence.HibernateUtil;
  */
 public class HibernateHelper implements Serializable {
 
-    private static final Logger logger = LogManager.getLogger(HibernateHelper.class);
     private static final long serialVersionUID = -7449236652821237059L;
 
     /**
@@ -58,7 +54,7 @@ public class HibernateHelper implements Serializable {
     public static Session getHibernateSession() {
         Session session;
         try {
-            session = (Session) getManagedBeanValue("#{HibernateSessionLong.session}");
+            session = (Session) getManagedBeanValue("HibernateSessionLong.session");
             if (session == null) {
                 session = HibernateUtil.getSession();
             }
@@ -74,25 +70,21 @@ public class HibernateHelper implements Serializable {
     /**
      * Get managed bean value.
      *
-     * @param expr
+     * @param beanName
      *            String
      * @return managed bean
      */
-    public static Object getManagedBeanValue(String expr) {
+    public static Object getManagedBeanValue(String beanName) {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context == null) {
             return null;
         } else {
             Object value = null;
-            Application application = context.getApplication();
-            if (application != null) {
-                ValueBinding vb = application.createValueBinding(expr);
-                if (vb != null) {
-                    try {
-                        value = vb.getValue(context);
-                    } catch (EvaluationException e) {
-                        logger.error(e.getMessage(), e);
-                    }
+            ELContext elContext = context.getELContext();
+            if (Objects.nonNull(elContext)) {
+                ELResolver elResolver = elContext.getELResolver();
+                if (Objects.nonNull(elResolver)) {
+                    value = elResolver.getValue(context.getELContext(), null, beanName);
                 }
             }
             return value;
