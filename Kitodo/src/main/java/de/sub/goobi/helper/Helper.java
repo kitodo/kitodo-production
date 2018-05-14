@@ -50,6 +50,7 @@ import org.goobi.mq.WebServiceResult;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.HibernateHelper;
 import org.kitodo.data.database.helper.Util;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 /**
  * Extends Helper from Kitodo Data Management module.
@@ -442,6 +443,10 @@ public class Helper extends HibernateHelper implements Observer {
         if (Objects.isNull(currentUser)) {
             LoginForm login = (LoginForm) Helper.getManagedBeanValue("LoginForm");
             currentUser = login != null ? login.getMyBenutzer() : null;
+            if (Objects.isNull(currentUser)) {
+                setErrorMessage("noLoggedUser", null);
+                throw new SessionAuthenticationException(getTranslation("noLoggedUser"));
+            }
         }
         return currentUser;
     }
