@@ -40,10 +40,12 @@ public class ImageIOInitializer implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        // nothing is done here
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // nothing is done here
     }
 
 }

@@ -49,26 +49,32 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // nothing is done here
     }
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
+        // nothing is done here
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
+        // nothing is done here
     }
 
     @Override
     public void attributeAdded(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
     @Override
     public void attributeRemoved(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
     @Override
     public void attributeReplaced(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
 }

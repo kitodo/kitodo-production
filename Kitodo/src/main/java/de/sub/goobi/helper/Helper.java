@@ -19,8 +19,6 @@ import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
@@ -57,21 +55,6 @@ import org.kitodo.data.database.helper.Util;
  * Extends Helper from Kitodo Data Management module.
  */
 public class Helper extends HibernateHelper implements Observer {
-
-    /**
-     * Always treat de-serialization as a full-blown constructor, by validating the
-     * final state of the de-serialized object.
-     */
-    private void readObject(ObjectInputStream aInputStream) {
-
-    }
-
-    /**
-     * This is the default implementation of writeObject. Customise if necessary.
-     */
-    private void writeObject(ObjectOutputStream aOutputStream) {
-
-    }
 
     public static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
