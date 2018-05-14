@@ -77,20 +77,19 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         clientDTO.setName(clientJSONObject.getString(ClientTypeField.NAME.getName()));
         clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, ClientTypeField.PROJECTS.getName()));
         if (!related) {
-            clientDTO = convertRelatedJSONObjects(clientJSONObject, clientDTO);
+            convertRelatedJSONObjects(clientJSONObject, clientDTO);
         } else {
-            clientDTO = addBasicProjectRelation(clientDTO, clientJSONObject);
+            addBasicProjectRelation(clientDTO, clientJSONObject);
         }
         return clientDTO;
     }
 
-    private ClientDTO convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
         clientDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, ClientTypeField.PROJECTS.getName(),
             serviceManager.getProjectService()));
-        return clientDTO;
     }
 
-    private ClientDTO addBasicProjectRelation(ClientDTO clientDTO, JsonObject jsonObject) {
+    private void addBasicProjectRelation(ClientDTO clientDTO, JsonObject jsonObject) {
         if (clientDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -107,7 +106,6 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
             }
             clientDTO.setProjects(projects);
         }
-        return clientDTO;
     }
 
     /**

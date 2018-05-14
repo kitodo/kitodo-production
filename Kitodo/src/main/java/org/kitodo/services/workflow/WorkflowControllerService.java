@@ -149,7 +149,7 @@ public class WorkflowControllerService {
      */
     public Task setTaskStatusUp(Task task) throws DataException, IOException {
         if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
-            task = setProcessingStatusUp(task);
+            setProcessingStatusUp(task);
             task.setEditTypeEnum(TaskEditType.ADMIN);
             if (task.getProcessingStatusEnum() == TaskStatus.DONE) {
                 close(task);
@@ -172,7 +172,8 @@ public class WorkflowControllerService {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
         serviceManager.getTaskService().replaceProcessingUser(task, this.user);
-        return setProcessingStatusDown(task);
+        setProcessingStatusDown(task);
+        return task;
     }
 
     /**
@@ -451,13 +452,11 @@ public class WorkflowControllerService {
      *
      * @param task
      *            object
-     * @return task object
      */
-    private Task setProcessingStatusUp(Task task) {
+    private void setProcessingStatusUp(Task task) {
         if (task.getProcessingStatusEnum() != TaskStatus.DONE) {
             task.setProcessingStatus(task.getProcessingStatus() + 1);
         }
-        return task;
     }
 
     /**
@@ -465,13 +464,11 @@ public class WorkflowControllerService {
      *
      * @param task
      *            object
-     * @return task object
      */
-    private Task setProcessingStatusDown(Task task) {
+    private void setProcessingStatusDown(Task task) {
         if (task.getProcessingStatusEnum() != TaskStatus.LOCKED) {
             task.setProcessingStatus(task.getProcessingStatus() - 1);
         }
-        return task;
     }
 
     // TODO: find out if method should save or not task

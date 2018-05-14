@@ -673,7 +673,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         if (!related) {
-            processDTO = convertRelatedJSONObjects(processJSONObject, processDTO);
+            convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
             projectDTO.setId(processJSONObject.getInt(ProcessTypeField.PROJECT_ID.getName()));
@@ -684,7 +684,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return processDTO;
     }
 
-    private ProcessDTO convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
         Integer project = jsonObject.getInt(ProcessTypeField.PROJECT_ID.getName());
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
@@ -702,7 +702,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
         processDTO.setBlockedUser(getBlockedUser(processDTO));
-        return processDTO;
     }
 
     /**

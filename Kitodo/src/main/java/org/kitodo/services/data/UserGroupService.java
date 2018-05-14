@@ -248,22 +248,21 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
         userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
         if (!related) {
-            userGroupDTO = convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
+            convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
-            userGroupDTO = addBasicAuthorizationsRelation(userGroupDTO, userGroupJSONObject);
-            userGroupDTO = addBasicUsersRelation(userGroupDTO, userGroupJSONObject);
+            addBasicAuthorizationsRelation(userGroupDTO, userGroupJSONObject);
+            addBasicUsersRelation(userGroupDTO, userGroupJSONObject);
         }
         return userGroupDTO;
     }
 
-    private UserGroupDTO convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
+    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
             throws DataException {
         userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getName(),
                 serviceManager.getUserService()));
-        return userGroupDTO;
     }
 
-    private UserGroupDTO addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
+    private void addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -280,10 +279,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             }
             userGroupDTO.setAuthorities(authorizations);
         }
-        return userGroupDTO;
     }
 
-    private UserGroupDTO addBasicUsersRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
+    private void addBasicUsersRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -303,7 +301,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             }
             userGroupDTO.setUsers(users);
         }
-        return userGroupDTO;
     }
 
     /**

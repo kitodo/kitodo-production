@@ -577,27 +577,26 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.USER_GROUPS.getName()));
 
         if (!related) {
-            userDTO = convertRelatedJSONObjects(userJSONObject, userDTO);
+            convertRelatedJSONObjects(userJSONObject, userDTO);
         } else {
-            userDTO = addBasicFilterRelation(userDTO, userJSONObject);
-            userDTO = addBasicProjectRelation(userDTO, userJSONObject);
-            userDTO = addBasicUserGroupRelation(userDTO, userJSONObject);
+            addBasicFilterRelation(userDTO, userJSONObject);
+            addBasicProjectRelation(userDTO, userJSONObject);
+            addBasicUserGroupRelation(userDTO, userJSONObject);
         }
 
         return userDTO;
     }
 
-    private UserDTO convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
         userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.FILTERS.getName(), serviceManager.getFilterService()));
         userDTO.setProjects(
                 convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getName(), serviceManager.getProjectService()));
         userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getName(), serviceManager.getTaskService()));
         userDTO.setUserGroups(
             convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getName(), serviceManager.getUserGroupService()));
-        return userDTO;
     }
 
-    private UserDTO addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
+    private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getFiltersSize() > 0) {
             List<FilterDTO> filters = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -613,10 +612,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             }
             userDTO.setFilters(filters);
         }
-        return userDTO;
     }
 
-    private UserDTO addBasicProjectRelation(UserDTO userDTO, JsonObject jsonObject) {
+    private void addBasicProjectRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -633,10 +631,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             }
             userDTO.setProjects(projects);
         }
-        return userDTO;
     }
 
-    private UserDTO addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
+    private void addBasicUserGroupRelation(UserDTO userDTO, JsonObject jsonObject) {
         if (userDTO.getUserGroupSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -653,7 +650,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             }
             userDTO.setUserGroups(userGroups);
         }
-        return userDTO;
     }
 
     /**
