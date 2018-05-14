@@ -251,7 +251,7 @@ public class MetadataPathSelector extends MetadataSelector {
      * @return the index number of the metadata selector
      */
     public int getIndex() {
-        if (index != null && index instanceof Integer) {
+        if (index instanceof Integer) {
             int a = ((Integer) index).intValue();
             if (a < Integer.MAX_VALUE) {
                 return a;

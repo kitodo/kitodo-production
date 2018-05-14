@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.jms.JMSException;
@@ -65,7 +66,6 @@ public class MapMessageObjectReader {
      */
     public Set<String> getMandatorySetOfString(String key) throws JMSException {
         Set<String> result = new HashSet<>();
-        Boolean emptiness = Boolean.TRUE;
 
         Object collectionObject = ticket.getObject(key);
         if (collectionObject == null) {
@@ -77,14 +77,14 @@ public class MapMessageObjectReader {
         }
         for (Object contentObject : (Collection<?>) collectionObject) {
             if (!(contentObject instanceof String)) {
-                throw new IllegalArgumentException(
-                        "Incompatible types: An element of \"" + key + WRONG_TYPE + "String.");
+                if (Objects.isNull(contentObject)) {
+                    throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\" must not be empty.");
+                } else {
+                    throw new IllegalArgumentException(
+                            "Incompatible types: An element of \"" + key + WRONG_TYPE + " String.");
+                }
             }
             result.add((String) contentObject);
-            emptiness = false;
-        }
-        if (emptiness) {
-            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\" must not be empty.");
         }
         return result;
     }

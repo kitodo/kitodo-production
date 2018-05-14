@@ -310,7 +310,7 @@ public class XMLWriter {
             transformer.setOutputProperty(OutputKeys.ENCODING, charset);
             transformer.transform(new DOMSource(toDocument(node, namespaces)), new StreamResult(out));
         } catch (TransformerException transformerException) {
-            if ((transformerException.getCause() != null) && (transformerException.getCause() instanceof IOException)) {
+            if (transformerException.getCause() instanceof IOException) {
                 throw (IOException) transformerException.getCause();
             } else {
                 throw new IOException(transformerException.getMessage(), transformerException);
