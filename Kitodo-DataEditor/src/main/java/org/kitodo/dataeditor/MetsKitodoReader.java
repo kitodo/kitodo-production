@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.nio.file.Files;
@@ -36,23 +37,6 @@ class MetsKitodoReader {
     private static final Logger logger = LogManager.getLogger(MetsKitodoReader.class);
 
     /**
-     * Reads an old mets-mods-goobi formated xml file by transforming it to the
-     * current used mets-kitodo format.
-     * 
-     * @param xmlFile
-     *            The file as URI object.
-     * @return The Mets object in mets-kitodo format.
-     */
-    static Mets readUriToMetsFromOldFormat(URI xmlFile, URI xsltFile)
-            throws TransformerException, IOException, JAXBException {
-        String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xsltFile);
-        Mets mets = readStringToMets(convertedData);
-        mets = MetsKitodoHandler
-                .addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"), mets);
-        return mets;
-    }
-
-    /**
      * Reads a mets-kitodo formated xml String to a Mets object.
      * 
      * @param xmlString
@@ -60,7 +44,7 @@ class MetsKitodoReader {
      * 
      * @return The Mets object in mets-kitodo format.
      */
-    private static Mets readStringToMets(String xmlString) throws JAXBException {
+    static Mets readStringToMets(String xmlString) throws JAXBException {
         JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
         try (StringReader stringReader = new StringReader(xmlString)) {
@@ -75,10 +59,14 @@ class MetsKitodoReader {
      *            The file as URI object.
      * @return The Mets object in mets-kitodo format.
      */
-    static Mets readUriToMets(URI xmlFile) throws JAXBException {
-        JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
-        Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
-        return (Mets) jaxbUnmarshaller.unmarshal(new StreamSource(xmlFile.getRawPath()));
+    static Mets readUriToMets(URI xmlFile) throws JAXBException, IOException {
+        if (Files.exists(Paths.get(xmlFile))) {
+            JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
+            Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
+            return (Mets) jaxbUnmarshaller.unmarshal(xmlFile.toURL());
+        } else {
+            throw new IOException("File was not found: " + xmlFile.getPath());
+        }
     }
 
     /**
@@ -102,19 +90,7 @@ class MetsKitodoReader {
         if (MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 0)) {
             if (!MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
                 logger.warn("Not supported metadata format detected. Trying to convert from old goobi format now!");
-                if (!Files.exists(Paths.get(xsltFile))) {
-                    logger.error("Path to xslt file for transformation of goobi format metadata files is not valid: "
-                            + xmlFile.getPath());
-                    throw new IOException("Xslt file [" + xsltFile.getPath()
-                            + "] for transformation of goobi format metadata files was not found. Please check your local config!");
-                } else {
-                    mets = readUriToMetsFromOldFormat(xmlFile, xsltFile);
-                    if (MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
-                        logger.info("Successfully converted metadata to kitodo format!");
-                    } else {
-                        throw new IOException("Can not read data because of not supported format!");
-                    }
-                }
+                return MetsKitodoConverter.convertToMetsKitodo(xmlFile, xsltFile);
             }
         } else {
             logger.warn("Metadata file does not contain any metadata");

@@ -30,17 +30,17 @@ public class DataEditorTest {
 
     @Test
     public void shouldReadMetadata() throws IOException {
-        dataEditor.readData(URI.create("src/test/resources/testmeta.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmeta.xml").toUri(), xsltFile);
     }
 
     @Test
     public void shouldReadEmptyMetadata() throws IOException {
-        dataEditor.readData(URI.create("src/test/resources/testmetaEmpty.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmetaEmpty.xml").toUri(), xsltFile);
     }
 
     @Test
     public void shouldReadOldMetadata() throws IOException {
-        dataEditor.readData(URI.create("src/test/resources/testmetaOldFormat.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmetaOldFormat.xml").toUri(), xsltFile);
     }
 
     @Test
@@ -49,27 +49,28 @@ public class DataEditorTest {
         expectedException.expect(IOException.class);
         expectedException.expectMessage("Xslt file [" + xsltFile.getPath()
                 + "] for transformation of goobi format metadata files was not found. Please check your local config!");
-        dataEditor.readData(URI.create("src/test/resources/testmetaOldFormat.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmetaOldFormat.xml").toUri(), xsltFile);
     }
 
     @Test
     public void shouldNotReadInvalidMetadata() throws IOException {
         expectedException.expect(IOException.class);
         expectedException.expectMessage("Unable to read file");
-        dataEditor.readData(URI.create("src/test/resources/testmetaInvalid.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmetaInvalid.xml").toUri(), xsltFile);
     }
 
     @Test
     public void shouldNotReadUnsupportedMetadata() throws IOException {
         expectedException.expect(IOException.class);
         expectedException.expectMessage("Can not read data because of not supported format!");
-        dataEditor.readData(URI.create("src/test/resources/testmetaUnsupportedFormat.xml"), xsltFile);
+        dataEditor.readData(Paths.get("src/test/resources/testmetaUnsupportedFormat.xml").toUri(), xsltFile);
     }
 
     @Test
     public void shouldNotReadMetadataOfNotExistingFile() throws IOException {
+        URI notExistingUri = Paths.get("notExisting.xml").toUri();
         expectedException.expect(IOException.class);
-        expectedException.expectMessage("Unable to read file");
-        dataEditor.readData(URI.create("notExisting.xml"), xsltFile);
+        expectedException.expectMessage("File was not found: " + notExistingUri.getPath());
+        dataEditor.readData(notExistingUri, xsltFile);
     }
 }

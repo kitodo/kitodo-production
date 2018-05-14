@@ -138,7 +138,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldReadGoobiMetadata() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        URI oldXmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
+        URI oldXmlfile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 
@@ -151,7 +151,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldReadGoobiMetadataGroup() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        URI oldXmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
+        URI oldXmlfile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 

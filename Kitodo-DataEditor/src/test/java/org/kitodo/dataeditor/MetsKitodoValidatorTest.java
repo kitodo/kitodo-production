@@ -11,7 +11,9 @@
 
 package org.kitodo.dataeditor;
 
+import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBException;
 
@@ -22,20 +24,20 @@ import org.kitodo.dataformat.metskitodo.Mets;
 public class MetsKitodoValidatorTest {
 
     @Test
-    public void shouldCheckValidMetsObject() throws JAXBException {
-        Mets mets = MetsKitodoReader.readUriToMets(URI.create("./src/test/resources/testmeta.xml"));
+    public void shouldCheckValidMetsObject() throws JAXBException, IOException {
+        Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmeta.xml").toUri());
         Assert.assertTrue("Result of validation of Mets object was not true!",MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets));
     }
 
     @Test
-    public void shouldCheckOldFormatMetsObject() throws JAXBException {
-        Mets mets = MetsKitodoReader.readUriToMets(URI.create("./src/test/resources/testmetaOldFormat.xml"));
+    public void shouldCheckOldFormatMetsObject() throws JAXBException, IOException {
+        Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri());
         Assert.assertFalse("Result of validation of Mets object was not false!",MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets));
     }
 
     @Test
-    public void shouldMetsContainsMetadataAtMdSecIndex() throws JAXBException {
-        Mets mets = MetsKitodoReader.readUriToMets(URI.create("./src/test/resources/testmeta.xml"));
+    public void shouldMetsContainsMetadataAtMdSecIndex() throws JAXBException, IOException {
+        Mets mets = MetsKitodoReader.readUriToMets(Paths.get("./src/test/resources/testmeta.xml").toUri());
         Assert.assertTrue("Result of checking if mets contains metadata at dmdSec index was wrong!",MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets,2));
         Assert.assertFalse("Result of checking if mets contains metadata at dmdSec index which does not exist was wrong!",MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets,3));
     }
