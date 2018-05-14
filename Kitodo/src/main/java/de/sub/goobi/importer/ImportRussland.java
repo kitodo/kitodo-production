@@ -50,12 +50,6 @@ public class ImportRussland {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Constructor.
-     */
-    public ImportRussland() {
-    }
-
-    /**
      * Parse.
      *
      * @param reader

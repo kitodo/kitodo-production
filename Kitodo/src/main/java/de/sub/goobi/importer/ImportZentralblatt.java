@@ -53,12 +53,6 @@ public class ImportZentralblatt {
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Constructor.
-     */
-    public ImportZentralblatt() {
-    }
-
-    /**
      * Parse.
      *
      * @param reader
