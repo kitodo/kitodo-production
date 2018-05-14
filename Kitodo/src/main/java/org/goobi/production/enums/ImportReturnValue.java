@@ -23,20 +23,12 @@ public enum ImportReturnValue {
     private String value;
 
     ImportReturnValue(int id, String title) {
-        this.setId(id);
-        this.setValue(title);
-    }
-
-    public void setId(int id) {
         this.id = id;
+        this.value = title;
     }
 
     public int getId() {
         return this.id;
-    }
-
-    public void setValue(String title) {
-        this.value = title;
     }
 
     public String getValue() {

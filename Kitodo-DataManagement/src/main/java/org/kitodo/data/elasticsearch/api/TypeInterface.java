@@ -11,8 +11,8 @@
 
 package org.kitodo.data.elasticsearch.api;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 
@@ -28,5 +28,5 @@ public interface TypeInterface<T> {
 
     HttpEntity createDocument(T baseIndexedBean);
 
-    HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans);
+    Map<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans);
 }

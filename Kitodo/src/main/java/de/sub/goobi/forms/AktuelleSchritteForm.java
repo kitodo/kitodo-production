@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -73,7 +74,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private boolean nurEigeneSchritte = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
-    private HashMap<String, Boolean> anzeigeAnpassen;
+    private Map<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
     private String addToWikiField = "";
     private static String DONEDIRECTORYNAME = "fertig/";
@@ -684,11 +685,11 @@ public class AktuelleSchritteForm extends BasisForm {
         this.nurEigeneSchritte = nurEigeneSchritte;
     }
 
-    public HashMap<String, Boolean> getAnzeigeAnpassen() {
+    public Map<String, Boolean> getAnzeigeAnpassen() {
         return this.anzeigeAnpassen;
     }
 
-    public void setAnzeigeAnpassen(HashMap<String, Boolean> anzeigeAnpassen) {
+    public void setAnzeigeAnpassen(Map<String, Boolean> anzeigeAnpassen) {
         this.anzeigeAnpassen = anzeigeAnpassen;
     }
 

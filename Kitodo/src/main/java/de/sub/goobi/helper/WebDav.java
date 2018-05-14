@@ -58,7 +58,7 @@ public class WebDav implements Serializable {
 
     public List<URI> uploadAllFromHome(String inVerzeichnis) {
         User currentUser = Helper.getCurrentUser();
-        ArrayList<URI> files = new ArrayList<>();
+        List<URI> files = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter("]");
 
         try {

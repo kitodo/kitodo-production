@@ -82,7 +82,7 @@ public class ConfigOpacDoctype {
     }
 
     @XmlElement(name = "receivingValue")
-    public ArrayList<String> getMappings() {
+    public List<String> getMappings() {
         return this.mappings;
     }
 

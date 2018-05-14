@@ -13,8 +13,8 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -113,7 +113,7 @@ public class AuthorityTypeTest {
         AuthorityType authorityType = new AuthorityType();
 
         List<Authority> authorities = prepareData();
-        HashMap<Integer, HttpEntity> documents = authorityType.createDocuments(authorities);
+        Map<Integer, HttpEntity> documents = authorityType.createDocuments(authorities);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
     }
 }

@@ -12,6 +12,7 @@
 package org.kitodo.api.docket;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class DocketData {
@@ -29,11 +30,11 @@ public class DocketData {
     /** A comment. */
     private String comment;
     /** The template properties. */
-    private ArrayList<Property> templateProperties;
+    private List<Property> templateProperties;
     /** The workpiece properties. */
-    private ArrayList<Property> workpieceProperties;
+    private List<Property> workpieceProperties;
     /** The process properties. */
-    private ArrayList<Property> processProperties;
+    private List<Property> processProperties;
 
     /**
      * Gets the processName.
@@ -154,7 +155,7 @@ public class DocketData {
      * 
      * @return The templateProperties.
      */
-    public ArrayList<Property> getTemplateProperties() {
+    public List<Property> getTemplateProperties() {
         return templateProperties;
     }
 
@@ -164,7 +165,7 @@ public class DocketData {
      * @param templateProperties
      *            The templateProperties.
      */
-    public void setTemplateProperties(ArrayList<Property> templateProperties) {
+    public void setTemplateProperties(List<Property> templateProperties) {
         this.templateProperties = templateProperties;
     }
 
@@ -173,7 +174,7 @@ public class DocketData {
      * 
      * @return The workpieceProperties.
      */
-    public ArrayList<Property> getWorkpieceProperties() {
+    public List<Property> getWorkpieceProperties() {
         if (Objects.isNull(workpieceProperties)) {
             workpieceProperties = new ArrayList<>();
         }
@@ -186,7 +187,7 @@ public class DocketData {
      * @param workpieceProperties
      *            The workpieceProperties.
      */
-    public void setWorkpieceProperties(ArrayList<Property> workpieceProperties) {
+    public void setWorkpieceProperties(List<Property> workpieceProperties) {
         this.workpieceProperties = workpieceProperties;
     }
 
@@ -195,7 +196,7 @@ public class DocketData {
      * 
      * @return The processProperties.
      */
-    public ArrayList<Property> getProcessProperties() {
+    public List<Property> getProcessProperties() {
         if (Objects.isNull(processProperties)) {
             processProperties = new ArrayList<>();
         }
@@ -208,7 +209,7 @@ public class DocketData {
      * @param processProperties
      *            The processProperties.
      */
-    public void setProcessProperties(ArrayList<Property> processProperties) {
+    public void setProcessProperties(List<Property> processProperties) {
         this.processProperties = processProperties;
     }
 }

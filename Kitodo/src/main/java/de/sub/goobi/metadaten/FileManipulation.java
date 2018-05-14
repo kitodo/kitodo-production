@@ -303,7 +303,7 @@ public class FileManipulation {
         String filenamePrefix = imageName.substring(0, imageName.lastIndexOf('.'));
         URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
                 ProcessSubType.IMAGE, currentFolder);
-        ArrayList<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
+        List<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
         for (URI currentFile : filesInFolder) {
             String currentFileName = fileService.getFileName(currentFile);
             String currentFileNamePrefix = currentFileName.substring(0, currentFileName.lastIndexOf('.'));
@@ -377,7 +377,7 @@ public class FileManipulation {
             String prefix = filename.replace(Metadaten.getFileExtension(filename), "");
             String processTitle = metadataBean.getProcess().getTitle();
             for (URI folder : metadataBean.getAllTifFolders()) {
-                ArrayList<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
+                List<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
                         .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, folder.toString()));
                 for (URI currentFile : filesInFolder) {
 
@@ -477,14 +477,14 @@ public class FileManipulation {
         List<URI> importedFileNames = new ArrayList<>();
         for (String importName : selectedFiles) {
             URI importFolderUri = fileService.createResource(tempDirectory + "fileupload/" + importName);
-            ArrayList<URI> subFolderList = fileService.getSubUris(importFolderUri);
+            List<URI> subFolderList = fileService.getSubUris(importFolderUri);
             for (URI subFolder : subFolderList) {
                 if (useMasterFolder) {
                     // check if current import folder is master folder
                     if (fileService.getFileName(subFolder).startsWith(masterPrefix)) {
                         URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
                                 currentProcess);
-                        ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);
+                        List<URI> objectInFolder = fileService.getSubUris(subFolder);
                         Collections.sort(objectInFolder);
                         for (URI file : objectInFolder) {
                             fileService.copyFileToDirectory(file, masterDirectory);
@@ -531,7 +531,7 @@ public class FileManipulation {
                     .substring(fileService.getFileName(subFolder).lastIndexOf('_') + 1);
             URI folderName = serviceManager.getProcessService().getMethodFromName(folderSuffix, currentProcess);
             if (folderName != null) {
-                ArrayList<URI> objectInFolder = fileService.getSubUris(subFolder);
+                List<URI> objectInFolder = fileService.getSubUris(subFolder);
                 Collections.sort(objectInFolder);
                 for (URI file : objectInFolder) {
                     if (serviceManager.getProcessService().getImagesTifDirectory(false, currentProcess).getRawPath()

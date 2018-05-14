@@ -11,7 +11,7 @@
 
 package org.kitodo.api.command;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CommandResult {
 
@@ -25,7 +25,7 @@ public class CommandResult {
     private boolean successful;
 
     /** The resultMessages. */
-    private ArrayList<String> messages;
+    private List<String> messages;
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ public class CommandResult {
      * @param messages
      *            The resultMessages
      */
-    public CommandResult(Integer id, String command, boolean successful, ArrayList<String> messages) {
+    public CommandResult(Integer id, String command, boolean successful, List<String> messages) {
         this.id = id;
         this.command = command;
         this.successful = successful;
@@ -78,7 +78,7 @@ public class CommandResult {
      * 
      * @return The messages.
      */
-    public ArrayList<String> getMessages() {
+    public List<String> getMessages() {
         return messages;
     }
 

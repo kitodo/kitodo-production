@@ -11,7 +11,6 @@
 
 package org.kitodo.api.ugh;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -112,7 +111,7 @@ public interface MetadataTypeInterface {
      * @param labels
      *            the map of display labels of this meta-data type
      */
-    void setAllLanguages(HashMap<String, String> labels);
+    void setAllLanguages(Map<String, String> labels);
 
     /**
      * Sets whether the meta-data type is an identifier type.

@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -221,14 +221,14 @@ public class FileManagementTest {
         URI secondSub = fileManagement.create(directory, "second.xml", true);
         URI thirdSub = fileManagement.create(directory, "third.jpg", true);
 
-        ArrayList subUris = fileManagement.getSubUris(null, directory);
+        List subUris = fileManagement.getSubUris(null, directory);
         Collections.sort(subUris);
         Assert.assertEquals(subUris.get(0), firstSub);
         Assert.assertEquals(subUris.get(1), secondSub);
         Assert.assertEquals(subUris.get(2), thirdSub);
 
         FilenameFilter filter = new FileNameEndsWithFilter(".xml");
-        ArrayList subUrisWithFilter = fileManagement.getSubUris(filter, directory);
+        List subUrisWithFilter = fileManagement.getSubUris(filter, directory);
         Assert.assertEquals(subUrisWithFilter.size(), 1);
         Assert.assertEquals(subUrisWithFilter.get(0), secondSub);
     }

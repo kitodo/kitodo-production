@@ -424,7 +424,7 @@ public class ExportXmlLog {
      * @return list of elements
      */
     @SuppressWarnings("unchecked")
-    public List<Element> getMetsValues(String expr, Object element, HashMap<String, Namespace> namespaces)
+    public List<Element> getMetsValues(String expr, Object element, Map<String, Namespace> namespaces)
             throws JaxenException {
         JDOMXPath xpath = new JDOMXPath(expr.trim().replace("\n", ""));
         // Add all namespaces

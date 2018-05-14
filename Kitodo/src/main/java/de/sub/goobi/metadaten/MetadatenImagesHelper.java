@@ -421,7 +421,7 @@ public class MetadatenImagesHelper {
          * alle Bilder durchlaufen und dafür die Seiten anlegen
          */
         if (fileService.fileExist(folder)) {
-            ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
+            List<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
             if (files.size() == 0) {
                 Helper.setFehlerMeldung("[" + title + "] No objects found");
                 return false;
@@ -492,7 +492,7 @@ public class MetadatenImagesHelper {
      */
     public List<URI> getImageFiles(URI directory) {
         /* Verzeichnis einlesen */
-        ArrayList<URI> files = fileService.getSubUris(Helper.imageNameFilter, directory);
+        List<URI> files = fileService.getSubUris(Helper.imageNameFilter, directory);
         ArrayList<URI> finalFiles = new ArrayList<>();
         for (URI file : files) {
             String newURI = file.toString().replace(directory.toString(), "");
@@ -573,7 +573,7 @@ public class MetadatenImagesHelper {
         }
         /* Verzeichnis einlesen */
         ArrayList<URI> dataList = new ArrayList<>();
-        ArrayList<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
+        List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         if (files.size() > 0) {
             dataList.addAll(files);
             Collections.sort(dataList, new GoobiImageFileComparator());

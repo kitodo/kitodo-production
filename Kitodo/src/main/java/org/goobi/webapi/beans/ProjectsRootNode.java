@@ -13,6 +13,7 @@ package org.goobi.webapi.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -32,7 +33,7 @@ import org.kitodo.data.database.beans.Project;
 @XmlRootElement(name = "projects")
 public class ProjectsRootNode {
     @XmlElement(name = "project")
-    private ArrayList<Project> projects;
+    private List<Project> projects;
 
     public ProjectsRootNode() {
         projects = new ArrayList<>();
@@ -57,7 +58,7 @@ public class ProjectsRootNode {
         this.projects = toCopy.projects != null ? new ArrayList<>(toCopy.projects) : null;
     }
 
-    public void setProjects(ArrayList<Project> projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
 

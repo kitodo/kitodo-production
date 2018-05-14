@@ -14,8 +14,8 @@ package org.kitodo.data.elasticsearch.index;
 import com.sun.research.ws.wadl.HTTPMethods;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.logging.log4j.LogManager;
@@ -106,7 +106,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         IndexRestClient restClient = initiateRestClient();
 
         if (method == HTTPMethods.PUT) {
-            HashMap<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
+            Map<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
             restClient.addType(documents);
         } else {
             throw new CustomResponseException("Incorrect HTTP method!");

@@ -67,8 +67,8 @@ public class ConfigOpac {
      *
      * @return all catalogue titles
      */
-    public static ArrayList<String> getAllCatalogueTitles() {
-        ArrayList<String> myList = new ArrayList<>();
+    public static List<String> getAllCatalogueTitles() {
+        List<String> myList = new ArrayList<>();
         try {
             int countCatalogues = getConfig().getMaxIndex("catalogue");
             for (int i = 0; i <= countCatalogues; i++) {
@@ -189,7 +189,7 @@ public class ConfigOpac {
      * @return all catalogue titles
      */
     @XmlElement(name = "interface")
-    public ArrayList<String> getInterface() {
+    public List<String> getInterface() {
         return getAllCatalogueTitles();
     }
 
@@ -200,7 +200,7 @@ public class ConfigOpac {
      * @return all media types
      */
     @XmlElement(name = "mediaType")
-    public ArrayList<ConfigOpacDoctype> getMediaType() {
+    public List<ConfigOpacDoctype> getMediaType() {
         return getAllDoctypes();
     }
 }

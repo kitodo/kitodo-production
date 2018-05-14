@@ -340,8 +340,8 @@ public class ProjekteForm extends BasisForm {
      *
      * @return modified ArrayList
      */
-    public ArrayList<ProjectFileGroup> getFileGroupList() {
-        ArrayList<ProjectFileGroup> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
+    public List<ProjectFileGroup> getFileGroupList() {
+        List<ProjectFileGroup> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
 
         for (Integer id : this.deletedFileGroups) {
             for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {

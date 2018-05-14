@@ -25,8 +25,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 import javax.faces.context.FacesContext;
@@ -55,7 +55,7 @@ public class Multipage {
     private void create(Process process) throws IOException {
         // ago through all the TIFFs
         URI path = serviceManager.getFileService().getImagesDirectory(process);
-        ArrayList<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, path);
+        List<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, path);
 
         // No TIFFs available, so get out
         if (files.size() == 0) {

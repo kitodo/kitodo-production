@@ -15,8 +15,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -138,7 +138,7 @@ public class BatchTypeTest {
         BatchType batchType = new BatchType();
 
         List<Batch> batches = prepareData();
-        HashMap<Integer, HttpEntity> documents = batchType.createDocuments(batches);
+        Map<Integer, HttpEntity> documents = batchType.createDocuments(batches);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
     }
 }

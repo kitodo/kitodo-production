@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -244,7 +245,7 @@ public class FileManagement implements FileManagementInterface {
     private Integer iterateOverDirectories(URI directory) {
         int count = 0;
         if (isDirectory(directory)) {
-            ArrayList<URI> children = getSubUris(null, directory);
+            List<URI> children = getSubUris(null, directory);
             for (URI child : children) {
                 child = fileMapper.mapAccordingToMappingType(child);
                 if (isDirectory(child)) {
@@ -268,7 +269,7 @@ public class FileManagement implements FileManagementInterface {
         int count = 0;
         if (isDirectory(directory)) {
             count = getSubUris(filter, directory).size();
-            ArrayList<URI> children = getSubUris(null, directory);
+            List<URI> children = getSubUris(null, directory);
             for (URI child : children) {
                 child = fileMapper.mapAccordingToMappingType(child);
                 count += getNumberOfFiles(filter, child);
@@ -295,11 +296,11 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public ArrayList<URI> getSubUris(FilenameFilter filter, URI uri) {
+    public List<URI> getSubUris(FilenameFilter filter, URI uri) {
         if (!uri.isAbsolute()) {
             uri = fileMapper.mapAccordingToMappingType(uri);
         }
-        ArrayList<URI> resultList = new ArrayList<>();
+        List<URI> resultList = new ArrayList<>();
         File[] files;
         if (filter == null) {
             files = listFiles(new File(uri));
@@ -423,7 +424,7 @@ public class FileManagement implements FileManagementInterface {
         FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
         URI sourceFolder = URI.create("");
         try {
-            ArrayList<URI> directories = getSubUris(filterDirectory, dir);
+            List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.size() == 0) {
                 sourceFolder = dir.resolve(processTitle + "_source");
                 if (Config.getBooleanParameter("createSourceFolder", false)) {

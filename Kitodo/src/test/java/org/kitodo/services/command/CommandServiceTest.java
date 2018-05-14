@@ -191,7 +191,7 @@ public class CommandServiceTest {
      * 
      * @return The CommandResult.
      */
-    private CommandResult getLastFinishedCommandResult(ArrayList<CommandResult> commandResults) {
+    private CommandResult getLastFinishedCommandResult(List<CommandResult> commandResults) {
         if (commandResults.isEmpty()) {
             return null;
         }

@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.Json;
@@ -60,8 +61,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
     }
 
     @Override
-    public HashMap<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
-        HashMap<Integer, HttpEntity> documents = new HashMap<>();
+    public Map<Integer, HttpEntity> createDocuments(List<T> baseIndexedBeans) {
+        Map<Integer, HttpEntity> documents = new HashMap<>();
         for (T bean : baseIndexedBeans) {
             documents.put(bean.getId(), createDocument(bean));
         }

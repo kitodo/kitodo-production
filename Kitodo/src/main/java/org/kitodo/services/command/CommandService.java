@@ -193,7 +193,7 @@ public class CommandService {
      *
      * @return The CommandResults.
      */
-    public ArrayList<CommandResult> getFinishedCommandResults() {
+    public List<CommandResult> getFinishedCommandResults() {
         return finishedCommandResults;
     }
 }

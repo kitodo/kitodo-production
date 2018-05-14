@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Manages the handling of files.
@@ -171,7 +171,7 @@ public interface FileManagementInterface {
      *            the URI, to get the sub URIs from
      * @return a List of sub URIs
      */
-    ArrayList<URI> getSubUris(FilenameFilter filter, URI uri);
+    List<URI> getSubUris(FilenameFilter filter, URI uri);
 
     /**
      * Creates the FolderStructure needed for a process in kitodo.

@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +64,7 @@ public class BackupFileRotation {
      *             if a file system operation fails
      */
     public void performBackup() throws IOException {
-        ArrayList<URI> metaFiles;
+        List<URI> metaFiles;
 
         if (numberOfBackups < 1) {
             return;
@@ -145,7 +145,7 @@ public class BackupFileRotation {
         }
     }
 
-    private ArrayList<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
+    private List<URI> generateBackupBaseNameFileList(String filterFormat, Process process) {
         FilenameFilter filter = new FileNameMatchesFilter(filterFormat);
 
         URI processDataDirectory = serviceManager.getProcessService().getProcessDataDirectory(process);

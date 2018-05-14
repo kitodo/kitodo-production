@@ -1462,7 +1462,7 @@ public class ProzesskopieForm implements Serializable {
         this.digitalCollections = digitalCollections;
     }
 
-    public HashMap<String, Boolean> getStandardFields() {
+    public Map<String, Boolean> getStandardFields() {
         return this.standardFields;
     }
 

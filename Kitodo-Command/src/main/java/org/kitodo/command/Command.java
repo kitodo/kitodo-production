@@ -14,6 +14,7 @@ package org.kitodo.command;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,16 +39,16 @@ public class Command implements CommandInterface {
     @Override
     public CommandResult runCommand(Integer id, String command) {
 
-        CommandResult commandResult = null;
-        Process process = null;
+        CommandResult commandResult;
+        Process process;
         String[] callSequence = command.split("[\\r\\n\\s]+");
 
         try {
             process = new ProcessBuilder(callSequence).start();
             try (InputStream inputStream = process.getInputStream();
                     InputStream errorInputStream = process.getErrorStream()) {
-                ArrayList<String> outputMessage = inputStreamArrayToList(inputStream);
-                ArrayList<String> errorMessage = inputStreamArrayToList(errorInputStream);
+                List<String> outputMessage = inputStreamArrayToList(inputStream);
+                List<String> errorMessage = inputStreamArrayToList(errorInputStream);
                 int errCode = process.waitFor();
 
                 outputMessage.addAll(errorMessage);
@@ -62,7 +63,7 @@ public class Command implements CommandInterface {
                 }
             }
         } catch (IOException | InterruptedException exception) {
-            ArrayList<String> errorMessages = new ArrayList<>();
+            List<String> errorMessages = new ArrayList<>();
             errorMessages.add(exception.getCause().toString());
             errorMessages.add(exception.getMessage());
             commandResult = new CommandResult(id, command, false, errorMessages);

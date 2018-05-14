@@ -226,15 +226,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
-     * Get all projects from index an convert them for frontend.
-     *
-     * @return list of ProjectDTO objects
-     */
-    public List<ProjectDTO> findAll() throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(), false);
-    }
-
-    /**
      * Get all projects sorted by title.
      *
      * @return all projects sorted by title as Project objects

@@ -276,8 +276,8 @@ public class Helper extends HibernateHelper implements Observer {
      *            resource key to get translations for
      * @return a map with all language id strings and the corresponding resource
      */
-    public static HashMap<String, String> getAllStrings(String key) {
-        HashMap<String, String> result = new HashMap<>(Util.hashCapacityFor(commonMessages.entrySet()));
+    public static Map<String, String> getAllStrings(String key) {
+        Map<String, String> result = new HashMap<>(Util.hashCapacityFor(commonMessages.entrySet()));
         @SuppressWarnings("unchecked")
         Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
         while (languages.hasNext()) {

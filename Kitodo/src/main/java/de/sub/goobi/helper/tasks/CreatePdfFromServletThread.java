@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -117,7 +118,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 StringBuilder url = new StringBuilder();
                 FilenameFilter filter = Helper.imageNameFilter;
                 URI imagesDir = serviceManager.getProcessService().getImagesTifDirectory(true, this.getProcess());
-                ArrayList<URI> meta = fileService.getSubUris(filter, imagesDir);
+                List<URI> meta = fileService.getSubUris(filter, imagesDir);
                 ArrayList<String> fileNames = new ArrayList<>();
                 String basePath = ConfigCore.getKitodoDataDirectory();
                 for (URI data : meta) {
