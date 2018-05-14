@@ -114,8 +114,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private final FileService fileService = serviceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static ProcessService instance = null;
-    private static String DIRECTORY_PREFIX = "orig";
-    private static String DIRECTORY_SUFFIX = "images";
+    private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String EXPORT_ERROR = "exportError";
 
@@ -789,8 +789,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public URI getImagesTifDirectory(boolean useFallBack, Process process) throws IOException {
         URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-        DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
@@ -846,8 +845,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public URI getImagesTifDirectory(boolean useFallBack, Integer processId, String processTitle, URI processBaseURI)
             throws DAOException, IOException {
         URI dir = fileService.getProcessSubTypeURI(processId, processTitle, processBaseURI, ProcessSubType.IMAGE, null);
-        DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
-        DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+
         /* nur die _tif-Ordner anzeigen, die nicht mir orig_ anfangen */
         FilenameFilter filterDirectory = new FileNameEndsAndDoesNotBeginWithFilter(DIRECTORY_PREFIX + "_",
                 "_" + DIRECTORY_SUFFIX);
@@ -921,8 +919,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
         if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
-            DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
-            DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
             FilenameFilter filterDirectory = new FileNameBeginsAndEndsWithFilter(DIRECTORY_PREFIX + "_",
                     "_" + DIRECTORY_SUFFIX);
