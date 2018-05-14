@@ -1979,11 +1979,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                  */
                 User user = Helper.getCurrentUser();
                 try {
-                    if (user != null) {
-                        fileService.createDirectoryForUser(zielTif, user.getLogin());
-                    } else {
-                        throw new IOException("No logged user!");
-                    }
+                    fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {
                     Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger,
                         e);

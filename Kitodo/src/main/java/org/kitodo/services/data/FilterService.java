@@ -428,9 +428,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private BoolQueryBuilder limitToUserAssignedTasks(Boolean onlyOpenTask, Boolean onlyUserAssignedTask) {
         // identify current user
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new BoolQueryBuilder();
-        }
 
         // hits by user groups
         BoolQueryBuilder taskQuery = new BoolQueryBuilder();

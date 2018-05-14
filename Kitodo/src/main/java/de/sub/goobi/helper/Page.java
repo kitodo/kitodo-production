@@ -14,7 +14,6 @@ package de.sub.goobi.helper;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.dto.BaseDTO;
@@ -46,11 +45,7 @@ public class Page<T extends BaseDTO> implements Serializable { // implements Ite
         this.page = page;
         this.results = results;
         User currentUser = Helper.getCurrentUser();
-        if (Objects.isNull(currentUser)) {
-            this.pageSize = 10;
-        } else {
-            this.pageSize = currentUser.getTableSize();
-        }
+        this.pageSize = currentUser.getTableSize();
         this.totalResults = results.size();
     }
 

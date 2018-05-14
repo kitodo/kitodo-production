@@ -60,14 +60,8 @@ public class WebDav implements Serializable {
         FilenameFilter filter = new FileNameEndsWithFilter("]");
 
         try {
-            if (currentUser != null) {
-                URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser)
-                        .resolve(inVerzeichnis);
-                files = fileService.getSubUris(filter, directoryName);
-            } else {
-                Helper.setFehlerMeldung("uploadFromHomeAlle abgebrochen, Fehler", Helper.getTranslation("noUser"));
-                return files;
-            }
+            URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
+            files = fileService.getSubUris(filter, directoryName);
         } catch (IOException e) {
             Helper.setErrorMessage("uploadFromHomeAlle abgebrochen, Fehler", logger, e);
             return files;
@@ -99,13 +93,9 @@ public class WebDav implements Serializable {
         URI verzeichnisAlle;
         User currentUser = Helper.getCurrentUser();
         try {
-            if (currentUser != null) {
-                verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(directory);
-                for (URI name : uris) {
-                    fileService.deleteSymLink(verzeichnisAlle.resolve(name));
-                }
-            } else {
-                Helper.setFehlerMeldung("Upload stopped, error - no logged user");
+            verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(directory);
+            for (URI name : uris) {
+                fileService.deleteSymLink(verzeichnisAlle.resolve(name));
             }
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("Upload stopped, error", logger, e);
@@ -120,9 +110,7 @@ public class WebDav implements Serializable {
      */
     public void uploadFromHome(Process process) {
         User currentUser = Helper.getCurrentUser();
-        if (currentUser != null) {
-            uploadFromHome(currentUser, process);
-        }
+        uploadFromHome(currentUser, process);
     }
 
     /**
@@ -172,32 +160,25 @@ public class WebDav implements Serializable {
         URI userHome;
 
         try {
-            if (currentUser != null) {
-                source = serviceManager.getFileService().getImagesDirectory(process);
-                userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
+            source = serviceManager.getFileService().getImagesDirectory(process);
+            userHome = serviceManager.getUserService().getHomeDirectory(currentUser);
 
-                /*
-                 * bei Massendownload muss auch das Projekt- und
-                 * Fertig-Verzeichnis existieren
-                 */
-                if (currentUser.isWithMassDownload()) {
-                    URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
-                    fileService.createDirectoryForUser(project, currentUser.getLogin());
+            // for mass download, the project and directory must exist
+            if (currentUser.isWithMassDownload()) {
+                URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
+                fileService.createDirectoryForUser(project, currentUser.getLogin());
 
-                    project = Paths.get(userHome + doneDirectoryName).toUri();
-                    fileService.createDirectoryForUser(project, currentUser.getLogin());
-                }
-
-                URI destination = userHome;
-                if (currentUser.isWithMassDownload() && process.getProject() != null) {
-                    destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
-                }
-                destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
-
-                fileService.createSymLink(source, destination, onlyRead, currentUser);
-            } else {
-                Helper.setFehlerMeldung("Aborted download to home, error - there is not current user");
+                project = Paths.get(userHome + doneDirectoryName).toUri();
+                fileService.createDirectoryForUser(project, currentUser.getLogin());
             }
+
+            URI destination = userHome;
+            if (currentUser.isWithMassDownload() && process.getProject() != null) {
+                destination = Paths.get(new File(destination).getPath(), process.getProject().getTitle()).toUri();
+            }
+            destination = Paths.get(new File(destination).getPath(), getEncodedProcessLinkName(process)).toUri();
+
+            fileService.createSymLink(source, destination, onlyRead, currentUser);
         } catch (IOException e) {
             Helper.setErrorMessage("Aborted download to home, error", logger, e);
         }
