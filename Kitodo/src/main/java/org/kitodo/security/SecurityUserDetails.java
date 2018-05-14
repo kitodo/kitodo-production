@@ -44,13 +44,13 @@ public class SecurityUserDetails extends User implements UserDetails {
                 grantedAuthorities.add(new SimpleGrantedAuthority(authority.getTitle() + "_GLOBAL"));
             }
 
-            grantedAuthorities = insertClientAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
-            grantedAuthorities = insertProjectAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
+            insertClientAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
+            insertProjectAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
         }
         return grantedAuthorities;
     }
 
-    private List<SimpleGrantedAuthority> insertClientAuthoritiesFromUserGroup(
+    private void insertClientAuthoritiesFromUserGroup(
             List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
         List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
                 .getUserGroupClientAuthorityRelations();
@@ -73,10 +73,9 @@ public class SecurityUserDetails extends User implements UserDetails {
                 }
             }
         }
-        return simpleGrantedAuthorities;
     }
 
-    private List<SimpleGrantedAuthority> insertProjectAuthoritiesFromUserGroup(
+    private void insertProjectAuthoritiesFromUserGroup(
             List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
         List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = userGroup
                 .getUserGroupProjectAuthorityRelations();
@@ -97,7 +96,6 @@ public class SecurityUserDetails extends User implements UserDetails {
                 simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
             }
         }
-        return simpleGrantedAuthorities;
     }
 
     @Override
