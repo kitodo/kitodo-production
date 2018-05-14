@@ -77,7 +77,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Map<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
     private String addToWikiField = "";
-    private static String DONEDIRECTORYNAME = "fertig/";
+    private String doneDirectoryName;
     private BatchStepHelper batchHelper;
     private List<Property> properties;
     private Property property;
@@ -108,7 +108,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /**
@@ -352,7 +352,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     @SuppressWarnings("unchecked")
     public String uploadFromHomeAlle() throws DataException, IOException {
-        List<URI> fertigListe = this.myDav.uploadAllFromHome(DONEDIRECTORYNAME);
+        List<URI> fertigListe = this.myDav.uploadAllFromHome(doneDirectoryName);
         List<URI> geprueft = new ArrayList<>();
         /*
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen
@@ -378,8 +378,8 @@ public class AktuelleSchritteForm extends BasisForm {
             }
         }
 
-        this.myDav.removeAllFromHome(geprueft, URI.create(DONEDIRECTORYNAME));
-        Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", DONEDIRECTORYNAME);
+        this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
+        Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
         return null;
     }
 

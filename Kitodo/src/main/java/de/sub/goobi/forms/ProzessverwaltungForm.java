@@ -114,7 +114,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager.getWorkflowControllerService();
-    private static String DONEDIRECTORYNAME = "fertig/";
+    private String doneDirectoryName;
     private static final String ERROR_LOAD_ONE = "errorLoadingOne";
     private static final String EXPORT_FINISHED = "ExportFinished";
     private static final String PROCESS = "prozess";
@@ -149,7 +149,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /**
@@ -723,9 +723,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     public String uploadFromHomeAll() {
         WebDav myDav = new WebDav();
-        List<URI> folder = myDav.uploadAllFromHome(DONEDIRECTORYNAME);
-        myDav.removeAllFromHome(folder, URI.create(DONEDIRECTORYNAME));
-        Helper.setMeldung(null, "directoryRemovedAll", DONEDIRECTORYNAME);
+        List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
+        myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
+        Helper.setMeldung(null, "directoryRemovedAll", doneDirectoryName);
         return null;
     }
 
