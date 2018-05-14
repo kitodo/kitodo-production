@@ -34,7 +34,7 @@ import javax.jms.MessageListener;
  */
 public abstract class ActiveMQProcessor implements MessageListener {
 
-    protected String queueName; // the queue name will be available here
+    private String queueName; // the queue name will be available here
     private MessageConsumer checker;
 
     /**
@@ -102,19 +102,19 @@ public abstract class ActiveMQProcessor implements MessageListener {
             Map<String, String> loggingConfig = new HashMap<>();
             loggingConfig.put("queueName", queueName);
             loggingConfig.put("id", ticketID);
-            Helper.activeMQReporting = loggingConfig;
+            Helper.setActiveMQReporting(loggingConfig);
 
             // process ticket
             process(ticket);
 
             // turn off logging again
-            Helper.activeMQReporting = null;
+            Helper.setActiveMQReporting(null);
 
             // if everything ‘s fine, report success
             new WebServiceResult(queueName, ticketID, ReportLevel.SUCCESS).send();
-        } catch (Exception exce) {
+        } catch (Exception e) {
             // report any errors
-            new WebServiceResult(queueName, ticketID, ReportLevel.FATAL, exce.getMessage()).send();
+            new WebServiceResult(queueName, ticketID, ReportLevel.FATAL, e.getMessage()).send();
         }
     }
 
