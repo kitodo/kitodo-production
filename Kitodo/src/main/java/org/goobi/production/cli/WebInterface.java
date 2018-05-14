@@ -38,7 +38,7 @@ public class WebInterface extends HttpServlet {
     private static final long serialVersionUID = 6187229284187412768L;
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) {
         resp.setContentType("text/html");
         if (ConfigCore.getBooleanParameter("useWebApi", false)) {
             String ip;
@@ -134,14 +134,14 @@ public class WebInterface extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
         doGet(req, resp);
     }
 
-    private void generateHelp(HttpServletResponse resp) throws IOException {
+    private void generateHelp(HttpServletResponse resp) {
         StringBuilder allHelp = new StringBuilder();
-        List<IPlugin> mycommands = PluginLoader.getPluginList(PluginType.COMMAND);
-        for (IPlugin iPlugin : mycommands) {
+        List<IPlugin> commands = PluginLoader.getPluginList(PluginType.COMMAND);
+        for (IPlugin iPlugin : commands) {
             ICommandPlugin icp = (ICommandPlugin) iPlugin;
             allHelp.append("<h4>");
             allHelp.append(icp.help().getTitle());
@@ -152,11 +152,11 @@ public class WebInterface extends HttpServlet {
         generateAnswer(resp, 200, "Goobi Web API Help", allHelp.toString());
     }
 
-    private void generateAnswer(HttpServletResponse resp, int status, String title, String message) throws IOException {
+    private void generateAnswer(HttpServletResponse resp, int status, String title, String message) {
         generateAnswer(resp, new CommandResponse(status, title, message));
     }
 
-    private void generateAnswer(HttpServletResponse resp, CommandResponse cr) throws IOException {
+    private void generateAnswer(HttpServletResponse resp, CommandResponse cr) {
         resp.setStatus(cr.getStatus());
         String answer = "";
         answer += "<html><head></head><body>";
@@ -165,7 +165,11 @@ public class WebInterface extends HttpServlet {
         answer += "</h3>";
         answer += cr.getMessage();
         answer += "</body></html>";
-        resp.getOutputStream().print(answer);
+        try {
+            resp.getOutputStream().print(answer);
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        }
     }
 
 }
