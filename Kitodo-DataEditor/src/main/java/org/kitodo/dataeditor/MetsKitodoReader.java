@@ -14,6 +14,8 @@ package org.kitodo.dataeditor;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -41,11 +43,12 @@ class MetsKitodoReader {
      *            The file as URI object.
      * @return The Mets object in mets-kitodo format.
      */
-    static Mets readUriToMetsFromOldFormat(URI xmlFile) throws TransformerException, IOException, JAXBException {
-        URI xslFile = URI.create("./src/main/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl");
-        String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xslFile);
+    static Mets readUriToMetsFromOldFormat(URI xmlFile, URI xsltFile)
+            throws TransformerException, IOException, JAXBException {
+        String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xsltFile);
         Mets mets = readStringToMets(convertedData);
-        mets = MetsKitodoHandler.addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"),mets);
+        mets = MetsKitodoHandler
+                .addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"), mets);
         return mets;
     }
 
@@ -86,9 +89,12 @@ class MetsKitodoReader {
      * 
      * @param xmlFile
      *            The file as URI object.
+     * @param xsltFile
+     *            The URI to the xsl file for transformation of old format goobi
+     *            metadata files
      * @return The Mets object in mets-kitodo format.
      */
-    static Mets readAndValidateUriToMets(URI xmlFile)
+    static Mets readAndValidateUriToMets(URI xmlFile, URI xsltFile)
             throws JAXBException, TransformerException, IOException {
 
         Mets mets = readUriToMets(xmlFile);
@@ -96,11 +102,18 @@ class MetsKitodoReader {
         if (MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 0)) {
             if (!MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
                 logger.warn("Not supported metadata format detected. Trying to convert from old goobi format now!");
-                mets = readUriToMetsFromOldFormat(xmlFile);
-                if (MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
-                    logger.info("Successfully converted metadata to kitodo format!");
+                if (!Files.exists(Paths.get(xsltFile))) {
+                    logger.error("Path to xslt file for transformation of goobi format metadata files is not valid: "
+                            + xmlFile.getPath());
+                    throw new IOException("Xslt file [" + xsltFile.getPath()
+                            + "] for transformation of goobi format metadata files was not found. Please check your local config!");
                 } else {
-                    throw new IOException("Can not read data because of not supported format!");
+                    mets = readUriToMetsFromOldFormat(xmlFile, xsltFile);
+                    if (MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
+                        logger.info("Successfully converted metadata to kitodo format!");
+                    } else {
+                        throw new IOException("Can not read data because of not supported format!");
+                    }
                 }
             }
         } else {

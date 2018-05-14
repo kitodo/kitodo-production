@@ -24,8 +24,10 @@ public interface DataEditorInterface {
      *
      * @param xmlFileUri
      *            The URI to the xml file to read.
+     * @param xmlFileUri
+     *            The URI to the xsl file for transformation of old format goobi metadata files.
      */
-    void readData(URI xmlFileUri) throws IOException;
+    void readData(URI xmlFileUri, URI xsltfileUri) throws IOException;
 
     /**
      * Opens an editor to edit an xmlfile.

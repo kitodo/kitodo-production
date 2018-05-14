@@ -26,6 +26,11 @@ public class DataEditorServiceTest {
         dataEditorService.readData(URI.create("./src/test/resources/metadata/testmeta.xml"));
     }
 
+    @Test
+    public void shouldReadOldMetadata() throws IOException {
+        dataEditorService.readData(URI.create("./src/test/resources/metadata/testmetaOldFormat.xml"));
+    }
+
     @Test(expected = IOException.class)
     public void shouldNotReadMetadataOfNotExistingFile() throws IOException {
         dataEditorService.readData(URI.create("notExisting.xml"));

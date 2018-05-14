@@ -71,10 +71,12 @@ public class MetsKitodoWrapper {
      * 
      * @param xmlFile
      *            The xml file in mets-kitodo format as URI.
+     * @param xsltFile
+     *            The URI to the xsl file for transformation of old format goobi metadata files.
      */
-    public MetsKitodoWrapper(URI xmlFile)
+    public MetsKitodoWrapper(URI xmlFile, URI xsltFile)
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile));
+        this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile, xsltFile));
     }
 
     /**

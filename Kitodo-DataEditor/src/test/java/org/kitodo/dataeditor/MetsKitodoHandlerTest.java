@@ -13,6 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -24,11 +25,12 @@ import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoHandlerTest {
-    private URI xmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
+    private URI xmlfile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
+    private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
 
     @Test
     public void shouldReadKitodoMetadataFormOldFormatFile() throws JAXBException, TransformerException, IOException {
-        Mets mets = MetsKitodoReader.readUriToMetsFromOldFormat(xmlfile);
+        Mets mets = MetsKitodoReader.readUriToMetsFromOldFormat(xmlfile, xsltFile);
         JAXBElement jaxbElement = (JAXBElement) mets.getDmdSec().get(0).getMdWrap().getXmlData().getAny().get(0);
         KitodoType kitodoType = (KitodoType) jaxbElement.getValue();
 

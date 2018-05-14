@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
@@ -37,7 +38,8 @@ import org.kitodo.dataformat.metskitodo.StructLinkType;
 
 public class MetsKitodoWrapperTest {
 
-    private URI xmlfile = URI.create("./src/test/resources/testmeta.xml");
+    private URI xmlfile = Paths.get("./src/test/resources/testmeta.xml").toUri();
+    private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private ObjectFactory objectFactory = new ObjectFactory();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
@@ -99,20 +101,20 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldCreateMetsByFile() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsKitodoWrapper.getDmdSecs().size());
     }
 
     @Test
     public void shouldReadValues() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         String id = metsKitodoWrapper.getMets().getDmdSec().get(0).getID();
         Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_0000", id);
     }
 
     @Test
     public void shouldReadKitodoMetadata() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
@@ -124,7 +126,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldReadKitodoMetadataGroup() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0).getMetadataGroup().get(0);
@@ -137,7 +139,7 @@ public class MetsKitodoWrapperTest {
     @Test
     public void shouldReadGoobiMetadata() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         URI oldXmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
@@ -150,7 +152,7 @@ public class MetsKitodoWrapperTest {
     @Test
     public void shouldReadGoobiMetadataGroup() throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         URI oldXmlfile = URI.create("./src/test/resources/testmetaOldFormat.xml");
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0);
@@ -163,7 +165,7 @@ public class MetsKitodoWrapperTest {
     @Test
     public void shouldReadKitodoMetadataById()
         throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0002");
 
         MetadataType metadataType = kitodoType.getMetadata().get(0);
@@ -179,7 +181,7 @@ public class MetsKitodoWrapperTest {
     @Test
     public void shouldNotReadKitodoMetadataByNotExistingId()
         throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("MdSec element with id: not existing was not found");
         metsKitodoWrapper.getKitodoTypeByMdSecId("not existing");

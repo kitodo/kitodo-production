@@ -30,6 +30,7 @@ import org.junit.Test;
 public class MetsKitodoWriterTest {
 
     private MetsKitodoWriter metsKitodoWriter = new MetsKitodoWriter();
+    private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
     @BeforeClass
@@ -61,13 +62,13 @@ public class MetsKitodoWriterTest {
     @Test
     public void shouldWriteMetsFile()
             throws TransformerException, JAXBException, IOException, DatatypeConfigurationException {
-        URI xmlFile = URI.create("./src/test/resources/testmeta.xml");
+        URI xmlFile = Paths.get("./src/test/resources/testmeta.xml").toUri();
 
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile,xsltFile);
         metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
-        MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile);
+        MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
         String loadedMetadata = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0).getValue();
@@ -83,13 +84,13 @@ public class MetsKitodoWriterTest {
     @Test
     public void shouldWriteMetsFileFromOldFormat()
             throws TransformerException, JAXBException, IOException, DatatypeConfigurationException {
-        URI xmlFile = URI.create("./src/test/resources/testmetaOldFormat.xml");
+        URI xmlFile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
 
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmetaold.xml").toUri();
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
         metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
-        MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile);
+        MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
         String loadedMetadata = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0).getValue();
