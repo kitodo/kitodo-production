@@ -9,14 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.exceptions;
+package org.kitodo.exceptions;
 
-public class UnreachableCodeException extends RuntimeException {
+public class NotImplementedException extends RuntimeException {
 
-    public UnreachableCodeException() {
+    public NotImplementedException() {
     }
 
-    public UnreachableCodeException(String exceptionMessage) {
+    public NotImplementedException(String exceptionMessage) {
         super(exceptionMessage);
     }
 }

@@ -16,11 +16,12 @@ import java.net.URI;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
+import org.kitodo.exceptions.NotImplementedException;
 
 public class LongTimePreservationValidation implements LongTimePreservationValidationInterface {
 
     @Override
     public ValidationResult validate(URI fileUri, FileType fileType) {
-        throw new RuntimeException("Not implemented yet!");
+        throw new NotImplementedException();
     }
 }

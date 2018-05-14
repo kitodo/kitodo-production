@@ -15,12 +15,13 @@ import java.net.URI;
 
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.filestructure.FileStructureValidationInterface;
+import org.kitodo.exceptions.NotImplementedException;
 
 public class FileStructureValidation implements FileStructureValidationInterface {
 
     @Override
     public ValidationResult validate(URI xmlFileUri, URI xsdFileUri) {
-        throw new RuntimeException("Not implemented yet!");
+        throw new NotImplementedException();
     }
 
 }

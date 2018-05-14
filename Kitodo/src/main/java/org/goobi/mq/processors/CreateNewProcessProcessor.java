@@ -14,9 +14,12 @@ package org.goobi.mq.processors;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
+import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +30,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -67,6 +74,7 @@ import org.kitodo.services.ServiceManager;
 public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessProcessor.class);
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static final String ERROR_CREATE = "errorCreating";
 
     public CreateNewProcessProcessor() {
         super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));
@@ -113,12 +121,13 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *            collections to add the digitisation to
      * @param userFields
      *            Values for additional fields can be set here (may be null)
-     * @throws Exception
+     * @throws IOException
      *             in various cases, such as bad parameters or errors in the
      *             underlying layers
      */
     private static void createNewProcessMain(String template, String opac, String field, String value, String id,
-            String docType, Set<String> collections, Map<String, String> userFields) throws Exception {
+            String docType, Set<String> collections, Map<String, String> userFields)
+            throws IOException, PreferencesException, ReadException, WriteException {
 
         try {
             ProzesskopieForm newProcess = newProcessFromTemplate(template);
@@ -135,12 +144,12 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             newProcess.calculateProcessTitle();
             String state = newProcess.createNewProcess();
             if (!state.equals("NewProcess/Page3")) {
-                throw new RuntimeException();
+                throw new ProcessCreationException(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
             }
             logger.info("Created new process: {}", id);
         } catch (RuntimeException e) {
-            logger.error("Failed to create new process: " + id, e);
-            throw e;
+            logger.error(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)), e);
+            throw new ProcessCreationException(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
         }
     }
 

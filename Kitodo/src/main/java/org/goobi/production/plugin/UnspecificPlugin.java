@@ -19,8 +19,9 @@ import java.util.Map;
 
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
-import org.kitodo.production.exceptions.NotImplementedException;
-import org.kitodo.production.exceptions.UnreachableCodeException;
+import org.kitodo.exceptions.NotImplementedException;
+import org.kitodo.exceptions.PluginException;
+import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
  * The class UnspecificPlugin is the base class for a set of redirection classes
@@ -458,20 +459,8 @@ public abstract class UnspecificPlugin {
     protected <T> T invokeQuietly(Object object, Method method, Object[] args, Class<T> resultType) {
         try {
             return (T) method.invoke(object, args);
-        } catch (RuntimeException toBeRethrown) {
-            throw toBeRethrown;
-        } catch (InvocationTargetException toBeUnwrapped) {
-            Throwable wrappedException = toBeUnwrapped.getTargetException();
-            if (wrappedException == null) {
-                throw new RuntimeException(toBeUnwrapped.getMessage(), toBeUnwrapped);
-            }
-            if (wrappedException instanceof RuntimeException) {
-                throw (RuntimeException) wrappedException;
-            } else {
-                throw new RuntimeException(wrappedException.getMessage(), wrappedException);
-            }
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e.getMessage(), e);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new PluginException(e.getMessage(), e);
         }
     }
 

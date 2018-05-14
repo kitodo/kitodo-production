@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.goobi.webapi.beans.Label;
 import org.goobi.webapi.beans.Label.KeyAttribute;
-import org.kitodo.production.exceptions.NotImplementedException;
+import org.kitodo.exceptions.NotImplementedException;
 
 public class ConfigOpacDoctype {
     private String title;

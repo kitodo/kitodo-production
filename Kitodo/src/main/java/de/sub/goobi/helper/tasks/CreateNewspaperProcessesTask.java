@@ -44,6 +44,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -202,7 +203,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     newProcess.setAdditionalFields(pattern.getAdditionalFields());
                     currentTitle = newProcess.generateTitle(issues.get(0).getGenericFields());
                     if (currentTitle.equals("")) {
-                        setException(new RuntimeException(
+                        setException(new ProcessCreationException(
                                 "Couldn’t create process title for issue " + issues.get(0).toString()));
                         return;
                     }
@@ -218,7 +219,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     }
                     String state = newProcess.createNewProcess();
                     if (Objects.isNull(state) || !state.equals("NewProcess/Page3")) {
-                        throw new RuntimeException(Helper.getLastMessage().replaceFirst(":\\?*$", ""));
+                        throw new ProcessCreationException(Helper.getLastMessage().replaceFirst(":\\?*$", ""));
                     }
                     addToBatches(newProcess.getProzessKopie(), issues, currentTitle);
                 }
@@ -238,7 +239,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
                     ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
                         currentTitle)
                     : e.getClass().getSimpleName();
-            setException(new RuntimeException(message + ": " + e.getMessage(), e));
+            setException(new ProcessCreationException(message + ": " + e.getMessage(), e));
         }
     }
 
@@ -281,7 +282,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             } else {
                 message.append(e.getClass().getSimpleName());
             }
-            throw new RuntimeException(message.toString(), e);
+            throw new ProcessCreationException(message.toString(), e);
         }
     }
 
@@ -307,7 +308,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         try {
             document = newProcess.getFileformat().getDigitalDocument();
         } catch (PreferencesException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new ProcessCreationException(e.getMessage(), e);
         }
         DocStructInterface newspaper = document.getLogicalDocStruct();
 
@@ -381,7 +382,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             level.addMetadata(key, value);
         } catch (MetadataTypeNotAllowedException | RuntimeException e) {
             if (fail) {
-                throw new RuntimeException("Could not create metadatum " + key + " in "
+                throw new ProcessCreationException("Could not create metadatum " + key + " in "
                         + (level.getDocStructType() != null ? "DocStrctType " + level.getDocStructType().getName()
                                 : "anonymous DocStrctType")
                         + ": " + e.getClass().getSimpleName().replace("NullPointerException",
