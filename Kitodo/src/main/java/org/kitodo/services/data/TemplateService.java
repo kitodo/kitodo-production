@@ -142,7 +142,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setCreationDate(templateJSONObject.getString("creationDate"));
 
         if (!related) {
-            templateDTO = convertRelatedJSONObjects(templateJSONObject, templateDTO);
+            convertRelatedJSONObjects(templateJSONObject, templateDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
             projectDTO.setId(templateJSONObject.getInt("project.id"));
@@ -154,7 +154,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return templateDTO;
     }
 
-    private TemplateDTO convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
         Integer project = jsonObject.getInt("project.id");
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
@@ -163,7 +163,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setProgressOpen(serviceManager.getProcessService().getProgressOpen(null, templateDTO.getTasks()));
         templateDTO.setProgressLocked(serviceManager.getProcessService().getProgressLocked(null, templateDTO.getTasks()));
         templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));
-        return templateDTO;
     }
 
     private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)

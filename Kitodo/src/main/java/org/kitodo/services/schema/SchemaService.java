@@ -145,7 +145,7 @@ public class SchemaService {
         // group paths!
         VariableReplacer vp = new VariableReplacer(metsMods.getDigitalDocument(), prefs, process, null);
 
-        metsMods = addVirtualFileGroupsToMetsMods(metsMods, process, vp);
+        addVirtualFileGroupsToMetsMods(metsMods, process, vp);
 
         // Replace rights and digiprov entries.
         metsMods.setRightsOwner(vp.replace(process.getProject().getMetsRightsOwner()));
@@ -531,10 +531,10 @@ public class SchemaService {
          */
         inTopStruct.getAllMetadataByType(prefs.getMetadataTypeByName("TitleDocMain")).get(0).setStringValue(title);
         try {
-            inTopStruct = preventNullMetadataInsert(inTopStruct, mdVerlag);
-            inTopStruct = preventNullMetadataInsert(inTopStruct, mdPlace);
-            inTopStruct = preventNullMetadataInsert(inTopStruct, mdPPN);
-            inTopStruct = preventNullMetadataInsert(inTopStruct, mdISSN);
+            preventNullMetadataInsert(inTopStruct, mdVerlag);
+            preventNullMetadataInsert(inTopStruct, mdPlace);
+            preventNullMetadataInsert(inTopStruct, mdPPN);
+            preventNullMetadataInsert(inTopStruct, mdISSN);
         } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
             logger.error(e.getMessage());
         }
@@ -545,23 +545,22 @@ public class SchemaService {
         DocStructInterface structBand = inTopStruct.getAllChildren().get(0);
         if (structBand != null) {
             try {
-                structBand = preventNullMetadataInsert(structBand, mdVerlag);
-                structBand = preventNullMetadataInsert(structBand, mdPlace);
-                structBand = preventNullMetadataInsert(structBand, mdPPNBand);
-                structBand = preventNullMetadataInsert(structBand, mdSorting);
+                preventNullMetadataInsert(structBand, mdVerlag);
+                preventNullMetadataInsert(structBand, mdPlace);
+                preventNullMetadataInsert(structBand, mdPPNBand);
+                preventNullMetadataInsert(structBand, mdSorting);
             } catch (DocStructHasNoTypeException | MetadataTypeNotAllowedException e) {
                 logger.error(e.getMessage());
             }
         }
     }
 
-    private DocStructInterface preventNullMetadataInsert(DocStructInterface docStruct, MetadataInterface metadata)
+    private void preventNullMetadataInsert(DocStructInterface docStruct, MetadataInterface metadata)
             throws MetadataTypeNotAllowedException {
 
         if (metadata != null) {
             docStruct.addMetadata(metadata);
         }
-        return docStruct;
     }
 
     /**

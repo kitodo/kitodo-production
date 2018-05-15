@@ -182,21 +182,19 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         authorityDTO.setUserGroupsSize(
             getSizeOfRelatedPropertyForDTO(authorizationJSONObject, AuthorityTypeField.USER_GROUPS.getName()));
         if (!related) {
-            authorityDTO = convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
+            convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
         } else {
-            authorityDTO = addBasicUserGroupRelation(authorityDTO, authorizationJSONObject);
+            addBasicUserGroupRelation(authorityDTO, authorizationJSONObject);
         }
         return authorityDTO;
     }
 
-    private AuthorityDTO convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO)
-            throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO) throws DataException {
         authorityDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.USER_GROUPS.getName(),
             serviceManager.getUserGroupService()));
-        return authorityDTO;
     }
 
-    private AuthorityDTO addBasicUserGroupRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
+    private void addBasicUserGroupRelation(AuthorityDTO authorityDTO, JsonObject jsonObject) {
         if (authorityDTO.getUserGroupsSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
@@ -213,6 +211,5 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             }
             authorityDTO.setUserGroups(userGroups);
         }
-        return authorityDTO;
     }
 }

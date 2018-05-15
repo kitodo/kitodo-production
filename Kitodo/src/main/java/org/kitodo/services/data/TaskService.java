@@ -462,12 +462,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
 
         if (!related) {
-            taskDTO = convertRelatedJSONObjects(taskJSONObject, taskDTO);
+            convertRelatedJSONObjects(taskJSONObject, taskDTO);
         }
         return taskDTO;
     }
 
-    private TaskDTO convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
         Integer processingUser = jsonObject.getInt(TaskTypeField.PROCESSING_USER.getName());
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
@@ -475,7 +475,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getName(), serviceManager.getUserService()));
         taskDTO.setUserGroups(
             convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getName(), serviceManager.getUserGroupService()));
-        return taskDTO;
     }
 
     /**

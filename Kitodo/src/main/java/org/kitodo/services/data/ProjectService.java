@@ -264,7 +264,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         clientDTO.setName(projectJSONObject.getString(ProjectTypeField.CLIENT_NAME.getName()));
         projectDTO.setClient(clientDTO);
         if (!related) {
-            projectDTO = convertRelatedJSONObjects(projectJSONObject, projectDTO);
+            convertRelatedJSONObjects(projectJSONObject, projectDTO);
         }
         return projectDTO;
     }
@@ -283,10 +283,9 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return templateDTOS;
     }
 
-    private ProjectDTO convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
-        return projectDTO;
     }
 
     /**

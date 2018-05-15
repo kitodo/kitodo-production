@@ -293,10 +293,8 @@ public class BenutzergruppenForm extends BasisForm {
         List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = this.userGroup
                 .getUserGroupClientAuthorityRelations();
 
-        userGroupClientAuthorityRelations = modifyClientRelationsByPickedAuthorities(userGroupClientAuthorityRelations,
-            targetAuthorities);
-        userGroupClientAuthorityRelations = modifyClientRelationsByNotPickedAuthorities(
-            userGroupClientAuthorityRelations, sourceAuthorities);
+        modifyClientRelationsByPickedAuthorities(userGroupClientAuthorityRelations, targetAuthorities);
+        modifyClientRelationsByNotPickedAuthorities(userGroupClientAuthorityRelations, sourceAuthorities);
 
         this.userGroup.setUserGroupClientAuthorityRelations(userGroupClientAuthorityRelations);
     }
@@ -315,7 +313,7 @@ public class BenutzergruppenForm extends BasisForm {
         return new UserGroupClientAuthorityRelation();
     }
 
-    private List<UserGroupClientAuthorityRelation> modifyClientRelationsByPickedAuthorities(
+    private void modifyClientRelationsByPickedAuthorities(
             List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
             List<Authority> authoritiesToCheck) {
         for (Authority authority : authoritiesToCheck) {
@@ -333,10 +331,9 @@ public class BenutzergruppenForm extends BasisForm {
                 userGroupClientAuthorityRelations.add(userGroupClientAuthorityRelation);
             }
         }
-        return userGroupClientAuthorityRelations;
     }
 
-    private List<UserGroupClientAuthorityRelation> modifyClientRelationsByNotPickedAuthorities(
+    private void modifyClientRelationsByNotPickedAuthorities(
             List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
             List<Authority> authoritiesToCheck) {
 
@@ -354,7 +351,6 @@ public class BenutzergruppenForm extends BasisForm {
                 this.userGroupClientAuthorityRelationsToDelete.add(userGroupClientAuthorityRelation);
             }
         }
-        return userGroupClientAuthorityRelations;
     }
 
     /**
@@ -388,10 +384,8 @@ public class BenutzergruppenForm extends BasisForm {
         List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = this.userGroup
                 .getUserGroupProjectAuthorityRelations();
 
-        userGroupProjectAuthorityRelations = modifyProjectRelationsByPickedAuthorities(
-            userGroupProjectAuthorityRelations, targetAuthorities);
-        userGroupProjectAuthorityRelations = modifyProjectRelationsByNotPickedAuthorities(
-            userGroupProjectAuthorityRelations, sourceAuthorities);
+        modifyProjectRelationsByPickedAuthorities(userGroupProjectAuthorityRelations, targetAuthorities);
+        modifyProjectRelationsByNotPickedAuthorities(userGroupProjectAuthorityRelations, sourceAuthorities);
 
         this.userGroup.setUserGroupProjectAuthorityRelations(userGroupProjectAuthorityRelations);
     }
@@ -410,7 +404,7 @@ public class BenutzergruppenForm extends BasisForm {
         return new UserGroupProjectAuthorityRelation();
     }
 
-    private List<UserGroupProjectAuthorityRelation> modifyProjectRelationsByPickedAuthorities(
+    private void modifyProjectRelationsByPickedAuthorities(
             List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
             List<Authority> authoritiesToCheck) {
         for (Authority authority : authoritiesToCheck) {
@@ -428,10 +422,9 @@ public class BenutzergruppenForm extends BasisForm {
                 userGroupProjectAuthorityRelations.add(userGroupProjectAuthorityRelation);
             }
         }
-        return userGroupProjectAuthorityRelations;
     }
 
-    private List<UserGroupProjectAuthorityRelation> modifyProjectRelationsByNotPickedAuthorities(
+    private void modifyProjectRelationsByNotPickedAuthorities(
             List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
             List<Authority> authoritiesToCheck) {
 
@@ -449,7 +442,6 @@ public class BenutzergruppenForm extends BasisForm {
                 this.userGroupProjectAuthorityRelationsToDelete.add(userGroupProjectAuthorityRelation);
             }
         }
-        return userGroupProjectAuthorityRelations;
     }
 
     /**
