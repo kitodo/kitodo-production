@@ -11,14 +11,17 @@
 
 package de.sub.goobi.importer;
 
+import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +31,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -171,23 +175,15 @@ public class ImportRussland {
     }
 
     private void setArticleDetails(List<String> list) throws MetadataTypeNotAllowedException, WrongImportFileException {
-        // go through all the details and determine the ZBL-ID of the article
-        String zblID = "";
-        for (String articleDetail : list) {
-            if (articleDetail.substring(0, 3).equals("090")) {
-                zblID = articleDetail.substring(4).trim();
-                break;
-            }
-        }
+        String zblID = getZBLID(list);
 
         /*
          * alle Hefte und Artikel durchlaufen und den richtigen Artikel mit der
          * selben ZBL-ID finden
          */
-        MetadataTypeInterface metadataTypeId = serviceManager.getRulesetService()
-                .getPreferences(this.process.getRuleset()).getMetadataTypeByName("ZBLIdentifier");
-        MetadataTypeInterface metadataTypeTempId = serviceManager.getRulesetService()
-                .getPreferences(this.process.getRuleset()).getMetadataTypeByName("ZBLTempID");
+        PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(this.process.getRuleset());
+        MetadataTypeInterface metadataTypeId = preferences.getMetadataTypeByName("ZBLIdentifier");
+        MetadataTypeInterface metadataTypeTempId = preferences.getMetadataTypeByName("ZBLTempID");
         DocStructInterface band = this.logicalTopstruct.getAllChildren().get(0);
 
         List<DocStructInterface> listHefte = band.getAllChildren();
@@ -209,47 +205,7 @@ public class ImportRussland {
                             }
                             // logger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {
-                                // go through all the details and add to the
-                                // article
-                                for (String detail : list) {
-                                    String detailNr = detail.substring(0, 3);
-
-                                    // Artikel Autor russisch (wiederholbar)
-                                    if (detailNr.equals("120")) {
-                                        addPerson(article, "Author", detail);
-                                    }
-
-                                    // Artikel Autor-Variation (wiederholbar)
-                                    if (detailNr.equals("130")) {
-                                        addPerson(article, "AuthorVariation", detail);
-                                    }
-
-                                    // Artikel Autor-Kontributor (wiederholbar)
-                                    if (detailNr.equals("140")) {
-                                        addPerson(article, "Contributor", detail);
-                                    }
-
-                                    // Artikel Person als Subjekt des Artikels
-                                    // (wiederholbar)
-                                    if (detailNr.equals("150")) {
-                                        addMetadata(article, "PersonAsSubject", detail);
-                                    }
-
-                                    // Artikel Titel russisch
-                                    if (detailNr.equals("170")) {
-                                        addMetadata(article, "RUSMainTitle", detail);
-                                    }
-
-                                    // Artikel Klassifikation UDK (wiederholbar)
-                                    if (detailNr.equals("190")) {
-                                        addMetadata(article, "ClassificationUDK", detail);
-                                    }
-
-                                    // Artikel Keywords russisch
-                                    if (detailNr.equals("210")) {
-                                        addMetadata(article, "RUSKeyword", detail);
-                                    }
-                                }
+                                iterateOverDetailsAndAddToArticle(list, article);
                                 return;
                             }
                         }
@@ -264,6 +220,66 @@ public class ImportRussland {
         } else {
             throw new WrongImportFileException(
                     "Parsingfehler: Es sind bisher keine Artikel angelegt worden, zu denen Daten ergänzt werden könnten");
+        }
+    }
+
+    /**
+     * Go through all the details and determine the ZBL-ID of the article.
+     *
+     * @param list
+     *            of Strings
+     * @return ZBL-ID
+     */
+    private String getZBLID(List<String> list) {
+        String zblID = "";
+        for (String articleDetail : list) {
+            if (articleDetail.substring(0, 3).equals("090")) {
+                zblID = articleDetail.substring(4).trim();
+                break;
+            }
+        }
+        return zblID;
+    }
+
+    private void iterateOverDetailsAndAddToArticle(List<String> list, DocStructInterface article)
+            throws MetadataTypeNotAllowedException, WrongImportFileException {
+        for (String detail : list) {
+            String detailNr = detail.substring(0, 3);
+
+            // article author Russian (repeatable)
+            if (detailNr.equals("120")) {
+                addPerson(article, "Author", detail);
+            }
+
+            // article author variation (repeatable)
+            if (detailNr.equals("130")) {
+                addPerson(article, "AuthorVariation", detail);
+            }
+
+            // article author contributor (repeatable)
+            if (detailNr.equals("140")) {
+                addPerson(article, "Contributor", detail);
+            }
+
+            // article person as subject of the article (repeatable)
+            if (detailNr.equals("150")) {
+                addMetadata(article, "PersonAsSubject", detail);
+            }
+
+            // article title Russian
+            if (detailNr.equals("170")) {
+                addMetadata(article, "RUSMainTitle", detail);
+            }
+
+            // article classification UDK (repeatable)
+            if (detailNr.equals("190")) {
+                addMetadata(article, "ClassificationUDK", detail);
+            }
+
+            // article keywords Russian
+            if (detailNr.equals("210")) {
+                addMetadata(article, "RUSKeyword", detail);
+            }
         }
     }
 
@@ -303,12 +319,16 @@ public class ImportRussland {
             }
         }
 
-        /*
-         * von dem aktuellen Stukturelement alle Kinder durchlaufen und rekursiv
-         * durchlaufen
-         */
+        deleteRussianDataForChildren(docStruct);
+    }
+
+    /**
+     * Traversing all children from the current structure element
+     * and iterating through recursively.
+     */
+    private void deleteRussianDataForChildren(DocStructInterface docStruct) {
         List<DocStructInterface> children = docStruct.getAllChildren();
-        if (children != null) {
+        if (Objects.nonNull(children)) {
             // there are children's structural elements, so go through them
             for (DocStructInterface child : children) {
                 deleteRussianData(child);
@@ -355,8 +375,8 @@ public class ImportRussland {
             return;
         }
         if (!pName.contains(",")) {
-            throw new WrongImportFileException(
-                    "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + inDetail + "')");
+            String message = Helper.getTranslation("errorParsingName", Collections.singletonList(inDetail));
+            throw new WrongImportFileException(message);
         }
         p.setLastName(pName.substring(0, pName.indexOf(',')).trim());
         p.setFirstName(pName.substring(pName.indexOf(',') + 1, pName.length()).trim());
