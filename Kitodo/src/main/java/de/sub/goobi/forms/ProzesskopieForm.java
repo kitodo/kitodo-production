@@ -1573,7 +1573,7 @@ public class ProzesskopieForm implements Serializable {
 
         }
         StringBuilder newTitle = new StringBuilder();
-        String titleDefinition = getTitleDefinition();
+        String titleDefinition = getTitleDefinition(this.template.getProject().getTitle(), this.docType);
 
         StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         /* jetzt den Bandtitel parsen */
@@ -1629,8 +1629,8 @@ public class ProzesskopieForm implements Serializable {
         return filteredTitle;
     }
 
-    private String getTitleDefinition() throws IOException {
-        ConfigProjects cp = new ConfigProjects(this.template.getProject().getTitle());
+    protected String getTitleDefinition(String projectTitle, String docType) throws IOException {
+        ConfigProjects cp = new ConfigProjects(projectTitle);
         int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
         String titleDefinition = "";
 
@@ -1639,15 +1639,9 @@ public class ProzesskopieForm implements Serializable {
             String isDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
             String isNotDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
 
-            if (title == null) {
-                title = "";
-            }
-            if (isDocType == null) {
-                isDocType = "";
-            }
-            if (isNotDocType == null) {
-                isNotDocType = "";
-            }
+            title = processNullValues(title);
+            isDocType = processNullValues(isDocType);
+            isNotDocType = processNullValues(isNotDocType);
 
             // if nothing was specified, then show
             if (isDocType.equals("") && isNotDocType.equals("")) {
@@ -1657,24 +1651,31 @@ public class ProzesskopieForm implements Serializable {
 
             // if both were specified
             if (!isDocType.equals("") && !isNotDocType.equals("")
-                    && StringUtils.containsIgnoreCase(isDocType, this.docType)
-                    && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+                    && StringUtils.containsIgnoreCase(isDocType, docType)
+                    && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
                 titleDefinition = title;
                 break;
             }
 
             // if only duty was specified
-            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, this.docType)) {
+            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)) {
                 titleDefinition = title;
                 break;
             }
             // if only "may not" was specified
-            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
                 titleDefinition = title;
                 break;
             }
         }
         return titleDefinition;
+    }
+
+    private String processNullValues(String value) {
+        if (value == null) {
+            value = "";
+        }
+        return value;
     }
 
     private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
