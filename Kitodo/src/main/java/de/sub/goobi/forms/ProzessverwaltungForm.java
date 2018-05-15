@@ -256,28 +256,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
             return false;
         } else {
-            // process properties
-            for (Property processProperty : this.process.getProperties()) {
-                if (processProperty != null && processProperty.getValue() != null
-                        && (processProperty.getValue().contains(this.process.getTitle()))) {
-                    processProperty.setValue(processProperty.getValue()
-                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                }
-            }
-            // template properties
-            for (Property templateProperty : this.process.getTemplates()) {
-                if (templateProperty.getValue().contains(this.process.getTitle())) {
-                    templateProperty.setValue(templateProperty.getValue()
-                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                }
-            }
-            // workpiece properties
-            for (Property workpieceProperty : this.process.getWorkpieces()) {
-                if (workpieceProperty.getValue().contains(this.process.getTitle())) {
-                    workpieceProperty.setValue(workpieceProperty.getValue()
-                            .replaceAll(this.process.getTitle(), this.newProcessTitle));
-                }
-            }
+            renamePropertiesValuesForProcessTitle(this.process.getProperties());
+            renamePropertiesValuesForProcessTitle(this.process.getTemplates());
+            removePropertiesWithEmptyTitle(this.process.getWorkpieces());
 
             try {
                 renameImageDirectories();
@@ -297,6 +278,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             gs.updateImagePath(pro);
         }
         return true;
+    }
+
+    private void renamePropertiesValuesForProcessTitle(List<Property> properties) {
+        for (Property property : properties) {
+            if (Objects.nonNull(property.getValue()) && property.getValue().contains(this.process.getTitle())) {
+                property.setValue(property.getValue().replaceAll(this.process.getTitle(), this.newProcessTitle));
+            }
+        }
     }
 
     private void renameImageDirectories() throws IOException {

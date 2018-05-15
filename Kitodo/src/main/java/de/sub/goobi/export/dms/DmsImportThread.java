@@ -83,15 +83,8 @@ public class DmsImportThread extends Thread {
             try {
                 Thread.sleep(550);
                 if (!this.fileXml.exists() && (this.fileError.exists() || this.fileSuccess.exists())) {
-                    if (this.fileError.exists()
-                            && this.fileError.getAbsoluteFile().lastModified() > this.timeFileError) {
-                        this.stop = true;
-                        this.result = readErrorFile();
-                    }
-                    if (this.fileSuccess.exists()
-                            && this.fileSuccess.getAbsoluteFile().lastModified() > this.timeFileSuccess) {
-                        this.stop = true;
-                    }
+                    processOnError();
+                    processOnSuccess();
                 }
             } catch (IOException e) {
                 logger.error("Problem with file processing!", e);
@@ -107,6 +100,19 @@ public class DmsImportThread extends Thread {
     void stopThread() {
         this.result = "Import wurde wegen Zeitüberschreitung abgebrochen";
         this.stop = true;
+    }
+
+    private void processOnError() throws IOException {
+        if (this.fileError.exists() && this.fileError.getAbsoluteFile().lastModified() > this.timeFileError) {
+            this.stop = true;
+            this.result = readErrorFile();
+        }
+    }
+
+    private void processOnSuccess() {
+        if (this.fileSuccess.exists() && this.fileSuccess.getAbsoluteFile().lastModified() > this.timeFileSuccess) {
+            this.stop = true;
+        }
     }
 
     private String readErrorFile() throws IOException {
