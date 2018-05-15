@@ -768,7 +768,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
-            Helper.setFehlerMeldung("Fehler beim Einlesen der Vorgaenge", e.getMessage());
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("prozess")}, logger, e);
             return false;
         }
         if (amount > 0) {
@@ -830,60 +830,7 @@ public class ProzesskopieForm implements Serializable {
 
             for (AdditionalField field : this.additionalFields) {
                 if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                    /* welches Docstruct */
-                    DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
-                    DocStructInterface tempChild = null;
-                    if (field.getDocstruct().equals("firstchild")) {
-                        try {
-                            tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-                        } catch (RuntimeException e) {
-                            Helper.setErrorMessage(
-                                e.getMessage() + " The first child below the top structure could not be determined!",
-                                logger, e);
-                        }
-                    }
-                    /*
-                     * falls topstruct und firstchild das Metadatum bekommen
-                     * sollen
-                     */
-                    if (!field.getDocstruct().equals("firstchild") && field.getDocstruct().contains("firstchild")) {
-                        try {
-                            tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
-                        } catch (RuntimeException e) {
-                            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                        }
-                    }
-                    if (field.getDocstruct().equals("boundbook")) {
-                        tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
-                    }
-                    /* welches Metadatum */
-                    try {
-                        /*
-                         * bis auf die Autoren alle additionals in die Metadaten
-                         * übernehmen
-                         */
-                        if (!field.getMetadata().equals("ListOfCreators")) {
-                            MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                                serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                                field.getMetadata());
-                            MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
-                            if (metadata != null) {
-                                metadata.setStringValue(field.getValue());
-                            }
-                            /*
-                             * wenn dem Topstruct und dem Firstchild der Wert
-                             * gegeben werden soll
-                             */
-                            if (tempChild != null) {
-                                metadata = UghHelper.getMetadata(tempChild, mdt);
-                                if (metadata != null) {
-                                    metadata.setStringValue(field.getValue());
-                                }
-                            }
-                        }
-                    } catch (UghHelperException | RuntimeException e) {
-                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                    }
+                    processAdditionalField(field);
                 }
             }
 
@@ -899,6 +846,54 @@ public class ProzesskopieForm implements Serializable {
         startTaskScriptThreads();
 
         return processListPath;
+    }
+
+    private void processAdditionalField(AdditionalField field) throws PreferencesException {
+        // which DocStruct
+        DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
+        DocStructInterface tempChild = null;
+        String fieldDocStruct = field.getDocstruct();
+        if (fieldDocStruct.equals("firstchild")) {
+            try {
+                tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage(
+                        e.getMessage() + " The first child below the top structure could not be determined!",
+                        logger, e);
+            }
+        }
+        // if topstruct and first child should get the metadata
+        if (!fieldDocStruct.equals("firstchild") && fieldDocStruct.contains("firstchild")) {
+            try {
+                tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+        if (fieldDocStruct.equals("boundbook")) {
+            tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
+        }
+        // which Metadata
+        try {
+            // except for the authors, take all additional into the metadata
+            if (!field.getMetadata().equals("ListOfCreators")) {
+                PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+                MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
+                MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
+                if (metadata != null) {
+                    metadata.setStringValue(field.getValue());
+                }
+                // if the topstruct and the first child should be given the value
+                if (tempChild != null) {
+                    metadata = UghHelper.getMetadata(tempChild, mdt);
+                    if (metadata != null) {
+                        metadata.setStringValue(field.getValue());
+                    }
+                }
+            }
+        } catch (UghHelperException | RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -1013,57 +1008,67 @@ public class ProzesskopieForm implements Serializable {
                 if (allMetadata == null) {
                     allMetadata = Collections.emptyList();
                 }
-                for (MetadataInterface available : allMetadata) {
-                    Map<String, MetadataInterface> availableMetadata = higherLevelMetadata
-                            .containsKey(available.getMetadataType().getName())
-                                    ? higherLevelMetadata.get(available.getMetadataType().getName())
-                                    : new HashMap<>();
-                    if (!availableMetadata.containsKey(available.getValue())) {
-                        availableMetadata.put(available.getValue(), available);
-                    }
-                    higherLevelMetadata.put(available.getMetadataType().getName(), availableMetadata);
-                }
+                iterateOverAllMetadata(higherLevelMetadata, allMetadata);
 
                 // enrich children with inherited metadata
                 for (DocStructInterface nextChild : enricher.getAllChildren()) {
                     enricher = nextChild;
-                    for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata
-                            .entrySet()) {
-                        String enrichable = availableHigherMetadata.getKey();
-                        boolean addable = false;
-                        List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
-                        if (addableTypesNotNull == null) {
-                            addableTypesNotNull = Collections.emptyList();
-                        }
-                        for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
-                            if (addableMetadata.getName().equals(enrichable)) {
-                                addable = true;
-                                break;
-                            }
-                        }
-                        if (!addable) {
-                            continue;
-                        }
-                        there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
-                                .entrySet()) {
-                            List<MetadataInterface> amNotNull = enricher.getAllMetadata();
-                            if (amNotNull == null) {
-                                amNotNull = Collections.emptyList();
-                            }
-                            for (MetadataInterface existentMetadata : amNotNull) {
-                                if (existentMetadata.getMetadataType().getName().equals(enrichable)
-                                        && existentMetadata.getValue().equals(higherElement.getKey())) {
-                                    continue there;
-                                }
-                            }
-                            try {
-                                enricher.addMetadata(higherElement.getValue());
-                            } catch (UGHException e) {
-                                Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") },
-                                    logger, e);
-                            }
-                        }
+                    iterateOverHigherLevelMetadata(enricher, higherLevelMetadata);
+                }
+            }
+        }
+    }
+
+    private void iterateOverAllMetadata(Map<String, Map<String, MetadataInterface>> higherLevelMetadata,
+                                        List<MetadataInterface> allMetadata) {
+        for (MetadataInterface available : allMetadata) {
+            String availableKey = available.getMetadataType().getName();
+            String availableValue = available.getValue();
+            Map<String, MetadataInterface> availableMetadata = higherLevelMetadata.containsKey(availableKey)
+                    ? higherLevelMetadata.get(availableKey) : new HashMap<>();
+            if (!availableMetadata.containsKey(availableValue)) {
+                availableMetadata.put(availableValue, available);
+            }
+            higherLevelMetadata.put(availableKey, availableMetadata);
+        }
+    }
+
+    private void iterateOverHigherLevelMetadata(DocStructInterface enricher,
+                                                Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
+        for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata
+                .entrySet()) {
+            String enrichable = availableHigherMetadata.getKey();
+            boolean addable = false;
+            List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
+            if (addableTypesNotNull == null) {
+                addableTypesNotNull = Collections.emptyList();
+            }
+            for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
+                if (addableMetadata.getName().equals(enrichable)) {
+                    addable = true;
+                    break;
+                }
+            }
+            if (!addable) {
+                continue;
+            }
+            there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
+                    .entrySet()) {
+                List<MetadataInterface> amNotNull = enricher.getAllMetadata();
+                if (amNotNull == null) {
+                    amNotNull = Collections.emptyList();
+                }
+                for (MetadataInterface existentMetadata : amNotNull) {
+                    if (existentMetadata.getMetadataType().getName().equals(enrichable)
+                            && existentMetadata.getValue().equals(higherElement.getKey())) {
+                        continue there;
                     }
+                }
+                try {
+                    enricher.addMetadata(higherElement.getValue());
+                } catch (UGHException e) {
+                    Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") },
+                            logger, e);
                 }
             }
         }
@@ -1568,52 +1573,9 @@ public class ProzesskopieForm implements Serializable {
 
         }
         StringBuilder newTitle = new StringBuilder();
-        String titeldefinition = "";
-        ConfigProjects cp = new ConfigProjects(this.template.getProject().getTitle());
+        String titleDefinition = getTitleDefinition();
 
-        int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
-        for (int i = 0; i < count; i++) {
-            String titel = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")");
-            String isdoctype = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
-            String isnotdoctype = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
-
-            if (titel == null) {
-                titel = "";
-            }
-            if (isdoctype == null) {
-                isdoctype = "";
-            }
-            if (isnotdoctype == null) {
-                isnotdoctype = "";
-            }
-
-            /* wenn nix angegeben wurde, dann anzeigen */
-            if (isdoctype.equals("") && isnotdoctype.equals("")) {
-                titeldefinition = titel;
-                break;
-            }
-
-            /* wenn beides angegeben wurde */
-            if (!isdoctype.equals("") && !isnotdoctype.equals("")
-                    && StringUtils.containsIgnoreCase(isdoctype, this.docType)
-                    && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
-
-            /* wenn nur pflicht angegeben wurde */
-            if (isnotdoctype.equals("") && StringUtils.containsIgnoreCase(isdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
-            /* wenn nur "darf nicht" angegeben wurde */
-            if (isdoctype.equals("") && !StringUtils.containsIgnoreCase(isnotdoctype, this.docType)) {
-                titeldefinition = titel;
-                break;
-            }
-        }
-
-        StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         /* jetzt den Bandtitel parsen */
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
@@ -1667,12 +1629,58 @@ public class ProzesskopieForm implements Serializable {
         return filteredTitle;
     }
 
+    private String getTitleDefinition() throws IOException {
+        ConfigProjects cp = new ConfigProjects(this.template.getProject().getTitle());
+        int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
+        String titleDefinition = "";
+
+        for (int i = 0; i < count; i++) {
+            String title = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")");
+            String isDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
+            String isNotDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
+
+            if (title == null) {
+                title = "";
+            }
+            if (isDocType == null) {
+                isDocType = "";
+            }
+            if (isNotDocType == null) {
+                isNotDocType = "";
+            }
+
+            // if nothing was specified, then show
+            if (isDocType.equals("") && isNotDocType.equals("")) {
+                titleDefinition = title;
+                break;
+            }
+
+            // if both were specified
+            if (!isDocType.equals("") && !isNotDocType.equals("")
+                    && StringUtils.containsIgnoreCase(isDocType, this.docType)
+                    && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+
+            // if only duty was specified
+            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+            // if only "may not" was specified
+            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
+                titleDefinition = title;
+                break;
+            }
+        }
+        return titleDefinition;
+    }
+
     private String calculateProcessTitleCheck(String inFeldName, String inFeldWert) {
         String rueckgabe = inFeldWert;
 
-        /*
-         * Bandnummer
-         */
+        // Bandnummer
         if (inFeldName.equals("Bandnummer") || inFeldName.equals("Volume number")) {
             try {
                 int bandint = Integer.parseInt(inFeldWert);
@@ -1760,8 +1768,15 @@ public class ProzesskopieForm implements Serializable {
 
                 }
             }
-            // reduce to 255 character
         }
+
+        reduceLengthOfTifHeaderImageDescription(title);
+    }
+
+    /**
+     * Reduce to 255 characters.
+     */
+    private void reduceLengthOfTifHeaderImageDescription(String title) {
         int length = this.tifHeaderImageDescription.length();
         if (length > 255) {
             try {
