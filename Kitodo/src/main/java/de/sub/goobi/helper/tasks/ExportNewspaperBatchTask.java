@@ -130,6 +130,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     private Integer batchId;
 
+    private Process process = null;
+
     /**
      * Constructor to create an ExportNewspaperBatchTask.
      *
@@ -199,45 +201,18 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     @Override
     public void run() {
-        Process process = null;
         try {
             if (processesIterator == null) {
                 batch = serviceManager.getBatchService().getById(batchId);
                 processesIterator = batch.getProcesses().iterator();
             }
+
             if (action == 1) {
-                while (processesIterator.hasNext()) {
-                    if (isInterrupted()) {
-                        return;
-                    }
-                    process = processesIterator.next();
-                    Integer processesYear = getYear(serviceManager.getProcessService().getDigitalDocument(process));
-                    if (!collectedYears.containsKey(processesYear)) {
-                        collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
-                    }
-                    aggregation.addAll(getIssueDates(serviceManager.getProcessService().getDigitalDocument(process)),
-                        getMetsPointerURL(process));
-                    setProgress(++dividend / divisor);
-                }
-                action = 2;
-                processesIterator = batch.getProcesses().iterator();
-                dividend = 0;
+                runForActionOne();
             }
 
             if (action == 2) {
-                while (processesIterator.hasNext()) {
-                    if (isInterrupted()) {
-                        return;
-                    }
-                    process = processesIterator.next();
-                    MetsModsInterface extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
-                    setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
-
-                    new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(
-                        process, serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()),
-                        extendedData.getDigitalDocument());
-                    setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
-                }
+                runForActionTwo();
             }
         } catch (DAOException | ReadException | PreferencesException | IOException | TypeNotAllowedForParentException
                 | MetadataTypeNotAllowedException | TypeNotAllowedAsChildException | WriteException
@@ -245,6 +220,42 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
+        }
+    }
+
+    private void runForActionOne() throws IOException, PreferencesException, ReadException {
+        while (processesIterator.hasNext()) {
+            if (isInterrupted()) {
+                return;
+            }
+            process = processesIterator.next();
+            Integer processesYear = getYear(serviceManager.getProcessService().getDigitalDocument(process));
+            if (!collectedYears.containsKey(processesYear)) {
+                collectedYears.put(processesYear, getMetsYearAnchorPointerURL(process));
+            }
+            aggregation.addAll(getIssueDates(serviceManager.getProcessService().getDigitalDocument(process)),
+                getMetsPointerURL(process));
+            setProgress(++dividend / divisor);
+        }
+        action = 2;
+        processesIterator = batch.getProcesses().iterator();
+        dividend = 0;
+    }
+
+    private void runForActionTwo() throws IOException, MetadataTypeNotAllowedException, PreferencesException,
+            ReadException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException, WriteException {
+        while (processesIterator.hasNext()) {
+            if (isInterrupted()) {
+                return;
+            }
+            process = processesIterator.next();
+            MetsModsInterface extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
+            setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
+
+            new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(process,
+                serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()),
+                extendedData.getDigitalDocument());
+            setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
         }
     }
 
