@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -281,11 +282,10 @@ public class MassImportForm implements Serializable {
         }
     }
 
-    private void removeFiles() {
+    private void removeFiles() throws IOException {
         if (this.importFile != null) {
-            if (this.importFile.delete()) {
-                this.importFile = null;
-            }
+            Files.delete(this.importFile.toPath());
+            this.importFile = null;
         }
         if (selectedFilenames != null && !selectedFilenames.isEmpty()) {
             this.plugin.deleteFiles(this.selectedFilenames);
