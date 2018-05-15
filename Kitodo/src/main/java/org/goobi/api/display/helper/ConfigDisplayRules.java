@@ -24,9 +24,9 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
 
-public final class ConfigDispayRules {
+public final class ConfigDisplayRules {
 
-    private static ConfigDispayRules instance = new ConfigDispayRules();
+    private static ConfigDisplayRules instance = new ConfigDisplayRules();
     private static XMLConfiguration config;
     private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<>();
     private static final String RULESET = "ruleSet";
@@ -36,7 +36,7 @@ public final class ConfigDispayRules {
     /**
      * Reads given xml file into XMLConfiguration.
      */
-    private ConfigDispayRules() {
+    private ConfigDisplayRules() {
         String configPath = ConfigCore.getKitodoConfigDirectory() + "kitodo_metadataDisplayRules.xml";
         try {
             config = new XMLConfiguration(configPath);
@@ -50,7 +50,7 @@ public final class ConfigDispayRules {
         }
     }
 
-    public static ConfigDispayRules getInstance() {
+    public static ConfigDisplayRules getInstance() {
         return instance;
     }
 
