@@ -221,88 +221,94 @@ public class HotfolderJob extends AbstractGoobiJob {
                     return 28;
                 }
             }
-            CopyProcess form = new CopyProcess();
-            form.setTemplate(template);
-            form.setMetadataFile(dir.resolve(File.separator + processTitle));
-            form.prepare(template.getId());
-            form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
-            if (form.testTitle()) {
-                if (digitalCollection == null) {
-                    List<String> collections = new ArrayList<>();
-                    form.setDigitalCollections(collections);
-                } else {
-                    List<String> col = new ArrayList<>();
-                    col.add(digitalCollection);
-                    form.setDigitalCollections(col);
-                }
-                form.evaluateOpac();
-
-                try {
-                    Process p = form.neuenProzessAnlegen();
-                    if (Objects.nonNull(p) && Objects.nonNull(p.getId())) {
-                        // copy image files to new directory
-                        URI images = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + File.separator);
-                        List<URI> imageDir = new ArrayList<>();
-                        if (fileService.isDirectory(images)) {
-                            List<URI> files = fileService.getSubUris(images);
-                            imageDir.addAll(files);
-                            for (URI file : imageDir) {
-                                URI image = fileService.createResource(images, fileService.getFileName(file));
-                                URI dest = fileService.createResource(
-                                    serviceManager.getProcessService().getImagesOrigDirectory(false, p),
-                                    fileService.getFileName(image));
-                                fileService.moveFile(image, dest);
-                            }
-                            fileService.delete(images);
-                        }
-
-                        // copy fulltext files
-                        URI textDirectory = fileService.createDirectory(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + "_txt");
-                        fileService.moveDirectory(textDirectory, fileService.getTxtDirectory(p));
-
-                        // copy source files
-                        URI sourceDirectory = fileService.createDirectory(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + "_src");
-                        fileService.moveDirectory(sourceDirectory, fileService.getImportDirectory(p));
-
-                        try {
-                            fileService.delete(dir.resolve(File.separator + processTitle));
-                        } catch (IOException e) {
-                            logger.error(ERROR_DELETE + processTitle + " after importing " + p.getTitle()
-                                    + " into kitodo",
-                                e);
-                            return 30;
-                        }
-                        URI anchorUri = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + ANCHOR);
-                        fileService.delete(anchorUri);
-                        List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
-                        runThreads(tasks);
-                    }
-                } catch (ReadException e) {
-                    logger.error(e.getMessage(), e);
-                    return 20;
-                } catch (PreferencesException e) {
-                    logger.error(e.getMessage(), e);
-                    return 21;
-                } catch (DAOException e) {
-                    logger.error(e.getMessage(), e);
-                    return 22;
-                } catch (WriteException e) {
-                    logger.error(e.getMessage(), e);
-                    return 23;
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                    return 24;
-                }
-            }
-            // TODO updateImagePath aufrufen
-
-            return 0;
+            return createNewProcess(template, processTitle, dir, digitalCollection);
         } else {
             return 26;
+        }
+    }
+
+    private static int createNewProcess(Template template, String processTitle, URI dir, String digitalCollection) {
+        CopyProcess form = new CopyProcess();
+        form.setTemplate(template);
+        form.setMetadataFile(dir.resolve(File.separator + processTitle));
+        form.prepare(template.getId());
+        form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
+        if (form.testTitle()) {
+            if (digitalCollection == null) {
+                List<String> collections = new ArrayList<>();
+                form.setDigitalCollections(collections);
+            } else {
+                List<String> col = new ArrayList<>();
+                col.add(digitalCollection);
+                form.setDigitalCollections(col);
+            }
+            form.evaluateOpac();
+
+            try {
+                Process p = form.neuenProzessAnlegen();
+                if (Objects.nonNull(p) && Objects.nonNull(p.getId())) {
+                    copyImagesToNewDirectory(dir, processTitle, p);
+
+                    // copy fulltext files
+                    URI textDirectory = fileService.createDirectory(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + "_txt");
+                    fileService.moveDirectory(textDirectory, fileService.getTxtDirectory(p));
+
+                    // copy source files
+                    URI sourceDirectory = fileService.createDirectory(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + "_src");
+                    fileService.moveDirectory(sourceDirectory, fileService.getImportDirectory(p));
+
+                    try {
+                        fileService.delete(dir.resolve(File.separator + processTitle));
+                    } catch (IOException e) {
+                        logger.error(ERROR_DELETE + processTitle + " after importing " + p.getTitle()
+                                        + " into kitodo", e);
+                        return 30;
+                    }
+                    URI anchorUri = fileService.createResource(dir,
+                            processTitle.substring(0, processTitle.length() - 4) + ANCHOR);
+                    fileService.delete(anchorUri);
+                    List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
+                    runThreads(tasks);
+                }
+            } catch (ReadException e) {
+                logger.error(e.getMessage(), e);
+                return 20;
+            } catch (PreferencesException e) {
+                logger.error(e.getMessage(), e);
+                return 21;
+            } catch (DAOException e) {
+                logger.error(e.getMessage(), e);
+                return 22;
+            } catch (WriteException e) {
+                logger.error(e.getMessage(), e);
+                return 23;
+            } catch (IOException e) {
+                logger.error(e.getMessage(), e);
+                return 24;
+            }
+        }
+        // TODO updateImagePath aufrufen
+        return 0;
+    }
+
+    private static void copyImagesToNewDirectory(URI dir, String processTitle, Process p) throws IOException {
+        // copy image files to new directory
+        URI images = fileService.createResource(dir,
+                processTitle.substring(0, processTitle.length() - 4) + File.separator);
+        List<URI> imageDir = new ArrayList<>();
+        if (fileService.isDirectory(images)) {
+            List<URI> files = fileService.getSubUris(images);
+            imageDir.addAll(files);
+            for (URI file : imageDir) {
+                URI image = fileService.createResource(images, fileService.getFileName(file));
+                URI dest = fileService.createResource(
+                        serviceManager.getProcessService().getImagesOrigDirectory(false, p),
+                        fileService.getFileName(image));
+                fileService.moveFile(image, dest);
+            }
+            fileService.delete(images);
         }
     }
 
