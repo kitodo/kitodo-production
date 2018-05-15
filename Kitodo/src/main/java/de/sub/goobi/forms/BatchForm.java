@@ -66,6 +66,10 @@ public class BatchForm extends BasisForm {
     private String processfilter;
     private ObjectMode editMode = ObjectMode.NONE;
     private String batchTitle;
+    private static final String ERROR_READ = "errorReading";
+    private static final String NO_BATCH_SELECTED = "noBatchSelected";
+    private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
+    private static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     // TODO; for what is it needed - right now it is used only in new tests
@@ -107,7 +111,7 @@ public class BatchForm extends BasisForm {
             }
             currentProcesses = new ArrayList<>(processes);
         } catch (NumberFormatException | DAOException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, logger, e);
         }
     }
 
@@ -249,17 +253,17 @@ public class BatchForm extends BasisForm {
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
                 serviceManager.getProcessService().downloadDocket(
                     serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
-                Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+                Helper.setErrorMessage(ERROR_READ, logger, e);
                 return null;
             }
         } else {
-            Helper.setFehlerMeldung("tooManyBatchesSelected");
+            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
         }
         return null;
     }
@@ -271,7 +275,7 @@ public class BatchForm extends BasisForm {
     public void deleteBatch() {
         int selectedBatchesSize = this.selectedBatches.size();
         if (selectedBatchesSize == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return;
         }
         List<Integer> ids = new ArrayList<>(selectedBatchesSize);
@@ -289,7 +293,7 @@ public class BatchForm extends BasisForm {
      */
     public void addProcessesToBatch() {
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return;
         }
         if (this.selectedProcesses.size() == 0) {
@@ -301,7 +305,7 @@ public class BatchForm extends BasisForm {
                 Batch batch = serviceManager.getBatchService().getById(entry);
                 serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
                 serviceManager.getBatchService().save(batch);
-                if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
+                if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
                             serviceManager.getBatchService().getLabel(batch)), p);
@@ -321,7 +325,7 @@ public class BatchForm extends BasisForm {
      */
     public void removeProcessesFromBatch() throws DAOException, DataException {
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return;
         }
         if (this.selectedProcesses.size() == 0) {
@@ -333,7 +337,7 @@ public class BatchForm extends BasisForm {
             Batch batch = serviceManager.getBatchService().getById(entry);
             serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
+            if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(Helper.getTranslation("removeFromBatch",
                         serviceManager.getBatchService().getLabel(batch)), p);
@@ -349,9 +353,9 @@ public class BatchForm extends BasisForm {
      */
     public void renameBatch() {
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() > 1) {
-            Helper.setFehlerMeldung("tooManyBatchesSelected");
+            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
                 Integer selected = selectedBatches.get(0);
@@ -381,7 +385,7 @@ public class BatchForm extends BasisForm {
             }
 
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter("batches.logChangesToWikiField", false)) {
+            if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
                 for (Process p : selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
                         serviceManager.getBatchService().getLabel(batch)), p);
@@ -404,10 +408,10 @@ public class BatchForm extends BasisForm {
      */
     public String editProperties() {
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return null;
         } else if (this.selectedBatches.size() > 1) {
-            Helper.setFehlerMeldung("tooManyBatchesSelected");
+            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
             return null;
         } else {
             if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals(0)) {
@@ -417,11 +421,11 @@ public class BatchForm extends BasisForm {
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/pages/BatchProperties";
                 } catch (DAOException e) {
-                    Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+                    Helper.setErrorMessage(ERROR_READ, logger, e);
                     return null;
                 }
             } else {
-                Helper.setFehlerMeldung("noBatchSelected");
+                Helper.setFehlerMeldung(NO_BATCH_SELECTED);
                 return null;
             }
         }
@@ -465,7 +469,7 @@ public class BatchForm extends BasisForm {
      */
     public String exportBatch() {
         if (this.selectedBatches.size() == 0) {
-            Helper.setFehlerMeldung("noBatchSelected");
+            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
             return null;
         }
 
@@ -491,7 +495,7 @@ public class BatchForm extends BasisForm {
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+                Helper.setErrorMessage(ERROR_READ, logger, e);
                 return null;
             }
         }
@@ -536,7 +540,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerBeimEinlesen", logger, e);
+            Helper.setErrorMessage(ERROR_READ, logger, e);
         }
     }
 }

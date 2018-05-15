@@ -14,7 +14,6 @@ package de.sub.goobi.helper;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.forms.LoginForm;
-import de.sub.goobi.forms.SpracheForm;
 import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
@@ -227,38 +226,22 @@ public class Helper extends HibernateHelper implements Observer {
      * übergeben.
      */
     private static void setMeldung(String control, String message, String description, boolean onlyInfo) {
-        FacesContext context = FacesContext.getCurrentInstance();
-
         // Never forget: Strings are immutable
         message = message.replaceAll("<", "&lt;");
         message = message.replaceAll(">", "&gt;");
         description = description.replaceAll("<", "&lt;");
         description = description.replaceAll(">", "&gt;");
 
-        Locale language = Locale.ENGLISH;
-        SpracheForm sf = (SpracheForm) Helper.getManagedBeanValue("SpracheForm");
-        if (sf != null) {
-            language = sf.getLocale();
-        }
-
-        String msg;
-        try {
-            msg = getString(language, message);
-        } catch (RuntimeException e) {
-            msg = message;
-        }
-        String descript;
-        try {
-            descript = getString(language, description);
-        } catch (RuntimeException e) {
-            descript = description;
-        }
+        String msg = getTranslation(message);
+        String descript = getTranslation(description);
 
         compoundMessage = msg.replaceFirst(":\\s*$", "") + ": " + descript;
         if (activeMQReporting != null) {
             new WebServiceResult(activeMQReporting.get("queueName"), activeMQReporting.get("id"),
                     onlyInfo ? ReportLevel.INFO : ReportLevel.ERROR, compoundMessage).send();
         }
+
+        FacesContext context = FacesContext.getCurrentInstance();
         if (context != null) {
             context.addMessage(control,
                 new FacesMessage(onlyInfo ? FacesMessage.SEVERITY_INFO : FacesMessage.SEVERITY_ERROR, msg, descript));

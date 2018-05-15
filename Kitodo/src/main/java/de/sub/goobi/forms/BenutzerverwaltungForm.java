@@ -62,7 +62,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;
-
+    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
@@ -222,17 +222,18 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String or null
      */
     public String addToGroup() {
-        Integer gruppenID = Integer.valueOf(Helper.getRequestParameter("ID"));
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
         try {
-            UserGroup usergroup = serviceManager.getUserGroupService().getById(gruppenID);
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             for (UserGroup b : this.userObject.getUserGroups()) {
-                if (b.equals(usergroup)) {
+                if (b.equals(userGroup)) {
                     return null;
                 }
             }
-            this.userObject.getUserGroups().add(usergroup);
+            this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
             return null;
         }
         return null;
@@ -249,7 +250,8 @@ public class BenutzerverwaltungForm extends BasisForm {
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
             return null;
         }
         return null;
@@ -271,7 +273,8 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getProjects().add(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
             return null;
         }
         return null;

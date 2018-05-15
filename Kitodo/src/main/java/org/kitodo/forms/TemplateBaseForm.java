@@ -41,6 +41,7 @@ public class TemplateBaseForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
+    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -98,7 +99,8 @@ public class TemplateBaseForm extends BasisForm {
             }
             task.getUserGroups().add(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
         }
     }
 
@@ -119,7 +121,8 @@ public class TemplateBaseForm extends BasisForm {
             }
             task.getUsers().add(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
         }
     }
 
@@ -135,7 +138,8 @@ public class TemplateBaseForm extends BasisForm {
             User user = serviceManager.getUserService().getById(userId);
             task.getUsers().remove(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
         }
     }
 
@@ -151,7 +155,8 @@ public class TemplateBaseForm extends BasisForm {
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             task.getUserGroups().remove(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Error on reading database", logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
         }
     }
 

@@ -31,6 +31,13 @@ public class UghHelper {
     private static final ServiceManager serviceManager = new ServiceManager();
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private UghHelper() {
+
+    }
+
+    /**
      * MetadataType aus Preferences eines Prozesses ermitteln.
      *
      * @param inProzess

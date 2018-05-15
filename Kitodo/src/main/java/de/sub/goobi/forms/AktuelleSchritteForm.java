@@ -82,7 +82,8 @@ public class AktuelleSchritteForm extends BasisForm {
     private List<Property> properties;
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
-
+    private static final String ERROR_LOADING = "errorLoadingOne";
+    private static final String WORK_TASK = "arbeitsschritt";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
 
@@ -268,7 +269,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
         return taskListPath;
     }
@@ -413,8 +414,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorLoadingOne",
-                    new Object[] {Helper.getTranslation("arbeitsschritt"), taskDTO.getId() }, logger, e);
+                Helper.setErrorMessage(ERROR_LOADING,
+                    new Object[] {Helper.getTranslation(WORK_TASK), taskDTO.getId() }, logger, e);
             }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
@@ -516,7 +517,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             return serviceManager.getTaskService().getById(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id },
                 logger, e);
             return null;
         }
@@ -867,7 +868,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(this.serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id },
                 logger, e);
         }
     }

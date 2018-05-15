@@ -38,7 +38,7 @@ import org.goobi.production.constants.FileNames;
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {
     private static final Logger logger = LogManager.getLogger(ConfigOpac.class);
-
+    private static final String ERROR_READ = "errorReading";
     private static XMLConfiguration config;
 
     private static XMLConfiguration getConfig() throws FileNotFoundException {
@@ -76,7 +76,7 @@ public class ConfigOpac {
                 myList.add(title);
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
         }
         return myList;
     }
@@ -93,7 +93,7 @@ public class ConfigOpac {
                 myList.add(title);
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
         }
         return myList;
     }
@@ -110,7 +110,7 @@ public class ConfigOpac {
                 myList.add(getDoctypeByName(title));
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage("Error while reading von opac-config", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
         }
         return myList;
     }

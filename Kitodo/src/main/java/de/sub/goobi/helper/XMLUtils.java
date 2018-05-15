@@ -38,6 +38,13 @@ import org.xml.sax.SAXException;
 public class XMLUtils {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private XMLUtils() {
+
+    }
+
+    /**
      * The method documentToByteArray() converts an org.w3c.dom.Document to a
      * ByteArray for Downloading
      *
