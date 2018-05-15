@@ -13,14 +13,60 @@
 
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
-    <ui:define name="content">
-        <p:panel id="listWrapper">
-            <p:panel styleClass="content-header">
-                <h3>#{msgs.workflows}</h3>
-            </p:panel>
-        </p:panel>
-    </ui:define>
+    <h:outputScript library="js" name="modeler.js" target="body" />
+
+    <div>
+        <h3>#{msgs.workflows}</h3>
+
+        <div>
+            <h:form id="xmlDiagramReadForm" enctype="multipart/form-data">
+                <p:outputLabel for="selectedDiagram" value="Diagrams: " style="top:-8px"/>
+                <p:selectOneMenu id="selectedDiagram" value="#{ModelerForm.xmlDiagramName}" style="width:100px">
+                    <f:selectItems value="#{ModelerForm.xmlDiagramNames}"/>
+                </p:selectOneMenu>
+
+                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram" action="#{ModelerForm.readXMLDiagram}"
+                                 update="xmlDiagram projectsTabView:xmlDiagramSaveForm:xmlDiagramName" style="top:-8px"/>
+                <h:inputHidden value="#{ModelerForm.xmlDiagram}" id="xmlDiagram" />
+            </h:form>
+        </div>
+        <div style="height: 850px;">
+            <div class="content" id="js-drop-zone">
+
+                <div class="message intro">
+                    <div class="note">
+                        Drop BPMN diagram from your desktop or <h:link id="js-create-diagram">create a new diagram</h:link> to get started.
+                    </div>
+                </div>
+
+                <div class="message error">
+                    <div class="note">
+                        <p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+
+                        <div class="details">
+                            <span>cause of the problem</span>
+                            <pre></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="canvas" id="js-canvas"></div>
+                <div class="properties-panel-parent" id="js-properties-panel"></div>
+            </div>
+        </div>
+        <div>
+            <h:form id="xmlDiagramSaveForm" enctype="multipart/form-data">
+                <p:outputLabel for="xmlDiagramName" value="#{msgs.titel}" />
+                <p:inputText id="xmlDiagramName" placeholder="#{msgs.titel}" class="input" value="#{ModelerForm.xmlDiagramName}"/>
+
+                <p:remoteCommand name="xmlContent" actionListener="#{ModelerForm.save}" />
+                <p:commandButton id="btnSaveXmlDiagram" value="Save XML diagram" update="projectsTabView:xmlDiagramReadForm" />
+            </h:form>
+        </div>
+    </div>
 
 </ui:composition>

@@ -23,12 +23,22 @@ import org.goobi.production.constants.FileNames;
 
 public class FileLoader {
 
-    private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
+    private static String diagramBasePath = ConfigCore.getKitodoDiagramDirectory() + "base.bpmn20.xml";
+    private static String diagramTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
+    private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "extended-test.bpmn20.xml";
     private static String diagramReaderGatewayPath = ConfigCore.getKitodoDiagramDirectory() + "gateway.bpmn20.xml";
     private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
     private static String rulesetPath = ConfigCore.getKitodoConfigDirectory() + "ruleset_test.xml";
+
+    public static void createDiagramBaseFile() throws IOException {
+        Files.write(Paths.get(diagramBasePath), prepareDiagram());
+    }
+
+    public static void createDiagramTestFile() throws IOException {
+        Files.write(Paths.get(diagramTestPath), prepareDiagram());
+    }
 
     public static void createDigitalCollectionsFile() throws IOException {
         List<String> content = new ArrayList<>();
@@ -216,6 +226,14 @@ public class FileLoader {
         Files.write(Paths.get(rulesetPath), content);
     }
 
+    public static void deleteDiagramBaseFile() throws IOException {
+        Files.deleteIfExists(Paths.get(diagramBasePath));
+    }
+
+    public static void deleteDiagramTestFile() throws IOException {
+        Files.deleteIfExists(Paths.get(diagramTestPath));
+    }
+
     public static void deleteExtendedDiagramTestFile() throws IOException {
         Files.deleteIfExists(Paths.get(diagramReaderTestPath));
     }
@@ -274,6 +292,37 @@ public class FileLoader {
         content.add("<language name=\"en\">" + enName + "</language>");
         content.add("<language name=\"de\">" + deName + "</language>");
         content.add("</MetadataType>");
+        return content;
+    }
+
+    private static List<String> prepareDiagram() {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<bpmn:definitions xmlns:bpmn=\"http://www.omg.org/spec/BPMN/20100524/MODEL\" xmlns:bpmndi=\"http://www.omg.org/spec/BPMN/20100524/DI\" xmlns:di=\"http://www.omg.org/spec/DD/20100524/DI\" xmlns:dc=\"http://www.omg.org/spec/DD/20100524/DC\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:camunda=\"http://camunda.org/schema/1.0/bpmn\" id=\"Definitions_1\" targetNamespace=\"http://bpmn.io/schema/bpmn\" exporter=\"Camunda Modeler\" exporterVersion=\"1.11.2\">");
+        content.add("<bpmn:process id=\"say_hello\" name=\"say-hello\" isExecutable=\"true\">");
+        content.add("<bpmn:startEvent id=\"StartEvent_1\" name=\"Start Event\">");
+        content.add("<bpmn:outgoing>SequenceFlow_0f2vwms</bpmn:outgoing>");
+        content.add("</bpmn:startEvent>");
+        content.add("<bpmn:endEvent id=\"EndEvent_1\" name=\"End Event\">");
+        content.add("<bpmn:incoming>SequenceFlow_1jf1dm1</bpmn:incoming>");
+        content.add("</bpmn:endEvent>");
+        content.add("<bpmn:sequenceFlow id=\"SequenceFlow_0f2vwms\" sourceRef=\"StartEvent_1\" targetRef=\"ScriptTask_1\" />");
+        content.add("<bpmn:sequenceFlow id=\"SequenceFlow_1jf1dm1\" sourceRef=\"ScriptTask_1\" targetRef=\"EndEvent_1\" />");
+        content.add("<bpmn:scriptTask id=\"ScriptTask_1\" name=\"Say hello\">");
+        content.add("<bpmn:extensionElements>");
+        content.add("<camunda:inputOutput>");
+        content.add("<camunda:inputParameter name=\"name\" />");
+        content.add("<camunda:outputParameter name=\"Output\" />");
+        content.add("</camunda:inputOutput>");
+        content.add("</bpmn:extensionElements>");
+        content.add("<bpmn:incoming>SequenceFlow_0f2vwms</bpmn:incoming>");
+        content.add("<bpmn:outgoing>SequenceFlow_1jf1dm1</bpmn:outgoing>");
+        content.add("<bpmn:script><![CDATA[kcontext.setVariable(\"welcomeText\",\"Hello, \" + name);");
+        content.add("");
+        content.add("System.out.println(\"Hello, \" + name);]]></bpmn:script>");
+        content.add("</bpmn:scriptTask>");
+        content.add("</bpmn:process>");
+        content.add("</bpmn:definitions>");
         return content;
     }
 
