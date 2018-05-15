@@ -125,7 +125,7 @@
                                     class="fa fa-life-ring fa-lg"/></h:link></li>
                             </h:panelGroup>
 
-                            <h:panelGroup rendered="true">
+                            <h:panelGroup rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityGlobal('viewIndex, editIndex')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.indexing}" id="linkIndexing"
                                                                  outcome="indexingPage"><i
                                     class="fa fa-database fa-lg"/></h:link></li>

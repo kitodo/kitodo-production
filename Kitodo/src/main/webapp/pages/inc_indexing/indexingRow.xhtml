@@ -20,6 +20,7 @@
             <td>#{objectType.translation}</td>
             <td>
                 <p:commandButton widgetVar="startIndexing#{objectType}"
+                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('editIndex')}"
                                  onclick="PF('#{objectType}'+'Progress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexing(objectType)}"
