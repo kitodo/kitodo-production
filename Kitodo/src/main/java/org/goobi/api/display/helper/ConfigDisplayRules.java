@@ -50,6 +50,11 @@ public final class ConfigDisplayRules {
         }
     }
 
+    /**
+     * Get instance of ConfigDisplayRules.
+     * 
+     * @return instance of ConfigDisplayRules
+     */
     public static ConfigDisplayRules getInstance() {
         return instance;
     }
@@ -65,7 +70,8 @@ public final class ConfigDisplayRules {
                 for (int j = 0; j <= projectContext; j++) {
                     HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = new HashMap<>();
                     HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bindState = new HashMap<>();
-                    String projectName = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")[@projectName]");
+                    String projectName = config
+                            .getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")[@projectName]");
                     String bind = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ").bind");
 
                     itemsByType.put("anotherSelect", getAnotherSelectItems(i, j, projectName, bind));
@@ -158,7 +164,8 @@ public final class ConfigDisplayRules {
     }
 
     /**
-     *
+     * Get by element name for 'select1' parameter.
+     * 
      * @param project
      *            name of project as String
      * @param bind
@@ -167,13 +174,13 @@ public final class ConfigDisplayRules {
      *            name of the select1 element
      * @return ArrayList with all items and its values of given select1 element.
      */
-
     private ArrayList<Item> getSelectOneByElementName(String project, String bind, String elementName) {
         return getSelectByElementName(project, bind, elementName, "select1");
     }
 
     /**
-     *
+     * Get by element name for 'select' parameter.
+     * 
      * @param project
      *            name of project as String
      * @param bind
@@ -220,7 +227,8 @@ public final class ConfigDisplayRules {
     }
 
     /**
-     *
+     * Get by element name for 'input' parameter.
+     * 
      * @param project
      *            name of project as String
      * @param bind
@@ -229,7 +237,6 @@ public final class ConfigDisplayRules {
      *            name of the input element
      * @return item of given input element.
      */
-
     private ArrayList<Item> getInputByElementName(String project, String bind, String elementName) {
         ArrayList<Item> listOfItems = new ArrayList<>();
         int count = config.getMaxIndex(RULESET_CONTEXT);
@@ -244,6 +251,8 @@ public final class ConfigDisplayRules {
     }
 
     /**
+     * Get by element name for 'textarea' parameter.
+     * 
      * @param project
      *            name of project as String
      * @param bind
@@ -252,7 +261,6 @@ public final class ConfigDisplayRules {
      *            name of the textarea element
      * @return item of given textarea element.
      */
-
     private ArrayList<Item> getTextareaByElementName(String project, String bind, String elementName) {
         ArrayList<Item> listOfItems = new ArrayList<>();
         int count = config.getMaxIndex(RULESET_CONTEXT);
@@ -319,7 +327,6 @@ public final class ConfigDisplayRules {
      *            name of element
      * @return type of element
      */
-
     public DisplayType getElementTypeByName(String myproject, String mybind, String myelementName) {
         synchronized (this.allValues) {
             if (this.allValues.isEmpty() && config != null) {
@@ -365,7 +372,6 @@ public final class ConfigDisplayRules {
      *            type of the element
      * @return ArrayList with all values of given element
      */
-
     public List<Item> getItemsByNameAndType(String myproject, String mybind, String myelementName,
             DisplayType mydisplayType) {
         List<Item> values = new ArrayList<>();
