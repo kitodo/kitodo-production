@@ -44,4 +44,11 @@ public class FileNames {
      */
     public static final String METADATA_DISPLAY_RULES_FILE = "kitodo_metadataDisplayRules.xml";
 
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private FileNames() {
+
+    }
+
 }

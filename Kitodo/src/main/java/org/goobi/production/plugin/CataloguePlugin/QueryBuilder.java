@@ -67,6 +67,13 @@ import java.util.List;
 public class QueryBuilder {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private QueryBuilder() {
+
+    }
+
+    /**
      * The function appendAll() appends a list of query tokens to an initial
      * query by means of a StringBuilder.
      *

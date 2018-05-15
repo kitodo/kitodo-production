@@ -49,9 +49,10 @@ import org.kitodo.services.file.FileService;
 @Deprecated
 public class HotfolderJob extends AbstractGoobiJob {
     private static final Logger logger = LogManager.getLogger(HotfolderJob.class);
-
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
+    private static final String ANCHOR = "_anchor.xml";
+    private static final String ERROR_DELETE = "Can not delete file ";
 
     /*
      * (non-Javadoc)
@@ -187,11 +188,11 @@ public class HotfolderJob extends AbstractGoobiJob {
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
                     } catch (RuntimeException e) {
-                        logger.error("Can not delete file " + processTitle, e);
+                        logger.error(ERROR_DELETE + processTitle, e);
                         return 30;
                     }
                     URI anchor = fileService.createResource(dir,
-                        processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                        processTitle.substring(0, processTitle.length() - 4) + ANCHOR);
                     if (fileService.fileExist(anchor)) {
                         fileService.delete(anchor);
                     }
@@ -209,11 +210,11 @@ public class HotfolderJob extends AbstractGoobiJob {
                     try {
                         fileService.delete(dir.resolve(File.separator + processTitle));
                     } catch (RuntimeException e) {
-                        logger.error("Can not delete file " + processTitle, e);
+                        logger.error(ERROR_DELETE + processTitle, e);
                         return 30;
                     }
                     URI anchor = fileService.createResource(dir,
-                        processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                        processTitle.substring(0, processTitle.length() - 4) + ANCHOR);
                     if (fileService.fileExist(anchor)) {
                         fileService.delete(anchor);
                     }
@@ -269,13 +270,13 @@ public class HotfolderJob extends AbstractGoobiJob {
                         try {
                             fileService.delete(dir.resolve(File.separator + processTitle));
                         } catch (IOException e) {
-                            logger.error("Can not delete file " + processTitle + " after importing " + p.getTitle()
+                            logger.error(ERROR_DELETE + processTitle + " after importing " + p.getTitle()
                                     + " into kitodo",
                                 e);
                             return 30;
                         }
                         URI anchorUri = fileService.createResource(dir,
-                            processTitle.substring(0, processTitle.length() - 4) + "_anchor.xml");
+                            processTitle.substring(0, processTitle.length() - 4) + ANCHOR);
                         fileService.delete(anchorUri);
                         List<Task> tasks = serviceManager.getProcessService().getById(p.getId()).getTasks();
                         runThreads(tasks);
@@ -347,10 +348,10 @@ public class HotfolderJob extends AbstractGoobiJob {
             try {
                 fileService.delete(metsfilename);
             } catch (RuntimeException e) {
-                logger.error("Can not delete file " + processTitle, e);
+                logger.error(ERROR_DELETE + processTitle, e);
                 return null;
             }
-            File anchor = new File(basepath + "_anchor.xml");
+            File anchor = new File(basepath + ANCHOR);
             if (anchor.exists()) {
                 fileService.delete(anchor.toURI());
             }

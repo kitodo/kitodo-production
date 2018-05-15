@@ -36,6 +36,13 @@ public class GoobiProcessDAO {
     private static final Logger logger = LogManager.getLogger(GoobiProcessDAO.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private GoobiProcessDAO() {
+
+    }
+
+    /**
      * Get process by PPN.
      * 
      * @param ppn

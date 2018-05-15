@@ -30,6 +30,7 @@ import java.security.PrivilegedAction;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -502,17 +503,19 @@ public class Helper extends HibernateHelper implements Observer {
             boolean fileOk = false;
             String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
 
-            if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[jJ][pP][2]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[pP][nN][gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
-                fileOk = true;
+            List<String> regexList = new ArrayList<>();
+            regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
+            regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
+            regexList.add(prefix + "\\.[jJ][pP][2]");
+            regexList.add(prefix + "\\.[pP][nN][gG]");
+            regexList.add(prefix + "\\.[gG][iI][fF]");
+
+            for (String regex : regexList) {
+                if (name.matches(regex)) {
+                    fileOk = true;
+                }
             }
+
             return fileOk;
         }
     };
@@ -523,47 +526,34 @@ public class Helper extends HibernateHelper implements Observer {
         public boolean accept(File dir, String name) {
             boolean fileOk = false;
             String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
-            if (name.matches(prefix + "\\.[Tt][Ii][Ff][Ff]?")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[jJ][pP][eE]?[gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[jJ][pP][2]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[pP][nN][gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[gG][iI][fF]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[pP][dD][fF]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[aA][vV][iI]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[mM][pP][gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[mM][pP]4")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[mM][pP]3")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[wW][aA][vV]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[wW][mM][vV]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[fF][lL][vV]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.[oO][gG][gG]")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.docx")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.doc")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.xls")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.xlsx")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.pptx")) {
-                fileOk = true;
-            } else if (name.matches(prefix + "\\.ppt")) {
-                fileOk = true;
+
+            List<String> regexList = new ArrayList<>();
+            regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
+            regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
+            regexList.add(prefix + "\\.[jJ][pP][2]");
+            regexList.add(prefix + "\\.[pP][nN][gG]");
+            regexList.add(prefix + "\\.[gG][iI][fF]");
+            regexList.add(prefix + "\\.[pP][dD][fF]");
+            regexList.add(prefix + "\\.[aA][vV][iI]");
+            regexList.add(prefix + "\\.[mM][pP][gG]");
+            regexList.add(prefix + "\\.[mM][pP]4");
+            regexList.add(prefix + "\\.[mM][pP]3");
+            regexList.add(prefix + "\\.[wW][aA][vV]");
+            regexList.add(prefix + "\\.[wW][mM][vV]");
+            regexList.add(prefix + "\\.[fF][lL][vV]");
+            regexList.add(prefix + "\\.[oO][gG][gG]");
+            regexList.add(prefix + "\\.docx");
+            regexList.add(prefix + "\\.xls");
+            regexList.add(prefix + "\\.xlsx");
+            regexList.add(prefix + "\\.pptx");
+            regexList.add(prefix + "\\.ppt");
+
+            for (String regex : regexList) {
+                if (name.matches(regex)) {
+                    fileOk = true;
+                }
             }
+
             return fileOk;
         }
     };

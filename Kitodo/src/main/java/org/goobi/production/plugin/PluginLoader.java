@@ -47,6 +47,13 @@ public class PluginLoader {
     private static final Logger logger = LogManager.getLogger(PluginLoader.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private PluginLoader() {
+
+    }
+
+    /**
      * The function getCataloguePluginForCatalogue() returns a redirection class
      * to handle the first plug-in implementation object that positively
      * responds to <code>supportsCatalogue(catalogue)</code>.

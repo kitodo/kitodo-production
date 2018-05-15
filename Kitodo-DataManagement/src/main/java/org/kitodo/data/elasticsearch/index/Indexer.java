@@ -18,8 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpEntity;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -31,7 +29,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
 public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
 
     private HTTPMethods method;
-    private static final Logger logger = LogManager.getLogger(Indexer.class);
+    private static final String INCORRECT_HTTP = "Incorrect HTTP method!";
 
     /**
      * Constructor for indexer with type names equal to table names.
@@ -71,7 +69,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         } else if (method == HTTPMethods.DELETE) {
             restClient.deleteDocument(baseIndexedBean.getId());
         } else {
-            throw new CustomResponseException("Incorrect HTTP method!");
+            throw new CustomResponseException(INCORRECT_HTTP);
         }
 
     }
@@ -88,7 +86,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         if (method == HTTPMethods.DELETE) {
             restClient.deleteDocument(beanId);
         } else {
-            throw new CustomResponseException("Incorrect HTTP method!");
+            throw new CustomResponseException(INCORRECT_HTTP);
         }
     }
 
@@ -109,7 +107,7 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
             Map<Integer, HttpEntity> documents = baseType.createDocuments(baseIndexedBeans);
             restClient.addType(documents);
         } else {
-            throw new CustomResponseException("Incorrect HTTP method!");
+            throw new CustomResponseException(INCORRECT_HTTP);
         }
     }
 

@@ -59,6 +59,13 @@ public class SRUHelper {
     // "http://www.loc.gov/zing/cql/xcql/");
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private SRUHelper() {
+
+    }
+
+    /**
      * Search.
      *
      * @param ppn

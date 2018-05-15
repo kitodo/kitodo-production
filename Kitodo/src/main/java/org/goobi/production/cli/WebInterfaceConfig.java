@@ -23,6 +23,13 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 public class WebInterfaceConfig {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private WebInterfaceConfig() {
+
+    }
+
+    /**
      * Get credentials.
      *
      * @param requestIp

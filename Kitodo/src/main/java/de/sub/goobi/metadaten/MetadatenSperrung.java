@@ -22,6 +22,8 @@ import java.util.HashMap;
 public class MetadatenSperrung implements Serializable {
     private static final long serialVersionUID = -8248209179063050307L;
     private static HashMap<Integer, HashMap<String, String>> sperrungen = new HashMap<>();
+    private static final String USER = "Benutzer";
+    private static final String LIFE_SIGN = "Lebenszeichen";
     /*
      * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
      * behalten (30 min)
@@ -42,8 +44,8 @@ public class MetadatenSperrung implements Serializable {
      */
     public void setLocked(int prozessID, String benutzerID) {
         HashMap<String, String> map = new HashMap<>();
-        map.put("Benutzer", benutzerID);
-        map.put("Lebenszeichen", String.valueOf(System.currentTimeMillis()));
+        map.put(USER, benutzerID);
+        map.put(LIFE_SIGN, String.valueOf(System.currentTimeMillis()));
         sperrungen.put(prozessID, map);
     }
 
@@ -57,7 +59,7 @@ public class MetadatenSperrung implements Serializable {
             return false;
         } else {
             /* wenn er in der Hashmap ist, muss die Zeit geprüft werden */
-            long lebenszeichen = Long.parseLong(temp.get("Lebenszeichen"));
+            long lebenszeichen = Long.parseLong(temp.get(LIFE_SIGN));
             return lebenszeichen >= System.currentTimeMillis() - sperrzeit;
         }
     }
@@ -73,7 +75,7 @@ public class MetadatenSperrung implements Serializable {
         HashMap<Integer, HashMap<String, String>> temp = new HashMap<>(sperrungen);
         for (Integer key : temp.keySet()) {
             HashMap<String, String> intern = sperrungen.get(key);
-            if (intern.get("Benutzer").equals(inBenutzerString)) {
+            if (intern.get(USER).equals(inBenutzerString)) {
                 sperrungen.remove(key);
             }
         }
@@ -89,7 +91,7 @@ public class MetadatenSperrung implements Serializable {
          * wenn der Prozess nicht in der Hashpmap ist, gibt es keinen Benutzer
          */
         if (temp != null) {
-            rueckgabe = temp.get("Benutzer");
+            rueckgabe = temp.get(USER);
         }
         return rueckgabe;
     }
@@ -117,7 +119,7 @@ public class MetadatenSperrung implements Serializable {
         if (temp == null) {
             return 0;
         } else {
-            return (System.currentTimeMillis() - Long.parseLong(temp.get("Lebenszeichen"))) / 1000;
+            return (System.currentTimeMillis() - Long.parseLong(temp.get(LIFE_SIGN))) / 1000;
         }
     }
 }

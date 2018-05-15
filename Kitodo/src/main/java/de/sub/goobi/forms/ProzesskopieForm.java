@@ -93,11 +93,11 @@ import org.primefaces.context.RequestContext;
 public class ProzesskopieForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProzesskopieForm.class);
     private static final long serialVersionUID = -4512865679353743L;
-    private static final String CREATE_NEW_PROCESS = "createNewProcess";
-    private static final String ERROR_READ = "errorReading";
-    private static final String ITEM_LIST = CREATE_NEW_PROCESS + ".itemlist";
-    private static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
-    private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
+    protected static final String CREATE_NEW_PROCESS = "createNewProcess";
+    protected static final String ERROR_READ = "errorReading";
+    protected static final String ITEM_LIST = CREATE_NEW_PROCESS + ".itemlist";
+    protected static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
+    protected static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private int activeTabId = 0;
@@ -330,7 +330,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             cp = new ConfigProjects(this.template.getProject().getTitle());
         } catch (IOException e) {
-            Helper.setErrorMessage("IOException", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
