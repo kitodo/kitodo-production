@@ -155,7 +155,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     @Override
     public void run() {
         TaskManager taskManager = TaskManager.singleton();
-        if (taskManager.taskList.size() == 0) {
+        if (taskManager.taskList.isEmpty()) {
             return;
         }
 

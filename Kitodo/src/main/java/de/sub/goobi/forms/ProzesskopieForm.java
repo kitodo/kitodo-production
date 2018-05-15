@@ -293,7 +293,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
-            if (this.template.getTasks().size() == 0) {
+            if (this.template.getTasks().isEmpty()) {
                 Helper.setFehlerMeldung("noStepsInWorkflow");
             }
             for (Task s : this.template.getTasks()) {
@@ -713,7 +713,7 @@ public class ProzesskopieForm implements Serializable {
          * Prüfung der standard-Eingaben, die angegeben werden müssen
          */
         /* keine Collektion ausgewählt */
-        if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
+        if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
                     + Helper.getTranslation("ProcessCreationErrorNoCollection"));

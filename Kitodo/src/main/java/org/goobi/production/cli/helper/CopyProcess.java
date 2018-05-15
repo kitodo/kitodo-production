@@ -387,7 +387,7 @@ public class CopyProcess extends ProzesskopieForm {
          * Prüfung der standard-Eingaben, die angegeben werden müssen
          */
         /* keine Collektion ausgewählt */
-        if (this.standardFields.get("collections") && getDigitalCollections().size() == 0) {
+        if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
                     + Helper.getTranslation("ProcessCreationErrorNoCollection"));

@@ -153,7 +153,7 @@ public class MetadataValidationService {
             checkDocStructsOhneSeiten(logicalTop);
         }
 
-        if (this.docStructsOhneSeiten.size() != 0) {
+        if (!this.docStructsOhneSeiten.isEmpty()) {
             for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
                 Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationStructure")
                         + docStructWithoutPages.getDocStructType().getNameByLanguage(metadataLanguage));
@@ -269,7 +269,7 @@ public class MetadataValidationService {
     }
 
     private void checkDocStructsOhneSeiten(DocStructInterface docStruct) {
-        if (docStruct.getAllToReferences().size() == 0 && docStruct.getDocStructType().getAnchorClass() == null) {
+        if (docStruct.getAllToReferences().isEmpty() && docStruct.getDocStructType().getAnchorClass() == null) {
             this.docStructsOhneSeiten.add(docStruct);
         }
         /* alle Kinder des aktuellen DocStructs durchlaufen */
@@ -291,7 +291,7 @@ public class MetadataValidationService {
         /* alle Seiten durchlaufen und prüfen ob References existieren */
         for (DocStructInterface docStruct : boundBook.getAllChildren()) {
             List<ReferenceInterface> refs = docStruct.getAllFromReferences();
-            if (refs.size() == 0) {
+            if (refs.isEmpty()) {
                 result.add(collectLogicalAndPhysicalStructure(docStruct));
             }
         }
@@ -459,7 +459,7 @@ public class MetadataValidationService {
          * schreiben
          */
         List<? extends MetadataInterface> createMetadata = docStruct.getAllMetadataByType(mdt);
-        if (createMetadata == null || createMetadata.size() == 0) {
+        if (createMetadata == null || createMetadata.isEmpty()) {
             try {
                 MetadataInterface createdElement = UghImplementation.INSTANCE.createMetadata(mdt);
                 String value = "";

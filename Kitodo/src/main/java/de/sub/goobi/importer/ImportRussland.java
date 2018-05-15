@@ -111,7 +111,7 @@ public class ImportRussland {
     }
 
     private void analyzeParagraph(List<String> list) throws MetadataTypeNotAllowedException, WrongImportFileException {
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return;
         }
 

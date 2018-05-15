@@ -95,7 +95,7 @@ public class DigitalCollections {
             }
         }
 
-        if (possibleDigitalCollection.size() == 0) {
+        if (possibleDigitalCollection.isEmpty()) {
             possibleDigitalCollection = defaultCollections;
         }
     }

@@ -590,6 +590,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     // jsp files
 
     public boolean isDeleteAble() {
-        return this.processes.size() == 0;
+        return this.processes.isEmpty();
     }
 }

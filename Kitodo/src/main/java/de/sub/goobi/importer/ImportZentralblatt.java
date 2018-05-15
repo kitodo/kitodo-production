@@ -227,7 +227,7 @@ public class ImportZentralblatt {
         // first check if the booklet already exists
         List<DocStructInterface> myList = dsPeriodicalVolume.getAllChildrenByTypeAndMetadataType("PeriodicalIssue",
             "CurrentNo");
-        if (myList != null && myList.size() != 0) {
+        if (myList != null && !myList.isEmpty()) {
             for (DocStructInterface dsIntern : myList) {
                 // logger.debug(dsIntern.getAllMetadataByType(mdt).getFirst());
                 MetadataInterface metadata = dsIntern.getAllMetadataByType(mdt).get(0);
@@ -270,7 +270,7 @@ public class ImportZentralblatt {
             mdt = this.myPrefs.getMetadataTypeByName("TitleDocMain");
             List<? extends MetadataInterface> myList = inStruct.getAllMetadataByType(mdt);
             // if no journal name has been assigned yet, then assign now
-            if (myList.size() == 0) {
+            if (myList.isEmpty()) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
                 // md.setType(mdt);
                 md.setStringValue(right);
@@ -293,7 +293,7 @@ public class ImportZentralblatt {
             List<? extends MetadataInterface> list = inStruct.getAllMetadataByType(mdt);
 
             // if no journal name has been assigned yet, then assign now
-            if (list.size() == 0) {
+            if (list.isEmpty()) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
                 // md.setType(mdt);
                 md.setStringValue(right);
@@ -308,7 +308,7 @@ public class ImportZentralblatt {
             List<? extends MetadataInterface> list = inStruct.getAllMetadataByType(mdt);
 
             // if no band number has been assigned yet, then assign now
-            if (list.size() == 0) {
+            if (list.isEmpty()) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
                 md.setStringValue(right);
                 inStruct.addMetadata(md);

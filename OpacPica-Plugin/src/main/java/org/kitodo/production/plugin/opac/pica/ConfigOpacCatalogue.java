@@ -183,7 +183,7 @@ class ConfigOpacCatalogue {
                                     matcher = Pattern.compile(cocbe.getValue()).matcher(value);
                                     if (cocbe.getMode().equals("matches") && matcher.matches() || matcher.find()) {
                                         prooflist.remove(cocbe);
-                                        if (prooflist.size() == 0 && subfield.equals(elementToChange)) {
+                                        if (prooflist.isEmpty() && subfield.equals(elementToChange)) {
                                             merelyCount = true;
                                         }
                                     }
@@ -197,7 +197,7 @@ class ConfigOpacCatalogue {
                  * mehr enthalten sind, kann der zu ändernde Wert wirklich
                  * geändert werden
                  */
-                if (prooflist.size() == 0) {
+                if (prooflist.isEmpty()) {
                     if (elementToChange == null) {
                         if (tagged == null) {
                             tagged = new Element("field");

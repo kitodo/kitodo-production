@@ -424,7 +424,7 @@ public class Process extends BaseTemplateBean {
      * @return the batches the process is in
      */
     public String getBatchID() {
-        if (this.getBatches().size() == 0) {
+        if (this.getBatches().isEmpty()) {
             return null;
         }
         StringBuilder result = new StringBuilder();

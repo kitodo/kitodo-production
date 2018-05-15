@@ -169,7 +169,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return null;
         }
         List<Task> currentStepsOfBatch;
-        if (batches.size() != 0) {
+        if (!batches.isEmpty()) {
             Integer batchNumber = batches.iterator().next().getId();
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
@@ -177,7 +177,7 @@ public class AktuelleSchritteForm extends BasisForm {
             return schrittDurchBenutzerUebernehmen();
         }
 
-        if (currentStepsOfBatch.size() == 0) {
+        if (currentStepsOfBatch.isEmpty()) {
             return null;
         }
         if (currentStepsOfBatch.size() == 1) {
@@ -241,7 +241,7 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setFehlerMeldung("multipleBatchesAssigned");
             return null;
         }
-        if (batches.size() != 0) {
+        if (!batches.isEmpty()) {
             Integer batchNumber = batches.iterator().next().getId();
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
@@ -357,7 +357,7 @@ public class AktuelleSchritteForm extends BasisForm {
         /*
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen
          */
-        if (fertigListe.size() > 0 && this.nurOffeneSchritte) {
+        if (!fertigListe.isEmpty() && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
             return taskListPath;
         }

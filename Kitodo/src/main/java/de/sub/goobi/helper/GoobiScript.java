@@ -304,7 +304,7 @@ public class GoobiScript {
         try {
             List<Ruleset> rulesets = serviceManager.getRulesetService()
                     .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
-            if (rulesets == null || rulesets.size() == 0) {
+            if (rulesets.isEmpty()) {
                 Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
                 return;
             }

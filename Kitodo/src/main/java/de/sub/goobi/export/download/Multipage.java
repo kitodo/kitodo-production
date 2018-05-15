@@ -58,7 +58,7 @@ public class Multipage {
         List<URI> files = serviceManager.getFileService().getSubUris(Helper.imageNameFilter, path);
 
         // No TIFFs available, so get out
-        if (files.size() == 0) {
+        if (files.isEmpty()) {
             logger.debug("Directory is empty!");
             return;
         }

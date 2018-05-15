@@ -677,7 +677,7 @@ public class Metadaten {
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
-                        || this.digitalDocument.getPhysicalDocStruct().getAllChildren().size() == 0)) {
+                        || this.digitalDocument.getPhysicalDocStruct().getAllChildren().isEmpty())) {
             createPagination();
         }
 
@@ -1383,7 +1383,7 @@ public class Metadaten {
     private void determineSecondPagesStructure(DocStructInterface inStrukturelement, int inZaehler) {
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("logicalPageNumber");
         List<? extends MetadataInterface> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
-        if (listMetadaten == null || listMetadaten.size() == 0) {
+        if (listMetadaten == null || listMetadaten.isEmpty()) {
             return;
         }
         for (MetadataInterface meineSeite : listMetadaten) {
@@ -1399,7 +1399,7 @@ public class Metadaten {
     private int determineThirdPagesStructure(DocStructInterface inStrukturelement) {
         MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
         List<? extends MetadataInterface> listMetadaten = inStrukturelement.getAllMetadataByType(mdt);
-        if (listMetadaten == null || listMetadaten.size() == 0) {
+        if (listMetadaten == null || listMetadaten.isEmpty()) {
             return 0;
         }
         int result = 0;
@@ -2937,7 +2937,7 @@ public class Metadaten {
             MetadataTypeInterface mdt = this.myPrefs.getMetadataTypeByName("physPageNumber");
             for (DocStructInterface page : allPages) {
                 List<? extends MetadataInterface> pageNoMetadata = page.getAllMetadataByType(mdt);
-                if (pageNoMetadata == null || pageNoMetadata.size() == 0) {
+                if (pageNoMetadata == null || pageNoMetadata.isEmpty()) {
                     currentPhysicalOrder++;
                     break;
                 }
@@ -3053,7 +3053,7 @@ public class Metadaten {
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
             for (URI dir : folder) {
-                if (fileService.isDirectory(dir) && fileService.getSubUris(dir).size() > 0) {
+                if (fileService.isDirectory(dir) && !fileService.getSubUris(dir).isEmpty()) {
                     removeFiles(dir, fileToDeletePrefix);
                 }
             }

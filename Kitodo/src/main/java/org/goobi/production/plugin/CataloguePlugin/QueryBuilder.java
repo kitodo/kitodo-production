@@ -84,7 +84,7 @@ public class QueryBuilder {
      * @return complete query
      */
     public static String appendAll(String query, List<String> tokens) {
-        if (tokens.size() == 0) {
+        if (tokens.isEmpty()) {
             return query;
         }
         int capacity = query.length();

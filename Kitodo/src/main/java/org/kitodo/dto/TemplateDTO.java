@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateDTO extends BaseDTO {
@@ -22,7 +23,7 @@ public class TemplateDTO extends BaseDTO {
     private DocketDTO docket;
     private ProjectDTO project;
     private RulesetDTO ruleset;
-    private List<TaskDTO> tasks;
+    private List<TaskDTO> tasks = new ArrayList<>();
     private Integer progressClosed;
     private Integer progressInProcessing;
     private Integer progressOpen;

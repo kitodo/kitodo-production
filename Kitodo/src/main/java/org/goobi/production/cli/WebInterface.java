@@ -63,7 +63,7 @@ public class WebInterface extends HttpServlet {
 
             Map<String, String[]> parameter = req.getParameterMap();
             // command
-            if (parameter.size() == 0) {
+            if (parameter.isEmpty()) {
                 generateAnswer(resp, 400, "Empty request", "no parameters given");
                 return;
             }

@@ -11,6 +11,7 @@
 
 package org.kitodo.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfVolumes;
     private Boolean active = true;
     private ClientDTO client;
-    private List<ProcessDTO> processes;
-    private List<TemplateDTO> templates;
-    private List<UserDTO> users;
+    private List<ProcessDTO> processes = new ArrayList<>();
+    private List<TemplateDTO> templates = new ArrayList<>();
+    private List<UserDTO> users = new ArrayList<>();
 
     /**
      * Get title.
