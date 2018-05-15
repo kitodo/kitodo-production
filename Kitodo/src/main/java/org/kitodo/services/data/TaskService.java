@@ -697,7 +697,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return whether this step’s process is in a batch
      */
     public boolean isBatchSize(Task task) {
-        return task.getProcess().getBatches().size() > 0;
+        return !task.getProcess().getBatches().isEmpty();
     }
 
     /**

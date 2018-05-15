@@ -159,7 +159,7 @@ public class GUIExceptionWrapper extends Exception {
         String emailPart;
 
         // only elaborate email part if
-        if (this.emailAddresses.size() > 0) {
+        if (!this.emailAddresses.isEmpty()) {
             emailPart = this.errEmailMessage.replace("{0}",
                 mailtoLinkHrefMailTo + getAddresses() + mailtoLinkSubject + this.errSubjectLine + mailtoLinkBody
                         + this.errEmailBody + htmlLineFeed + htmlLineFeed + htmlLineFeed + getContextInfo()

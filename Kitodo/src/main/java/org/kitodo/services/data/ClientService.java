@@ -99,7 +99,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
             for (RelatedProperty relatedProperty : relatedProperties) {
                 ProjectDTO project = new ProjectDTO();
                 project.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     project.setTitle(relatedProperty.getValues().get(0));
                 }
                 projects.add(project);

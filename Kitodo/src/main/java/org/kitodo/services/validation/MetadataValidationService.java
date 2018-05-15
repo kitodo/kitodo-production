@@ -105,7 +105,7 @@ public class MetadataValidationService {
 
         DocStructInterface logical = dd.getLogicalDocStruct();
         List<MetadataInterface> allIdentifierMetadata = logical.getAllIdentifierMetadata();
-        if (allIdentifierMetadata != null && allIdentifierMetadata.size() > 0) {
+        if (Objects.nonNull(allIdentifierMetadata) && !allIdentifierMetadata.isEmpty()) {
             MetadataInterface identifierTopStruct = allIdentifierMetadata.get(0);
 
             if (isMetadataValueReplaced(logical, identifierTopStruct, metadataLanguage)) {
@@ -114,7 +114,7 @@ public class MetadataValidationService {
 
             DocStructInterface firstChild = logical.getAllChildren().get(0);
             List<MetadataInterface> allChildIdentifierMetadata = firstChild.getAllIdentifierMetadata();
-            if (allChildIdentifierMetadata != null && allChildIdentifierMetadata.size() > 0) {
+            if (Objects.nonNull(allChildIdentifierMetadata) && !allChildIdentifierMetadata.isEmpty()) {
                 MetadataInterface identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
@@ -255,7 +255,7 @@ public class MetadataValidationService {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(myPrefs, "pathimagefiles");
             List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdt);
-            if (allMetadata != null && allMetadata.size() > 0) {
+            if (Objects.nonNull(allMetadata) && !allMetadata.isEmpty()) {
                 return true;
             } else {
                 Helper.setFehlerMeldung(this.process.getTitle() + ": " + "Can not verify, image path is not set", "");
@@ -391,7 +391,7 @@ public class MetadataValidationService {
              * dieses jetzt (sofern vorhanden) übernehmen
              */
             if (propDoctype != null && propDoctype.equals("firstchild")) {
-                if (docStruct.getAllChildren() != null && docStruct.getAllChildren().size() > 0) {
+                if (Objects.nonNull(docStruct.getAllChildren()) && !docStruct.getAllChildren().isEmpty()) {
                     docStruct = docStruct.getAllChildren().get(0);
                 } else {
                     continue;
@@ -406,7 +406,7 @@ public class MetadataValidationService {
                 /* ein CreatorsAllOrigin soll erzeugt werden */
                 if (propCreateElementFrom != null) {
                     List<MetadataTypeInterface> listOfFromMdts = prepareMetadataTypes(prefs, propCreateElementFrom);
-                    if (listOfFromMdts.size() > 0) {
+                    if (!listOfFromMdts.isEmpty()) {
                         checkCreateElementFrom(listOfFromMdts, docStruct, mdt, language);
                     }
                 } else {
@@ -467,12 +467,12 @@ public class MetadataValidationService {
                 // element
                 for (MetadataTypeInterface metadataType : metadataTypes) {
                     List<PersonInterface> fromElemente = docStruct.getAllPersons();
-                    if (fromElemente != null && fromElemente.size() > 0) {
+                    if (Objects.nonNull(fromElemente) && !fromElemente.isEmpty()) {
                         value = iterateOverPersons(fromElemente, docStruct, language, metadataType);
                     }
                 }
 
-                if (value.length() > 0) {
+                if (!value.isEmpty()) {
                     createdElement.setStringValue(value);
                     docStruct.addMetadata(createdElement);
                 }
@@ -483,7 +483,7 @@ public class MetadataValidationService {
 
         // go through all children
         List<DocStructInterface> children = docStruct.getAllChildren();
-        if (children != null && children.size() > 0) {
+        if (Objects.nonNull(children)) {
             for (DocStructInterface child : children) {
                 checkCreateElementFrom(metadataTypes, child, mdt, language);
             }
@@ -532,9 +532,9 @@ public class MetadataValidationService {
     private void checkStartsEndsWith(List<String> errorList, String propStartsWith, String propEndsWith,
             DocStructInterface myStruct, MetadataTypeInterface mdt, String language) {
         // starts with or ends with
-        List<? extends MetadataInterface> alleMetadaten = myStruct.getAllMetadataByType(mdt);
-        if (alleMetadaten != null && alleMetadaten.size() > 0) {
-            for (MetadataInterface md : alleMetadaten) {
+        List<? extends MetadataInterface> allMetadataByType = myStruct.getAllMetadataByType(mdt);
+        if (Objects.nonNull(allMetadataByType)) {
+            for (MetadataInterface md : allMetadataByType) {
                 /* prüfen, ob es mit korrekten Werten beginnt */
                 if (propStartsWith != null) {
                     boolean isOk = false;

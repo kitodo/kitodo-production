@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -82,12 +83,12 @@ public class MetadatenImagesHelper {
      * delete pages from the end of pyhsicalDocStruct.
      */
     public void createPagination(Process process, URI directory) throws IOException {
-
         DocStructInterface physicalStructure = this.mydocument.getPhysicalDocStruct();
         DocStructInterface logicalStructure = this.mydocument.getLogicalDocStruct();
-        while (logicalStructure.getDocStructType().getAnchorClass() != null && logicalStructure.getAllChildren() != null
-                && logicalStructure.getAllChildren().size() > 0) {
-            logicalStructure = logicalStructure.getAllChildren().get(0);
+        List<DocStructInterface> allChildren = logicalStructure.getAllChildren();
+        while (logicalStructure.getDocStructType().getAnchorClass() != null && Objects.nonNull(allChildren)
+                && !allChildren.isEmpty()) {
+            logicalStructure = allChildren.get(0);
         }
 
         // the physical structure tree is only created if it does not exist yet
@@ -499,23 +500,20 @@ public class MetadatenImagesHelper {
             finalFiles.add(URI.create(newURI));
         }
 
-        if (finalFiles.size() > 0) {
-            List<URI> dataList = new ArrayList<>(finalFiles);
+        List<URI> dataList = new ArrayList<>(finalFiles);
 
-            if (!dataList.isEmpty()) {
-                List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
+        if (!dataList.isEmpty()) {
+            List<URI> orderedFileNameList = prepareOrderedFileNameList(dataList);
 
-                if (orderedFileNameList.size() == dataList.size()) {
-                    return orderedFileNameList;
-                } else {
-                    Collections.sort(dataList, new GoobiImageFileComparator());
-                    return dataList;
-                }
+            if (orderedFileNameList.size() == dataList.size()) {
+                return orderedFileNameList;
             } else {
-                return new ArrayList<>();
+                Collections.sort(dataList, new GoobiImageFileComparator());
+                return dataList;
             }
+        } else {
+            return new ArrayList<>();
         }
-        return new ArrayList<>();
     }
 
     private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
@@ -574,7 +572,7 @@ public class MetadatenImagesHelper {
         /* Verzeichnis einlesen */
         ArrayList<URI> dataList = new ArrayList<>();
         List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
-        if (files.size() > 0) {
+        if (!files.isEmpty()) {
             dataList.addAll(files);
             Collections.sort(dataList, new GoobiImageFileComparator());
         }

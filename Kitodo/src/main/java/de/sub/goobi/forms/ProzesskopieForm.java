@@ -930,7 +930,7 @@ public class ProzesskopieForm implements Serializable {
     private void insertCollections() throws PreferencesException {
         DocStructInterface colStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
         if (Objects.nonNull(colStruct) && Objects.nonNull(colStruct.getAllChildren())
-                && colStruct.getAllChildren().size() > 0) {
+                && !colStruct.getAllChildren().isEmpty()) {
             try {
                 addCollections(colStruct);
                 // falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
@@ -953,7 +953,7 @@ public class ProzesskopieForm implements Serializable {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(this.prozessKopie, "pathimagefiles");
             List<? extends MetadataInterface> allImagePaths = digitalDocument.getPhysicalDocStruct()
                     .getAllMetadataByType(mdt);
-            if (allImagePaths != null && allImagePaths.size() > 0) {
+            if (Objects.nonNull(allImagePaths)) {
                 for (MetadataInterface metadata : allImagePaths) {
                     digitalDocument.getPhysicalDocStruct().getAllMetadata().remove(metadata);
                 }
@@ -1106,10 +1106,8 @@ public class ProzesskopieForm implements Serializable {
                     serviceManager.getRulesetService().getPreferences(process.getRuleset()),
                 "singleDigCollection");
             ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
-            if (myCollections.size() > 0) {
-                for (MetadataInterface md : myCollections) {
-                    colStruct.removeMetadata(md);
-                }
+            for (MetadataInterface md : myCollections) {
+                colStruct.removeMetadata(md);
             }
         } catch (UghHelperException | DocStructHasNoTypeException e) {
             Helper.setErrorMessage(e.getMessage(), logger, e);

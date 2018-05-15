@@ -605,7 +605,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             for (RelatedProperty relatedProperty : relatedProperties) {
                 FilterDTO filter = new FilterDTO();
                 filter.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     filter.setValue(relatedProperty.getValues().get(0));
                 }
                 filters.add(filter);
@@ -623,7 +623,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             for (RelatedProperty relatedProperty : relatedProperties) {
                 ProjectDTO project = new ProjectDTO();
                 project.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     project.setTitle(relatedProperty.getValues().get(0));
                 }
                 project.setTitle(relatedProperty.getValues().get(0));
@@ -643,7 +643,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserGroupDTO userGroup = new UserGroupDTO();
                 userGroup.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     userGroup.setTitle(relatedProperty.getValues().get(0));
                 }
                 userGroups.add(userGroup);

@@ -398,7 +398,7 @@ public class Helper extends HibernateHelper implements Observer {
     public static String getTranslation(String title, List<String> parameterList) {
         String value = getTranslation(title);
 
-        if (value != null && parameterList != null && parameterList.size() > 0) {
+        if (value != null && parameterList != null && !parameterList.isEmpty()) {
             int parameterCount = 0;
             for (String parameter : parameterList) {
                 value = value.replace("{" + parameterCount + "}", parameter);

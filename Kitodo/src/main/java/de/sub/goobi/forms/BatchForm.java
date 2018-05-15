@@ -375,7 +375,7 @@ public class BatchForm extends BasisForm {
      * Create new Batch.
      */
     public void createNewBatch() throws DAOException, DataException {
-        if (selectedProcesses.size() > 0) {
+        if (!selectedProcesses.isEmpty()) {
             Batch batch;
             if (batchTitle != null && batchTitle.trim().length() > 0) {
                 batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);

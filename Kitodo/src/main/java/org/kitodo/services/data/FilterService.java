@@ -876,11 +876,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private Set<Integer> filterValuesAsIntegers(String filter, FilterString filterString) {
         Set<Integer> ids = new HashSet<>();
         List<String> stringIds = getFilterValuesFromFilterString(filter, filterString);
-        if (stringIds.size() > 0) {
-            for (String tempId : stringIds) {
-                Integer id = Integer.parseInt(tempId);
-                ids.add(id);
-            }
+        for (String tempId : stringIds) {
+            Integer id = Integer.parseInt(tempId);
+            ids.add(id);
         }
         return ids;
     }
@@ -897,7 +895,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private Set<String> filterValuesAsStrings(String filter, FilterString filterString) {
         Set<String> ids = new HashSet<>();
         List<String> stringIds = getFilterValuesFromFilterString(filter, filterString);
-        if (stringIds.size() > 0) {
+        if (!stringIds.isEmpty()) {
             ids.addAll(stringIds);
         }
         return ids;

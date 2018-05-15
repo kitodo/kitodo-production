@@ -145,7 +145,7 @@ public class ShellScript {
             for (String line : s.getStdOut()) {
                 logger.error(line);
             }
-            if (s.getStdErr().size() > 0) {
+            if (!s.getStdErr().isEmpty()) {
                 err = ShellScript.ERRORLEVEL_ERROR;
                 for (String line : s.getStdErr()) {
                     logger.error(line);

@@ -67,7 +67,7 @@ public class BatchStepHelper extends BatchHelper {
         for (Task s : steps) {
             this.processNameList.add(s.getProcess().getTitle());
         }
-        if (steps.size() > 0) {
+        if (!steps.isEmpty()) {
             this.currentStep = steps.get(0);
             this.processName = this.currentStep.getProcess().getTitle();
             loadProcessProperties(this.currentStep);

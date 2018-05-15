@@ -313,17 +313,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         List<Integer> missingInIndex = findMissingValues(database, index);
         List<Integer> notNeededInIndex = findMissingValues(index, database);
-
-        if (missingInIndex.size() > 0) {
-            for (Integer missing : missingInIndex) {
-                serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing));
-            }
+        for (Integer missing : missingInIndex) {
+            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing));
         }
 
-        if (notNeededInIndex.size() > 0) {
-            for (Integer notNeeded : notNeededInIndex) {
-                serviceManager.getTaskService().removeFromIndex(notNeeded);
-            }
+        for (Integer notNeeded : notNeededInIndex) {
+            serviceManager.getTaskService().removeFromIndex(notNeeded);
         }
     }
 
@@ -902,7 +897,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 testMe = getImagesTifDirectory(true, processId, processTitle, null);
             }
             return fileService.getSubUris(testMe) != null && fileService.fileExist(testMe)
-                    && fileService.getSubUris(testMe).size() > 0;
+                    && !fileService.getSubUris(testMe).isEmpty();
         } catch (DAOException | IOException e) {
             logger.error(e.getMessage(), e);
             return false;
@@ -2086,19 +2081,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // group paths!
         VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
         List<ProjectFileGroup> fileGroups = project.getProjectFileGroups();
-
-        if (fileGroups != null && fileGroups.size() > 0) {
-            for (ProjectFileGroup pfg : fileGroups) {
-                // check if source files exists
-                if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    URI folder = new File(pfg.getFolder()).toURI();
-                    if (fileService.fileExist(folder)
-                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
-                    }
-                } else {
+        for (ProjectFileGroup pfg : fileGroups) {
+            // check if source files exists
+            if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+                URI folder = new File(pfg.getFolder()).toURI();
+                if (fileService.fileExist(folder) && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
                     mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
                 }
+            } else {
+                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
             }
         }
 
@@ -2185,7 +2176,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         List<URI> dataList = new ArrayList<>();
         List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
-        if (files.size() > 0) {
+        if (!files.isEmpty()) {
             dataList.addAll(files);
             Collections.sort(dataList);
         }

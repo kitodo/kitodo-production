@@ -15,6 +15,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -99,8 +100,7 @@ public class GoobiProcessDAO {
 
             @SuppressWarnings(value = "unchecked")
             List<GoobiProcess> list = criteria.list();
-
-            if ((list != null) && (list.size() > 0)) {
+            if (Objects.nonNull(list) && !list.isEmpty()) {
                 result.addAll(list);
             }
         } catch (HibernateException he) {

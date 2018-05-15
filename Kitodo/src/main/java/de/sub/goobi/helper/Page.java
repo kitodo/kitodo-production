@@ -91,7 +91,7 @@ public class Page<T extends BaseDTO> implements Serializable { // implements Ite
          * Since we retrieved one more than the specified pageSize when the class was
          * constructed, we now trim it down to the pageSize if a next page exists.
          */
-        if (this.results != null && this.results.size() > 0) {
+        if (this.results != null && !this.results.isEmpty()) {
             return hasNextPage() ? this.results.subList(0, this.pageSize) : this.results;
         } else {
             return new ArrayList<>();

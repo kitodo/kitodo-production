@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -282,7 +283,7 @@ public class VariableReplacer {
             /* TopStruct und FirstChild ermitteln */
             DocStructInterface topstruct = this.dd.getLogicalDocStruct();
             DocStructInterface firstchildstruct = null;
-            if (topstruct.getAllChildren() != null && topstruct.getAllChildren().size() > 0) {
+            if (Objects.nonNull(topstruct.getAllChildren()) && !topstruct.getAllChildren().isEmpty()) {
                 firstchildstruct = topstruct.getAllChildren().get(0);
             }
 
@@ -348,7 +349,7 @@ public class VariableReplacer {
      */
     private String getMetadataValue(DocStructInterface inDocstruct, MetadataTypeInterface mdt) {
         List<? extends MetadataInterface> mds = inDocstruct.getAllMetadataByType(mdt);
-        if (mds.size() > 0) {
+        if (!mds.isEmpty()) {
             return mds.get(0).getValue();
         } else {
             return null;

@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -509,7 +510,7 @@ public class Citation {
         StringBuilder result = new StringBuilder();
         switch (style) {
             case MONOGRAPH:
-                if (creators.size() > 0) {
+                if (!creators.isEmpty()) {
                     appendNames(creators, result);
                     appendYear(result);
                     appendTitle(result);
@@ -609,7 +610,7 @@ public class Citation {
                 appendTitle(result);
                 break;
             case INTERNET:
-                if (creators.size() > 0) {
+                if (!creators.isEmpty()) {
                     appendNames(creators, result);
                     appendYear(result);
                     appendTitle(result);
@@ -731,7 +732,7 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendNames(List<String> names, StringBuilder builder) {
-        if (names != null && names.size() > 0) {
+        if (Objects.nonNull(names) && !names.isEmpty()) {
             builder.append(formatName(names.get(0), true));
             for (int i = 1; i < names.size(); i++) {
                 builder.append(" ; ");

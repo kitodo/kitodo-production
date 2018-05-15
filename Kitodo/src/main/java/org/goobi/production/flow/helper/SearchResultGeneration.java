@@ -168,13 +168,11 @@ public class SearchResultGeneration {
             cell7.setCellValue("");
             HSSFCell cell8 = row.createCell(8);
             cell8.setCellValue("");
-            if (p.getProperties().size() > 0) {
-                for (Property property : p.getProperties()) {
-                    if (property.getTitle().equals("AltRefNo")) {
-                        cell7.setCellValue(property.getValue());
-                    } else if (property.getTitle().equals("b-number")) {
-                        cell8.setCellValue(property.getValue());
-                    }
+            for (Property property : p.getProperties()) {
+                if (property.getTitle().equals("AltRefNo")) {
+                    cell7.setCellValue(property.getValue());
+                } else if (property.getTitle().equals("b-number")) {
+                    cell8.setCellValue(property.getValue());
                 }
             }
             rowCounter++;
