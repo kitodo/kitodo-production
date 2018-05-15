@@ -17,11 +17,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
-import org.kitodo.services.ServiceManager;
 
 public class DataEditorService {
 

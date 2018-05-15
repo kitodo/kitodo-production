@@ -25,9 +25,9 @@ public class DataEditor implements DataEditorInterface {
     private MetsKitodoWrapper metsKitodoWrapper;
 
     @Override
-    public void readData(URI xmlFileUri, URI xsltFile) throws IOException {
+    public void readData(URI xmlFileUri, URI xsltFileUri) throws IOException {
         try {
-            this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri, xsltFile);
+            this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri, xsltFileUri);
         } catch (JAXBException  | TransformerException | DatatypeConfigurationException e) {
             // TODO add also message for modul frontend, when it is ready!
             // For now we wrap exceptions in an IOExecption so that we dont need to

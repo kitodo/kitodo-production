@@ -52,7 +52,7 @@ public class VersionFinder {
                 }
             }
         }
-        logger.error("Error at writing version info in header of mets file!");
+        logger.error("Could not read application version info for writing in header of mets file!");
         return "Version info is missing";
     }
 }
