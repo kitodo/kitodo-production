@@ -39,9 +39,6 @@ public class ImportObject {
     private List<Property> workProperties = new ArrayList<>();
     private List<Property> templateProperties = new ArrayList<>();
 
-    public ImportObject() {
-    }
-
     public String getProcessTitle() {
         return this.processTitle;
     }

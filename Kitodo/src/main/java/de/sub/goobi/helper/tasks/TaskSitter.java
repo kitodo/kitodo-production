@@ -80,6 +80,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      */
     @Override
     public void contextInitialized(ServletContextEvent argument) {
+        // nothing is done here
     }
 
     /**

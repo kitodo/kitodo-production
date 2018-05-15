@@ -32,6 +32,7 @@ public class HibernateSessionFilter2 implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) {
+        // nothing is done here
     }
 
     @Override

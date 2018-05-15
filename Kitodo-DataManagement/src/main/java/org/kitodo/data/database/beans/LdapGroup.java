@@ -84,9 +84,6 @@ public class LdapGroup extends BaseBean {
     @JoinColumn(name = "ldapServer_id", foreignKey = @ForeignKey(name = "FK_ldapGroup_ldapServer_id"))
     private LdapServer ldapServer;
 
-    public LdapGroup() {
-    }
-
     public String getTitle() {
         return this.title;
     }

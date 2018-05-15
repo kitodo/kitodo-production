@@ -31,12 +31,8 @@ import javax.servlet.http.HttpSessionListener;
 @WebListener
 public class GoobiVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
-    public GoobiVersionListener() {
-    }
-
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-
         // Retrieve Manifest file as Stream
         ServletContext context = sce.getServletContext();
         InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
@@ -53,26 +49,32 @@ public class GoobiVersionListener implements ServletContextListener, HttpSession
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // nothing is done here
     }
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
+        // nothing is done here
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
+        // nothing is done here
     }
 
     @Override
     public void attributeAdded(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
     @Override
     public void attributeRemoved(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
     @Override
     public void attributeReplaced(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
 
 }

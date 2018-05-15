@@ -42,12 +42,6 @@ public class Import {
     private UploadedFile uploadedFile;
 
     /**
-     * Constructor.
-     */
-    public Import() {
-    }
-
-    /**
      * Start import.
      *
      * @return String
