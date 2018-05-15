@@ -18,6 +18,8 @@ import de.sub.goobi.helper.exceptions.WrongImportFileException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -172,17 +174,20 @@ public class ImportZentralblatt {
 
     private String checkXmlSuitability(String text) {
         int length = text.length();
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = 0; i < length; i++) {
             char c = text.charAt(i);
 
             if (!isValidXMLChar(c)) {
-                result = maskHtmlTags(text.substring(0, i)) + "<span class=\"parsingfehler\">" + c + "</span>";
-                result += maskHtmlTags(text.substring(i + 1, length));
+                result.append(maskHtmlTags(text.substring(0, i)));
+                result.append("<span class=\"parsingfehler\">");
+                result.append(c);
+                result.append("</span>");
+                result.append(maskHtmlTags(text.substring(i + 1, length)));
                 break;
             }
         }
-        return result;
+        return result.toString();
     }
 
     private static boolean isValidXMLChar(char c) {
@@ -273,9 +278,10 @@ public class ImportZentralblatt {
                 // a journal name has already been assigned, check if this is
                 // the same
                 md = myList.get(0);
-                if (!right.equals(md.getValue())) {
-                    throw new WrongImportFileException("Parsingfehler: verschiedene Zeitschriftennamen in der Datei ('"
-                            + md.getValue() + "' & '" + right + "')");
+                String value = md.getValue();
+                if (!right.equals(value)) {
+                    String message = Helper.getTranslation("errorParsingFile", Arrays.asList("Zeitschriftennamen", value, right));
+                    throw new WrongImportFileException(message);
                 }
             }
             return;
@@ -310,9 +316,10 @@ public class ImportZentralblatt {
                 // a band number has already been assigned, check if this is the
                 // same
                 md = list.get(0);
-                if (!right.equals(md.getValue())) {
-                    throw new WrongImportFileException("Parsingfehler: verschiedene Bandangaben in der Datei ('"
-                            + md.getValue() + "' & '" + right + "')");
+                String value = md.getValue();
+                if (!right.equals(value)) {
+                    String message = Helper.getTranslation("errorParsingFile", Arrays.asList("Bandangaben", value, right));
+                    throw new WrongImportFileException(message);
                 }
             }
         }
@@ -437,19 +444,8 @@ public class ImportZentralblatt {
         if (left.equals("AU")) {
             StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
-                PersonInterface p = UghImplementation.INSTANCE
-                        .createPerson(this.myPrefs.getMetadataTypeByName("ZBLAuthor"));
                 String token = tokenizer.nextToken();
-
-                if (!token.contains(",")) {
-                    throw new WrongImportFileException(
-                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + token + "')");
-                }
-
-                p.setLastName(token.substring(0, token.indexOf(',')).trim());
-                p.setFirstName(token.substring(token.indexOf(',') + 1, token.length()).trim());
-                p.setRole("ZBLAuthor");
-                docStruct.addPerson(p);
+                docStruct.addPerson(preparePerson(token, "ZBLAuthor"));
             }
             return;
         }
@@ -458,19 +454,8 @@ public class ImportZentralblatt {
         if (left.equals("NH")) {
             StringTokenizer tokenizer = new StringTokenizer(right, ";");
             while (tokenizer.hasMoreTokens()) {
-                PersonInterface p = UghImplementation.INSTANCE
-                        .createPerson(this.myPrefs.getMetadataTypeByName("AuthorVariation"));
                 String token = tokenizer.nextToken();
-
-                if (!token.contains(",")) {
-                    throw new WrongImportFileException(
-                            "Parsingfehler: Vorname nicht mit Komma vom Nachnamen getrennt ('" + token + "')");
-                }
-
-                p.setLastName(token.substring(0, token.indexOf(',')).trim());
-                p.setFirstName(token.substring(token.indexOf(',') + 1, token.length()).trim());
-                p.setRole("AuthorVariation");
-                docStruct.addPerson(p);
+                docStruct.addPerson(preparePerson(token, "AuthorVariation"));
             }
             return;
         }
@@ -484,6 +469,22 @@ public class ImportZentralblatt {
                     prepareMetadata(this.myPrefs.getMetadataTypeByName("ClassificationMSC"), token.trim()));
             }
         }
+    }
+
+    private PersonInterface preparePerson(String token, String role)
+            throws MetadataTypeNotAllowedException, WrongImportFileException {
+        PersonInterface person = UghImplementation.INSTANCE
+                .createPerson(this.myPrefs.getMetadataTypeByName(role));
+
+        if (!token.contains(",")) {
+            String message = Helper.getTranslation("errorParsingName", Collections.singletonList(token));
+            throw new WrongImportFileException(message);
+        }
+
+        person.setLastName(token.substring(0, token.indexOf(',')).trim());
+        person.setFirstName(token.substring(token.indexOf(',') + 1, token.length()).trim());
+        person.setRole(role);
+        return person;
     }
 
     private MetadataInterface prepareMetadata(MetadataTypeInterface mdt, String right)
