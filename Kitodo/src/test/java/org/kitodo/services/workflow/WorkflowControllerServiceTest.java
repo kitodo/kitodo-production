@@ -11,6 +11,8 @@
 
 package org.kitodo.services.workflow;
 
+import de.sub.goobi.helper.Helper;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Task;
@@ -22,12 +24,12 @@ import static org.junit.Assert.assertEquals;
 
 public class WorkflowControllerServiceTest {
 
-    private static final WorkflowControllerService workflowControllerService = new ServiceManager().getWorkflowControllerService();
+    private static WorkflowControllerService workflowControllerService;
 
     @BeforeClass
     public static void prepareUser() {
-        User user = new User();
-        workflowControllerService.setUser(user);
+        Helper.setCurrentUser(new User());
+        workflowControllerService = new ServiceManager().getWorkflowControllerService();
     }
 
     @Test
