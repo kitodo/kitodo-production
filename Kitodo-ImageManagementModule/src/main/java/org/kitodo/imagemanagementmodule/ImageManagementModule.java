@@ -74,17 +74,20 @@ public class ImageManagementModule implements ImageManagementInterface {
         }
 
         File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT, TMPDIR);
-        temporaryWebImage.deleteOnExit();
-        URI webImageUri = temporaryWebImage.toURI();
-        ImageConverter imageConverter = new ImageConverter(imageFileUri);
-        imageConverter.addResult(webImageUri).resize(percent);
+        try {
+            temporaryWebImage.deleteOnExit();
+            URI webImageUri = temporaryWebImage.toURI();
+            ImageConverter imageConverter = new ImageConverter(imageFileUri);
+            imageConverter.addResult(webImageUri).resize(percent);
 
-        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-        imageConverter.run();
+            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+            imageConverter.run();
 
-        Image result = ImageIO.read(temporaryWebImage);
-        temporaryWebImage.delete();
-        return result;
+            Image result = ImageIO.read(temporaryWebImage);
+            return result;
+        } finally {
+            temporaryWebImage.delete();
+        }
     }
 
     /**
