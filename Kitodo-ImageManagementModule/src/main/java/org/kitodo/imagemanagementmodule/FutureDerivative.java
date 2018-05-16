@@ -139,7 +139,6 @@ class FutureDerivative {
         commandLine.addImage(outputFile);
         commandLine.p_delete();
         commandLine.closeOperation();
-        return;
     }
 
     /**
