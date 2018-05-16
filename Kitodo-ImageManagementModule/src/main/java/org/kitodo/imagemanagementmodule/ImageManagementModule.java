@@ -36,6 +36,11 @@ public class ImageManagementModule implements ImageManagementInterface {
     private static final String RAW_IMAGE_FORMAT = ".bmp";
 
     /**
+     * Temporary directory location.
+     */
+    private static final File TMPDIR = new File(System.getProperty("java.io.tmpdir"));
+
+    /**
      * Image format used internally to create web images, optimized for small
      * size. The format must be supported by both ImageMagick and
      * {@link javax.imageio.ImageIO}.
@@ -68,7 +73,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("percent must be > 0.0, but was " + Double.toString(percent));
         }
 
-        File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT);
+        File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT, TMPDIR);
         temporaryWebImage.deleteOnExit();
         URI webImageUri = temporaryWebImage.toURI();
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
@@ -128,7 +133,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
         }
 
-        File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT);
+        File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT, TMPDIR);
         temporaryImage.deleteOnExit();
         URI imageUri = temporaryImage.toURI();
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
@@ -159,7 +164,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
         }
 
-        File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT);
+        File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT, TMPDIR);
         temporaryWebImage.deleteOnExit();
         URI webImageUri = temporaryWebImage.toURI();
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
