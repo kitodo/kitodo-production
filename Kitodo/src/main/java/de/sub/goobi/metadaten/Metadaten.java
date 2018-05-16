@@ -184,6 +184,7 @@ public class Metadaten {
     private String addMetaDataType;
     private String addMetaDataValue;
     private boolean addServeralStructuralElementsMode = false;
+    private static final String BLOCK_EXPIRED = "SperrungAbgelaufen";
 
     /**
      * Konstruktor.
@@ -207,7 +208,7 @@ public class Metadaten {
     public String changeView() {
         this.modeView = Helper.getRequestParameter("Ansicht");
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
         return "";
     }
@@ -1455,7 +1456,7 @@ public class Metadaten {
         allPagesSelection = null;
         retrieveAllImages();
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
 
         return null;
@@ -1753,7 +1754,7 @@ public class Metadaten {
 
         /* zum Schluss die Sperrung aktualisieren */
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
         return "";
     }
@@ -1795,7 +1796,7 @@ public class Metadaten {
 
         /* zum Schluss die Sperrung aktualisieren */
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
         return "";
     }
@@ -2034,7 +2035,7 @@ public class Metadaten {
      */
     public String takePagesFromChildren() {
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
 
         // go through all the children of the current DocStruct
@@ -2125,7 +2126,7 @@ public class Metadaten {
         determinePagesStructure(this.docStruct);
         this.allPagesSelection = null;
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
         return null;
     }
@@ -2141,7 +2142,7 @@ public class Metadaten {
         determinePagesStructure(this.docStruct);
         this.structSeitenAuswahl = null;
         if (!updateBlocked()) {
-            return "SperrungAbgelaufen";
+            return BLOCK_EXPIRED;
         }
         return null;
     }
@@ -3245,7 +3246,7 @@ public class Metadaten {
         modeAdd = false;
         modeAddPerson = false;
         addMetadataGroupMode = true;
-        return !updateBlocked() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? BLOCK_EXPIRED : "";
     }
 
     /**
@@ -3266,7 +3267,7 @@ public class Metadaten {
         modeAdd = false;
         modeAddPerson = false;
         addMetadataGroupMode = true;
-        return !updateBlocked() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? BLOCK_EXPIRED : "";
     }
 
     /**
@@ -3282,7 +3283,7 @@ public class Metadaten {
         modeAddPerson = false;
         addMetadataGroupMode = false;
         newMetadataGroup = null;
-        return !updateBlocked() ? "SperrungAbgelaufen" : "";
+        return !updateBlocked() ? BLOCK_EXPIRED : "";
     }
 
     /**

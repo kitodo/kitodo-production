@@ -39,20 +39,23 @@ import org.goobi.production.constants.FileNames;
 public class ConfigOpac {
     private static final Logger logger = LogManager.getLogger(ConfigOpac.class);
     private static final String ERROR_READ = "errorReading";
+    private static final String CATALOGUE = "catalogue";
+    private static final String DOCTYPES_TYPE = "doctypes.type";
+    private static final String OPAC_CONFIG = "configurationOPAC";
     private static XMLConfiguration config;
 
     private static XMLConfiguration getConfig() throws FileNotFoundException {
         if (config != null) {
             return config;
         }
-        String configPfad = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
+        String configPath = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
             FileNames.OPAC_CONFIGURATION_FILE);
 
-        if (!new File(configPfad).exists()) {
-            throw new FileNotFoundException("File not found: " + configPfad);
+        if (!new File(configPath).exists()) {
+            throw new FileNotFoundException("File not found: " + configPath);
         }
         try {
-            config = new XMLConfiguration(configPfad);
+            config = new XMLConfiguration(configPath);
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             config = new XMLConfiguration();
@@ -68,34 +71,28 @@ public class ConfigOpac {
      * @return all catalogue titles
      */
     public static List<String> getAllCatalogueTitles() {
-        List<String> myList = new ArrayList<>();
-        try {
-            int countCatalogues = getConfig().getMaxIndex("catalogue");
-            for (int i = 0; i <= countCatalogues; i++) {
-                String title = getConfig().getString("catalogue(" + i + ")[@title]");
-                myList.add(title);
-            }
-        } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
-        }
-        return myList;
+        return getTitles(CATALOGUE);
     }
 
     /**
-     * return all configured Doctype-Titles from Configfile.
+     * Return all configured Doctype-Titles from Config file.
      */
-    private static ArrayList<String> getAllDoctypeTitles() {
-        ArrayList<String> myList = new ArrayList<>();
+    private static List<String> getAllDoctypeTitles() {
+        return getTitles(DOCTYPES_TYPE);
+    }
+
+    private static List<String> getTitles(String label) {
+        List<String> titles = new ArrayList<>();
         try {
-            int countTypes = getConfig().getMaxIndex("doctypes.type");
+            int countTypes = getConfig().getMaxIndex(label);
             for (int i = 0; i <= countTypes; i++) {
-                String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
-                myList.add(title);
+                String title = getConfig().getString(label + "(" + i + ")[@title]");
+                titles.add(title);
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
         }
-        return myList;
+        return titles;
     }
 
     /**
@@ -110,7 +107,7 @@ public class ConfigOpac {
                 myList.add(getDoctypeByName(title));
             }
         } catch (FileNotFoundException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
         }
         return myList;
     }
@@ -120,31 +117,31 @@ public class ConfigOpac {
      */
     @SuppressWarnings("unchecked")
     public static ConfigOpacDoctype getDoctypeByName(String inTitle) throws FileNotFoundException {
-        int countCatalogues = getConfig().getMaxIndex("doctypes.type");
+        int countCatalogues = getConfig().getMaxIndex(DOCTYPES_TYPE);
         for (int i = 0; i <= countCatalogues; i++) {
-            String title = getConfig().getString("doctypes.type(" + i + ")[@title]");
+            String title = getConfig().getString(DOCTYPES_TYPE + "(" + i + ")[@title]");
             if (title.equals(inTitle)) {
                 /* Sprachen erfassen */
                 HashMap<String, String> labels = new HashMap<>();
-                int countLabels = getConfig().getMaxIndex("doctypes.type(" + i + ").label");
+                int countLabels = getConfig().getMaxIndex(DOCTYPES_TYPE + "(" + i + ").label");
                 for (int j = 0; j <= countLabels; j++) {
-                    String language = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")[@language]");
-                    String value = getConfig().getString("doctypes.type(" + i + ").label(" + j + ")");
+                    String language = getConfig().getString(DOCTYPES_TYPE + "(" + i + ").label(" + j + ")[@language]");
+                    String value = getConfig().getString(DOCTYPES_TYPE + "(" + i + ").label(" + j + ")");
                     labels.put(language, value);
                 }
-                String inRulesetType = getConfig().getString("doctypes.type(" + i + ")[@rulesetType]");
-                String inTifHeaderType = getConfig().getString("doctypes.type(" + i + ")[@tifHeaderType]");
-                boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
-                boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
-                boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
+                String inRulesetType = getConfig().getString(DOCTYPES_TYPE + "(" + i + ")[@rulesetType]");
+                String inTifHeaderType = getConfig().getString(DOCTYPES_TYPE + "(" + i + ")[@tifHeaderType]");
+                boolean periodical = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isPeriodical]");
+                boolean multiVolume = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isMultiVolume]");
+                boolean containedWork = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isContainedWork]");
                 boolean newspaper;
                 try {
-                    newspaper = getConfig().getBoolean("doctypes.type(" + i + ")[@isNewspaper]");
+                    newspaper = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isNewspaper]");
                 } catch (NoSuchElementException noParameterIsNewspaper) {
                     newspaper = false;
                 }
                 ArrayList<String> mappings = (ArrayList<String>) getConfig()
-                        .getList("doctypes.type(" + i + ").mapping");
+                        .getList(DOCTYPES_TYPE + "(" + i + ").mapping");
 
                 return new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical, multiVolume,
                         containedWork, newspaper, labels, mappings);
@@ -172,7 +169,7 @@ public class ConfigOpac {
     public static List<String> getRestrictionsForCatalogue(String title) throws FileNotFoundException {
         List<String> result = new LinkedList<>();
         @SuppressWarnings("unchecked")
-        List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt("catalogue");
+        List<HierarchicalConfiguration> catalogues = getConfig().configurationsAt(CATALOGUE);
         for (HierarchicalConfiguration catalogue : catalogues) {
             if (title.equals(catalogue.getString("[@title]"))) {
                 result.addAll(Arrays.asList(catalogue.getStringArray("restriction")));

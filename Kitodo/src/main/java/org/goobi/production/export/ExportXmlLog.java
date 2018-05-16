@@ -360,24 +360,24 @@ public class ExportXmlLog {
 
         List<Element> templateProperties = new ArrayList<>();
         for (Property prop : process.getTemplates()) {
-            Element property = new Element("property", xmlns);
-            property.setAttribute("propertyIdentifier", prop.getTitle());
+            Element property = new Element(PROPERTY, xmlns);
+            property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
             if (Objects.nonNull(prop.getValue())) {
-                property.setAttribute("value", replacer(prop.getValue()));
+                property.setAttribute(VALUE, replacer(prop.getValue()));
             } else {
-                property.setAttribute("value", "");
+                property.setAttribute(VALUE, "");
             }
 
-            Element label = new Element("label", xmlns);
+            Element label = new Element(LABEL, xmlns);
             label.setText(prop.getTitle());
             property.addContent(label);
             templateProperties.add(property);
             if (prop.getTitle().equals("Signatur")) {
-                Element secondProperty = new Element("property", xmlns);
-                secondProperty.setAttribute("propertyIdentifier", prop.getTitle() + "Encoded");
+                Element secondProperty = new Element(PROPERTY, xmlns);
+                secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
                 if (Objects.nonNull(prop.getValue())) {
-                    secondProperty.setAttribute("value", "vorl:" + replacer(prop.getValue()));
-                    Element secondLabel = new Element("label", xmlns);
+                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element(LABEL, xmlns);
                     secondLabel.setText(prop.getTitle());
                     secondProperty.addContent(secondLabel);
                     templateProperties.add(secondProperty);
@@ -385,7 +385,7 @@ public class ExportXmlLog {
             }
         }
         if (!templateProperties.isEmpty()) {
-            Element properties = new Element("properties", xmlns);
+            Element properties = new Element(PROPERTIES, xmlns);
             properties.addContent(templateProperties);
             template.addContent(properties);
         }

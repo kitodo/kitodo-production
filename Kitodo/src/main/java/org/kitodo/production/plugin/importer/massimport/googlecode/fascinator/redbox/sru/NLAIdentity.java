@@ -54,6 +54,9 @@ public class NLAIdentity {
     private String institution;
     private List<Map<String, String>> knownIds;
 
+    private static final String DISPLAY_NAME = "displayName";
+    private static final String INSTITUTION = "institution";
+
     /**
      * <p>
      * Default Constructor. Extract some basic information.
@@ -86,7 +89,7 @@ public class NLAIdentity {
         // top-level name we found)
         firstName = knownIds.get(0).get("firstName");
         surname = knownIds.get(0).get("surname");
-        displayName = knownIds.get(0).get("displayName");
+        displayName = knownIds.get(0).get(DISPLAY_NAME);
         // For institution we want the first one we find that isn't NLA or
         // Libraries Australia
         for (Map<String, String> id : knownIds) {
@@ -94,7 +97,7 @@ public class NLAIdentity {
                     // But we'll settle for those in a pinch
                     || "National Library of Australia Party Infrastructure".equals(institution)
                     || "Libraries Australia".equals(institution)) {
-                institution = id.get("institution");
+                institution = id.get(INSTITUTION);
             }
         }
     }
@@ -112,15 +115,15 @@ public class NLAIdentity {
         List<Map<String, String>> nameList = getNames(nlaNamesNode);
         for (Map<String, String> name : nameList) {
             // Only use the longest top-level name for display purposes
-            String oldDisplayName = idMap.get("displayName");
-            String thisDisplayName = name.get("displayName");
+            String oldDisplayName = idMap.get(DISPLAY_NAME);
+            String thisDisplayName = name.get(DISPLAY_NAME);
             if (oldDisplayName == null
                     || (thisDisplayName != null && thisDisplayName.length() > oldDisplayName.length())) {
                 // Clear any old data
                 idMap.clear();
                 // Store this ID
                 idMap.putAll(name);
-                idMap.put("institution", institutionString);
+                idMap.put(INSTITUTION, institutionString);
             }
         }
         // And add to the list
@@ -148,7 +151,7 @@ public class NLAIdentity {
                         idMap.putAll(name);
                     }
                     // Indicate the institution for each one
-                    idMap.put("institution", institutionString);
+                    idMap.put(INSTITUTION, institutionString);
                     // And add to the list
                     returnList.add(idMap);
                 }
@@ -218,7 +221,7 @@ public class NLAIdentity {
             if (Objects.nonNull(title)) {
                 thisDisplay += " (" + title + ")";
             }
-            nameMap.put("displayName", thisDisplay);
+            nameMap.put(DISPLAY_NAME, thisDisplay);
         }
 
         // Last ditch effort... we couldn't find simple name information
@@ -237,7 +240,7 @@ public class NLAIdentity {
                     thisDisplay += ", " + value;
                 }
             }
-            nameMap.put("displayName", thisDisplay);
+            nameMap.put(DISPLAY_NAME, thisDisplay);
         }
 
         return nameMap;

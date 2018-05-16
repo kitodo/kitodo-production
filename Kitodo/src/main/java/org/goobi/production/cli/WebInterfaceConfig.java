@@ -22,6 +22,8 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 
 public class WebInterfaceConfig {
 
+    private static final String CREDENTIALS = "credentials";
+
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -45,15 +47,15 @@ public class WebInterfaceConfig {
             config.setListDelimiter('&');
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-            int count = config.getMaxIndex("credentials");
+            int count = config.getMaxIndex(CREDENTIALS);
             for (int i = 0; i <= count; i++) {
-                String ip = config.getString("credentials(" + i + ")[@ip]");
-                String password = config.getString("credentials(" + i + ")[@password]");
+                String ip = config.getString(CREDENTIALS + "(" + i + ")[@ip]");
+                String password = config.getString(CREDENTIALS + "(" + i + ")[@password]");
                 if (requestIp.startsWith(ip) && requestPassword.equals(password)) {
-                    int countCommands = config.getMaxIndex("credentials(" + i + ").command");
+                    int countCommands = config.getMaxIndex(CREDENTIALS + "(" + i + ").command");
 
                     for (int j = 0; j <= countCommands; j++) {
-                        allowed.add(config.getString("credentials(" + i + ").command(" + j + ")[@name]"));
+                        allowed.add(config.getString(CREDENTIALS + "(" + i + ").command(" + j + ")[@name]"));
                     }
                 }
             }

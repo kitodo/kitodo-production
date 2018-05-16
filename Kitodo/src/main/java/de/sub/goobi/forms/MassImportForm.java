@@ -86,6 +86,7 @@ public class MassImportForm implements Serializable {
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
+    private static final String OPAC_CONFIG = "configurationOPAC";
 
     /**
      * Constructor.
@@ -486,7 +487,7 @@ public class MassImportForm implements Serializable {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("errorReading", new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage("errorReading", new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
         }
         return allOpacCatalogues;
     }

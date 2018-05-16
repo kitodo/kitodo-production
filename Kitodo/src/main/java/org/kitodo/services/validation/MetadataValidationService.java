@@ -54,6 +54,7 @@ public class MetadataValidationService {
     private Process process;
     private boolean autoSave = false;
     private static final Logger logger = LogManager.getLogger(MetadataValidationService.class);
+    private static final String VALIDATE_METADATA = "validate.metadata";
     private final ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -65,9 +66,6 @@ public class MetadataValidationService {
      */
     public boolean validate(Process process) {
         PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        /*
-         * Fileformat einlesen
-         */
         FileformatInterface gdzfile;
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
@@ -361,7 +359,6 @@ public class MetadataValidationService {
      */
     private List<String> checkConfiguredValidationValues(DocStructInterface docStruct, ArrayList<String> errorList,
             PrefsInterface prefs, String language) {
-
         // open configuration and read the validation details
         ConfigProjects cp;
         try {
@@ -370,15 +367,14 @@ public class MetadataValidationService {
             Helper.setErrorMessage(process.getTitle(), logger, e);
             return errorList;
         }
-        int count = cp.getParamList("validate.metadata").size();
+        int count = cp.getParamList(VALIDATE_METADATA).size();
         for (int i = 0; i < count; i++) {
-
             // evaluate attributes
-            String propMetadatatype = cp.getParamString("validate.metadata(" + i + ")[@metadata]");
-            String propDoctype = cp.getParamString("validate.metadata(" + i + ")[@docstruct]");
-            String propStartswith = cp.getParamString("validate.metadata(" + i + ")[@startswith]");
-            String propEndswith = cp.getParamString("validate.metadata(" + i + ")[@endswith]");
-            String propCreateElementFrom = cp.getParamString("validate.metadata(" + i + ")[@createelementfrom]");
+            String propMetadatatype = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@metadata]");
+            String propDoctype = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@docstruct]");
+            String propStartswith = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@startswith]");
+            String propEndswith = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@endswith]");
+            String propCreateElementFrom = cp.getParamString(VALIDATE_METADATA + "(" + i + ")[@createelementfrom]");
             MetadataTypeInterface mdt = null;
             try {
                 mdt = UghHelper.getMetadataType(prefs, propMetadatatype);
@@ -452,7 +448,6 @@ public class MetadataValidationService {
      */
     private void checkCreateElementFrom(List<MetadataTypeInterface> metadataTypes, DocStructInterface docStruct,
             MetadataTypeInterface mdt, String language) {
-
         /*
          * existiert das zu erzeugende Metadatum schon, dann überspringen,
          * ansonsten alle Daten zusammensammeln und in das neue Element

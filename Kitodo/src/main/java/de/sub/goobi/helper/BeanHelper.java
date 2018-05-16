@@ -122,11 +122,7 @@ public class BeanHelper {
                 }
             } else {
                 for (String workflowCondition : workflowConditions) {
-                    if (taskWorkflowCondition.contains("default")) {
-                        Task task = new Task(templateTask);
-                        task.setProcess(processCopy);
-                        tasks.add(task);
-                    } else if (taskWorkflowCondition.contains(workflowCondition)) {
+                    if (taskWorkflowCondition.contains("default") || taskWorkflowCondition.contains(workflowCondition)) {
                         Task task = new Task(templateTask);
                         task.setProcess(processCopy);
                         tasks.add(task);
