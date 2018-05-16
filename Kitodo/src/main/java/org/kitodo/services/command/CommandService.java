@@ -11,8 +11,6 @@
 
 package org.kitodo.services.command;
 
-import de.sub.goobi.config.ConfigCore;
-
 import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -46,8 +44,7 @@ public class CommandService {
         if (script == null) {
             return null;
         }
-        KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class,
-                ConfigCore.getParameter("moduleFolder"));
+        KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
         CommandInterface command = serviceLoader.loadModule();
 
         CommandResult commandResult = command.runCommand(generateId(), script);
@@ -105,8 +102,7 @@ public class CommandService {
      */
     public void runCommandAsync(String script) {
         if (script != null) {
-            KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class,
-                    ConfigCore.getParameter("moduleFolder"));
+            KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
             CommandInterface commandInterface = serviceLoader.loadModule();
 
             Flowable<CommandResult> source = Flowable.fromCallable(() -> {
