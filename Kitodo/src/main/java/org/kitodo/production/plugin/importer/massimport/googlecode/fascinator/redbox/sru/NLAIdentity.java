@@ -211,11 +211,11 @@ public class NLAIdentity {
         if (Objects.nonNull(thisSurname)) {
             thisDisplay = thisSurname;
             nameMap.put("surname", thisSurname);
-            if (thisFirstName != null) {
+            if (Objects.nonNull(thisFirstName)) {
                 thisDisplay += ", " + thisFirstName;
                 nameMap.put("firstName", thisFirstName);
             }
-            if (title != null) {
+            if (Objects.nonNull(title)) {
                 thisDisplay += " (" + title + ")";
             }
             nameMap.put("displayName", thisDisplay);
@@ -248,7 +248,7 @@ public class NLAIdentity {
         String value = part.getText();
         String type = part.attributeValue("localType");
         // Build a display value for this part
-        if (type != null) {
+        if (Objects.nonNull(type)) {
             value += " (" + type + ")";
         }
         return value;

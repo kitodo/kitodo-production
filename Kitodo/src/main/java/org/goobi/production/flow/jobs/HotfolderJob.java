@@ -234,7 +234,7 @@ public class HotfolderJob extends AbstractGoobiJob {
         form.prepare(template.getId());
         form.getProzessKopie().setTitle(processTitle.substring(0, processTitle.length() - 4));
         if (form.testTitle()) {
-            if (digitalCollection == null) {
+            if (Objects.isNull(digitalCollection)) {
                 List<String> collections = new ArrayList<>();
                 form.setDigitalCollections(collections);
             } else {

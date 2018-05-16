@@ -880,13 +880,13 @@ public class ProzesskopieForm implements Serializable {
                 PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
-                if (metadata != null) {
+                if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
                 // if the topstruct and the first child should be given the value
-                if (tempChild != null) {
+                if (Objects.nonNull(tempChild)) {
                     metadata = UghHelper.getMetadata(tempChild, mdt);
-                    if (metadata != null) {
+                    if (Objects.nonNull(metadata)) {
                         metadata.setStringValue(field.getValue());
                     }
                 }
@@ -1040,7 +1040,7 @@ public class ProzesskopieForm implements Serializable {
             String enrichable = availableHigherMetadata.getKey();
             boolean addable = false;
             List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
-            if (addableTypesNotNull == null) {
+            if (Objects.isNull(addableTypesNotNull)) {
                 addableTypesNotNull = Collections.emptyList();
             }
             for (MetadataTypeInterface addableMetadata : addableTypesNotNull) {
@@ -1055,7 +1055,7 @@ public class ProzesskopieForm implements Serializable {
             there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
                     .entrySet()) {
                 List<MetadataInterface> amNotNull = enricher.getAllMetadata();
-                if (amNotNull == null) {
+                if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();
                 }
                 for (MetadataInterface existentMetadata : amNotNull) {

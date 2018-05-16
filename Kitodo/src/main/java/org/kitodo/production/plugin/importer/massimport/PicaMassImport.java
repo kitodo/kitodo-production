@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
@@ -487,13 +488,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         for (int j = 0; j <= sheet.getLastRowNum(); j++) {
             // loop over all cells
             XSSFRow row = sheet.getRow(j);
-            if (row != null) {
+            if (Objects.nonNull(row)) {
                 for (int i = 0; i < row.getLastCellNum(); i++) {
                     XSSFCell cell = row.getCell(i);
                     // changing all cell types to String
                     cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                     Record record = changeCellTypeToString(cell, i, j);
-                    if (record != null) {
+                    if (Objects.nonNull(record)) {
                         records.add(record);
                     }
                 }
@@ -512,14 +513,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         for (int j = 0; j <= sheet.getLastRowNum(); j++) {
             // loop over all cells
             HSSFRow row = sheet.getRow(j);
-            if (row != null) {
+            if (Objects.nonNull(row)) {
                 for (int i = 0; i < row.getLastCellNum(); i++) {
                     HSSFCell cell = row.getCell(i);
                     // changing all cell types to String
-                    if (cell != null) {
+                    if (Objects.nonNull(cell)) {
                         cell.setCellType(HSSFCell.CELL_TYPE_STRING);
                         Record record = changeCellTypeToString(cell, i, j);
-                        if (record != null) {
+                        if (Objects.nonNull(record)) {
                             records.add(record);
                         }
                     }
