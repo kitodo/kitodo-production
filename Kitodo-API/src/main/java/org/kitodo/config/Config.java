@@ -25,13 +25,6 @@ public class Config {
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private Config() {
-
-    }
-
-    /**
      * Get Kitodo data directory.
      *
      * @return String
@@ -64,15 +57,6 @@ public class Config {
     }
 
     /**
-     * Request boolean parameter from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static boolean getBooleanParameter(String parameter, boolean defaultIfNull) {
-        return getConfig().getBoolean(parameter, defaultIfNull);
-    }
-
-    /**
      * Request selected parameter with given default value from configuration.
      *
      * @return Parameter as String
@@ -86,11 +70,51 @@ public class Config {
     }
 
     /**
+     * Request boolean parameter from configuration, default if missing: false.
+     *
+     * @return Parameter as String
+     */
+    public static boolean getBooleanParameter(String inParameter) {
+        return getBooleanParameter(inParameter, false);
+    }
+
+    /**
+     * Request boolean parameter from configuration.
+     *
+     * @return Parameter as String
+     */
+    public static boolean getBooleanParameter(String parameter, boolean defaultIfNull) {
+        return getConfig().getBoolean(parameter, defaultIfNull);
+    }
+
+    /**
+     * Request int-parameter from Configuration.
+     *
+     * @return Parameter as Int
+     */
+    public static int getIntParameter(String inParameter) {
+        return getIntParameter(inParameter, 0);
+    }
+
+    /**
+     * Request int-parameter from Configuration with default-value.
+     *
+     * @return Parameter as Int
+     */
+    public static int getIntParameter(String inParameter, int inDefault) {
+        try {
+            return getConfig().getInt(inParameter, inDefault);
+        } catch (RuntimeException e) {
+            return 0;
+        }
+    }
+
+    /**
      * Gets the configuration.
      *
      * @return the PropertyConfiguration
      */
-    private static PropertiesConfiguration getConfig() {
+    public static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (Config.class) {
                 PropertiesConfiguration initialized = config;

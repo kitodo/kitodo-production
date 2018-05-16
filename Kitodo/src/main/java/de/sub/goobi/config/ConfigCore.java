@@ -25,17 +25,22 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
-import org.kitodo.config.ConfigMain;
+import org.kitodo.config.Config;
 import org.kitodo.services.ServiceManager;
 
-public class ConfigCore extends ConfigMain {
+public class ConfigCore extends Config {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);
     private static URI imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
-    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
-    private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
     private static final String DIAGRAM_DIR = "diagramsFolder";
     public static final String IMAGES_TEMP = "/pages/imagesTemp/";
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ConfigCore() {
+
+    }
 
     /**
      * Return the absolute path for the temporary images directory. Method
@@ -61,7 +66,7 @@ public class ConfigCore extends ConfigMain {
         return uri;
     }
 
-    public static void setImagesPath(URI path) {
+    static void setImagesPath(URI path) {
         imagesPath = path;
     }
 
@@ -91,24 +96,6 @@ public class ConfigCore extends ConfigMain {
      */
     public static String[] getStringArrayParameter(String inParameter) {
         return getConfig().getStringArray(inParameter);
-    }
-
-    /**
-     * Get Kitodo data directory.
-     *
-     * @return String
-     */
-    public static String getKitodoDataDirectory() {
-        return getParameter(METADATA_DIRECTORY);
-    }
-
-    /**
-     * Get Kitodo config directory.
-     *
-     * @return String
-     */
-    public static String getKitodoConfigDirectory() {
-        return getParameter(CONFIG_DIR);
     }
 
     /**

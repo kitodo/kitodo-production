@@ -23,11 +23,18 @@ public class ConfigMain {
     private static final String CONFIG_FILE = "kitodo_config.properties";
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ConfigMain() {
+
+    }
+
+    /**
      * Get properties from configuration file.
      *
      * @return PropertiesConfiguration object
      */
-    public static PropertiesConfiguration getConfig() {
+    private static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (ConfigMain.class) {
                 PropertiesConfiguration initialized = config;
@@ -47,20 +54,6 @@ public class ConfigMain {
             }
         }
         return config;
-    }
-
-    /**
-     * Request selected parameter from configuration.
-     *
-     * @return Parameter as String
-     */
-    public static String getParameter(String inParameter) {
-        try {
-            return getConfig().getString(inParameter);
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage(), e);
-            return "- keine Konfiguration gefunden -";
-        }
     }
 
     /**
@@ -92,15 +85,6 @@ public class ConfigMain {
      */
     public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
         return getConfig().getBoolean(inParameter, inDefault);
-    }
-
-    /**
-     * Request int-parameter from Configuration.
-     *
-     * @return Parameter as Int
-     */
-    public static int getIntParameter(String inParameter) {
-        return getIntParameter(inParameter, 0);
     }
 
     /**
