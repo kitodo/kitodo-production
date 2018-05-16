@@ -13,6 +13,7 @@ package org.goobi.production.model.bibliography.course;
 
 import de.sub.goobi.helper.XMLUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -550,7 +551,7 @@ public class Course extends ArrayList<Block> {
      *
      * @return XML as String
      */
-    public Document toXML() {
+    public Document toXML() throws IOException {
         Document result = XMLUtils.newDocument();
         Element courseNode = result.createElement(ELEMENT_COURSE);
 

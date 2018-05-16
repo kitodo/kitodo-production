@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.jms.JMSException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
@@ -81,8 +83,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     }
 
     @Override
-    protected void process(MapMessageObjectReader args) throws Exception {
-
+    protected void process(MapMessageObjectReader args) throws IOException, JMSException, PreferencesException,
+            ReadException, WriteException {
         Set<String> collections = args.getMandatorySetOfString("collections");
         String id = args.getMandatoryString("id");
         String template = args.getMandatoryString("template");

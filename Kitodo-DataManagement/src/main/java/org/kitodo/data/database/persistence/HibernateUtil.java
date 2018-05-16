@@ -75,7 +75,7 @@ public class HibernateUtil {
                 sessionFactory = metadata.getSessionFactoryBuilder().build();
             } catch (RuntimeException e) {
                 shutdown();
-                throw new RuntimeException(e.getMessage(), e);
+                throw new HibernateException(e.getMessage(), e);
             }
         }
         return sessionFactory;

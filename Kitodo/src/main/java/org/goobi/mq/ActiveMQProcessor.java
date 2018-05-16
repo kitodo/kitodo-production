@@ -14,13 +14,21 @@ package org.goobi.mq;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.enums.ReportLevel;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
+
+import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.api.ugh.exceptions.ReadException;
+import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 
 /**
  * The class ActiveMQProcessor offers general services, such as making the
@@ -45,7 +53,8 @@ public abstract class ActiveMQProcessor implements MessageListener {
      *            A MapMessage which can be processor-specific except that it
      *            requires to have a field “id”.
      */
-    protected abstract void process(MapMessageObjectReader ticket) throws Exception;
+    protected abstract void process(MapMessageObjectReader ticket)
+            throws DAOException, DataException, IOException, JMSException, PreferencesException, ReadException, WriteException;
 
     /**
      * Instantiating the class ActiveMQProcessor always requires to pass the
