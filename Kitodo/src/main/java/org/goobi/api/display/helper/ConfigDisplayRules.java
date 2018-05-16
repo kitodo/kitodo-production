@@ -23,26 +23,27 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
+import org.goobi.production.constants.FileNames;
 
 public final class ConfigDisplayRules {
 
     private static ConfigDisplayRules instance = new ConfigDisplayRules();
     private static XMLConfiguration config;
     private final HashMap<String, HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>>> allValues = new HashMap<>();
-    private static final String ANOTHER_SELECT = "anotherSelect";
     private static final String CONTEXT = "context";
     private static final String INPUT = "input";
     private static final String READ_ONLY = "readonly";
     private static final String RULESET = "ruleSet";
     private static final String RULESET_CONTEXT = RULESET + "." + CONTEXT;
     private static final String SELECT = "select";
+    private static final String SELECT_ONE = "select1";
     private static final String TEXTAREA = "textarea";
 
     /**
      * Reads given xml file into XMLConfiguration.
      */
     private ConfigDisplayRules() {
-        String configPath = ConfigCore.getKitodoConfigDirectory() + "kitodo_metadataDisplayRules.xml";
+        String configPath = ConfigCore.getKitodoConfigDirectory() + FileNames.METADATA_DISPLAY_RULES_FILE;
         try {
             config = new XMLConfiguration(configPath);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
@@ -79,7 +80,7 @@ public final class ConfigDisplayRules {
                             .getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ")[@projectName]");
                     String bind = config.getString(RULESET + "(" + i + ")." + CONTEXT + "(" + j + ").bind");
 
-                    itemsByType.put(ANOTHER_SELECT, getAnotherSelectItems(i, j, projectName, bind));
+                    itemsByType.put(SELECT_ONE, getSelectOneItems(i, j, projectName, bind));
                     itemsByType.put(SELECT, getSelectItems(i, j, projectName, bind));
                     itemsByType.put(INPUT, getInputItems(i, j, projectName, bind));
                     itemsByType.put(TEXTAREA, getTextAreaItems(i, j, projectName, bind));
@@ -96,17 +97,17 @@ public final class ConfigDisplayRules {
         }
     }
 
-    private HashMap<String, ArrayList<Item>> getAnotherSelectItems(int i, int j, String projectName, String bind) {
-        int countAnotherSelect = getAmountOfElements(i, j, ANOTHER_SELECT);
-        HashMap<String, ArrayList<Item>> anotherSelect = new HashMap<>();
+    private HashMap<String, ArrayList<Item>> getSelectOneItems(int i, int j, String projectName, String bind) {
+        int countAnotherSelect = getAmountOfElements(i, j, SELECT_ONE);
+        HashMap<String, ArrayList<Item>> selectOne = new HashMap<>();
 
         for (int k = 0; k <= countAnotherSelect; k++) {
-            String elementName = getElementName(i, j, k, ANOTHER_SELECT);
+            String elementName = getElementName(i, j, k, SELECT_ONE);
             ArrayList<Item> items = getSelectOneByElementName(projectName, bind, elementName);
-            anotherSelect.put(elementName, items);
+            selectOne.put(elementName, items);
         }
 
-        return anotherSelect;
+        return selectOne;
     }
 
     private HashMap<String, ArrayList<Item>> getSelectItems(int i, int j, String projectName, String bind) {
@@ -180,7 +181,7 @@ public final class ConfigDisplayRules {
      * @return ArrayList with all items and its values of given select1 element.
      */
     private ArrayList<Item> getSelectOneByElementName(String project, String bind, String elementName) {
-        return getSelectByElementName(project, bind, elementName, "select1");
+        return getSelectByElementName(project, bind, elementName, SELECT_ONE);
     }
 
     /**
