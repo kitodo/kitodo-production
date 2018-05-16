@@ -14,11 +14,11 @@ package org.kitodo.imagemanagementmodule;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 
 import javax.imageio.ImageIO;
 
+import org.im4java.core.IM4JavaException;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 
@@ -54,27 +54,25 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      double)
      */
     @Override
-    public Image getScaledWebImage(URI imageFileUri, double percent) {
+    public Image getScaledWebImage(URI imageFileUri, double percent)
+            throws IOException, InterruptedException, IM4JavaException {
+
         assert new File(imageFileUri).exists();
         assert !Double.isNaN(percent);
         assert percent > 0.0;
 
-        try {
-            File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT);
-            temporaryWebImage.deleteOnExit();
-            URI webImageUri = temporaryWebImage.toURI();
-            ImageConverter imageConverter = new ImageConverter(imageFileUri);
-            imageConverter.addResult(webImageUri).resize(percent);
+        File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT);
+        temporaryWebImage.deleteOnExit();
+        URI webImageUri = temporaryWebImage.toURI();
+        ImageConverter imageConverter = new ImageConverter(imageFileUri);
+        imageConverter.addResult(webImageUri).resize(percent);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-            imageConverter.run();
+        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+        imageConverter.run();
 
-            Image result = ImageIO.read(temporaryWebImage);
-            temporaryWebImage.delete();
-            return result;
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        Image result = ImageIO.read(temporaryWebImage);
+        temporaryWebImage.delete();
+        return result;
     }
 
     /**
@@ -86,7 +84,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      */
     @Override
     public boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri,
-            ImageFileFormat resultFileFormat) {
+            ImageFileFormat resultFileFormat) throws IOException, InterruptedException, IM4JavaException {
 
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
         imageConverter.addResult(resultFileUri, resultFileFormat).resize(percent);
@@ -102,25 +100,21 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      int)
      */
     @Override
-    public Image changeDpi(URI imagefileUri, int dpi) {
+    public Image changeDpi(URI imagefileUri, int dpi) throws IOException, InterruptedException, IM4JavaException {
         assert new File(imagefileUri).exists();
 
-        try {
-            File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT);
-            temporaryImage.deleteOnExit();
-            URI imageUri = temporaryImage.toURI();
-            ImageConverter imageConverter = new ImageConverter(imagefileUri);
-            imageConverter.addResult(imageUri).setDpi(dpi);
+        File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT);
+        temporaryImage.deleteOnExit();
+        URI imageUri = temporaryImage.toURI();
+        ImageConverter imageConverter = new ImageConverter(imagefileUri);
+        imageConverter.addResult(imageUri).setDpi(dpi);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-            imageConverter.run();
+        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+        imageConverter.run();
 
-            Image result = ImageIO.read(temporaryImage);
-            temporaryImage.delete();
-            return result;
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        Image result = ImageIO.read(temporaryImage);
+        temporaryImage.delete();
+        return result;
     }
 
     /**
@@ -130,25 +124,22 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      int)
      */
     @Override
-    public Image getSizedWebImage(URI imageFileUri, int pixelWidth) {
+    public Image getSizedWebImage(URI imageFileUri, int pixelWidth)
+            throws IOException, InterruptedException, IM4JavaException {
         assert new File(imageFileUri).exists();
         assert pixelWidth > 0;
 
-        try {
-            File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT);
-            temporaryWebImage.deleteOnExit();
-            URI webImageUri = temporaryWebImage.toURI();
-            ImageConverter imageConverter = new ImageConverter(imageFileUri);
-            imageConverter.addResult(webImageUri).resize(pixelWidth);
+        File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT);
+        temporaryWebImage.deleteOnExit();
+        URI webImageUri = temporaryWebImage.toURI();
+        ImageConverter imageConverter = new ImageConverter(imageFileUri);
+        imageConverter.addResult(webImageUri).resize(pixelWidth);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-            imageConverter.run();
+        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+        imageConverter.run();
 
-            Image result = ImageIO.read(temporaryWebImage);
-            temporaryWebImage.delete();
-            return result;
-        } catch (IOException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        Image result = ImageIO.read(temporaryWebImage);
+        temporaryWebImage.delete();
+        return result;
     }
 }

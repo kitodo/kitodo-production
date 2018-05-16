@@ -17,15 +17,18 @@ import java.net.URI;
 public interface ImageManagementInterface {
 
     /**
-     * Scales an image at a given path and returns it.
+     * Changes the dpi of an image at a given uri.
      *
-     * @param imageFileUri
-     *            The uri to the image which should be scaled.
-     * @param percent
-     *            The percentage for scaling.
-     * @return The scaled image.
+     * @param imagefileUri
+     *            The uri of the image.
+     * @param dpi
+     *            the new dpi.
+     * @return the image with the new dpi.
+     * @throws Exception
+     *             if the plug-in is configured incorrectly, the image is
+     *             missing or corrupted, etc.
      */
-    Image getScaledWebImage(URI imageFileUri, double percent);
+    Image changeDpi(URI imagefileUri, int dpi) throws Exception;
 
     /**
      * Creates a derivative for an image at a given path.
@@ -39,29 +42,39 @@ public interface ImageManagementInterface {
      * @param resultFileFormat
      *            The formate for the derivative.
      * @return true, if creation was successful, false otherwise.
+     * @throws Exception
+     *             if the plug-in is configured incorrectly, the image is
+     *             missing or corrupted, etc.
      */
-    boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri, ImageFileFormat resultFileFormat);
+    boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri, ImageFileFormat resultFileFormat)
+            throws Exception;
 
     /**
-     * Changes the dpi of an image at a given uri.
-     * 
-     * @param imagefileUri
-     *            The uri of the image.
-     * @param dpi
-     *            the new dpi.
-     * @return the image with the new dpi.
+     * Scales an image at a given path and returns it.
+     *
+     * @param imageFileUri
+     *            The uri to the image which should be scaled.
+     * @param percent
+     *            The percentage for scaling.
+     * @return The scaled image.
+     * @throws Exception
+     *             if the plug-in is configured incorrectly, the image is
+     *             missing or corrupted, etc.
      */
-    Image changeDpi(URI imagefileUri, int dpi);
+    Image getScaledWebImage(URI imageFileUri, double percent) throws Exception;
 
     /**
      * changes the size (in pixel) of the image.
-     * 
+     *
      * @param imageFileUri
      *            The uri of the image to size.
      * @param pixelWidth
      *            The new pixelWidth.
      * @return The new sized image
+     * @throws Exception
+     *             if the plug-in is configured incorrectly, the image is
+     *             missing or corrupted, etc.
      */
-    Image getSizedWebImage(URI imageFileUri, int pixelWidth);
+    Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws Exception;
 
 }

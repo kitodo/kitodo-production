@@ -13,7 +13,6 @@ package org.kitodo.imagemanagementmodule;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,7 +30,7 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
  * images with different properties. This is done in one single ImageMagick
  * call, reading and decoding the source image into memory only once.
  */
-class ImageConverter implements Runnable {
+class ImageConverter {
 
     /**
      * ImageMagick file type prefix to request no file being written.
@@ -139,24 +138,19 @@ class ImageConverter implements Runnable {
     /**
      * Performs the conversion by calling ImageMagick.
      */
-    @Override
-    public void run() {
-        try {
-            IMOperation commandLine = new IMOperation();
-            commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MEMORY, memoryLimit));
-            commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MAP, memoryLimit));
-            commandLine.addRawArgs(Arrays.asList(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH));
-            commandLine.addImage(source);
-            results.forEach(result -> result.addToCommandLine(commandLine));
-            commandLine.addImage(FORMAT_OFF);
-            ConvertCmd convertCmd = new ConvertCmd();
-            if (SystemUtils.IS_OS_WINDOWS) {
-                convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
-            }
-            convertCmd.run(commandLine);
-        } catch (IOException | InterruptedException | IM4JavaException e) {
-            throw new UndeclaredThrowableException(e);
+    public void run() throws IOException, InterruptedException, IM4JavaException {
+        IMOperation commandLine = new IMOperation();
+        commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MEMORY, memoryLimit));
+        commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MAP, memoryLimit));
+        commandLine.addRawArgs(Arrays.asList(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH));
+        commandLine.addImage(source);
+        results.forEach(result -> result.addToCommandLine(commandLine));
+        commandLine.addImage(FORMAT_OFF);
+        ConvertCmd convertCmd = new ConvertCmd();
+        if (SystemUtils.IS_OS_WINDOWS) {
+            convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
         }
+        convertCmd.run(commandLine);
     }
 
     /**

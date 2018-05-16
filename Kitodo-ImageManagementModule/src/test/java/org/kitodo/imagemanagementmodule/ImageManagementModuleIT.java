@@ -25,14 +25,11 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Info;
-import org.im4java.core.InfoException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
-import org.kitodo.imagemanagementmodule.ImageManagementModule;
-import org.kitodo.imagemanagementmodule.ImageConverter;
 
 /**
  * Tests the Almighty Content Module.
@@ -78,7 +75,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testGetScaledWebImage() throws InfoException {
+    public void testGetScaledWebImage() throws Exception {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getScaledWebImage(new File(_00000001_TIF).toURI(), 0.3);
@@ -87,7 +84,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testCreateDerivative() throws InfoException {
+    public void testCreateDerivative() throws Exception {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
         ImageManagementInterface module = new ImageManagementModule();
@@ -100,7 +97,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testChangeDpi() throws InfoException {
+    public void testChangeDpi() throws Exception {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image image = module.changeDpi(new File(_00000001_TIF).toURI(), 300);
@@ -109,7 +106,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testGetSizedWebImage() {
+    public void testGetSizedWebImage() throws Exception {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getSizedWebImage(new File(_00000001_TIF).toURI(), 150);
