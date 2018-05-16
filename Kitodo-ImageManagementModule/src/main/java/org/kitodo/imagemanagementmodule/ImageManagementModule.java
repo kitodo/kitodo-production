@@ -120,9 +120,9 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      int)
      */
     @Override
-    public Image changeDpi(URI imagefileUri, int dpi) throws IOException, InterruptedException, IM4JavaException {
-        if (!new File(imagefileUri).exists()) {
-            throw new FileNotFoundException("imageFileUri must exist: " + imagefileUri.toString());
+    public Image changeDpi(URI imageFileUri, int dpi) throws IOException, InterruptedException, IM4JavaException {
+        if (!new File(imageFileUri).exists()) {
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
         }
         if (dpi <= 0) {
             throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
@@ -131,7 +131,7 @@ public class ImageManagementModule implements ImageManagementInterface {
         File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT);
         temporaryImage.deleteOnExit();
         URI imageUri = temporaryImage.toURI();
-        ImageConverter imageConverter = new ImageConverter(imagefileUri);
+        ImageConverter imageConverter = new ImageConverter(imageFileUri);
         imageConverter.addResult(imageUri).resizeToDpi(dpi);
 
         imageConverter.useAMaximumOfRAM(memorySizeLimitMB);

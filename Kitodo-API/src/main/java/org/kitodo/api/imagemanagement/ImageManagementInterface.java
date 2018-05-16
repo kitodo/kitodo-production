@@ -19,7 +19,7 @@ public interface ImageManagementInterface {
     /**
      * Changes the dpi of an image at a given uri.
      *
-     * @param imagefileUri
+     * @param imageFileUri
      *            The uri of the image.
      * @param dpi
      *            the new dpi.
@@ -28,7 +28,7 @@ public interface ImageManagementInterface {
      *             if the plug-in is configured incorrectly, the image is
      *             missing or corrupted, etc.
      */
-    Image changeDpi(URI imagefileUri, int dpi) throws Exception;
+    Image changeDpi(URI imageFileUri, int dpi) throws Exception;
 
     /**
      * Creates a derivative for an image at a given path.
