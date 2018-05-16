@@ -891,6 +891,16 @@ main i.fa {
 Metadata Editor
 ----------------------------------------------------------------------*/
 
+#metadataEditorHeader {
+    padding: 1em 10px;
+    margin-bottom: 1em;
+}
+
+#metadataEditorHeader .ui-panel,
+#metadataEditorHeader .ui-panel-content {
+    padding: 0;
+}
+
 #metadataEditorWrapper {
     height: 700px;
 }
@@ -901,7 +911,7 @@ Metadata Editor
     box-sizing: border-box;
     vertical-align: top;
     position: relative;
-    padding: 60px 0 0 0;
+    padding: 10px 0 0 0;
     background: #d8d8d8;
     overflow: visible !important;
 }
@@ -923,14 +933,26 @@ Metadata Editor
     transform: scaleX(-1);
 }
 
-.collapsibleWrapper .columnHeading {
-    position: absolute;
-    top: 30px;
-    left: 10px;
+.collapsibleWrapper .columnHeadingWrapper {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 8px;
     font-weight: bold;
 }
 
+.collapsibleWrapper .columnHeadingWrapper button {
+    float: right;
+    background: none;
+    border: none;
+    height: 40px;
+}
+
+.collapsibleWrapper.collapsed .columnHeadingWrapper button {
+    display: none;
+}
+
 .collapsibleWrapper.collapsed .columnHeading {
+    position: absolute;
     transform: rotate(90deg);
     top: -10px;
     left: 0px;
@@ -951,24 +973,6 @@ Metadata Editor
     visibility: hidden;
 }
 
-#structureTreeForm {
-    height: 100%;
-}
-
-#structureTreeForm\:structurePanel,
-#metaDataPanel {
-    overflow-y: scroll;
-    height: 50%;
-    box-sizing: border-box;
-}
-
-#structureTreeForm\:paginationPanel,
-#commentPanel {
-    margin-top: 5px;
-    height: calc(50% - 5px);
-    box-sizing: border-box;
-}
-
 #metadataEditorWrapper .resizer {
     display: inline-block;
     height: 100%;
@@ -978,6 +982,55 @@ Metadata Editor
 
 #metadataEditorWrapper .resizer.disabled {
     pointer-events: none;
+}
+
+#metadataEditorWrapper #verticalResizer {
+    height: 5px;
+    background: white;
+    cursor: ns-resize;
+}
+
+#metadataEditorWrapper #verticalResizer.disabled {
+    pointer-events: none;
+}
+
+#metadataPanel,
+#commentPanel {
+    overflow-y: scroll;
+    height: 300px;
+}
+
+#metadataPanel.collapsed,
+#commentPanel.collapsed {
+    display: none;
+}
+
+
+/*
+Column content
+ */
+
+#structureTreeForm\:structurePanel > .ui-panel-content,
+#structureTreeForm\:paginationPanel > .ui-panel-content,
+#metaDataPanel > .ui-panel-content,
+#commentPanel > .ui-panel-content {
+    padding: 0;
+}
+
+#structureTreeForm {
+    height: 100%;
+}
+
+#structureTreeForm\:structurePanel {
+    overflow-y: scroll;
+    height: 50%;
+    box-sizing: border-box;
+}
+
+#structureTreeForm\:paginationPanel {
+    margin-top: 5px;
+    height: calc(50% - 5px);
+    box-sizing: border-box;
 }
 
 #structureTreeForm\:actionButtons .ui-panelgrid-cell {
@@ -998,6 +1051,22 @@ Metadata Editor
 
 #metadata input {
     width: 100%;
+}
+
+#metadata\:metadataTable td {
+    padding: 5px;
+}
+
+#metadata\:personTable .ui-button {
+    margin: 10px 0;
+}
+
+#metadata .ui-datatable-even {
+    background: #fff;
+}
+
+#metadata .ui-datatable-odd {
+    background: #f3f3f3;
 }
 
 /*----------------------------------------------------------------------

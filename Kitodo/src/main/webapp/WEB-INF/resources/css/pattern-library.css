@@ -274,22 +274,6 @@ button .ui-icon {
     padding: 8px 16px;
 }
 
-#metadata\:metadataTable td {
-    padding: 8px 10px;
-}
-
-#metadata\:personTable .ui-button {
-    margin: 10px 0;
-}
-
-#metadata .ui-datatable-even {
-    background: #fff;
-}
-
-#metadata .ui-datatable-odd {
-    background: #f3f3f3;
-}
-
 .ui-panelgrid .ui-panelgrid-cell {
     border: 0px;
     padding: 8px;

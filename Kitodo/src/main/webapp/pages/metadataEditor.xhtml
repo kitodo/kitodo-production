@@ -23,7 +23,7 @@
 
         <p:panel id="metadataEditor">
             <!-- Header -->
-            <p:panel>
+            <p:panel id="metadataEditorHeader">
                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/header.xhtml" />
             </p:panel>
             <!-- Content -->
@@ -36,7 +36,9 @@
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
-                    <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
+                    <div class="columnHeadingWrapper">
+                        <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
+                    </div>
                     <p:panel id="firstColumnPanel">
                         <h:form id="structureTreeForm">
                             <p:panel id="structurePanel">
@@ -60,14 +62,30 @@
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
-                    <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
+
+                    <div class="columnHeadingWrapper">
+                        <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
+                        <button id="firstSectionToggler" onclick="toggleFirstSection()">
+                            <i class="fa fa-chevron-down fa-lg"/>
+                        </button>
+                    </div>
                     <p:panel id="secondColumnPanel" style="overflow: scroll">
-                        <p:panel id="metaDataPanel">
+                        <div id="metadataPanel" data-min-height="200">
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
-                        </p:panel>
-                        <p:panel id="commentPanel">
+                        </div>
+
+                        <!-- Vertical resizer -->
+                        <div id="verticalResizer"/>
+
+                        <div class="columnHeadingWrapper">
+                            <h:outputText value="#{msgs.comments}"/>
+                            <button id="secondSectionToggler" onclick="toggleSecondSection()">
+                                <i class="fa fa-chevron-down fa-lg"/>
+                            </button>
+                        </div>
+                        <div id="commentPanel" data-min-height="200">
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/comment.xhtml" />
-                        </p:panel>
+                        </div>
                     </p:panel>
                 </div>
 
@@ -81,7 +99,9 @@
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
-                    <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                    <div class="columnHeadingWrapper">
+                        <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                    </div>
                     <p:panel id="thirdColumnPanel">
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
                     </p:panel>
