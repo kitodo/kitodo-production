@@ -114,8 +114,8 @@ public class SchemaService {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
-                if (exportMets instanceof ExportDms && ((ExportDms) exportMets).exportDmsTask != null) {
-                    ((ExportDms) exportMets).exportDmsTask.setException(new RuntimeException(
+                if (exportMets instanceof ExportDms && ((ExportDms) exportMets).getExportDmsTask() != null) {
+                    ((ExportDms) exportMets).getExportDmsTask().setException(new RuntimeException(
                             process.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
                     Helper.setFehlerMeldung(

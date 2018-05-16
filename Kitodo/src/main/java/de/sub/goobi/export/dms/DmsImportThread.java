@@ -32,12 +32,9 @@ public class DmsImportThread extends Thread {
     private File folderImages;
     private long timeFileSuccess;
     private long timeFileError;
-
+    private String result = "";
     private static final ServiceManager serviceManager = new ServiceManager();
-
-    public String result = "";
-
-    public boolean stop = false;
+    private boolean stop = false;
 
     /**
      * Constructor.
@@ -100,6 +97,15 @@ public class DmsImportThread extends Thread {
     void stopThread() {
         this.result = "Import wurde wegen Zeitüberschreitung abgebrochen";
         this.stop = true;
+    }
+
+    /**
+     * Get result.
+     *
+     * @return value of result
+     */
+    public String getResult() {
+        return result;
     }
 
     private void processOnError() throws IOException {

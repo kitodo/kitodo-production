@@ -45,20 +45,14 @@ public class GUIExceptionWrapper extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
-
+    private final String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
     private String userSeenErrorMessage = "";
-
     private String additionalMessage = "";
-
     private String errLinkText = "";
-
     private String errEmailBody = "";
     private String errEmailMessage = "";
     private String errSubjectLine = "";
-
     private ArrayList<String> emailAddresses = new ArrayList<>();
-
     private String internalErrorMsg = "";
 
     // private constructor to avoid wrong construction

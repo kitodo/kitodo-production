@@ -62,7 +62,7 @@ public class ExportDms extends ExportMets {
      * its errors will be passed to the task manager screen (if available) for
      * visualisation.
      */
-    public EmptyTask exportDmsTask = null;
+    private EmptyTask exportDmsTask = null;
 
     public ExportDms() {
     }
@@ -365,11 +365,12 @@ public class ExportDms extends ExportMets {
             Thread.currentThread().interrupt();
         }
 
-        if (!asyncThread.result.isEmpty()) {
+        String result = asyncThread.getResult();
+        if (result.length() > 0) {
             if (exportDmsTask != null) {
-                exportDmsTask.setException(new RuntimeException(processTitle + ": " + asyncThread.result));
+                exportDmsTask.setException(new RuntimeException(processTitle + ": " + result));
             } else {
-                Helper.setFehlerMeldung(processTitle + ": ", asyncThread.result);
+                Helper.setFehlerMeldung(processTitle + ": ", result);
             }
         } else {
             if (exportDmsTask != null) {
@@ -396,6 +397,15 @@ public class ExportDms extends ExportMets {
         }
 
         Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+    }
+
+    /**
+     * Get exportDmsTask.
+     *
+     * @return value of exportDmsTask
+     */
+    public EmptyTask getExportDmsTask() {
+        return exportDmsTask;
     }
 
     /**

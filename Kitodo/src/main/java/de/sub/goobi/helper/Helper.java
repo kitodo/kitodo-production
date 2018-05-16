@@ -56,7 +56,7 @@ import org.kitodo.data.database.helper.Util;
  */
 public class Helper extends HibernateHelper implements Observer {
 
-    public static Map<String, String> activeMQReporting = null;
+    private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static final long serialVersionUID = -7449236652821237059L;
     private static Map<Locale, ResourceBundle> commonMessages = null;
@@ -552,4 +552,12 @@ public class Helper extends HibernateHelper implements Observer {
         return compoundMessage;
     }
 
+    /**
+     * Set activeMQReporting.
+     *
+     * @param activeMQReporting as java.util.Map<java.lang.String,java.lang.String>
+     */
+    public static void setActiveMQReporting(Map<String, String> activeMQReporting) {
+        Helper.activeMQReporting = activeMQReporting;
+    }
 }

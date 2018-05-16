@@ -45,17 +45,15 @@ public class WebDav implements Serializable {
     /*
      * Kopieren bzw. symbolische Links für einen Prozess in das Benutzerhome
      */
-
-    private static String DONEDIRECTORYNAME = "fertig/";
+    private String doneDirectoryName;
 
     public WebDav() {
-        DONEDIRECTORYNAME = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
     }
 
     /**
      * Retrieve all folders from one directory.
      */
-
     public List<URI> uploadAllFromHome(String inVerzeichnis) {
         User currentUser = Helper.getCurrentUser();
         List<URI> files = new ArrayList<>();
@@ -186,7 +184,7 @@ public class WebDav implements Serializable {
                     URI project = Paths.get(userHome + process.getProject().getTitle()).toUri();
                     fileService.createDirectoryForUser(project, currentUser.getLogin());
 
-                    project = Paths.get(userHome + DONEDIRECTORYNAME).toUri();
+                    project = Paths.get(userHome + doneDirectoryName).toUri();
                     fileService.createDirectoryForUser(project, currentUser.getLogin());
                 }
 

@@ -51,7 +51,7 @@ public class VariableReplacer {
     private DigitalDocumentInterface dd;
     private PrefsInterface prefs;
     // $(meta.abc)
-    private final String namespaceMeta = "\\$\\(meta\\.([\\w.-]*)\\)";
+    private static final String NAMESPACE_META = "\\$\\(meta\\.([\\w.-]*)\\)";
 
     private Process process;
     private Task task;
@@ -153,7 +153,7 @@ public class VariableReplacer {
      * @return replaced String
      */
     private String replaceMetadata(String input) {
-        for (MatchResult r : findRegexMatches(this.namespaceMeta, input)) {
+        for (MatchResult r : findRegexMatches(this.NAMESPACE_META, input)) {
             if (r.group(1).toLowerCase().startsWith("firstchild.")) {
                 input = input.replace(r.group(),
                     getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
