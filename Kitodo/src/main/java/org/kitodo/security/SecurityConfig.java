@@ -136,7 +136,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "editUserGroup_" + CLIENT_ANY)
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
-                "editLdapGroup_" + GLOBAL)
+                "editLdapGroup_" + GLOBAL,
+                "viewLdapGroup_" + GLOBAL)
 
             .antMatchers("/pages/images/**").permitAll()
             .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.security.SecurityAccessService;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -30,7 +31,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
-    private ServiceManager serviceManager = new ServiceManager();
+    private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -50,12 +51,13 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/clientEdit")
-                    && !hasAuthority("editClient", idInt, true)) {
+                    && !securityAccessService.isAdminOrHasAuthorityGlobalOrForClient("editClient", idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
+
             if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
-                    && !hasAuthority("editProject", idInt, false)) {
+                    && !isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient("editProject", idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
@@ -63,17 +65,14 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
         chain.doFilter(request, response);
     }
 
-    private boolean hasAuthority(String authority, int id, boolean checkClientOnly) throws IOException {
-        if (checkClientOnly) {
-            return serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobalOrForClient(authority, id);
-        } else {
-            try {
-                return serviceManager.getSecurityAccessService()
-                        .isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
-            } catch (DataException e) {
-                throw new IOException(e);
-            }
+    private boolean isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(String authority, int id)
+            throws IOException {
+        try {
+            return securityAccessService.isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
+        } catch (DataException e) {
+            throw new IOException(e);
         }
+
     }
 
     private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {

@@ -9,8 +9,6 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
-ALTER TABLE userGroup DROP COLUMN permission;
-
 -- Change ruleset authories added in V2_28
 UPDATE authority SET clientAssignable='1' WHERE title='viewAllRulesets';
 UPDATE authority SET clientAssignable='1' WHERE title='viewRuleset';
@@ -73,5 +71,3 @@ INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssigna
 VALUES ('viewProcessPagination', '1', '1', '1');
 INSERT INTO authority (title, globalAssignable, clientAssignable, projectAssignable)
 VALUES ('viewProcessImages', '1', '1', '1');
-
-

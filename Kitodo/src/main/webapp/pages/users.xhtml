@@ -30,6 +30,7 @@
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
                             action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.Neu}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
@@ -46,7 +47,8 @@
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUserGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.ldapgruppen}">
+            <p:tab title="#{msgs.ldapgroups}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
             </p:tab>
         </p:tabView>
