@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.almightycontentmodule;
+package org.kitodo.imagemanagementmodule;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -31,11 +31,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.imagemanagementmodule.ImageManagementModule;
+import org.kitodo.imagemanagementmodule.ImageConverter;
 
 /**
  * Tests the Almighty Content Module.
  */
-public class TestAlmightyContentModule {
+public class ImageManagementModuleIT {
     /**
      * Folder for test resources (images).
      */
@@ -78,7 +80,7 @@ public class TestAlmightyContentModule {
     @Test
     public void testGetScaledWebImage() throws InfoException {
         assert new File(_00000001_TIF).exists();
-        ImageManagementInterface module = new AlmightyContentModule();
+        ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getScaledWebImage(new File(_00000001_TIF).toURI(), 0.3);
         assertThat(scaledWebImage.getWidth(null),
             is((int) Math.round(0.3 * new Info(_00000001_TIF, true).getImageWidth())));
@@ -88,7 +90,7 @@ public class TestAlmightyContentModule {
     public void testCreateDerivative() throws InfoException {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
-        ImageManagementInterface module = new AlmightyContentModule();
+        ImageManagementInterface module = new ImageManagementModule();
         assertThat(
             module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG),
             is(true));
@@ -100,7 +102,7 @@ public class TestAlmightyContentModule {
     @Test
     public void testChangeDpi() throws InfoException {
         assert new File(_00000001_TIF).exists();
-        ImageManagementInterface module = new AlmightyContentModule();
+        ImageManagementInterface module = new ImageManagementModule();
         Image image = module.changeDpi(new File(_00000001_TIF).toURI(), 300);
         assertThat(72 * image.getWidth(null) / new Info(_00000001_TIF, true).getImageWidth(), is(equalTo(300)));
 
@@ -109,7 +111,7 @@ public class TestAlmightyContentModule {
     @Test
     public void testGetSizedWebImage() {
         assert new File(_00000001_TIF).exists();
-        ImageManagementInterface module = new AlmightyContentModule();
+        ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getSizedWebImage(new File(_00000001_TIF).toURI(), 150);
         assertThat(scaledWebImage.getWidth(null), is(equalTo(150)));
     }

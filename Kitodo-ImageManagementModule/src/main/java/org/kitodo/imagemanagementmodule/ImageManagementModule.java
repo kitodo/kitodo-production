@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.almightycontentmodule;
+package org.kitodo.imagemanagementmodule;
 
 import java.awt.Image;
 import java.io.File;
@@ -25,7 +25,7 @@ import org.kitodo.api.imagemanagement.ImageManagementInterface;
 /**
  * An ImageManagementInterface implementation using ImageMagick.
  */
-public class AlmightyContentModule implements ImageManagementInterface {
+public class ImageManagementModule implements ImageManagementInterface {
 
     /**
      * Image format used internally to create image derivatives, optimized for

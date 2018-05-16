@@ -14,4 +14,4 @@
  * To use this plug-in, ImageMagick must be available on the path (Linux) or in
  * the “Program files” directory (Windows).
  */
-package org.kitodo.almightycontentmodule;
+package org.kitodo.imagemanagementmodule;

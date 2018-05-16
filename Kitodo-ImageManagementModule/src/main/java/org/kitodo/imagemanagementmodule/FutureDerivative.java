@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.almightycontentmodule;
+package org.kitodo.imagemanagementmodule;
 
 import java.util.LinkedList;
 import java.util.List;
