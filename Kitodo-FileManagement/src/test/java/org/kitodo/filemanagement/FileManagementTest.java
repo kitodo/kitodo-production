@@ -11,20 +11,29 @@
 
 package org.kitodo.filemanagement;
 
+import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.config.Config;
+
+import static org.junit.Assume.assumeTrue;
 
 public class FileManagementTest {
 
@@ -244,7 +253,7 @@ public class FileManagementTest {
     }
 
     @Test
-    public void shouldGetProcessSubTypeURI() throws IOException {
+    public void shouldGetProcessSubTypeURI() {
         URI processSubTypeURI = fileManagement.getProcessSubTypeUri(URI.create("1"), "test", ProcessSubType.IMAGE, "");
         Assert.assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/images/"), processSubTypeURI);
 
@@ -252,4 +261,83 @@ public class FileManagementTest {
         Assert.assertEquals("Process subtype URI was incorrectly generated!", URI.create("1/ocr/test_alto/"), processSubTypeURI);
     }
 
+    @Test
+    public void shouldCreateSymLink() throws IOException {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
+
+        URI symLinkSource = URI.create("symLinkSource");
+        URI symLinkTarget = URI.create("symLinkTarget");
+
+        File script = new File(Config.getParameter("script_createSymLink"));
+        URI directory = fileManagement.create(URI.create(""), "symLinkSource", false);
+        fileManagement.create(directory, "meta.xml", true);
+        setFileExecutable(script);
+        boolean result = fileManagement.createSymLink(symLinkTarget, symLinkSource, false, "travis");
+        setFileNotExecutable(script);
+        Assert.assertTrue("Create symbolic link has failed!", result);
+
+        File scriptClean = new File(Config.getParameter("script_deleteSymLink"));
+        setFileExecutable(scriptClean);
+        fileManagement.deleteSymLink(symLinkTarget);
+        setFileNotExecutable(scriptClean);
+        fileManagement.delete(symLinkSource);
+        fileManagement.delete(symLinkTarget);
+    }
+
+    @Test
+    public void shouldDeleteSymLink() throws IOException {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
+
+        URI symLinkSource = URI.create("symLinkSource");
+        URI symLinkTarget = URI.create("symLinkTarget");
+
+        File scriptPrepare = new File(Config.getParameter("script_createSymLink"));
+        URI directory =  fileManagement.create(URI.create(""), "symLinkSource", false);
+        fileManagement.create(directory, "meta.xml", true);
+        setFileExecutable(scriptPrepare);
+        fileManagement.createSymLink(symLinkTarget, symLinkSource, false, "travis");
+        setFileNotExecutable(scriptPrepare);
+
+        File script = new File(Config.getParameter("script_deleteSymLink"));
+        setFileExecutable(script);
+        boolean result = fileManagement.deleteSymLink(symLinkTarget);
+        setFileNotExecutable(script);
+        Assert.assertTrue("Delete symbolic link has failed!", result);
+
+        fileManagement.delete(symLinkSource);
+        fileManagement.delete(symLinkTarget);
+    }
+
+    private static void setFileExecutable(File file) throws IOException {
+        Set<PosixFilePermission> perms = new HashSet<>();
+
+        perms.add(PosixFilePermission.OWNER_READ);
+        perms.add(PosixFilePermission.OWNER_WRITE);
+        perms.add(PosixFilePermission.OWNER_EXECUTE);
+
+        perms.add(PosixFilePermission.OTHERS_READ);
+        perms.add(PosixFilePermission.OTHERS_WRITE);
+        perms.add(PosixFilePermission.OTHERS_EXECUTE);
+
+        perms.add(PosixFilePermission.GROUP_READ);
+        perms.add(PosixFilePermission.GROUP_WRITE);
+        perms.add(PosixFilePermission.GROUP_EXECUTE);
+
+        Files.setPosixFilePermissions(file.toPath(), perms);
+    }
+
+    private static void setFileNotExecutable(File file) throws IOException {
+        Set<PosixFilePermission> perms = new HashSet<>();
+
+        perms.add(PosixFilePermission.OWNER_READ);
+        perms.add(PosixFilePermission.OWNER_WRITE);
+
+        perms.add(PosixFilePermission.OTHERS_READ);
+        perms.add(PosixFilePermission.OTHERS_WRITE);
+
+        perms.add(PosixFilePermission.GROUP_READ);
+        perms.add(PosixFilePermission.GROUP_WRITE);
+
+        Files.setPosixFilePermissions(file.toPath(), perms);
+    }
 }
