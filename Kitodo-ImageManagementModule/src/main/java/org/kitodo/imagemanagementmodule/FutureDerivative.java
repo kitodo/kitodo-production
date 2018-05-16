@@ -150,23 +150,14 @@ class FutureDerivative {
      * @return this, for method chaining
      */
     FutureDerivative resize(double percent) {
-        assert !Double.isNaN(percent);
-        assert percent > 0.0;
+        if (Double.isNaN(percent)) {
+            throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
+        }
+        if (percent <= 0.0) {
+            throw new IllegalArgumentException("percent must be > 0.0, but was " + Double.toString(percent));
+        }
         String percentValue = Double.toString(100 * percent).concat("%");
         operations.add(Pair.of(OPTION_RESIZE, percentValue));
-        return this;
-    }
-
-    /**
-     * Defines a resize operation to create this result.
-     *
-     * @param pixelWidth
-     *            with of created image in pixels
-     * @return this, for method chaining
-     */
-    FutureDerivative resize(int pixelWidth) {
-        assert pixelWidth > 0;
-        operations.add(Pair.of(OPTION_RESIZE, Integer.toString(pixelWidth)));
         return this;
     }
 
@@ -177,9 +168,26 @@ class FutureDerivative {
      *            new image resolution in DPI
      * @return this, for method chaining
      */
-    FutureDerivative setDpi(int dpi) {
-        assert dpi > 0;
+    FutureDerivative resizeToDpi(int dpi) {
+        if (dpi <= 0) {
+            throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
+        }
         operations.add(Pair.of(OPTION_RESAMPLE, Integer.toString(dpi)));
+        return this;
+    }
+
+    /**
+     * Defines a resize operation to create this result.
+     *
+     * @param pixelWidth
+     *            with of created image in pixels
+     * @return this, for method chaining
+     */
+    FutureDerivative resizeToWidth(int pixelWidth) {
+        if (pixelWidth <= 0) {
+            throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
+        }
+        operations.add(Pair.of(OPTION_RESIZE, Integer.toString(pixelWidth)));
         return this;
     }
 

@@ -13,6 +13,7 @@ package org.kitodo.imagemanagementmodule;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 
@@ -57,9 +58,15 @@ public class ImageManagementModule implements ImageManagementInterface {
     public Image getScaledWebImage(URI imageFileUri, double percent)
             throws IOException, InterruptedException, IM4JavaException {
 
-        assert new File(imageFileUri).exists();
-        assert !Double.isNaN(percent);
-        assert percent > 0.0;
+        if (!new File(imageFileUri).exists()) {
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+        }
+        if (Double.isNaN(percent)) {
+            throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
+        }
+        if (percent <= 0.0) {
+            throw new IllegalArgumentException("percent must be > 0.0, but was " + Double.toString(percent));
+        }
 
         File temporaryWebImage = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT);
         temporaryWebImage.deleteOnExit();
@@ -86,6 +93,19 @@ public class ImageManagementModule implements ImageManagementInterface {
     public boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri,
             ImageFileFormat resultFileFormat) throws IOException, InterruptedException, IM4JavaException {
 
+        if (!new File(imageFileUri).exists()) {
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+        }
+        if (Double.isNaN(percent)) {
+            throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
+        }
+        if (percent <= 0.0) {
+            throw new IllegalArgumentException("percent must be > 0.0, but was " + Double.toString(percent));
+        }
+        if (resultFileUri == null) {
+            throw new FileNotFoundException("resultFileUri must not be null");
+        }
+
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
         imageConverter.addResult(resultFileUri, resultFileFormat).resize(percent);
         imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
@@ -101,13 +121,18 @@ public class ImageManagementModule implements ImageManagementInterface {
      */
     @Override
     public Image changeDpi(URI imagefileUri, int dpi) throws IOException, InterruptedException, IM4JavaException {
-        assert new File(imagefileUri).exists();
+        if (!new File(imagefileUri).exists()) {
+            throw new FileNotFoundException("imageFileUri must exist: " + imagefileUri.toString());
+        }
+        if (dpi <= 0) {
+            throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
+        }
 
         File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT);
         temporaryImage.deleteOnExit();
         URI imageUri = temporaryImage.toURI();
         ImageConverter imageConverter = new ImageConverter(imagefileUri);
-        imageConverter.addResult(imageUri).setDpi(dpi);
+        imageConverter.addResult(imageUri).resizeToDpi(dpi);
 
         imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
         imageConverter.run();
@@ -126,14 +151,19 @@ public class ImageManagementModule implements ImageManagementInterface {
     @Override
     public Image getSizedWebImage(URI imageFileUri, int pixelWidth)
             throws IOException, InterruptedException, IM4JavaException {
-        assert new File(imageFileUri).exists();
-        assert pixelWidth > 0;
+
+        if (!new File(imageFileUri).exists()) {
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+        }
+        if (pixelWidth <= 0) {
+            throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
+        }
 
         File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT);
         temporaryWebImage.deleteOnExit();
         URI webImageUri = temporaryWebImage.toURI();
         ImageConverter imageConverter = new ImageConverter(imageFileUri);
-        imageConverter.addResult(webImageUri).resize(pixelWidth);
+        imageConverter.addResult(webImageUri).resizeToWidth(pixelWidth);
 
         imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
         imageConverter.run();

@@ -125,7 +125,10 @@ class ImageConverter {
     }
 
     static String pathToTheWindowsInstallation() {
-        assert SystemUtils.IS_OS_WINDOWS;
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            throw new IllegalStateException(
+                    "pathToTheWindowsInstallation() can only be called on Windows operating systems");
+        }
         File programFiles = new File(System.getenv("ProgramFiles"));
         File[] candidates = programFiles
                 .listFiles(file -> file.isDirectory() && file.getName().toUpperCase().startsWith("IMAGEMAGICK"));
@@ -165,6 +168,9 @@ class ImageConverter {
     }
 
     public void useAMaximumOfRAM(int ofMB) {
+        if (ofMB <= 0) {
+            throw new IllegalArgumentException("ofMB must be > 0, but was " + Integer.toString(ofMB));
+        }
         memoryLimit = Integer.toString(ofMB) + "MB";
     }
 }
