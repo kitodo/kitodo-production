@@ -51,7 +51,7 @@ public class MetsKitodoWriterTest {
             "Implementation-Vendor: kitodo.org\n" +
             "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
-        FileUtils.write(manifestFile,manifest,"UTF-8");
+        FileUtils.write(manifestFile, manifest, "UTF-8");
     }
 
     @AfterClass
@@ -66,7 +66,7 @@ public class MetsKitodoWriterTest {
 
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile,xsltFile);
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
         metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
