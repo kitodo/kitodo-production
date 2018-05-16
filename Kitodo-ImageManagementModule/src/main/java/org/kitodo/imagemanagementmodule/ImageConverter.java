@@ -132,7 +132,7 @@ class ImageConverter {
         File programFiles = new File(System.getenv("ProgramFiles"));
         File[] candidates = programFiles
                 .listFiles(file -> file.isDirectory() && file.getName().toUpperCase().startsWith("IMAGEMAGICK"));
-        if (candidates.length == 0) {
+        if (candidates == null || candidates.length == 0) {
             throw new NoSuchElementException("ImageMagick was not found in " + programFiles);
         }
         return candidates[candidates.length - 1].getAbsolutePath();
@@ -141,7 +141,7 @@ class ImageConverter {
     /**
      * Performs the conversion by calling ImageMagick.
      */
-    public void run() throws IOException, InterruptedException, IM4JavaException {
+    void run() throws IOException, InterruptedException, IM4JavaException {
         IMOperation commandLine = new IMOperation();
         commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MEMORY, memoryLimit));
         commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MAP, memoryLimit));
@@ -167,7 +167,7 @@ class ImageConverter {
         return new File(uri).getAbsolutePath();
     }
 
-    public void useAMaximumOfRAM(int ofMB) {
+    void useAMaximumOfRAM(int ofMB) {
         if (ofMB <= 0) {
             throw new IllegalArgumentException("ofMB must be > 0, but was " + Integer.toString(ofMB));
         }
