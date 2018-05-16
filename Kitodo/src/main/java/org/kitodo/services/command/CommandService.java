@@ -169,7 +169,7 @@ public class CommandService {
     private String generateScriptString(File file, List<String> parameter) {
         String scriptString = file.getAbsolutePath();
         if (parameter != null) {
-            scriptString = scriptString + " " + scriptString.join(" ", parameter);
+            scriptString = scriptString + " " + String.join(" ", parameter);
         }
         return scriptString;
     }

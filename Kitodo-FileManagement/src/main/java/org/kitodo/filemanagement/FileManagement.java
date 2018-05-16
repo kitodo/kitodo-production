@@ -24,7 +24,6 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -447,37 +446,47 @@ public class FileManagement implements FileManagementInterface {
         if (userHome.exists()) {
             return false;
         }
-        String command = Config.getParameter("script_createSymLink") + " ";
-        command += imagePath + " " + userHome + " ";
+
+        String command = Config.getParameter("script_createSymLink");
+        CommandService commandService = new CommandService();
+        List<String> parameters = new ArrayList<>();
+        parameters.add(imagePath.getAbsolutePath());
+        parameters.add(userHome.getAbsolutePath());
+
         if (onlyRead) {
-            command += Config.getParameter("UserForImageReading", "root");
+            parameters.add(Config.getParameter("UserForImageReading", "root"));
         } else {
-            command += userLogin;
+            parameters.add(userLogin);
         }
+
         try {
-            ShellScript.legacyCallShell(command);
-            return true;
+            return commandService.runCommand(new File(command), parameters).isSuccessful();
+        } catch (FileNotFoundException e) {
+            logger.error("FileNotFoundException in createSymLink", e);
+            return false;
         } catch (IOException e) {
-            logger.error("IOException downloadToHome()", e);
+            logger.error("IOException in createSymLink", e);
             return false;
         }
     }
 
     @Override
     public boolean deleteSymLink(URI homeUri) {
+        File homeFile = new File(fileMapper.mapAccordingToMappingType(homeUri));
+
         String command = Config.getParameter("script_deleteSymLink");
-        ShellScript deleteSymLinkScript;
+        CommandService commandService = new CommandService();
+        List<String> parameters = new ArrayList<>();
+        parameters.add(homeFile.getAbsolutePath());
         try {
-            deleteSymLinkScript = new ShellScript(new File(command));
-            deleteSymLinkScript.run(Collections.singletonList(new File(getDecodedPath(homeUri)).getPath()));
+            return commandService.runCommand(new File(command), parameters).isSuccessful();
         } catch (FileNotFoundException e) {
-            logger.error("FileNotFoundException in deleteSymLink()", e);
+            logger.error("FileNotFoundException in deleteSymLink", e);
             return false;
         } catch (IOException e) {
-            logger.error("IOException in deleteSymLink()", e);
+            logger.error("IOException in deleteSymLink", e);
             return false;
         }
-        return true;
     }
 
     private String getDecodedPath(URI uri) {
