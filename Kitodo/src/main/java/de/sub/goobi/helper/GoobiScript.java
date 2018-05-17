@@ -268,7 +268,7 @@ public class GoobiScript {
                 Integer processId = process.getId();
                 String processTitle = process.getTitle();
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, process);
-                if (fileService.getSubUris(imagesFolder).size() > 0) {
+                if (!fileService.getSubUris(imagesFolder).isEmpty()) {
                     Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "",
                         "The process " + processTitle + " [" + processId + "] has already data in image folder");
                 } else {
@@ -621,7 +621,7 @@ public class GoobiScript {
         User user;
         List<User> foundUsers = serviceManager.getUserService()
                 .getByQuery("from User where login='" + this.parameters.get(USER_NAME) + "'");
-        if (foundUsers != null && foundUsers.size() > 0) {
+        if (!foundUsers.isEmpty()) {
             user = foundUsers.get(0);
         } else {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
@@ -662,7 +662,7 @@ public class GoobiScript {
         UserGroup userGroup;
         List<UserGroup> foundUserGroups = serviceManager.getUserGroupService()
                 .getByQuery("from UserGroup where title='" + this.parameters.get(USER_GROUP) + "'");
-        if (foundUserGroups != null && foundUserGroups.size() > 0) {
+        if (!foundUserGroups.isEmpty()) {
             userGroup = foundUserGroups.get(0);
         } else {
             Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
@@ -723,10 +723,8 @@ public class GoobiScript {
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(process, "pathimagefiles");
                 List<? extends MetadataInterface> allImagePaths = rdf.getDigitalDocument().getPhysicalDocStruct()
                         .getAllMetadataByType(mdt);
-                if (allImagePaths.size() > 0) {
-                    for (MetadataInterface md : allImagePaths) {
-                        rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
-                    }
+                for (MetadataInterface md : allImagePaths) {
+                    rdf.getDigitalDocument().getPhysicalDocStruct().getAllMetadata().remove(md);
                 }
                 MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
                 if (SystemUtils.IS_OS_WINDOWS) {

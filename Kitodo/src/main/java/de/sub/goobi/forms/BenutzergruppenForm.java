@@ -162,26 +162,24 @@ public class BenutzergruppenForm extends BasisForm {
     public String delete() {
         try {
             this.serviceManager.getUserGroupService().refresh(this.userGroup);
-            if (this.userGroup.getUsers().size() > 0) {
+            if (!this.userGroup.getUsers().isEmpty()) {
                 for (User b : this.userGroup.getUsers()) {
                     b.getUserGroups().remove(this.userGroup);
                 }
                 this.userGroup.setUsers(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.userGroup);
             }
-            if (this.userGroup.getTasks().size() > 0) {
+            if (!this.userGroup.getTasks().isEmpty()) {
                 Helper.setFehlerMeldung("userGroupAssignedError");
                 return null;
             }
-            if (this.userGroup.getUserGroupClientAuthorityRelations().size() > 0) {
-                for (UserGroupClientAuthorityRelation relation : userGroup.getUserGroupClientAuthorityRelations()) {
-                    relation.setAuthority(null);
-                    relation.setClient(null);
-                    relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
-                }
+            for (UserGroupClientAuthorityRelation relation : userGroup.getUserGroupClientAuthorityRelations()) {
+                relation.setAuthority(null);
+                relation.setClient(null);
+                relation.setUserGroup(null);
+                this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
             }
-            if (this.userGroup.getGlobalAuthorities().size() > 0) {
+            if (!this.userGroup.getGlobalAuthorities().isEmpty()) {
                 this.userGroup.setGlobalAuthorities(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.userGroup);
             }

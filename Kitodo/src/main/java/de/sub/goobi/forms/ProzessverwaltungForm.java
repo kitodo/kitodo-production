@@ -1464,7 +1464,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 PdfWriter.getInstance(document, out);
                 document.setPageSize(rectangle);
                 document.open();
-                if (rowList.size() > 0) {
+                if (!rowList.isEmpty()) {
                     Paragraph p = new Paragraph(rowList.get(0).get(0).toString());
                     document.add(p);
                     PdfPTable table = new PdfPTable(9);

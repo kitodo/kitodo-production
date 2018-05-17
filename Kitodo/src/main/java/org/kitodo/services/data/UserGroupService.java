@@ -272,7 +272,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     authorization.setTitle(relatedProperty.getValues().get(0));
                 }
                 authorizations.add(authorization);
@@ -292,7 +292,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     user.setName(relatedProperty.getValues().get(0));
                     user.setSurname(relatedProperty.getValues().get(1));
                 }

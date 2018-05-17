@@ -240,7 +240,7 @@ public class MassImportForm implements Serializable {
                 answer = getAnswer(this.plugin.generateRecordsFromFile());
             } else if (StringUtils.isNotEmpty(this.records)) {
                 answer = getAnswer(this.plugin.splitRecords(this.records));
-            } else if (this.selectedFilenames.size() > 0) {
+            } else if (!this.selectedFilenames.isEmpty()) {
                 answer = getAnswer(this.plugin.generateRecordsFromFilenames(this.selectedFilenames));
             }
 
@@ -712,9 +712,7 @@ public class MassImportForm implements Serializable {
             Object o = method.invoke(this.plugin);
             @SuppressWarnings("unchecked")
             List<ImportProperty> list = (List<ImportProperty>) o;
-            if (list.size() > 0) {
-                return true;
-            }
+            return !list.isEmpty();
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

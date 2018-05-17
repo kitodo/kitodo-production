@@ -186,7 +186,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static Template getTemplateByTitle(String templateTitle) {
         List<Template> response = serviceManager.getTemplateService().getProcessTemplatesWithTitle(templateTitle);
 
-        if (response.size() > 0) {
+        if (!response.isEmpty()) {
             return response.get(0);
         } else {
             throw new IllegalArgumentException("Bad argument: No template \"" + templateTitle + "\" available.");

@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -119,7 +120,7 @@ class UGHUtils {
         if (mdt == null) {
             return;
         }
-        if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
+        if (Objects.nonNull(inStruct) && Objects.nonNull(inStruct.getAllMetadataByType(mdt))) {
             List<? extends Metadata> metadataList = inStruct.getAllMetadataByType(mdt);
             for (Metadata metadata : metadataList) {
                 inStruct.removeMetadata(metadata);
@@ -151,7 +152,7 @@ class UGHUtils {
         if (mdt == null) {
             return;
         }
-        if (inStruct != null && inStruct.getAllMetadataByType(mdt).size() > 0) {
+        if (Objects.nonNull(inStruct) && Objects.nonNull(inStruct.getAllMetadataByType(mdt))) {
             List<? extends Metadata> metadataList = inStruct.getAllMetadataByType(mdt);
             for (Metadata metadata : metadataList) {
                 inStruct.removeMetadata(metadata);

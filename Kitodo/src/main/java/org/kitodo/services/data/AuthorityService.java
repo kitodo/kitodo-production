@@ -204,7 +204,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserGroupDTO userGroup = new UserGroupDTO();
                 userGroup.setId(relatedProperty.getId());
-                if (relatedProperty.getValues().size() > 0) {
+                if (!relatedProperty.getValues().isEmpty()) {
                     userGroup.setTitle(relatedProperty.getValues().get(0));
                 }
                 userGroups.add(userGroup);

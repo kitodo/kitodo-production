@@ -195,7 +195,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         try {
             while (nextProcessToCreate < numberOfProcesses) {
                 List<IndividualIssue> issues = processes.get(nextProcessToCreate);
-                if (issues.size() > 0) {
+                if (!issues.isEmpty()) {
                     ProzesskopieForm newProcess = CreateNewProcessProcessor
                             .newProcessFromTemplate(pattern.getTemplate().getTitle());
                     newProcess.setDigitalCollections(pattern.getDigitalCollections());

@@ -55,22 +55,20 @@ public class SecurityUserDetails extends User implements UserDetails {
         List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
                 .getUserGroupClientAuthorityRelations();
 
-        if (userGroupClientAuthorityRelations.size() > 0) {
-            for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
+        for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
 
-                SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
                         relation.getAuthority().getTitle() + "_CLIENT_ANY");
 
-                if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
-                    simpleGrantedAuthorities.add(simpleGrantedAuthority);
-                }
+            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
+                simpleGrantedAuthorities.add(simpleGrantedAuthority);
+            }
 
-                SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
                         relation.getAuthority().getTitle() + "_CLIENT_" + relation.getClient().getId());
 
-                if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                    simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
-                }
+            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
+                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
             }
         }
     }

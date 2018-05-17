@@ -202,7 +202,7 @@ public class ProjekteForm extends BasisForm {
      * @return String
      */
     public String delete() {
-        if (this.myProjekt.getUsers().size() > 0) {
+        if (!this.myProjekt.getUsers().isEmpty()) {
             Helper.setFehlerMeldung("userAssignedError");
             return null;
         } else {

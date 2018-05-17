@@ -195,13 +195,14 @@ public class ImportRussland {
                     // go through all the articles until the right article is
                     // found
                     for (DocStructInterface article : listArticle) {
-                        if (article.getAllMetadataByType(metadataTypeId).size() > 0
-                                || article.getAllMetadataByType(metadataTypeTempId).size() > 0) {
+                        List<? extends MetadataInterface> allMetadataByType = article.getAllMetadataByType(metadataTypeId);
+                        List<? extends MetadataInterface> allMetadataByTempType = article.getAllMetadataByType(metadataTypeTempId);
+                        if (!allMetadataByType.isEmpty() || !allMetadataByTempType.isEmpty()) {
                             MetadataInterface md;
-                            if (article.getAllMetadataByType(metadataTypeId).size() > 0) {
-                                md = article.getAllMetadataByType(metadataTypeId).get(0);
+                            if (!allMetadataByType.isEmpty()) {
+                                md = allMetadataByType.get(0);
                             } else {
-                                md = article.getAllMetadataByType(metadataTypeTempId).get(0);
+                                md = allMetadataByTempType.get(0);
                             }
                             // logger.debug(md.getValue());
                             if (md.getValue().equals(zblID)) {

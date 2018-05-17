@@ -155,7 +155,7 @@ public class IndexRestClient extends KitodoRestClient {
     }
 
     private void filterAsynchronousResponses(ArrayList<String> responses) throws CustomResponseException {
-        if (responses.size() > 0) {
+        if (!responses.isEmpty()) {
             for (String response : responses) {
                 if (response == null || response.equals("")) {
                     throw new CustomResponseException(

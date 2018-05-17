@@ -72,7 +72,7 @@ public class BackupFileRotation {
 
         metaFiles = generateBackupBaseNameFileList(format, process);
 
-        if (metaFiles.size() < 1) {
+        if (metaFiles.isEmpty()) {
             logger.info("No files matching format '{}' in directory {} found.",
                     this.format, serviceManager.getProcessService().getProcessDataDirectory(process));
             return;

@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
@@ -99,10 +100,10 @@ public class MetadatenHelper implements Comparator<Object> {
         DocStructInterface newDocstruct = this.digitalDocument.createDocStruct(dst);
 
         // add all metadata
-        if (inOldDocstruct.getAllMetadata() != null && inOldDocstruct.getAllMetadata().size() > 0) {
+        if (Objects.nonNull(inOldDocstruct.getAllMetadata())) {
             for (MetadataInterface old : inOldDocstruct.getAllMetadata()) {
-                if (newDocstruct.getPossibleMetadataTypes() != null
-                        && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+                if (Objects.nonNull(newDocstruct.getPossibleMetadataTypes())
+                        && !newDocstruct.getPossibleMetadataTypes().isEmpty()) {
                     boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
                         try {
@@ -127,10 +128,10 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         // add all persons
-        if (inOldDocstruct.getAllPersons() != null && inOldDocstruct.getAllPersons().size() > 0) {
+        if (Objects.nonNull(inOldDocstruct.getAllPersons())) {
             for (PersonInterface old : inOldDocstruct.getAllPersons()) {
-                if (newDocstruct.getPossibleMetadataTypes() != null
-                        && newDocstruct.getPossibleMetadataTypes().size() > 0) {
+                if (Objects.nonNull(newDocstruct.getPossibleMetadataTypes())
+                        && !newDocstruct.getPossibleMetadataTypes().isEmpty()) {
                     boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
                         Helper.setFehlerMeldung(
@@ -156,10 +157,10 @@ public class MetadatenHelper implements Comparator<Object> {
         }
 
         // add all Docstruct children
-        if (inOldDocstruct.getAllChildren() != null && inOldDocstruct.getAllChildren().size() > 0) {
+        if (Objects.nonNull(inOldDocstruct.getAllChildren())) {
             for (DocStructInterface old : inOldDocstruct.getAllChildren()) {
-                if (newDocstruct.getDocStructType().getAllAllowedDocStructTypes() != null
-                        && newDocstruct.getDocStructType().getAllAllowedDocStructTypes().size() > 0) {
+                if (Objects.nonNull(newDocstruct.getDocStructType().getAllAllowedDocStructTypes())
+                        && !newDocstruct.getDocStructType().getAllAllowedDocStructTypes().isEmpty()) {
 
                     if (!newDocstruct.getDocStructType().getAllAllowedDocStructTypes()
                             .contains(old.getDocStructType().getName())) {
@@ -372,7 +373,7 @@ public class MetadatenHelper implements Comparator<Object> {
      */
     public void deleteAllUnusedElements(DocStructInterface inStruct) {
         inStruct.deleteUnusedPersonsAndMetadata();
-        if (inStruct.getAllChildren() != null && inStruct.getAllChildren().size() > 0) {
+        if (Objects.nonNull(inStruct.getAllChildren())) {
             for (DocStructInterface child : inStruct.getAllChildren()) {
                 deleteAllUnusedElements(child);
             }
@@ -390,10 +391,7 @@ public class MetadatenHelper implements Comparator<Object> {
             return "";
         }
         List<ReferenceInterface> listReferenzen = inStrukturelement.getAllReferences("to");
-        if (listReferenzen != null && listReferenzen.size() > 0) {
-            /*
-             * Referenzen sortieren
-             */
+        if (Objects.nonNull(listReferenzen) && !listReferenzen.isEmpty()) {
             Collections.sort(listReferenzen, new Comparator<ReferenceInterface>() {
                 @Override
                 public int compare(final ReferenceInterface firstObject, final ReferenceInterface secondObject) {
@@ -402,12 +400,12 @@ public class MetadatenHelper implements Comparator<Object> {
                     final MetadataTypeInterface mdt = MetadatenHelper.this.prefs
                             .getMetadataTypeByName("physPageNumber");
                     List<? extends MetadataInterface> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
-                    if (listMetadaten != null && listMetadaten.size() > 0) {
+                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
                         final MetadataInterface meineSeite = listMetadaten.get(0);
                         firstPage = Integer.parseInt(meineSeite.getValue());
                     }
                     listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
-                    if (listMetadaten != null && listMetadaten.size() > 0) {
+                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
                         final MetadataInterface meineSeite = listMetadaten.get(0);
                         secondPage = Integer.parseInt(meineSeite.getValue());
                     }
@@ -420,7 +418,7 @@ public class MetadatenHelper implements Comparator<Object> {
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
-            if (listSeiten != null && listSeiten.size() > 0) {
+            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
                 MetadataInterface meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
@@ -429,7 +427,7 @@ public class MetadatenHelper implements Comparator<Object> {
             if (inPageNumber == PAGENUMBER_LAST) {
                 listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
-            if (listSeiten != null && listSeiten.size() > 0) {
+            if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
                 MetadataInterface meineSeite = listSeiten.get(0);
                 rueckgabe += ":" + meineSeite.getValue();
             }

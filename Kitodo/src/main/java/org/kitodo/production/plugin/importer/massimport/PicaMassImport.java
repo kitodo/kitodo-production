@@ -153,7 +153,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 String mess = "PICA record for " + currentIdentifier + " does not exist in catalogue.";
                 logger.error(mess);
                 throw new ImportPluginException(mess);
-
             }
             pica = addParentDataForVolume(pica);
             FileformatInterface fileformat = SRUHelper.parsePicaFormat(pica, prefs);
@@ -168,10 +167,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             // reading title
             MetadataTypeInterface titleType = prefs.getMetadataTypeByName("TitleDocMain");
             List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
-            if (mdList != null && mdList.size() > 0) {
+            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                 MetadataInterface title = mdList.get(0);
                 currentTitle = title.getValue();
-
             }
             // reading identifier
             MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
@@ -184,7 +182,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             } else {
                 mdList = logicalDS.getAllMetadataByType(identifierType);
             }
-            if (mdList != null && mdList.size() > 0) {
+            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                 MetadataInterface identifier = mdList.get(0);
                 currentIdentifier = identifier.getValue();
             } else {
@@ -192,10 +190,9 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             // reading author
-
             MetadataTypeInterface authorType = prefs.getMetadataTypeByName("Author");
             List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
-            if (personList != null && personList.size() > 0) {
+            if (Objects.nonNull(personList) && !personList.isEmpty()) {
                 PersonInterface authorMetadata = personList.get(0);
                 author = authorMetadata.getDisplayName();
 
@@ -205,13 +202,13 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             if (child != null) {
                 MetadataTypeInterface mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
                 mdList = child.getAllMetadataByType(mdt);
-                if (mdList != null && mdList.size() > 0) {
+                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                     MetadataInterface md = mdList.get(0);
                     volumeNumber = md.getValue();
                 } else {
                     mdt = prefs.getMetadataTypeByName("DateIssuedSort");
                     mdList = child.getAllMetadataByType(mdt);
-                    if (mdList != null && mdList.size() > 0) {
+                    if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                         MetadataInterface md = mdList.get(0);
                         volumeNumber = md.getValue();
                     }
@@ -221,7 +218,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             // reading ats
             MetadataTypeInterface atsType = prefs.getMetadataTypeByName("TSL_ATS");
             mdList = logicalDS.getAllMetadataByType(atsType);
-            if (mdList != null && mdList.size() > 0) {
+            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                 MetadataInterface atstsl = mdList.get(0);
                 ats = atstsl.getValue();
             } else {
@@ -240,14 +237,14 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
             MetadataTypeInterface identifierAnalogType = prefs.getMetadataTypeByName("CatalogIDSource");
             mdList = logicalDS.getAllMetadataByType(identifierAnalogType);
-            if (mdList != null && mdList.size() > 0) {
+            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                 String analog = mdList.get(0).getValue();
                 templateProperties.add(prepareProperty("Identifier", analog));
             }
 
             if (child != null) {
                 mdList = child.getAllMetadataByType(identifierType);
-                if (mdList != null && mdList.size() > 0) {
+                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                     MetadataInterface identifier = mdList.get(0);
                     workpieceProperties.add(prepareProperty("Identifier Band", identifier.getValue()));
                 }

@@ -196,21 +196,18 @@ public class SchemaService {
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer) throws PreferencesException {
         List<ProjectFileGroup> fileGroups = process.getProject().getProjectFileGroups();
-
-        if (fileGroups != null && fileGroups.size() > 0) {
-            for (ProjectFileGroup pfg : fileGroups) {
-                // check if source files exists
-                if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                    URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), process);
-                    if (serviceManager.getFileService().fileExist(folder)
-                            && serviceManager.getFileService().getSubUris(folder).size() > 0) {
-                        metsMods.getDigitalDocument().getFileSet()
-                                .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
-                    }
-                } else {
+        for (ProjectFileGroup pfg : fileGroups) {
+            // check if source files exists
+            if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
+                URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getFolder(), process);
+                if (serviceManager.getFileService().fileExist(folder)
+                        && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
                             .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
                 }
+            } else {
+                metsMods.getDigitalDocument().getFileSet()
+                        .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
             }
         }
         return metsMods;
@@ -239,7 +236,7 @@ public class SchemaService {
                 imageStrings.add(uri.toString());
             }
             int sizeOfPagination = digitalDocument.getPhysicalDocStruct().getAllChildren().size();
-            if (images.size() > 0) {
+            if (!images.isEmpty()) {
                 int sizeOfImages = images.size();
                 if (sizeOfPagination == sizeOfImages) {
                     digitalDocument.overrideContentFiles(imageStrings);
@@ -449,7 +446,7 @@ public class SchemaService {
             throws ExportFileException {
         MetadataTypeInterface mdTypeForPath = prefs.getMetadataTypeByName("pathimagefiles");
         List<? extends MetadataInterface> allMetadata = phys.getAllMetadataByType(mdTypeForPath);
-        if (allMetadata.size() > 0) {
+        if (!allMetadata.isEmpty()) {
             for (MetadataInterface meta : allMetadata) {
                 meta.setStringValue(newValue);
             }

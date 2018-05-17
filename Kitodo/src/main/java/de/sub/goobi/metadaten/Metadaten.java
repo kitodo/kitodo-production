@@ -681,9 +681,9 @@ public class Metadaten {
             createPagination();
         }
 
-        if (this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
-                && this.digitalDocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
-            for (MetadataInterface md : this.digitalDocument.getPhysicalDocStruct().getAllMetadata()) {
+        List<MetadataInterface> allMetadata = this.digitalDocument.getPhysicalDocStruct().getAllMetadata();
+        if (Objects.nonNull(allMetadata)) {
+            for (MetadataInterface md : allMetadata) {
                 if (md.getMetadataType().getName().equals("_representative")) {
                     try {
                         Integer value = Integer.valueOf(md.getValue());
@@ -704,7 +704,8 @@ public class Metadaten {
     private void createDefaultValues(DocStructInterface element) {
         if (ConfigCore.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
             saveMetadataAsBean(element);
-            if (element.getAllChildren() != null && element.getAllChildren().size() > 0) {
+            List allChildren = element.getAllChildren();
+            if (Objects.nonNull(allChildren)) {
                 for (DocStructInterface ds : element.getAllChildren()) {
                     createDefaultValues(ds);
                 }
@@ -736,9 +737,8 @@ public class Metadaten {
 
         if (currentRepresentativePage != null && currentRepresentativePage.length() > 0) {
             boolean match = false;
-            if (this.digitalDocument.getPhysicalDocStruct() != null
-                    && this.digitalDocument.getPhysicalDocStruct().getAllMetadata() != null
-                    && this.digitalDocument.getPhysicalDocStruct().getAllMetadata().size() > 0) {
+            DocStructInterface physicalDocStruct = this.digitalDocument.getPhysicalDocStruct();
+            if (Objects.nonNull(physicalDocStruct) && Objects.nonNull(physicalDocStruct.getAllMetadata())) {
                 for (MetadataInterface md : this.digitalDocument.getPhysicalDocStruct().getAllMetadata()) {
                     if (md.getMetadataType().getName().equals("_representative")) {
                         Integer value = Integer.valueOf(currentRepresentativePage);
@@ -1256,7 +1256,7 @@ public class Metadaten {
         // added new
         DocStructInterface log = this.digitalDocument.getLogicalDocStruct();
         while (log.getDocStructType().getAnchorClass() != null && log.getAllChildren() != null
-                && log.getAllChildren().size() > 0) {
+                && !log.getAllChildren().isEmpty()) {
             log = log.getAllChildren().get(0);
         }
         if (log.getDocStructType().getAnchorClass() != null) {
@@ -1339,12 +1339,12 @@ public class Metadaten {
 
                     MetadataTypeInterface mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
                     List<? extends MetadataInterface> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
-                    if (listMetadaten != null && listMetadaten.size() > 0) {
+                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
                         MetadataInterface meineSeite = listMetadaten.get(0);
                         firstPage = Integer.parseInt(meineSeite.getValue());
                     }
                     listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
-                    if (listMetadaten != null && listMetadaten.size() > 0) {
+                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
                         MetadataInterface meineSeite = listMetadaten.get(0);
                         secondPage = Integer.parseInt(meineSeite.getValue());
                     }
@@ -1599,7 +1599,7 @@ public class Metadaten {
                 logger.error(e.getMessage(), e);
             }
         }
-        if (dataList != null && dataList.size() > 0) {
+        if (dataList != null && !dataList.isEmpty()) {
             logger.trace("dataList not null");
             this.lastImage = dataList.size();
             logger.trace("myBildLetztes");
@@ -1860,7 +1860,7 @@ public class Metadaten {
         // create the list of all allowed metadata elements
         List<MetadataTypeInterface> addableMetadataTypes = this.docStruct.getAddableMetadataTypes();
         List<String> allowed = new ArrayList<>();
-        if (addableMetadataTypes != null && addableMetadataTypes.size() > 0) {
+        if (Objects.nonNull(addableMetadataTypes)) {
             for (MetadataTypeInterface metadataType : addableMetadataTypes) {
                 allowed.add(metadataType.getName());
             }

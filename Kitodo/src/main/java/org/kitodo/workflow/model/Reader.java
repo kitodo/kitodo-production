@@ -116,7 +116,7 @@ public class Reader {
     private Workflow determineWorkflow(String title, String file) throws DataException {
         List<Workflow> workflows = serviceManager.getWorkflowService().getWorkflowsForTitleAndFile(title, file);
 
-        if (workflows.size() > 0) {
+        if (!workflows.isEmpty()) {
             if (workflows.size() == 1) {
                 return workflows.get(0);
             } else {
