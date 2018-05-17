@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -25,19 +26,29 @@ public class DataEditorService {
      * Reads the data of a given file in xml format. The format of that file needs
      * to be the corresponding to the one which is referenced by the data editor
      * module as data format module.
-     * 
+     *
      * @param xmlFileUri
      *            The path to the metadata file as URI.
-     * 
      */
     public void readData(URI xmlFileUri) throws IOException {
         DataEditorInterface dataEditor = loadDataEditorModule();
-        dataEditor.readData(xmlFileUri);
+        URI xsltFile = getXsltFileFromConfig();
+        dataEditor.readData(xmlFileUri, xsltFile);
     }
 
     private DataEditorInterface loadDataEditorModule() {
         KitodoServiceLoader<DataEditorInterface> serviceLoader = new KitodoServiceLoader<>(DataEditorInterface.class,
             ConfigCore.getParameter("moduleFolder"));
         return serviceLoader.loadModule();
+    }
+
+    private URI getXsltFileFromConfig() {
+        String path = getXsltFolder();
+        String file = ConfigCore.getParameter("xsltFilenameMetadataTransformation");
+        return Paths.get(path + file).toUri();
+    }
+
+    private String getXsltFolder() {
+        return ConfigCore.getParameter("xsltFolder");
     }
 }

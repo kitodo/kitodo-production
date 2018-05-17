@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2018-02-14T10:01:44">
+        <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+            <mets:name>Kitodo - kitodo-dataeditor-3.0 - 22−May−2017</mets:name>
+            <mets:note>Kitodo</mets:note>
+        </mets:agent>
+    <mets:dmdSec ID="DMDLOG_0001">
+</mets:mets>

@@ -15,19 +15,20 @@ import java.io.IOException;
 import java.net.URI;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.stream.XMLStreamException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
 public class DataEditor implements DataEditorInterface {
 
-    private MetsKitodoWrap metsKitodoWrap;
+    private MetsKitodoWrapper metsKitodoWrapper;
 
     @Override
-    public void readData(URI xmlFileUri) throws IOException {
+    public void readData(URI xmlFileUri, URI xsltFileUri) throws IOException {
         try {
-            this.metsKitodoWrap = new MetsKitodoWrap(xmlFileUri);
-        } catch (JAXBException | XMLStreamException e) {
+            this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri, xsltFileUri);
+        } catch (JAXBException  | TransformerException | DatatypeConfigurationException e) {
             // TODO add also message for modul frontend, when it is ready!
             // For now we wrap exceptions in an IOExecption so that we dont need to
             // implement JAXB to core
