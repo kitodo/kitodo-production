@@ -120,10 +120,6 @@ public class StatistikForm {
     private int getAmountOfCurrentTasks(boolean open, boolean processing) {
         User user = Helper.getCurrentUser();
 
-        if (user == null) {
-            return 0;
-        }
-
         Long amount = 0L;
         try {
             amount = serviceManager.getTaskService().getAmountOfCurrentTasks(open, processing, user);

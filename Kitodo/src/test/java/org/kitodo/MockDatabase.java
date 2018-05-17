@@ -1161,6 +1161,7 @@ public class MockDatabase {
         firstUser.setTableSize(20);
         firstUser.setCss("old/userStyles/classic.css");
         serviceManager.getUserService().save(firstUser);
+        Helper.setCurrentUser(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");

@@ -540,11 +540,7 @@ public class ExportDms extends ExportMets {
                 // authorization again
                 User user = Helper.getCurrentUser();
                 try {
-                    if (user != null) {
-                        fileService.createDirectoryForUser(zielTif, user.getLogin());
-                    } else {
-                        throw new IOException("No logged user!");
-                    }
+                    fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (IOException e) {
                     handleException(e);
                     throw e;

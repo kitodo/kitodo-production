@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -129,9 +128,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new ArrayList<>();
-        }
         BoolQueryBuilder query = createUserTaskQuery(user);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
@@ -139,9 +135,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public String createCountQuery(Map filters) {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return "";
-        }
         BoolQueryBuilder query = createUserTaskQuery(user);
         return query.toString();
     }
@@ -734,9 +727,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new ArrayList<>();
-        }
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -751,9 +741,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new ArrayList<>();
-        }
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -768,9 +755,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new ArrayList<>();
-        }
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
             sort);
         return convertJSONObjectsToDTOs(results, false);
@@ -786,9 +770,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         User user = Helper.getCurrentUser();
-        if (user == null) {
-            return new ArrayList<>();
-        }
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
             10, false, sort);
         return convertJSONObjectsToDTOs(results, false);

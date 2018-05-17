@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
@@ -438,16 +437,14 @@ public class BatchStepHelper extends BatchHelper {
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = Helper.getCurrentUser();
-            if (Objects.nonNull(user)) {
-                String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
-                this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                     this.currentStep.getProcess().getWikiField(), "user", message));
-                this.addToWikiField = "";
-                try {
-                    this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-                } catch (DataException e) {
-                    logger.error(e.getMessage(), e);
-                }
+            this.addToWikiField = "";
+            try {
+                this.serviceManager.getProcessService().save(this.currentStep.getProcess());
+            } catch (DataException e) {
+                logger.error(e.getMessage(), e);
             }
         }
     }
@@ -458,19 +455,17 @@ public class BatchStepHelper extends BatchHelper {
     public void addToWikiFieldForAll() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
             User user = Helper.getCurrentUser();
-            if (Objects.nonNull(user)) {
-                String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
-                for (Task task : this.steps) {
-                    task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
+            String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
+            for (Task task : this.steps) {
+                task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
                         task.getProcess().getWikiField(), "user", message));
-                    try {
-                        this.serviceManager.getProcessService().save(task.getProcess());
-                    } catch (DataException e) {
-                        logger.error(e.getMessage(), e);
-                    }
+                try {
+                    this.serviceManager.getProcessService().save(task.getProcess());
+                } catch (DataException e) {
+                    logger.error(e.getMessage(), e);
                 }
-                this.addToWikiField = "";
             }
+            this.addToWikiField = "";
         }
     }
 

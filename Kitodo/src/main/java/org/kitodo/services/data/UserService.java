@@ -275,11 +275,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public UserDTO findAuthenticatedUser() throws DataException {
         User user = Helper.getCurrentUser();
-        if (Objects.nonNull(user)) {
-            return findById(user.getId());
-        } else {
-            return null;
-        }
+        return findById(user.getId());
     }
 
     public List<User> getByQuery(String query, String parameter) throws DAOException {

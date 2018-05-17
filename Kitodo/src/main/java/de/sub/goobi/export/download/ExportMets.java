@@ -52,11 +52,8 @@ public class ExportMets {
     public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException {
         User user = Helper.getCurrentUser();
-        if (user != null) {
-            URI userHome = serviceManager.getUserService().getHomeDirectory(user);
-            return startExport(process, userHome);
-        }
-        return false;
+        URI userHome = serviceManager.getUserService().getHomeDirectory(user);
+        return startExport(process, userHome);
     }
 
     /**
@@ -103,13 +100,11 @@ public class ExportMets {
      */
     protected void prepareUserDirectory(URI targetFolder) {
         User user = Helper.getCurrentUser();
-        if (user != null) {
-            try {
-                fileService.createDirectoryForUser(targetFolder, user.getLogin());
-            } catch (IOException | RuntimeException e) {
-                Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder,
+        try {
+            fileService.createDirectoryForUser(targetFolder, user.getLogin());
+        } catch (IOException | RuntimeException e) {
+            Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder,
                     logger, e);
-            }
         }
     }
 
