@@ -18,6 +18,7 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -700,10 +701,10 @@ public class GoobiScript {
                 File tiffHeaderFile = new File(
                         serviceManager.getFileService().getImagesDirectory(process) + "tiffwriter.conf");
                 if (tiffHeaderFile.exists()) {
-                    tiffHeaderFile.delete();
+                    Files.delete(tiffHeaderFile.toPath());
                 }
                 Helper.setMeldung(KITODO_SCRIPT_FIELD, "TiffHeaderFile deleted: ", process.getTitle());
-            } catch (RuntimeException e) {
+            } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while deleting TiffHeader", logger, e);
             }
         }

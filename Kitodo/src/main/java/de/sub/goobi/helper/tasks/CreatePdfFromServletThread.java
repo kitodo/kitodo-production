@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -133,7 +134,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             fileService.delete(tempPdf);
             if (this.metsURL != null) {
                 File tempMets = new File(this.metsURL.toString());
-                tempMets.delete();
+                Files.delete(tempMets.toPath());
             }
         } catch (IOException | RuntimeException e) {
             logger.error("Error while creating pdf for " + this.getProcess().getTitle(), e);
