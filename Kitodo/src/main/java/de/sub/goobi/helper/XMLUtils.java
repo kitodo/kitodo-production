@@ -105,17 +105,17 @@ public class XMLUtils {
      *             if any parse errors occur
      * @throws IOException
      *             if any IO errors occur
-     * @throws RuntimeException
+     * @throws IOException
      *             if a DocumentBuilder cannot be created which satisfies the
      *             configuration requested—which never happens because we use
      *             the default configuration here and that is definitely
-     *             supported
+     *             supported, but in case - wrap it in IOException
      */
     public static Document load(InputStream data) throws SAXException, IOException {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(data);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IOException(e.getMessage(), e);
         }
     }
 
@@ -124,17 +124,17 @@ public class XMLUtils {
      * instance of a DOM Document object.
      *
      * @return A new DOM Document
-     * @throws RuntimeException
+     * @throws IOException
      *             if a DocumentBuilder cannot be created which satisfies the
      *             configuration requested—which never happens because we use
      *             the default configuration here and that is definitely
-     *             supported
+     *             supported, but in case - wrap it in IOException
      */
-    public static Document newDocument() {
+    public static Document newDocument() throws IOException {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new IOException(e.getMessage(), e);
         }
     }
 
