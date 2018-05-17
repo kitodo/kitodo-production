@@ -14,6 +14,7 @@ package org.kitodo.data.database.persistence;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.hibernate.HibernateException;
@@ -110,6 +111,25 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 throw new DAOException(e);
             }
         }
+    }
+
+    /**
+     * Retrieves BaseBean objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> getByQuery(String query, Map<String, Object> parameters) {
+        Session session = HibernateHelper.getHibernateSession();
+        Query q = session.createQuery(query);
+        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            q.setParameter(parameter.getKey(), parameter.getValue());
+        }
+        return (List<T>) q.list();
     }
 
     /**

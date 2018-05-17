@@ -11,7 +11,9 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -78,8 +80,11 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of Task objects
      */
     public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
-        return getByQuery("FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = '" + title
-                + "' AND batchStep = 1 AND b.id = " + batchId);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("title", title);
+        parameters.put("batchId", batchId);
+        return getByQuery("FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
+                + ":title AND batchStep = 1 AND b.id = :batchId", parameters);
     }
 
     /**
@@ -94,8 +99,12 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of Task objects
      */
     public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
-        return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering < " + orderingMin
-                + " AND ordering > " + orderingMax + " ORDER BY ordering ASC");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("orderingMax", orderingMax);
+        parameters.put("orderingMin", orderingMin);
+        parameters.put("processId", processId);
+        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
+                + " AND ordering > :orderingMax ORDER BY ordering ASC", parameters);
     }
 
     /**
@@ -108,8 +117,11 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of Task objects
      */
     public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ordering", ordering);
+        parameters.put("processId", processId);
         return getByQuery(
-                "FROM Task WHERE process_id = " + processId + " AND ordering > " + ordering + " AND priority = 10");
+                "FROM Task WHERE process_id = :processId AND ordering > :ordering AND priority = 10", parameters);
     }
 
     /**
@@ -122,8 +134,11 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of Task objects
      */
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
-        return getByQuery("FROM Task WHERE process_id = " + processId + " AND ordering < " + ordering
-                + " ORDER BY ordering DESC");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("ordering", ordering);
+        parameters.put("processId", processId);
+        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :ordering"
+                + " ORDER BY ordering DESC", parameters);
     }
 
     /**
@@ -135,9 +150,11 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of tasks
      */
     public List<Task> getTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projectId", projectId);
         return getByQuery(
                 "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
+                        + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
     }
 
     /**
@@ -176,10 +193,13 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Task> getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("processingStatus", processingStatus);
+        parameters.put("projectId", projectId);
         return getByQuery(
                 "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
-                        + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
-                        + " GROUP BY t.title ORDER BY t.ordering");
+                        + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
+                        + "GROUP BY t.title ORDER BY t.ordering", parameters);
     }
 
     /**
