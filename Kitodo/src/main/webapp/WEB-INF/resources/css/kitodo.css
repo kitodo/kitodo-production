@@ -951,6 +951,10 @@ Metadata Editor
     display: none;
 }
 
+.collapsibleWrapper .columnHeadingWrapper button.collapsed {
+    transform: scaleY(-1);
+}
+
 .collapsibleWrapper.collapsed .columnHeading {
     position: absolute;
     transform: rotate(90deg);
