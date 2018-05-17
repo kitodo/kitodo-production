@@ -150,9 +150,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    List<Double> getAverage(String query) {
+    List<Double> getAverage(String query, Map<String, Object> parameters) {
         Session session = HibernateHelper.getHibernateSession();
-        List<Double> result = session.createQuery(query).list();
+        Query q = session.createQuery(query);
+        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            q.setParameter(parameter.getKey(), parameter.getValue());
+        }
+        List<Double> result = q.list();
         if (Objects.isNull(result)) {
             result = new ArrayList<>();
         }
@@ -160,19 +164,22 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    List<Long> getCount(String query) {
-        Session session = HibernateHelper.getHibernateSession();
-        List<Long> result = session.createQuery(query).list();
-        if (Objects.isNull(result)) {
-            result = new ArrayList<>();
-        }
-        return result;
+    List<Long> getCount(String query, Map<String, Object> parameters) {
+        return getLongList(query, parameters);
+    }
+
+    List<Long> getSum(String query, Map<String, Object> parameters) {
+        return getLongList(query, parameters);
     }
 
     @SuppressWarnings("unchecked")
-    List<Long> getSum(String query) {
+    private List<Long> getLongList(String query, Map<String, Object> parameters) {
         Session session = HibernateHelper.getHibernateSession();
-        List<Long> result = session.createQuery(query).list();
+        Query q = session.createQuery(query);
+        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+            q.setParameter(parameter.getKey(), parameter.getValue());
+        }
+        List<Long> result = q.list();
         if (Objects.isNull(result)) {
             result = new ArrayList<>();
         }
