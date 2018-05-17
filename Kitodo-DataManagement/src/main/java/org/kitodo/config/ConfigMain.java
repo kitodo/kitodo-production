@@ -11,7 +11,10 @@
 
 package org.kitodo.config;
 
+import java.util.NoSuchElementException;
+
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
@@ -59,12 +62,17 @@ public class ConfigMain {
     /**
      * Request selected parameter with given default value from configuration.
      *
+     * @param inParameter
+     *            name of parameter in config file
+     * @param inDefaultIfNull
+     *            default value in case parameter taken from config file is null or
+     *            exception occurred
      * @return Parameter as String
      */
     public static String getParameter(String inParameter, String inDefaultIfNull) {
         try {
             return getConfig().getString(inParameter, inDefaultIfNull);
-        } catch (RuntimeException e) {
+        } catch (ConversionException e) {
             return inDefaultIfNull;
         }
     }
@@ -81,22 +89,36 @@ public class ConfigMain {
     /**
      * Request boolean parameter from configuration.
      *
-     * @return Parameter as String
+     * @param inParameter
+     *            name of parameter in config file
+     * @param inDefault
+     *            default value in case parameter taken from config file is null or
+     *            exception occurred
+     * @return Parameter as boolean
      */
     public static boolean getBooleanParameter(String inParameter, boolean inDefault) {
-        return getConfig().getBoolean(inParameter, inDefault);
+        try {
+            return getConfig().getBoolean(inParameter, inDefault);
+        } catch (ConversionException e) {
+            return inDefault;
+        }
     }
 
     /**
      * Request int-parameter from Configuration with default-value.
      *
-     * @return Parameter as Int
+     * @param inParameter
+     *            name of parameter in config file
+     * @param inDefault
+     *            default value in case parameter taken from config file is null or
+     *            exception occurred
+     * @return Parameter as int
      */
     public static int getIntParameter(String inParameter, int inDefault) {
         try {
             return getConfig().getInt(inParameter, inDefault);
-        } catch (RuntimeException e) {
-            return 0;
+        } catch (NoSuchElementException e) {
+            return inDefault;
         }
     }
 }
