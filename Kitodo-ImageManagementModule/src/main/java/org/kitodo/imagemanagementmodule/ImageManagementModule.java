@@ -19,7 +19,6 @@ import java.net.URI;
 
 import javax.imageio.ImageIO;
 
-import org.im4java.core.IM4JavaException;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 
@@ -60,8 +59,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      double)
      */
     @Override
-    public Image getScaledWebImage(URI imageFileUri, double percent)
-            throws IOException, InterruptedException, IM4JavaException {
+    public Image getScaledWebImage(URI imageFileUri, double percent) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
             throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
@@ -99,7 +97,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      */
     @Override
     public boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri,
-            ImageFileFormat resultFileFormat) throws IOException, InterruptedException, IM4JavaException {
+            ImageFileFormat resultFileFormat) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
             throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
@@ -128,7 +126,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      int)
      */
     @Override
-    public Image changeDpi(URI imageFileUri, int dpi) throws IOException, InterruptedException, IM4JavaException {
+    public Image changeDpi(URI imageFileUri, int dpi) throws IOException {
         if (!new File(imageFileUri).exists()) {
             throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
         }
@@ -157,8 +155,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      int)
      */
     @Override
-    public Image getSizedWebImage(URI imageFileUri, int pixelWidth)
-            throws IOException, InterruptedException, IM4JavaException {
+    public Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
             throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());

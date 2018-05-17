@@ -141,7 +141,7 @@ class ImageConverter {
     /**
      * Performs the conversion by calling ImageMagick.
      */
-    void run() throws IOException, InterruptedException, IM4JavaException {
+    void run() throws IOException {
         IMOperation commandLine = new IMOperation();
         commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MEMORY, memoryLimit));
         commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MAP, memoryLimit));
@@ -153,7 +153,11 @@ class ImageConverter {
         if (SystemUtils.IS_OS_WINDOWS) {
             convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
         }
-        convertCmd.run(commandLine);
+        try {
+            convertCmd.run(commandLine);
+        } catch (InterruptedException | IM4JavaException e) {
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
     /**

@@ -12,69 +12,70 @@
 package org.kitodo.api.imagemanagement;
 
 import java.awt.Image;
+import java.io.IOException;
 import java.net.URI;
 
 public interface ImageManagementInterface {
 
     /**
-     * Changes the dpi of an image at a given uri.
+     * Changes the DPI of an image at a given URI.
      *
      * @param imageFileUri
-     *            The uri of the image.
+     *            the URI of the image
      * @param dpi
-     *            the new dpi.
-     * @return the image with the new dpi.
-     * @throws Exception
+     *            the new DPI
+     * @return the image with the new DPI
+     * @throws IOException
      *             if the plug-in is configured incorrectly, the image is
      *             missing or corrupted, etc.
      */
-    Image changeDpi(URI imageFileUri, int dpi) throws Exception;
+    Image changeDpi(URI imageFileUri, int dpi) throws IOException;
 
     /**
      * Creates a derivative for an image at a given path.
      *
      * @param imageFileUri
-     *            The uri to the image.
+     *            the URI to the image
      * @param percent
-     *            The percentage of scaling for the derivative.
+     *            the percentage of scaling for the derivative
      * @param resultFileUri
-     *            The uri to save the derivative to.
+     *            the URI to save the derivative to
      * @param resultFileFormat
-     *            The formate for the derivative.
-     * @return true, if creation was successful, false otherwise.
-     * @throws Exception
+     *            the format for the derivative
+     * @return true, if creation was successful, false otherwise
+     * @throws IOException
      *             if the plug-in is configured incorrectly, the image is
      *             missing or corrupted, etc.
      */
     boolean createDerivative(URI imageFileUri, double percent, URI resultFileUri, ImageFileFormat resultFileFormat)
-            throws Exception;
+            throws IOException;
 
     /**
      * Scales an image at a given path and returns it.
      *
      * @param imageFileUri
-     *            The uri to the image which should be scaled.
+     *            the URI to the image which should be scaled
      * @param percent
-     *            The percentage for scaling.
-     * @return The scaled image.
-     * @throws Exception
+     *            the percentage for scaling
+     * @return the scaled image
+     * @throws IOException
      *             if the plug-in is configured incorrectly, the image is
      *             missing or corrupted, etc.
      */
-    Image getScaledWebImage(URI imageFileUri, double percent) throws Exception;
+    Image getScaledWebImage(URI imageFileUri, double percent) throws IOException;
 
     /**
-     * changes the size (in pixel) of the image.
+     * Changes the size (in pixel) of the image.
      *
      * @param imageFileUri
-     *            The uri of the image to size.
+     *            the URI of the image to size
      * @param pixelWidth
-     *            The new pixelWidth.
-     * @return The new sized image
-     * @throws Exception
+     *            the new width in pixels
+     * @return the new sized image
+     * @throws IOException
      *             if the plug-in is configured incorrectly, the image is
      *             missing or corrupted, etc.
      */
-    Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws Exception;
+    Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws IOException;
 
 }

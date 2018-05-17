@@ -25,6 +25,7 @@ import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.im4java.core.Info;
+import org.im4java.core.InfoException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -75,7 +76,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testGetScaledWebImage() throws Exception {
+    public void testGetScaledWebImage() throws IOException, InfoException {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getScaledWebImage(new File(_00000001_TIF).toURI(), 0.3);
@@ -84,7 +85,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testCreateDerivative() throws Exception {
+    public void testCreateDerivative() throws IOException, InfoException {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
         ImageManagementInterface module = new ImageManagementModule();
@@ -97,7 +98,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testChangeDpi() throws Exception {
+    public void testChangeDpi() throws IOException, InfoException {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image image = module.changeDpi(new File(_00000001_TIF).toURI(), 300);
@@ -106,7 +107,7 @@ public class ImageManagementModuleIT {
     }
 
     @Test
-    public void testGetSizedWebImage() throws Exception {
+    public void testGetSizedWebImage() throws IOException {
         assert new File(_00000001_TIF).exists();
         ImageManagementInterface module = new ImageManagementModule();
         Image scaledWebImage = module.getSizedWebImage(new File(_00000001_TIF).toURI(), 150);
