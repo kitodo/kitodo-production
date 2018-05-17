@@ -903,6 +903,7 @@ Metadata Editor
 
 #metadataEditorWrapper {
     height: 700px;
+    white-space: nowrap;
 }
 
 .collapsibleWrapper {
@@ -914,6 +915,7 @@ Metadata Editor
     padding: 10px 0 0 0;
     background: #d8d8d8;
     overflow: visible !important;
+    white-space: initial;
 }
 
 .collapsibleWrapper > button {
@@ -1033,8 +1035,10 @@ Column content
 
 #structureTreeForm\:paginationPanel {
     margin-top: 5px;
-    height: calc(50% - 5px);
+    height: calc(50% - 45px);
     box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 #structureTreeForm\:actionButtons .ui-panelgrid-cell {
