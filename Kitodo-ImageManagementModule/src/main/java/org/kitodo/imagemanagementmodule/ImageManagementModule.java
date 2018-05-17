@@ -62,7 +62,7 @@ public class ImageManagementModule implements ImageManagementInterface {
     public Image getScaledWebImage(URI imageFileUri, double percent) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
-            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.getRawPath());
         }
         if (Double.isNaN(percent)) {
             throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
@@ -99,7 +99,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             ImageFileFormat resultFileFormat) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
-            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.getRawPath());
         }
         if (Double.isNaN(percent)) {
             throw new IllegalArgumentException("percent must be a number, but was " + Double.toString(percent));
@@ -127,7 +127,7 @@ public class ImageManagementModule implements ImageManagementInterface {
     @Override
     public Image changeDpi(URI imageFileUri, int dpi) throws IOException {
         if (!new File(imageFileUri).exists()) {
-            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.getRawPath());
         }
         if (dpi <= 0) {
             throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
@@ -159,7 +159,7 @@ public class ImageManagementModule implements ImageManagementInterface {
     public Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws IOException {
 
         if (!new File(imageFileUri).exists()) {
-            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.toString());
+            throw new FileNotFoundException("imageFileUri must exist: " + imageFileUri.getRawPath());
         }
         if (pixelWidth <= 0) {
             throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
