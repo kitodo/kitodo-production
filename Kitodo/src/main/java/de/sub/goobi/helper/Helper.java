@@ -560,7 +560,7 @@ public class Helper extends HibernateHelper implements Observer {
     /**
      * Set activeMQReporting.
      *
-     * @param activeMQReporting as java.util.Map<java.lang.String,java.lang.String>
+     * @param activeMQReporting as Map of Strings
      */
     public static void setActiveMQReporting(Map<String, String> activeMQReporting) {
         Helper.activeMQReporting = activeMQReporting;

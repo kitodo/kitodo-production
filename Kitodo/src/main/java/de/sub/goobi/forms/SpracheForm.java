@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -30,7 +31,6 @@ import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import de.sub.goobi.helper.Helper;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +39,6 @@ import org.apache.logging.log4j.Logger;
  * The SpracheForm class serves to switch the displayed language for the current
  * user in the running application.
  */
-
 @Named("SpracheForm")
 @SessionScoped
 public class SpracheForm implements Serializable {

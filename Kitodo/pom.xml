@@ -30,7 +30,7 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>114</maxAllowedViolations>
+        <maxAllowedViolations>95</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
     </properties>
