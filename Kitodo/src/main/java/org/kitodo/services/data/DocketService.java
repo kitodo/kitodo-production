@@ -62,7 +62,7 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Docket");
+        return countDatabaseRows("SELECT COUNT(*) FROM Docket");
     }
 
     /**

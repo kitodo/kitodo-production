@@ -149,8 +149,7 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of tasks
      */
     public List<Long> getSizeOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
-        return getCount("t.id",
-                "FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
+        return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
     }
 
@@ -163,8 +162,7 @@ public class TaskDAO extends BaseDAO<Task> {
      * @return list of tasks
      */
     public List<Double> getAverageOrderingOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
-        return getAverage("t.ordering",
-                "FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
+        return getAverage("SELECT AVG(t.ordering) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = " + projectId + " GROUP BY t.title ORDER BY t.ordering");
     }
 
@@ -194,8 +192,7 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Long> getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
-        return getCount("t.id",
-                "FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
+        return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
                         + " GROUP BY t.title ORDER BY t.ordering");
     }
@@ -210,8 +207,8 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Long> getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
-        return getSum("p.sortHelperImages",
-                "FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
+        return getSum(
+                "SELECT SUM(p.sortHelperImages) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = " + projectId + " WHERE t.processingStatus = " + processingStatus
                         + " GROUP BY t.title ORDER BY t.ordering");
     }

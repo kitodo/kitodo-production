@@ -130,9 +130,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    List<Double> getAverage(String field, String query) {
+    List<Double> getAverage(String query) {
         Session session = HibernateHelper.getHibernateSession();
-        List<Double> result = session.createQuery("SELECT AVG(" + field + ") " + query).list();
+        List<Double> result = session.createQuery(query).list();
         if (Objects.isNull(result)) {
             result = new ArrayList<>();
         }
@@ -140,9 +140,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    List<Long> getCount(String field, String query) {
+    List<Long> getCount(String query) {
         Session session = HibernateHelper.getHibernateSession();
-        List<Long> result = session.createQuery("SELECT COUNT(" + field + ") " + query).list();
+        List<Long> result = session.createQuery(query).list();
         if (Objects.isNull(result)) {
             result = new ArrayList<>();
         }
@@ -150,9 +150,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    List<Long> getSum(String field, String query) {
+    List<Long> getSum(String query) {
         Session session = HibernateHelper.getHibernateSession();
-        List<Long> result = session.createQuery("SELECT SUM(" + field + ") " + query).list();
+        List<Long> result = session.createQuery(query).list();
         if (Objects.isNull(result)) {
             result = new ArrayList<>();
         }
@@ -169,7 +169,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     public Long count(String query) throws DAOException {
         try {
             Session session = HibernateHelper.getHibernateSession();
-            return (Long) session.createQuery("select count(*) " + query).uniqueResult();
+            return (Long) session.createQuery(query).uniqueResult();
         } catch (HibernateException he) {
             throw new DAOException(he);
         }

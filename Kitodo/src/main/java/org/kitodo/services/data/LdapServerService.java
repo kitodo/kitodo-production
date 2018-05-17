@@ -94,7 +94,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM LdapServer");
+        return countDatabaseRows("SELECT COUNT(*) FROM LdapServer");
     }
 
     private String buildUserDN(User inUser) {

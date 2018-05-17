@@ -24,6 +24,6 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM LdapGroup");
+        return countDatabaseRows("SELECT COUNT(*) FROM LdapGroup");
     }
 }

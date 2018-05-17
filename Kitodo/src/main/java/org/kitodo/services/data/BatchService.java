@@ -91,7 +91,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Batch");
+        return countDatabaseRows("SELECT COUNT(*) FROM Batch");
     }
 
     public void removeAll(Iterable<Integer> ids) throws DAOException {

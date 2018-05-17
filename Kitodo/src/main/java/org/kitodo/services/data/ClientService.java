@@ -42,7 +42,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Client");
+        return countDatabaseRows("SELECT COUNT(*) FROM Client");
     }
 
     /**
