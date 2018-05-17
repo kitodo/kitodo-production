@@ -54,8 +54,8 @@ public class Config {
         try {
             return getConfig().getString(parameter);
         } catch (NoSuchElementException e) {
-            logger.error(e.getMessage(), e);
-            return "No configuration found!";
+            throw new NoSuchElementException(
+                    "No configuration found in kitodo_config.properties for key " + parameter + "!");
         }
     }
 
@@ -156,6 +156,7 @@ public class Config {
                     initialized.setListDelimiter('&');
                     initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
                     config = initialized;
+                    config.setThrowExceptionOnMissing(true);
                 }
             }
         }
