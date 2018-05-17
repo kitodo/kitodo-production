@@ -81,8 +81,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
             imageConverter.run();
 
-            Image result = ImageIO.read(temporaryWebImage);
-            return result;
+            return ImageIO.read(temporaryWebImage);
         } finally {
             temporaryWebImage.delete();
         }
@@ -134,18 +133,20 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
         }
 
-        File temporaryImage = File.createTempFile("changedDpiImage-", RAW_IMAGE_FORMAT, TMPDIR);
-        temporaryImage.deleteOnExit();
-        URI imageUri = temporaryImage.toURI();
-        ImageConverter imageConverter = new ImageConverter(imageFileUri);
-        imageConverter.addResult(imageUri).resizeToDpi(dpi);
+        File temporaryImage = File.createTempFile("DpiChangedImage-", RAW_IMAGE_FORMAT, TMPDIR);
+        try {
+            temporaryImage.deleteOnExit();
+            URI imageUri = temporaryImage.toURI();
+            ImageConverter imageConverter = new ImageConverter(imageFileUri);
+            imageConverter.addResult(imageUri).resizeToDpi(dpi);
 
-        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-        imageConverter.run();
+            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+            imageConverter.run();
 
-        Image result = ImageIO.read(temporaryImage);
-        temporaryImage.delete();
-        return result;
+            return ImageIO.read(temporaryImage);
+        } finally {
+            temporaryImage.delete();
+        }
     }
 
     /**
@@ -164,17 +165,19 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("pixelWidth must be > 0, but was " + Integer.toString(pixelWidth));
         }
 
-        File temporaryWebImage = File.createTempFile("sizedWebImage", WEB_IMAGE_FORMAT, TMPDIR);
-        temporaryWebImage.deleteOnExit();
-        URI webImageUri = temporaryWebImage.toURI();
-        ImageConverter imageConverter = new ImageConverter(imageFileUri);
-        imageConverter.addResult(webImageUri).resizeToWidth(pixelWidth);
+        File temporaryWebImage = File.createTempFile("sizedWebImage-", WEB_IMAGE_FORMAT, TMPDIR);
+        try {
+            temporaryWebImage.deleteOnExit();
+            URI webImageUri = temporaryWebImage.toURI();
+            ImageConverter imageConverter = new ImageConverter(imageFileUri);
+            imageConverter.addResult(webImageUri).resizeToWidth(pixelWidth);
 
-        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-        imageConverter.run();
+            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
+            imageConverter.run();
 
-        Image result = ImageIO.read(temporaryWebImage);
-        temporaryWebImage.delete();
-        return result;
+            return ImageIO.read(temporaryWebImage);
+        } finally {
+            temporaryWebImage.delete();
+        }
     }
 }
