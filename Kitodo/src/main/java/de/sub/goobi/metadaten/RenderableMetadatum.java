@@ -20,7 +20,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
-import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.api.display.helper.ConfigDisplayRules;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
@@ -141,7 +141,7 @@ public abstract class RenderableMetadatum {
         if (metadataType.isPerson()) {
             return new RenderablePersonMetadataGroup(metadataType, binding, container, projectName);
         }
-        switch (ConfigDispayRules.getInstance().getElementTypeByName(projectName, getBindState(binding),
+        switch (ConfigDisplayRules.getInstance().getElementTypeByName(projectName, getBindState(binding),
             metadataType.getName())) {
             case input:
                 return new RenderableEdit(metadataType, binding, container);
@@ -292,7 +292,7 @@ public abstract class RenderableMetadatum {
      * @return the collection of available items for the input element
      */
     protected final Collection<Item> getItems(String projectName, DisplayType type) {
-        List<Item> prototypes = ConfigDispayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
+        List<Item> prototypes = ConfigDisplayRules.getInstance().getItemsByNameAndType(projectName, getBindState(),
             metadataType.getName(), type);
         ArrayList<Item> result = new ArrayList<>(prototypes.size());
         for (Item item : prototypes) {

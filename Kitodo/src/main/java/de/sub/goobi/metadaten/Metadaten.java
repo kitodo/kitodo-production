@@ -54,7 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
-import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.api.display.helper.ConfigDisplayRules;
 import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
@@ -606,7 +606,7 @@ public class Metadaten {
 
     private void readXmlAndBuildTree() {
         // re-reading the config for display rules
-        ConfigDispayRules.getInstance().refresh();
+        ConfigDisplayRules.getInstance().refresh();
 
         Modes.setBindState(BindState.edit);
         try {

@@ -16,13 +16,13 @@ import java.util.List;
 
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.enums.DisplayType;
-import org.goobi.api.display.helper.ConfigDispayRules;
+import org.goobi.api.display.helper.ConfigDisplayRules;
 import org.kitodo.data.database.beans.Process;
 
 public class DisplayCase {
     private DisplayType displayType;
     private List<Item> itemList = new ArrayList<>();
-    private ConfigDispayRules configDisplay;
+    private ConfigDisplayRules configDisplay;
     private Process myProcess;
     private String metaName;
     private BindState myBindState;
@@ -42,7 +42,7 @@ public class DisplayCase {
         myProcess = inProcess;
         myBindState = Modes.getBindState();
         try {
-            configDisplay = ConfigDispayRules.getInstance();
+            configDisplay = ConfigDisplayRules.getInstance();
             if (configDisplay != null) {
                 displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(),
                     myBindState.getTitle(), metaName);
@@ -75,7 +75,7 @@ public class DisplayCase {
         myProcess = inProcess;
         myBindState = Modes.getBindState();
         try {
-            configDisplay = ConfigDispayRules.getInstance();
+            configDisplay = ConfigDisplayRules.getInstance();
             if (configDisplay != null) {
                 displayType = configDisplay.getElementTypeByName(myProcess.getProject().getTitle(), bind, metaName);
                 itemList = configDisplay.getItemsByNameAndType(myProcess.getProject().getTitle(), bind, metaName,

@@ -303,7 +303,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
         inputForm.evaluateOpac();
         int afterwards = countPopulatedAdditionalFields(inputForm);
 
-        if (!(afterwards > before)) {
+        if (afterwards <= before) {
             throw new RuntimeException("Searching the OPAC didn’t yield any results.");
         }
     }

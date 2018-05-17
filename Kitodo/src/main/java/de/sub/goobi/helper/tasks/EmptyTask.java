@@ -459,7 +459,9 @@ public class EmptyTask extends Thread implements INameableTask {
      *            the tasks progress
      */
     public void setProgress(int progress) {
-        assert progress < 0 || progress > 100 : "Progress out of range: " + progress;
+        if (progress < 0 || progress > 100) {
+            throw new IllegalArgumentException("Progress out of range: " + progress);
+        }
         this.progress = progress;
     }
 

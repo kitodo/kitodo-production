@@ -962,7 +962,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private URI getImageDirectory(boolean useFallBack, URI directory, URI imageDirectory) {
-        if (!(imageDirectory == null) && useFallBack) {
+        if (Objects.nonNull(imageDirectory) && useFallBack) {
             String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
             if (!suffix.equals("")) {
                 URI tif = imageDirectory;
