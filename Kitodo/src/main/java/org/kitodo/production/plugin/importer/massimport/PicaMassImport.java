@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.faces.context.FacesContext;
@@ -466,53 +467,67 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
     public List<Record> generateRecordsFromFile() {
         List<Record> records = new ArrayList<>();
 
-        try (InputStream myxls = new FileInputStream(importFile)) {
+        try (InputStream xls = new FileInputStream(importFile)) {
             if (importFile.getName().endsWith(".xlsx")) {
-                XSSFWorkbook wb = new XSSFWorkbook(myxls);
-                XSSFSheet sheet = wb.getSheetAt(0); // first sheet
-                // loop over all rows
-                for (int j = 0; j <= sheet.getLastRowNum(); j++) {
-                    // loop over all cells
-                    XSSFRow row = sheet.getRow(j);
-
-                    if (row != null) {
-                        for (int i = 0; i < row.getLastCellNum(); i++) {
-                            XSSFCell cell = row.getCell(i);
-                            // changing all cell types to String
-                            cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                            Record record = changeCellTypeToString(cell, i, j);
-                            if (record != null) {
-                                records.add(record);
-                            }
-                        }
-                    }
-                }
+                records = getRecordsForXLSX(xls);
             } else {
-                HSSFWorkbook wb = new HSSFWorkbook(myxls);
-                HSSFSheet sheet = wb.getSheetAt(0); // first sheet
-                // loop over all rows
-                for (int j = 0; j <= sheet.getLastRowNum(); j++) {
-                    // loop over all cells
-                    HSSFRow row = sheet.getRow(j);
-
-                    if (row != null) {
-                        for (int i = 0; i < row.getLastCellNum(); i++) {
-                            HSSFCell cell = row.getCell(i);
-                            // changing all cell types to String
-                            if (cell != null) {
-                                cell.setCellType(HSSFCell.CELL_TYPE_STRING);
-                                Record record = changeCellTypeToString(cell, i, j);
-                                if (record != null) {
-                                    records.add(record);
-                                }
-                            }
-                        }
-                    }
-                }
+                records = getRecordsForXLS(xls);
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
+        return records;
+    }
+
+    private List<Record> getRecordsForXLSX(InputStream xls) throws IOException {
+        List<Record> records = new ArrayList<>();
+
+        XSSFWorkbook wb = new XSSFWorkbook(xls);
+        XSSFSheet sheet = wb.getSheetAt(0); // first sheet
+        // loop over all rows
+        for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+            // loop over all cells
+            XSSFRow row = sheet.getRow(j);
+            if (Objects.nonNull(row)) {
+                for (int i = 0; i < row.getLastCellNum(); i++) {
+                    XSSFCell cell = row.getCell(i);
+                    // changing all cell types to String
+                    cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                    Record record = changeCellTypeToString(cell, i, j);
+                    if (Objects.nonNull(record)) {
+                        records.add(record);
+                    }
+                }
+            }
+        }
+
+        return records;
+    }
+
+    private List<Record> getRecordsForXLS(InputStream xls) throws IOException {
+        List<Record> records = new ArrayList<>();
+
+        HSSFWorkbook wb = new HSSFWorkbook(xls);
+        HSSFSheet sheet = wb.getSheetAt(0); // first sheet
+        // loop over all rows
+        for (int j = 0; j <= sheet.getLastRowNum(); j++) {
+            // loop over all cells
+            HSSFRow row = sheet.getRow(j);
+            if (Objects.nonNull(row)) {
+                for (int i = 0; i < row.getLastCellNum(); i++) {
+                    HSSFCell cell = row.getCell(i);
+                    // changing all cell types to String
+                    if (Objects.nonNull(cell)) {
+                        cell.setCellType(HSSFCell.CELL_TYPE_STRING);
+                        Record record = changeCellTypeToString(cell, i, j);
+                        if (Objects.nonNull(record)) {
+                            records.add(record);
+                        }
+                    }
+                }
+            }
+        }
+
         return records;
     }
 

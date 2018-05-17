@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -291,55 +292,53 @@ public class VariableReplacer {
             try {
                 mdt = UghHelper.getMetadataType(this.prefs, metadata);
             } catch (UghHelperException e) {
-                Helper.setErrorMessage(e.toString(), logger, e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return "";
             }
 
-            String result = "";
             String resultTop = getMetadataValue(topstruct, mdt);
             String resultFirst = null;
             if (firstchildstruct != null) {
                 resultFirst = getMetadataValue(firstchildstruct, mdt);
             }
-
-            switch (inLevel) {
-                case FIRSTCHILD:
-                    // without existing FirstChild, this can not be returned
-                    if (resultFirst == null) {
-                        logger.info("Can not replace firstChild-variable for METS: {}", metadata);
-                        result = "";
-                    } else {
-                        result = resultFirst;
-                    }
-                    break;
-
-                case TOPSTRUCT:
-                    if (resultTop == null) {
-                        result = "";
-                        logger.warn("Can not replace topStruct-variable for METS: {}", metadata);
-                    } else {
-                        result = resultTop;
-                    }
-                    break;
-
-                case ALL:
-                    if (resultFirst != null) {
-                        result = resultFirst;
-                    } else if (resultTop != null) {
-                        result = resultTop;
-                    } else {
-                        result = "";
-                        logger.warn("Can not replace variable for METS: {}", metadata);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-            return result;
+            return getResultAccordingToMetadataLevel(inLevel, metadata, resultFirst, resultTop);
         } else {
             return "";
         }
+    }
+
+    private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
+                                                     String resultTop) {
+        String result = "";
+        switch (metadataLevel) {
+            case FIRSTCHILD:
+                // without existing FirstChild, this can not be returned
+                if (Objects.isNull(resultFirst)) {
+                    logger.info("Can not replace firstChild-variable for METS: {}", metadata);
+                } else {
+                    result = resultFirst;
+                }
+                break;
+            case TOPSTRUCT:
+                if (Objects.isNull(resultTop)) {
+                    logger.warn("Can not replace topStruct-variable for METS: {}", metadata);
+                } else {
+                    result = resultTop;
+                }
+                break;
+            case ALL:
+                if (Objects.nonNull(resultFirst)) {
+                    result = resultFirst;
+                } else if (Objects.nonNull(resultTop)) {
+                    result = resultTop;
+                } else {
+                    logger.warn("Can not replace variable for METS: {}", metadata);
+                }
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 
     /**

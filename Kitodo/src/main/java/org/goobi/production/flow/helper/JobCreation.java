@@ -206,48 +206,50 @@ public class JobCreation {
                 fileService.delete(anchor.toURI());
             }
         } else {
-            // new folder structure for process imports
-            URI importFolder = basepath;
-            if (fileService.isDirectory(importFolder)) {
-                List<URI> folderList = fileService.getSubUris(importFolder);
-                for (URI directory : folderList) {
-                    if (fileService.getFileName(directory).contains("images")) {
-                        List<URI> imageList = fileService.getSubUris(directory);
-                        for (URI imageDir : imageList) {
-                            if (fileService.isDirectory(imageDir)) {
-                                for (URI file : fileService.getSubUris(imageDir)) {
-                                    fileService.moveFile(file,
+            createNewFolderForProcessImports(basepath, metsfile, p);
+        }
+    }
+
+    private static void createNewFolderForProcessImports(URI importFolder, URI metsFile, Process p) throws IOException {
+        if (fileService.isDirectory(importFolder)) {
+            List<URI> folderList = fileService.getSubUris(importFolder);
+            for (URI directory : folderList) {
+                if (fileService.getFileName(directory).contains("images")) {
+                    List<URI> imageList = fileService.getSubUris(directory);
+                    for (URI imageDir : imageList) {
+                        if (fileService.isDirectory(imageDir)) {
+                            for (URI file : fileService.getSubUris(imageDir)) {
+                                fileService.moveFile(file,
                                         fileService.createResource(fileService.getImagesDirectory(p),
-                                            fileService.getFileName(imageDir) + fileService.getFileName(file)));
-                                }
-                            } else {
-                                fileService.moveFile(imageDir, fileService.createResource(
-                                    fileService.getImagesDirectory(p), fileService.getFileName(imageDir)));
+                                                fileService.getFileName(imageDir) + fileService.getFileName(file)));
                             }
-                        }
-                    } else if (fileService.getFileName(directory).contains("ocr")) {
-                        URI ocr = serviceManager.getFileService().getOcrDirectory(p);
-                        if (!fileService.fileExist(ocr)) {
-                            fileService.createDirectory(ocr, null);
-                        }
-                        List<URI> ocrList = fileService.getSubUris(directory);
-                        for (URI ocrDir : ocrList) {
-                            moveDirectory(ocrDir, fileService.createResource(ocr, fileService.getFileName(ocrDir)));
-                        }
-                    } else {
-                        URI i = serviceManager.getFileService().getImportDirectory(p);
-                        if (!fileService.fileExist(i)) {
-                            fileService.createResource(i.getPath());
-                        }
-                        List<URI> importList = fileService.getSubUris(directory);
-                        for (URI importDir : importList) {
-                            moveDirectory(importDir, fileService.createResource(i, fileService.getFileName(importDir)));
+                        } else {
+                            fileService.moveFile(imageDir, fileService.createResource(
+                                    fileService.getImagesDirectory(p), fileService.getFileName(imageDir)));
                         }
                     }
+                } else if (fileService.getFileName(directory).contains("ocr")) {
+                    URI ocr = serviceManager.getFileService().getOcrDirectory(p);
+                    if (!fileService.fileExist(ocr)) {
+                        fileService.createDirectory(ocr, null);
+                    }
+                    List<URI> ocrList = fileService.getSubUris(directory);
+                    for (URI ocrDir : ocrList) {
+                        moveDirectory(ocrDir, fileService.createResource(ocr, fileService.getFileName(ocrDir)));
+                    }
+                } else {
+                    URI i = serviceManager.getFileService().getImportDirectory(p);
+                    if (!fileService.fileExist(i)) {
+                        fileService.createResource(i.getPath());
+                    }
+                    List<URI> importList = fileService.getSubUris(directory);
+                    for (URI importDir : importList) {
+                        moveDirectory(importDir, fileService.createResource(i, fileService.getFileName(importDir)));
+                    }
                 }
-                fileService.delete(importFolder);
-                fileService.delete(metsfile);
             }
+            fileService.delete(importFolder);
+            fileService.delete(metsFile);
         }
     }
 

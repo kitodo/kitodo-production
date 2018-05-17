@@ -538,33 +538,9 @@ public class BatchStepHelper extends BatchHelper {
      */
     public String batchDurchBenutzerAbschliessen() throws DataException, IOException {
         for (Task task : this.steps) {
-            boolean error = false;
+            boolean valid = isTaskValid(task);
 
-            if (task.isTypeCloseVerify()) {
-                if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
-                    serviceManager.getMetadataValidationService().setAutoSave(true);
-                    if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
-                        error = true;
-                    }
-                }
-                if (task.isTypeImagesWrite()) {
-                    MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
-                    if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                            serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
-                        error = true;
-                        Helper.setFehlerMeldung("Error on image validation!");
-                    }
-                }
-
-                loadProcessProperties(task);
-
-                for (Property prop : this.properties) {
-                    if (isPropertyInvalid(prop, task)) {
-                        error = true;
-                    }
-                }
-            }
-            if (!error) {
+            if (valid) {
                 this.myDav.uploadFromHome(task.getProcess());
                 task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 serviceManager.getWorkflowControllerService().close(task);
@@ -572,6 +548,55 @@ public class BatchStepHelper extends BatchHelper {
         }
 
         return Helper.getCurrentTaskForm().filterAll();
+    }
+
+    private boolean isTaskValid(Task task) throws IOException {
+        boolean valid = true;
+
+        if (task.isTypeCloseVerify()) {
+            if (invalidMetadataExists(task)) {
+                valid = false;
+            }
+            if (invalidImageExists(task)) {
+                valid = false;
+            }
+
+            loadProcessProperties(task);
+            if (invalidPropertyExists(task)) {
+                valid = false;
+            }
+        }
+
+        return valid;
+    }
+
+    private boolean invalidMetadataExists(Task task) {
+        if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+            serviceManager.getMetadataValidationService().setAutoSave(true);
+            return !serviceManager.getMetadataValidationService().validate(task.getProcess());
+        }
+        return false;
+    }
+
+    private boolean invalidImageExists(Task task) throws IOException {
+        if (task.isTypeImagesWrite()) {
+            MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
+            if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
+                    serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
+                Helper.setFehlerMeldung("Error on image validation!");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean invalidPropertyExists(Task task) {
+        for (Property prop : this.properties) {
+            if (isPropertyInvalid(prop, task)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isPropertyInvalid(Property property, Task task) {

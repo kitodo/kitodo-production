@@ -745,52 +745,15 @@ public class CopyProcess extends ProzesskopieForm {
     @Override
     public void calculateProcessTitle() {
         StringBuilder newTitle = new StringBuilder();
-        String titeldefinition = "";
-        ConfigProjects cp;
+        String titleDefinition;
         try {
-            cp = new ConfigProjects(this.template.getProject().getTitle());
+            titleDefinition = getTitleDefinition(this.template.getProject().getTitle(), this.docType);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
         }
 
-        int count = cp.getParamList(ITEM_LIST_PROCESS_TITLE).size();
-        for (int i = 0; i < count; i++) {
-            String title = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")");
-            String isDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isdoctype]");
-            String isNotDocType = cp.getParamString(ITEM_LIST_PROCESS_TITLE + "(" + i + ")[@isnotdoctype]");
-
-            title = processNullValues(title);
-            isDocType = processNullValues(isDocType);
-            isNotDocType = processNullValues(isNotDocType);
-
-            /* wenn nix angegeben wurde, dann anzeigen */
-            if (isDocType.equals("") && isNotDocType.equals("")) {
-                titeldefinition = title;
-                break;
-            }
-
-            /* wenn beides angegeben wurde */
-            if (!isDocType.equals("") && !isNotDocType.equals("")
-                    && StringUtils.containsIgnoreCase(isDocType, this.docType)
-                    && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
-                titeldefinition = title;
-                break;
-            }
-
-            /* wenn nur pflicht angegeben wurde */
-            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, this.docType)) {
-                titeldefinition = title;
-                break;
-            }
-            /* wenn nur "darf nicht" angegeben wurde */
-            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, this.docType)) {
-                titeldefinition = title;
-                break;
-            }
-        }
-
-        StringTokenizer tokenizer = new StringTokenizer(titeldefinition, "+");
+        StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         /* jetzt den Bandtitel parsen */
         while (tokenizer.hasMoreTokens()) {
             String token = tokenizer.nextToken();
@@ -824,13 +787,6 @@ public class CopyProcess extends ProzesskopieForm {
         }
         this.prozessKopie.setTitle(newTitle.toString());
         calculateTiffHeader();
-    }
-
-    private String processNullValues(String value) {
-        if (value == null) {
-            value = "";
-        }
-        return value;
     }
 
     private String calcProcessTitleCheck(String fieldName, String fieldValue) {
