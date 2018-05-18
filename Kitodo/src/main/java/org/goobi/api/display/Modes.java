@@ -17,6 +17,13 @@ public class Modes {
 
     private static BindState bindState = BindState.create;
 
+    /**
+     * Add a private constructor to hide the implicit public one.
+     */
+    private Modes() {
+
+    }
+
     public static BindState getBindState() {
         return bindState;
     }

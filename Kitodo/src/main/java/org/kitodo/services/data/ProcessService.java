@@ -116,8 +116,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static ProcessService instance = null;
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
+    private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String EXPORT_ERROR = "exportError";
+    private static final String CLOSED = "closed";
+    private static final String IN_PROCESSING = "inProcessing";
+    private static final String LOCKED = "locked";
+    private static final String OPEN = "open";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -795,11 +800,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         if (tifDirectory == null && useFallBack) {
-            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
-            if (!suffix.equals("")) {
+            if (!SUFFIX.equals("")) {
                 List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
-                    if (folder.toString().endsWith(suffix)) {
+                    if (folder.toString().endsWith(SUFFIX)) {
                         tifDirectory = folder;
                         break;
                     }
@@ -851,12 +855,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         if (tifDirectory == null && useFallBack) {
-            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
-            if (!suffix.equals("")) {
+            if (!SUFFIX.equals("")) {
                 List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
                     processBaseURI, ProcessSubType.IMAGE, "");
                 for (URI folder : folderList) {
-                    if (folder.toString().endsWith(suffix)) {
+                    if (folder.toString().endsWith(SUFFIX)) {
                         tifDirectory = folder;
                         break;
                     }
@@ -925,11 +928,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
 
             if (origDirectory == null && useFallBack) {
-                String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
-                if (!suffix.equals("")) {
+                if (!SUFFIX.equals("")) {
                     List<URI> folderList = fileService.getSubUris(dir);
                     for (URI folder : folderList) {
-                        if (folder.toString().endsWith(suffix)) {
+                        if (folder.toString().endsWith(SUFFIX)) {
                             origDirectory = folder;
                             break;
                         }
@@ -958,14 +960,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     private URI getImageDirectory(boolean useFallBack, URI directory, URI imageDirectory) {
         if (Objects.nonNull(imageDirectory) && useFallBack) {
-            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
-            if (!suffix.equals("")) {
+            if (!SUFFIX.equals("")) {
                 URI tif = imageDirectory;
                 List<URI> files = fileService.getSubUris(tif);
                 if (files.isEmpty()) {
                     List<URI> folderList = fileService.getSubUris(directory);
                     for (URI folder : folderList) {
-                        if (folder.toString().endsWith(suffix) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
+                        if (folder.toString().endsWith(SUFFIX) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
                             imageDirectory = folder;
                             break;
                         }
@@ -1110,14 +1111,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public String getProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
-        double closed = (tasks.get("closed") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double inProcessing = (tasks.get("inProcessing") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double open = (tasks.get("open") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
-        double locked = (tasks.get("locked") * 100)
-                / (double) (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        double closed = (tasks.get(CLOSED) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        double inProcessing = (tasks.get(IN_PROCESSING) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        double open = (tasks.get(OPEN) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
+        double locked = (tasks.get(LOCKED) * 100)
+                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
 
         DecimalFormat decimalFormat = new DecimalFormat("#000");
         return decimalFormat.format(closed) + decimalFormat.format(inProcessing) + decimalFormat.format(open)
@@ -1136,8 +1137,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public int getProgressClosed(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
-        return (tasks.get("closed") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        return (tasks.get(CLOSED) * 100)
+                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     /**
@@ -1152,8 +1153,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public int getProgressInProcessing(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
 
-        return (tasks.get("inProcessing") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        return (tasks.get(IN_PROCESSING) * 100)
+                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     /**
@@ -1167,8 +1168,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public int getProgressOpen(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-        return (tasks.get("open") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        return (tasks.get(OPEN) * 100)
+                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     /**
@@ -1182,8 +1183,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public int getProgressLocked(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
         HashMap<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-        return (tasks.get("locked") * 100)
-                / (tasks.get("closed") + tasks.get("inProcessing") + tasks.get("open") + tasks.get("locked"));
+        return (tasks.get(LOCKED) * 100)
+                / (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
     }
 
     private HashMap<String, Integer> getCalculationForProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
@@ -1737,7 +1738,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             newfile.setDigitalDocument(gdzfile.getDigitalDocument());
             gdzfile = newfile;
         } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation("exportError") + process.getTitle(), logger, e);
+            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
             return false;
         }
 

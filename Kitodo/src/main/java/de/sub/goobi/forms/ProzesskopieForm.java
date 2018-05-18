@@ -97,7 +97,8 @@ public class ProzesskopieForm implements Serializable {
     protected static final String ERROR_READ = "errorReading";
     protected static final String ITEM_LIST = CREATE_NEW_PROCESS + ".itemlist";
     protected static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
-    protected static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
+    private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
+    private static final String OPAC_CONFIG = "configurationOPAC";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private int activeTabId = 0;
@@ -1180,7 +1181,7 @@ public class ProzesskopieForm implements Serializable {
         } catch (TypeNotAllowedAsChildException | PreferencesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
         }
     }
 
@@ -1437,7 +1438,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1451,7 +1452,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1739,7 +1740,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
                 } catch (FileNotFoundException | RuntimeException e) {
-                    Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+                    Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
@@ -1991,7 +1992,7 @@ public class ProzesskopieForm implements Serializable {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"opac-config"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
             return false;
         }
     }

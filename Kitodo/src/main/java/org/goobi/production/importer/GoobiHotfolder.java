@@ -39,7 +39,7 @@ public class GoobiHotfolder implements IGoobiHotfolder {
     private Integer template;
     private String updateStrategy;
     private String collection;
-
+    private static final String HOTFOLDER = "hotfolder";
     private final ServiceManager serviceManager = new ServiceManager();
     public final FileService fileService = serviceManager.getFileService();
 
@@ -166,24 +166,22 @@ public class GoobiHotfolder implements IGoobiHotfolder {
             config.setReloadingStrategy(new FileChangedReloadingStrategy());
             logger.trace("config 5");
 
-            int count = config.getMaxIndex("hotfolder");
+            int count = config.getMaxIndex(HOTFOLDER);
             logger.trace("config 6");
 
             for (int i = 0; i <= count; i++) {
-
                 logger.trace("config 7");
-                String name = config.getString("hotfolder(" + i + ")[@name]");
+                String name = config.getString(HOTFOLDER + "(" + i + ")[@name]");
                 logger.trace("config 8");
-                URI folder = URI.create(config.getString("hotfolder(" + i + ")[@folder]"));
+                URI folder = URI.create(config.getString(HOTFOLDER + "(" + i + ")[@folder]"));
                 logger.trace("config 9");
-                Integer template = config.getInt("hotfolder(" + i + ")[@template]");
+                Integer template = config.getInt(HOTFOLDER + "(" + i + ")[@template]");
                 logger.trace("config 10");
-
-                String updateStrategy = config.getString("hotfolder(" + i + ")[@updateStrategy]");
+                String updateStrategy = config.getString(HOTFOLDER + "(" + i + ")[@updateStrategy]");
                 logger.trace("config 11");
-                String collection = config.getString("hotfolder(" + i + ")[@collection]");
+                String collection = config.getString(HOTFOLDER + "(" + i + ")[@collection]");
                 logger.trace("config 12");
-                if (name == null || name.equals("") || template == null) {
+                if (name == null || name.equals("")) {
                     logger.trace("config 13");
                     break;
                 }

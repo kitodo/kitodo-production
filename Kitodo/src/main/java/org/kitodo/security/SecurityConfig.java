@@ -29,6 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static SecurityConfig instance = null;
     private SessionRegistry sessionRegistry;
+    private static final String CLIENT_ANY = "CLIENT_ANY";
+    private static final String GLOBAL = "GLOBAL";
+    private static final String PROJECT_ANY = "PROJECT_ANY";
+    private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
 
     /**
      * Constructor for SecurityConfig which also sets instance variable for singleton usage.
@@ -66,73 +70,73 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
             .antMatchers("/pages/clients.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewAllClients_GLOBAL")
+                ADMIN_GLOBAL,
+                "viewAllClients_" + GLOBAL)
             .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editClient_GLOBAL",
-                "editClient_CLIENT_ANY")
+                ADMIN_GLOBAL,
+                "editClient_" + GLOBAL,
+                "editClient_" + CLIENT_ANY)
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewIndex_GLOBAL")
+                ADMIN_GLOBAL,
+                "viewIndex_" + GLOBAL)
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewAllProcesses_GLOBAL",
-                "viewAllProcesses_CLIENT_ANY",
-                "viewAllProcesses_PROJECT_ANY")
+                ADMIN_GLOBAL,
+                "viewAllProcesses_" + GLOBAL,
+                "viewAllProcesses_" + CLIENT_ANY,
+                "viewAllProcesses_" + PROJECT_ANY)
             .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editProcess_GLOBAL",
-                "editProcess_CLIENT_ANY",
-                "editProcess_PROJECT_ANY")
+                ADMIN_GLOBAL,
+                "editProcess_" + GLOBAL,
+                "editProcess_" + CLIENT_ANY,
+                "editProcess_" + PROJECT_ANY)
 
             .antMatchers("/pages/projects.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewAllProjects_GLOBAL",
-                "viewAllProjects_CLIENT_ANY",
-                "viewAllTemplates_GLOBAL",
-                "viewAllTemplates_CLIENT_ANY",
-                "viewAllTemplates_PROJECT_ANY",
-                "viewAllDockets_GLOBAL",
-                "viewAllRulesets_GLOBAL")
+                ADMIN_GLOBAL,
+                "viewAllProjects_" + GLOBAL,
+                "viewAllProjects_" + CLIENT_ANY,
+                "viewAllTemplates_" + GLOBAL,
+                "viewAllTemplates_" + CLIENT_ANY,
+                "viewAllTemplates_" + PROJECT_ANY,
+                "viewAllDockets_" + GLOBAL,
+                "viewAllRulesets_" + GLOBAL)
             .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editProject_GLOBAL",
-                "editProject_CLIENT_ANY",
-                "editProject_PROJECT_ANY")
+                ADMIN_GLOBAL,
+                "editProject_" + GLOBAL,
+                "editProject_" + CLIENT_ANY,
+                "editProject_" + PROJECT_ANY)
             .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editDocket_GLOBAL")
+                ADMIN_GLOBAL,
+                "editDocket_" + GLOBAL)
             .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editRuleset_GLOBAL")
+                ADMIN_GLOBAL,
+                "editRuleset_" + GLOBAL)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewAllTasks_GLOBAL",
-                "viewAllTasks_CLIENT_ANY",
-                "viewAllTasks_PROJECT_ANY")
+                ADMIN_GLOBAL,
+                "viewAllTasks_" + GLOBAL,
+                "viewAllTasks_" + CLIENT_ANY,
+                "viewAllTasks_" + PROJECT_ANY)
 
             .antMatchers("/pages/users.jsf").hasAnyAuthority(
-                "admin_GLOBAL",
-                "viewAllUsers_GLOBAL",
-                "viewAllUsers_CLIENT_ANY",
-                "viewAllUserGroups_GLOBAL",
-                "viewAllUserGroups_CLIENT_ANY",
-                "viewAllLdapGroups_GLOBAL")
+                ADMIN_GLOBAL,
+                "viewAllUsers_" + GLOBAL,
+                "viewAllUsers_" + CLIENT_ANY,
+                "viewAllUserGroups_" + GLOBAL,
+                "viewAllUserGroups_" + CLIENT_ANY,
+                "viewAllLdapGroups_" + GLOBAL)
             .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editUser_GLOBAL",
-                "editUser_CLIENT_ANY")
+                ADMIN_GLOBAL,
+                "editUser_" + GLOBAL,
+                "editUser_" + CLIENT_ANY)
             .antMatchers("/pages/usergroupEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editUserGroup_GLOBAL",
-                "editUserGroup_CLIENT_ANY")
+                ADMIN_GLOBAL,
+                "editUserGroup_" + GLOBAL,
+                "editUserGroup_" + CLIENT_ANY)
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
-                "admin_GLOBAL",
-                "editLdapGroup_GLOBAL")
+                ADMIN_GLOBAL,
+                "editLdapGroup_" + GLOBAL)
 
             .antMatchers("/pages/images/**").permitAll()
             .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
