@@ -539,7 +539,7 @@ public class ProzesskopieForm implements Serializable {
      */
     private void applyCopyingRules(CopierData data) {
         String rules = ConfigCore.getParameter("copyData.onCatalogueQuery");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+        if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(data);
             } catch (ConfigurationException e) {
