@@ -39,6 +39,10 @@ public class UsersPage {
     private WebElement userGroupsTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:ldapGroupsTable_data")
+    private WebElement ldapGroupsTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newElementButton_button")
     private WebElement newElementButton;
 
@@ -110,6 +114,20 @@ public class UsersPage {
     }
 
     /**
+     * Counts rows of ldap groups table.
+     *
+     * @return The number of rows of ldab groups table.
+     */
+    public int countListedLdapGroups() throws Exception {
+        if (isNotAt()) {
+            goTo();
+            switchToTabByIndex(2);
+        }
+        List<WebElement> listOfRows = getRowsOfTable(ldapGroupsTable);
+        return listOfRows.size();
+    }
+
+    /**
      * Goes to edit page for creating a new user.
      * 
      * @return The user edit page.
@@ -124,6 +142,35 @@ public class UsersPage {
         Thread.sleep(Browser.getDelayAfterNewItemClick());
 
         return Pages.getUserEditPage();
+    }
+
+    /**
+     * Goes to edit page for creating a new ldap group.
+     *
+     * @return The user edit page.
+     */
+    public LdapGroupEditPage createNewLdapGroup() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        newLdapGroupButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+
+        return Pages.getLdapGroupEditPage();
+    }
+
+    /**
+     * Returns a list of all ldap groups titles which were displayed on ldap group page.
+     *
+     * @return The list of ldap group titles
+     */
+    public List<String> getListOfLdapGroupNames() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(ldapGroupsTable, 0);
     }
 
     /**
@@ -195,7 +242,7 @@ public class UsersPage {
 
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                WebElement userGroupEditLink = userGroupEditLink = tableRow.findElement(By.tagName("a"));
+                WebElement userGroupEditLink = tableRow.findElement(By.tagName("a"));
                 userGroupEditLink.click();
                 Thread.sleep(Browser.getDelayAfterLinkClick());
                 return Pages.getUserGroupEditPage();

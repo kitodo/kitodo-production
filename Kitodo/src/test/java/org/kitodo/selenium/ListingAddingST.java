@@ -16,10 +16,12 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
 
@@ -46,7 +48,8 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getProjectsPage().goTo();
         int numberOfProjectsInDatabase = serviceManager.getProjectService().getAll().size();
         int numberOfProjectsDisplayed = Pages.getProjectsPage().countListedProjects();
-        Assert.assertEquals("Displayed wrong number of projects", numberOfProjectsInDatabase, numberOfProjectsDisplayed);
+        Assert.assertEquals("Displayed wrong number of projects", numberOfProjectsInDatabase,
+            numberOfProjectsDisplayed);
     }
 
     @Test
@@ -54,7 +57,8 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getProjectsPage().goTo();
         int numberOfTemplatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
         int numberOfTemplatesDisplayed = Pages.getProjectsPage().countListedTemplates();
-        Assert.assertEquals("Displayed wrong number of templates", numberOfTemplatesInDatabase, numberOfTemplatesDisplayed);
+        Assert.assertEquals("Displayed wrong number of templates", numberOfTemplatesInDatabase,
+            numberOfTemplatesDisplayed);
     }
 
     @Test
@@ -62,7 +66,8 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo();
         int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
         int numberOfProcessesDisplayed = Pages.getProcessesPage().countListedProcesses();
-        Assert.assertEquals("Displayed wrong number of processes", numberOfProcessesInDatabase, numberOfProcessesDisplayed);
+        Assert.assertEquals("Displayed wrong number of processes", numberOfProcessesInDatabase,
+            numberOfProcessesDisplayed);
     }
 
     @Test
@@ -81,6 +86,14 @@ public class ListingAddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void listLdapGroupsTest() throws Exception {
+        int numberOfLdapGroupsInDatabase = serviceManager.getLdapGroupService().getAll().size();
+        int numberOfLdapGroupsDisplayed = Pages.getUsersPage().goTo().switchToTabByIndex(2).countListedLdapGroups();
+        Assert.assertEquals("Displayed wrong number of ldap groups!", numberOfLdapGroupsInDatabase,
+            numberOfLdapGroupsDisplayed);
+    }
+
+    @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
         Pages.getUsersPage().goTo().createNewUser().insertUserData(user).save();
@@ -88,6 +101,22 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getLoginPage().performLogin(user);
 
         Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
+    }
+
+    @Test
+    public void addLdapGroupTest() throws Exception {
+        LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
+        Pages.getUsersPage().goTo().createNewLdapGroup().insertLdapGroupData(ldapGroup);
+        // We need a wait longer here because the many inputs produces a lot of toggling
+        // on the save button which makes it stale
+        Thread.sleep(9000);
+        Pages.getLdapGroupEditPage().save();
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLoginAsAdmin();
+        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getListOfLdapGroupNames()
+                .contains(ldapGroup.getTitle());
+
+        Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
     }
 
     @Test

@@ -46,7 +46,7 @@ public class UserEditPage {
     @FindBy(id = "editForm:userTabView:metaDataLanguage")
     private WebElement metaDataLanguageInput;
 
-    public UserEditPage insertUserData(User user) throws InterruptedException {
+    public UserEditPage insertUserData(User user) {
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
