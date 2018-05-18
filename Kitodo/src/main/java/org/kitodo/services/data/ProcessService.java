@@ -123,6 +123,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String IN_PROCESSING = "inProcessing";
     private static final String LOCKED = "locked";
     private static final String OPEN = "open";
+    private static final String PROCESS_TITLE = "(processtitle)";
+    private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter("useOrigFolder", true);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -818,8 +821,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     .create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
-        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
-                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
             fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
@@ -872,8 +874,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
-        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
-                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
             fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
@@ -911,7 +912,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return path
      */
     public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
-        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
+        if (USE_ORIG_FOLDER) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -942,8 +943,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
-            if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
-                    && process.getSortHelperStatus() != null && process.getSortHelperStatus().equals("100000000")) {
+            if (CREATE_ORIG_FOLDER_IF_NOT_EXISTS && process.getSortHelperStatus() != null
+                    && process.getSortHelperStatus().equals("100000000")) {
                 fileService.createDirectory(result, origDirectory.getRawPath());
             }
             return origDirectory;
@@ -1220,13 +1221,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        results.put("closed", closed);
-        results.put("inProcessing", inProcessing);
-        results.put("open", open);
-        results.put("locked", locked);
+        results.put(CLOSED, closed);
+        results.put(IN_PROCESSING, inProcessing);
+        results.put(OPEN, open);
+        results.put(LOCKED, locked);
 
         if ((open + inProcessing + closed + locked) == 0) {
-            results.put("locked", 1);
+            results.put(LOCKED, 1);
         }
 
         return results;
@@ -1570,7 +1571,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
-                processDir.replace("(processtitle)", process.getTitle()));
+                processDir.replace(PROCESS_TITLE, process.getTitle()));
         }
     }
 
@@ -2182,9 +2183,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
-                    + processDir.replace("(processtitle)", myProcess.getTitle()));
+                    + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
             URI destinationDirectory = URI.create(
-                targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
+                targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
 
             if (fileService.isDirectory(sourceDirectory)) {
                 fileService.copyFile(sourceDirectory, destinationDirectory);
