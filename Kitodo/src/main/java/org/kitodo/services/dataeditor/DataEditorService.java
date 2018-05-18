@@ -11,13 +11,12 @@
 
 package org.kitodo.services.dataeditor;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
+import org.kitodo.config.Config;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class DataEditorService {
@@ -37,18 +36,17 @@ public class DataEditorService {
     }
 
     private DataEditorInterface loadDataEditorModule() {
-        KitodoServiceLoader<DataEditorInterface> serviceLoader = new KitodoServiceLoader<>(DataEditorInterface.class,
-            ConfigCore.getParameter("moduleFolder"));
+        KitodoServiceLoader<DataEditorInterface> serviceLoader = new KitodoServiceLoader<>(DataEditorInterface.class);
         return serviceLoader.loadModule();
     }
 
     private URI getXsltFileFromConfig() {
         String path = getXsltFolder();
-        String file = ConfigCore.getParameter("xsltFilenameMetadataTransformation");
+        String file = Config.getParameter("xsltFilenameMetadataTransformation");
         return Paths.get(path + file).toUri();
     }
 
     private String getXsltFolder() {
-        return ConfigCore.getParameter("xsltFolder");
+        return Config.getParameter("xsltFolder");
     }
 }

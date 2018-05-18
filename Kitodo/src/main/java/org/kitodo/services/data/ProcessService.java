@@ -1448,8 +1448,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private DocketInterface initialiseDocketModule() {
-        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class,
-                ConfigCore.getParameter("moduleFolder"));
+        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         return loader.loadModule();
     }
 

@@ -598,7 +598,7 @@ public class MetadataValidationService {
 
     private MetadataValidationInterface getValidationModule() {
         KitodoServiceLoader<MetadataValidationInterface> loader = new KitodoServiceLoader<>(
-                MetadataValidationInterface.class, ConfigCore.getParameter("moduleFolder"));
+                MetadataValidationInterface.class);
         return loader.loadModule();
     }
 }

@@ -11,8 +11,6 @@
 
 package org.kitodo.services.validation;
 
-import de.sub.goobi.config.ConfigCore;
-
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -20,7 +18,7 @@ public class LongTimePreservationValidationService {
 
     private LongTimePreservationValidationInterface getValidationModule() {
         KitodoServiceLoader<LongTimePreservationValidationInterface> loader = new KitodoServiceLoader<>(
-                LongTimePreservationValidationInterface.class, ConfigCore.getParameter("moduleFolder"));
+                LongTimePreservationValidationInterface.class);
         return loader.loadModule();
     }
 }

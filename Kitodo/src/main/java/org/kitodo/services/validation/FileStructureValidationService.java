@@ -11,8 +11,6 @@
 
 package org.kitodo.services.validation;
 
-import de.sub.goobi.config.ConfigCore;
-
 import org.kitodo.api.validation.filestructure.FileStructureValidationInterface;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
@@ -20,7 +18,7 @@ public class FileStructureValidationService {
 
     private FileStructureValidationInterface getValidationModule() {
         KitodoServiceLoader<FileStructureValidationInterface> loader = new KitodoServiceLoader<>(
-                FileStructureValidationInterface.class, ConfigCore.getParameter("moduleFolder"));
+                FileStructureValidationInterface.class);
         return loader.loadModule();
     }
 }
