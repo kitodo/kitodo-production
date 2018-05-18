@@ -440,7 +440,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public boolean createSymLink(URI targetUri, URI homeUri, boolean onlyRead, String userLogin) {
+    public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, String userLogin) {
         File imagePath = new File(fileMapper.mapAccordingToMappingType(homeUri));
         File userHome = new File(getDecodedPath(targetUri));
         if (userHome.exists()) {

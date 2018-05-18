@@ -272,7 +272,7 @@ public class FileManagementTest {
         URI directory = fileManagement.create(URI.create(""), "symLinkSource", false);
         fileManagement.create(directory, "meta.xml", true);
         setFileExecutable(script);
-        boolean result = fileManagement.createSymLink(symLinkTarget, symLinkSource, false, "travis");
+        boolean result = fileManagement.createSymLink(symLinkSource, symLinkTarget, false, "travis");
         setFileNotExecutable(script);
         Assert.assertTrue("Create symbolic link has failed!", result);
 
@@ -295,7 +295,7 @@ public class FileManagementTest {
         URI directory =  fileManagement.create(URI.create(""), "symLinkSource", false);
         fileManagement.create(directory, "meta.xml", true);
         setFileExecutable(scriptPrepare);
-        fileManagement.createSymLink(symLinkTarget, symLinkSource, false, "travis");
+        fileManagement.createSymLink(symLinkSource, symLinkTarget, false, "travis");
         setFileNotExecutable(scriptPrepare);
 
         File script = new File(Config.getParameter("script_deleteSymLink"));
