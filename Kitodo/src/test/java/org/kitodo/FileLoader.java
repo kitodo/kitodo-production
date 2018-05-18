@@ -23,6 +23,7 @@ import org.goobi.production.constants.FileNames;
 
 public class FileLoader {
 
+    private static String configProjectsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE;
     private static String diagramBasePath = ConfigCore.getKitodoDiagramDirectory() + "base.bpmn20.xml";
     private static String diagramTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
     private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "extended-test.bpmn20.xml";
@@ -31,6 +32,31 @@ public class FileLoader {
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
     private static String rulesetPath = ConfigCore.getKitodoConfigDirectory() + "ruleset_test.xml";
+
+    public static void createConfigProjectsFile() throws IOException {
+        List<String> content = new ArrayList<>();
+        content.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        content.add("<kitodoProjects>");
+        content.add("<project name=\"default\">");
+        content.add("<createNewProcess>");
+        content.add("<itemlist>");
+        content.add("<item from=\"werk\" multiselect=\"true\">Artist");
+        content.add("<select label=\"CHANGEME\">CHANGEME BIBLIOTHEKSLABEL</select>");
+        content.add("</item>");
+        content.add("<item from=\"werk\" multiselect=\"false\">Schrifttyp");
+        content.add("<select label=\"Antiqua\">Antiqua</select>");
+        content.add("<select label=\"Fraktur\">Fraktur</select>");
+        content.add("<select label=\"Antiqua\">Antiqua</select>");
+        content.add("</item>");
+        content.add("<processtitle isdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)</processtitle>");
+        content.add("<processtitle isdoctype=\"monograph\">ATS+TSL+'_'+PPN digital a-Satz</processtitle>");
+        content.add("<processtitle isdoctype=\"periodical\">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>");
+        content.add("</itemlist>");
+        content.add("</createNewProcess>");
+        content.add("</project>");
+        content.add("</kitodoProjects>");
+        Files.write(Paths.get(configProjectsPath), content);
+    }
 
     public static void createDiagramBaseFile() throws IOException {
         Files.write(Paths.get(diagramBasePath), prepareDiagram());
@@ -224,6 +250,10 @@ public class FileLoader {
         content.add("</Preferences>");
 
         Files.write(Paths.get(rulesetPath), content);
+    }
+
+    public static void deleteConfigProjectsFile() throws IOException {
+        Files.deleteIfExists(Paths.get(configProjectsPath));
     }
 
     public static void deleteDiagramBaseFile() throws IOException {

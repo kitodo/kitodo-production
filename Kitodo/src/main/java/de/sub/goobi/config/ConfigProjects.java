@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
 
 public class ConfigProjects {
-    XMLConfiguration config;
+    private XMLConfiguration config;
     private String projektTitel;
     private static final Logger logger = LogManager.getLogger(ConfigProjects.class);
 
@@ -38,15 +38,15 @@ public class ConfigProjects {
      *
      * @param projectTitle
      *            project title
-     * @param configPfad
+     * @param configPath
      *            config path
      */
-    public ConfigProjects(String projectTitle, String configPfad) throws IOException {
-        if (!(new File(configPfad)).exists()) {
-            throw new IOException("File not found: " + configPfad);
+    public ConfigProjects(String projectTitle, String configPath) throws IOException {
+        if (!(new File(configPath)).exists()) {
+            throw new IOException("File not found: " + configPath);
         }
         try {
-            this.config = new XMLConfiguration(configPfad);
+            this.config = new XMLConfiguration(configPath);
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             this.config = new XMLConfiguration();
@@ -80,7 +80,7 @@ public class ConfigProjects {
         try {
             this.config.setListDelimiter('&');
             String rueckgabe = this.config.getString(this.projektTitel + inParameter);
-            return cleanXmlFormatedString(rueckgabe);
+            return cleanXmlFormattedString(rueckgabe);
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             return null;
@@ -98,13 +98,13 @@ public class ConfigProjects {
             this.config.setListDelimiter('&');
             String myParam = this.projektTitel + inParameter;
             String rueckgabe = this.config.getString(myParam, inDefaultIfNull);
-            return cleanXmlFormatedString(rueckgabe);
+            return cleanXmlFormattedString(rueckgabe);
         } catch (RuntimeException e) {
             return inDefaultIfNull;
         }
     }
 
-    private String cleanXmlFormatedString(String inString) {
+    private String cleanXmlFormattedString(String inString) {
         if (inString != null) {
             inString = inString.replaceAll("\t", " ");
             inString = inString.replaceAll("\n", " ");
