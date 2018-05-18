@@ -259,7 +259,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Task");
+        return countDatabaseRows("SELECT COUNT(*) FROM Task");
     }
 
     /**

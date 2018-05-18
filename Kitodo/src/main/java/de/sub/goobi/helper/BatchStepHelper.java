@@ -249,7 +249,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return list of selected items
      */
-    public List<SelectItem> getPreviousStepsForProblemReporting() {
+    public List<SelectItem> getPreviousStepsForProblemReporting() throws DAOException {
         List<SelectItem> answer = new ArrayList<>();
         List<Task> previousTasksForProblemReporting = serviceManager.getTaskService()
                 .getPreviousTasksForProblemReporting(this.currentStep.getOrdering(),
@@ -265,7 +265,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return list of selected items
      */
-    public List<SelectItem> getNextStepsForProblemSolution() {
+    public List<SelectItem> getNextStepsForProblemSolution() throws DAOException {
         List<SelectItem> answer = new ArrayList<>();
         List<Task> nextTasksForProblemSolution = serviceManager.getTaskService()
                 .getNextTasksForProblemSolution(this.currentStep.getOrdering(), this.currentStep.getProcess().getId());

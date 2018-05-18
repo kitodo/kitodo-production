@@ -89,7 +89,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Filter");
+        return countDatabaseRows("SELECT COUNT(*) FROM Filter");
     }
 
     /**

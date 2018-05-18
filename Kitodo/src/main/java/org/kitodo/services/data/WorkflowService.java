@@ -29,7 +29,7 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Workflow");
+        return countDatabaseRows("SELECT COUNT(*) FROM Workflow");
     }
 
     /**

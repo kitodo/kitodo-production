@@ -103,7 +103,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM UserGroup");
+        return countDatabaseRows("SELECT COUNT(*) FROM UserGroup");
     }
 
     /**

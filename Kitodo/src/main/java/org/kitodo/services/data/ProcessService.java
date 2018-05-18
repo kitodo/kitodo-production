@@ -392,7 +392,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Process");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process");
     }
 
     public void refresh(Process process) {

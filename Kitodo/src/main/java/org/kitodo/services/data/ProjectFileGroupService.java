@@ -24,6 +24,6 @@ public class ProjectFileGroupService extends SearchDatabaseService<ProjectFileGr
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Process");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process");
     }
 }

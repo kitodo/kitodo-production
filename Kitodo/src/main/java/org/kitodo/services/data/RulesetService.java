@@ -67,7 +67,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Ruleset");
+        return countDatabaseRows("SELECT COUNT(*) FROM Ruleset");
     }
 
     /**

@@ -66,7 +66,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Template");
+        return countDatabaseRows("SELECT COUNT(*) FROM Template");
     }
 
     @Override

@@ -11,7 +11,9 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -60,6 +62,9 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
      * @return list of Workflow objects - expected is that list will have length 0 or 1
      */
     public List<Workflow> getByTitleAndFile(String title, String fileName) {
-        return getByQuery("FROM Workflow WHERE title = '" + title + "' AND fileName = '" + fileName + "'");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("title", title);
+        parameters.put("fileName", fileName);
+        return getByQuery("FROM Workflow WHERE title = :title AND fileName = :fileName", parameters);
     }
 }

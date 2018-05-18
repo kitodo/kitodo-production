@@ -48,7 +48,7 @@ public class UserGroupProjectAuthorityRelationService
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM UserGroupProjectAuthorityRelation");
+        return countDatabaseRows("SELECT COUNT(*) FROM UserGroupProjectAuthorityRelation");
     }
 
     /**

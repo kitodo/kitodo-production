@@ -153,7 +153,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Project");
+        return countDatabaseRows("SELECT COUNT(*) FROM Project");
     }
 
     /**

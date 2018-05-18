@@ -121,7 +121,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Authority");
+        return countDatabaseRows("SELECT COUNT(*) FROM Authority");
     }
 
     /**

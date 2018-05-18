@@ -87,7 +87,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("FROM Property");
+        return countDatabaseRows("SELECT COUNT(*) FROM Property");
     }
 
     /**

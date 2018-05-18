@@ -472,7 +472,8 @@ public class WorkflowControllerService {
     }
 
     // TODO: find out if method should save or not task
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask)
+            throws DAOException, DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
@@ -484,7 +485,7 @@ public class WorkflowControllerService {
     }
 
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
-            throws DataException {
+            throws DAOException, DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {

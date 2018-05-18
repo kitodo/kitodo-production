@@ -11,7 +11,9 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -89,7 +91,9 @@ public class TemplateDAO extends BaseDAO<Template> {
      * @return list of all process templates as Template objects
      */
     public List<Template> getTemplatesWithTitle(String title) {
-        return getByQuery("FROM Template WHERE title LIKE '" + title + "' ORDER BY title ASC");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("title", title);
+        return getByQuery("FROM Template WHERE title LIKE :title ORDER BY title ASC", parameters);
     }
 
     /**
