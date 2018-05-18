@@ -1566,7 +1566,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void addToWikiField(User user, String message, Process process) {
         String text = message + " (" + user.getSurname() + ")";
-        // addToWikiField("user", process, text);
+        addToWikiField("user", text, process);
     }
 
     /**
