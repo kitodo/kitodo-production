@@ -923,14 +923,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 origDirectory = directory;
             }
 
-            if (origDirectory == null && useFallBack) {
-                if (!SUFFIX.equals("")) {
-                    List<URI> folderList = fileService.getSubUris(dir);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(SUFFIX)) {
-                            origDirectory = folder;
-                            break;
-                        }
+            if (origDirectory == null && useFallBack && !SUFFIX.equals("")) {
+                List<URI> folderList = fileService.getSubUris(dir);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(SUFFIX)) {
+                        origDirectory = folder;
+                        break;
                     }
                 }
             }
@@ -955,17 +953,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private URI getImageDirectory(boolean useFallBack, URI directory, URI imageDirectory) {
-        if (Objects.nonNull(imageDirectory) && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                URI tif = imageDirectory;
-                List<URI> files = fileService.getSubUris(tif);
-                if (files.isEmpty()) {
-                    List<URI> folderList = fileService.getSubUris(directory);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(SUFFIX) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
-                            imageDirectory = folder;
-                            break;
-                        }
+        if (Objects.nonNull(imageDirectory) && useFallBack && !SUFFIX.equals("")) {
+            URI tif = imageDirectory;
+            List<URI> files = fileService.getSubUris(tif);
+            if (files.isEmpty()) {
+                List<URI> folderList = fileService.getSubUris(directory);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(SUFFIX) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
+                        imageDirectory = folder;
+                        break;
                     }
                 }
             }
