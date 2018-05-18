@@ -1351,7 +1351,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of AdditionalField
      */
     public List<AdditionalField> getVisibleAdditionalFields() {
-        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype())
+        return this.getAdditionalFields().stream().filter(AdditionalField::getShowDependingOnDoctype)
                 .collect(Collectors.toList());
     }
 
