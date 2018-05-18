@@ -799,14 +799,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = directory;
         }
 
-        if (tifDirectory == null && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
-                for (URI folder : folderList) {
-                    if (folder.toString().endsWith(SUFFIX)) {
-                        tifDirectory = folder;
-                        break;
-                    }
+        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
+            List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
+            for (URI folder : folderList) {
+                if (folder.toString().endsWith(SUFFIX)) {
+                    tifDirectory = folder;
+                    break;
                 }
             }
         }
@@ -854,15 +852,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = directory;
         }
 
-        if (tifDirectory == null && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
+        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
+            List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
                     processBaseURI, ProcessSubType.IMAGE, "");
-                for (URI folder : folderList) {
-                    if (folder.toString().endsWith(SUFFIX)) {
-                        tifDirectory = folder;
-                        break;
-                    }
+            for (URI folder : folderList) {
+                if (folder.toString().endsWith(SUFFIX)) {
+                    tifDirectory = folder;
+                    break;
                 }
             }
         }
