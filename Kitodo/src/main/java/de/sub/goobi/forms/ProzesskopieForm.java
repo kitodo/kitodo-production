@@ -99,6 +99,9 @@ public class ProzesskopieForm implements Serializable {
     protected static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
     private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
     private static final String OPAC_CONFIG = "configurationOPAC";
+    private static final String BOUND_BOOK = "boundbook";
+    private static final String FIRST_CHILD = "firstchild";
+    private static final String LIST_OF_CREATORS = "ListOfCreators";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private int activeTabId = 0;
@@ -574,7 +577,7 @@ public class ProzesskopieForm implements Serializable {
     private void proceedField(AdditionalField field) throws PreferencesException {
         DocStructInterface docStruct = getDocStruct(field);
         try {
-            if (field.getMetadata().equals("ListOfCreators")) {
+            if (field.getMetadata().equals(LIST_OF_CREATORS)) {
                 field.setValue(getAuthors(docStruct.getAllPersons()));
             } else {
                 // evaluate the content in normal fields
@@ -595,10 +598,10 @@ public class ProzesskopieForm implements Serializable {
     private DocStructInterface getDocStruct(AdditionalField field) throws PreferencesException {
         DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
         DocStructInterface docStruct = digitalDocument.getLogicalDocStruct();
-        if (field.getDocstruct().equals("firstchild")) {
+        if (field.getDocstruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
         }
-        if (field.getDocstruct().equals("boundbook")) {
+        if (field.getDocstruct().equals(BOUND_BOOK)) {
             docStruct = digitalDocument.getPhysicalDocStruct();
         }
         return docStruct;
@@ -854,7 +857,7 @@ public class ProzesskopieForm implements Serializable {
         DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
         DocStructInterface tempChild = null;
         String fieldDocStruct = field.getDocstruct();
-        if (fieldDocStruct.equals("firstchild")) {
+        if (fieldDocStruct.equals(FIRST_CHILD)) {
             try {
                 tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
@@ -864,20 +867,20 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         // if topstruct and first child should get the metadata
-        if (!fieldDocStruct.equals("firstchild") && fieldDocStruct.contains("firstchild")) {
+        if (!fieldDocStruct.equals(FIRST_CHILD) && fieldDocStruct.contains(FIRST_CHILD)) {
             try {
                 tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
-        if (fieldDocStruct.equals("boundbook")) {
+        if (fieldDocStruct.equals(BOUND_BOOK)) {
             tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
         }
         // which Metadata
         try {
             // except for the authors, take all additional into the metadata
-            if (!field.getMetadata().equals("ListOfCreators")) {
+            if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
                 PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
@@ -1565,7 +1568,7 @@ public class ProzesskopieForm implements Serializable {
             if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
                     && currentTitle.length() == 0) {
                 currentTitle = field.getValue();
-            } else if (field.getMetadata() != null && field.getMetadata().equals("ListOfCreators")
+            } else if (field.getMetadata() != null && field.getMetadata().equals(LIST_OF_CREATORS)
                     && currentAuthors.length() == 0) {
                 currentAuthors = field.getValue();
             }
