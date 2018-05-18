@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -248,9 +250,40 @@ public class LdapGroup extends BaseBean {
     /**
      * Sets ldapServer.
      *
-     * @param ldapServer The ldapServer.
+     * @param ldapServer
+     *            The ldapServer.
      */
     public void setLdapServer(LdapServer ldapServer) {
         this.ldapServer = ldapServer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LdapGroup ldapGroup = (LdapGroup) o;
+        return Objects.equals(title, ldapGroup.title)
+                && Objects.equals(homeDirectory, ldapGroup.homeDirectory)
+                && Objects.equals(gidNumber, ldapGroup.gidNumber)
+                && Objects.equals(userDN, ldapGroup.userDN)
+                && Objects.equals(objectClasses, ldapGroup.objectClasses)
+                && Objects.equals(sambaSID, ldapGroup.sambaSID)
+                && Objects.equals(sn, ldapGroup.sn)
+                && Objects.equals(uid, ldapGroup.uid)
+                && Objects.equals(description, ldapGroup.description)
+                && Objects.equals(displayName, ldapGroup.displayName)
+                && Objects.equals(gecos, ldapGroup.gecos)
+                && Objects.equals(loginShell, ldapGroup.loginShell)
+                && Objects.equals(sambaAcctFlags, ldapGroup.sambaAcctFlags)
+                && Objects.equals(sambaLogonScript, ldapGroup.sambaLogonScript)
+                && Objects.equals(sambaPrimaryGroupSID, ldapGroup.sambaPrimaryGroupSID)
+                && Objects.equals(sambaPwdMustChange, ldapGroup.sambaPwdMustChange)
+                && Objects.equals(sambaPasswordHistory, ldapGroup.sambaPasswordHistory)
+                && Objects.equals(sambaLogonHours, ldapGroup.sambaLogonHours)
+                && Objects.equals(sambaKickoffTime, ldapGroup.sambaKickoffTime);
     }
 }

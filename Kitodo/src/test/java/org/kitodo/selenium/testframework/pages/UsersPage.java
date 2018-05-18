@@ -242,13 +242,41 @@ public class UsersPage {
 
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                WebElement userGroupEditLink = tableRow.findElement(By.tagName("a"));
-                userGroupEditLink.click();
-                Thread.sleep(Browser.getDelayAfterLinkClick());
+                clickEditLinkOfTableRow(tableRow);
                 return Pages.getUserGroupEditPage();
             }
         }
         throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+    }
+
+    /**
+     * Goes to edit page for editing a given ldap group, specified by title.
+     *
+     * @param ldapGroupTitle
+     *            The ldap group title.
+     * @return The ldap group edit page.
+     */
+    public LdapGroupEditPage editLdapGroup(String ldapGroupTitle) throws Exception {
+        if (isNotAt()) {
+            goTo();
+            switchToTabByIndex(2);
+        }
+
+        List<WebElement> tableRows = getRowsOfTable(ldapGroupsTable);
+
+        for (WebElement tableRow : tableRows) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(ldapGroupTitle)) {
+                clickEditLinkOfTableRow(tableRow);
+                return Pages.getLdapGroupEditPage();
+            }
+        }
+        throw new NoSuchElementException("No ldap group with given title was found: " + ldapGroupTitle);
+    }
+
+    private void clickEditLinkOfTableRow(WebElement tableRow) throws InterruptedException {
+        WebElement ldapGroupEditLink = tableRow.findElement(By.tagName("a"));
+        ldapGroupEditLink.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**

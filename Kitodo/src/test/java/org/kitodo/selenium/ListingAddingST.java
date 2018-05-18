@@ -99,7 +99,6 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getUsersPage().goTo().createNewUser().insertUserData(user).save();
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
-
         Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
     }
 
@@ -117,6 +116,9 @@ public class ListingAddingST extends BaseTestSelenium {
                 .contains(ldapGroup.getTitle());
 
         Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
+
+        LdapGroup actualLdapGroup = Pages.getUsersPage().editLdapGroup(ldapGroup.getTitle()).readLdapGroup();
+        Assert.assertEquals("Saved ldap group is giving wrong data at edit page!", ldapGroup, actualLdapGroup);
     }
 
     @Test
@@ -164,6 +166,5 @@ public class ListingAddingST extends BaseTestSelenium {
         int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
         Assert.assertEquals("Assigned project authorities of the new user group were not saved!",
             availableProjectAuthorities, assignedProjectAuthorities);
-
     }
 }
