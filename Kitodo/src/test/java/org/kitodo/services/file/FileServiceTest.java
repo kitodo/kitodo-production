@@ -552,7 +552,7 @@ public class FileServiceTest {
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
-        user.setLogin("travis");
+        user.setLogin(SystemUtils.USER_NAME);
         ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
         ExecutionPermission.setNoExecutePermission(script);
@@ -577,7 +577,7 @@ public class FileServiceTest {
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
-        user.setLogin("travis");
+        user.setLogin(SystemUtils.USER_NAME);
         ExecutionPermission.setExecutePermission(scriptPrepare);
         fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
         ExecutionPermission.setNoExecutePermission(scriptPrepare);
