@@ -1851,7 +1851,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            as Fileformat
      * @param process
      *            as Process object
-     * @return true if no exception appeared
+     * @return false if no exception appeared
      */
     public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
         String rules = ConfigCore.getParameter("copyData.onExport");
