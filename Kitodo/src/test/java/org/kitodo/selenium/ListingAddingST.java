@@ -97,6 +97,7 @@ public class ListingAddingST extends BaseTestSelenium {
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
         Pages.getUsersPage().goTo().createNewUser().insertUserData(user).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
         Assert.assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
@@ -106,10 +107,11 @@ public class ListingAddingST extends BaseTestSelenium {
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
         Pages.getUsersPage().goTo().createNewLdapGroup().insertLdapGroupData(ldapGroup);
-        // We need a wait longer here because the many inputs produces a lot of toggling
+        // We need to wait longer here because the many inputs produces a lot of toggling
         // on the save button which makes it stale and throws a StaleElementException
         Thread.sleep(9000);
         Pages.getLdapGroupEditPage().save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
         boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getListOfLdapGroupNames()
@@ -126,6 +128,7 @@ public class ListingAddingST extends BaseTestSelenium {
         Client client = new Client();
         client.setName("MockClient");
         Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
         boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
@@ -138,9 +141,12 @@ public class ListingAddingST extends BaseTestSelenium {
         userGroup.setTitle("MockUserGroup");
 
         Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
-                .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities().save();
+                .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities();
 
-        Pages.getStartPage().goTo();
+        Thread.sleep(2000);
+        Pages.getUserGroupEditPage().save();
+
+        Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();
 
