@@ -1593,28 +1593,7 @@ public class ProzesskopieForm implements Serializable {
                     }
                 }
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
-                for (AdditionalField additionalField : this.additionalFields) {
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
-                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
-                            && additionalField.getShowDependingOnDoctype()
-                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                        if (atstsl == null || atstsl.length() == 0) {
-                            atstsl = createAtstsl(currentTitle, currentAuthors);
-                        }
-                        additionalField.setValue(this.atstsl);
-                    }
-
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                            && additionalField.getValue() != null) {
-                        newTitle.append(
-                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
-                    }
-                }
+                newTitle.append(evaluateAdditionalFieldsForTitle(currentTitle, currentAuthors, token));
             }
         }
 
@@ -1668,6 +1647,33 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         return titleDefinition;
+    }
+
+    private String evaluateAdditionalFieldsForTitle(String currentTitle, String currentAuthors, String token) {
+        StringBuilder newTitle = new StringBuilder();
+
+        for (AdditionalField additionalField : this.additionalFields) {
+            /*
+             * if it is the ATS or TSL field, then use the calculated
+             * atstsl if it does not already exist
+             */
+            if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
+                    && additionalField.getShowDependingOnDoctype()
+                    && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                if (atstsl == null || atstsl.length() == 0) {
+                    atstsl = createAtstsl(currentTitle, currentAuthors);
+                }
+                additionalField.setValue(this.atstsl);
+            }
+
+            // add the content to the title
+            if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
+                    && additionalField.getValue() != null) {
+                newTitle.append(
+                        calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+            }
+        }
+        return newTitle.toString();
     }
 
     private String processNullValues(String value) {
@@ -1769,7 +1775,6 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         }
-
         reduceLengthOfTifHeaderImageDescription(title);
     }
 
@@ -1858,8 +1863,8 @@ public class ProzesskopieForm implements Serializable {
     public static String createAtstsl(String title, String author) {
         StringBuilder result = new StringBuilder(8);
         if (author != null && author.trim().length() > 0) {
-            result.append(author.length() > 4 ? author.substring(0, 4) : author);
-            result.append(title.length() > 4 ? title.substring(0, 4) : title);
+            result.append(getPartString(author, 4));
+            result.append(getPartString(title, 4));
         } else {
             StringTokenizer titleWords = new StringTokenizer(title);
             int wordNo = 1;
@@ -1867,14 +1872,14 @@ public class ProzesskopieForm implements Serializable {
                 String word = titleWords.nextToken();
                 switch (wordNo) {
                     case 1:
-                        result.append(word.length() > 4 ? word.substring(0, 4) : word);
+                        result.append(getPartString(word, 4));
                         break;
                     case 2:
                     case 3:
-                        result.append(word.length() > 2 ? word.substring(0, 2) : word);
+                        result.append(getPartString(word, 2));
                         break;
                     case 4:
-                        result.append(word.length() > 1 ? word.substring(0, 1) : word);
+                        result.append(getPartString(word, 1));
                         break;
                     default:
                         assert false : wordNo;
@@ -1883,6 +1888,10 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
+    }
+
+    private static String getPartString(String word, int length) {
+        return word.length() > length ? word.substring(0, length) : word;
     }
 
     /**
