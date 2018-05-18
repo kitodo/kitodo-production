@@ -47,7 +47,7 @@
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUserGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.ldapgroups}"
+            <p:tab title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
             </p:tab>

@@ -35,11 +35,11 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.ldapgroupEdit} (#{LdapGruppenForm.myLdapGruppe.title})"
+            <h:outputText value="#{msgs.ldapGroupEdit} (#{LdapGruppenForm.myLdapGruppe.title})"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
                           rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.ldapgroupView}"
+            <h:outputText value="#{msgs.ldapGroupView}"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="saveButton"
@@ -255,10 +255,10 @@
                     #{msgs.neueLdapgruppeAnlegen}
                 </ui:fragment>
                 <ui:fragment rendered="#{isEditMode}">
-                    #{msgs.ldapgroupEdit}
+                    #{msgs.ldapGroupEdit}
                 </ui:fragment>
                 <ui:fragment rendered="#{isViewMode}">
-                    #{msgs.ldapgroupView}
+                    #{msgs.ldapGroupView}
                 </ui:fragment>
             </a>
         </li>

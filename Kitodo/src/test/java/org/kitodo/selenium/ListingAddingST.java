@@ -108,7 +108,7 @@ public class ListingAddingST extends BaseTestSelenium {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
         Pages.getUsersPage().goTo().createNewLdapGroup().insertLdapGroupData(ldapGroup);
         // We need a wait longer here because the many inputs produces a lot of toggling
-        // on the save button which makes it stale
+        // on the save button which makes it stale and throws a StaleElementException
         Thread.sleep(9000);
         Pages.getLdapGroupEditPage().save();
         Pages.getTopNavigation().logout();
