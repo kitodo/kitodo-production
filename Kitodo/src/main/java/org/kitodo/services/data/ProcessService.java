@@ -1708,34 +1708,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-
-        Project project = process.getProject();
         String atsPpnBand = process.getTitle();
 
         // read document
-        FileformatInterface gdzfile;
-        FileformatInterface newfile;
-        try {
-            URI metadataPath = fileService.getMetadataFilePath(process);
-            gdzfile = readMetadataFile(metadataPath, preferences);
-            switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
-                case METS:
-                    newfile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
-                    break;
-                case METS_AND_RDF:
-                default:
-                    newfile = UghImplementation.INSTANCE.createRDFFile(preferences);
-                    break;
-            }
-
-            newfile.setDigitalDocument(gdzfile.getDigitalDocument());
-            gdzfile = newfile;
-        } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
-            return false;
-        }
-
-        if (!handleExceptionsForConfiguration(newfile, process)) {
+        FileformatInterface gdzfile = readDocument(preferences, process);
+        if (Objects.isNull(gdzfile)) {
             return false;
         }
 
@@ -1747,6 +1724,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return false;
         }
 
+        Project project = process.getProject();
+
         // prepare place for save and download
         URI targetDirectory = new File(project.getDmsImportImagesPath()).toURI();
         URI userHome = targetDirectory;
@@ -1754,29 +1733,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // if necessary, create an operation folder
         if (project.isDmsImportCreateProcessFolder()) {
             targetDirectory = userHome.resolve(File.separator + process.getTitle());
-            // remove old import folder
-            if (!fileService.delete(userHome)) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+            boolean created = createOperationDirectory(userHome, process);
+            if (!created) {
                 return false;
-            }
-            // remove old success folder
-            File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-            if (!fileService.delete(successFile.toURI())) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-                return false;
-            }
-            // remove old error folder
-            File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
-            if (!fileService.delete(errorFile.toURI())) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
-                return false;
-            }
-
-            if (!fileService.fileExist(userHome)) {
-                fileService.createDirectory(userHome, File.separator + process.getTitle());
             }
         }
 
@@ -1826,6 +1785,64 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
+    private FileformatInterface readDocument(PrefsInterface preferences, Process process)
+            throws IOException, PreferencesException {
+        FileformatInterface gdzFile;
+        FileformatInterface newFile;
+        try {
+            URI metadataPath = fileService.getMetadataFilePath(process);
+            gdzFile = readMetadataFile(metadataPath, preferences);
+            switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
+                case METS:
+                    newFile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
+                    break;
+                case METS_AND_RDF:
+                default:
+                    newFile = UghImplementation.INSTANCE.createRDFFile(preferences);
+                    break;
+            }
+            newFile.setDigitalDocument(gdzFile.getDigitalDocument());
+            gdzFile = newFile;
+        } catch (ReadException | RuntimeException e) {
+            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
+            return null;
+        }
+
+        if (handleExceptionsForConfiguration(newFile, process)) {
+            return null;
+        }
+        return gdzFile;
+    }
+
+    private boolean createOperationDirectory(URI userHome, Process process) throws IOException {
+        Project project = process.getProject();
+        // remove old import folder
+        if (!fileService.delete(userHome)) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+            return false;
+        }
+        // remove old success folder
+        File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+        if (!fileService.delete(successFile.toURI())) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
+            return false;
+        }
+        // remove old error folder
+        File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
+        if (!fileService.delete(errorFile.toURI())) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
+            return false;
+        }
+
+        if (!fileService.fileExist(userHome)) {
+            fileService.createDirectory(userHome, File.separator + process.getTitle());
+        }
+        return true;
+    }
+
     /**
      * Method for avoiding redundant code for exception handling. //TODO: should
      * this exceptions be handled that way?
@@ -1843,13 +1860,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 new DataCopier(rules).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
                 Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
-                return false;
+                return true;
             } catch (RuntimeException e) {
                 Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -1886,7 +1903,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            String
      */
     private void fulltextDownload(Process process, URI userHome, String atsPpnBand) throws IOException {
+        downloadSources(process, userHome, atsPpnBand);
+        downloadOCR(process, userHome, atsPpnBand);
+    }
 
+    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
         // download sources
         URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
@@ -1894,15 +1915,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            List<URI> dateien = fileService.getSubUris(sources);
-            for (URI aDateien : dateien) {
-                if (fileService.isFile(aDateien)) {
-                    URI meinZiel = destination.resolve(File.separator + fileService.getFileNameWithExtension(aDateien));
-                    fileService.copyFile(aDateien, meinZiel);
+            List<URI> files = fileService.getSubUris(sources);
+            for (URI file : files) {
+                if (fileService.isFile(file)) {
+                    URI targetDirectory = destination.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                    fileService.copyFile(file, targetDirectory);
                 }
             }
         }
+    }
 
+    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);

@@ -74,7 +74,7 @@ public class ExportMets {
         String atsPpnBand = process.getTitle();
         FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
-        if (!serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
+        if (serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
             return false;
         }
 
