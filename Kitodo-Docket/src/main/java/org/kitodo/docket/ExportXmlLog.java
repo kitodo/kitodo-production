@@ -99,19 +99,18 @@ public class ExportXmlLog {
             root.addContent(processRoot);
         }
 
-        XMLOutputter outp = new XMLOutputter();
-        outp.setFormat(Format.getPrettyFormat());
+        XMLOutputter outp = new XMLOutputter(Format.getPrettyFormat());
 
         try {
             outp.output(answer, outputStream);
         } catch (IOException e) {
-            logger.error("Generating XML Output failed.", e.getMessage());
+            logger.error("Generating XML Output failed.", e);
         } finally {
             if (outputStream != null) {
                 try {
                     outputStream.close();
                 } catch (IOException e) {
-                    logger.error("Closing the outputstream failed.", e.getMessage());
+                    logger.error("Closing the output stream failed.", e);
                 }
             }
         }

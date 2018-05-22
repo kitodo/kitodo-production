@@ -58,7 +58,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      */
     private static int autoRunLimit;
 
-    {
+    static {
         setAutoRunningThreads(true);
     }
 

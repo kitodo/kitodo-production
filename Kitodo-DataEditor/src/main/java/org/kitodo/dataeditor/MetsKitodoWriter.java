@@ -41,8 +41,8 @@ public class MetsKitodoWriter {
      *            The file path to write the xml file.
      */
     public void write(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
-        mets = insertMetsHeaderIfNotExist(mets);
-        mets = updateLastModDate(mets);
+        insertMetsHeaderIfNotExist(mets);
+        updateLastModDate(mets);
         writeMetsData(mets, filePath);
     }
 
@@ -53,15 +53,13 @@ public class MetsKitodoWriter {
         jaxbMetsMarshaller.marshal(mets, new File(file));
     }
 
-    private Mets insertMetsHeaderIfNotExist(Mets mets) throws DatatypeConfigurationException, IOException {
+    private void insertMetsHeaderIfNotExist(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getMetsHdr())) {
             mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
         }
-        return mets;
     }
 
-    private Mets updateLastModDate(Mets mets) throws DatatypeConfigurationException {
+    private void updateLastModDate(Mets mets) throws DatatypeConfigurationException {
         mets.getMetsHdr().setLASTMODDATE(XmlUtils.getXmlTime());
-        return mets;
     }
 }
