@@ -16,6 +16,7 @@ import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -75,16 +76,19 @@ public class TopNavigationPage {
     /**
      * Hovers user menu and logs out.
      */
-    public void logout() throws InterruptedException {
+    public void logout() throws InterruptedException, InstantiationException, IllegalAccessException {
         int attempt = 1;
         int maximumAttempts = 10;
         while (attempt <= maximumAttempts) {
             try {
                 hoverWebElement(userMenuButton);
+                hoverWebElement(logoutButton);
+                logoutButton.click();
                 break;
             } catch (ElementNotVisibleException e) {
                 logger.error("User menu icon not visible, retrying now, " + attempt);
                 Thread.sleep(1000);
+                Pages.getStartPage().goTo();
                 attempt++;
             }
         }
@@ -92,8 +96,6 @@ public class TopNavigationPage {
             throw new ElementNotVisibleException("User menu icon not visible");
         }
 
-        hoverWebElement(logoutButton);
-        logoutButton.click();
         Thread.sleep(Browser.getDelayAfterLogout());
     }
 
