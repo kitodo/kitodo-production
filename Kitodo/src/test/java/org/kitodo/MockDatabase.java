@@ -164,6 +164,7 @@ public class MockDatabase {
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
+        insertClients();
         insertProjects();
         insertProjectFileGroups();
         insertProcessForWorkflow();
@@ -681,7 +682,7 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    public static void insertClients() throws DataException {
+    private static void insertClients() throws DataException {
         Client client = new Client();
         client.setName("First client");
         serviceManager.getClientService().save(client);
@@ -692,9 +693,6 @@ public class MockDatabase {
     }
 
     private static void insertProjects() throws DAOException, DataException {
-
-        int clientsCount = serviceManager.getClientService().getAll().size();
-
         User firstUser = serviceManager.getUserService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
@@ -709,12 +707,9 @@ public class MockDatabase {
         firstProject.setNumberOfVolumes(2);
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-
-        if (clientsCount > 0) {
-            Client client = serviceManager.getClientService().getById(1);
-            client.getProjects().add(firstProject);
-            firstProject.setClient(client);
-        }
+        Client client = serviceManager.getClientService().getById(1);
+        client.getProjects().add(firstProject);
+        firstProject.setClient(client);
         serviceManager.getProjectService().save(firstProject);
 
         Project secondProject = new Project();
@@ -727,18 +722,14 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
-        if (clientsCount > 0) {
-            Client client = serviceManager.getClientService().getById(1);
-            client.getProjects().add(secondProject);
-            secondProject.setClient(client);
-        }
+        client.getProjects().add(secondProject);
+        secondProject.setClient(client);
         serviceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
         serviceManager.getUserService().save(firstUser);
-        serviceManager.getUserService().save(secondUser);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -749,11 +740,17 @@ public class MockDatabase {
         thirdProject.setNumberOfPages(160);
         thirdProject.setNumberOfVolumes(5);
         thirdProject.setActive(false);
-        if (clientsCount > 0) {
-            Client client = serviceManager.getClientService().getById(2);
-            thirdProject.setClient(client);
-        }
+        User thirdUser = serviceManager.getUserService().getById(3);
+        thirdProject.getUsers().add(secondUser);
+        thirdProject.getUsers().add(thirdUser);
+        Client secondClient = serviceManager.getClientService().getById(2);
+        thirdProject.setClient(secondClient);
         serviceManager.getProjectService().save(thirdProject);
+
+        secondUser.getProjects().add(thirdProject);
+        thirdUser.getProjects().add(thirdProject);
+        serviceManager.getUserService().save(secondUser);
+        serviceManager.getUserService().save(thirdUser);
     }
 
     private static void insertProjectFileGroups() throws DAOException, DataException {

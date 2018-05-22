@@ -195,13 +195,13 @@ public class ProjectServiceIT {
 
         projects = projectService.findByUserId(2);
         actual = projects.size();
-        expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
+        expected = 2;
+        assertEquals("Projects were not found in index!", expected, actual);
 
         projects = projectService.findByUserId(3);
         actual = projects.size();
-        expected = 0;
-        assertEquals("Projects were found in index!", expected, actual);
+        expected = 1;
+        assertEquals("Projects was not found in index!", expected, actual);
     }
 
     @Test
@@ -213,13 +213,13 @@ public class ProjectServiceIT {
 
         projects = projectService.findByUserLogin("nowak");
         actual = projects.size();
-        expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
+        expected = 2;
+        assertEquals("Projects were not found in index!", expected, actual);
 
         projects = projectService.findByUserLogin("dora");
         actual = projects.size();
-        expected = 0;
-        assertEquals("Projects were found in index!", expected, actual);
+        expected = 1;
+        assertEquals("Projects was not found in index!", expected, actual);
     }
 
     @Test
