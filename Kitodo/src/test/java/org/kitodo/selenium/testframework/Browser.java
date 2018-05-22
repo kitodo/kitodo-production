@@ -46,7 +46,6 @@ public class Browser {
     private static BrowserType browserType = BrowserType.CHROME;
 
     private static int delayIndexing = 3000;
-    private static int delayAfterSave = 6000;
     private static int delayAfterLogin = 2000;
     private static int delayAfterLogout = 3000;
     private static int delayAfterLinkClick = 500;
@@ -187,18 +186,16 @@ public class Browser {
      *
      * @param webElement
      *            the save button to be clicked
-     * @throws InterruptedException
-     *             when the thread gets interrupted
      */
     public static void clickAjaxSaveButton(WebElement webElement) {
-        for (int attempt = 1; attempt < 10; attempt++) {
+        for (int attempt = 1; attempt < 50; attempt++) {
             try {
                 new WebDriverWait(webDriver, 5).ignoring(StaleElementReferenceException.class)
                         .until(ExpectedConditions.elementToBeClickable(webElement));
                 webElement.click();
                 return;
             } catch (StaleElementReferenceException e) {
-                logger.error("Save button is not accessible, retry now (" + attempt + ". attempt)");
+                logger.warn("Save button is not accessible, retry now (" + attempt + ". attempt)");
             }
         }
         throw new StaleElementReferenceException("Could not access save button!");
@@ -224,15 +221,6 @@ public class Browser {
     public static String getCellDataByRow(WebElement row, int columnIndex) {
         List<WebElement> cells = getCellsOfRow(row);
         return cells.get(columnIndex).getText();
-    }
-
-    /**
-     * Gets delayAfterSave.
-     *
-     * @return The delayAfterSave.
-     */
-    public static int getDelayAfterSave() {
-        return delayAfterSave;
     }
 
     /**

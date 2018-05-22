@@ -58,6 +58,8 @@ public class UsersPage {
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
 
+    private final String URL = "pages/users.jsf";
+
     /**
      * Goes to users page.
      * 
@@ -69,12 +71,21 @@ public class UsersPage {
     }
 
     /**
+     * Gets URL.
+     *
+     * @return The URL.
+     */
+    public String getUrl() {
+        return URL;
+    }
+
+    /**
      * Checks if the browser is currently at users page.
      * 
      * @return True if browser is at users page.
      */
     public boolean isAt() {
-        return Browser.getCurrentUrl().contains("users");
+        return Browser.getCurrentUrl().contains(URL);
     }
 
     /**

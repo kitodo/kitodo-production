@@ -35,6 +35,17 @@ public class ClientsPage {
     @FindBy(id = "clientsTabView:clientsTable_data")
     private WebElement clientsTable;
 
+    private final String URL = "pages/clients.jsf";
+
+    /**
+     * Gets URL.
+     *
+     * @return The URL.
+     */
+    public String getUrl() {
+        return URL;
+    }
+
     /**
      * Goes to clients page.
      *
@@ -51,7 +62,7 @@ public class ClientsPage {
      * @return True if browser is at clients page.
      */
     public boolean isAt() {
-        return Browser.getCurrentUrl().contains("clients");
+        return Browser.getCurrentUrl().contains(URL);
     }
 
     /**

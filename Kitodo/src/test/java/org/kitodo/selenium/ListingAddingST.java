@@ -111,6 +111,7 @@ public class ListingAddingST extends BaseTestSelenium {
         // on the save button which makes it stale and throws a StaleElementException
         Thread.sleep(9000);
         Pages.getLdapGroupEditPage().save();
+
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLoginAsAdmin();

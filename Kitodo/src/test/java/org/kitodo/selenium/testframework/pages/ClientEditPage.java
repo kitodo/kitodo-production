@@ -16,6 +16,8 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ClientEditPage {
     @SuppressWarnings("unused")
@@ -31,9 +33,10 @@ public class ClientEditPage {
         return this;
     }
 
-    public ClientsPage save() throws InterruptedException, IllegalAccessException, InstantiationException {
+    public ClientsPage save() throws IllegalAccessException, InstantiationException {
         Browser.clickAjaxSaveButton(saveClientButton);
-        Thread.sleep(Browser.getDelayAfterSave());
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
+        wait.until(ExpectedConditions.urlContains(Pages.getClientsPage().getUrl()));
         return Pages.getClientsPage();
     }
 }
