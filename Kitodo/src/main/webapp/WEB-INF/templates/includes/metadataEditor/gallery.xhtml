@@ -87,7 +87,7 @@
                 </p:dataList>
             </p:fieldset>
 
-            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages">
+            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages" rendered="#{not empty Metadaten.images}">
                 <p:dataGrid id="unstructuredPages"
                             styleClass="structureElementDataGrid"
                             var="page"
