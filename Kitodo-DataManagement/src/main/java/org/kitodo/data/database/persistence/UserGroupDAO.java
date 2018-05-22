@@ -11,8 +11,12 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -58,5 +62,26 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
      */
     public void refresh(UserGroup userGroup) {
         refreshObject(userGroup);
+    }
+
+    /**
+     * Get all user groups visible for current user - user groups of users assigned
+     * to projects with certain clients.
+     *
+     * @param clientIdList
+     *            list of client ids assigned to which current user is assigned
+     * @return list of user groups
+     */
+    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
+        UserDAO userDAO = new UserDAO();
+        List<User> users = userDAO.getAllActiveUsersByClientIds(clientIdList);
+        List<Integer> userIdList = new ArrayList<>();
+        for (User user : users) {
+            userIdList.add(user.getId());
+        }
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("userIdList", userIdList);
+        return getByQuery("SELECT ug FROM UserGroup AS ug JOIN ug.users AS u WHERE u.id IN :userIdList GROUP BY ug.id",
+            parameters);
     }
 }

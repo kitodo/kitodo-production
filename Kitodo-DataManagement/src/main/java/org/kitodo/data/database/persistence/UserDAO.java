@@ -11,7 +11,9 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -95,5 +97,21 @@ public class UserDAO extends BaseDAO<User> {
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
         return getByQuery("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
+    }
+
+    /**
+     * Get all active users visible for current user - user assigned to projects
+     * with certain clients.
+     * 
+     * @param clientIdList
+     *            list of client ids assigned to which current user is assigned
+     * @return list of users
+     */
+    public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientIdList", clientIdList);
+        return getByQuery("SELECT u FROM User AS u JOIN u.projects AS p JOIN p.client AS c WHERE u.active = 1 AND "
+                + "u.deleted = 0 AND c.id IN :clientIdList GROUP BY u.id",
+            parameters);
     }
 }
