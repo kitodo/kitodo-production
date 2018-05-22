@@ -34,7 +34,7 @@ public class LoginForm implements Serializable {
     private String login;
     private String password;
     private User myBenutzer;
-    private boolean schonEingeloggt = false;
+    private boolean alreadyLoggedIn = false;
     private String passwortAendernAlt;
     private String passwortAendernNeu1;
     private String passwortAendernNeu2;
@@ -43,14 +43,10 @@ public class LoginForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private boolean firstVisit = true;
 
-    /*
-     * änderung des Passworts
-     */
-
     /**
      * neues Passwort übernehmen.
      */
-    public String PasswortAendernSpeichern() {
+    public String saveChangedPassword() {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
         if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
@@ -78,7 +74,7 @@ public class LoginForm implements Serializable {
     /**
      * Benutzerkonfiguration speichern.
      */
-    public String BenutzerkonfigurationSpeichern() {
+    public String saveUserConfiguration() {
         try {
             serviceManager.getUserService().save(this.myBenutzer);
         } catch (DataException e) {
@@ -103,7 +99,7 @@ public class LoginForm implements Serializable {
      */
     public void setLogin(String login) {
         if (this.login != null && !this.login.equals(login)) {
-            this.schonEingeloggt = false;
+            this.alreadyLoggedIn = false;
         }
         this.login = login;
     }
@@ -164,8 +160,8 @@ public class LoginForm implements Serializable {
         this.passwortAendernNeu2 = passwortAendernNeu2;
     }
 
-    public boolean isSchonEingeloggt() {
-        return this.schonEingeloggt;
+    public boolean isAlreadyLoggedIn() {
+        return this.alreadyLoggedIn;
     }
 
     /**

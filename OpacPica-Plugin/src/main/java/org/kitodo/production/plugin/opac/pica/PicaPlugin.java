@@ -778,7 +778,7 @@ public class PicaPlugin implements Plugin {
      * @return a Map with the hit
      */
     private static Map<String, Object> createResult(String docType, Element hit, Fileformat fileformat) {
-        final LocalTime DAY_END = new LocalTime(23, 59, 59, 999);
+        final LocalTime dayEnd = new LocalTime(23, 59, 59, 999);
 
         Map<String, Object> result = new HashMap<>(20);
         LocalDate today = new LocalDate();
@@ -790,7 +790,7 @@ public class PicaPlugin implements Plugin {
         String accessed = getElementFieldValue(hit, "208@", "a");
         try {
             LocalDate date = toRecentLocalDate(accessed, today);
-            result.put("accessed", date.toDateTime(date.isEqual(today) ? new LocalTime() : DAY_END).toString());
+            result.put("accessed", date.toDateTime(date.isEqual(today) ? new LocalTime() : dayEnd).toString());
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
         }
@@ -870,15 +870,15 @@ public class PicaPlugin implements Plugin {
      * The function toRecentLocalDate() interprets a String of scheme "dd-mm-yy"
      * as a LocalDate within the last 100 years up to a given reference date.
      *
-     * @param dd_mm_yy
-     *            a date String to interpret
+     * @param dateString
+     *            a date String to interpret dd-mm-yy
      * @param upTo
      *            a reference date
      * @return the date value as LocalDate
      */
-    private static LocalDate toRecentLocalDate(String dd_mm_yy, LocalDate upTo) {
+    private static LocalDate toRecentLocalDate(String dateString, LocalDate upTo) {
         int centuryPrefix = upTo.getYear() / 100;
-        String[] fields = dd_mm_yy.split("-");
+        String[] fields = dateString.split("-");
         int year = (100 * centuryPrefix) + Integer.parseInt(fields[2]);
         if (year > upTo.getYear()) {
             year -= 100;
