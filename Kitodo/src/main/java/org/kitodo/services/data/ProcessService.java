@@ -123,6 +123,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String IN_PROCESSING = "inProcessing";
     private static final String LOCKED = "locked";
     private static final String OPEN = "open";
+    private static final String PROCESS_TITLE = "(processtitle)";
+    private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter("useOrigFolder", true);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -799,14 +802,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = directory;
         }
 
-        if (tifDirectory == null && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
-                for (URI folder : folderList) {
-                    if (folder.toString().endsWith(SUFFIX)) {
-                        tifDirectory = folder;
-                        break;
-                    }
+        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
+            List<URI> folderList = fileService.getSubUrisForProcess(null, process, ProcessSubType.IMAGE, "");
+            for (URI folder : folderList) {
+                if (folder.toString().endsWith(SUFFIX)) {
+                    tifDirectory = folder;
+                    break;
                 }
             }
         }
@@ -820,8 +821,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                     .create(result.getRawPath() + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
         }
 
-        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
-                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
             fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
@@ -854,15 +854,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = directory;
         }
 
-        if (tifDirectory == null && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
+        if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
+            List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
                     processBaseURI, ProcessSubType.IMAGE, "");
-                for (URI folder : folderList) {
-                    if (folder.toString().endsWith(SUFFIX)) {
-                        tifDirectory = folder;
-                        break;
-                    }
+            for (URI folder : folderList) {
+                if (folder.toString().endsWith(SUFFIX)) {
+                    tifDirectory = folder;
+                    break;
                 }
             }
         }
@@ -876,8 +874,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             tifDirectory = URI.create(result.getRawPath() + getNormalizedTitle(processTitle) + "_" + DIRECTORY_SUFFIX);
         }
 
-        if (!ConfigCore.getBooleanParameter("useOrigFolder", true)
-                && ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)) {
+        if (!USE_ORIG_FOLDER && CREATE_ORIG_FOLDER_IF_NOT_EXISTS) {
             fileService.createDirectory(result, tifDirectory.getRawPath());
         }
 
@@ -915,7 +912,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return path
      */
     public URI getImagesOrigDirectory(boolean useFallBack, Process process) throws IOException {
-        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
+        if (USE_ORIG_FOLDER) {
             URI dir = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null);
 
             /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
@@ -927,14 +924,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 origDirectory = directory;
             }
 
-            if (origDirectory == null && useFallBack) {
-                if (!SUFFIX.equals("")) {
-                    List<URI> folderList = fileService.getSubUris(dir);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(SUFFIX)) {
-                            origDirectory = folder;
-                            break;
-                        }
+            if (origDirectory == null && useFallBack && !SUFFIX.equals("")) {
+                List<URI> folderList = fileService.getSubUris(dir);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(SUFFIX)) {
+                        origDirectory = folder;
+                        break;
                     }
                 }
             }
@@ -948,8 +943,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                         + getNormalizedTitle(process.getTitle()) + "_" + DIRECTORY_SUFFIX);
             }
 
-            if (ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false)
-                    && process.getSortHelperStatus() != null && process.getSortHelperStatus().equals("100000000")) {
+            if (CREATE_ORIG_FOLDER_IF_NOT_EXISTS && process.getSortHelperStatus() != null
+                    && process.getSortHelperStatus().equals("100000000")) {
                 fileService.createDirectory(result, origDirectory.getRawPath());
             }
             return origDirectory;
@@ -959,17 +954,15 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private URI getImageDirectory(boolean useFallBack, URI directory, URI imageDirectory) {
-        if (Objects.nonNull(imageDirectory) && useFallBack) {
-            if (!SUFFIX.equals("")) {
-                URI tif = imageDirectory;
-                List<URI> files = fileService.getSubUris(tif);
-                if (files.isEmpty()) {
-                    List<URI> folderList = fileService.getSubUris(directory);
-                    for (URI folder : folderList) {
-                        if (folder.toString().endsWith(SUFFIX) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
-                            imageDirectory = folder;
-                            break;
-                        }
+        if (Objects.nonNull(imageDirectory) && useFallBack && !SUFFIX.equals("")) {
+            URI tif = imageDirectory;
+            List<URI> files = fileService.getSubUris(tif);
+            if (files.isEmpty()) {
+                List<URI> folderList = fileService.getSubUris(directory);
+                for (URI folder : folderList) {
+                    if (folder.toString().endsWith(SUFFIX) && !folder.getPath().startsWith(DIRECTORY_PREFIX)) {
+                        imageDirectory = folder;
+                        break;
                     }
                 }
             }
@@ -1228,13 +1221,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             }
         }
 
-        results.put("closed", closed);
-        results.put("inProcessing", inProcessing);
-        results.put("open", open);
-        results.put("locked", locked);
+        results.put(CLOSED, closed);
+        results.put(IN_PROCESSING, inProcessing);
+        results.put(OPEN, open);
+        results.put(LOCKED, locked);
 
         if ((open + inProcessing + closed + locked) == 0) {
-            results.put("locked", 1);
+            results.put(LOCKED, 1);
         }
 
         return results;
@@ -1566,7 +1559,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void addToWikiField(User user, String message, Process process) {
         String text = message + " (" + user.getSurname() + ")";
-        // addToWikiField("user", process, text);
+        addToWikiField("user", text, process);
     }
 
     /**
@@ -1578,7 +1571,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
-                processDir.replace("(processtitle)", process.getTitle()));
+                processDir.replace(PROCESS_TITLE, process.getTitle()));
         }
     }
 
@@ -1715,34 +1708,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-
-        Project project = process.getProject();
         String atsPpnBand = process.getTitle();
 
         // read document
-        FileformatInterface gdzfile;
-        FileformatInterface newfile;
-        try {
-            URI metadataPath = fileService.getMetadataFilePath(process);
-            gdzfile = readMetadataFile(metadataPath, preferences);
-            switch (MetadataFormat.findFileFormatsHelperByName(project.getFileFormatDmsExport())) {
-                case METS:
-                    newfile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
-                    break;
-                case METS_AND_RDF:
-                default:
-                    newfile = UghImplementation.INSTANCE.createRDFFile(preferences);
-                    break;
-            }
-
-            newfile.setDigitalDocument(gdzfile.getDigitalDocument());
-            gdzfile = newfile;
-        } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
-            return false;
-        }
-
-        if (!handleExceptionsForConfiguration(newfile, process)) {
+        FileformatInterface gdzfile = readDocument(preferences, process);
+        if (Objects.isNull(gdzfile)) {
             return false;
         }
 
@@ -1754,6 +1724,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return false;
         }
 
+        Project project = process.getProject();
+
         // prepare place for save and download
         URI targetDirectory = new File(project.getDmsImportImagesPath()).toURI();
         URI userHome = targetDirectory;
@@ -1761,29 +1733,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // if necessary, create an operation folder
         if (project.isDmsImportCreateProcessFolder()) {
             targetDirectory = userHome.resolve(File.separator + process.getTitle());
-            // remove old import folder
-            if (!fileService.delete(userHome)) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+            boolean created = createOperationDirectory(userHome, process);
+            if (!created) {
                 return false;
-            }
-            // remove old success folder
-            File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
-            if (!fileService.delete(successFile.toURI())) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
-                return false;
-            }
-            // remove old error folder
-            File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
-            if (!fileService.delete(errorFile.toURI())) {
-                Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
-                return false;
-            }
-
-            if (!fileService.fileExist(userHome)) {
-                fileService.createDirectory(userHome, File.separator + process.getTitle());
             }
         }
 
@@ -1833,6 +1785,64 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
+    private FileformatInterface readDocument(PrefsInterface preferences, Process process)
+            throws IOException, PreferencesException {
+        FileformatInterface gdzFile;
+        FileformatInterface newFile;
+        try {
+            URI metadataPath = fileService.getMetadataFilePath(process);
+            gdzFile = readMetadataFile(metadataPath, preferences);
+            switch (MetadataFormat.findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport())) {
+                case METS:
+                    newFile = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
+                    break;
+                case METS_AND_RDF:
+                default:
+                    newFile = UghImplementation.INSTANCE.createRDFFile(preferences);
+                    break;
+            }
+            newFile.setDigitalDocument(gdzFile.getDigitalDocument());
+            gdzFile = newFile;
+        } catch (ReadException | RuntimeException e) {
+            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
+            return null;
+        }
+
+        if (handleExceptionsForConfiguration(newFile, process)) {
+            return null;
+        }
+        return gdzFile;
+    }
+
+    private boolean createOperationDirectory(URI userHome, Process process) throws IOException {
+        Project project = process.getProject();
+        // remove old import folder
+        if (!fileService.delete(userHome)) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+            return false;
+        }
+        // remove old success folder
+        File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+        if (!fileService.delete(successFile.toURI())) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
+            return false;
+        }
+        // remove old error folder
+        File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
+        if (!fileService.delete(errorFile.toURI())) {
+            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
+            return false;
+        }
+
+        if (!fileService.fileExist(userHome)) {
+            fileService.createDirectory(userHome, File.separator + process.getTitle());
+        }
+        return true;
+    }
+
     /**
      * Method for avoiding redundant code for exception handling. //TODO: should
      * this exceptions be handled that way?
@@ -1841,7 +1851,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            as Fileformat
      * @param process
      *            as Process object
-     * @return true if no exception appeared
+     * @return false if no exception appeared
      */
     public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
         String rules = ConfigCore.getParameter("copyData.onExport");
@@ -1850,13 +1860,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 new DataCopier(rules).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
                 Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
-                return false;
+                return true;
             } catch (RuntimeException e) {
                 Helper.setErrorMessage("dataCopier.runtimeException", logger, e);
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -1893,7 +1903,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            String
      */
     private void fulltextDownload(Process process, URI userHome, String atsPpnBand) throws IOException {
+        downloadSources(process, userHome, atsPpnBand);
+        downloadOCR(process, userHome, atsPpnBand);
+    }
 
+    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
         // download sources
         URI sources = fileService.getSourceDirectory(process);
         if (fileService.fileExist(sources) && !fileService.getSubUris(sources).isEmpty()) {
@@ -1901,15 +1915,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!fileService.fileExist(destination)) {
                 fileService.createDirectory(userHome, atsPpnBand + "_src");
             }
-            List<URI> dateien = fileService.getSubUris(sources);
-            for (URI aDateien : dateien) {
-                if (fileService.isFile(aDateien)) {
-                    URI meinZiel = destination.resolve(File.separator + fileService.getFileNameWithExtension(aDateien));
-                    fileService.copyFile(aDateien, meinZiel);
+            List<URI> files = fileService.getSubUris(sources);
+            for (URI file : files) {
+                if (fileService.isFile(file)) {
+                    URI targetDirectory = destination.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                    fileService.copyFile(file, targetDirectory);
                 }
             }
         }
+    }
 
+    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
         URI ocr = fileService.getOcrDirectory(process);
         if (fileService.fileExist(ocr)) {
             List<URI> folder = fileService.getSubUris(ocr);
@@ -2190,9 +2206,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
-                    + processDir.replace("(processtitle)", myProcess.getTitle()));
+                    + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
             URI destinationDirectory = URI.create(
-                targetDirectory.toString() + "/" + processDir.replace("(processtitle)", myProcess.getTitle()));
+                targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
 
             if (fileService.isDirectory(sourceDirectory)) {
                 fileService.copyFile(sourceDirectory, destinationDirectory);
