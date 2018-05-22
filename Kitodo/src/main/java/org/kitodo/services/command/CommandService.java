@@ -105,9 +105,9 @@ public class CommandService {
             KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
             CommandInterface commandInterface = serviceLoader.loadModule();
 
-            Flowable<CommandResult> source = Flowable.fromCallable(() -> {
-                return commandInterface.runCommand(generateId(), script);
-            });
+            Flowable<CommandResult> source = Flowable.fromCallable(() ->
+                commandInterface.runCommand(generateId(), script)
+            );
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());
             Flowable<CommandResult> commandResultListener = commandBackgroundWorker.observeOn(Schedulers.single());
