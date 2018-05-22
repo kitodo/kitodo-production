@@ -1057,6 +1057,14 @@ Column content
     filter: opacity(35%);
 }
 
+.structureElementDataGrid {
+    min-height: 75px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
 #metadata input {
     width: 100%;
 }
@@ -1075,6 +1083,32 @@ Column content
 
 #metadata .ui-datatable-odd {
     background: #f3f3f3;
+}
+
+.rotate-right {
+    top: 65px !important;
+    left: .5em;
+    right: auto !important;
+}
+
+.rotate-left {
+    top: 95px !important;
+    left: .5em;
+    right: auto !important;
+}
+
+.thumbnailWrapper {
+    margin-left: 5px;
+}
+
+.thumbnail {
+    height: 60px;
+    border: 1px solid black;
+    margin: 3px;
+}
+
+.thumbnail.active {
+    border: 2px solid red;
 }
 
 /*----------------------------------------------------------------------

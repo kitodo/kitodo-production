@@ -21,11 +21,16 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,11 +43,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -88,6 +97,8 @@ import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -102,6 +113,16 @@ import org.primefaces.model.TreeNode;
  */
 public class Metadaten {
     private static final Logger logger = LogManager.getLogger(Metadaten.class);
+
+    /**
+     * Get imageHelper.
+     *
+     * @return value of imageHelper
+     */
+    public MetadatenImagesHelper getImageHelper() {
+        return imageHelper;
+    }
+
     private MetadatenImagesHelper imageHelper;
     private MetadatenHelper metaHelper;
     private boolean treeReloaded = false;
@@ -136,6 +157,8 @@ public class Metadaten {
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
     private boolean showPagination = false;
+    private String viewMode = "list";
+    private String currentImage = "";
 
     private String paginationValue;
     private int paginationFromPageOrMark;
@@ -189,6 +212,12 @@ public class Metadaten {
     private String addMetaDataValue;
     private boolean addServeralStructuralElementsMode = false;
     private static final String BLOCK_EXPIRED = "SperrungAbgelaufen";
+
+    private URI imagesFolderURI = ConfigCore.getTempImagesPathAsCompleteDirectory();
+    private Path imageFolderPath = Paths.get(imagesFolderURI);
+    private File imageFolderFile = imageFolderPath.toFile();
+    private String imagesFolder = imageFolderFile.toString().replace("pages", "images").replace("imagesTemp", "");
+    private int numberOfConvertedImages = 0;
 
     /**
      * Konstruktor.
@@ -1253,7 +1282,7 @@ public class Metadaten {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public String createPagination() throws IOException {
+    public void createPagination() throws IOException {
         this.imageHelper.createPagination(this.process, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1264,7 +1293,7 @@ public class Metadaten {
             log = log.getAllChildren().get(0);
         }
         if (log.getDocStructType().getAnchorClass() != null) {
-            return "";
+            return;
         }
 
         if (log.getAllChildren() != null) {
@@ -1285,7 +1314,6 @@ public class Metadaten {
                 }
             }
         }
-        return "";
     }
 
     /**
@@ -2587,8 +2615,14 @@ public class Metadaten {
                 treeNode.setSelected(true);
             }
             List<DocStructInterface> children = element.getAllChildren();
+            List<DocStructInterface> pages = getPageReferencesToDocStruct(element);
             if (children != null) {
+                if (Objects.nonNull(pages) && pages.size() > 0) {
+                    children.addAll(pages);
+                }
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
+            } else if (Objects.nonNull(pages) && pages.size() > 0) {
+                convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
         return treeNode;
@@ -3411,5 +3445,292 @@ public class Metadaten {
      */
     public void setShowPagination(boolean showPagination) {
         this.showPagination = showPagination;
+    }
+
+    public String getViewMode() {
+        return viewMode;
+    }
+
+    public void setViewMode(String viewMode) {
+        this.viewMode = viewMode;
+    }
+
+    public String getCurrentImage() {
+        return currentImage;
+    }
+
+    public void setCurrentImage(String currentImage) {
+        this.currentImage = currentImage;
+    }
+
+    public int getPageIndex() {
+        if (this.getImages().size() > 0 && this.getImages().contains(this.currentImage)) {
+            return this.getImages().indexOf(this.currentImage) + 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Convert the TIFF images of the current process to PNG images for the metadata web frontend and
+     * copy them to them to the webapps/images/[processID]/fullsize/ folder!
+     */
+    private void convertImages() {
+        if (Objects.nonNull(this.currentTifFolder)) {
+            String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
+            try {
+                ensureDirectoryExists(Paths.get(fullsizePath));
+
+                // first, convert tiff images to pngs
+                for (URI tiffPath : this.imageHelper.getImageFiles(this.currentTifFolder)) {
+                    String targetPath = fullsizePath + FilenameUtils.removeExtension(tiffPath.toString()) + ".png";
+
+                    File fullsizeFile = new File(targetPath);
+                    if (fullsizeFile.exists()) {
+                        continue;
+                    }
+
+                    URI tiffURI = Paths.get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString()).toUri();
+
+                    BufferedImage inputImage = ImageIO.read(tiffURI.toURL());
+                    ImageIO.write(inputImage, "png", new File(targetPath));
+                    numberOfConvertedImages++;
+                    //RequestContext.getCurrentInstance().update("metadataEditor");
+                }
+
+                // then, create thumbnails from the converted images
+                generateThumbnails();
+
+            } catch (MalformedURLException e) {
+                Helper.setErrorMessage("ERROR: URL malformed!", logger, e);
+            } catch (IOException e) {
+                Helper.setErrorMessage("ERROR: File not found!", logger, e);
+            }
+        }
+
+    }
+
+    private void generateThumbnails() {
+        if (!thumbnailsExist()) {
+            String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
+            String thumbnailPath = fullsizePath.replace("fullsize", "thumbnails");
+            try {
+                URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
+
+                Thumbnails.of((File[]) Files.list(Paths.get(fullsizeFolderURI))
+                        .filter(path -> path.toFile().isFile())
+                        .filter(path -> path.toFile().canRead())
+                        .filter(path -> path.toString().endsWith(".png"))
+                        .map(Path::toFile).toArray(File[]::new))
+                        .size(60, 100)
+                        .outputFormat("png")
+                        .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
+            } catch (IOException e) {
+                logger.error("ERROR: IOException thrown while creating thumbnails: " + e.getLocalizedMessage());
+            } catch (IllegalArgumentException e) {
+                logger.error("ERROR: IllegalArgumentException thrown while creating thumbnails: " + e.getMessage());
+            }
+        }
+    }
+
+    private boolean thumbnailsExist() {
+        String thumbnailPath = imagesFolder + this.process.getId() + File.separator + "thumbnails";
+        Path thumbnailDirectory = Paths.get(thumbnailPath);
+        ensureDirectoryExists(thumbnailDirectory);
+        File thumbnailFile;
+        File imageFile;
+        for (String image : getImages()) {
+            imageFile = new File(image);
+            String thumbnailFilepath = thumbnailPath + File.separator + imageFile.getName();
+            thumbnailFile = new File(thumbnailFilepath);
+            if (!thumbnailFile.exists()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void ensureDirectoryExists(Path directory) {
+        if (!directory.toFile().exists() || !directory.toFile().isDirectory()) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                logger.error("ERROR: IOException thrown while trying to create directory '" + directory + ": " + e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Return the path to the thumbnail for the page with the given path 'image'.
+     * @param image path to image file whose thumbnail is returned
+     * @return thumbnail for given image
+     */
+    public String getThumbnail(String image) {
+        File imageFile = new File(image);
+        String filename = imageFile.getName();
+        return image
+                .replace("fullsize", "thumbnails")
+                .replace(filename, "thumbnail." + filename);
+    }
+
+    private void resetTemporaryFolders() {
+        String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
+        String thumbnailPath = fullsizePath.replace("fullsize", "thumbnails");
+
+        try {
+            FileUtils.deleteDirectory(new File(fullsizePath));
+            FileUtils.deleteDirectory(new File(thumbnailPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Generate PNG copies and thumbnails of all images in currently selected TIF folder.
+     */
+    public void generatePNGs() {
+        this.numberOfConvertedImages = 0;
+        resetTemporaryFolders();
+        RequestContext.getCurrentInstance().update("convertTIFFDialog");
+        convertImages();
+    }
+
+    /**
+     * Get number of TIFF images converted to PNG.
+     * @return number of converted TIFF images
+     */
+    public int getNumberOfConvertedImages() {
+        return numberOfConvertedImages;
+    }
+
+    /**
+     * Get number of all images in current TIFF folder.
+     * @return number of images in current TIFF folder
+     */
+    public int getNumberOfImagesInCurrentTifFolder() {
+        return this.imageHelper.getImageFiles(this.currentTifFolder).size();
+    }
+
+    public List<DocStructInterface> getAllStructureElements() {
+        return getStructureElements(this.logicalTopstruct);
+    }
+
+    private List<DocStructInterface> getStructureElements(DocStructInterface docStruct) {
+        List<DocStructInterface> docStructElements = new LinkedList<>();
+        docStructElements.add(docStruct);
+        for (DocStructInterface element : docStruct.getAllChildren()) {
+            if (Objects.nonNull(element)) {
+                if (Objects.isNull(element.getAllChildren()) || element.getAllChildren().isEmpty()) {
+                    docStructElements.add(element);
+                } else {
+                    docStructElements.addAll(getStructureElements(element));
+                }
+            }
+        }
+        return docStructElements;
+    }
+
+    public void onPageDrop(DragDropEvent dragDropEvent) {
+
+        String dragId = dragDropEvent.getDragId();
+        String dropId = dragDropEvent.getDropId();
+
+        String[] dragIDComponents = dragId.split(":");
+        String[] dropIDComponents = dropId.split(":");
+
+        int sourceStructureElementIndex;
+        int pageIndex;
+
+        int targetStructureElementIndex = Integer.valueOf(dropIDComponents[2]);
+        DocStructInterface targetDocStruct = getAllStructureElements().get(targetStructureElementIndex);
+
+        if (dragIDComponents[1].equals("structuredPages")) {
+            sourceStructureElementIndex = Integer.valueOf(dragIDComponents[2]);
+            pageIndex = Integer.valueOf(dragIDComponents[4]);
+
+            DocStructInterface sourceDocStruct = getAllStructureElements().get(sourceStructureElementIndex);
+
+            List<String> docStructPages = getPagesAssignedToDocStruct(sourceDocStruct);
+
+            String pagePath = docStructPages.get(pageIndex);
+
+            if (Objects.nonNull(sourceDocStruct) && Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
+                for (ReferenceInterface reference : sourceDocStruct.getAllToReferences("logical_physical")) {
+
+                    if (FilenameUtils.getBaseName(pagePath).equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
+                        // Remove page reference from source doc struct
+                        sourceDocStruct.removeReferenceTo(reference.getTarget());
+
+                        // Add page reference to target doc struct
+                        targetDocStruct.addReferenceTo(reference.getTarget(), "logical_physical");
+
+                        determinePagesStructure(sourceDocStruct);
+                        determinePagesStructure(targetDocStruct);
+
+                        break;
+                    }
+                }
+            }
+
+        } else if (dragIDComponents[1].equals("unstructuredPages")) {
+            // TODO: check whether incorporating 'unstructuredPages' here really makes sense!
+//            pageIndex = Integer.valueOf(dragIDComponents[2]);
+//            List<String> docStructPages = getImages();
+        }
+    }
+
+    public List<DocStructInterface> getPageReferencesToDocStruct(DocStructInterface docStruct) {
+        List<DocStructInterface> pageReferenceDocStructs = new LinkedList<>();
+        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+
+        for (ReferenceInterface pageReferenceInterface : pageReferences) {
+            pageReferenceDocStructs.add(pageReferenceInterface.getTarget());
+        }
+
+        return pageReferenceDocStructs;
+    }
+
+    public List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
+        List<String> assignedPages = new LinkedList<>();
+        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
+        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+
+        List<String> allImages = getImages();
+
+        for (ReferenceInterface pageReferenceInterface : pageReferences) {
+            DocStructInterface docStructInterface = pageReferenceInterface.getTarget();
+            List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface.getAllMetadataByType(mdt);
+            for (MetadataInterface metadataInterface : allMetadata) {
+                assignedPages.add(allImages.get(Integer.parseInt(metadataInterface.getValue()) - 1));
+            }
+        }
+        return assignedPages;
+    }
+
+    /**
+     * Get list of images for current process.
+     *
+     * @return List<String> List of images
+     */
+    public List<String> getImages() {
+        String pngFolder = imagesFolder + this.process.getId() + File.separator + "fullsize";
+        List<String> imagePaths = new LinkedList<>();
+        Path pngDir = Paths.get(pngFolder);
+        ensureDirectoryExists(pngDir);
+        try {
+            imagePaths = Files.list(pngDir)
+                    .filter(path -> path.toFile().isFile())
+                    .filter(path -> path.toFile().canRead())
+                    .filter(path -> path.toString().endsWith(".png"))
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .map(filename -> "/kitodo/images/" + this.process.getId() + "/fullsize/" + filename)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return imagePaths;
     }
 }

@@ -14,6 +14,131 @@
 <ui:composition
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
-    <h:outputText value="lorem ipsum dolor sit amet"/>
+        xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:form id="imagePreviewForm" style="height: 100%">
+        <span id="imageData" data-image="#{Metadaten.currentImage}"/>
+        <p:panelGrid id="imageControlPanel" columns="3" style="right: 17px; top: 9px; position: absolute;">
+            <p:column>
+                <p:commandButton id="listViewButton"
+                                 update="imagePreviewForm galleryHeadingWrapper"
+                                 icon="fa fa-list"
+                                 styleClass="#{Metadaten.viewMode eq 'list' ? 'active' : 'inactive'}">
+                    <f:setPropertyActionListener value="list" target="#{Metadaten.viewMode}"/>
+                </p:commandButton>
+            </p:column>
+            <p:column>
+                <p:commandButton id="gridViewButton"
+                                 update="imagePreviewForm galleryHeadingWrapper"
+                                 icon="fa fa-th-large"
+                                 styleClass="#{Metadaten.viewMode eq 'grid' ? 'active' : 'inactive'}">
+                    <f:setPropertyActionListener value="grid" target="#{Metadaten.viewMode}"/>
+                </p:commandButton>
+            </p:column>
+            <p:column>
+                <p:commandButton id="previewButton"
+                                 update="imagePreviewForm galleryHeadingWrapper"
+                                 icon="fa fa-image"
+                                 styleClass="#{Metadaten.viewMode eq 'preview' ? 'active' : 'inactive'}">
+                    <f:setPropertyActionListener value="preview" target="#{Metadaten.viewMode}"/>
+                </p:commandButton>
+            </p:column>
+        </p:panelGrid>
+
+        <p:panel>
+            <p:outputLabel for="tifFolders" value="#{msgs.aktuellerOrdner}"/>
+            <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}">
+                <f:selectItems value="#{Metadaten.allTifFolders}"/>
+            </p:selectOneMenu>
+            <p:commandButton id="readImagesButton" value="#{msgs.generatePNGs}"
+                             action="#{Metadaten.generatePNGs()}">
+                <p:confirm header="#{msgs.generatePNGs}"
+                           message="#{msgs.confirm}"
+                           icon="ui-icon-alert"/>
+            </p:commandButton>
+        </p:panel>
+
+        <!-- Pages in structured view -->
+        <ui:fragment rendered="#{Metadaten.viewMode eq 'list'}">
+            <p:fieldset id="structuredPagesField" legend="Structured Pages">
+                <p:dataList id="structuredPages"
+                            var="structureElement"
+                            value="#{Metadaten.allStructureElements}"
+                            type="definition"
+                            binding="#{currentElement}">
+                    #{structureElement.getDocStructType().getNameByLanguage(SpracheForm.locale)}
+                    <!-- TODO: show pages associated with individual structure elements here! -->
+                    <p:dataGrid styleClass="structureElementDataGrid"
+                                id="structureElementDataGrid"
+                                var="page"
+                                value="#{Metadaten.getPagesAssignedToDocStruct(structureElement)}"
+                                binding="#{structuredThumbnail}">
+                        <p:panel id="structuredPagePanel">
+                            <p:commandLink update="imagePreviewForm"><img src="#{Metadaten.getThumbnail(page)}" class="thumbnail #{Metadaten.currentImage eq page ? 'active' : ''}"/>
+                                <f:setPropertyActionListener value="#{page}" target="#{Metadaten.currentImage}"/>
+                            </p:commandLink>
+                        </p:panel>
+                        <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataGrid:#{structuredThumbnail.rowIndex}:structuredPagePanel"
+                                     revert="true" stack=".ui-panel"/>
+                    </p:dataGrid>
+                    <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataGrid">
+                        <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
+                    </p:droppable>
+                </p:dataList>
+            </p:fieldset>
+
+            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages">
+                <p:dataGrid id="unstructuredPages"
+                            styleClass="structureElementDataGrid"
+                            var="page"
+                            value="#{Metadaten.images}"
+                            binding="#{unstructuredThumbnail}">
+                    <p:panel id="unstructuredPagePanel">
+                        <p:commandLink update="imagePreviewForm"><img src="#{Metadaten.getThumbnail(page)}" class="thumbnail #{Metadaten.currentImage eq page ? 'active' : ''}"/>
+                            <f:setPropertyActionListener value="#{page}" target="#{Metadaten.currentImage}"/>
+                        </p:commandLink>
+                    </p:panel>
+                    <p:draggable for="imagePreviewForm:unstructuredPages:#{unstructuredThumbnail.rowIndex}:unstructuredPagePanel"
+                                 revert="true" stack=".ui-panel"/>
+                </p:dataGrid>
+                <p:droppable for="imagePreviewForm:unstructuredPages:0:unstructuredPagePanel">
+                    <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
+                </p:droppable>
+            </p:fieldset>
+        </ui:fragment>
+
+        <!-- Pages in UNstructured view -->
+        <ui:fragment rendered="#{Metadaten.viewMode eq 'grid'}">
+            <div class="thumbnailWrapper">
+                <ui:repeat value="#{Metadaten.images}" var="image">
+                    <p:commandLink update="imagePreviewForm"><img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
+                        <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
+                    </p:commandLink>
+                    <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
+                    <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
+                </ui:repeat>
+            </div>
+        </ui:fragment>
+
+        <!-- View current page with OpenLayers -->
+        <ui:fragment rendered="#{Metadaten.viewMode eq 'preview'}">
+            <!-- OpenLayers Kitodo custom controls -->
+            <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
+            <h:outputScript name="js/ol_custom.js"/>
+            <div id="olWrapper" style="overflow-x: auto; height: 100%">
+                <div id="thumbnailStripe" style="width: 10%; display: inline-block; float: right">
+                    <ui:repeat value="#{Metadaten.images}" var="image">
+                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper"><img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
+                            <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
+                        </p:commandLink>
+                        <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
+                        <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
+                    </ui:repeat>
+                </div>
+                <div id="map" class="map" style="width: 85%; height: 100%; display: inline-block; float: left"/>
+            </div>
+        </ui:fragment>
+
+    </h:form>
+
 </ui:composition>

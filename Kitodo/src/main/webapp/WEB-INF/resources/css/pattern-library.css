@@ -274,6 +274,50 @@ button .ui-icon {
     padding: 8px 16px;
 }
 
+#metadata\:metadataTable td {
+    padding: 8px 10px;
+}
+
+#metadata\:personTable .ui-button {
+    margin: 10px 0;
+}
+
+#metadata .ui-datatable-even {
+    background: #fff;
+}
+
+#metadata .ui-datatable-odd {
+    background: #f3f3f3;
+}
+
+#imagePreviewForm\:imageControlPanel {
+    margin-bottom: 10px;
+}
+
+#imagePreviewForm\:imageControlPanel tr {
+    background-color: #d8d8d8;
+}
+
+#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
+    padding: 0;
+}
+
+#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell:nth-child(2) {
+    border-left: 3px solid #0071bc;
+}
+
+#imagePreviewForm\:imageControlPanel button {
+    background-color: #d8d8d8;
+}
+
+#imagePreviewForm\:imageControlPanel button.active .fa {
+    color: white;
+}
+
+#imagePreviewForm\:imageControlPanel button.inactive .fa {
+    color: #0071bc;
+}
+
 .ui-panelgrid .ui-panelgrid-cell {
     border: 0px;
     padding: 8px;

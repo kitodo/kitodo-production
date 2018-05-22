@@ -104,7 +104,8 @@ public class MetadatenImagesHelper {
                 serviceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
-                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
+                    directory);
+//                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         // retrieve existing pages/images

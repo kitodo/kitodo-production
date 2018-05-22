@@ -99,19 +99,38 @@
                             class="columnExpandButton">
                         <i class="fa fa-angle-double-left fa-lg"/>
                     </button>
+
                     <div class="columnHeadingWrapper">
-                        <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                        <h:panelGroup id="galleryHeadingWrapper">
+                            <ui:fragment rendered="#{Metadaten.viewMode eq 'list' or Metadaten.viewMode eq 'grid'}">
+                                <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{Metadaten.viewMode eq 'preview'}">
+                                <h:outputText styleClass="columnHeading" value="#{msgs.page} #{Metadaten.pageIndex}"/>
+                            </ui:fragment>
+                        </h:panelGroup>
                     </div>
-                    <p:panel id="thirdColumnPanel">
+
+                    <p:panel id="thirdColumnPanel" style="overflow-y: scroll; height: calc(100% - 40px);">
                         <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
                     </p:panel>
                 </div>
             </div>
         </p:panel>
+
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="generatePNGsConfirmDialog">
+            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="PF('convertTIFFDialog').show()"/>
+            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
+
+        <p:dialog header="Generating PNGs" modal="true" id="convertTIFFDialog" widgetVar="convertTIFFDialog">
+            <h:outputText value="#{Metadaten.numberOfConvertedImages} / #{Metadaten.numberOfImagesInCurrentTifFolder}" />
+        </p:dialog>
+
     </ui:define>
     <ui:define name="breadcrumbs">
             <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
             <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
-            <li><a href="">#{msgs.metadataEdit}</a></li>
+            <li><a href="">#{msgs.metadataEdit} (#{Metadaten.process.title})</a></li>
     </ui:define>
 </ui:composition>

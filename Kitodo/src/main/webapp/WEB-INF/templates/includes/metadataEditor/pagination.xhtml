@@ -98,6 +98,11 @@
         <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
                        itemValue="#{scope}" itemLabel="#{scope.label}"/>
     </p:selectOneMenu>
+    <p:commandLink id="createPaginationButton"
+                   action="#{Metadaten.createPagination}"
+                   value="#{msgs.paginierungEinlesen}"
+                   update="metadataEditor"
+                   immediate="true"/>
     <p:commandButton id="okButton" value="OK"
                      action="#{Metadaten.setShowPagination(false)}"
                      update="structureTreeForm"/>

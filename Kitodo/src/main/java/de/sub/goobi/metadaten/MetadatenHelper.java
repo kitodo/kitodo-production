@@ -597,4 +597,31 @@ public class MetadatenHelper {
         return myList;
     }
 
+   @Override
+    public int compare(Object firstObject, Object secondObject) {
+        String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
+        String firstString = (String) firstObject;
+        String secondString = (String) secondObject;
+        // comparing only prefixes of files:
+        firstString = firstString.substring(0, firstString.lastIndexOf('.'));
+        secondString = secondString.substring(0, secondString.lastIndexOf('.'));
+
+        if (imageSorting.equalsIgnoreCase("number")) {
+            try {
+                Integer firstIterator = Integer.valueOf(firstString);
+                Integer secondIterator = Integer.valueOf(secondString);
+                return firstIterator.compareTo(secondIterator);
+            } catch (NumberFormatException e) {
+                return firstString.compareToIgnoreCase(secondString);
+            }
+        } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
+            return firstString.compareToIgnoreCase(secondString);
+        } else {
+            return firstString.compareToIgnoreCase(secondString);
+        }
+    }
+
+    public PrefsInterface getPrefs() {
+        return this.prefs;
+    }
 }
