@@ -215,7 +215,7 @@ public class ExportDms extends ExportMets {
 
     private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
         String rules = ConfigCore.getParameter("copyData.onExport");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+        if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, process));
             } catch (ConfigurationException e) {

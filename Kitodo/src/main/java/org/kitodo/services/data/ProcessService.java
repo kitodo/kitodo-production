@@ -1855,7 +1855,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
         String rules = ConfigCore.getParameter("copyData.onExport");
-        if (rules != null && !rules.equals("- keine Konfiguration gefunden -")) {
+        if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
