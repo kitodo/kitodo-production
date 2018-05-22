@@ -157,5 +157,4 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         QueryBuilder query = createSimpleQuery("projects.id", id, true);
         return searcher.findDocument(query.toString());
     }
-
 }

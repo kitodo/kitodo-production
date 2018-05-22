@@ -569,7 +569,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.FILTERS.getName()));
         userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROJECTS.getName()));
         userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.TASKS.getName()));
-        userDTO.setProcessingTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROCESSING_TASKS.getName()));
+        userDTO.setProcessingTasksSize(
+            getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROCESSING_TASKS.getName()));
         userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.USER_GROUPS.getName()));
 
         if (!related) {
@@ -584,12 +585,14 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, UserDTO userDTO) throws DataException {
-        userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.FILTERS.getName(), serviceManager.getFilterService()));
-        userDTO.setProjects(
-                convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getName(), serviceManager.getProjectService()));
-        userDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getName(), serviceManager.getTaskService()));
-        userDTO.setUserGroups(
-            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getName(), serviceManager.getUserGroupService()));
+        userDTO.setFilters(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.FILTERS.getName(),
+            serviceManager.getFilterService()));
+        userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getName(),
+            serviceManager.getProjectService()));
+        userDTO.setTasks(
+            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getName(), serviceManager.getTaskService()));
+        userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getName(),
+            serviceManager.getUserGroupService()));
     }
 
     private void addBasicFilterRelation(UserDTO userDTO, JsonObject jsonObject) {
@@ -597,7 +600,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             List<FilterDTO> filters = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(FilterTypeField.VALUE.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, UserTypeField.FILTERS.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserTypeField.FILTERS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 FilterDTO filter = new FilterDTO();
                 filter.setId(relatedProperty.getId());
@@ -615,7 +619,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(ProcessTypeField.TITLE.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject, UserTypeField.PROJECTS.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserTypeField.PROJECTS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 ProjectDTO project = new ProjectDTO();
                 project.setId(relatedProperty.getId());
@@ -634,8 +639,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(UserGroupTypeField.TITLE.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
-                    jsonObject, UserTypeField.USER_GROUPS.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserTypeField.USER_GROUPS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserGroupDTO userGroup = new UserGroupDTO();
                 userGroup.setId(relatedProperty.getId());
@@ -848,5 +853,26 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public List<Task> getTasksInProgress(User user) {
         return user.getProcessingTasks().stream().filter(task -> !task.getProcessingStatusEnum().equals(TaskStatus.DONE)
                 && !task.getProcessingStatusEnum().equals(TaskStatus.LOCKED)).collect(Collectors.toList());
+    }
+
+    /**
+     * Get all active users visible for current user - user assigned to projects
+     * with certain clients.
+     *
+     * @return list of users
+     */
+    public List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
+        List<Integer> clientIdList = serviceManager.getSecurityAccessService()
+                .getClientIdListForAuthority("viewAllUser");
+        List<User> users = getAllActiveUsersByClientIds(clientIdList);
+        List<Integer> userIdList = new ArrayList<>();
+        for (User user : users) {
+            userIdList.add(user.getId());
+        }
+        return convertListIdToDTO(userIdList, this);
+    }
+
+    List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
+        return dao.getAllActiveUsersByClientIds(clientIdList);
     }
 }
