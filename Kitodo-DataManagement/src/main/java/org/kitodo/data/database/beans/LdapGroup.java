@@ -262,7 +262,7 @@ public class LdapGroup extends BaseBean {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || !Objects.equals(getClass(), o.getClass())) {
             return false;
         }
         LdapGroup ldapGroup = (LdapGroup) o;
