@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -284,10 +285,10 @@ public class RequestControlFilter implements Filter {
     private long getMaxWaitTime(HttpServletRequest request) {
         // look for a Pattern that matches the request's path
         String path = request.getRequestURI();
-        for (Pattern pattern : this.maxWaitDurations.keySet()) {
-            Matcher m = pattern.matcher(path);
+        for (Map.Entry<Pattern, Long> entry : this.maxWaitDurations.entrySet()) {
+            Matcher m = entry.getKey().matcher(path);
             if (m.matches()) {
-                return this.maxWaitDurations.get(pattern);
+                return entry.getValue();
             }
         }
 

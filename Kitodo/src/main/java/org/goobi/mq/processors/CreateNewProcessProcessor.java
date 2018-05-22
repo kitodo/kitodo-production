@@ -267,8 +267,8 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *             ProzesskopieForm object
      */
     private static void setUserFields(ProzesskopieForm form, Map<String, String> userFields) {
-        for (String key : userFields.keySet()) {
-            form.setAdditionalField(key, userFields.get(key), true);
+        for (Map.Entry<String, String> entry : userFields.entrySet()) {
+            form.setAdditionalField(entry.getKey(), entry.getValue(), true);
         }
     }
 
