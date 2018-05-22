@@ -161,12 +161,12 @@ public class ImportProperty implements IProperty {
      *            list of Strings
      */
     public void setValueList(List<String> valueList) {
-        StringBuilder valueBilder = new StringBuilder();
+        StringBuilder valueBuilder = new StringBuilder();
         for (String val : valueList) {
-            valueBilder.append(val);
-            valueBilder.append("; ");
+            valueBuilder.append(val);
+            valueBuilder.append("; ");
         }
-        this.value = valueBilder.toString();
+        this.value = valueBuilder.toString();
     }
 
     /**

@@ -55,9 +55,9 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * Save.
+     * Save LDAP Group.
      *
-     * @return page or empty String
+     * @return page or null
      */
     public String saveLdapGroup() {
         try {
@@ -70,9 +70,9 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * Remove.
+     * Remove LDAP Group.
      *
-     * @return page or empty String
+     * @return page or null
      */
     public String deleteLdapGroup() {
         try {

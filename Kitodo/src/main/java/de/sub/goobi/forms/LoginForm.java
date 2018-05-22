@@ -44,7 +44,9 @@ public class LoginForm implements Serializable {
     private boolean firstVisit = true;
 
     /**
-     * neues Passwort übernehmen.
+     * Save changed password.
+     *
+     * @return null
      */
     public String saveChangedPassword() {
         /* ist das aktuelle Passwort korrekt angegeben ? */
@@ -72,7 +74,9 @@ public class LoginForm implements Serializable {
     }
 
     /**
-     * Benutzerkonfiguration speichern.
+     * Save user configuration.
+     *
+     * @return null
      */
     public String saveUserConfiguration() {
         try {
@@ -115,8 +119,7 @@ public class LoginForm implements Serializable {
     /**
      * Gets current authenticated User.
      *
-     * @return
-     *      The user object or null if no user is authenticated.
+     * @return The user object or null if no user is authenticated.
      */
     public User getMyBenutzer() {
         if (myBenutzer != null) {
@@ -160,6 +163,11 @@ public class LoginForm implements Serializable {
         this.passwortAendernNeu2 = passwortAendernNeu2;
     }
 
+    /**
+     * Check if user is already logged im.
+     * 
+     * @return true or false
+     */
     public boolean isAlreadyLoggedIn() {
         return this.alreadyLoggedIn;
     }
