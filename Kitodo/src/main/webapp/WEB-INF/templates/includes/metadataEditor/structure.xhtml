@@ -25,7 +25,8 @@
         <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
                 update="firstColumnPanel,secondColumnPanel,thirdColumnPanel"/>
         <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
-            <h:outputText value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
+            <ui:param name="elementType" value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
+            <h:outputText value="#{elementType}"/> <h:outputText value=" #{Metadaten.getPhysicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
         </p:treeNode>
     </p:tree>
 </ui:composition>

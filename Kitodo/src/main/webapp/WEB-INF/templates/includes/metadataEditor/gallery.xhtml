@@ -66,30 +66,31 @@
                             value="#{Metadaten.allStructureElements}"
                             type="definition"
                             binding="#{currentElement}">
-                    #{structureElement.getDocStructType().getNameByLanguage(SpracheForm.locale)}
-                    <!-- TODO: show pages associated with individual structure elements here! -->
-                    <p:dataGrid styleClass="structureElementDataGrid"
-                                id="structureElementDataGrid"
+                    <h:outputText value="#{structureElement.getDocStructType().getNameByLanguage(SpracheForm.locale)}" style="font-weight: bold;"/>
+                    <p:dataList styleClass="structureElementDataList"
+                                id="structureElementDataList"
                                 var="page"
-                                value="#{Metadaten.getPagesAssignedToDocStruct(structureElement)}"
+                                value="#{Metadaten.getPageReferencesToDocStruct(structureElement)}"
                                 binding="#{structuredThumbnail}">
-                        <p:panel id="structuredPagePanel">
-                            <p:commandLink update="imagePreviewForm"><img src="#{Metadaten.getThumbnail(page)}" class="thumbnail #{Metadaten.currentImage eq page ? 'active' : ''}"/>
-                                <f:setPropertyActionListener value="#{page}" target="#{Metadaten.currentImage}"/>
+                        <ui:param name="filePath" value="#{Metadaten.getPageImageFilePath(page)}"/>
+                        <p:panel id="structuredPagePanel" header="#{msgs.page} #{Metadaten.getPhysicalPageNumber(page)}">
+                            <p:commandLink update="structureTreeForm, imagePreviewForm"><img src="#{Metadaten.getThumbnail(filePath)}" class="thumbnail #{Metadaten.currentImage eq filePath ? 'active' : ''}"/>
+                                <f:setPropertyActionListener value="#{filePath}" target="#{Metadaten.currentImage}"/>
+                                <f:setPropertyActionListener value="#{page}" target="#{Metadaten.myStrukturelement}"/>
                             </p:commandLink>
                         </p:panel>
-                        <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataGrid:#{structuredThumbnail.rowIndex}:structuredPagePanel"
+                        <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
                                      revert="true" stack=".ui-panel"/>
-                    </p:dataGrid>
-                    <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataGrid">
+                    </p:dataList>
+                    <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
                         <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
                     </p:droppable>
                 </p:dataList>
             </p:fieldset>
 
-            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages" rendered="#{not empty Metadaten.images}">
-                <p:dataGrid id="unstructuredPages"
-                            styleClass="structureElementDataGrid"
+            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages" rendered="#{not empty Metadaten.images and false}">
+                <p:dataList id="unstructuredPages"
+                            styleClass="structureElementDataList"
                             var="page"
                             value="#{Metadaten.images}"
                             binding="#{unstructuredThumbnail}">
@@ -100,7 +101,7 @@
                     </p:panel>
                     <p:draggable for="imagePreviewForm:unstructuredPages:#{unstructuredThumbnail.rowIndex}:unstructuredPagePanel"
                                  revert="true" stack=".ui-panel"/>
-                </p:dataGrid>
+                </p:dataList>
                 <p:droppable for="imagePreviewForm:unstructuredPages:0:unstructuredPagePanel">
                     <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
                 </p:droppable>

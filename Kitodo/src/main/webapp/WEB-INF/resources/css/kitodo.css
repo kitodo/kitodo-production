@@ -1057,7 +1057,7 @@ Column content
     filter: opacity(35%);
 }
 
-.structureElementDataGrid {
+.structureElementDataList {
     min-height: 75px;
     border: 1px solid black;
     border-radius: 10px;
@@ -1109,6 +1109,18 @@ Column content
 
 .thumbnail.active {
     border: 2px solid red;
+}
+
+#imagePreviewForm\:structuredPages ul {
+    list-style-type: none;
+}
+
+#imagePreviewForm\:structuredPages ul li {
+    display: inline-block;
+}
+
+#imagePreviewForm\:structuredPages ul li span.ui-panel-title {
+    margin: 0;
 }
 
 /*----------------------------------------------------------------------

@@ -52,6 +52,7 @@ import javax.servlet.http.HttpSession;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -3463,6 +3464,10 @@ public class Metadaten {
         this.currentImage = currentImage;
     }
 
+    /**
+     * Return index of currently selected page.
+     * @return current page index
+     */
     public int getPageIndex() {
         if (this.getImages().size() > 0 && this.getImages().contains(this.currentImage)) {
             return this.getImages().indexOf(this.currentImage) + 1;
@@ -3612,6 +3617,10 @@ public class Metadaten {
         return this.imageHelper.getImageFiles(this.currentTifFolder).size();
     }
 
+    /**
+     * Return all structure elements.
+     * @return list of all structure elements
+     */
     public List<DocStructInterface> getAllStructureElements() {
         return getStructureElements(this.logicalTopstruct);
     }
@@ -3635,6 +3644,10 @@ public class Metadaten {
         return docStructElements;
     }
 
+    /**
+     *
+     * @param dragDropEvent
+     */
     public void onPageDrop(DragDropEvent dragDropEvent) {
 
         String dragId = dragDropEvent.getDragId();
@@ -3684,6 +3697,12 @@ public class Metadaten {
         }
     }
 
+    /**
+     * Retrieve and return list of all DocStructInferface instances
+     * referencing the given DocStructInterfaces 'docStruct'.
+     * @param docStruct
+     * @return
+     */
     public List<DocStructInterface> getPageReferencesToDocStruct(DocStructInterface docStruct) {
         List<DocStructInterface> pageReferenceDocStructs = new LinkedList<>();
         List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
@@ -3695,7 +3714,12 @@ public class Metadaten {
         return pageReferenceDocStructs;
     }
 
-    public List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
+    /**
+     * Retrieve and return list of file paths for pages assigned to given DocStructInterface 'docStruct'.
+     * @param docStruct DocStructInterfaces for which page file paths are returned.
+     * @return list of file paths of pages assigned to given DocStructInterface 'docStruct'.
+     */
+    private List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
         List<String> assignedPages = new LinkedList<>();
         List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
@@ -3714,9 +3738,32 @@ public class Metadaten {
     }
 
     /**
+     * Retrieve file path to png image for given DocStructInterface 'pageDocStruct' representing a single scanned page image.
+     * @param pageDocStruct DocStructInterface for which the corresponding file path to the png copy is returned.
+     * @return file path to the png image of the given DocStructInterface 'pageDoctStruct'.
+     */
+    public String getPageImageFilePath(DocStructInterface pageDocStruct) {
+        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
+        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        List<String> allImages = getImages();
+        List<MetadataInterface> allMetadata = (List<MetadataInterface>) pageDocStruct.getAllMetadataByType(mdt);
+
+        switch (allMetadata.size()) {
+            case 0:
+                logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
+                return "IMAGE_PATH_NOT_FOUND";
+            case 1:
+                return allImages.get(Integer.parseInt(allMetadata.get(0).getValue()) - 1);
+            default:
+                logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is " + allMetadata.size() + " (1 expected)!");
+                return "IMAGE_PATH_NOT_FOUND";
+        }
+    }
+
+    /**
      * Get list of images for current process.
      *
-     * @return List<String> List of images
+     * @return List<String> List of images.
      */
     public List<String> getImages() {
         String pngFolder = imagesFolder + this.process.getId() + File.separator + "fullsize";
@@ -3736,5 +3783,18 @@ public class Metadaten {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return imagePaths;
+    }
+
+    /**
+     * Retrieve and return physical page number of given DocStructInterface 'pageDocStruct'.
+     * @param pageDocStruct DocStructInterface whose physical page number is returned.
+     * @return physical page number of given DocStructInterface pageDocStruct
+     */
+    public int getPhysicalPageNumber(DocStructInterface pageDocStruct) {
+        try {
+            return Integer.parseInt(determineMetadata(pageDocStruct, "physPageNumber"));
+        } catch (NullPointerException e) {
+            return -1;
+        }
     }
 }
