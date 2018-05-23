@@ -24,7 +24,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     private ProjectDTO project;
     private RulesetDTO ruleset;
     private List<TaskDTO> tasks = new ArrayList<>();
-    private boolean panelShown = false;
 
     /**
      * Get title.
@@ -176,24 +175,5 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;
-    }
-
-    /**
-     * Get information if panel is shown.
-     *
-     * @return true or false
-     */
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    /**
-     * Set information if panel is shown.
-     *
-     * @param panelShown
-     *            as boolean
-     */
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 }
