@@ -15,10 +15,17 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
 
 public class MetsKitodoObjectFactory extends ObjectFactory {
+
+    public KitodoType createKitodoType() {
+        KitodoType kitodoType = new KitodoType();
+        kitodoType.setVersion("1.0");
+        return kitodoType;
+    }
 
     /**
      * Creates a kitodo data editor specific MetsHdr.Agent object.

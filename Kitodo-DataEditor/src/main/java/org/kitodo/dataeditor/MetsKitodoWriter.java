@@ -29,11 +29,18 @@ import org.kitodo.dataformat.metskitodo.Mets;
 public class MetsKitodoWriter {
 
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
+    private JAXBContext jaxbMetsContext;
+    private Marshaller jaxbMetsMarshaller;
+
+    public MetsKitodoWriter() throws JAXBException {
+        jaxbMetsContext = JAXBContext.newInstance(Mets.class);
+        jaxbMetsMarshaller = jaxbMetsContext.createMarshaller();
+    }
 
     /**
      * Updating Mets header by inserting a new header if no one exists, updating
-     * last modification date and writing the Mets object to specified file path as
-     * in xml format.
+     * last modification date and writing the Mets object to specified file path in
+     * xml format.
      * 
      * @param mets
      *            The Mets object.
@@ -46,9 +53,19 @@ public class MetsKitodoWriter {
         writeMetsData(mets, filePath);
     }
 
+    /**
+     * Prints a given Mets object to the console in xml format.
+     * 
+     * @param mets
+     *            The mets object.
+     */
+    public void print(Mets mets) throws JAXBException {
+        jaxbMetsMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoPrefixMapper());
+        jaxbMetsMarshaller.marshal(mets, System.out);
+    }
+
     private void writeMetsData(Mets mets, URI file) throws JAXBException {
-        JAXBContext jaxbMetsContext = JAXBContext.newInstance(Mets.class);
-        Marshaller jaxbMetsMarshaller = jaxbMetsContext.createMarshaller();
         jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoPrefixMapper());
         jaxbMetsMarshaller.marshal(mets, new File(file));
     }

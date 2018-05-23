@@ -40,4 +40,58 @@ public class MetsKitodoPrefixMapper extends NamespacePrefixMapper {
     public String[] getPreDeclaredNamespaceUris() {
         return new String[] {METS_URI, KITODO_URI, XLINK_URI };
     }
+
+    /**
+     * Gets METS_PREFIX.
+     *
+     * @return The METS_PREFIX.
+     */
+    public static String getMetsPrefix() {
+        return METS_PREFIX;
+    }
+
+    /**
+     * Gets METS_URI.
+     *
+     * @return The METS_URI.
+     */
+    public static String getMetsUri() {
+        return METS_URI;
+    }
+
+    /**
+     * Gets XLINK_PREFIX.
+     *
+     * @return The XLINK_PREFIX.
+     */
+    public static String getXlinkPrefix() {
+        return XLINK_PREFIX;
+    }
+
+    /**
+     * Gets XLINK_URI.
+     *
+     * @return The XLINK_URI.
+     */
+    public static String getXlinkUri() {
+        return XLINK_URI;
+    }
+
+    /**
+     * Gets KITODO_PREFIX.
+     *
+     * @return The KITODO_PREFIX.
+     */
+    public static String getKitodoPrefix() {
+        return KITODO_PREFIX;
+    }
+
+    /**
+     * Gets KITODO_URI.
+     *
+     * @return The KITODO_URI.
+     */
+    public static String getKitodoUri() {
+        return KITODO_URI;
+    }
 }

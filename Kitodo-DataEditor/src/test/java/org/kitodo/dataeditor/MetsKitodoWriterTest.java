@@ -33,6 +33,9 @@ public class MetsKitodoWriterTest {
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
+    public MetsKitodoWriterTest() throws JAXBException {
+    }
+
     @BeforeClass
     public static void setUp() throws IOException {
 
@@ -67,6 +70,7 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
+        metsKitodoWriter.print(metsKitodoWrapper.getMets());
         metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));

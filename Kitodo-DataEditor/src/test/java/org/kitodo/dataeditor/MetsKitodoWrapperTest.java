@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
@@ -46,20 +48,12 @@ public class MetsKitodoWrapperTest {
     @BeforeClass
     public static void setUp() throws IOException {
 
-        String manifest =
-            "Manifest-Version: 1.0\n" +
-            "Archiver-Version: Plexus Archiver\n" +
-            "Created-By: Apache Maven\n" +
-            "Built-By: tester\n" +
-            "Build-Jdk: 1.8.0_144\n" +
-            "Specification-Title: Kitodo - Data Editor\n" +
-            "Specification-Version: 3.0-SNAPSHOT\n" +
-            "Specification-Vendor: kitodo.org\n" +
-            "Implementation-Title: Kitodo - Data Editor\n" +
-            "Implementation-Version: 3.0-SNAPSHOT\n" +
-            "Implementation-Vendor-Id: org.kitodo\n" +
-            "Implementation-Vendor: kitodo.org\n" +
-            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+        String manifest = "Manifest-Version: 1.0\n" + "Archiver-Version: Plexus Archiver\n"
+                + "Created-By: Apache Maven\n" + "Built-By: tester\n" + "Build-Jdk: 1.8.0_144\n"
+                + "Specification-Title: Kitodo - Data Editor\n" + "Specification-Version: 3.0-SNAPSHOT\n"
+                + "Specification-Vendor: kitodo.org\n" + "Implementation-Title: Kitodo - Data Editor\n"
+                + "Implementation-Version: 3.0-SNAPSHOT\n" + "Implementation-Vendor-Id: org.kitodo\n"
+                + "Implementation-Vendor: kitodo.org\n" + "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
@@ -179,6 +173,24 @@ public class MetsKitodoWrapperTest {
             metadataType.getName());
         Assert.assertEquals("Reading value out of kitodo metadata was not correct", "[Seite 157r-181v]",
             metadataType.getValue());
+    }
+
+    @Test
+    public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException, JAXBException {
+        FileService fileService = new FileService();
+        fileService.createDirectory(Paths.get("src/test").toUri(),"images");
+
+
+        List<URI> files = new ArrayList<>();
+        for (int i = 1; i <= 3; i++) {
+            files.add(URI.create("file:///images/001" + i + ".tif"));
+        }
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        metsKitodoWrapper.insertFilesFromDirectory(URI.create("file:///images/"),null,"image/tiff");
+//        metsKitodoWrapper.insertFilesToLocalFileGroup(files,"image/tiff");
+//        metsKitodoWrapper.insertPathToImageFiles(URI.create("file:///test/path/"));
+
+        new MetsKitodoWriter().print(metsKitodoWrapper.getMets());
     }
 
     @Rule
