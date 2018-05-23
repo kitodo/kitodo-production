@@ -799,7 +799,7 @@ public class FileService {
      */
     public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, User user) {
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.createSymLink(targetUri, homeUri, onlyRead, user.getLogin());
+        return fileManagementModule.createSymLink(homeUri, targetUri, onlyRead, user.getLogin());
     }
 
     /**

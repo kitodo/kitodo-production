@@ -21,17 +21,21 @@ import java.nio.file.Paths;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.User;
+
+import static org.junit.Assume.assumeTrue;
 
 public class FileServiceTest {
 
     private static FileService fileService = new FileService();
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileServiceTest.class);
+    private static final Logger logger = LogManager.getLogger(FileServiceTest.class);
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -535,6 +539,57 @@ public class FileServiceTest {
         URI uri = URI.create("/test/test");
         URI actualUri = fileService.deleteFirstSlashFromPath(uri);
         Assert.assertEquals("Paths of Uri did not match", "test/test", actualUri.getPath());
+    }
+
+    @Test
+    public void shouldCreateSymLink() throws IOException {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
+
+        URI symLinkSource = URI.create("symLinkSource");
+        URI symLinkTarget = URI.create("symLinkTarget");
+
+        File script = new File(ConfigCore.getParameter("script_createSymLink"));
+        URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
+        fileService.createResource(directory, "meta.xml");
+        User user = new User();
+        user.setLogin(SystemUtils.USER_NAME);
+        ExecutionPermission.setExecutePermission(script);
+        boolean result = fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
+        ExecutionPermission.setNoExecutePermission(script);
+        Assert.assertTrue("Create symbolic link has failed!", result);
+
+        File scriptClean = new File(ConfigCore.getParameter("script_deleteSymLink"));
+        ExecutionPermission.setExecutePermission(scriptClean);
+        fileService.deleteSymLink(symLinkTarget);
+        ExecutionPermission.setNoExecutePermission(scriptClean);
+        fileService.delete(symLinkSource);
+        fileService.delete(symLinkTarget);
+    }
+
+    @Test
+    public void shouldDeleteSymLink() throws IOException {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
+
+        URI symLinkSource = URI.create("symLinkSource");
+        URI symLinkTarget = URI.create("symLinkTarget");
+
+        File scriptPrepare = new File(ConfigCore.getParameter("script_createSymLink"));
+        URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
+        fileService.createResource(directory, "meta.xml");
+        User user = new User();
+        user.setLogin(SystemUtils.USER_NAME);
+        ExecutionPermission.setExecutePermission(scriptPrepare);
+        fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
+        ExecutionPermission.setNoExecutePermission(scriptPrepare);
+
+        File script = new File(ConfigCore.getParameter("script_deleteSymLink"));
+        ExecutionPermission.setExecutePermission(script);
+        boolean result = fileService.deleteSymLink(symLinkTarget);
+        ExecutionPermission.setNoExecutePermission(script);
+        Assert.assertTrue("Delete symbolic link has failed!", result);
+
+        fileService.delete(symLinkSource);
+        fileService.delete(symLinkTarget);
     }
 
 }

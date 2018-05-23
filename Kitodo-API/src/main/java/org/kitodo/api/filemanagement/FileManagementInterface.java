@@ -210,17 +210,17 @@ public interface FileManagementInterface {
     /**
      * Creates a symbolic link.
      *
-     * @param targetUri
-     *            the target URI for the link
      * @param homeUri
      *            the home URI
+     * @param targetUri
+     *            the target URI for the link
      * @param onlyRead
      *            boolean, true if user has only read rights, false otherwise
      * @param userLogin
      *            login of the user
      * @return true, if link creation was successful.
      */
-    boolean createSymLink(URI targetUri, URI homeUri, boolean onlyRead, String userLogin);
+    boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, String userLogin);
 
     /**
      * Delete a symbolic link.

@@ -112,10 +112,10 @@
         <module>Kitodo-API</module>
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
-        <module>Kitodo-FileManagement</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
         <module>Kitodo-Command</module>
+        <module>Kitodo-FileManagement</module>
         <module>Kitodo-SchemaConverter</module>
         <module>Kitodo-Validation</module>
         <module>Kitodo</module>
