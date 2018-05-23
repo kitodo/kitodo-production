@@ -18,17 +18,9 @@ import java.util.Objects;
 /**
  * Process DTO object.
  */
-public class ProcessDTO extends BaseDTO {
+public class ProcessDTO extends BaseTemplateDTO {
 
-    private String title;
-    private String outputName;
-    private String wikiField;
-    private String creationDate;
-    private DocketDTO docket;
-    private ProjectDTO project;
-    private RulesetDTO ruleset;
     private List<BatchDTO> batches = new ArrayList<>();
-    private List<TaskDTO> tasks = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
     private Integer propertiesSize;
     private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
@@ -45,140 +37,6 @@ public class ProcessDTO extends BaseDTO {
     private Integer sortHelperMetadata;
     private boolean imageFolderInUse = false;
     private boolean tifDirectoryExists = false;
-    private boolean panelShown = false;
-
-    /**
-     * Get title.
-     * 
-     * @return title as String
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Set title.
-     * 
-     * @param title
-     *            as String
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Get output name.
-     * 
-     * @return output name as String
-     */
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
-     * Set output name.
-     * 
-     * @param outputName
-     *            as String
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
-    }
-
-    /**
-     * Get wiki field.
-     * 
-     * @return wiki field as String
-     */
-    public String getWikiField() {
-        return wikiField;
-    }
-
-    /**
-     * Set wiki field.
-     * 
-     * @param wikiField
-     *            as String
-     */
-    public void setWikiField(String wikiField) {
-        this.wikiField = wikiField;
-    }
-
-    /**
-     * Get creation date.
-     * 
-     * @return creation date as String
-     */
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    /**
-     * Set creation date.
-     * 
-     * @param creationDate
-     *            as String
-     */
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    /**
-     * Get docket.
-     * 
-     * @return docket as DocketDTO
-     */
-    public DocketDTO getDocket() {
-        return docket;
-    }
-
-    /**
-     * Set docket.
-     * 
-     * @param docket
-     *            as DocketDTO
-     */
-    public void setDocket(DocketDTO docket) {
-        this.docket = docket;
-    }
-
-    /**
-     * Get project.
-     * 
-     * @return project as ProjectDTO
-     */
-    public ProjectDTO getProject() {
-        return project;
-    }
-
-    /**
-     * Set project.
-     * 
-     * @param project
-     *            as ProjectDTO
-     */
-    public void setProject(ProjectDTO project) {
-        this.project = project;
-    }
-
-    /**
-     * Get ruleset.
-     * 
-     * @return ruleset as RulesetDTO
-     */
-    public RulesetDTO getRuleset() {
-        return ruleset;
-    }
-
-    /**
-     * Set ruleset.
-     * 
-     * @param ruleset
-     *            as RulesetDTO
-     */
-    public void setRuleset(RulesetDTO ruleset) {
-        this.ruleset = ruleset;
-    }
 
     /**
      * Get list of batches.
@@ -197,25 +55,6 @@ public class ProcessDTO extends BaseDTO {
      */
     public void setBatches(List<BatchDTO> batches) {
         this.batches = batches;
-    }
-
-    /**
-     * Get list of tasks.
-     * 
-     * @return list of tasks as TaskDTO
-     */
-    public List<TaskDTO> getTasks() {
-        return tasks;
-    }
-
-    /**
-     * Set list of tasks.
-     *
-     * @param tasks
-     *            list of tasks as TaskDTO
-     */
-    public void setTasks(List<TaskDTO> tasks) {
-        this.tasks = tasks;
     }
 
     /**
@@ -523,24 +362,5 @@ public class ProcessDTO extends BaseDTO {
      */
     public void setImageFolderInUse(boolean imageFolderInUse) {
         this.imageFolderInUse = imageFolderInUse;
-    }
-
-    /**
-     * Get information if panel is shown.
-     *
-     * @return true or false
-     */
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    /**
-     * Set information if panel is shown.
-     *
-     * @param panelShown
-     *            as boolean
-     */
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 }

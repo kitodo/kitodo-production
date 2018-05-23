@@ -158,10 +158,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         Integer project = jsonObject.getInt("project.id");
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
-        templateDTO.setProgressClosed(serviceManager.getProcessService().getProgressClosed(null, templateDTO.getTasks()));
-        templateDTO.setProgressInProcessing(serviceManager.getProcessService().getProgressInProcessing(null, templateDTO.getTasks()));
-        templateDTO.setProgressOpen(serviceManager.getProcessService().getProgressOpen(null, templateDTO.getTasks()));
-        templateDTO.setProgressLocked(serviceManager.getProcessService().getProgressLocked(null, templateDTO.getTasks()));
         templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));
     }
 

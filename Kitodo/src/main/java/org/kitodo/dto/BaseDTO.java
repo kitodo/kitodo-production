@@ -11,7 +11,7 @@
 
 package org.kitodo.dto;
 
-public class BaseDTO {
+public abstract class BaseDTO {
 
     private Integer id;
 
