@@ -154,7 +154,7 @@ public class VariableReplacer {
      * @return replaced String
      */
     private String replaceMetadata(String input) {
-        for (MatchResult r : findRegexMatches(this.NAMESPACE_META, input)) {
+        for (MatchResult r : findRegexMatches(NAMESPACE_META, input)) {
             if (r.group(1).toLowerCase().startsWith("firstchild.")) {
                 input = input.replace(r.group(),
                     getMetadataFromDigitalDocument(MetadataLevel.FIRSTCHILD, r.group(1).substring(11)));
