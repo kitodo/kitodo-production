@@ -99,6 +99,9 @@ public class ProzesskopieForm implements Serializable {
     protected static final String ITEM_LIST_ITEM = ITEM_LIST + ".item";
     private static final String ITEM_LIST_PROCESS_TITLE = ITEM_LIST + ".processtitle";
     private static final String OPAC_CONFIG = "configurationOPAC";
+    private static final String BOUND_BOOK = "boundbook";
+    private static final String FIRST_CHILD = "firstchild";
+    private static final String LIST_OF_CREATORS = "ListOfCreators";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private int activeTabId = 0;
@@ -574,7 +577,7 @@ public class ProzesskopieForm implements Serializable {
     private void proceedField(AdditionalField field) throws PreferencesException {
         DocStructInterface docStruct = getDocStruct(field);
         try {
-            if (field.getMetadata().equals("ListOfCreators")) {
+            if (field.getMetadata().equals(LIST_OF_CREATORS)) {
                 field.setValue(getAuthors(docStruct.getAllPersons()));
             } else {
                 // evaluate the content in normal fields
@@ -595,10 +598,10 @@ public class ProzesskopieForm implements Serializable {
     private DocStructInterface getDocStruct(AdditionalField field) throws PreferencesException {
         DigitalDocumentInterface digitalDocument = this.rdf.getDigitalDocument();
         DocStructInterface docStruct = digitalDocument.getLogicalDocStruct();
-        if (field.getDocstruct().equals("firstchild")) {
+        if (field.getDocstruct().equals(FIRST_CHILD)) {
             docStruct = digitalDocument.getLogicalDocStruct().getAllChildren().get(0);
         }
-        if (field.getDocstruct().equals("boundbook")) {
+        if (field.getDocstruct().equals(BOUND_BOOK)) {
             docStruct = digitalDocument.getPhysicalDocStruct();
         }
         return docStruct;
@@ -854,7 +857,7 @@ public class ProzesskopieForm implements Serializable {
         DocStructInterface tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct();
         DocStructInterface tempChild = null;
         String fieldDocStruct = field.getDocstruct();
-        if (fieldDocStruct.equals("firstchild")) {
+        if (fieldDocStruct.equals(FIRST_CHILD)) {
             try {
                 tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
@@ -864,20 +867,20 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         // if topstruct and first child should get the metadata
-        if (!fieldDocStruct.equals("firstchild") && fieldDocStruct.contains("firstchild")) {
+        if (!fieldDocStruct.equals(FIRST_CHILD) && fieldDocStruct.contains(FIRST_CHILD)) {
             try {
                 tempChild = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
-        if (fieldDocStruct.equals("boundbook")) {
+        if (fieldDocStruct.equals(BOUND_BOOK)) {
             tempStruct = this.rdf.getDigitalDocument().getPhysicalDocStruct();
         }
         // which Metadata
         try {
             // except for the authors, take all additional into the metadata
-            if (!field.getMetadata().equals("ListOfCreators")) {
+            if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
                 PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
@@ -1348,7 +1351,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of AdditionalField
      */
     public List<AdditionalField> getVisibleAdditionalFields() {
-        return this.getAdditionalFields().stream().filter(af -> af.getShowDependingOnDoctype())
+        return this.getAdditionalFields().stream().filter(AdditionalField::getShowDependingOnDoctype)
                 .collect(Collectors.toList());
     }
 
@@ -1565,7 +1568,7 @@ public class ProzesskopieForm implements Serializable {
             if (field.getMetadata() != null && field.getMetadata().equals("TitleDocMain")
                     && currentTitle.length() == 0) {
                 currentTitle = field.getValue();
-            } else if (field.getMetadata() != null && field.getMetadata().equals("ListOfCreators")
+            } else if (field.getMetadata() != null && field.getMetadata().equals(LIST_OF_CREATORS)
                     && currentAuthors.length() == 0) {
                 currentAuthors = field.getValue();
             }
@@ -1593,28 +1596,7 @@ public class ProzesskopieForm implements Serializable {
                     }
                 }
             } else {
-                /* andernfalls den string als Feldnamen auswerten */
-                for (AdditionalField additionalField : this.additionalFields) {
-                    /*
-                     * wenn es das ATS oder TSL-Feld ist, dann den berechneten
-                     * atstsl einsetzen, sofern noch nicht vorhanden
-                     */
-                    if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
-                            && additionalField.getShowDependingOnDoctype()
-                            && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
-                        if (atstsl == null || atstsl.length() == 0) {
-                            atstsl = createAtstsl(currentTitle, currentAuthors);
-                        }
-                        additionalField.setValue(this.atstsl);
-                    }
-
-                    /* den Inhalt zum Titel hinzufügen */
-                    if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
-                            && additionalField.getValue() != null) {
-                        newTitle.append(
-                            calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
-                    }
-                }
+                newTitle.append(evaluateAdditionalFieldsForTitle(currentTitle, currentAuthors, token));
             }
         }
 
@@ -1668,6 +1650,33 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         return titleDefinition;
+    }
+
+    private String evaluateAdditionalFieldsForTitle(String currentTitle, String currentAuthors, String token) {
+        StringBuilder newTitle = new StringBuilder();
+
+        for (AdditionalField additionalField : this.additionalFields) {
+            /*
+             * if it is the ATS or TSL field, then use the calculated
+             * atstsl if it does not already exist
+             */
+            if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
+                    && additionalField.getShowDependingOnDoctype()
+                    && (additionalField.getValue() == null || additionalField.getValue().equals(""))) {
+                if (atstsl == null || atstsl.length() == 0) {
+                    atstsl = createAtstsl(currentTitle, currentAuthors);
+                }
+                additionalField.setValue(this.atstsl);
+            }
+
+            // add the content to the title
+            if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
+                    && additionalField.getValue() != null) {
+                newTitle.append(
+                        calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+            }
+        }
+        return newTitle.toString();
     }
 
     private String processNullValues(String value) {
@@ -1769,7 +1778,6 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         }
-
         reduceLengthOfTifHeaderImageDescription(title);
     }
 
@@ -1858,8 +1866,8 @@ public class ProzesskopieForm implements Serializable {
     public static String createAtstsl(String title, String author) {
         StringBuilder result = new StringBuilder(8);
         if (author != null && author.trim().length() > 0) {
-            result.append(author.length() > 4 ? author.substring(0, 4) : author);
-            result.append(title.length() > 4 ? title.substring(0, 4) : title);
+            result.append(getPartString(author, 4));
+            result.append(getPartString(title, 4));
         } else {
             StringTokenizer titleWords = new StringTokenizer(title);
             int wordNo = 1;
@@ -1867,14 +1875,14 @@ public class ProzesskopieForm implements Serializable {
                 String word = titleWords.nextToken();
                 switch (wordNo) {
                     case 1:
-                        result.append(word.length() > 4 ? word.substring(0, 4) : word);
+                        result.append(getPartString(word, 4));
                         break;
                     case 2:
                     case 3:
-                        result.append(word.length() > 2 ? word.substring(0, 2) : word);
+                        result.append(getPartString(word, 2));
                         break;
                     case 4:
-                        result.append(word.length() > 1 ? word.substring(0, 1) : word);
+                        result.append(getPartString(word, 1));
                         break;
                     default:
                         assert false : wordNo;
@@ -1883,6 +1891,10 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         return result.toString().replaceAll("[\\W]", ""); // delete umlauts etc.
+    }
+
+    private static String getPartString(String word, int length) {
+        return word.length() > length ? word.substring(0, length) : word;
     }
 
     /**
