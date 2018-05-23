@@ -13,6 +13,7 @@ package org.kitodo.services.security;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.data.exceptions.DataException;
@@ -318,5 +319,30 @@ public class SecurityAccessService {
             int projectId) {
         return isAdmin() || hasAuthorityGlobal(authorityTitle) || hasAuthorityForClient(authorityTitle, clientId)
                 || hasAuthorityForProject(authorityTitle, projectId);
+    }
+
+    /**
+     * Get list of client id for given authority title.
+     * 
+     * @param authorityTitle
+     *            as String
+     * @return list of Client id
+     */
+    public List<Integer> getClientIdListForAuthority(String authorityTitle) {
+        List<Integer> clientIdList = new ArrayList<>();
+        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
+
+        if (hasAuthorityForAnyClient(authorityTitle)) {
+            for (GrantedAuthority authority : authorities) {
+                String currentAuthority = authority.getAuthority();
+                String authorityPart = authorityTitle + "_CLIENT_";
+                if (currentAuthority.contains(authorityPart)
+                        && !currentAuthority.equals(authorityPart + "ANY")) {
+                    Integer clientId = Integer.valueOf(currentAuthority.replace(authorityPart, ""));
+                    clientIdList.add(clientId);
+                }
+            }
+        }
+        return clientIdList;
     }
 }
