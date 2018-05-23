@@ -176,6 +176,8 @@ public class Task extends BaseIndexedBean {
         this.typeMetadata = templateTask.isTypeMetadata();
         this.processingStatus = templateTask.getProcessingStatus();
         this.homeDirectory = templateTask.getHomeDirectory();
+        this.workflowId = templateTask.getWorkflowId();
+        this.workflowCondition = templateTask.getWorkflowCondition();
 
         // necessary to create new ArrayList in other case session problem!
         this.users = new ArrayList<>(templateTask.getUsers());

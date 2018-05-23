@@ -321,7 +321,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
 
-        BeanHelper.copyTasks(this.template, this.prozessKopie, this.workflowConditions);
+        BeanHelper.copyTasks(this.template, this.prozessKopie);
 
         initializePossibleDigitalCollections();
 

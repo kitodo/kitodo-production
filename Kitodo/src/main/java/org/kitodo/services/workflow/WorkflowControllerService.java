@@ -218,8 +218,7 @@ public class WorkflowControllerService {
      */
     public Task closeTaskByUser(Task task) throws DataException, IOException {
         // if the result of the task is to be verified first, then if necessary,
-        // cancel
-        // the completion
+        // cancel the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
             if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
@@ -240,8 +239,7 @@ public class WorkflowControllerService {
             }
         }
         // if the result of the verification is ok, then continue, otherwise it
-        // is not
-        // reached
+        // is not reached
         this.webDav.uploadFromHome(task.getProcess());
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         close(task);
