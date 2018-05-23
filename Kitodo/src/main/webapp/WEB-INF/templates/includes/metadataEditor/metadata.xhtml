@@ -19,8 +19,6 @@
 
     <h:form id="metadata">
 
-        <p:messages id="messagesMetadata" closable="true"/>
-
         <h:panelGroup rendered="#{!empty Metadaten.metaPersonList}">
             <p:dataTable id="personTable" value="#{Metadaten.metaPersonList}" var="person" style="margin-bottom:30px">
                 <f:facet name="header">
@@ -58,7 +56,7 @@
                 </p:column>
 
                 <p:column style="width:64px;text-align: center; padding: 8px 0" id="actionButtons">
-                    <p:commandButton update="metadata:personTable, metadata:messagesMetadata"
+                    <p:commandButton update="metadata:personTable"
                                      icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
                                      title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
                         <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
@@ -96,13 +94,13 @@
 
             <p:column style="width: 25%; text-align: center">
 
-                <p:commandButton update="metadata:metadataTable, metadata:messagesMetadata"
+                <p:commandButton update="metadata:metadataTable"
                                  icon="fa fa-clipboard" immediate="true"
                                  title="#{msgs.metadataCopy}" action="#{Metadaten.copy}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                 </p:commandButton>
 
-                <p:commandButton update="metadata:metadataTable, metadata:messagesMetadata"
+                <p:commandButton update="metadata:metadataTable"
                                  icon="fa fa-trash" immediate="true"
                                  title="#{msgs.metadataDelete}" action="#{Metadaten.delete}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
