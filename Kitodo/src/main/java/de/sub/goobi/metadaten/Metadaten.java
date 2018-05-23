@@ -3618,13 +3618,17 @@ public class Metadaten {
 
     private List<DocStructInterface> getStructureElements(DocStructInterface docStruct) {
         List<DocStructInterface> docStructElements = new LinkedList<>();
-        docStructElements.add(docStruct);
-        for (DocStructInterface element : docStruct.getAllChildren()) {
-            if (Objects.nonNull(element)) {
-                if (Objects.isNull(element.getAllChildren()) || element.getAllChildren().isEmpty()) {
-                    docStructElements.add(element);
-                } else {
-                    docStructElements.addAll(getStructureElements(element));
+        if (Objects.nonNull(docStruct)) {
+            docStructElements.add(docStruct);
+            if (Objects.nonNull(docStruct.getAllChildren())) {
+                for (DocStructInterface element : docStruct.getAllChildren()) {
+                    if (Objects.nonNull(element)) {
+                        if (Objects.isNull(element.getAllChildren()) || element.getAllChildren().isEmpty()) {
+                            docStructElements.add(element);
+                        } else {
+                            docStructElements.addAll(getStructureElements(element));
+                        }
+                    }
                 }
             }
         }
