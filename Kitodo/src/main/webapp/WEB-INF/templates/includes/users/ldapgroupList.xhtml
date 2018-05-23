@@ -17,13 +17,14 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
+                 id="ldapGroupsTable"
                  value="#{LdapGruppenForm.page.listReload}"
                  lazy="true"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.ldapgruppe}">
+        <p:column headerText="#{msgs.ldapGroup}">
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.homeVerzeichnis}">

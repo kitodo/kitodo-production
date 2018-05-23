@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityAccessService {
 
     private static SecurityAccessService instance = null;
-    private static ServiceManager serviceManager  = new ServiceManager();
+    private static ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Return singleton variable of type SecurityAccessService.
@@ -168,6 +168,25 @@ public class SecurityAccessService {
     }
 
     /**
+     * Checks if the current user has any of the specified authorities globally.
+     *
+     * @param authorityTitles
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
+     * @return True if the current user has any of the specified authorities
+     *         globally
+     */
+    public boolean hasAnyAuthorityGlobal(String authorityTitles) {
+        String[] authorityTitlesArray = getStringArray(authorityTitles);
+        for (String authorityTitle : authorityTitlesArray) {
+            if (hasAuthorityGlobal(authorityTitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks if the current user is admin or has a specified authority globally.
      *
      * @param authorityTitle
@@ -177,6 +196,20 @@ public class SecurityAccessService {
      */
     public boolean isAdminOrHasAuthorityGlobal(String authorityTitle) {
         return isAdmin() || hasAuthorityGlobal(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user is admin or has any of the specified authorities
+     * globally.
+     *
+     * @param authorityTitles
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
+     * @return True if the current user is admin or has any of the specified
+     *         authorities globally
+     */
+    public boolean isAdminOrHasAnyAuthorityGlobal(String authorityTitles) {
+        return isAdmin() || hasAnyAuthorityGlobal(authorityTitles);
     }
 
     /**

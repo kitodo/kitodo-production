@@ -39,6 +39,10 @@ public class UsersPage {
     private WebElement userGroupsTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:ldapGroupsTable_data")
+    private WebElement ldapGroupsTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newElementButton_button")
     private WebElement newElementButton;
 
@@ -54,6 +58,8 @@ public class UsersPage {
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
 
+    private final String URL = "pages/users.jsf";
+
     /**
      * Goes to users page.
      * 
@@ -65,12 +71,21 @@ public class UsersPage {
     }
 
     /**
+     * Gets URL.
+     *
+     * @return The URL.
+     */
+    public String getUrl() {
+        return URL;
+    }
+
+    /**
      * Checks if the browser is currently at users page.
      * 
      * @return True if browser is at users page.
      */
     public boolean isAt() {
-        return Browser.getCurrentUrl().contains("users");
+        return Browser.getCurrentUrl().contains(URL);
     }
 
     /**
@@ -110,6 +125,20 @@ public class UsersPage {
     }
 
     /**
+     * Counts rows of ldap groups table.
+     *
+     * @return The number of rows of ldab groups table.
+     */
+    public int countListedLdapGroups() throws Exception {
+        if (isNotAt()) {
+            goTo();
+            switchToTabByIndex(2);
+        }
+        List<WebElement> listOfRows = getRowsOfTable(ldapGroupsTable);
+        return listOfRows.size();
+    }
+
+    /**
      * Goes to edit page for creating a new user.
      * 
      * @return The user edit page.
@@ -124,6 +153,35 @@ public class UsersPage {
         Thread.sleep(Browser.getDelayAfterNewItemClick());
 
         return Pages.getUserEditPage();
+    }
+
+    /**
+     * Goes to edit page for creating a new ldap group.
+     *
+     * @return The user edit page.
+     */
+    public LdapGroupEditPage createNewLdapGroup() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        newLdapGroupButton.click();
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+
+        return Pages.getLdapGroupEditPage();
+    }
+
+    /**
+     * Returns a list of all ldap groups titles which were displayed on ldap group page.
+     *
+     * @return The list of ldap group titles
+     */
+    public List<String> getListOfLdapGroupNames() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(ldapGroupsTable, 0);
     }
 
     /**
@@ -195,13 +253,41 @@ public class UsersPage {
 
         for (WebElement tableRow : tableRows) {
             if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                WebElement userGroupEditLink = userGroupEditLink = tableRow.findElement(By.tagName("a"));
-                userGroupEditLink.click();
-                Thread.sleep(Browser.getDelayAfterLinkClick());
+                clickEditLinkOfTableRow(tableRow);
                 return Pages.getUserGroupEditPage();
             }
         }
         throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+    }
+
+    /**
+     * Goes to edit page for editing a given ldap group, specified by title.
+     *
+     * @param ldapGroupTitle
+     *            The ldap group title.
+     * @return The ldap group edit page.
+     */
+    public LdapGroupEditPage editLdapGroup(String ldapGroupTitle) throws Exception {
+        if (isNotAt()) {
+            goTo();
+            switchToTabByIndex(2);
+        }
+
+        List<WebElement> tableRows = getRowsOfTable(ldapGroupsTable);
+
+        for (WebElement tableRow : tableRows) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(ldapGroupTitle)) {
+                clickEditLinkOfTableRow(tableRow);
+                return Pages.getLdapGroupEditPage();
+            }
+        }
+        throw new NoSuchElementException("No ldap group with given title was found: " + ldapGroupTitle);
+    }
+
+    private void clickEditLinkOfTableRow(WebElement tableRow) throws InterruptedException {
+        WebElement ldapGroupEditLink = tableRow.findElement(By.tagName("a"));
+        ldapGroupEditLink.click();
+        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**

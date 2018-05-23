@@ -117,6 +117,17 @@ public class SecurityAccessController {
     }
 
     /**
+     * Checks if the current user is admin or has any of the specified authorities globally.
+     *
+     * @param authorityTitles
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAnyAuthorityGlobal(String authorityTitles) {
+        return securityAccessService.isAdminOrHasAnyAuthorityGlobal(authorityTitles);
+    }
+
+    /**
      * Checks if the current user has a specified authority globally, for any client
      * or for any project.
      *
@@ -145,7 +156,8 @@ public class SecurityAccessController {
      * globally, for any client or for any project.
      *
      * @param authorityTitles
-     *            The authority titles.
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
      * @return True if the current user has one of the specified authorities or is
      *         admin.
      */

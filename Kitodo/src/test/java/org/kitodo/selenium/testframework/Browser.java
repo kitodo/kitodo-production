@@ -32,6 +32,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Browser {
     private static final Logger logger = LogManager.getLogger(Browser.class);
@@ -44,14 +46,12 @@ public class Browser {
     private static BrowserType browserType = BrowserType.CHROME;
 
     private static int delayIndexing = 3000;
-    private static int delayAfterSave = 6000;
     private static int delayAfterLogin = 2000;
     private static int delayAfterLogout = 3000;
     private static int delayAfterLinkClick = 500;
     private static int delayAfterHoverMenu = 500;
     private static int delayAfterNewItemClick = 500;
     private static int delayAfterPickListClick = 1500;
-    private static int delayAfterUpdate = 3000;
 
     /**
      * Provides the web driver, sets timeout and window size.
@@ -152,7 +152,7 @@ public class Browser {
      * @param webElement
      *            The web element.
      */
-    public static void hoverWebElement(WebElement webElement) throws InterruptedException {
+    public static void hoverWebElement(WebElement webElement) {
         actions.moveToElement(webElement).pause(delayAfterHoverMenu).build().perform();
     }
 
@@ -186,17 +186,16 @@ public class Browser {
      *
      * @param webElement
      *            the save button to be clicked
-     * @throws InterruptedException
-     *             when the thread gets interrupted
      */
-    public static void clickAjaxSaveButton(WebElement webElement) throws InterruptedException {
-        for (int attempt = 1; attempt < 4; attempt++) {
+    public static void clickAjaxSaveButton(WebElement webElement) {
+        for (int attempt = 1; attempt < 50; attempt++) {
             try {
-                Thread.sleep(Browser.getDelayAfterUpdate());
+                new WebDriverWait(webDriver, 5).ignoring(StaleElementReferenceException.class)
+                        .until(ExpectedConditions.elementToBeClickable(webElement));
                 webElement.click();
                 return;
             } catch (StaleElementReferenceException e) {
-                logger.error("Save button is not accessible, retry now (" + attempt + ". attempt)");
+                logger.warn("Save button is not accessible, retry now (" + attempt + ". attempt)");
             }
         }
         throw new StaleElementReferenceException("Could not access save button!");
@@ -222,15 +221,6 @@ public class Browser {
     public static String getCellDataByRow(WebElement row, int columnIndex) {
         List<WebElement> cells = getCellsOfRow(row);
         return cells.get(columnIndex).getText();
-    }
-
-    /**
-     * Gets delayAfterSave.
-     *
-     * @return The delayAfterSave.
-     */
-    public static int getDelayAfterSave() {
-        return delayAfterSave;
     }
 
     /**
@@ -303,15 +293,6 @@ public class Browser {
      */
     public static boolean isOnTravis() {
         return onTravis;
-    }
-
-    /**
-     * Gets delayAfterUpdate.
-     *
-     * @return The delayAfterUpdate.
-     */
-    public static int getDelayAfterUpdate() {
-        return delayAfterUpdate;
     }
 
 }

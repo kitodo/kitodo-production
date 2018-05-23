@@ -22,7 +22,7 @@ public class StartPage {
      *
      * @return The help page.
      */
-    public StartPage goTo() throws Exception {
+    public StartPage goTo() {
         Browser.goTo(URL);
         return this;
     }

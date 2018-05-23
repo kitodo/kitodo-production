@@ -35,7 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
 
     /**
-     * Constructor for SecurityConfig which also sets instance variable for singleton usage.
+     * Constructor for SecurityConfig which also sets instance variable for
+     * singleton usage.
      */
     public SecurityConfig() {
         if (Objects.equals(instance, null)) {
@@ -59,7 +60,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return this.sessionRegistry;
     }
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // CSRF protection is disabled. In default enabled state, CSRF Token must be included on every request.
@@ -68,6 +68,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
                 .expiredUrl("/pages/login.jsf");
 
+        // viewAll... Authority to view list of entities
+        // view...... Authority to view entity at edit page
+        // edit...... Authority to change and save entities at edit page
         http.authorizeRequests()
             .antMatchers("/pages/clients.jsf").hasAnyAuthority(
                 ADMIN_GLOBAL,
@@ -79,6 +82,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
                 ADMIN_GLOBAL,
+                "editIndex_" + GLOBAL,
                 "viewIndex_" + GLOBAL)
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
@@ -105,10 +109,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ADMIN_GLOBAL,
                 "editProject_" + GLOBAL,
                 "editProject_" + CLIENT_ANY,
-                "editProject_" + PROJECT_ANY)
+                "editProject_" + PROJECT_ANY,
+                "viewProject_" + GLOBAL,
+                "viewProject_" + CLIENT_ANY,
+                "viewProject_" + PROJECT_ANY)
+
             .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 "editDocket_" + GLOBAL)
+
             .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 "editRuleset_" + GLOBAL)
@@ -129,14 +138,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 "editUser_" + GLOBAL,
-                "editUser_" + CLIENT_ANY)
+                "editUser_" + CLIENT_ANY,
+                "viewUser_" + GLOBAL,
+                "viewUser_" + CLIENT_ANY)
+
             .antMatchers("/pages/usergroupEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 "editUserGroup_" + GLOBAL,
-                "editUserGroup_" + CLIENT_ANY)
+                "editUserGroup_" + CLIENT_ANY,
+                "viewUserGroup_" + GLOBAL,
+                "viewUserGroup_" + CLIENT_ANY)
+
             .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
-                "editLdapGroup_" + GLOBAL)
+                "editLdapGroup_" + GLOBAL,
+                "viewLdapGroup_" + GLOBAL)
 
             .antMatchers("/pages/images/**").permitAll()
             .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
@@ -156,12 +172,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/login.jsf"));
     }
 
+    /**
+     * Reads local config and configures the dynamic authentication provider
+     * (authentication against ldap or database).
+     * 
+     * @param authenticationManagerBuilder
+     *            The authentication manager builder
+     */
     @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
+    public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) {
         DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
         authenticationProvider.readLocalConfig();
         authenticationProvider.initializeAuthenticationProvider();
-        auth.authenticationProvider(authenticationProvider);
+        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
     }
 
     /**
