@@ -20,6 +20,7 @@ public class RulesetDTO extends BaseDTO {
     private String title;
     private String fileContent;
     private Boolean orderMetadataByRuleset = false;
+    private Boolean active = true;
 
     /**
      * Get file.
@@ -95,5 +96,24 @@ public class RulesetDTO extends BaseDTO {
      */
     public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
+
+    /**
+     * Check if ruleset is active.
+     *
+     * @return whether ruleset is active or not
+     */
+    public Boolean isActive() {
+        return this.active;
+    }
+
+    /**
+     * Set if ruleset is active.
+     *
+     * @param active
+     *            whether ruleset is active or not
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

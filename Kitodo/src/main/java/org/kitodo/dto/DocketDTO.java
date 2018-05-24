@@ -18,6 +18,7 @@ public class DocketDTO extends BaseDTO {
 
     private String file;
     private String title;
+    private Boolean active = true;
 
     /**
      * Get file.
@@ -55,5 +56,24 @@ public class DocketDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    /**
+     * Check if docket is active.
+     *
+     * @return whether docket is active or not
+     */
+    public Boolean isActive() {
+        return this.active;
+    }
+
+    /**
+     * Set if docket is active.
+     *
+     * @param active
+     *            whether docket is active or not
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
