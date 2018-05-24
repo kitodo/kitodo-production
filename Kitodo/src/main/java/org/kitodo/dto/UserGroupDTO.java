@@ -24,7 +24,6 @@ public class UserGroupDTO extends BaseDTO {
     private Integer usersSize;
     private List<AuthorityDTO> authorities = new ArrayList<>();
     private Integer authorizationsSize;
-    private boolean panelShown = false;
 
     /**
      * Get title.
@@ -119,24 +118,5 @@ public class UserGroupDTO extends BaseDTO {
      */
     public void setAuthorizationsSize(Integer authorizationsSize) {
         this.authorizationsSize = authorizationsSize;
-    }
-
-    /**
-     * Get information if panel is shown.
-     * 
-     * @return true or false
-     */
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    /**
-     * Set information if panel is shown.
-     * 
-     * @param panelShown
-     *            as boolean
-     */
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 }

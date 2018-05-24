@@ -47,7 +47,6 @@ public class TaskDTO extends BaseDTO {
     private boolean typeImagesRead;
     private boolean typeImagesWrite;
     private boolean batchStep;
-    private boolean panelShown = false;
     private boolean selected = false;
 
     /**
@@ -521,25 +520,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
-    }
-
-    /**
-     * Get information if panel is shown.
-     *
-     * @return true or false
-     */
-    public boolean isPanelShown() {
-        return this.panelShown;
-    }
-
-    /**
-     * Set information if panel is shown.
-     *
-     * @param panelShown
-     *            as boolean
-     */
-    public void setPanelShown(boolean panelShown) {
-        this.panelShown = panelShown;
     }
 
     /**
