@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -28,6 +30,9 @@ public class Ruleset extends BaseIndexedBean {
 
     @Column(name = "orderMetadataByRuleset")
     private Boolean orderMetadataByRuleset = false;
+
+    @Column(name = "active")
+    private Boolean active = true;
 
     public String getTitle() {
         return this.title;
@@ -65,5 +70,26 @@ public class Ruleset extends BaseIndexedBean {
      */
     public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
+    }
+
+    /**
+     * Check if ruleset is active.
+     *
+     * @return true or false
+     */
+    public Boolean isActive() {
+        if (Objects.isNull(this.active)) {
+            this.active = true;
+        }
+        return this.active;
+    }
+
+    /**
+     * Set ruleset as active.
+     *
+     * @param active as Boolean
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
