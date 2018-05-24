@@ -46,12 +46,13 @@
         </p:panelGrid>
 
         <p:panel>
-            <p:outputLabel for="tifFolders" value="#{msgs.aktuellerOrdner}"/>
-            <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}">
+            <p:outputLabel for="tifFolders" value="#{msgs.aktuellerOrdner}" style="vertical-align: top"/>
+            <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
             </p:selectOneMenu>
             <p:commandButton id="readImagesButton" value="#{msgs.generatePNGs}"
-                             action="#{Metadaten.generatePNGs()}">
+                             action="#{Metadaten.generatePNGs()}"
+                             style="vertical-align: top">
                 <p:confirm header="#{msgs.generatePNGs}"
                            message="#{msgs.confirm}"
                            icon="ui-icon-alert"/>
