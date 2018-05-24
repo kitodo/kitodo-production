@@ -659,12 +659,12 @@ public class Citation {
      *            StringBuilder to write to
      */
     private void appendAccessed(StringBuilder builder) {
-        final Pattern LOOK_FOR = Pattern.compile("(?<= )([+\\-]\\d{2}:\\d{2}$)");
+        final Pattern lookFor = Pattern.compile("(?<= )([+\\-]\\d{2}:\\d{2}$)");
         builder.append(Helper.getTranslation("citation.accessTimestamp"));
         builder.append(' ');
         StringBuffer result = new StringBuffer();
         String formatted = accessed.toString(ACCESS_TIME_FORMAT);
-        Matcher scanner = LOOK_FOR.matcher(formatted);
+        Matcher scanner = lookFor.matcher(formatted);
         while (scanner.find()) {
             scanner.appendReplacement(result,
                     Helper.getTranslation("timeZone.".concat(scanner.group(1)), scanner.group(1)));

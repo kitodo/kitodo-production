@@ -29,7 +29,7 @@
                 <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
                             action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
-                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.Neu}"
+                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
             </p:menuButton>

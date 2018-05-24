@@ -493,7 +493,7 @@ public class SchemaService {
         String title = BeanHelper.determineWorkpieceProperty(process, "Haupttitel");
         String verlag = BeanHelper.determineWorkpieceProperty(process, "Verlag");
         String place = BeanHelper.determineWorkpieceProperty(process, "Erscheinungsort");
-        String ISSN = BeanHelper.determineWorkpieceProperty(process, "ISSN");
+        String issn = BeanHelper.determineWorkpieceProperty(process, "ISSN");
         String bandNumber = BeanHelper.determineWorkpieceProperty(process, "Band");
 
         /*
@@ -511,7 +511,7 @@ public class SchemaService {
             mdPlace = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("PlaceOfPublication"));
             mdPlace.setStringValue(place);
             mdISSN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("ISSN"));
-            mdISSN.setStringValue(ISSN);
+            mdISSN.setStringValue(issn);
             mdPPN = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));
             mdPPN.setStringValue("PPN" + ppn);
             mdPPNBand = UghImplementation.INSTANCE.createMetadata(prefs.getMetadataTypeByName("CatalogIDDigital"));

@@ -2076,7 +2076,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 location = "file://" + location;
             }
             String url = new URL(location).getFile();
-            File f = new File(!url.startsWith(imageFolder.toURL().getPath()) ? imageFolder : null, url);
+            File f = new File(!url.startsWith(imageFolder.toURI().toURL().getPath()) ? imageFolder : null, url);
             cf.setLocation(f.toURI().toString());
         }
 

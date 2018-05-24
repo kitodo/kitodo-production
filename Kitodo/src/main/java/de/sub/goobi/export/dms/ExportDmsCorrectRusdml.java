@@ -24,12 +24,12 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
-public class ExportDms_CorrectRusdml {
+public class ExportDmsCorrectRusdml {
     private final PrefsInterface prefs;
     private final Process process;
     private final DigitalDocumentInterface digitalDocument;
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ExportDms_CorrectRusdml.class);
+    private static final Logger logger = LogManager.getLogger(ExportDmsCorrectRusdml.class);
 
     /**
      * Constructor.
@@ -41,7 +41,7 @@ public class ExportDms_CorrectRusdml {
      * @param gdzFile
      *            Fileformat object
      */
-    public ExportDms_CorrectRusdml(Process process, PrefsInterface prefs, FileformatInterface gdzFile)
+    public ExportDmsCorrectRusdml(Process process, PrefsInterface prefs, FileformatInterface gdzFile)
             throws PreferencesException {
         this.prefs = prefs;
         this.digitalDocument = gdzFile.getDigitalDocument();

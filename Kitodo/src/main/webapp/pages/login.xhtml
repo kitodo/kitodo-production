@@ -76,7 +76,7 @@
                         </h:panelGroup>
 
                         <h:panelGroup
-                                rendered="#{LoginForm.myBenutzer == null and LoginForm.schonEingeloggt}">
+                                rendered="#{LoginForm.myBenutzer == null and LoginForm.alreadyLoggedIn}">
 
                             <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
                             <br/>

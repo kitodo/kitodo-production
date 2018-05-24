@@ -227,7 +227,7 @@ public class CalendarForm implements Serializable {
          * @return the HTML colour code of the issue
          */
         public String getColour() {
-            return ISSUE_COLOURS[index % ISSUE_COLOURS.length];
+            return issueColours[index % issueColours.length];
         }
 
         /**
@@ -568,18 +568,18 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * The constant field ISSUE_COLOURS holds a regular expression to parse date
+     * The constant field issueColours holds a regular expression to parse date
      * inputs in a flexible way.
      */
     private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
 
     /**
-     * The constant field ISSUE_COLOURS holds the colours used to represent the
+     * The constant field issueColours holds the colours used to represent the
      * issues in the calendar editor. It is populated on form bean creation, so
      * changing the configuration should take effect without need to restart the
      * servlet container.
      */
-    protected static String[] ISSUE_COLOURS;
+    protected static String[] issueColours;
 
     private static final Logger logger = LogManager.getLogger(CalendarForm.class);
 
@@ -645,11 +645,11 @@ public class CalendarForm implements Serializable {
     private LocalDate firstAppearanceIsToChange = null;
 
     /**
-     * The constant field TODAY hold the date of today. Reading the system clock
+     * The constant field today hold the date of today. Reading the system clock
      * requires much synchronisation throughout the JVM and is therefore only
      * done once on form creation.
      */
-    private final LocalDate TODAY = LocalDate.now();
+    private final LocalDate today = LocalDate.now();
 
     protected UploadedFile uploadedFile;
 
@@ -676,7 +676,7 @@ public class CalendarForm implements Serializable {
      * </p>
      */
     public CalendarForm() {
-        ISSUE_COLOURS = ConfigCore
+        issueColours = ConfigCore
                 .getParameter("issue.colours",
                         "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
                 .split(";");
@@ -734,13 +734,13 @@ public class CalendarForm implements Serializable {
             if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung(BLOCK + "firstAppearance.early");
             }
-            if (blockShowing.getFirstAppearance().isAfter(TODAY)) {
+            if (blockShowing.getFirstAppearance().isAfter(today)) {
                 Helper.setMeldung(BLOCK + "firstAppearance.fiction");
             }
             if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
                 Helper.setMeldung(BLOCK + "lastAppearance.early");
             }
-            if (blockShowing.getLastAppearance().isAfter(TODAY)) {
+            if (blockShowing.getLastAppearance().isAfter(today)) {
                 Helper.setMeldung(BLOCK + "lastAppearance.fiction");
             }
         }
@@ -1084,8 +1084,8 @@ public class CalendarForm implements Serializable {
             }
             if (numbers[2] < 100) {
                 new LocalDate();
-                numbers[2] += 100 * TODAY.getCenturyOfEra();
-                if (numbers[2] > TODAY.getYear()) {
+                numbers[2] += 100 * today.getCenturyOfEra();
+                if (numbers[2] > today.getYear()) {
                     numbers[2] -= 100;
                 }
                 Helper.setMeldung(Helper.getTranslation(BLOCK + input + ".yearCompleted",

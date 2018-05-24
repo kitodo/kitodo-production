@@ -41,7 +41,7 @@ public abstract class MetadataSelector extends DataSelector {
         }
 
         if (path.startsWith(METADATA_PATH_SEPARATOR)) {
-            if (path.indexOf(METADATA_SEPARATOR) == 1) {
+            if (path.indexOf(METADATA_SEPARATOR, 1) > -1) {
                 return new LocalMetadataSelector(path.substring(1));
             } else {
                 return new MetadataPathSelector(path);

@@ -46,7 +46,7 @@
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.speichern}"
-                         action="#{LdapGruppenForm.Speichern}"
+                         action="#{LdapGruppenForm.saveLdapGroup}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
@@ -228,7 +228,7 @@
                     <p:commandButton id="delete"
                                      value="#{msgs.loeschen}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
-                                     action="#{LdapGruppenForm.Loeschen}"
+                                    action="#{LdapGruppenForm.deleteLdapGroup}"
                                      rendered="#{isEditMode and SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
                                      iconPos="right"/>
