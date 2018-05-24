@@ -543,7 +543,7 @@ public class FileServiceTest {
 
     @Test
     public void shouldCreateSymLink() throws IOException {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
