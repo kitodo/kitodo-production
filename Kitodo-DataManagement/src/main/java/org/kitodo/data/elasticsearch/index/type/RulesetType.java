@@ -30,6 +30,7 @@ public class RulesetType extends BaseType<Ruleset> {
         jsonObjectBuilder.add(RulesetTypeField.FILE.getName(), preventNull(ruleset.getFile()));
         jsonObjectBuilder.add(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName(), ruleset.isOrderMetadataByRuleset());
         jsonObjectBuilder.add(RulesetTypeField.FILE_CONTENT.getName(), "");
+        jsonObjectBuilder.add(RulesetTypeField.ACTIVE.getName(), ruleset.isActive());
         return jsonObjectBuilder.build();
     }
 }

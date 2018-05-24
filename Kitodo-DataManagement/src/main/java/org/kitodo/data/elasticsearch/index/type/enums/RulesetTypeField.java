@@ -17,7 +17,8 @@ public enum RulesetTypeField {
     TITLE("title"),
     FILE("file"),
     ORDER_METADATA_BY_RULESET("orderMetadataByRuleset"),
-    FILE_CONTENT("fileContent");
+    FILE_CONTENT("fileContent"),
+    ACTIVE("active");
 
     private String name;
 
