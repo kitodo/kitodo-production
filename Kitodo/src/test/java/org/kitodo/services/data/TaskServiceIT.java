@@ -63,7 +63,7 @@ public class TaskServiceIT {
     @Test
     public void shouldCountAllTasks() throws Exception {
         Long amount = taskService.count();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
@@ -71,13 +71,13 @@ public class TaskServiceIT {
         UserService userService = new ServiceManager().getUserService();
 
         Long amount = taskService.getAmountOfCurrentTasks(true, true, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(4), amount);
 
         amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(1));
         assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
 
         amount = taskService.getAmountOfCurrentTasks(false, true, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(1), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
 
         amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(2));
         assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
@@ -86,7 +86,7 @@ public class TaskServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
         Long amount = taskService.countDatabaseRows();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals("Tasks were not counted correctly!", Long.valueOf(8), amount);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TaskServiceIT {
     @Test
     public void shouldFindAllTasks() throws Exception {
         List<TaskDTO> tasks = taskService.findAll();
-        assertEquals("Not all tasks were found in index!", 7, tasks.size());
+        assertEquals("Not all tasks were found in index!", 8, tasks.size());
     }
 
     @Test
@@ -112,7 +112,7 @@ public class TaskServiceIT {
     @Test
     public void shouldGetAllTasks() {
         List<Task> tasks = taskService.getAll();
-        assertEquals("Not all tasks were found in database!", 7, tasks.size());
+        assertEquals("Not all tasks were found in database!", 8, tasks.size());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class TaskServiceIT {
     @Test
     public void shouldFindByProcessingStatusAndUser() throws Exception {
         List<JsonObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
-        assertEquals("Some tasks were found in database!", 0, tasks.size());
+        assertEquals("Not only one task found in database!", 1, tasks.size());
 
         tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
         assertEquals("Not all tasks were found in database!", 2, tasks.size());
@@ -173,7 +173,7 @@ public class TaskServiceIT {
         task.setTitle("To Remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        Task foundTask = taskService.getById(8);
+        Task foundTask = taskService.getById(9);
         assertEquals("Additional task was not inserted in database!", "To Remove", foundTask.getTitle());
 
         taskService.remove(foundTask);
@@ -184,12 +184,12 @@ public class TaskServiceIT {
         task.setTitle("To remove");
         task.setProcessingStatusEnum(TaskStatus.OPEN);
         taskService.save(task);
-        foundTask = taskService.getById(9);
+        foundTask = taskService.getById(10);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
-        taskService.remove(9);
+        taskService.remove(10);
         exception.expect(DAOException.class);
-        taskService.getById(9);
+        taskService.getById(10);
     }
 
     @Test
@@ -283,7 +283,7 @@ public class TaskServiceIT {
     public void shouldGetTasksForProjectHelper() {
         List<Task> tasks = taskService.getTasksForProjectHelper(1);
         int actual = tasks.size();
-        int expected = 4;
+        int expected = 5;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         for (int i = 0; i < tasks.size(); i++) {
@@ -306,7 +306,7 @@ public class TaskServiceIT {
     public void shouldGetSizeOfTasksForProjectHelper() {
         List<Long> tasksSize = taskService.getSizeOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
-        int expected = 4;
+        int expected = 5;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getSizeOfTasksForProjectHelper(2);
@@ -319,7 +319,7 @@ public class TaskServiceIT {
     public void shouldGetAverageOrderingOfTasksForProjectHelper() {
         List<Double> tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(1);
         int actual = tasksSize.size();
-        int expected = 4;
+        int expected = 5;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getAverageOrderingOfTasksForProjectHelper(2);
@@ -350,7 +350,7 @@ public class TaskServiceIT {
 
         tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(2,1);
         actual = tasksSize.size();
-        expected = 1;
+        expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
         tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,2);
@@ -376,7 +376,7 @@ public class TaskServiceIT {
     public void shouldFindDistinctTitles() throws Exception {
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
         int size = taskTitlesDistinct.size();
-        assertEquals("Incorrect size of distinct titles for tasks!", 6, size);
+        assertEquals("Incorrect size of distinct titles for tasks!", 7, size);
 
         String title = taskTitlesDistinct.get(0);
         assertEquals("Incorrect sorting of distinct titles for tasks!", "Additional", title);
