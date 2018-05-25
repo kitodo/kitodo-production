@@ -52,6 +52,8 @@ public class ModelerForm implements Serializable {
     private List<URI> xmlDiagramNamesURI;
     private Map<String, String> xmlDiagramNames = new TreeMap<>();
     private String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
+    private static final String BPMN_EXTENSION = ".bpmn20.xml";
+    private static final String BASE_FILE = "base" + BPMN_EXTENSION;
     private static final Logger logger = LogManager.getLogger(ModelerForm.class);
     private static final ServiceManager serviceManager = new ServiceManager();
 
@@ -60,11 +62,11 @@ public class ModelerForm implements Serializable {
         // TODO: this needs to be removed after base file is stored inside the app
         for (URI uri : xmlDiagramNamesURI) {
             String fileName = serviceManager.getFileService().getFileNameWithExtension(uri);
-            if (!fileName.equals("base.bpmn20.xml") && !fileName.contains(".svg")) {
+            if (!fileName.equals(BASE_FILE) && !fileName.contains(".svg")) {
                 xmlDiagramNames.put(decodeXMLDiagramName(fileName), fileName);
             }
         }
-        readXMLDiagram("base.bpmn20.xml");
+        readXMLDiagram(BASE_FILE);
     }
 
     /**
@@ -177,7 +179,7 @@ public class ModelerForm implements Serializable {
             }
         }
         // TODO: this one needs to be stored inside the WAR file
-        readXMLDiagram("base.bpmn20.xml");
+        readXMLDiagram(BASE_FILE);
         xmlDiagramName = newXMLDiagramName;
         newXMLDiagramName = "";
         try {
@@ -233,16 +235,16 @@ public class ModelerForm implements Serializable {
     }
 
     private String decodeXMLDiagramName(String xmlDiagramName) {
-        if (xmlDiagramName.contains(".bpmn20.xml")) {
-            return xmlDiagramName.replace(".bpmn20.xml", "");
+        if (xmlDiagramName.contains(BPMN_EXTENSION)) {
+            return xmlDiagramName.replace(BPMN_EXTENSION, "");
         }
         return xmlDiagramName;
 
     }
 
     private String encodeXMLDiagramName(String xmlDiagramName) {
-        if (!xmlDiagramName.contains(".bpmn20.xml")) {
-            return xmlDiagramName + ".bpmn20.xml";
+        if (!xmlDiagramName.contains(BPMN_EXTENSION)) {
+            return xmlDiagramName + BPMN_EXTENSION;
         }
         return xmlDiagramName;
     }

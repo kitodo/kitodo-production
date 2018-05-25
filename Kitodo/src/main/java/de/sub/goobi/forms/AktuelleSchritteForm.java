@@ -83,6 +83,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final String ERROR_LOADING = "errorLoadingOne";
     private static final String ERROR_SAVING = "errorSaving";
+    private static final String PROCESS = "prozess";
     private static final String WORK_TASK = "arbeitsschritt";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
@@ -206,7 +207,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             this.serviceManager.getProcessService().save(task.getProcess());
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("prozess") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
         }
     }
 
@@ -412,7 +413,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     this.serviceManager.getProcessService().save(process);
                 } catch (DataException e) {
-                    Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+                    Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
                 }
                 this.myDav.downloadToHome(process, false);
             }
@@ -717,7 +718,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {"prozess"}, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {PROCESS}, logger, e);
             }
         }
     }

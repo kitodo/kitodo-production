@@ -499,7 +499,7 @@ public class BatchStepHelper extends BatchHelper {
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
-                        new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);;
+                        new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
             }
         }
     }

@@ -108,7 +108,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(subquery);
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.DONE.getValue(), false));
-        query.must(createSimpleQuery("templateForTask.id", 0, true));
+        query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getName(), 0, true));
 
         // TODO: find other way than retrieving the form bean to access
         // "hideCorrectionTasks" and "showAutomaticTasks"
@@ -297,7 +297,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createSimpleQuery("templateForTask.id", 0, true));
+        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getName(), 0, true));
 
         return count(boolQuery.toString());
     }
@@ -449,7 +449,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
         }
-        Integer template = taskJSONObject.getInt("templateForTask.id");
+        Integer template = taskJSONObject.getInt(TaskTypeField.TEMPLATE_ID.getName());
         if (template > 0) {
             taskDTO.setTemplate(serviceManager.getTemplateService().findById(template, true));
         }

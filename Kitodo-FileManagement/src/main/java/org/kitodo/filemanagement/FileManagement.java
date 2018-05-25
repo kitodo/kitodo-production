@@ -370,6 +370,7 @@ public class FileManagement implements FileManagementInterface {
     private String getProcessSubType(String processID, String processTitle, ProcessSubType processSubType,
             String resourceName) {
         processTitle = encodeTitle(processTitle);
+        final String ocr = "/ocr/";
 
         switch (processSubType) {
             case IMAGE:
@@ -383,15 +384,15 @@ public class FileManagement implements FileManagementInterface {
             case IMPORT:
                 return processID + "/import/" + resourceName;
             case OCR:
-                return processID + "/ocr/";
+                return processID + ocr;
             case OCR_PDF:
-                return processID + "/ocr/" + processTitle + "_pdf/" + resourceName;
+                return processID + ocr + processTitle + "_pdf/" + resourceName;
             case OCR_TXT:
-                return processID + "/ocr/" + processTitle + "_txt/" + resourceName;
+                return processID + ocr + processTitle + "_txt/" + resourceName;
             case OCR_WORD:
-                return processID + "/ocr/" + processTitle + "_wc/" + resourceName;
+                return processID + ocr + processTitle + "_wc/" + resourceName;
             case OCR_ALTO:
-                return processID + "/ocr/" + processTitle + "_alto/" + resourceName;
+                return processID + ocr + processTitle + "_alto/" + resourceName;
             default:
                 return "";
         }
@@ -419,15 +420,16 @@ public class FileManagement implements FileManagementInterface {
      * @return the source directory as a string
      */
     private URI getSourceDirectory(String processId, String processTitle) {
+        final String source = "_source";
         URI dir = URI.create(getProcessSubType(processId, processTitle, ProcessSubType.IMAGE, null));
-        FilenameFilter filterDirectory = new FileNameEndsWithFilter("_source");
+        FilenameFilter filterDirectory = new FileNameEndsWithFilter(source);
         URI sourceFolder = URI.create("");
         try {
             List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.isEmpty()) {
-                sourceFolder = dir.resolve(processTitle + "_source");
+                sourceFolder = dir.resolve(processTitle + source);
                 if (Config.getBooleanParameter("createSourceFolder", false)) {
-                    createDirectory(dir, processTitle + "_source");
+                    createDirectory(dir, processTitle + source);
                 }
             } else {
                 sourceFolder = dir.resolve(directories.get(0));

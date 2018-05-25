@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String GLOBAL = "GLOBAL";
     private static final String PROJECT_ANY = "PROJECT_ANY";
     private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
+    private static final String LOGIN_PAGE = "/pages/login.jsf";
 
     /**
      * Constructor for SecurityConfig which also sets instance variable for
@@ -66,7 +67,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
 
         http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
-                .expiredUrl("/pages/login.jsf");
+                .expiredUrl(LOGIN_PAGE);
 
         // viewAll... Authority to view list of entities
         // view...... Authority to view entity at edit page
@@ -162,14 +163,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
 
         http.formLogin()
-                .loginPage("/pages/login.jsf")
+                .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
                 .defaultSuccessUrl("/pages/start.jsf")
                 .permitAll()
                 .and()
             .logout()
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler("/pages/login.jsf"));
+                .logoutSuccessHandler(new CustomLogoutSuccessHandler(LOGIN_PAGE));
     }
 
     /**
