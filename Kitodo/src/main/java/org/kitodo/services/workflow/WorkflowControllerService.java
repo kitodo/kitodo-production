@@ -514,7 +514,7 @@ public class WorkflowControllerService {
 
     private Property prepareProblemMessageProperty(Date date) {
         Property processProperty = new Property();
-        processProperty.setTitle(Helper.getTranslation("Korrektur notwendig"));
+        processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
         processProperty.setValue("[" + this.formatter.format(date) + ", "
                 + serviceManager.getUserService().getFullName(this.user) + "] " + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
@@ -523,23 +523,23 @@ public class WorkflowControllerService {
 
     private Property prepareSolveMessageProperty(Task correctionTask) {
         Property processProperty = new Property();
-        processProperty.setTitle(Helper.getTranslation("Korrektur durchgefuehrt"));
+        processProperty.setTitle(Helper.getTranslation("correctionPerformed"));
         processProperty.setValue(
             "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
-                    + "] " + Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
+                    + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
                     + this.solution.getMessage());
         processProperty.setType(PropertyType.MESSAGE_IMPORTANT);
         return processProperty;
     }
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = Helper.getTranslation("KorrekturFuer") + " " + correctionTask.getTitle() + ": "
+        String message = Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
                 + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "error", message);
     }
 
     private String prepareSolutionWikiField(Process process, Task correctionTask) {
-        String message = Helper.getTranslation("KorrekturloesungFuer") + " " + correctionTask.getTitle() + ": "
+        String message = Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
                 + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "info", message);
     }

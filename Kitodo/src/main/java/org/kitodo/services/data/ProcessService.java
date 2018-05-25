@@ -1608,8 +1608,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         listOfTranslations.add("Korrektur notwendig");
         listOfTranslations.add("Korrektur durchgefuehrt");
-        listOfTranslations.add(Helper.getTranslation("Korrektur notwendig"));
-        listOfTranslations.add(Helper.getTranslation("Korrektur durchgefuehrt"));
+        listOfTranslations.add(Helper.getTranslation("correctionNecessary"));
+        listOfTranslations.add(Helper.getTranslation("correctionPerformed"));
 
         if (lpe.isEmpty()) {
             return filteredList;
