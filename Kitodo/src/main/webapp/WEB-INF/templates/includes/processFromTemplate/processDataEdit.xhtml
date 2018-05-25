@@ -23,7 +23,8 @@
             <div>
                 <!-- process title -->
                 <p:outputLabel for="processTitle" value="#{msgs.prozessTitel}"/>
-                <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button" required="true"/>
+                <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button"
+                             required="#{empty param['editForm:processFromTemplateTabView:performOpacQuery']}"/>
                 <p:commandButton id="generateTitleButton"
                                  actionListener="#{ProzesskopieForm.calculateProcessTitle}"
                                  icon="fa fa-cog" title="#{msgs.generieren}"/>
