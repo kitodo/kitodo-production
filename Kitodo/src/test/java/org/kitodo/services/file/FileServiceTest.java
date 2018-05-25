@@ -51,27 +51,20 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testCreateMetaDirectory() {
-        try {
-            File script = new File(ConfigCore.getParameter("script_createDirMeta"));
-            if (!SystemUtils.IS_OS_WINDOWS) {
-                ExecutionPermission.setExecutePermission(script);
-            }
+    public void testCreateMetaDirectory() throws IOException {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-            boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
-            File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
+        File script = new File(ConfigCore.getParameter("script_createDirMeta"));
+        ExecutionPermission.setExecutePermission(script);
 
-            if (!SystemUtils.IS_OS_WINDOWS) {
-                ExecutionPermission.setNoExecutePermission(script);
-            }
+        boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
+        File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
+        ExecutionPermission.setNoExecutePermission(script);
 
-            Assert.assertTrue(result);
-            Assert.assertTrue(file.isDirectory());
-            Assert.assertFalse(file.isFile());
-            Assert.assertTrue(file.exists());
-        } catch (IOException e) {
-            logger.error("Probably you run this test on Windows: " + e.getMessage());
-        }
+        Assert.assertTrue("Result of execution was incorrect!", result);
+        Assert.assertTrue("Created resource is not directory!", file.isDirectory());
+        Assert.assertFalse("Created resource is file!", file.isFile());
+        Assert.assertTrue("Directory was not created!", file.exists());
     }
 
     @Test
@@ -79,9 +72,9 @@ public class FileServiceTest {
         URI testMetaUri = fileService.createDirectory(URI.create("fileServiceTest"), "testMeta");
         File file = fileService.getFile(URI.create("fileServiceTest/testMeta"));
 
-        Assert.assertTrue(file.isDirectory());
-        Assert.assertFalse(file.isFile());
-        Assert.assertTrue(file.exists());
+        Assert.assertTrue("Created resource is not directory!", file.isDirectory());
+        Assert.assertFalse("Created resource is file!", file.isFile());
+        Assert.assertTrue("Directory was not created!", file.exists());
         Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
@@ -90,7 +83,7 @@ public class FileServiceTest {
         try {
             fileService.createDirectory(URI.create("fileServiceTestMissing"), "testMeta");
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            logger.error("Directory was not created what is expected behaviour. " + e.getMessage());
         }
         File file = fileService.getFile(URI.create("fileServiceTestMissing/testMeta"));
 
