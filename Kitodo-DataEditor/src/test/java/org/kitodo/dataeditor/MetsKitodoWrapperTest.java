@@ -189,7 +189,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException, JAXBException {
+    public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException {
         Path path = Paths.get("images");
         int numberOfFiles = 5;
         List<MediaFile> mediaFiles = new ArrayList<>();
@@ -201,7 +201,6 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
         metsKitodoWrapper.insertMediaFiles(mediaFiles);
 
-        System.out.println(new MetsKitodoWriter().writeSerializedToString(metsKitodoWrapper.getMets()));
         Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
             metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
         Assert.assertEquals("Wrong number of fils in fileSec", numberOfFiles,

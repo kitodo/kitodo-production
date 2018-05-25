@@ -29,15 +29,16 @@ import org.junit.Test;
 
 public class MetsKitodoWriterTest {
 
-    private MetsKitodoWriter metsKitodoWriter = new MetsKitodoWriter();
+    private static MetsKitodoWriter metsKitodoWriter;
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
-    public MetsKitodoWriterTest() throws JAXBException {
-    }
+
 
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() throws IOException, JAXBException {
+        
+        metsKitodoWriter = new MetsKitodoWriter();
 
         String manifest =
             "Manifest-Version: 1.0\n" +

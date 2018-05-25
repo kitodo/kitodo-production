@@ -70,19 +70,21 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      * @return The StructMap object.
      */
     public StructMapType createPhysicalStructMapType() {
-        StructMapType structMapType = super.createStructMapType();
-        structMapType.setTYPE("PHYSICAL");
-        return structMapType;
+        return createStructMapTypeOfType("PHYSICAL");
     }
 
     /**
-     * Creates a StructMap object of type "PHYSICAL".
+     * Creates a StructMap object of type "LOGICAL".
      *
      * @return The StructMap object.
      */
     public StructMapType createLogicalStructMapType() {
+        return createStructMapTypeOfType("LOGICAL");
+    }
+
+    private StructMapType createStructMapTypeOfType(String type) {
         StructMapType structMapType = super.createStructMapType();
-        structMapType.setTYPE("LOGICAL");
+        structMapType.setTYPE(type);
         return structMapType;
     }
 

@@ -70,7 +70,7 @@ public class MetsKitodoWrapper {
         if (Objects.isNull(mets.getMetsHdr())) {
             mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
         }
-        if (mets.getStructMap().size() == 0) {
+        if (mets.getStructMap().isEmpty()) {
             StructMapType logicalStructMapType = objectFactory.createLogicalStructMapType();
             mets.getStructMap().add(logicalStructMapType);
 

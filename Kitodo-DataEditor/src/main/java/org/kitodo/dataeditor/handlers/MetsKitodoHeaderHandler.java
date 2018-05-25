@@ -33,8 +33,8 @@ public class MetsKitodoHeaderHandler {
      */
     public static Mets addNoteToMetsHeader(String noteMessage, Mets mets) {
         List<MetsType.MetsHdr.Agent> agents = mets.getMetsHdr().getAgent();
-        if (agents.size() > 0) {
-            mets.getMetsHdr().getAgent().get(0).getNote().add(noteMessage);
+        if (!agents.isEmpty()) {
+            agents.get(0).getNote().add(noteMessage);
         }
         return mets;
     }
