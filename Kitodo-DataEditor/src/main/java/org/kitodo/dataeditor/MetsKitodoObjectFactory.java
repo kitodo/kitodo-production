@@ -99,6 +99,11 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         return metsTypeFileSecFileGrp;
     }
 
+    /**
+     * Creates a DivType object for using as root div in mets physical sruct map.
+     * 
+     * @return The DivType object.
+     */
     public DivType createRootDivTypeForPhysicalStructMap() {
         DivType divType = super.createDivType();
         divType.setID("PHYS_0000");

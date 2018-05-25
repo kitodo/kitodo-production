@@ -31,7 +31,7 @@ public class MetsKitodoFileSecHandler {
      * Inserts MediaFile objects into fileSec of mets object.
      * 
      * @param mets
-     *            The mets object.
+     *            The Mets object.
      * @param mediaFiles
      *            The list of media files.
      */
@@ -54,6 +54,13 @@ public class MetsKitodoFileSecHandler {
         getLocalFileGroupOfMets(mets).getFile().add(fileType);
     }
 
+    /**
+     * Returns the local file group of given mets object as FileGrp object.
+     * 
+     * @param mets
+     *            The Mets object.
+     * @return The FileGrp object.
+     */
     public static MetsType.FileSec.FileGrp getLocalFileGroupOfMets(Mets mets) {
         for (MetsType.FileSec.FileGrp fileGrp : mets.getFileSec().getFileGrp()) {
             if (fileGrp.getUSE().equals("LOCAL")) {
