@@ -28,7 +28,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.DateTime;
 
-public class XmlUtils {
+public class JaxbXmlUtils {
 
     /**
      * Transforms a xml file by xslt and returns the result as string.
@@ -72,7 +72,7 @@ public class XmlUtils {
      * @return {@code true} if the list of Jaxb-Object elements contain objects of
      *         given type. {@code false} if not.
      */
-    static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
+    public static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
                 JAXBElement jaxbElement = (JAXBElement) object;

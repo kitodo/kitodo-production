@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.dataeditor.handlers.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoConverter {
@@ -44,7 +45,7 @@ public class MetsKitodoConverter {
             throw new IOException("Xslt file [" + xsltFile.getPath()
                 + "] for transformation of goobi format metadata files was not found. Please check your local config!");
         } else {
-            Mets mets = convertUriToMetsFromOldFormat(xmlFile, xsltFile);
+            Mets mets = convertUriToMetsFromGoobiFormat(xmlFile, xsltFile);
             if (MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
                 logger.info("Successfully converted metadata to kitodo format!");
                 return mets;
@@ -54,11 +55,11 @@ public class MetsKitodoConverter {
         }
     }
 
-    private static Mets convertUriToMetsFromOldFormat(URI xmlFile, URI xsltFile)
+    private static Mets convertUriToMetsFromGoobiFormat(URI xmlFile, URI xsltFile)
         throws TransformerException, IOException, JAXBException {
-        String convertedData = XmlUtils.transformXmlByXslt(xmlFile, xsltFile);
+        String convertedData = JaxbXmlUtils.transformXmlByXslt(xmlFile, xsltFile);
         Mets mets = MetsKitodoReader.readStringToMets(convertedData);
-        mets = MetsKitodoHandler
+        mets = MetsKitodoHeaderHandler
             .addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"), mets);
         return mets;
     }

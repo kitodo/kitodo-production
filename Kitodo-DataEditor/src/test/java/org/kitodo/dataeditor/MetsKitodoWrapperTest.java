@@ -13,8 +13,10 @@ package org.kitodo.dataeditor;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.dataeditor.enums.FileLocationType;
+import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
@@ -48,12 +53,20 @@ public class MetsKitodoWrapperTest {
     @BeforeClass
     public static void setUp() throws IOException {
 
-        String manifest = "Manifest-Version: 1.0\n" + "Archiver-Version: Plexus Archiver\n"
-                + "Created-By: Apache Maven\n" + "Built-By: tester\n" + "Build-Jdk: 1.8.0_144\n"
-                + "Specification-Title: Kitodo - Data Editor\n" + "Specification-Version: 3.0-SNAPSHOT\n"
-                + "Specification-Vendor: kitodo.org\n" + "Implementation-Title: Kitodo - Data Editor\n"
-                + "Implementation-Version: 3.0-SNAPSHOT\n" + "Implementation-Vendor-Id: org.kitodo\n"
-                + "Implementation-Vendor: kitodo.org\n" + "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+        String manifest =
+            "Manifest-Version: 1.0\n" +
+            "Archiver-Version: Plexus Archiver\n" +
+            "Created-By: Apache Maven\n" +
+            "Built-By: tester\n" +
+            "Build-Jdk: 1.8.0_144\n" +
+            "Specification-Title: Kitodo - Data Editor\n" +
+            "Specification-Version: 3.0-SNAPSHOT\n" +
+            "Specification-Vendor: kitodo.org\n" +
+            "Implementation-Title: Kitodo - Data Editor\n" +
+            "Implementation-Version: 3.0-SNAPSHOT\n" +
+            "Implementation-Vendor-Id: org.kitodo\n" +
+            "Implementation-Vendor: kitodo.org\n" +
+            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
@@ -177,20 +190,33 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException, JAXBException {
-        FileService fileService = new FileService();
-        fileService.createDirectory(Paths.get("src/test").toUri(),"images");
-
-
-        List<URI> files = new ArrayList<>();
-        for (int i = 1; i <= 3; i++) {
-            files.add(URI.create("file:///images/001" + i + ".tif"));
+        Path path = Paths.get("images");
+        int numberOfFiles = 5;
+        List<MediaFile> mediaFiles = new ArrayList<>();
+        for (int i = 1; i <= numberOfFiles; i++) {
+            mediaFiles.add(
+                new MediaFile(Paths.get(path + "/0000" + i + ".tif").toUri(), FileLocationType.URL, "image/tiff"));
         }
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
-        metsKitodoWrapper.insertFilesFromDirectory(URI.create("file:///images/"),null,"image/tiff");
-//        metsKitodoWrapper.insertFilesToLocalFileGroup(files,"image/tiff");
-//        metsKitodoWrapper.insertPathToImageFiles(URI.create("file:///test/path/"));
 
-        new MetsKitodoWriter().print(metsKitodoWrapper.getMets());
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        metsKitodoWrapper.insertMediaFiles(mediaFiles);
+
+        System.out.println(new MetsKitodoWriter().writeSerializedToString(metsKitodoWrapper.getMets()));
+        Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
+            metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
+        Assert.assertEquals("Wrong number of fils in fileSec", numberOfFiles,
+            metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+
+        DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(1);
+
+        Assert.assertEquals("Wrong order label at second div", "uncounted", divType.getORDERLABEL());
+        Assert.assertEquals("Wrong order at second div", BigInteger.valueOf(2), divType.getORDER());
+        Assert.assertEquals("Wrong type at second div", "page", divType.getTYPE());
+        Assert.assertEquals("Wrong id at second div", "PHYS_0002", divType.getID());
+
+        FileType fileType = (FileType) divType.getFptr().get(0).getFILEID();
+        Assert.assertEquals("Wrong file id at second div", "FILE_0002", fileType.getID());
+
     }
 
     @Rule

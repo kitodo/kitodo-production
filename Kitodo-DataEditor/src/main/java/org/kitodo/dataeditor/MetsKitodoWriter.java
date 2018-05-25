@@ -13,6 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URI;
 import java.util.Objects;
 
@@ -32,6 +33,9 @@ public class MetsKitodoWriter {
     private JAXBContext jaxbMetsContext;
     private Marshaller jaxbMetsMarshaller;
 
+    /**
+     * The Constructor which instanciates the JAXB context of MetsKitodo format.
+     */
     public MetsKitodoWriter() throws JAXBException {
         jaxbMetsContext = JAXBContext.newInstance(Mets.class);
         jaxbMetsMarshaller = jaxbMetsContext.createMarshaller();
@@ -39,7 +43,7 @@ public class MetsKitodoWriter {
 
     /**
      * Updating Mets header by inserting a new header if no one exists, updating
-     * last modification date and writing the Mets object to specified file path in
+     * last modification date and writing the serialized Mets object to specified file path in
      * xml format.
      * 
      * @param mets
@@ -47,22 +51,24 @@ public class MetsKitodoWriter {
      * @param filePath
      *            The file path to write the xml file.
      */
-    public void write(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
+    public void writeSerializedToFile(Mets mets, URI filePath) throws JAXBException, DatatypeConfigurationException, IOException {
         insertMetsHeaderIfNotExist(mets);
         updateLastModDate(mets);
         writeMetsData(mets, filePath);
     }
 
     /**
-     * Prints a given Mets object to the console in xml format.
+     * Serializes a given Mets object to xml format and returns as String.
      * 
      * @param mets
      *            The mets object.
      */
-    public void print(Mets mets) throws JAXBException {
+    public String writeSerializedToString(Mets mets) throws JAXBException {
         jaxbMetsMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoPrefixMapper());
-        jaxbMetsMarshaller.marshal(mets, System.out);
+        StringWriter stringWriter = new StringWriter();
+        jaxbMetsMarshaller.marshal(mets, stringWriter);
+        return stringWriter.toString();
     }
 
     private void writeMetsData(Mets mets, URI file) throws JAXBException {
@@ -77,6 +83,6 @@ public class MetsKitodoWriter {
     }
 
     private void updateLastModDate(Mets mets) throws DatatypeConfigurationException {
-        mets.getMetsHdr().setLASTMODDATE(XmlUtils.getXmlTime());
+        mets.getMetsHdr().setLASTMODDATE(JaxbXmlUtils.getXmlTime());
     }
 }

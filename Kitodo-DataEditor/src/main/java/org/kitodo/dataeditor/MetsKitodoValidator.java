@@ -14,6 +14,7 @@ package org.kitodo.dataeditor;
 import java.util.List;
 import java.util.Optional;
 
+import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
@@ -31,7 +32,7 @@ class MetsKitodoValidator {
      *         of KitodoType
      */
     static boolean checkMetsKitodoFormatOfMets(Mets mets) {
-        return XmlUtils.objectListContainsType(MetsKitodoHandler.getXmlDataOfMetsByMdSecIndex(mets, 0),
+        return JaxbXmlUtils.objectListContainsType(MetsKitodoMdSecHandler.getXmlDataOfMetsByMdSecIndex(mets, 0),
             KitodoType.class);
     }
 
@@ -48,7 +49,7 @@ class MetsKitodoValidator {
      */
     static boolean metsContainsMetadataAtDmdSecIndex(Mets mets, int index) {
         if (mets.getDmdSec().size() > index) {
-            Optional<List<Object>> xmlData = MetsKitodoHandler.getXmlDataOfMdSec(mets.getDmdSec().get(index));
+            Optional<List<Object>> xmlData = MetsKitodoMdSecHandler.getXmlDataOfMdSec(mets.getDmdSec().get(index));
             return xmlData.isPresent();
         }
         return false;

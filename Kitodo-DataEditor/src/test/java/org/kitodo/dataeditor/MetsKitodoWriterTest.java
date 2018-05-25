@@ -70,8 +70,8 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
-        metsKitodoWriter.print(metsKitodoWrapper.getMets());
-        metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
+        metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
+        metsKitodoWriter.writeSerializedToFile(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
@@ -93,7 +93,7 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmetaold.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
-        metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
+        metsKitodoWriter.writeSerializedToFile(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
