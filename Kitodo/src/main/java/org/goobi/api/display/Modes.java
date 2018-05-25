@@ -15,7 +15,7 @@ import org.goobi.api.display.enums.BindState;
 
 public class Modes {
 
-    private static BindState bindState = BindState.create;
+    private static BindState bindState = BindState.CREATE;
 
     /**
      * Add a private constructor to hide the implicit public one.

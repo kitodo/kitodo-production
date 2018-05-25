@@ -31,7 +31,7 @@ public class ImportObject {
     private URI importFileName;
 
     // error handling
-    private ImportReturnValue importReturnValue = ImportReturnValue.ExportFinished;
+    private ImportReturnValue importReturnValue = ImportReturnValue.EXPORT_FINISHED;
     private String errorMessage = "";
 
     // additional information

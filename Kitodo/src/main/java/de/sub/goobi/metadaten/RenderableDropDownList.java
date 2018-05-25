@@ -56,7 +56,7 @@ public class RenderableDropDownList extends RenderableMetadatum
             RenderableMetadataGroup container, String projectName) {
 
         super(metadataType, binding, container);
-        items = getItems(projectName, DisplayType.select1);
+        items = getItems(projectName, DisplayType.SELECT1);
         if (binding != null) {
             for (MetadataInterface data : binding.getMetadataByType(metadataType.getName())) {
                 addContent(data);

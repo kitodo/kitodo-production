@@ -218,7 +218,7 @@ public class Metadaten {
      */
     public void add() {
         this.modeAdd = true;
-        Modes.setBindState(BindState.create);
+        Modes.setBindState(BindState.CREATE);
         getMetadatum().setValue("");
     }
 
@@ -238,7 +238,7 @@ public class Metadaten {
     public void cancel() {
         this.modeAdd = false;
         this.modeAddPerson = false;
-        Modes.setBindState(BindState.edit);
+        Modes.setBindState(BindState.EDIT);
         getMetadatum().setValue("");
     }
 
@@ -352,7 +352,7 @@ public class Metadaten {
         }
 
         this.modeAdd = false;
-        Modes.setBindState(BindState.edit);
+        Modes.setBindState(BindState.EDIT);
         this.selectedMetadatum.setValue("");
         this.tempValue = "";
         saveMetadataAsBean(this.docStruct);
@@ -609,7 +609,7 @@ public class Metadaten {
         // re-reading the config for display rules
         ConfigDisplayRules.getInstance().refresh();
 
-        Modes.setBindState(BindState.edit);
+        Modes.setBindState(BindState.EDIT);
         try {
             Integer id = Integer.valueOf(Helper.getRequestParameter("ProzesseID"));
             this.process = serviceManager.getProcessService().getById(id);
@@ -995,7 +995,7 @@ public class Metadaten {
     public void setMyStrukturelement(DocStructInterface inStruct) {
         this.modeAdd = false;
         this.modeAddPerson = false;
-        Modes.setBindState(BindState.edit);
+        Modes.setBindState(BindState.EDIT);
         saveMetadataAsBean(inStruct);
 
         /*

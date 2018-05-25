@@ -92,7 +92,7 @@ public class MassImportForm implements Serializable {
      * Constructor.
      */
     public MassImportForm() {
-        usablePluginsForRecords = PluginLoader.getImportPluginsForType(ImportType.Record);
+        usablePluginsForRecords = PluginLoader.getImportPluginsForType(ImportType.RECORD);
         usablePluginsForIDs = PluginLoader.getImportPluginsForType(ImportType.ID);
         usablePluginsForFiles = PluginLoader.getImportPluginsForType(ImportType.FILE);
         usablePluginsForFolder = PluginLoader.getImportPluginsForType(ImportType.FOLDER);
@@ -275,7 +275,7 @@ public class MassImportForm implements Serializable {
                 io.getBatches().add(batch);
             }
 
-            if (io.getImportReturnValue().equals(ImportReturnValue.ExportFinished)) {
+            if (io.getImportReturnValue().equals(ImportReturnValue.EXPORT_FINISHED)) {
                 addProcessToList(io);
             } else {
                 removeImportFileNameFromSelectedFileNames(io);
@@ -382,7 +382,7 @@ public class MassImportForm implements Serializable {
                     "import failed for " + io.getProcessTitle() + ", process generation failed");
 
         } else {
-            Helper.setMeldung(ImportReturnValue.ExportFinished.getValue() + " for " + io.getProcessTitle());
+            Helper.setMeldung(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());
             this.processList.add(process);
         }
     }

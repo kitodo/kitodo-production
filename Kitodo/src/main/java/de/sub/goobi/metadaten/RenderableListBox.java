@@ -54,7 +54,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
             RenderableMetadataGroup container, String projectName) {
 
         super(metadataType, binding, container);
-        items = getItems(projectName, DisplayType.select);
+        items = getItems(projectName, DisplayType.SELECT);
         if (binding != null) {
             List<MetadataInterface> elements = binding.getMetadataByType(metadataType.getName());
             List<String> selected = new ArrayList<>(elements.size());
