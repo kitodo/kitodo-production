@@ -177,6 +177,7 @@ public class MetsKitodoWrapper {
      */
     public void insertMediaFiles(List<MediaFile> files) {
         MetsKitodoFileSecHandler.insertMediaFilesToLocalFileGroupOfMets(this.mets, files);
+        //TODO implement logic to check if pagination is set to automatic or not
         MetsKitodoStructMapHandler.fillPhysicalStructMapByMetsFileSec(mets);
     }
 

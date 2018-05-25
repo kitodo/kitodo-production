@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.kitodo.config.Config;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
@@ -70,7 +71,7 @@ public class MetsKitodoStructMapHandler {
             DivType div = objectFactory.createDivType();
             div.setID("PHYS_" + String.format("%04d", counter));
             div.setORDER(BigInteger.valueOf(counter));
-            div.setORDERLABEL("uncounted");
+            div.setORDERLABEL(Config.getParameter("MetsEditorDefaultPagination"));
             div.setTYPE(getPhysicalDivTypeByFileType(file));
             DivType.Fptr divTypeFptr = objectFactory.createDivTypeFptr();
             divTypeFptr.setFILEID(file);
