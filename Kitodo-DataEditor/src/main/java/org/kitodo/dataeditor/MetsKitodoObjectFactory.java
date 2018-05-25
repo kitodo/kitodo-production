@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
@@ -94,5 +95,12 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         MetsType.FileSec.FileGrp metsTypeFileSecFileGrp = super.createMetsTypeFileSecFileGrp();
         metsTypeFileSecFileGrp.setUSE("LOCAL");
         return metsTypeFileSecFileGrp;
+    }
+
+    public DivType createRootDivTypeForPhysicalStructMap() {
+        DivType divType = super.createDivType();
+        divType.setID("PHYS_0000");
+        divType.setTYPE("physSequence");
+        return divType;
     }
 }

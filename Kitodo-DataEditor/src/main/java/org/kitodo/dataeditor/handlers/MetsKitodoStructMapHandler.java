@@ -12,6 +12,8 @@
 package org.kitodo.dataeditor.handlers;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -55,14 +57,16 @@ public class MetsKitodoStructMapHandler {
      *            The mets object.
      */
     public static void fillPhysicalStructMapByMetsFileSec(Mets mets) {
-        DivType rootDiv = objectFactory.createDivType();
-        rootDiv.setID("PHYS_0000");
-        rootDiv.setTYPE("physSequence");
+        DivType rootDiv = objectFactory.createRootDivTypeForPhysicalStructMap();
+        rootDiv.getDiv().addAll(getDivTypesByFileTypes(MetsKitodoFileSecHandler.getLocalFileGroupOfMets(mets).getFile()));
         StructMapType physicalStructMap = getMetsStructMapByType(mets, "PHYSICAL");
         physicalStructMap.setDiv(rootDiv);
+    }
 
+    private static List<DivType> getDivTypesByFileTypes(List<FileType> fileTypes) {
+        List<DivType> divTypes = new ArrayList<>();
         int counter = 1;
-        for (FileType file : MetsKitodoFileSecHandler.getLocalFileGroupOfMets(mets).getFile()) {
+        for (FileType file : fileTypes) {
             DivType div = objectFactory.createDivType();
             div.setID("PHYS_" + String.format("%04d", counter));
             div.setORDER(BigInteger.valueOf(counter));
@@ -72,10 +76,11 @@ public class MetsKitodoStructMapHandler {
             divTypeFptr.setFILEID(file);
             div.getFptr().add(divTypeFptr);
 
-            rootDiv.getDiv().add(div);
+            divTypes.add(div);
 
             counter++;
         }
+        return divTypes;
     }
 
     private static String getPhysicalDivTypeByFileType(FileType file) {
@@ -85,6 +90,6 @@ public class MetsKitodoStructMapHandler {
         if (file.getMIMETYPE().contains("audio")) {
             return "track";
         }
-        return "";
+        return "other";
     }
 }
