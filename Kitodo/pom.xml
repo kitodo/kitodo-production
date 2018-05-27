@@ -36,6 +36,13 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
+        <!--<dependency>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>exec-maven-plugin</artifactId>-->
+            <!--<version>1.6.0</version>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
@@ -712,6 +719,128 @@
             </build>
         </profile>
 
+        <profile>
+            <id>demo</id>
+            <properties>
+                <build.resources.path>src/test/resources/selenium/resources</build.resources.path>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>1.4.193</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <!-- Copy config local resources to target -->
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/resources</outputDirectory>
+                                    <includeEmptyDirs>true</includeEmptyDirs>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/src/test/resources/selenium/config_local/</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.cargo</groupId>
+                        <artifactId>cargo-maven2-plugin</artifactId>
+                        <version>1.6.4</version>
+
+                        <configuration>
+                            <!-- Provide Tomcat -->
+                            <container>
+                                <containerId>tomcat7x</containerId>
+                                <zipUrlInstaller>
+                                    <url>
+                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
+                                    </url>
+                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
+                                    <extractDir>${project.build.directory}/extracts</extractDir>
+                                </zipUrlInstaller>
+                            </container>
+
+                            <!-- Tomcat configuration -->
+                            <configuration>
+                                <type>existing</type>
+                                <home>
+                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
+                                </home>
+                                <properties>
+                                    <cargo.logging>low</cargo.logging>
+                                </properties>
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
+                                    <type>war</type>
+                                </deployable>
+                            </deployables>
+                        </configuration>
+
+                        <executions>
+                            <!-- start Tomcat -->
+                            <execution>
+                                <id>start-container</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- stop Tomcat -->
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.6.0</version>
+                        <executions>
+                            <execution>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>org.kitodo.demo.DemoRunner</mainClass>
+                            <async>true</async>
+                            <classpathScope>test</classpathScope>
+                        </configuration>
+                    </plugin>
+
+
+
+
+
+
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>selenium</id>
             <properties>
