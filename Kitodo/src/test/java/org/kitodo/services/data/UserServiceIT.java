@@ -403,7 +403,6 @@ public class UserServiceIT {
         assertEquals("Properties' size is incorrect!", 2, actual);
     }
 
-    @Ignore("not sure how method works")
     @Test
     public void shouldCheckIfIsPasswordCorrect() throws Exception {
         User user = userService.getById(1);

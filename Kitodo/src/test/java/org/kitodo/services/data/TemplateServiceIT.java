@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Template;
@@ -72,13 +71,12 @@ public class TemplateServiceIT {
         assertEquals("Incorrect size of templates with given title!", 1, templates.size());
     }
 
-    @Ignore("IN clause doesn't work correctly here - to deeper check out")
     @Test
     public void shouldGetTemplatesForUser() {
         List<Integer> projects = new ArrayList<>();
         projects.add(1);
         List<Template> templates = templateService.getProcessTemplatesForUser(projects);
-        assertEquals("Found " + templates.size() + " processes, instead of 1", 1, templates.size());
+        assertEquals("Incorrect size of templates for given projects", 1, templates.size());
     }
 
     @Test

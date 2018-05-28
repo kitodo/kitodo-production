@@ -104,15 +104,11 @@ public class TemplateDAO extends BaseDAO<Template> {
      * @return list of all process templates for user as Process objects
      */
     public List<Template> getTemplatesForUser(List<Integer> projects) {
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT template FROM Template template, Project project WHERE project.id IN (");
-        for (Integer projectId : projects) {
-            query.append(projectId);
-            query.append(", ");
-        }
-        query.setLength(query.length() - 2);
-        query.append(") ORDER BY template.title ASC");
-        return getByQuery(query.toString());
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("projects", projects);
+        return getByQuery(
+            "SELECT t FROM Template AS t JOIN t.project AS p WHERE p.id IN (:projects) ORDER BY t.title ASC",
+            parameters);
     }
 
     /**
