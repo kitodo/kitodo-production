@@ -80,6 +80,18 @@ public class SecurityAccessController {
 
     /**
      * Checks if the current user is admin or has a specified authority globally or
+     * for a client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForAnyClient(String authorityTitle) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForAnyClient(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
      * for a client or for a project.
      *
      * @param authorityTitle

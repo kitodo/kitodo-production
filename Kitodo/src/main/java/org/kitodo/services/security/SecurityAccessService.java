@@ -228,6 +228,28 @@ public class SecurityAccessService {
     }
 
     /**
+     * Checks if the current user is admin or has a specified authority globally or for any client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current is admin or user has the specified authority globally or for any client.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForAnyClient(String authorityTitle) {
+        return isAdmin() || hasAuthorityGlobal(authorityTitle) || hasAuthorityForAnyClient(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has a specified authority globally or for any client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority globally or for any project.
+     */
+    public boolean hasAuthorityGlobalOrForAnyClient(String authorityTitle) {
+        return hasAuthorityGlobal(authorityTitle) || hasAuthorityForAnyClient(authorityTitle);
+    }
+
+    /**
      * Checks if the current user has a specified authority for any client.
      *
      * @param authorityTitle

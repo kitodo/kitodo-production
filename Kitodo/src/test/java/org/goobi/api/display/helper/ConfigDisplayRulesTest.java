@@ -11,6 +11,8 @@
 
 package org.goobi.api.display.helper;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.List;
 
 import org.goobi.api.display.Item;
@@ -19,8 +21,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
-
-import static org.junit.Assert.assertEquals;
 
 public class ConfigDisplayRulesTest {
 

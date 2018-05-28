@@ -75,6 +75,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
+    private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -294,7 +295,13 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     @Override
     @SuppressWarnings("unchecked")
     public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
+        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+            return convertJSONObjectsToDTOs(findAllDocuments(sortByLogin(), offset, size), false);
+        }
+        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return getAllActiveUsersVisibleForCurrentUser();
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -863,7 +870,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority("viewAllUser");
+                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
         List<User> users = getAllActiveUsersByClientIds(clientIdList);
         List<Integer> userIdList = new ArrayList<>();
         for (User user : users) {
