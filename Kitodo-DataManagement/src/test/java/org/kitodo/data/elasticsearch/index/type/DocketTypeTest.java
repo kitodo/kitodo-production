@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ public class DocketTypeTest {
             actual.getString(DocketTypeField.TITLE.getName()));
         assertEquals("Key file doesn't match to given value!", "docket.xsl",
             actual.getString(DocketTypeField.FILE.getName()));
+        assertTrue("Key file doesn't match to given value!", actual.getBoolean(DocketTypeField.ACTIVE.getName()));
     }
 
     @Test
@@ -74,7 +76,7 @@ public class DocketTypeTest {
         HttpEntity document = docketType.createDocument(docket);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
     }
 
     @Test

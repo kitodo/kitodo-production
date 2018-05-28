@@ -13,6 +13,7 @@ package org.kitodo.data.elasticsearch.index.type;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ public class RulesetTypeTest {
             actual.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
         assertEquals("Key fileContent doesn't match to given value!", "",
             actual.getString(RulesetTypeField.FILE_CONTENT.getName()));
+        assertTrue("Key active doesn't match to given value!", actual.getBoolean(RulesetTypeField.ACTIVE.getName()));
     }
 
     @Test
@@ -79,7 +81,7 @@ public class RulesetTypeTest {
         HttpEntity document = rulesetType.createDocument(ruleset);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 4, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
     }
 
     @Test

@@ -28,6 +28,7 @@ public class DocketType extends BaseType<Docket> {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(DocketTypeField.TITLE.getName(), preventNull(docket.getTitle()));
         jsonObjectBuilder.add(DocketTypeField.FILE.getName(), preventNull(docket.getFile()));
+        jsonObjectBuilder.add(DocketTypeField.ACTIVE.getName(), docket.isActive());
         return jsonObjectBuilder.build();
     }
 }

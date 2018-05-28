@@ -107,6 +107,9 @@
                         }
                     },
                     "fielddata": true
+                },
+                "active": {
+                    "type": "boolean"
                 }
             }
         },
@@ -1030,6 +1033,9 @@
                         }
                     },
                     "fielddata": true
+                },
+                "active": {
+                    "type": "boolean"
                 }
             }
         }

@@ -28,8 +28,8 @@ public class Workflow extends BaseBean {
     @Column(name = "fileName")
     private String fileName;
 
-    @Column(name = "archived")
-    private Boolean archived = false;
+    @Column(name = "active")
+    private Boolean active = true;
 
     @Column(name = "ready")
     private Boolean ready = false;
@@ -92,24 +92,24 @@ public class Workflow extends BaseBean {
     }
 
     /**
-     * Check if workflow is archived.
+     * Check if workflow is active.
      *
      * @return true or false
      */
-    public Boolean isArchived() {
-        if (Objects.isNull(this.archived)) {
-            this.archived = false;
+    public Boolean isActive() {
+        if (Objects.isNull(this.active)) {
+            this.active = true;
         }
-        return this.archived;
+        return this.active;
     }
 
     /**
-     * Set workflow as archived.
+     * Set workflow as active.
      *
-     * @param archived as Boolean
+     * @param active as Boolean
      */
-    public void setArchived(Boolean archived) {
-        this.archived = archived;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     /**

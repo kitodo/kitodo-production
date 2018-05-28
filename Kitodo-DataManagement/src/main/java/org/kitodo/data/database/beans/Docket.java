@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -27,6 +29,9 @@ public class Docket extends BaseIndexedBean {
     @Column(name = "file")
     private String file;
 
+    @Column(name = "active")
+    private Boolean active = true;
+
     public String getTitle() {
         return title;
     }
@@ -41,5 +46,26 @@ public class Docket extends BaseIndexedBean {
 
     public void setFile(String file) {
         this.file = file;
+    }
+
+    /**
+     * Check if docket is active.
+     *
+     * @return true or false
+     */
+    public Boolean isActive() {
+        if (Objects.isNull(this.active)) {
+            this.active = true;
+        }
+        return this.active;
+    }
+
+    /**
+     * Set docket as active.
+     *
+     * @param active as Boolean
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
