@@ -12,6 +12,7 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,6 +26,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 import javax.enterprise.context.SessionScoped;
@@ -39,6 +41,7 @@ import org.kitodo.services.ServiceManager;
 @SessionScoped
 public class ModelerForm implements Serializable {
     private static final long serialVersionUID = -3635859478787639614L;
+    private String svgDiagram;
     private String xmlDiagram;
     private String xmlDiagramName;
     private String newXMLDiagramName;
@@ -53,7 +56,7 @@ public class ModelerForm implements Serializable {
         // TODO: this needs to be removed after base file is stored inside the app
         for (URI uri : xmlDiagramNamesURI) {
             String fileName = serviceManager.getFileService().getFileNameWithExtension(uri);
-            if (!fileName.equals("base.bpmn20.xml")) {
+            if (!fileName.equals("base.bpmn20.xml") && !fileName.contains(".svg")) {
                 xmlDiagramNames.put(decodeXMLDiagramName(fileName), fileName);
             }
         }
@@ -178,7 +181,7 @@ public class ModelerForm implements Serializable {
                     encodeXMLDiagramName(xmlDiagramName));
             xmlDiagramNames.put(decodeXMLDiagramName(xmlDiagramName), encodeXMLDiagramName(xmlDiagramName));
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         saveXMLDiagram();
         readXMLDiagram();
@@ -203,7 +206,7 @@ public class ModelerForm implements Serializable {
             }
             xmlDiagram = sb.toString();
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -211,8 +214,15 @@ public class ModelerForm implements Serializable {
      * Save updated content of the diagram.
      */
     public void save() {
+        svgDiagram = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("svg");
+        if (Objects.nonNull(svgDiagram)) {
+            saveSVGDiagram();
+        }
+
         xmlDiagram = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("xml");
-        saveXMLDiagram();
+        if (Objects.nonNull(xmlDiagram)) {
+            saveXMLDiagram();
+        }
     }
 
     private String decodeXMLDiagramName(String xmlDiagramName) {
@@ -230,13 +240,23 @@ public class ModelerForm implements Serializable {
         return xmlDiagramName;
     }
 
+    void saveSVGDiagram() {
+        try (OutputStream outputStream = serviceManager.getFileService()
+                .write(new File(diagramsFolder + decodeXMLDiagramName(xmlDiagramName) + ".svg").toURI());
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            bufferedWriter.write(svgDiagram);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
     void saveXMLDiagram() {
         try (OutputStream outputStream = serviceManager.getFileService()
                 .write(new File(diagramsFolder + encodeXMLDiagramName(xmlDiagramName)).toURI());
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(xmlDiagram);
         } catch (IOException e) {
-            logger.error(e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 }
