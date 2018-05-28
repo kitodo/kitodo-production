@@ -184,7 +184,7 @@
                                                         value="/pages/images/buttons/step_back_20px.gif"
                                                         style="margin-right:3px;vertical-align:middle"/>
                                         <h:outputText
-                                                value="#{msgs.korrekturmeldungAnVorherigeStationSenden}"/>
+                                                value="#{msgs.correctionMessageSendPreviousTask}"/>
                                     </span>
 
                                     <div class="toggle-1" style="display: none;">
@@ -206,9 +206,9 @@
                                             <h:outputText value=""/>
                                             <h:commandLink id="action13"
                                                            action="#{AktuelleSchritteForm.reportProblem}"
-                                                           title="#{msgs.korrekturmeldungSenden}"
+                                                           title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                                <h:outputText value="#{msgs.korrekturmeldungSenden}"/>
+                                                <h:outputText value="#{msgs.correctionMessageSend}"/>
                                             </h:commandLink>
                                         </h:panelGrid>
                                     </div>
