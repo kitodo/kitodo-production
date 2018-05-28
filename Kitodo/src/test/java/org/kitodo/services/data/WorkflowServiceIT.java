@@ -18,11 +18,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class WorkflowServiceIT {
+
+    private WorkflowService workflowService = new ServiceManager().getWorkflowService();
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -38,8 +41,6 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldGetWorkflow() throws Exception {
-        WorkflowService workflowService = new WorkflowService();
-
         Workflow workflow = workflowService.getById(1);
         boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFileName().equals("test");
         assertTrue("Workflow was not found in database!", condition);
@@ -47,16 +48,12 @@ public class WorkflowServiceIT {
 
     @Test
     public void shouldGetAllWorkflows() {
-        WorkflowService workflowService = new WorkflowService();
-
         List<Workflow> workflows = workflowService.getAll();
         assertEquals("Workflows were not found in database!", 2, workflows.size());
     }
 
     @Test
     public void shouldGetWorkflowsForTitleAndFile() {
-        WorkflowService workflowService = new WorkflowService();
-
         List<Workflow> workflows = workflowService.getWorkflowsForTitleAndFile("say-hello", "test");
         assertEquals("Workflows were not found in database!", 1, workflows.size());
     }

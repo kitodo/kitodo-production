@@ -201,7 +201,7 @@ public class ServiceManager {
 
     private void initializeWorkflowService() {
         if (workflowService == null) {
-            workflowService = new WorkflowService();
+            workflowService = WorkflowService.getInstance();
         }
     }
 
