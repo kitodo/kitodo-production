@@ -22,6 +22,13 @@
         <f:viewAction action="#{BenutzerverwaltungForm.loadUserObject(id)}"/>
     </f:metadata>
 
+    <ui:param name="isEditMode"
+              value="#{BenutzerverwaltungForm.userObject.id ne null and SecurityAccessController.isAdminOrHasAuthorityToEditUser(id)}"/>
+    <ui:param name="isCreateMode"
+              value="#{BenutzerverwaltungForm.userObject.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser')}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode}"/>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
@@ -29,13 +36,16 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
-                          rendered="#{BenutzerverwaltungForm.userObject.id ne null}"/>
+                          rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
-                          rendered="#{BenutzerverwaltungForm.userObject.id eq null}"/>
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.userView}"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton value="#{msgs.speichern}"
                          action="#{BenutzerverwaltungForm.save}"
                          id="save"
+                         rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -60,6 +70,7 @@
                             <p:outputLabel for="surname" value="#{msgs.surname}"/>
                             <p:inputText id="surname"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          placeholder="#{msgs.surname}"
                                          value="#{BenutzerverwaltungForm.userObject.surname}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
@@ -68,6 +79,7 @@
                             <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
                             <p:inputText id="firstName"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          placeholder="#{msgs.vorname}"
                                          value="#{BenutzerverwaltungForm.userObject.name}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
@@ -76,6 +88,7 @@
                             <p:outputLabel for="location" value="#{msgs.location}"/>
                             <p:inputText id="location"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          placeholder="#{msgs.location}"
                                          value="#{BenutzerverwaltungForm.userObject.location}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
@@ -84,6 +97,7 @@
                             <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
                             <p:selectBooleanCheckbox id="active"
                                                      styleClass="input"
+                                                     disabled="#{isViewMode}"
                                                      value="#{BenutzerverwaltungForm.userObject.active}"
                                                      onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
@@ -93,6 +107,7 @@
                             <p:outputLabel for="login" value="#{msgs.login}"/>
                             <p:inputText id="login"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          placeholder="#{msgs.login}"
                                          value="#{BenutzerverwaltungForm.userObject.login}"
                                          readonly="#{BenutzerverwaltungForm.userObject.id ne null}"
@@ -102,6 +117,7 @@
                             <p:outputLabel for="password" value="#{msgs.password}"/>
                             <p:password id="password"
                                         class="input"
+                                        disabled="#{isViewMode}"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
                                         onblur="jQuery('#editForm\\:saveButtonToggler').click()"
@@ -112,6 +128,7 @@
                             <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
                             <p:inputText id="metaDataLanguage"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          placeholder="#{msgs.spracheFuerMetadaten}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
                                          onchange="jQuery('#editForm\\:saveButtonToggler').click()"
@@ -121,6 +138,7 @@
                             <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
                             <p:selectBooleanCheckbox id="withMassDownload"
                                                      styleClass="input"
+                                                     disabled="#{isViewMode}"
                                                      value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
                                                      onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
                         </div>
@@ -135,6 +153,7 @@
                     </p:column>
                     <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
                         <p:commandLink id="delete"
+                                       rendered="#{isEditMode || isCreateMode}"
                                        action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                        title="#{msgs.ausGruppeLoeschen}"
                                        oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
@@ -144,14 +163,14 @@
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>
-                <button onclick="PF('addUserGroupDialog').show()"
-                        id="addUserGroupButton"
-                        type="button"
-                        class="ui-button ui-widget ui-corner-all button-filled-green"
-                        style="padding:.7em;border:none;">
-                    #{msgs.benutzergruppenHinzufuegen}
-                    <i class="fa fa-plus-circle fa-lg"/>
-                </button>
+                <p:commandButton onclick="PF('addUserGroupDialog').show()"
+                                 id="addUserGroupButton"
+                                 value="#{msgs.benutzergruppenHinzufuegen}"
+                                 icon="fa fa-plus-circle fa-lg"
+                                 immediate="true"
+                                 rendered="#{isEditMode || isCreateMode}"
+                                 class="button-filled-green">
+                </p:commandButton>
             </p:tab>
         </p:tabView>
     </ui:define>
@@ -161,11 +180,14 @@
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{BenutzerverwaltungForm.userObject.id ne null}">
+                <ui:fragment rendered="#{isEditMode}">
                     #{msgs.benutzerBearbeiten}
                 </ui:fragment>
-                <ui:fragment rendered="#{BenutzerverwaltungForm.userObject.id eq null}">
+                <ui:fragment rendered="#{isCreateMode}">
                     #{msgs.neuenBenutzerAnlegen}
+                </ui:fragment>
+                <ui:fragment rendered="#{isViewMode}">
+                    #{msgs.userView}
                 </ui:fragment>
             </a>
         </li>

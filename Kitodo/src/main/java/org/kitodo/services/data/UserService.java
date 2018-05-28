@@ -868,18 +868,32 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *
      * @return list of users
      */
-    public List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
+    private List<UserDTO> getAllActiveUsersVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
                 .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
+        return convertListIdToDTO(getAllActiveUserIdsByClientIds(clientIdList), this);
+    }
+
+    /**
+     * Get ids of all active users which are assigned to project of the given clients.
+     *
+     * @return list of user ids
+     */
+    public List<Integer> getAllActiveUserIdsByClientIds(List<Integer> clientIdList) {
         List<User> users = getAllActiveUsersByClientIds(clientIdList);
         List<Integer> userIdList = new ArrayList<>();
         for (User user : users) {
             userIdList.add(user.getId());
         }
-        return convertListIdToDTO(userIdList, this);
+        return userIdList;
     }
 
-    List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
+    /**
+     * Get all active users which are assigned to project of the given clients.
+     *
+     * @return list of users
+     */
+    public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
         return dao.getAllActiveUsersByClientIds(clientIdList);
     }
 }
