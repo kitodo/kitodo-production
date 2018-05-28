@@ -432,17 +432,17 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                     logger.debug("Writing '{}' into given folder...", fileName);
                     mm.write(fileName);
                     io.setMetsFilename(new File(fileName).toURI());
-                    io.setImportReturnValue(ImportReturnValue.ExportFinished);
+                    io.setImportReturnValue(ImportReturnValue.EXPORT_FINISHED);
 
                 } catch (PreferencesException e) {
                     logger.error(currentIdentifier + ": " + e.getMessage(), e);
-                    io.setImportReturnValue(ImportReturnValue.InvalidData);
+                    io.setImportReturnValue(ImportReturnValue.INVALID_DATA);
                 } catch (WriteException e) {
                     logger.error(currentIdentifier + ": " + e.getMessage(), e);
-                    io.setImportReturnValue(ImportReturnValue.WriteError);
+                    io.setImportReturnValue(ImportReturnValue.WRITE_ERROR);
                 }
             } else {
-                io.setImportReturnValue(ImportReturnValue.InvalidData);
+                io.setImportReturnValue(ImportReturnValue.INVALID_DATA);
             }
             answer.add(io);
         }

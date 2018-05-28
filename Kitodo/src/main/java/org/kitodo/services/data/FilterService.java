@@ -565,7 +565,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
          * to the parameters
          */
         switch (FilterService.getTaskFilter(parameters)) {
-            case exact:
+            case EXACT:
                 try {
                     return filterTaskExact(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
@@ -577,7 +577,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                             + "' caused an error\n");
                 }
                 break;
-            case max:
+            case MAX:
                 try {
                     return filterTaskMax(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
@@ -589,7 +589,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                             + "' caused an error\n");
                 }
                 break;
-            case min:
+            case MIN:
                 try {
                     return filterTaskMin(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
@@ -601,7 +601,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                             + "' caused an error\n");
                 }
                 break;
-            case name:
+            case NAME:
                 /* filter for a specific done step by it's name (title) */
                 try {
                     return filterTaskTitle(parameters, taskStatus, negate, objectType);
@@ -614,7 +614,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                             + "' caused an error\n");
                 }
                 break;
-            case range:
+            case RANGE:
                 try {
                     return filterTaskRange(parameters, taskStatus, negate, objectType);
                 } catch (NullPointerException e) {
@@ -638,7 +638,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                             + "' caused an error\n");
                 }
                 break;
-            case unknown:
+            case UNKNOWN:
                 logger.info("Filter '" + filter + "' is not known!\n");
                 break;
             default:
@@ -662,23 +662,23 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             String[] strArray = parameters.split("-");
             if (strArray.length >= 2) {
                 if (strArray[0].length() == 0) {
-                    return TaskFilter.max;
+                    return TaskFilter.MAX;
                 } else {
-                    return TaskFilter.range;
+                    return TaskFilter.RANGE;
                 }
             } else {
-                return TaskFilter.min;
+                return TaskFilter.MIN;
             }
         } else if (!parameters.contains("-")) {
             try {
                 // check if parseInt throws an exception
                 Integer.parseInt(parameters);
-                return TaskFilter.exact;
+                return TaskFilter.EXACT;
             } catch (NumberFormatException e) {
-                return TaskFilter.name;
+                return TaskFilter.NAME;
             }
         }
-        return TaskFilter.unknown;
+        return TaskFilter.UNKNOWN;
     }
 
     /**
@@ -686,12 +686,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * Restrictions.
      */
     private enum TaskFilter {
-        exact,
-        range,
-        min,
-        max,
-        name,
-        unknown
+        EXACT,
+        RANGE,
+        MIN,
+        MAX,
+        NAME,
+        UNKNOWN
     }
 
     /**

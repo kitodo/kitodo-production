@@ -13,11 +13,11 @@ package org.goobi.production.enums;
 
 public enum ImportReturnValue {
 
-    ExportFinished(0, "Export finished"),
-    InvalidData(1, "Invalid data"),
-    NoData(2, "No data found"),
-    DataAlreadyExists(3, "Data already exists"),
-    WriteError(4, "Data could not be written");
+    EXPORT_FINISHED(0, "Export finished"),
+    INVALID_DATA(1, "Invalid data"),
+    NO_DATA(2, "No data found"),
+    DATA_ALREADY_EXISTS(3, "Data already exists"),
+    WRITE_ERROR(4, "Data could not be written");
 
     private int id;
     private String value;

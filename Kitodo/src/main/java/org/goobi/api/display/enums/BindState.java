@@ -13,8 +13,8 @@ package org.goobi.api.display.enums;
 
 public enum BindState {
 
-    create("0", "create"),
-    edit("1", "edit");
+    CREATE("0", "create"),
+    EDIT("1", "edit");
 
     private String id;
     private String title;
@@ -45,6 +45,6 @@ public enum BindState {
                 return type;
             }
         }
-        return edit; // edit is default
+        return EDIT; // edit is default
     }
 }

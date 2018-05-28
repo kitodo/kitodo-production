@@ -324,15 +324,15 @@ public final class ConfigDisplayRules {
             if (this.allValues.isEmpty() && config != null) {
                 getDisplayItems();
             } else if (config == null) {
-                return DisplayType.textarea;
+                return DisplayType.TEXTAREA;
             }
             HashMap<String, HashMap<String, HashMap<String, ArrayList<Item>>>> bind = this.allValues.get(myproject);
             if (bind == null) {
-                return DisplayType.textarea;
+                return DisplayType.TEXTAREA;
             }
             HashMap<String, HashMap<String, ArrayList<Item>>> itemsByType = bind.get(mybind);
             if (itemsByType == null) {
-                return DisplayType.textarea;
+                return DisplayType.TEXTAREA;
             }
             Set<String> itemTypes = itemsByType.keySet();
             for (String type : itemTypes) {
@@ -345,7 +345,7 @@ public final class ConfigDisplayRules {
                 }
             }
         }
-        return DisplayType.textarea;
+        return DisplayType.TEXTAREA;
     }
 
     /**
