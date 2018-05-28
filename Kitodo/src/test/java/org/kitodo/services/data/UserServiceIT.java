@@ -21,6 +21,7 @@ import de.sub.goobi.config.ConfigCore;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
 import javax.json.JsonObject;
@@ -384,11 +385,11 @@ public class UserServiceIT {
 
         user = userService.findById(2);
         actual = user.getProjectsSize();
-        assertEquals("Projects' size is incorrect!", 1, actual);
+        assertEquals("Projects' size is incorrect!", 2, actual);
 
         user = userService.findById(2, true);
         actual = user.getProjectsSize();
-        assertEquals("Projects' size is incorrect!", 1, actual);
+        assertEquals("Projects' size is incorrect!", 2, actual);
 
         String title = user.getProjects().get(0).getTitle();
         assertEquals("Project's title is incorrect!", "First project", title);
@@ -513,5 +514,16 @@ public class UserServiceIT {
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
         assertEquals("Title of task is incorrect!", tasks.get(0).getTitle(), "Testing");
+    }
+
+    @Test
+    public void shouldGetAllActiveUsersByClientIds() {
+        List<Integer> clientIds = Collections.singletonList(1);
+        List<User> users = userService.getAllActiveUsersByClientIds(clientIds);
+        assertEquals("Amount of users assigned to client is incorrect!", 2, users.size());
+
+        clientIds = Collections.singletonList(2);
+        users = userService.getAllActiveUsersByClientIds(clientIds);
+        assertEquals("Amount of users assigned to client is incorrect!", 1, users.size());
     }
 }

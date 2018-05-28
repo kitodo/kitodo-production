@@ -127,7 +127,11 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         Session session = HibernateHelper.getHibernateSession();
         Query q = session.createQuery(query);
         for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-            q.setParameter(parameter.getKey(), parameter.getValue());
+            if (parameter.getValue() instanceof List) {
+                q.setParameterList(parameter.getKey(), (List) parameter.getValue());
+            } else {
+                q.setParameter(parameter.getKey(), parameter.getValue());
+            }
         }
         return (List<T>) q.list();
     }

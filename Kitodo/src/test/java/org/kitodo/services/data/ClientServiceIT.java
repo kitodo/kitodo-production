@@ -57,7 +57,7 @@ public class ClientServiceIT {
     }
 
     @Test
-    public void shouldGetProjetByClient() throws Exception {
+    public void shouldGetProjectByClient() throws Exception {
         Client client = clientService.getById(1);
         assertEquals("Clients were not found database!", 2, client.getProjects().size());
     }

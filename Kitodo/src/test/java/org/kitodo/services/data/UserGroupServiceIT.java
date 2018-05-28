@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.json.JsonObject;
@@ -44,7 +45,7 @@ public class UserGroupServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertUserGroupsFull();
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
@@ -249,7 +250,7 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldSaveAndRemoveAuthorizationForUsergroup() throws Exception {
+    public void shouldSaveAndRemoveAuthorizationForUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         List<Authority> authorities = userGroup.getGlobalAuthorities();
 
@@ -270,4 +271,14 @@ public class UserGroupServiceIT {
             actual.contains(authority.getTitle()));
     }
 
+    @Test
+    public void shouldGetAllUserGroupsByClientIds() {
+        List<Integer> clientIds = Collections.singletonList(1);
+        List<UserGroup> userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);
+        assertEquals("Amount of user groups assigned to client is incorrect!", 1, userGroups.size());
+
+        clientIds = Collections.singletonList(2);
+        userGroups = userGroupService.getAllUserGroupsByClientIds(clientIds);
+        assertEquals("Amount of user groups assigned to client is incorrect!", 1, userGroups.size());
+    }
 }

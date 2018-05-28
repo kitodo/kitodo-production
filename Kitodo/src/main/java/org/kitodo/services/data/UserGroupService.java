@@ -318,4 +318,25 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         }
         return stringAuthorizations;
     }
+
+    /**
+     * Get all active user groups visible for current user - user assigned to projects
+     * with certain clients.
+     *
+     * @return list of user groups
+     */
+    public List<UserGroupDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
+        List<Integer> clientIdList = serviceManager.getSecurityAccessService()
+                .getClientIdListForAuthority("viewAllUserGroup");
+        List<UserGroup> userGroups = getAllUserGroupsByClientIds(clientIdList);
+        List<Integer> userGroupIdList = new ArrayList<>();
+        for (UserGroup userGroup : userGroups) {
+            userGroupIdList.add(userGroup.getId());
+        }
+        return convertListIdToDTO(userGroupIdList, this);
+    }
+
+    protected List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
+        return dao.getAllUserGroupsByClientIds(clientIdList);
+    }
 }
