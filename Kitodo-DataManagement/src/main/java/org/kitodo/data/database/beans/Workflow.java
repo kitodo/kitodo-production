@@ -11,10 +11,14 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -33,6 +37,9 @@ public class Workflow extends BaseIndexedBean {
 
     @Column(name = "ready")
     private Boolean ready = false;
+
+    @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Template> templates;
 
     /**
      * Empty constructor.
@@ -131,5 +138,27 @@ public class Workflow extends BaseIndexedBean {
      */
     public void setReady(Boolean ready) {
         this.ready = ready;
+    }
+
+    /**
+     * Get list of template assigned to this workflow.
+     *
+     * @return list of template assigned to this workflow
+     */
+    public List<Template> getTemplates() {
+        if (Objects.isNull(this.templates)) {
+            this.templates = new ArrayList<>();
+        }
+        return this.templates;
+    }
+
+    /**
+     * Set list of template assigned to this workflow.
+     *
+     * @param templates
+     *            list of template assigned to this workflow
+     */
+    public void setTemplates(List<Template> templates) {
+        this.templates = templates;
     }
 }
