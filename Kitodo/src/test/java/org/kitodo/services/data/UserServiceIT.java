@@ -15,6 +15,7 @@ import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import de.sub.goobi.config.ConfigCore;
 
@@ -419,29 +420,24 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetHomeDirectory() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
         User user = userService.getById(1);
         String homeDirectory = ConfigCore.getParameter("dir_Users");
-        try {
-            File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
-            if (!SystemUtils.IS_OS_WINDOWS) {
-                ExecutionPermission.setExecutePermission(script);
-            }
 
-            URI homeDirectoryForUser = userService.getHomeDirectory(user);
-            boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
-            assertTrue("Home directory of user is incorrect!", condition);
+        File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
+        ExecutionPermission.setExecutePermission(script);
 
-            user = userService.getById(2);
-            homeDirectoryForUser = userService.getHomeDirectory(user);
-            condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
-            assertTrue("Home directory of user is incorrect!", condition);
+        URI homeDirectoryForUser = userService.getHomeDirectory(user);
+        boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
+        assertTrue("Home directory of user is incorrect!", condition);
 
-            if (!SystemUtils.IS_OS_WINDOWS) {
-                ExecutionPermission.setNoExecutePermission(script);
-            }
-        } catch (IOException e) {
-            logger.error("Probably you run this test on Windows: " + e.getMessage());
-        }
+        user = userService.getById(2);
+        homeDirectoryForUser = userService.getHomeDirectory(user);
+        condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
+        assertTrue("Home directory of user is incorrect!", condition);
+
+        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Test
