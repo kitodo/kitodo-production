@@ -237,7 +237,7 @@ public class SecurityAccessService {
      *         globally or for any client.
      */
     public boolean isAdminOrHasAuthorityGlobalOrForAnyClient(String authorityTitle) {
-        return isAdmin() || hasAuthorityGlobal(authorityTitle) || hasAuthorityForAnyClient(authorityTitle);
+        return isAdmin() || hasAuthorityGlobalOrForAnyClient(authorityTitle);
     }
 
     /**
