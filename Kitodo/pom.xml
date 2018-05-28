@@ -36,13 +36,6 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.codehaus.mojo/exec-maven-plugin -->
-        <!--<dependency>-->
-            <!--<groupId>org.codehaus.mojo</groupId>-->
-            <!--<artifactId>exec-maven-plugin</artifactId>-->
-            <!--<version>1.6.0</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
@@ -832,12 +825,6 @@
                             <classpathScope>test</classpathScope>
                         </configuration>
                     </plugin>
-
-
-
-
-
-
                 </plugins>
             </build>
         </profile>

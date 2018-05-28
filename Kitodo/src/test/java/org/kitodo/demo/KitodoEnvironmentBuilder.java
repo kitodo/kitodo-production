@@ -21,7 +21,7 @@ public class KitodoEnvironmentBuilder {
 
 	public static void main(String[] args) {
         setUpEnvironment();
-        System.out.println("Kitodo is running now. You can try access the application by the URL: http://localhost:8080/kitodo/pages/login.jsf");
+        System.out.println("Kitodo is running now. You can access the application by the URL: http://localhost:8080/kitodo/pages/login.jsf");
         System.out.println("You can stop the application by pressing Ctrl + c");
 	}
 }
