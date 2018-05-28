@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
@@ -123,7 +122,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private static final String PROPERTIES_SAVED = "propertiesSaved";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
 
-    private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
+    String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
@@ -223,7 +222,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
             return null;
         }
-        return filterAll();
+        return processListPath;
     }
 
     /**
@@ -359,22 +358,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             return null;
         }
         this.displayMode = ObjectMode.PROCESS;
-        return processListPath;
-    }
-
-    /**
-     * This method initializes the process list without any filter whenever the bean
-     * is constructed.
-     */
-    @PostConstruct
-    public void initializeProcessList() {
-        setFilter("");
-    }
-
-    /**
-     * Anzeige der Sammelbände filtern.
-     */
-    public String filterAll() {
         return processListPath;
     }
 
