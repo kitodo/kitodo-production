@@ -14,7 +14,6 @@ package de.sub.goobi.helper;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -103,32 +102,14 @@ public class BeanHelper {
      *            template object
      * @param processCopy
      *            new object
-     * @param workflowConditions
-     *            list of string values for workflow gateways, if list is null or
-     *            empty only tasks with default workflow conditions will be inserted
-     *            to newly created process
      */
-    public static void copyTasks(Template processTemplate, Process processCopy, List<String> workflowConditions) {
+    public static void copyTasks(Template processTemplate, Process processCopy) {
         List<Task> tasks = new ArrayList<>();
 
         for (Task templateTask : processTemplate.getTasks()) {
-            String taskWorkflowCondition = templateTask.getWorkflowCondition();
-            if (Objects.isNull(workflowConditions) || workflowConditions.isEmpty()) {
-                // tasks created before workflow functionality was introduced has null value
-                if (Objects.isNull(taskWorkflowCondition) || taskWorkflowCondition.contains("default")) {
-                    Task task = new Task(templateTask);
-                    task.setProcess(processCopy);
-                    tasks.add(task);
-                }
-            } else {
-                for (String workflowCondition : workflowConditions) {
-                    if (taskWorkflowCondition.contains("default") || taskWorkflowCondition.contains(workflowCondition)) {
-                        Task task = new Task(templateTask);
-                        task.setProcess(processCopy);
-                        tasks.add(task);
-                    }
-                }
-            }
+            Task task = new Task(templateTask);
+            task.setProcess(processCopy);
+            tasks.add(task);
         }
 
         adjustTaskOrdering(tasks);
