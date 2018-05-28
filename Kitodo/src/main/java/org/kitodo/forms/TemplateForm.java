@@ -217,7 +217,7 @@ public class TemplateForm extends TemplateBaseForm {
             try {
                 serviceManager.getTemplateService().save(this.template);
             } catch (DataException e) {
-                Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");

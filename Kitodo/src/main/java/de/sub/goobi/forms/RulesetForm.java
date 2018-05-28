@@ -79,7 +79,7 @@ public class RulesetForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
             return null;
         }
     }

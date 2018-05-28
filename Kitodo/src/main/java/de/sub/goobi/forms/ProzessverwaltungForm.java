@@ -191,7 +191,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 serviceManager.getProcessService().save(this.process);
             } catch (DataException e) {
-                Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");

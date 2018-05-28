@@ -80,7 +80,7 @@ public class DocketForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("docket") }, logger, e);
             return null;
         }
     }
