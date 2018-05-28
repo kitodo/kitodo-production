@@ -222,7 +222,8 @@ public class TemplateForm extends TemplateBaseForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return reload();
+        reload();
+        return null;
     }
 
     /**
@@ -316,14 +317,11 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Reload.
-     *
-     * @return String
+     * Reload task and template.
      */
-    public String reload() {
+    private void reload() {
         reload(this.task, "arbeitsschritt");
         reload(this.template, "template");
-        return null;
     }
 
     /**
