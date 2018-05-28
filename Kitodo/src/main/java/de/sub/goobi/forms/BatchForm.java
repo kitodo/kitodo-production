@@ -313,7 +313,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("fehlerNichtAktualisierbar", logger, e);
+            Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("batch") }, logger, e);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
@@ -366,7 +366,7 @@ public class BatchForm extends BasisForm {
                     }
                 }
             } catch (DataException e) {
-                Helper.setErrorMessage("fehlerNichtAktualisierbar", logger, e);
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("batch") }, logger, e);
             }
         }
     }
