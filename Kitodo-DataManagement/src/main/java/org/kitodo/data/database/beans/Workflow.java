@@ -19,7 +19,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseBean {
+public class Workflow extends BaseIndexedBean {
     private static final long serialVersionUID = 6831844584235763486L;
 
     @Column(name = "title")
