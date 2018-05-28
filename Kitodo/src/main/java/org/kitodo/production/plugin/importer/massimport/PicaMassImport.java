@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.goobi.production.constants.FileNames;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -723,7 +724,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         String address;
 
         try (FileInputStream istream = new FileInputStream(
-                FilenameUtils.concat(this.getGoobiConfigDirectory(), "kitodo_opac.xml"))) {
+                FilenameUtils.concat(this.getGoobiConfigDirectory(), FileNames.OPAC_CONFIGURATION_FILE))) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
