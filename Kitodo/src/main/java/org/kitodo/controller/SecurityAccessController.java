@@ -198,4 +198,17 @@ public class SecurityAccessController {
     public boolean isAdminOrHasAuthorityToEditUser(int userId) {
         return securityAccessService.isAdminOrHasAuthorityToEditUser(userId);
     }
+
+    /**
+     * Checks if the current user is admin or has the authority to edit the user group
+     * with the specified id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @return True if the current user is admin or has the authority to edit the
+     *         user group with the specified id.
+     */
+    public boolean isAdminOrHasAuthorityToEditUserGroup(int userGroupId) {
+        return securityAccessService.isAdminOrHasAuthorityToEditUserGroup(userGroupId);
+    }
 }

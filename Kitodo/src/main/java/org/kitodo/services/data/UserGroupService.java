@@ -353,15 +353,24 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     public List<UserGroupDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
                 .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
-        List<UserGroup> userGroups = getAllUserGroupsByClientIds(clientIdList);
-        List<Integer> userGroupIdList = new ArrayList<>();
-        for (UserGroup userGroup : userGroups) {
-            userGroupIdList.add(userGroup.getId());
-        }
-        return convertListIdToDTO(userGroupIdList, this);
+        return convertListIdToDTO(getAllUserGroupIdsByClientIds(clientIdList), this);
     }
 
     protected List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
         return dao.getAllUserGroupsByClientIds(clientIdList);
+    }
+
+    /**
+     * Get ids of all user groups which hold users which are assigned to projects of the given clients.
+     *
+     * @return list of user ids
+     */
+    public List<Integer> getAllUserGroupIdsByClientIds(List<Integer> clientIdList) {
+        List<UserGroup> users = getAllUserGroupsByClientIds(clientIdList);
+        List<Integer> userIdList = new ArrayList<>();
+        for (UserGroup userGroup : users) {
+            userIdList.add(userGroup.getId());
+        }
+        return userIdList;
     }
 }

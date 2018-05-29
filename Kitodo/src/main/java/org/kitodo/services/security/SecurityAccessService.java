@@ -414,4 +414,48 @@ public class SecurityAccessService {
         }
         return false;
     }
+
+    /**
+     * Checks if the current user is admin or has the authority to edit the user group
+     * with the specified id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @return True if the current user is admin or has the authority to edit the
+     *         user group with the specified id.
+     */
+    public boolean isAdminOrHasAuthorityToEditUserGroup(int userGroupId) {
+        String authorityTitle = "editUserGroup";
+        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+            return true;
+        }
+        return hasAuthorityForUserGroup(authorityTitle, userGroupId);
+    }
+
+    /**
+     * Checks if the current user is admin or has the authority to view the user group
+     * with the specified id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @return True if the current user is admin or has the authority to view the
+     *         user group with the specified id.
+     */
+    public boolean isAdminOrHasAuthorityToViewUserGroup(int userGroupId) {
+        String authorityTitle = "viewUserGroup";
+        if (isAdminOrHasAuthorityGlobal(authorityTitle)) {
+            return true;
+        }
+        return hasAuthorityForUserGroup(authorityTitle, userGroupId);
+    }
+
+    private boolean hasAuthorityForUserGroup(String authorityTitle, int userId) {
+        List<Integer> clientIdListForAuthority = getClientIdListForAuthority(authorityTitle);
+        if (!clientIdListForAuthority.isEmpty()) {
+            List<Integer> allActiveUserGroupIdsVisibleForCurrentUser = serviceManager.getUserGroupService()
+                .getAllUserGroupIdsByClientIds(clientIdListForAuthority);
+            return allActiveUserGroupIdsVisibleForCurrentUser.contains(userId);
+        }
+        return false;
+    }
 }

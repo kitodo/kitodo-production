@@ -28,14 +28,11 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
-            <h:link outcome="usergroupEdit" title="#{msgs.benutzerBearbeiten}">
+            <h:link outcome="usergroupEdit" title="#{msgs.userGroupEdit}"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUserGroup')}">
                 <f:param name="id" value="#{item.id}" />
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
         </p:column>
     </p:dataTable>
-    <ui:define name="breadcrumbs">
-        <li><a href="">#{msgs.benutzergruppen}</a></li>
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-    </ui:define>
 </ui:composition>
