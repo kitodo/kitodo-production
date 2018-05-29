@@ -19,10 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -79,9 +76,6 @@ public class SearchForm {
     private String stepOperand = "";
 
     private ServiceManager serviceManager = new ServiceManager();
-
-    @Inject
-    BeanManager beanManager;
 
     /**
      * Initialise drop down list of master piece property titles.
@@ -401,10 +395,7 @@ public class SearchForm {
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
 
-        Bean<ProzessverwaltungForm> bean = (Bean<ProzessverwaltungForm>) beanManager
-                .resolve(beanManager.getBeans(ProzessverwaltungForm.class));
-        ProzessverwaltungForm form = beanManager.getContext(bean.getScope()).get(bean,
-                beanManager.createCreationalContext(bean));
+        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("ProzessverwaltungForm");
 
         if (form != null) {
             form.filter = search;
