@@ -48,7 +48,9 @@
         <p:panel>
             <p:outputLabel for="tifFolders" value="#{msgs.aktuellerOrdner}" style="vertical-align: top"/>
             <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
+                <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
+                <f:ajax listener="#{Metadaten.updateImagesFolder()}"/>
             </p:selectOneMenu>
             <p:commandButton id="readImagesButton" value="#{msgs.generatePNGs}"
                              action="#{Metadaten.generatePNGs()}"
@@ -75,7 +77,8 @@
                                 binding="#{structuredThumbnail}">
                         <ui:param name="filePath" value="#{Metadaten.getPageImageFilePath(page)}"/>
                         <p:panel id="structuredPagePanel" header="#{msgs.page} #{Metadaten.getPhysicalPageNumber(page)}">
-                            <p:commandLink update="structureTreeForm, imagePreviewForm"><img src="#{Metadaten.getThumbnail(filePath)}" class="thumbnail #{Metadaten.currentImage eq filePath ? 'active' : ''}"/>
+                            <p:commandLink update="structureTreeForm, imagePreviewForm" rendered="#{Metadaten.isAccessGranted(filePath)}">
+                                <img src="#{Metadaten.getThumbnail(filePath)}" class="thumbnail #{Metadaten.currentImage eq filePath ? 'active' : ''}"/>
                                 <f:setPropertyActionListener value="#{filePath}" target="#{Metadaten.currentImage}"/>
                                 <f:setPropertyActionListener value="#{page}" target="#{Metadaten.myStrukturelement}"/>
                             </p:commandLink>
@@ -88,32 +91,14 @@
                     </p:droppable>
                 </p:dataList>
             </p:fieldset>
-
-            <p:fieldset id="unstructuredPagesField" legend="Unstructured Pages" rendered="#{not empty Metadaten.images and false}">
-                <p:dataList id="unstructuredPages"
-                            styleClass="structureElementDataList"
-                            var="page"
-                            value="#{Metadaten.images}"
-                            binding="#{unstructuredThumbnail}">
-                    <p:panel id="unstructuredPagePanel">
-                        <p:commandLink update="imagePreviewForm"><img src="#{Metadaten.getThumbnail(page)}" class="thumbnail #{Metadaten.currentImage eq page ? 'active' : ''}"/>
-                            <f:setPropertyActionListener value="#{page}" target="#{Metadaten.currentImage}"/>
-                        </p:commandLink>
-                    </p:panel>
-                    <p:draggable for="imagePreviewForm:unstructuredPages:#{unstructuredThumbnail.rowIndex}:unstructuredPagePanel"
-                                 revert="true" stack=".ui-panel"/>
-                </p:dataList>
-                <p:droppable for="imagePreviewForm:unstructuredPages:0:unstructuredPagePanel">
-                    <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
-                </p:droppable>
-            </p:fieldset>
         </ui:fragment>
 
         <!-- Pages in UNstructured view -->
         <ui:fragment rendered="#{Metadaten.viewMode eq 'grid'}">
             <div class="thumbnailWrapper">
                 <ui:repeat value="#{Metadaten.images}" var="image">
-                    <p:commandLink update="imagePreviewForm"><img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
+                    <p:commandLink update="imagePreviewForm" rendered="#{Metadaten.isAccessGranted(image)}">
+                        <img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
                         <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
                     </p:commandLink>
                     <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
@@ -125,19 +110,22 @@
         <!-- View current page with OpenLayers -->
         <ui:fragment rendered="#{Metadaten.viewMode eq 'preview'}">
             <!-- OpenLayers Kitodo custom controls -->
-            <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
-            <h:outputScript name="js/ol_custom.js"/>
             <div id="olWrapper" style="overflow-x: auto; height: 100%">
                 <div id="thumbnailStripe" style="width: 10%; display: inline-block; float: right">
                     <ui:repeat value="#{Metadaten.images}" var="image">
-                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper"><img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
+                        <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{Metadaten.isAccessGranted(image)}">
+                            <img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{Metadaten.getThumbnail(image)}"/>
                             <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
                         </p:commandLink>
                         <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
                         <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
                     </ui:repeat>
                 </div>
-                <div id="map" class="map" style="width: 85%; height: 100%; display: inline-block; float: left"/>
+                <ui:fragment rendered="#{Metadaten.isAccessGranted(Metadaten.currentImage)}">
+                    <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
+                    <h:outputScript name="js/ol_custom.js"/>
+                    <div id="map" class="map" style="width: 85%; height: 100%; display: inline-block; float: left"/>
+                </ui:fragment>
             </div>
         </ui:fragment>
 

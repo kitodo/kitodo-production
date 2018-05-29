@@ -543,11 +543,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- additional functionality for original primefaces-extensions -->
+        <!-- Primefaces extension for a frontend code editor -->
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>resources-codemirror</artifactId>
-            <version>${primefaces.version}</version>
+            <version>6.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
@@ -629,11 +629,6 @@
             <groupId>org.webjars</groupId>
             <artifactId>openlayers</artifactId>
             <version>4.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jai-imageio</groupId>
-            <artifactId>jai-imageio-core</artifactId>
-            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>net.coobird</groupId>

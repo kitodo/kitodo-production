@@ -98,6 +98,7 @@ import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -218,6 +219,11 @@ public class Metadaten {
     private Path imageFolderPath = Paths.get(imagesFolderURI);
     private File imageFolderFile = imageFolderPath.toFile();
     private String imagesFolder = imageFolderFile.toString().replace("pages", "images").replace("imagesTemp", "");
+    private String fullsizePath = "";
+    private String thumbnailPath = "";
+    private String subfolderName = "";
+    private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
+    private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private int numberOfConvertedImages = 0;
 
     /**
@@ -3482,7 +3488,6 @@ public class Metadaten {
      */
     private void convertImages() {
         if (Objects.nonNull(this.currentTifFolder)) {
-            String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
             try {
                 ensureDirectoryExists(Paths.get(fullsizePath));
 
@@ -3498,9 +3503,13 @@ public class Metadaten {
                     URI tiffURI = Paths.get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString()).toUri();
 
                     BufferedImage inputImage = ImageIO.read(tiffURI.toURL());
+
                     ImageIO.write(inputImage, "png", new File(targetPath));
                     numberOfConvertedImages++;
-                    //RequestContext.getCurrentInstance().update("metadataEditor");
+                    PrimeFaces primeFaces = PrimeFaces.current();
+                    if (primeFaces.isAjaxRequest()) {
+                        primeFaces.ajax().update("convertTIFFDialog");
+                    }
                 }
 
                 // then, create thumbnails from the converted images
@@ -3509,16 +3518,14 @@ public class Metadaten {
             } catch (MalformedURLException e) {
                 Helper.setErrorMessage("ERROR: URL malformed!", logger, e);
             } catch (IOException e) {
-                Helper.setErrorMessage("ERROR: File not found!", logger, e);
+                Helper.setErrorMessage("ERROR: IOException!", logger, e);
             }
         }
-
     }
 
     private void generateThumbnails() {
+        updateImagesFolder();
         if (!thumbnailsExist()) {
-            String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
-            String thumbnailPath = fullsizePath.replace("fullsize", "thumbnails");
             try {
                 URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
 
@@ -3539,7 +3546,6 @@ public class Metadaten {
     }
 
     private boolean thumbnailsExist() {
-        String thumbnailPath = imagesFolder + this.process.getId() + File.separator + "thumbnails";
         Path thumbnailDirectory = Paths.get(thumbnailPath);
         ensureDirectoryExists(thumbnailDirectory);
         File thumbnailFile;
@@ -3561,7 +3567,6 @@ public class Metadaten {
                 Files.createDirectories(directory);
             } catch (IOException e) {
                 logger.error("ERROR: IOException thrown while trying to create directory '" + directory + ": " + e.getLocalizedMessage());
-                e.printStackTrace();
             }
         }
     }
@@ -3575,20 +3580,25 @@ public class Metadaten {
         File imageFile = new File(image);
         String filename = imageFile.getName();
         return image
-                .replace("fullsize", "thumbnails")
+                .replace(FULLSIZE_FOLDER_NAME, THUMBNAIL_FOLDER_NAME)
                 .replace(filename, "thumbnail." + filename);
     }
 
     private void resetTemporaryFolders() {
-        String fullsizePath = imagesFolder + this.process.getId() + File.separator + "fullsize" + File.separator;
-        String thumbnailPath = fullsizePath.replace("fullsize", "thumbnails");
 
         try {
             FileUtils.deleteDirectory(new File(fullsizePath));
+        } catch (IOException e) {
+            logger.error("ERROR: unable to delete directory '" + fullsizePath + "' containing fullsize PNG copies of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
+        }
+
+        try {
             FileUtils.deleteDirectory(new File(thumbnailPath));
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("ERROR: unable to delete directory '" + thumbnailPath + "' containing PNG thumbnails of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
         }
+
+
     }
 
     /**
@@ -3596,7 +3606,7 @@ public class Metadaten {
      */
     public void generatePNGs() {
         this.numberOfConvertedImages = 0;
-        resetTemporaryFolders();
+        //resetTemporaryFolders();
         RequestContext.getCurrentInstance().update("convertTIFFDialog");
         convertImages();
     }
@@ -3672,7 +3682,7 @@ public class Metadaten {
 
             String pagePath = docStructPages.get(pageIndex);
 
-            if (Objects.nonNull(sourceDocStruct) && Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
+            if (Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
                 for (ReferenceInterface reference : sourceDocStruct.getAllToReferences("logical_physical")) {
 
                     if (FilenameUtils.getBaseName(pagePath).equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
@@ -3689,11 +3699,6 @@ public class Metadaten {
                     }
                 }
             }
-
-        } else if (dragIDComponents[1].equals("unstructuredPages")) {
-            // TODO: check whether incorporating 'unstructuredPages' here really makes sense!
-//            pageIndex = Integer.valueOf(dragIDComponents[2]);
-//            List<String> docStructPages = getImages();
         }
     }
 
@@ -3727,12 +3732,16 @@ public class Metadaten {
 
         List<String> allImages = getImages();
 
-        for (ReferenceInterface pageReferenceInterface : pageReferences) {
-            DocStructInterface docStructInterface = pageReferenceInterface.getTarget();
-            List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface.getAllMetadataByType(mdt);
-            for (MetadataInterface metadataInterface : allMetadata) {
-                assignedPages.add(allImages.get(Integer.parseInt(metadataInterface.getValue()) - 1));
+        if (!allImages.isEmpty()) {
+            for (ReferenceInterface pageReferenceInterface : pageReferences) {
+                DocStructInterface docStructInterface = pageReferenceInterface.getTarget();
+                List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface.getAllMetadataByType(mdt);
+                for (MetadataInterface metadataInterface : allMetadata) {
+                    assignedPages.add(allImages.get(Integer.parseInt(metadataInterface.getValue()) - 1));
+                }
             }
+        } else {
+            logger.error("ERROR: empty list of image file paths!");
         }
         return assignedPages;
     }
@@ -3746,14 +3755,19 @@ public class Metadaten {
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
         MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
-        List<MetadataInterface> allMetadata = (List<MetadataInterface>) pageDocStruct.getAllMetadataByType(mdt);
+        List<? extends MetadataInterface> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
 
         switch (allMetadata.size()) {
             case 0:
                 logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
                 return "IMAGE_PATH_NOT_FOUND";
             case 1:
-                return allImages.get(Integer.parseInt(allMetadata.get(0).getValue()) - 1);
+                if (allImages.size() > 0 ) {
+                    return allImages.get(Integer.parseInt(allMetadata.get(0).getValue()) - 1);
+                } else {
+                    logger.error("ERROR: empty list of image file paths!");
+                    return "IMAGE_PATH_NOT_FOUND";
+                }
             default:
                 logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is " + allMetadata.size() + " (1 expected)!");
                 return "IMAGE_PATH_NOT_FOUND";
@@ -3761,14 +3775,14 @@ public class Metadaten {
     }
 
     /**
-     * Get list of images for current process.
+     * Get list of image file paths for current process.
      *
      * @return List<String> List of images.
      */
     public List<String> getImages() {
-        String pngFolder = imagesFolder + this.process.getId() + File.separator + "fullsize";
+        updateImagesFolder();
         List<String> imagePaths = new LinkedList<>();
-        Path pngDir = Paths.get(pngFolder);
+        Path pngDir = Paths.get(fullsizePath);
         ensureDirectoryExists(pngDir);
         try {
             imagePaths = Files.list(pngDir)
@@ -3777,7 +3791,7 @@ public class Metadaten {
                     .filter(path -> path.toString().endsWith(".png"))
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .map(filename -> "/kitodo/images/" + this.process.getId() + "/fullsize/" + filename)
+                    .map(filename -> "/kitodo/images/" + this.process.getId() + "/" + this.subfolderName + "/" + FULLSIZE_FOLDER_NAME +"/" + filename)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -3795,6 +3809,33 @@ public class Metadaten {
             return Integer.parseInt(determineMetadata(pageDocStruct, "physPageNumber"));
         } catch (NullPointerException e) {
             return -1;
+        }
+    }
+
+    public boolean isAccessGranted(String imagePath) {
+        String imageName = FilenameUtils.getName(imagePath);
+        String filePath;
+        if (FilenameUtils.getPath(imagePath).endsWith(FULLSIZE_FOLDER_NAME + "/")) {
+            filePath = fullsizePath + imageName;
+        } else if (FilenameUtils.getPath(imagePath).endsWith(THUMBNAIL_FOLDER_NAME + "/")) {
+            filePath = thumbnailPath + imageName;
+        } else {
+            logger.error("ERROR: Image path '" + imagePath + "' is invalid!");
+            return false;
+        }
+        File image = new File(filePath);
+        return image.canRead();
+    }
+
+    public void updateImagesFolder() {
+        String uriSeparator = "/";
+        String[] pathParts = this.currentTifFolder.toString().split(uriSeparator);
+        if (pathParts.length > 0) {
+            subfolderName = pathParts[pathParts.length - 1];
+            fullsizePath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator + FULLSIZE_FOLDER_NAME + File.separator;
+            thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator + THUMBNAIL_FOLDER_NAME + File.separator;
+        } else {
+            logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator + "' resulted in an empty array!");
         }
     }
 }

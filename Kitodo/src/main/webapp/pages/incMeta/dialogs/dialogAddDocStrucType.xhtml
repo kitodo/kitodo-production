@@ -56,24 +56,29 @@
 
             <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
                 <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
-                    <h:panelGrid columns="2">
-                        <h:outputText value="#{msgs.firstPage}:"/>
-                        <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
-                                         filterMatchMode="startsWith">
-                            <f:selectItems value="#{Metadaten.allPages}"/>
-                        </p:selectOneMenu>
+                    <p:panelGrid columns="2">
+                        <p:row>
+                            <h:outputText value="#{msgs.firstPage}:"/>
+                            <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
+                                             filterMatchMode="startsWith">
+                                <f:selectItems value="#{Metadaten.allPages}"/>
+                            </p:selectOneMenu>
+                        </p:row>
 
-                        <h:outputText value="#{msgs.lastPage}:"/>
-                        <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
-                                         filterMatchMode="startsWith">
-                            <f:selectItems value="#{Metadaten.allPages}"/>
-                        </p:selectOneMenu>
+                        <p:row>
+                            <h:outputText value="#{msgs.lastPage}:"/>
+                            <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
+                                             filterMatchMode="startsWith">
+                                <f:selectItems value="#{Metadaten.allPages}"/>
+                            </p:selectOneMenu>
+                        </p:row>
 
-
-                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
-                                         update="structureTreeForm"
-                                         oncomplete="PF('dialogAddDocStrucType').hide();"/>
-                    </h:panelGrid>
+                        <p:row>
+                            <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
+                                             update="structureTreeForm"
+                                             oncomplete="PF('dialogAddDocStrucType').hide();"/>
+                        </p:row>
+                    </p:panelGrid>
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{Metadaten.addServeralStructuralElementsMode}">
