@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -48,6 +49,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
     private static UserGroupService instance = null;
+    private static String AUTHORITY_TITLE_VIEW_ALL = "viewAllUserGroups";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -99,6 +101,29 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     @Override
     public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return findAll(sort, offset, size, true);
+    }
+
+    /**
+     * Get all user groups from index and covert results to format accepted by
+     * frontend. Right now there is no usage which demands all relations.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @return list of UserGroupDTO objects
+     */
+    @Override
+    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+            return findAll(sort, offset, size, true);
+        }
+        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return getAllUserGroupsVisibleForCurrentUser();
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -327,7 +352,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      */
     public List<UserGroupDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority("viewAllUserGroup");
+                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
         List<UserGroup> userGroups = getAllUserGroupsByClientIds(clientIdList);
         List<Integer> userGroupIdList = new ArrayList<>();
         for (UserGroup userGroup : userGroups) {
