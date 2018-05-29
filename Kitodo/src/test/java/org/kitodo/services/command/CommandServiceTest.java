@@ -12,6 +12,7 @@
 package org.kitodo.services.command;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -134,8 +135,9 @@ public class CommandServiceTest {
         CommandService service = new CommandService();
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
-        CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertEquals("path to scripts are not identical", commandResult.getCommand(), commandString);
+        CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
+        assertNotNull("There were not results!", result);
+        assertEquals("path to scripts are not identical", result.getCommand(), commandString);
     }
 
     @Test
@@ -146,8 +148,9 @@ public class CommandServiceTest {
         service.runCommandAsync(commandString2s);
         service.runCommandAsync(commandString1s);
         Thread.sleep(3000); // wait for async thread to finish;
-        CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertEquals("latest finished command should be the 2 s one", commandResult.getCommand(), commandString2s);
+        CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
+        assertNotNull("There were no results!", result);
+        assertEquals("latest finished command should be the 2 s one", result.getCommand(), commandString2s);
     }
 
     @Test
@@ -156,9 +159,10 @@ public class CommandServiceTest {
         CommandService service = new CommandService();
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
-        CommandResult commandResult = getLastFinishedCommandResult(service.getFinishedCommandResults());
+        CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
+        assertNotNull("There were no results!", result);
         assertTrue("result message should contain IOException",
-                commandResult.getMessages().get(0).contains("IOException"));
+                result.getMessages().get(0).contains("IOException"));
     }
 
     @Test
@@ -179,6 +183,7 @@ public class CommandServiceTest {
         }
         expectedMessages.add("HelloWorld");
 
+        assertNotNull("There were no results!", result);
         assertEquals("result messages are not identical", expectedMessages, result.getMessages());
         assertTrue("successful booleans are not identical", result.isSuccessful());
     }
