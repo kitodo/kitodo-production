@@ -16,17 +16,20 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:tree value="#{Metadaten.treeNodes}" var="element"
-            selectionMode="single" id="docStruct"
-            selection="#{Metadaten.selectedTreeNode}"
-            draggable="true" droppable="true" dragdropScope="DocStructTree">
-        <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
-                update="firstColumnPanel,secondColumnPanel,thirdColumnPanel"/>
-        <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
-                update="firstColumnPanel,secondColumnPanel,thirdColumnPanel"/>
-        <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
-            <ui:param name="elementType" value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
-            <h:outputText value="#{elementType}"/> <h:outputText value=" #{Metadaten.getPhysicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
-        </p:treeNode>
-    </p:tree>
+    <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
+        <p:tree value="#{Metadaten.treeNodes}" var="element"
+                selectionMode="single" id="docStruct"
+                selection="#{Metadaten.selectedTreeNode}"
+                draggable="true" droppable="true" dragdropScope="DocStructTree">
+            <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                    update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+            <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
+                    update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+            <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                <ui:param name="elementType" value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
+                <h:outputText value="#{elementType}"/> <h:outputText
+                    value=" #{Metadaten.getPhysicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
+            </p:treeNode>
+        </p:tree>
+    </p:panel>
 </ui:composition>

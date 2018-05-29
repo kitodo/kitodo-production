@@ -110,9 +110,9 @@ function resizeSecondAndThird(e) {
 }
 
 function resizeVertical(e) {
-    if (e.pageY >= sectionWrapperPos + HEADING_HEIGHT + firstSection.data('min-height')
+    if (e.pageY >= sectionWrapperPos + firstSection.data('min-height')
         && e.pageY <= sectionWrapperPos + sectionWrapperHeight - HEADING_HEIGHT - secondSection.data('min-height')) {
-        firstSection.height(e.pageY - sectionWrapperPos - HEADING_HEIGHT);
+        firstSection.height(e.pageY - sectionWrapperPos);
         secondSection.height(sectionWrapperPos + sectionWrapperHeight - e.pageY - SEPARATOR_HEIGHT - HEADING_HEIGHT);
     }
 }
@@ -125,16 +125,20 @@ function getElements() {
     firstResizer = resizers.first();
     secondResizer = resizers.last();
 
-    sectionWrapperPos = secondColumn.offset().top + parseInt(secondColumn.css('padding-top'));
-    sectionWrapperHeight = secondColumn.height() - parseInt(secondColumn.css('padding-top'));
+    var secondColumnPanel = $('#secondColumnPanel');
+    sectionWrapperPos = secondColumnPanel.offset().top;
+    sectionWrapperHeight = secondColumnPanel.height();
 }
 
 function setSizes() {
     getElements();
 
+    wrapper.height(window.innerHeight - wrapper.offset().top - $('footer').height());
     firstColumn.width(firstColumn.data('min-width'));
     secondColumn.width(secondColumn.data('min-width'));
     thirdColumn.width(wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
+    firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
+    secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
 }
 
 function toggleResizers() {

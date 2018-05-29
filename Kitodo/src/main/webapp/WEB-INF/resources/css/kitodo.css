@@ -891,8 +891,13 @@ main i.fa {
 Metadata Editor
 ----------------------------------------------------------------------*/
 
+#metadataEditor.ui-panel,
+#metadataEditor > .ui-panel-content {
+    padding: 0;
+}
+
 #metadataEditorHeader {
-    padding: 1em 10px;
+    padding: 1em 16px;
     margin-bottom: 1em;
 }
 
@@ -973,10 +978,16 @@ Metadata Editor
     background: transparent;
     padding: 0;
     height: 100%;
+    overflow: hidden;
 }
 
 .collapsibleWrapper.collapsed > .ui-panel {
     visibility: hidden;
+}
+
+.wrapperPanel.ui-panel,
+.wrapperPanel.ui-panel > .ui-panel-content {
+    padding: 0;
 }
 
 #metadataEditorWrapper .resizer {
@@ -1000,10 +1011,18 @@ Metadata Editor
     pointer-events: none;
 }
 
+#secondColumnPanel {
+    height: calc(100% - 40px);
+}
+
 #metadataPanel,
-#commentPanel {
+#commentPanel,
+#galleryPanel {
     overflow-y: scroll;
-    height: 300px;
+}
+
+#galleryPanel {
+    height: 100%;
 }
 
 #metadataPanel.collapsed,

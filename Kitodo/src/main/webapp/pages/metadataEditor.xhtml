@@ -73,7 +73,7 @@
                         </button>
                     </div>
                     <p:panel id="secondColumnPanel">
-                        <div id="metadataPanel" data-min-height="200">
+                        <div id="metadataPanel" data-min-height="100">
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
                         </div>
 
@@ -86,7 +86,7 @@
                                 <i class="fa fa-chevron-down fa-lg"/>
                             </button>
                         </div>
-                        <div id="commentPanel" data-min-height="200">
+                        <div id="commentPanel" data-min-height="100">
                             <ui:include src="/WEB-INF/templates/includes/metadataEditor/comment.xhtml" />
                         </div>
                     </p:panel>
@@ -114,8 +114,10 @@
                         </h:panelGroup>
                     </div>
 
-                    <p:panel id="thirdColumnPanel" style="overflow-y: scroll; height: calc(100% - 40px);">
-                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
+                    <p:panel id="thirdColumnPanel" style="height: calc(100% - 40px);">
+                        <div id="galleryPanel">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
+                        </div>
                     </p:panel>
                 </div>
             </div>

@@ -17,94 +17,96 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:panelGrid id="actionButtons" columns="1" rendered="#{not Metadaten.showPagination}">
-        <p:commandButton id="newButton" value="#{msgs.newElement}"
-                         onclick="PF('dialogAddDocStrucType').show();"
-                         icon="fa fa-plus-circle fa-lg"
-                         iconPos="right"/>
-        <p:commandButton id="deleteButton" value="#{msgs.loeschen}"
-                         action="#{Metadaten.deleteNode}"
-                         update="metadataEditor"
-                         icon="fa fa-minus-circle fa-lg"
-                         iconPos="right"/>
-        <p:commandButton id="linkButton" value="#{msgs.link}"
-                         icon="fa fa-link fa-lg"
-                         iconPos="right"/>
-        <p:commandButton id="pagingButton" value="#{msgs.pagination}"
-                         action="#{Metadaten.setShowPagination(true)}"
-                         update="structureTreeForm"
-                         icon="fa fa-list-ol fa-lg"
-                         iconPos="right"/>
-    </p:panelGrid>
-    <p:panelGrid id="paginationPanelGrid" columns="1" rendered="#{Metadaten.showPagination}">
-    <h:outputText value="#{msgs.pagination}"/>
-    <p:selectOneMenu id="paginationTypeSelect"
-                     value="#{Metadaten.paginator.paginationType}">
-        <f:selectItems value="#{Metadaten.paginator.paginationTypes}"
-                       var="type"
-                       itemValue="#{type}"
-                       itemLabel="#{type.label}"/>
-    </p:selectOneMenu>
-    <p:inputText id="paginationValue" value="#{Metadaten.paginationValue}"/>
-    <p:outputLabel for="fictitiousCheckbox" value="#{msgs.paginationFictitious}"/>
-    <p:selectBooleanCheckbox id="fictitiousCheckbox"
-                             class="input" style="margin-bottom: 0"
-                             value="#{Metadaten.fictitious}"/>
-    <p:panel id="paginationStyle" style="padding: 0;">
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_seite.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 1 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.seitenzaehlung}"
-                            alt="#{msgs.seitenzaehlung}"/>
-            <f:setPropertyActionListener value="1" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_spalte.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 2 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.spaltenzaehlung}"
-                            alt="#{msgs.spaltenzaehlung}"/>
-            <f:setPropertyActionListener value="2" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_blatt.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 3 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.blattzaehlung}"
-                            alt="#{msgs.blattzaehlung}"/>
-            <f:setPropertyActionListener value="3" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_blatt_rectoverso.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 4 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.blattzaehlungrectoverso}"
-                            alt="#{msgs.blattzaehlungrectoverso}"/>
-            <f:setPropertyActionListener value="4" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_seite_rectoverso.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 5 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.seitenzaehlungrectoverso}"
-                            alt="#{msgs.seitenzaehlungrectoverso}"/>
-            <f:setPropertyActionListener value="5" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
-        <p:commandLink update="paginationStyle">
-            <p:graphicImage value="/pages/images/buttons/paginierung_doppelseite.svg"
-                            styleClass="#{Metadaten.paginationPagesProImage == 6 ? 'pagination-active' : 'pagination-inactive'}"
-                            title="#{msgs.seitenzaehlungdoppelseiten}"
-                            alt="#{msgs.seitenzaehlungdoppelseiten}"/>
-            <f:setPropertyActionListener value="6" target="#{Metadaten.paginationPagesProImage}"/>
-        </p:commandLink>
+    <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
+        <p:panelGrid id="actionButtons" columns="1" rendered="#{not Metadaten.showPagination}">
+            <p:commandButton id="newButton" value="#{msgs.newElement}"
+                             onclick="PF('dialogAddDocStrucType').show();"
+                             icon="fa fa-plus-circle fa-lg"
+                             iconPos="right"/>
+            <p:commandButton id="deleteButton" value="#{msgs.loeschen}"
+                             action="#{Metadaten.deleteNode}"
+                             update="metadataEditor"
+                             icon="fa fa-minus-circle fa-lg"
+                             iconPos="right"/>
+            <p:commandButton id="linkButton" value="#{msgs.link}"
+                             icon="fa fa-link fa-lg"
+                             iconPos="right"/>
+            <p:commandButton id="pagingButton" value="#{msgs.pagination}"
+                             action="#{Metadaten.setShowPagination(true)}"
+                             update="structureTreeForm"
+                             icon="fa fa-list-ol fa-lg"
+                             iconPos="right"/>
+        </p:panelGrid>
+        <p:panelGrid id="paginationPanelGrid" columns="1" rendered="#{Metadaten.showPagination}">
+            <h:outputText value="#{msgs.pagination}"/>
+            <p:selectOneMenu id="paginationTypeSelect"
+                             value="#{Metadaten.paginator.paginationType}">
+                <f:selectItems value="#{Metadaten.paginator.paginationTypes}"
+                               var="type"
+                               itemValue="#{type}"
+                               itemLabel="#{type.label}"/>
+            </p:selectOneMenu>
+            <p:inputText id="paginationValue" value="#{Metadaten.paginationValue}"/>
+            <p:outputLabel for="fictitiousCheckbox" value="#{msgs.paginationFictitious}"/>
+            <p:selectBooleanCheckbox id="fictitiousCheckbox"
+                                     class="input" style="margin-bottom: 0"
+                                     value="#{Metadaten.fictitious}"/>
+            <p:panel id="paginationStyle" style="padding: 0;">
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_seite.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 1 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.seitenzaehlung}"
+                                    alt="#{msgs.seitenzaehlung}"/>
+                    <f:setPropertyActionListener value="1" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_spalte.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 2 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.spaltenzaehlung}"
+                                    alt="#{msgs.spaltenzaehlung}"/>
+                    <f:setPropertyActionListener value="2" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_blatt.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 3 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.blattzaehlung}"
+                                    alt="#{msgs.blattzaehlung}"/>
+                    <f:setPropertyActionListener value="3" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_blatt_rectoverso.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 4 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.blattzaehlungrectoverso}"
+                                    alt="#{msgs.blattzaehlungrectoverso}"/>
+                    <f:setPropertyActionListener value="4" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_seite_rectoverso.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 5 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.seitenzaehlungrectoverso}"
+                                    alt="#{msgs.seitenzaehlungrectoverso}"/>
+                    <f:setPropertyActionListener value="5" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+                <p:commandLink update="paginationStyle">
+                    <p:graphicImage value="/pages/images/buttons/paginierung_doppelseite.svg"
+                                    styleClass="#{Metadaten.paginationPagesProImage == 6 ? 'pagination-active' : 'pagination-inactive'}"
+                                    title="#{msgs.seitenzaehlungdoppelseiten}"
+                                    alt="#{msgs.seitenzaehlungdoppelseiten}"/>
+                    <f:setPropertyActionListener value="6" target="#{Metadaten.paginationPagesProImage}"/>
+                </p:commandLink>
+            </p:panel>
+            <p:selectOneMenu id="paginationScopeSelect" value="#{Metadaten.paginator.paginationScope}">
+                <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
+                               itemValue="#{scope}" itemLabel="#{scope.label}"/>
+            </p:selectOneMenu>
+            <p:commandLink id="createPaginationButton"
+                           action="#{Metadaten.createPagination}"
+                           value="#{msgs.paginierungEinlesen}"
+                           update="metadataEditor"
+                           immediate="true"/>
+            <p:commandButton id="okButton" value="OK"
+                             action="#{Metadaten.setShowPagination(false)}"
+                             update="structureTreeForm"/>
+        </p:panelGrid>
     </p:panel>
-    <p:selectOneMenu id="paginationScopeSelect" value="#{Metadaten.paginator.paginationScope}">
-        <f:selectItems value="#{Metadaten.paginator.paginationScopes}" var="scope"
-                       itemValue="#{scope}" itemLabel="#{scope.label}"/>
-    </p:selectOneMenu>
-    <p:commandLink id="createPaginationButton"
-                   action="#{Metadaten.createPagination}"
-                   value="#{msgs.paginierungEinlesen}"
-                   update="metadataEditor"
-                   immediate="true"/>
-    <p:commandButton id="okButton" value="OK"
-                     action="#{Metadaten.setShowPagination(false)}"
-                     update="structureTreeForm"/>
-    </p:panelGrid>
 </ui:composition>
