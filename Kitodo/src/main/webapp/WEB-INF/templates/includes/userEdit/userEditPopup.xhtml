@@ -21,7 +21,7 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="addUserGroupDialog"
-                      header="#{msgs.benutzergruppenHinzufuegen}"
+                      header="#{msgs.userGroupsAdd}"
                       width="700px"
                       modal="true"
                       dynamic="true">
@@ -32,7 +32,7 @@
                                  paginator="true"
                                  rows="#{LoginForm.myBenutzer.tableSize}"
                                  paginatorPosition="bottom">
-                        <p:column headerText="#{msgs.benutzergruppe}">
+                        <p:column headerText="#{msgs.userGroup}">
                             <h:outputText value="#{item.title}"/>
                         </p:column>
                         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
