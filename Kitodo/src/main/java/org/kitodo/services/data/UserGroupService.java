@@ -113,6 +113,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      *            start point for get results
      * @param size
      *            amount of requested results
+     * @param filters
+     *            filter for requestes results
      * @return list of UserGroupDTO objects
      */
     @Override
@@ -270,8 +272,10 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
         userGroupDTO.setTitle(userGroupJSONObject.getString(UserGroupTypeField.TITLE.getName()));
-        userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
-        userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
+        userGroupDTO
+                .setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
+        userGroupDTO.setAuthorizationsSize(
+            getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
         if (!related) {
             convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
@@ -281,10 +285,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return userGroupDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
-            throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
         userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getName(),
-                serviceManager.getUserService()));
+            serviceManager.getUserService()));
     }
 
     private void addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
@@ -292,8 +295,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(AuthorityTypeField.TITLE.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
-                    jsonObject, UserGroupTypeField.AUTHORITIES.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserGroupTypeField.AUTHORITIES.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
@@ -312,8 +315,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             List<String> subKeys = new ArrayList<>();
             subKeys.add(UserTypeField.NAME.getName());
             subKeys.add(UserTypeField.SURNAME.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
-                    jsonObject, UserGroupTypeField.USERS.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserGroupTypeField.USERS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());
@@ -345,8 +348,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Get all active user groups visible for current user - user assigned to projects
-     * with certain clients.
+     * Get all active user groups visible for current user - user assigned to
+     * projects with certain clients.
      *
      * @return list of user groups
      */
@@ -361,9 +364,12 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Get ids of all user groups which hold users which are assigned to projects of the given clients.
-     *
-     * @return list of user ids
+     * Get ids of all user groups which hold users which are assigned to projects of
+     * the given clients.
+     * 
+     * @param clientIdList
+     *            The list of client ids.
+     * @return The list of user ids.
      */
     public List<Integer> getAllUserGroupIdsByClientIds(List<Integer> clientIdList) {
         List<UserGroup> users = getAllUserGroupsByClientIds(clientIdList);

@@ -875,8 +875,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Get ids of all active users which are assigned to project of the given clients.
-     *
+     * Get ids of all active users which are assigned to project of the given
+     * clients.
+     * 
+     * @param clientIdList
+     *            The list of client ids.
      * @return list of user ids
      */
     public List<Integer> getAllActiveUserIdsByClientIds(List<Integer> clientIdList) {
@@ -890,6 +893,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
 
     /**
      * Get all active users which are assigned to project of the given clients.
+     * 
+     * @param clientIdList
+     *            The list of client ids.
      *
      * @return list of users
      */
