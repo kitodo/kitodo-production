@@ -152,10 +152,11 @@
                         <h:outputText value="#{item.title}"/>
                     </p:column>
                     <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
-                        <p:commandLink id="delete"
+                        <p:commandLink id="deleteFromUserGroup"
                                        rendered="#{isEditMode || isCreateMode}"
                                        action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                        title="#{msgs.ausGruppeLoeschen}"
+                                       immediate="true"
                                        oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                        update="@form">
                             <i class="fa fa-trash-o fa-lg"/>
@@ -166,6 +167,33 @@
                 <p:commandButton onclick="PF('addUserGroupDialog').show()"
                                  id="addUserGroupButton"
                                  value="#{msgs.userGroupsAdd}"
+                                 icon="fa fa-plus-circle fa-lg"
+                                 immediate="true"
+                                 rendered="#{isEditMode || isCreateMode}"
+                                 class="button-filled-green">
+                </p:commandButton>
+            </p:tab>
+            <!-- projects -->
+            <p:tab id="projectTab" title="#{msgs.projectList}">
+                <p:dataTable id="projectDatatable" var="item" value="#{BenutzerverwaltungForm.userObject.projects}">
+                    <p:column headerText="#{msgs.projectList}">
+                        <h:outputText value="#{item.title}"/>
+                    </p:column>
+                    <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+                        <p:commandLink id="deleteFromProject"
+                                       action="#{BenutzerverwaltungForm.deleteFromProject}"
+                                       title="#{msgs.deleteFromProject}"
+                                       immediate="true"
+                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                       update="@form">
+                            <i class="fa fa-trash-o fa-lg"/>
+                            <f:param name="ID" value="#{item.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton onclick="PF('addProjectDialog').show()"
+                                 id="addProjectButton"
+                                 value="#{msgs.addProjects}"
                                  icon="fa fa-plus-circle fa-lg"
                                  immediate="true"
                                  rendered="#{isEditMode || isCreateMode}"
@@ -195,5 +223,6 @@
     <!-- add user groups dialog -->
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
     </ui:define>
 </ui:composition>
