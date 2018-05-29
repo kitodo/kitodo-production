@@ -17,10 +17,6 @@ package org.goobi.production.constants;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class FileNames {
-    /**
-     * Production main configuration file name.
-     */
-    public static final String CONFIG_FILE = "kitodo_config.properties";
 
     /**
      * Configuration file that lists the digital collections available for the
