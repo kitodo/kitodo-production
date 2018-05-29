@@ -73,8 +73,7 @@ public class SessionService {
                 user = (SecurityUserDetails) principal;
             }
             if (user != null) {
-                List<SessionInformation> activeSessionInformation = new ArrayList<>();
-                activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
+                List<SessionInformation> activeSessionInformation = new ArrayList<>(sessionRegistry.getAllSessions(principal, false));
 
                 for (SessionInformation sessionInformation : activeSessionInformation) {
                     SecuritySession securitySession = new SecuritySession();
