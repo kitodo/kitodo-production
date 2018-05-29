@@ -18,22 +18,23 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.dto.UserDTO;
+import org.kitodo.dto.DocketDTO;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
-import org.kitodo.services.data.UserService;
+import org.kitodo.services.data.DocketService;
 import org.primefaces.model.SortOrder;
 
 public class LazyDTOModelIT {
 
     private static final ServiceManager serviceManager = new ServiceManager();
-    private static UserService userService = serviceManager.getUserService();
+    private static DocketService docketService = serviceManager.getDocketService();
     private static LazyDTOModel lazyDTOModel = null;
 
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertUserGroupsFull();
-        lazyDTOModel = new LazyDTOModel(userService);
+        MockDatabase.insertDockets();
+        lazyDTOModel = new LazyDTOModel(docketService);
     }
 
     @AfterClass
@@ -44,16 +45,16 @@ public class LazyDTOModelIT {
 
     @Test
     public void shouldGetRowData() throws Exception {
-        List users = userService.findAll();
-        UserDTO firstUser = (UserDTO) users.get(0);
-        UserDTO lazyUser = (UserDTO) lazyDTOModel.getRowData(String.valueOf(firstUser.getId()));
-        Assert.assertEquals(firstUser.getLogin(), lazyUser.getLogin());
+        List dockets = docketService.findAll();
+        DocketDTO firstDocket = (DocketDTO) dockets.get(0);
+        DocketDTO lazyDocket = (DocketDTO) lazyDTOModel.getRowData(String.valueOf(firstDocket.getId()));
+        Assert.assertEquals(firstDocket.getTitle(), lazyDocket.getTitle());
     }
 
     @Test
     public void shouldLoad() {
-        List users = lazyDTOModel.load(0, 2, "login", SortOrder.ASCENDING, null);
-        UserDTO user = (UserDTO) users.get(0);
-        Assert.assertEquals("dora", user.getLogin());
+        List dockets = lazyDTOModel.load(0, 2, "title", SortOrder.ASCENDING, null);
+        DocketDTO docket = (DocketDTO) dockets.get(0);
+        Assert.assertEquals("default", docket.getTitle());
     }
 }
