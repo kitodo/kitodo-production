@@ -40,13 +40,13 @@ public class ConfigDisplayRulesTest {
     public void shouldGetElementTypeByName() {
         DisplayType displayType = configDisplayRules.getElementTypeByName("DigiNews", "edit", "NotePreImport");
 
-        assertEquals("Process definition was not loaded!", DisplayType.select1, displayType);
+        assertEquals("Process definition was not loaded!", DisplayType.SELECT1, displayType);
     }
 
     @Test
     public void shouldGetItemsByNameAndType() {
         List<Item> items = configDisplayRules.getItemsByNameAndType("DigiNews", "edit", "NotePreImport",
-            DisplayType.select1);
+            DisplayType.SELECT1);
 
         assertEquals("Process definition was not loaded!", 2, items.size());
     }
