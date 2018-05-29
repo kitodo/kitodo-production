@@ -85,21 +85,19 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * No filter.
-     *
-     * @return page or empty String
+     * Get all ldap groups with no filter.
      */
-    public String filterKein() {
+    @SuppressWarnings("unchecked")
+    private void filterKein() {
         List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().getAll();
         this.page = new Page(0, ldapGroups);
-        return "/pages/LdapGruppenAlle";
     }
 
     /**
-     * Method being used as viewAction for ldapgroup edit form.
+     * Method being used as viewAction for ldap group edit form.
      *
      * @param id
-     *            ID of the ldapgroup to load
+     *            ID of the ldap group to load
      */
     public void loadLdapGroup(int id) {
         try {

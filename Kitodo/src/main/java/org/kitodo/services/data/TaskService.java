@@ -232,7 +232,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         User currentProcessingUser = task.getProcessingUser();
 
         if (Objects.isNull(user) && Objects.isNull(currentProcessingUser)) {
-            // do nothing - there is not new nor old user
+            logger.info("do nothing - there is not new nor old user");
         } else if (Objects.isNull(user)) {
             currentProcessingUser.getProcessingTasks().remove(task);
             task.setProcessingUser(null);
@@ -240,7 +240,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             user.getProcessingTasks().add(task);
             task.setProcessingUser(user);
         } else if (Objects.equals(currentProcessingUser.getId(), user.getId())) {
-            // do nothing - both are the same
+            logger.info("do nothing - both are the same");
         } else {
             currentProcessingUser.getProcessingTasks().remove(task);
             user.getProcessingTasks().add(task);

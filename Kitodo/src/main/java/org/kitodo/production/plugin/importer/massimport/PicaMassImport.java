@@ -621,7 +621,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         if (author != null && !author.equals("")) {
             /* author */
             if (author.length() > 4) {
-                atsTsl.append(author.substring(0, 4));
+                atsTsl.append(author, 0, 4);
             } else {
                 atsTsl.append(author);
                 /* titel */

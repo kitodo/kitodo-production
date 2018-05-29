@@ -77,6 +77,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List load(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         if (indexRunning()) {
             try {

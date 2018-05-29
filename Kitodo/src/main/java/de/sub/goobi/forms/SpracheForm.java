@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 @SessionScoped
 public class SpracheForm implements Serializable {
 
-    public static final String SESSION_LOCALE_FIELD_ID = "lang";
+    private static final String SESSION_LOCALE_FIELD_ID = "lang";
     private static final long serialVersionUID = -8766724454080390450L;
     private static final Logger logger = LogManager.getLogger(SpracheForm.class);
 
@@ -111,7 +111,7 @@ public class SpracheForm implements Serializable {
                 translation.put("displayLanguageSelf", supportedLocale.getDisplayLanguage(supportedLocale));
                 translation.put("displayLanguageTranslated",
                         supportedLocale.getDisplayLanguage(currentDisplayLanguage));
-                translation.put("selected", Boolean.valueOf(supportedLocale.equals(currentDisplayLanguage)));
+                translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
                 result.add(translation);
             }
         }

@@ -30,7 +30,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 public class SessionService {
 
     private static SessionService instance = null;
-    private SessionRegistry sessionRegistry = null;
+    private SessionRegistry sessionRegistry;
     private static final Logger logger = LogManager.getLogger(SessionService.class);
 
     private SessionService() {
