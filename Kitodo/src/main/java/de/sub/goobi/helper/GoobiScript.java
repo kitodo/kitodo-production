@@ -211,7 +211,7 @@ public class GoobiScript {
                     }
                     Helper.setMeldung("Content deleted for " + title);
                 } catch (IOException | RuntimeException e) {
-                    Helper.setErrorMessage("Can not delete content for " + title, logger, e);
+                    Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title}, logger, e);
                 }
             }
             if (!contentOnly) {
@@ -220,7 +220,8 @@ public class GoobiScript {
                     serviceManager.getProcessService().remove(process);
                     Helper.setMeldung("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
-                    Helper.setErrorMessage("could not delete process " + title, logger, e);
+                    Helper.setErrorMessage("errorDeleting",
+                            new Object[] {Helper.getTranslation("prozess") + " " + title}, logger, e);
                 }
             }
         }
@@ -287,7 +288,7 @@ public class GoobiScript {
                 }
             }
         } catch (IOException e) {
-            Helper.setErrorMessage(e.toString(), logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

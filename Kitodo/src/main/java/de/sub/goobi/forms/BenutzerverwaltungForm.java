@@ -62,7 +62,8 @@ public class BenutzerverwaltungForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;
-    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
+    private static final String ERROR_DATABASE_READING = "errorDatabaseReading";
+    private static final String ERROR_SAVING = "errorSaving";
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
@@ -137,7 +138,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("Error, could not save", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer")}, logger, e);
             return null;
         }
     }
@@ -192,7 +193,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
-            Helper.setErrorMessage("Error, could not save", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer")}, logger, e);
             return null;
         }
         return filterAll();
@@ -232,7 +233,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
             return null;
         }
@@ -250,7 +251,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
             return null;
         }
@@ -273,7 +274,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getProjects().add(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
             return null;
         }
@@ -321,7 +322,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             try {
                 this.userObject.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
             } catch (DAOException e) {
-                Helper.setErrorMessage("Error on writing to database", logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapGroup")}, logger, e);
             }
         }
     }

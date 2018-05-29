@@ -83,6 +83,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final String ERROR_LOADING = "errorLoadingOne";
+    private static final String ERROR_SAVING = "errorSaving";
     private static final String WORK_TASK = "arbeitsschritt";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
@@ -222,7 +223,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             this.serviceManager.getProcessService().save(task.getProcess());
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("prozess") }, logger, e);
         }
     }
 
@@ -269,7 +270,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.mySchritt));
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
         return taskListPath;
     }
@@ -311,7 +312,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowControllerService().reportProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
@@ -339,7 +340,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setMySchritt(serviceManager.getWorkflowControllerService().solveProblem(this.mySchritt));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
         }
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
@@ -490,7 +491,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             loadTaskByParameter();
         } catch (DAOException | NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
         }
         return this.mySchritt;
     }
@@ -666,7 +667,7 @@ public class AktuelleSchritteForm extends BasisForm {
             export.startExport(this.mySchritt.getProcess());
         } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                 | IOException | ExportFileException | RuntimeException e) {
-            Helper.setErrorMessage("Error on export", logger, e);
+            Helper.setErrorMessage("exportError", new Object[] {this.mySchritt.getProcess().getTitle()}, logger, e);
         }
     }
 
@@ -733,7 +734,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
             } catch (DataException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {"prozess"}, logger, e);
             }
         }
     }
