@@ -29,12 +29,16 @@ import org.junit.Test;
 
 public class MetsKitodoWriterTest {
 
-    private MetsKitodoWriter metsKitodoWriter = new MetsKitodoWriter();
+    private static MetsKitodoWriter metsKitodoWriter;
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
+
+
     @BeforeClass
-    public static void setUp() throws IOException {
+    public static void setUp() throws IOException, JAXBException {
+        
+        metsKitodoWriter = new MetsKitodoWriter();
 
         String manifest =
             "Manifest-Version: 1.0\n" +
@@ -67,7 +71,8 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
-        metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
+        metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
+        metsKitodoWriter.writeSerializedToFile(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
@@ -89,7 +94,7 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmetaold.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
-        metsKitodoWriter.write(metsKitodoWrapper.getMets(), xmlTestFile);
+        metsKitodoWriter.writeSerializedToFile(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 

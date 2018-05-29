@@ -21,10 +21,15 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
+import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
+import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
+import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.StructLinkType;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a
@@ -46,7 +51,8 @@ public class MetsKitodoWrapper {
 
     /**
      * Constructor which creates a Mets object with corresponding object factory and
-     * also inserts the basic mets elements (FileSec, StructLink, MetsHdr).
+     * also inserts the basic mets elements (FileSec with local file group, StructLink, MetsHdr, physical
+     * and logical StructMap).
      */
     public MetsKitodoWrapper() throws DatatypeConfigurationException, IOException {
         this.mets = createBasicMetsElements(objectFactory.createMets());
@@ -55,12 +61,21 @@ public class MetsKitodoWrapper {
     private Mets createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
+            MetsType.FileSec.FileGrp fileGroup = objectFactory.createMetsTypeFileSecFileGrpLocal();
+            mets.getFileSec().getFileGrp().add(fileGroup);
         }
         if (Objects.isNull(mets.getStructLink())) {
             mets.setStructLink(objectFactory.createMetsTypeStructLink());
         }
         if (Objects.isNull(mets.getMetsHdr())) {
             mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
+        }
+        if (mets.getStructMap().isEmpty()) {
+            StructMapType logicalStructMapType = objectFactory.createLogicalStructMapType();
+            mets.getStructMap().add(logicalStructMapType);
+
+            StructMapType physicalStructMapType = objectFactory.createPhysicalStructMapType();
+            mets.getStructMap().add(physicalStructMapType);
         }
         return mets;
     }
@@ -72,7 +87,8 @@ public class MetsKitodoWrapper {
      * @param xmlFile
      *            The xml file in mets-kitodo format as URI.
      * @param xsltFile
-     *            The URI to the xsl file for transformation of old format goobi metadata files.
+     *            The URI to the xsl file for transformation of old format goobi
+     *            metadata files.
      */
     public MetsKitodoWrapper(URI xmlFile, URI xsltFile)
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
@@ -114,7 +130,7 @@ public class MetsKitodoWrapper {
         if (this.mets.getDmdSec().size() > index) {
             List<Object> xmlData = getXmlDataByMdSecIndex(index);
             try {
-                return MetsKitodoHandler.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
+                return MetsKitodoMdSecHandler.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
             } catch (NoSuchElementException e) {
                 throw new NoSuchElementException(
                         "MdSec element with index: " + index + " does not have kitodo metadata");
@@ -130,8 +146,8 @@ public class MetsKitodoWrapper {
      *            The index as int.
      * @return The KitodoType object.
      */
-    public List<Object> getXmlDataByMdSecIndex(int index) {
-        return MetsKitodoHandler.getXmlDataOfMetsByMdSecIndex(this.mets, index);
+    private List<Object> getXmlDataByMdSecIndex(int index) {
+        return MetsKitodoMdSecHandler.getXmlDataOfMetsByMdSecIndex(this.mets, index);
     }
 
     /**
@@ -150,5 +166,36 @@ public class MetsKitodoWrapper {
             index++;
         }
         throw new NoSuchElementException("MdSec element with id: " + id + " was not found");
+    }
+
+    /**
+     * Inserts MediaFile objects into fileSec of mets document and creates
+     * corresponding physical structMap.
+     * 
+     * @param files
+     *            The list of MediaFile objects.
+     */
+    public void insertMediaFiles(List<MediaFile> files) {
+        MetsKitodoFileSecHandler.insertMediaFilesToLocalFileGroupOfMets(this.mets, files);
+        //TODO implement logic to check if pagination is set to automatic or not
+        MetsKitodoStructMapHandler.fillPhysicalStructMapByMetsFileSec(mets);
+    }
+
+    /**
+     * Returns the physical StructMap of mets document.
+     * 
+     * @return The StructMapType object.
+     */
+    public StructMapType getPhysicalStructMap() {
+        return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL");
+    }
+
+    /**
+     * Returns the logical StructMap of mets document.
+     * 
+     * @return The StructMapType object.
+     */
+    public StructMapType getLogicalStructMap() {
+        return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL");
     }
 }

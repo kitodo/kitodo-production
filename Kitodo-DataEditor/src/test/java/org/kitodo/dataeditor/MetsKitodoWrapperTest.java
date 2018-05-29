@@ -13,9 +13,13 @@ package org.kitodo.dataeditor;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.xml.bind.JAXBException;
@@ -29,6 +33,9 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.dataeditor.enums.FileLocationType;
+import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.MetadataGroupType;
@@ -179,6 +186,36 @@ public class MetsKitodoWrapperTest {
             metadataType.getName());
         Assert.assertEquals("Reading value out of kitodo metadata was not correct", "[Seite 157r-181v]",
             metadataType.getValue());
+    }
+
+    @Test
+    public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException {
+        Path path = Paths.get("images");
+        int numberOfFiles = 5;
+        List<MediaFile> mediaFiles = new ArrayList<>();
+        for (int i = 1; i <= numberOfFiles; i++) {
+            mediaFiles.add(
+                new MediaFile(Paths.get(path + "/0000" + i + ".tif").toUri(), FileLocationType.URL, "image/tiff"));
+        }
+
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        metsKitodoWrapper.insertMediaFiles(mediaFiles);
+
+        Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
+            metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
+        Assert.assertEquals("Wrong number of fils in fileSec", numberOfFiles,
+            metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+
+        DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(1);
+
+        Assert.assertEquals("Wrong order label at second div", "uncounted", divType.getORDERLABEL());
+        Assert.assertEquals("Wrong order at second div", BigInteger.valueOf(2), divType.getORDER());
+        Assert.assertEquals("Wrong type at second div", "page", divType.getTYPE());
+        Assert.assertEquals("Wrong id at second div", "PHYS_0002", divType.getID());
+
+        FileType fileType = (FileType) divType.getFptr().get(0).getFILEID();
+        Assert.assertEquals("Wrong file id at second div", "FILE_0002", fileType.getID());
+
     }
 
     @Rule

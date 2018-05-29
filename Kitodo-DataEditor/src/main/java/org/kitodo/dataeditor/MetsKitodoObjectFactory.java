@@ -15,10 +15,26 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataformat.metskitodo.DivType;
+import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MetsKitodoObjectFactory extends ObjectFactory {
+
+    /**
+     * Creates KitodoType object which version indication of used kitodo format.
+     * 
+     * @return The KitodoType object.
+     */
+    public KitodoType createKitodoType() {
+        KitodoType kitodoType = new KitodoType();
+        // TODO this version value should come from data format module. Think about how
+        // implement this.
+        kitodoType.setVersion("1.0");
+        return kitodoType;
+    }
 
     /**
      * Creates a kitodo data editor specific MetsHdr.Agent object.
@@ -42,9 +58,56 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      */
     public MetsType.MetsHdr createKitodoMetsHeader() throws DatatypeConfigurationException, IOException {
         MetsType.MetsHdr metsTypeMetsHdr = super.createMetsTypeMetsHdr();
-        metsTypeMetsHdr.setCREATEDATE(XmlUtils.getXmlTime());
+        metsTypeMetsHdr.setCREATEDATE(JaxbXmlUtils.getXmlTime());
         MetsType.MetsHdr.Agent metsAgent = createKitodoMetsAgent();
         metsTypeMetsHdr.getAgent().add(metsAgent);
         return metsTypeMetsHdr;
+    }
+
+    /**
+     * Creates a StructMap object of type "PHYSICAL".
+     * 
+     * @return The StructMap object.
+     */
+    public StructMapType createPhysicalStructMapType() {
+        return createStructMapTypeOfType("PHYSICAL");
+    }
+
+    /**
+     * Creates a StructMap object of type "LOGICAL".
+     *
+     * @return The StructMap object.
+     */
+    public StructMapType createLogicalStructMapType() {
+        return createStructMapTypeOfType("LOGICAL");
+    }
+
+    private StructMapType createStructMapTypeOfType(String type) {
+        StructMapType structMapType = super.createStructMapType();
+        structMapType.setTYPE(type);
+        return structMapType;
+    }
+
+    /**
+     * Creates a Mets FileGrp object where the attribute USE is set to LOCAL.
+     * 
+     * @return The FileGrp object.
+     */
+    public MetsType.FileSec.FileGrp createMetsTypeFileSecFileGrpLocal() {
+        MetsType.FileSec.FileGrp metsTypeFileSecFileGrp = super.createMetsTypeFileSecFileGrp();
+        metsTypeFileSecFileGrp.setUSE("LOCAL");
+        return metsTypeFileSecFileGrp;
+    }
+
+    /**
+     * Creates a DivType object for using as root div in mets physical sruct map.
+     * 
+     * @return The DivType object.
+     */
+    public DivType createRootDivTypeForPhysicalStructMap() {
+        DivType divType = super.createDivType();
+        divType.setID("PHYS_0000");
+        divType.setTYPE("physSequence");
+        return divType;
     }
 }
