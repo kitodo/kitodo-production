@@ -28,7 +28,7 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
+            <h:outputText value="#{msgs.userGroupEdit} (#{BenutzergruppenForm.userGroup.title})"
                           rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
             <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
                           rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
@@ -185,7 +185,7 @@
         <li>
             <a href="">
                 <ui:fragment rendered="#{not empty BenutzergruppenForm.userGroup.title}">
-                    #{msgs.benutzergruppeBearbeiten}
+                    #{msgs.userGroupEdit}
                 </ui:fragment>
                 <ui:fragment rendered="#{empty BenutzergruppenForm.userGroup.title}">
                     #{msgs.newUserGroup}

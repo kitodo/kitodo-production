@@ -35,9 +35,9 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.benutzerBearbeiten} (#{BenutzerverwaltungForm.userObject.fullName})"
+            <h:outputText value="#{msgs.userEdit} (#{BenutzerverwaltungForm.userObject.fullName})"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.neuenBenutzerAnlegen}"
+            <h:outputText value="#{msgs.userCreate}"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.userView}"
                           rendered="#{isViewMode}"/>
@@ -146,9 +146,9 @@
                 </p:panelGrid>
             </p:tab>
             <!-- user groups -->
-            <p:tab id="usergroupTab" title="#{msgs.benutzergruppen}">
+            <p:tab id="usergroupTab" title="#{msgs.userGroups}">
                 <p:dataTable id="usergroupDatatable" var="item" value="#{BenutzerverwaltungForm.userObject.userGroups}">
-                    <p:column headerText="#{msgs.benutzergruppe}">
+                    <p:column headerText="#{msgs.userGroup}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
                     <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
@@ -165,7 +165,7 @@
                 </p:dataTable>
                 <p:commandButton onclick="PF('addUserGroupDialog').show()"
                                  id="addUserGroupButton"
-                                 value="#{msgs.benutzergruppenHinzufuegen}"
+                                 value="#{msgs.userGroupsAdd}"
                                  icon="fa fa-plus-circle fa-lg"
                                  immediate="true"
                                  rendered="#{isEditMode || isCreateMode}"
@@ -181,10 +181,10 @@
         <li>
             <a href="">
                 <ui:fragment rendered="#{isEditMode}">
-                    #{msgs.benutzerBearbeiten}
+                    #{msgs.userEdit}
                 </ui:fragment>
                 <ui:fragment rendered="#{isCreateMode}">
-                    #{msgs.neuenBenutzerAnlegen}
+                    #{msgs.userCreate}
                 </ui:fragment>
                 <ui:fragment rendered="#{isViewMode}">
                     #{msgs.userView}

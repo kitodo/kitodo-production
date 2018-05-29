@@ -39,11 +39,11 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
             <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
-            <p:tab title="#{msgs.benutzerverwaltung}"
+            <p:tab title="#{msgs.users}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUsers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.benutzergruppen}"
+            <p:tab title="#{msgs.userGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllUserGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
             </p:tab>
