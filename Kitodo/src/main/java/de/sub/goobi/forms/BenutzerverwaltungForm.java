@@ -217,7 +217,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+                    new Object[]{Helper.getTranslation("userGroup"), userGroupId}, logger, e);
             return null;
         }
         return null;
@@ -387,7 +387,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("benutzergruppen") }, logger,
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroup") }, logger,
                 e);
             return new LinkedList<>();
         }

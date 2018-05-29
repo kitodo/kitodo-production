@@ -1815,7 +1815,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("benutzergruppen") }, logger,
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroups") }, logger,
                 e);
             return new LinkedList<>();
         }
