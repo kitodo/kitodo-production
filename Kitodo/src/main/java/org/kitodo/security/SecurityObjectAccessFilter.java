@@ -32,7 +32,6 @@ import org.springframework.web.filter.GenericFilterBean;
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();
-    private ServiceManager serviceManager = new ServiceManager();
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -64,13 +63,13 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/userEdit")
-                && !securityAccessService.isAdminOrHasAuthorityToViewUser(idInt)) {
+                    && !securityAccessService.isAdminOrHasAuthorityToViewUser(idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/usergroupEdit")
-                && !securityAccessService.isAdminOrHasAuthorityToViewUserGroup(idInt)) {
+                    && !securityAccessService.isAdminOrHasAuthorityToViewUserGroup(idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
