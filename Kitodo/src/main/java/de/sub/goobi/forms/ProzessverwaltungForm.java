@@ -196,7 +196,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } else {
             Helper.setFehlerMeldung("titleEmpty");
         }
-        return reload();
+        reload();
+        return null;
     }
 
     /**
@@ -1033,14 +1034,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Reload.
-     *
-     * @return String
+     * Reload task and process.
      */
-    public String reload() {
+    private void reload() {
         reload(this.task, "arbeitsschritt");
         reload(this.process, PROCESS);
-        return null;
     }
 
     /**
