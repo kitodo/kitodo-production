@@ -11,16 +11,14 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -41,6 +39,7 @@ public class PropertyServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -49,25 +48,20 @@ public class PropertyServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProperties() throws Exception {
-        Long amount = propertyService.count();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
+    public void shouldCountAllProperties() {
+        await().untilAsserted(
+            () -> assertEquals("Properties were not counted correctly!", Long.valueOf(8), propertyService.count()));
     }
 
     @Test
-    public void shouldCountAllPropertiesAccordingToQuery() throws Exception {
+    public void shouldCountAllPropertiesAccordingToQuery() {
         String query = matchQuery("type", "process").operator(Operator.AND).toString();
-        Long amount = propertyService.count(query);
-        assertEquals("Properties were not counted correctly!", Long.valueOf(4), amount);
+        await().untilAsserted(() -> assertEquals("Properties were not counted correctly!", Long.valueOf(4),
+            propertyService.count(query)));
     }
 
     @Test
@@ -77,7 +71,7 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindProcessProperty() throws Exception {
+    public void shouldGetProcessProperty() throws Exception {
         Property processProperty = propertyService.getById(1);
         String actual = processProperty.getTitle();
         String expected = "Process Property";
@@ -89,7 +83,7 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindTemplateProperty() throws Exception {
+    public void shouldGetTemplateProperty() throws Exception {
         Property templateProperty = propertyService.getById(7);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
@@ -101,7 +95,7 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindWorkpieceProperty() throws Exception {
+    public void shouldGetWorkpieceProperty() throws Exception {
         Property workpieceProperty = propertyService.getById(5);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
@@ -114,9 +108,10 @@ public class PropertyServiceIT {
 
     @Test
     public void shouldFindDistinctTitles() throws Exception {
+        await().untilAsserted(() -> assertEquals("Incorrect size of distinct titles for process properties!", 2,
+            propertyService.findProcessPropertiesTitlesDistinct().size()));
+
         List<String> processPropertiesTitlesDistinct = propertyService.findProcessPropertiesTitlesDistinct();
-        int size = processPropertiesTitlesDistinct.size();
-        assertEquals("Incorrect size of distinct titles for process properties!", 2, size);
 
         String title = processPropertiesTitlesDistinct.get(0);
         assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
@@ -126,14 +121,14 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindAllProperties() {
+    public void shouldGetAllProperties() {
         List<Property> properties = propertyService.getAll();
         assertEquals("Not all properties were found in database!", 8, properties.size());
     }
 
     @Test
     public void shouldGetAllPropertiesInGivenRange() throws Exception {
-        List<Property> properties = propertyService.getAll(2,6);
+        List<Property> properties = propertyService.getAll(2, 6);
         assertEquals("Not all properties were found in database!", 6, properties.size());
     }
 
@@ -161,72 +156,67 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        Integer actual = propertyService.findById(1).getId();
+    public void shouldFindById() {
         Integer expected = 1;
-        assertEquals("Property was not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Property was not found in index!", expected, propertyService.findById(1).getId()));
     }
 
     @Test
-    public void shouldFindByValue() throws Exception {
-        List<JsonObject> properties = propertyService.findByValue("second", null, true);
-        Integer actual = properties.size();
-        Integer expected = 3;
-        assertEquals("Properties were not found in index!", expected, actual);
+    public void shouldFindByValue() {
+        await().untilAsserted(() -> assertEquals("Properties were not found in index!", 3,
+            propertyService.findByValue("second", null, true).size()));
 
-        properties = propertyService.findByValue("second value", null, true);
-        actual = properties.size();
-        expected = 1;
-        assertEquals("Property was not found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("Property was not found in index!", 1,
+            propertyService.findByValue("second value", null, true).size()));
     }
 
     @Test
-    public void shouldFindByValueForExactType() throws Exception {
-        List<JsonObject> properties = propertyService.findByValue("second", "process", true);
-        Integer actual = properties.size();
-        Integer expected = 1;
-        assertEquals("Property was not found in index!", expected, actual);
-
-        properties = propertyService.findByValue("third", "workpiece", false);
-        actual = properties.size();
-        expected = 2;
-        assertEquals("Properties were not found in index!", expected, actual);
-
-        properties = propertyService.findByValue("third", "workpiece", true);
-        actual = properties.size();
-        expected = 0;
-        assertEquals("Property was found in index!", expected, actual);
+    public void shouldFindManyByValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Properties were not found in index!", 2,
+            propertyService.findByValue("third", "workpiece", false).size()));
     }
 
     @Test
-    public void shouldFindByTitleAndValue() throws Exception {
-        List<JsonObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true);
-        Integer actual = properties.size();
-        Integer expected = 1;
-        assertEquals("Property was not found in index!", expected, actual);
-
-        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", null, true);
-        actual = properties.size();
-        expected = 0;
-        assertEquals("Property was found in index!", expected, actual);
+    public void shouldFindOneByValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Property was not found in index!", 1,
+            propertyService.findByValue("second", "process", true).size()));
     }
 
     @Test
-    public void shouldFindByTitleAndValueForExactType() throws Exception {
-        List<JsonObject> properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true);
-        Integer actual = properties.size();
-        Integer expected = 1;
-        assertEquals("Property was not found in index!", expected, actual);
+    public void shouldNotFindByValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Property was found in index!", 0,
+            propertyService.findByValue("third", "workpiece", true).size()));
+    }
 
-        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "third", "workpiece", false);
-        actual = properties.size();
-        expected = 2;
-        assertEquals("Properties were not found in index!", expected, actual);
+    @Test
+    public void shouldFindByTitleAndValue() {
+        await().untilAsserted(() -> assertEquals("Property was not found in index!", 1,
+            propertyService.findByTitleAndValue("Korrektur notwendig", "second", null, true).size()));
+    }
 
-        properties = propertyService.findByTitleAndValue("Korrektur notwendig", "second", "workpiece", true);
-        actual = properties.size();
-        expected = 0;
-        assertEquals("Property was found in index!", expected, actual);
+    @Test
+    public void shouldNotFindByTitleAndValue() {
+        await().untilAsserted(() -> assertEquals("Property was found in index!", 0,
+            propertyService.findByTitleAndValue("Korrektur notwendig", "third", null, true).size()));
+    }
+
+    @Test
+    public void shouldFindManyByTitleAndValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Properties were not found in index!", 2,
+            propertyService.findByTitleAndValue("Korrektur notwendig", "third", "workpiece", false).size()));
+    }
+
+    @Test
+    public void shouldFindOneByTitleAndValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Property was not found in index!", 1,
+            propertyService.findByTitleAndValue("Korrektur notwendig", "second", "process", true).size()));
+    }
+
+    @Test
+    public void shouldNotFindByTitleAndValueForExactType() {
+        await().untilAsserted(() -> assertEquals("Property was found in index!", 0,
+            propertyService.findByTitleAndValue("Korrektur notwendig", "second", "workpiece", true).size()));
     }
 
     @Test

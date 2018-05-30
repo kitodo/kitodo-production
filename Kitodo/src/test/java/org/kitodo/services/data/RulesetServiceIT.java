@@ -11,17 +11,15 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,6 +29,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -44,6 +43,7 @@ public class RulesetServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRulesets();
+        MockDatabase.setUpAwaitility();
 
         FileLoader.createRulesetFile();
     }
@@ -56,25 +56,20 @@ public class RulesetServiceIT {
         FileLoader.deleteRulesetFile();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllRulesets() throws Exception {
-        Long amount = rulesetService.count();
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
+    public void shouldCountAllRulesets() {
+        await().untilAsserted(
+            () -> assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), rulesetService.count()));
     }
 
     @Test
-    public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
+    public void shouldCountAllRulesetsAccordingToQuery() {
         String query = matchQuery("title", "SLUBDD").operator(Operator.AND).toString();
-        Long amount = rulesetService.count(query);
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), amount);
+        await().untilAsserted(
+            () -> assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), rulesetService.count(query)));
     }
 
     @Test
@@ -103,64 +98,61 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        String actual = rulesetService.findById(1).getTitle();
+    public void shouldFindById() {
         String expected = "SLUBDD";
-        assertEquals("Ruleset was not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Ruleset was not found in index!", expected, rulesetService.findById(1).getTitle()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> rulesets = rulesetService.findByTitle("SLUBDD", true);
-        Integer actual = rulesets.size();
-        Integer expected = 1;
-        assertEquals("Ruleset was not found in index!", expected, actual);
+    public void shouldFindByTitle() {
+        await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", 1,
+            rulesetService.findByTitle("SLUBDD", true).size()));
     }
 
     @Test
-    public void shouldFindByFile() throws Exception {
-        JsonObject ruleset = rulesetService.findByFile("ruleset_test.xml");
-        JsonObject jsonObject = ruleset.getJsonObject("_source");
-        String actual = jsonObject.getString("file");
+    public void shouldFindByFile() {
         String expected = "ruleset_test.xml";
-        assertEquals("Ruleset was not found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", expected, rulesetService
+                .findByFile("ruleset_test.xml").getJsonObject("_source").getString(RulesetTypeField.FILE.getName())));
     }
 
     @Test
-    public void shouldFindByTitleAndFile() throws Exception {
-        JsonObject ruleset = rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml");
-        Integer actual = rulesetService.getIdFromJSONObject(ruleset);
+    public void shouldFindByTitleAndFile() {
         Integer expected = 2;
-        assertEquals("Ruleset was not found in index!", expected, actual);
-
-        ruleset = rulesetService.findByTitleAndFile("SLUBDD", "none");
-        actual = rulesetService.getIdFromJSONObject(ruleset);
-        expected = 0;
-        assertEquals("Ruleset was found in index!", expected, actual);
+        await().untilAsserted(
+                () -> assertEquals("Ruleset was not found in index!", expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml"))));
     }
 
     @Test
-    public void shouldFindByTitleOrFile() throws Exception {
-        List<JsonObject> ruleset = rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml");
-        Integer actual = ruleset.size();
-        Integer expected = 2;
-        assertEquals("Rulesets were not found in index!", expected, actual);
-
-        ruleset = rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml");
-        actual = ruleset.size();
-        expected = 1;
-        assertEquals("Ruleset was not found in index!", expected, actual);
-
-        ruleset = rulesetService.findByTitleOrFile("none", "none");
-        actual = ruleset.size();
-        expected = 0;
-        assertEquals("Some rulesets were found in index!", expected, actual);
+    public void shouldNotFindByTitleAndFile() {
+        Integer expected = 0;
+        await().untilAsserted(
+                () -> assertEquals("Ruleset was found in index!", expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBDD", "none"))));
     }
 
     @Test
-    public void shouldFindAllRulesetsDocuments() throws Exception {
-        List<JsonObject> rulesets = rulesetService.findAllDocuments();
-        assertEquals("Not all rulesets were found in index!", 2, rulesets.size());
+    public void shouldFindManyByTitleOrFile() {
+        await().untilAsserted(
+                () -> assertEquals("Rulesets were not found in index!", 2, rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml").size()));
+    }
+
+    @Test
+    public void shouldFindOneByTitleOrFile() {
+        await().untilAsserted(
+                () -> assertEquals("Ruleset was not found in index!", 1, rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml").size()));
+    }
+
+    @Test
+    public void shouldNotFindByTitleOrFile() {
+        await().untilAsserted(
+                () -> assertEquals("Some rulesets were found in index!", 0, rulesetService.findByTitleOrFile("none", "none").size()));
+    }
+
+    @Test
+    public void shouldFindAllRulesetsDocuments() {
+        await().untilAsserted(
+                () -> assertEquals("Not all rulesets were found in index!", 2, rulesetService.findAllDocuments().size()));
     }
 
     @Test

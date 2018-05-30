@@ -11,17 +11,15 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,6 +27,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -42,6 +41,7 @@ public class DocketServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertDockets();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -50,25 +50,20 @@ public class DocketServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllDockets() throws Exception {
-        Long amount = docketService.count();
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(2), amount);
+    public void shouldCountAllDockets() {
+        await().untilAsserted(
+            () -> assertEquals("Dockets were not counted correctly!", Long.valueOf(2), docketService.count()));
     }
 
     @Test
-    public void shouldCountAllDocketsAccordingToQuery() throws Exception {
+    public void shouldCountAllDocketsAccordingToQuery() {
         String query = matchQuery("title", "default").operator(Operator.AND).toString();
-        Long amount = docketService.count(query);
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(1), amount);
+        await().untilAsserted(
+            () -> assertEquals("Dockets were not counted correctly!", Long.valueOf(1), docketService.count(query)));
     }
 
     @Test
@@ -92,69 +87,66 @@ public class DocketServiceIT {
 
     @Test
     public void shouldGetAllDocketsInGivenRange() throws Exception {
-        List<Docket> dockets = docketService.getAll(1,10);
+        List<Docket> dockets = docketService.getAll(1, 10);
         assertEquals("Not all dockets were found in database!", 1, dockets.size());
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        String actual = docketService.findById(1).getTitle();
+    public void shouldFindById() {
         String expected = "default";
-        assertEquals("Docket was not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Docket was not found in index!", expected, docketService.findById(1).getTitle()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> dockets = docketService.findByTitle("default", true);
-        Integer actual = dockets.size();
-        Integer expected = 1;
-        assertEquals("Docket was not found in index!", expected, actual);
+    public void shouldFindByTitle() {
+        await().untilAsserted(
+            () -> assertEquals("Docket was not found in index!", 1, docketService.findByTitle("default", true).size()));
     }
 
     @Test
-    public void shouldFindByFile() throws Exception {
-        JsonObject docket = docketService.findByFile("docket.xsl");
-        JsonObject jsonObject = docket.getJsonObject("_source");
-        String actual = jsonObject.getString("file");
+    public void shouldFindByFile() {
         String expected = "docket.xsl";
-        assertEquals("Docket was not found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("Docket was not found in index!", expected,
+            docketService.findByFile("docket.xsl").getJsonObject("_source").getString(DocketTypeField.FILE.getName())));
     }
 
     @Test
-    public void shouldFindByTitleAndFile() throws Exception {
-        JsonObject docket = docketService.findByTitleAndFile("default", "docket.xsl");
-        Integer actual = docketService.getIdFromJSONObject(docket);
+    public void shouldFindByTitleAndFile() {
         Integer expected = 1;
-        assertEquals("Docket was not found in index!", expected, actual);
-
-        docket = docketService.findByTitleAndFile("default", "none");
-        actual = docketService.getIdFromJSONObject(docket);
-        expected = 0;
-        assertEquals("Docket was found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("Docket was not found in index!", expected,
+            docketService.getIdFromJSONObject(docketService.findByTitleAndFile("default", "docket.xsl"))));
     }
 
     @Test
-    public void shouldFindByTitleOrFile() throws Exception {
-        List<JsonObject> docket = docketService.findByTitleOrFile("default", "docket.xsl");
-        Integer actual = docket.size();
-        Integer expected = 2;
-        assertEquals("Dockets were not found in index!", expected, actual);
-
-        docket = docketService.findByTitleOrFile("default", "none");
-        actual = docket.size();
-        expected = 1;
-        assertEquals("Docket was not found in index!", expected, actual);
-
-        docket = docketService.findByTitleOrFile("none", "none");
-        actual = docket.size();
-        expected = 0;
-        assertEquals("Some dockets were found in index!", expected, actual);
+    public void shouldNotFindByTitleAndFile() {
+        Integer expected = 0;
+        await().untilAsserted(() -> assertEquals("Docket was found in index!", expected,
+            docketService.getIdFromJSONObject(docketService.findByTitleAndFile("default", "none"))));
     }
 
     @Test
-    public void shouldFindAllDocketsDocuments() throws Exception {
-        List<JsonObject> dockets = docketService.findAllDocuments();
-        assertEquals("Not all dockets were found in index!", 2, dockets.size());
+    public void shouldFindManyByTitleOrFile() {
+        await().untilAsserted(() -> assertEquals("Dockets were not found in index!", 2,
+            docketService.findByTitleOrFile("default", "docket.xsl").size()));
+    }
+
+    @Test
+    public void shouldFindOneByTitleOrFile() {
+        await().untilAsserted(() -> assertEquals("Docket was not found in index!", 1,
+            docketService.findByTitleOrFile("default", "none").size()));
+    }
+
+    @Test
+    public void shouldNotFindByTitleOrFile() {
+        await().untilAsserted(() -> assertEquals("Some dockets were found in index!", 0,
+            docketService.findByTitleOrFile("none", "none").size()));
+    }
+
+    @Test
+    public void shouldFindAllDocketsDocuments() {
+        await().untilAsserted(
+            () -> assertEquals("Not all dockets were found in index!", 2, docketService.findAllDocuments().size()));
     }
 
     @Test

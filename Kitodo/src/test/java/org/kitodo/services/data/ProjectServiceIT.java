@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,11 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +29,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -45,6 +42,7 @@ public class ProjectServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -53,25 +51,20 @@ public class ProjectServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProjects() throws Exception {
-        Long amount = projectService.count();
-        assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
+    public void shouldCountAllProjects() {
+        await().untilAsserted(
+            () -> assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count()));
     }
 
     @Test
-    public void shouldCountAllProjectsAccordingToQuery() throws Exception {
+    public void shouldCountAllProjectsAccordingToQuery() {
         String query = matchQuery("title", "First project").operator(Operator.AND).toString();
-        Long amount = projectService.count(query);
-        assertEquals("Projects were not counted correctly!", Long.valueOf(1), amount);
+        await().untilAsserted(
+            () -> assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query)));
     }
 
     @Test
@@ -81,21 +74,23 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindProject() throws Exception {
-        ProjectDTO project = projectService.findById(1);
-        boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
-        assertTrue("Project was not found in index!", condition);
-        assertTrue("Project was not found in index!", project.isActive());
-        assertEquals("Project was not found in index!", 1, project.getTemplates().size());
+    public void shouldFindById() {
+        await().untilAsserted(() -> assertTrue("Project was not found in index!",
+            projectService.findById(1).getTitle().equals("First project")
+                    && projectService.findById(1).getId().equals(1)));
+        await().untilAsserted(
+            () -> assertTrue("Project was not found in index!", projectService.findById(1).isActive()));
+        await().untilAsserted(
+            () -> assertEquals("Project was not found in index!", 1, projectService.findById(1).getTemplates().size()));
 
-        project = projectService.findById(3);
-        assertFalse("Project was not found in index!", project.isActive());
+        await().untilAsserted(
+            () -> assertFalse("Project was not found in index!", projectService.findById(3).isActive()));
     }
 
     @Test
-    public void shouldFindAllProjects() throws Exception {
-        List<ProjectDTO> projects = projectService.findAll();
-        assertEquals("Not all projects were found in index!", 3, projects.size());
+    public void shouldFindAllProjects() {
+        await().untilAsserted(
+            () -> assertEquals("Not all projects were found in index!", 3, projectService.findAll().size()));
     }
 
     @Test
@@ -146,80 +141,53 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        String actual = projectService.findById(1).getTitle();
-        String expected = "First project";
-        assertEquals("Project was not found in index!", expected, actual);
+    public void shouldFindByTitle() {
+        await().untilAsserted(() -> assertEquals("Project was not found in index!", 1,
+            projectService.findByTitle("First project", true).size()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> projects = projectService.findByTitle("First project", true);
-        Integer actual = projects.size();
+    public void shouldFindByProcessId() {
         Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("Project were not found in index!", expected,
+            projectService.getIdFromJSONObject(projectService.findByProcessId(1))));
     }
 
     @Test
-    public void shouldFindByProcessId() throws Exception {
-        JsonObject project = projectService.findByProcessId(1);
-        Integer actual = projectService.getIdFromJSONObject(project);
-        Integer expected = 1;
-        assertEquals("Project were not found in index!", expected, actual);
-
-        project = projectService.findByProcessId(4);
-        actual = projectService.getIdFromJSONObject(project);
-        expected = 0;
-        assertEquals("Some project was found in index!", expected, actual);
+    public void shouldNotFindByProcessId() {
+        Integer expected = 0;
+        await().untilAsserted(() -> assertEquals("Some project was found in index!", expected,
+            projectService.getIdFromJSONObject(projectService.findByProcessId(4))));
     }
 
     @Test
-    public void shouldFindByProcessTitle() throws Exception {
-        List<JsonObject> projects = projectService.findByProcessTitle("First process");
-        Integer actual = projects.size();
-        Integer expected = 1;
-        assertEquals("Project was not found in index!", expected, actual);
-
-        projects = projectService.findByProcessTitle("DBConnectionTest");
-        actual = projects.size();
-        expected = 0;
-        assertEquals("Projects were found in index!", expected, actual);
+    public void shouldFindByProcessTitle() {
+        await().untilAsserted(() -> assertEquals("Project was not found in index!", 1,
+            projectService.findByProcessTitle("First process").size()));
     }
 
     @Test
-    public void shouldFindByUserId() throws Exception {
-        List<JsonObject> projects = projectService.findByUserId(1);
-        Integer actual = projects.size();
-        Integer expected = 2;
-        assertEquals("Projects were not found in index!", expected, actual);
-
-        projects = projectService.findByUserId(2);
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Projects were not found in index!", expected, actual);
-
-        projects = projectService.findByUserId(3);
-        actual = projects.size();
-        expected = 1;
-        assertEquals("Projects was not found in index!", expected, actual);
+    public void shouldNotFindByProcessTitle() {
+        await().untilAsserted(() -> assertEquals("Projects were found in index!", 0,
+            projectService.findByProcessTitle("DBConnectionTest").size()));
     }
 
     @Test
-    public void shouldFindByUserLogin() throws Exception {
-        List<JsonObject> projects = projectService.findByUserLogin("kowal");
-        Integer actual = projects.size();
-        Integer expected = 2;
-        assertEquals("Projects were not found in index!", expected, actual);
+    public void shouldFindByUserId() {
+        await().untilAsserted(
+            () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserId(1).size()));
 
-        projects = projectService.findByUserLogin("nowak");
-        actual = projects.size();
-        expected = 2;
-        assertEquals("Projects were not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Project was not found in index!", 1, projectService.findByUserId(3).size()));
+    }
 
-        projects = projectService.findByUserLogin("dora");
-        actual = projects.size();
-        expected = 1;
-        assertEquals("Projects was not found in index!", expected, actual);
+    @Test
+    public void shouldFindByUserLogin() {
+        await().untilAsserted(
+            () -> assertEquals("Projects were not found in index!", 2, projectService.findByUserLogin("kowal").size()));
+
+        await().untilAsserted(
+            () -> assertEquals("Project was not found in index!", 1, projectService.findByUserLogin("dora").size()));
     }
 
     @Test
@@ -235,7 +203,6 @@ public class ProjectServiceIT {
         ProjectService projectService = new ServiceManager().getProjectService();
 
         Project initialProject = projectService.getById(1);
-
         Project duplicatedProject = projectService.duplicateProject(1);
 
         assertEquals(

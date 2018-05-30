@@ -11,16 +11,14 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,6 +42,7 @@ public class TaskServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -52,35 +51,30 @@ public class TaskServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllTasks() throws Exception {
-        Long amount = taskService.count();
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(8), amount);
+    public void shouldCountAllTasks() {
+        await().untilAsserted(
+            () -> assertEquals("Tasks were not counted correctly!", Long.valueOf(8), taskService.count()));
     }
 
     @Test
-    public void shouldCountTasksAccordingToQuery() throws Exception {
+    public void shouldCountTasksAccordingToQuery() {
         UserService userService = new ServiceManager().getUserService();
 
-        Long amount = taskService.getAmountOfCurrentTasks(true, true, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(4), amount);
+        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(4),
+            taskService.getAmountOfCurrentTasks(true, true, userService.getById(1))));
 
-        amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
+        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
+            taskService.getAmountOfCurrentTasks(true, false, userService.getById(1))));
 
-        amount = taskService.getAmountOfCurrentTasks(false, true, userService.getById(1));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
+        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
+            taskService.getAmountOfCurrentTasks(false, true, userService.getById(1))));
 
-        amount = taskService.getAmountOfCurrentTasks(true, false, userService.getById(2));
-        assertEquals("Tasks were not counted correctly!", Long.valueOf(2), amount);
+        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
+            taskService.getAmountOfCurrentTasks(true, false, userService.getById(2))));
     }
 
     @Test
@@ -90,16 +84,15 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldFindTask() throws Exception {
-        TaskDTO task = taskService.findById(1);
-        boolean condition = task.getTitle().equals("Testing") && task.getPriority().equals(1);
-        assertTrue("Task was not found in index!", condition);
+    public void shouldFindTask() {
+        await().untilAsserted(() -> assertTrue("Task was not found in index!",
+            taskService.findById(1).getTitle().equals("Testing") && taskService.findById(1).getPriority().equals(1)));
     }
 
     @Test
-    public void shouldFindAllTasks() throws Exception {
-        List<TaskDTO> tasks = taskService.findAll();
-        assertEquals("Not all tasks were found in index!", 8, tasks.size());
+    public void shouldFindAllTasks() {
+        await().untilAsserted(
+            () -> assertEquals("Not all tasks were found in index!", 8, taskService.findAll().size()));
     }
 
     @Test
@@ -117,17 +110,26 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetAllTasksInGivenRange() throws Exception {
-        List<Task> tasks = taskService.getAll(1,3);
+        List<Task> tasks = taskService.getAll(1, 3);
         assertEquals("Not all tasks were found in database!", 3, tasks.size());
     }
 
     @Test
-    public void shouldFindByProcessingStatusAndUser() throws Exception {
-        List<JsonObject> tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null);
-        assertEquals("Not only one task found in database!", 1, tasks.size());
+    public void shouldFindManyByProcessingStatusAndUser() {
+        await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 2,
+                taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
+    }
 
-        tasks = taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null);
-        assertEquals("Not all tasks were found in database!", 2, tasks.size());
+    @Test
+    public void shouldFindOneByProcessingStatusAndUser() {
+        await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 1,
+            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 1, null).size()));
+    }
+
+    @Test
+    public void shouldNotFindByProcessingStatusAndUser() {
+        await().untilAsserted(() -> assertEquals("Some tasks were found in database!", 0,
+            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 3, null).size()));
     }
 
     @Test
@@ -288,10 +290,10 @@ public class TaskServiceIT {
 
         for (int i = 0; i < tasks.size(); i++) {
             if (i < tasks.size() - 1) {
-                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i+1).getOrdering();
+                boolean condition = tasks.get(i).getOrdering() <= tasks.get(i + 1).getOrdering();
                 assertTrue("Ordering of tasks is incorrect!", condition);
             } else {
-                boolean condition = tasks.get(i-1).getOrdering() <= tasks.get(i).getOrdering();
+                boolean condition = tasks.get(i - 1).getOrdering() <= tasks.get(i).getOrdering();
                 assertTrue("Ordering of tasks is incorrect!", condition);
             }
         }
@@ -330,7 +332,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetTasksWithProcessingStatusForProjectHelper() {
-        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1,1);
+        List<Task> tasks = taskService.getTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = tasks.size();
         int expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
@@ -343,17 +345,17 @@ public class TaskServiceIT {
 
     @Test
     public void shouldGetSizeOfTasksWithProcessingStatusForProjectHelper() {
-        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,1);
+        List<Long> tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 1);
         int actual = tasksSize.size();
         int expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
-        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(2,1);
+        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(2, 1);
         actual = tasksSize.size();
         expected = 2;
         assertEquals("Task's list size is incorrect!", expected, actual);
 
-        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1,2);
+        tasksSize = taskService.getSizeOfTasksWithProcessingStatusForProjectHelper(1, 2);
         actual = tasksSize.size();
         expected = 0;
         assertEquals("Task's list size is incorrect!", expected, actual);

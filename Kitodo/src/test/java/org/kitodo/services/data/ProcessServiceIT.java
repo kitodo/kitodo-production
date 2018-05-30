@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -18,15 +19,8 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
 import de.sub.goobi.config.ConfigCore;
 
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -48,6 +42,11 @@ import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
 /**
  * Tests for ProcessService class.
  */
@@ -60,6 +59,7 @@ public class ProcessServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
     }
 
@@ -70,28 +70,20 @@ public class ProcessServiceIT {
         fileService.delete(URI.create("1"));
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProcesses() throws Exception {
-        Long amount = processService.count();
-        assertEquals("Processes were not counted correctly!", Long.valueOf(3), amount);
+    public void shouldCountAllProcesses() {
+        await().untilAsserted(
+            () -> assertEquals("Processes were not counted correctly!", Long.valueOf(3), processService.count()));
     }
 
     @Test
-    public void shouldCountProcessesAccordingToQuery() throws Exception {
+    public void shouldCountProcessesAccordingToQuery() {
         String query = matchQuery("title", "First Process").operator(Operator.AND).toString();
-        Long amount = processService.count(query);
-        assertEquals("Process was not found!", Long.valueOf(1), amount);
-
-        amount = processService.findNumberOfProcessesWithTitle("First Process");
-        assertEquals("Process was not found!", Long.valueOf(1), amount);
+        await().untilAsserted(() -> assertEquals("Process was not found!", processService.count(query),
+            processService.findNumberOfProcessesWithTitle("First Process")));
     }
 
     @Test
@@ -143,85 +135,82 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        ProcessDTO process = processService.findById(1);
-        Integer actual = process.getId();
+    public void shouldFindById() {
         Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Process was not found in index!", expected, processService.findById(1).getId()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> process = processService.findByTitle("First process", true);
-        Integer actual = process.size();
-        Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
+    public void shouldFindByTitle() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+            processService.findByTitle("First process", true).size()));
     }
 
     @Test
-    public void shouldFindByBatchId() throws Exception {
-        List<JsonObject> processes = processService.findByBatchId(1);
-        Integer actual = processes.size();
-        Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
-
-        processes = processService.findByBatchId(2);
-        actual = processes.size();
-        expected = 0;
-        assertEquals("Some processes were found in index!", expected, actual);
+    public void shouldFindByBatchId() {
+        await().untilAsserted(
+            () -> assertEquals("Process was not found in index!", 1, processService.findByBatchId(1).size()));
     }
 
     @Test
-    public void shouldFindByBatchTitle() throws Exception {
-        List<JsonObject> processes = processService.findByBatchTitle("First batch");
-        Integer actual = processes.size();
-        Integer expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
-
-        processes = processService.findByBatchTitle("Some batch");
-        actual = processes.size();
-        expected = 0;
-        assertEquals("Process was found in index!", expected, actual);
+    public void shouldNotFindByBatchId() {
+        await().untilAsserted(
+            () -> assertEquals("Some processes were found in index!", 0, processService.findByBatchId(2).size()));
     }
 
     @Test
-    public void shouldFindByProjectId() throws Exception {
-        List<ProcessDTO> processes = processService.findByProjectId(1, true);
-        assertEquals("Process was not found in index!", 2, processes.size());
-
-        processes = processService.findByProjectId(2, true);
-        assertEquals("Some processes were found in index!", 0, processes.size());
+    public void shouldFindByBatchTitle() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+            processService.findByBatchTitle("First batch").size()));
     }
 
     @Test
-    public void shouldFindByProjectTitle() throws Exception {
-        List<JsonObject> processes = processService.findByProjectTitle("First project");
-        Integer actual = processes.size();
-        Integer expected = 2;
-        assertEquals("Process was not found in index!", expected, actual);
-
-        processes = processService.findByProjectTitle("Some project");
-        actual = processes.size();
-        expected = 0;
-        assertEquals("Process was found in index!", expected, actual);
+    public void shouldNotFindByBatchTitle() {
+        await().untilAsserted(
+            () -> assertEquals("Process was found in index!", 0, processService.findByBatchTitle("Some batch").size()));
     }
 
     @Test
-    public void shouldFindByProperty() throws Exception {
-        List<JsonObject> processes = processService.findByProcessProperty("Korrektur notwendig", null, true);
-        Integer actual = processes.size();
-        Integer expected = 2;
-        assertEquals("Processes were not found in index!", expected, actual);
+    public void shouldFindByProjectId() {
+        await().untilAsserted(
+            () -> assertEquals("Process was not found in index!", 2, processService.findByProjectId(1, true).size()));
+    }
 
-        processes = processService.findByProcessProperty("Process Property", "first value", true);
-        actual = processes.size();
-        expected = 1;
-        assertEquals("Process was not found in index!", expected, actual);
+    @Test
+    public void shouldNotFindByProjectId() {
+        await().untilAsserted(() -> assertEquals("Some processes were found in index!", 0,
+            processService.findByProjectId(2, true).size()));
+    }
 
-        processes = processService.findByProcessProperty("firstTemplate title", "first value", true);
-        actual = processes.size();
-        expected = 0;
-        assertEquals("Process was not found in index!", expected, actual);
+    @Test
+    public void shouldFindByProjectTitle() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 2,
+            processService.findByProjectTitle("First project").size()));
+    }
+
+    @Test
+    public void shouldNotFindByProjectTitle() {
+        await().untilAsserted(() -> assertEquals("Process was found in index!", 0,
+            processService.findByProjectTitle("Some project").size()));
+    }
+
+    @Test
+    public void shouldFindManyByProperty() {
+        await().untilAsserted(() -> assertEquals("Processes were not found in index!", 2,
+            processService.findByProcessProperty("Korrektur notwendig", null, true).size()));
+    }
+
+    @Test
+    public void shouldFindOneByProperty() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 1,
+            processService.findByProcessProperty("Process Property", "first value", true).size()));
+    }
+
+    @Test
+    public void shouldNotFindByProperty() {
+        await().untilAsserted(() -> assertEquals("Process was not found in index!", 0,
+            processService.findByProcessProperty("firstTemplate title", "first value", true).size()));
     }
 
     @Test
@@ -568,7 +557,7 @@ public class ProcessServiceIT {
     public void shouldCreateProcessDirs() throws Exception {
         Process process = processService.getById(2);
         processService.createProcessDirs(process);
-        //assertEquals("Process directories are not created!", expected, actual);
+        // assertEquals("Process directories are not created!", expected, actual);
     }
 
     @Test
@@ -577,7 +566,8 @@ public class ProcessServiceIT {
         FileLoader.createMetadataFile();
 
         DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(1));
-        assertEquals("Metadata size in digital document is incorrect!", 1, actual.getLogicalDocStruct().getAllMetadata().size());
+        assertEquals("Metadata size in digital document is incorrect!", 1,
+            actual.getLogicalDocStruct().getAllMetadata().size());
 
         FileLoader.deleteMetadataFile();
         FileLoader.deleteRulesetFile();
@@ -606,26 +596,26 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindProcessesOfActiveProjects() throws Exception {
-        List<ProcessDTO> activeProcesses = processService.findProcessesOfActiveProjects(null);
-        assertEquals("Found incorrect amount of processes!", 2, activeProcesses.size());
+    public void shouldFindProcessesOfActiveProjects() {
+        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
+            processService.findProcessesOfActiveProjects(null).size()));
     }
 
     @Test
-    public void shouldFindNotClosedProcessesWithoutTemplates() throws Exception {
-        List<ProcessDTO> notClosedProcesses = processService.findNotClosedProcessesWithoutTemplates(null);
-        assertEquals("Found incorrect amount of processes!", 3, notClosedProcesses.size());
+    public void shouldFindNotClosedProcessesWithoutTemplates() {
+        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 3,
+            processService.findNotClosedProcessesWithoutTemplates(null).size()));
     }
 
     @Test
-    public void shouldFindProcessesOfOpenAndActiveProjectsWithoutTemplates() throws Exception {
-        List<ProcessDTO> openAndActiveProcesses = processService.findOpenAndActiveProcessesWithoutTemplates(null);
-        assertEquals("Found incorrect amount of processes!", 2, openAndActiveProcesses.size());
+    public void shouldFindProcessesOfOpenAndActiveProjectsWithoutTemplates() {
+        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
+            processService.findOpenAndActiveProcessesWithoutTemplates(null).size()));
     }
 
     @Test
-    public void shouldFindAllActiveWithoutTemplates() throws Exception {
-        List<ProcessDTO> activeProcessesWithoutTemplates = processService.findAllActiveWithoutTemplates(null);
-        assertEquals("Found incorrect amount of processes!", 2, activeProcessesWithoutTemplates.size());
+    public void shouldFindAllActiveWithoutTemplates() {
+        await().untilAsserted(() -> assertEquals("Found incorrect amount of processes!", 2,
+            processService.findAllActiveWithoutTemplates(null).size()));
     }
 }

@@ -11,16 +11,14 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +44,7 @@ public class UserGroupServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -54,18 +53,13 @@ public class UserGroupServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllUserGroups() throws Exception {
-        Long amount = userGroupService.count();
-        assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
+    public void shouldCountAllUserGroups() {
+        await().untilAsserted(
+            () -> assertEquals("User groups were not counted correctly!", Long.valueOf(3), userGroupService.count()));
     }
 
     @Test
@@ -75,9 +69,9 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldFindAllUserGroups() throws Exception {
-        List<UserGroupDTO> userGroups = userGroupService.findAll();
-        assertEquals("Not all user's groups were found in database!", 3, userGroups.size());
+    public void shouldFindAllUserGroups() {
+        await().untilAsserted(
+            () -> assertEquals("Not all user's groups were found in database!", 3, userGroupService.findAll().size()));
     }
 
     @Test
@@ -148,71 +142,68 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        UserGroupDTO userGroup = userGroupService.findById(1);
-        String actual = userGroup.getTitle();
+    public void shouldFindById() {
         String expected = "Admin";
-        assertEquals("User group was not found in index!", expected, actual);
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", expected,
+            userGroupService.findById(1).getTitle()));
 
-        int usersSize = userGroup.getUsersSize();
-        assertEquals("User group was not found in index!", 2, usersSize);
+        Integer expectedInt = 2;
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", expectedInt,
+            userGroupService.findById(1).getUsersSize()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> userGroups = userGroupService.findByTitle("Admin", true);
-        Integer actual = userGroups.size();
-        Integer expected = 1;
-        assertEquals("User group was not found in index!", expected, actual);
-
-        userGroups = userGroupService.findByTitle("none", true);
-        actual = userGroups.size();
-        expected = 0;
-        assertEquals("User group was found in index!", expected, actual);
+    public void shouldFindByTitle() {
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", 1,
+            userGroupService.findByTitle("Admin", true).size()));
     }
 
     @Test
-    public void shouldFindByAuthorization() throws Exception {
-        List<JsonObject> userGroups = userGroupService.findByAuthorizationTitle("viewAllClients");
-        Integer actual = userGroups.size();
-        Integer expected = 2;
-        assertEquals("User group was not found in index!", expected, actual);
-
-        userGroups = userGroupService.findByAuthorizationTitle("viewAllUsers");
-        actual = userGroups.size();
-        expected = 1;
-        assertEquals("User group was not found in index!", expected, actual);
-
-        userGroups = userGroupService.findByAuthorizationTitle("notExisting");
-        actual = userGroups.size();
-        expected = 0;
-        assertEquals("User group was found in index!", expected, actual);
+    public void shouldNotFindByTitle() {
+        await().untilAsserted(
+            () -> assertEquals("User group was found in index!", 0, userGroupService.findByTitle("none", true).size()));
     }
 
     @Test
-    public void shouldFindByUserId() throws Exception {
-        List<JsonObject> userGroups = userGroupService.findByUserId(1);
-        Integer actual = userGroups.size();
-        Integer expected = 1;
-        assertEquals("User group was not found in index!", expected, actual);
-
-        userGroups = userGroupService.findByUserId(3);
-        actual = userGroups.size();
-        expected = 0;
-        assertEquals("User groups were found in index!", expected, actual);
+    public void shouldFindManyByAuthorization() {
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", 2,
+            userGroupService.findByAuthorizationTitle("viewAllClients").size()));
     }
 
     @Test
-    public void shouldFindByUserLogin() throws Exception {
-        List<JsonObject> userGroups = userGroupService.findByUserLogin("kowal");
-        Integer actual = userGroups.size();
-        Integer expected = 1;
-        assertEquals("User group was not found in index!", expected, actual);
+    public void shouldFindOneByAuthorization() {
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", 1,
+            userGroupService.findByAuthorizationTitle("viewAllUsers").size()));
+    }
 
-        userGroups = userGroupService.findByUserLogin("dora");
-        actual = userGroups.size();
-        expected = 0;
-        assertEquals("User groups were found in index!", expected, actual);
+    @Test
+    public void shouldNotFindByAuthorization() {
+        await().untilAsserted(() -> assertEquals("User group was found in index!", 0,
+            userGroupService.findByAuthorizationTitle("notExisting").size()));
+    }
+
+    @Test
+    public void shouldFindByUserId() {
+        await().untilAsserted(
+            () -> assertEquals("User group was not found in index!", 1, userGroupService.findByUserId(1).size()));
+    }
+
+    @Test
+    public void shouldNotFindByUserId() {
+        await().untilAsserted(
+            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserId(3).size()));
+    }
+
+    @Test
+    public void shouldFindByUserLogin() {
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", 1,
+            userGroupService.findByUserLogin("kowal").size()));
+    }
+
+    @Test
+    public void shouldNotFindByUserLogin() {
+        await().untilAsserted(
+            () -> assertEquals("User groups were found in index!", 0, userGroupService.findByUserLogin("dora").size()));
     }
 
     @Test
@@ -241,10 +232,12 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldGetAuthorizationForAdmin() throws Exception {
+        await().untilAsserted(
+                () -> assertEquals("Incorrect amount of found user groups", 1, userGroupService
+                        .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true).size()));
+
         List<UserGroupDTO> userGroupDTOS = userGroupService
                 .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
-        assertEquals("Incorrect amount of found user groups", 1, userGroupDTOS.size());
-
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
         assertEquals("Incorrect authorization!", "viewAllClients", authorityDTO.getTitle());
     }
