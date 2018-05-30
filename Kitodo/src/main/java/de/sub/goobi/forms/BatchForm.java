@@ -225,13 +225,10 @@ public class BatchForm extends BasisForm {
 
     /**
      * Filter all start.
-     *
-     * @return page - all batches
      */
-    public String filterAll() {
+    private void filterAll() {
         filterBatches();
         filterProcesses();
-        return "/pages/BatchesAll";
     }
 
     /**

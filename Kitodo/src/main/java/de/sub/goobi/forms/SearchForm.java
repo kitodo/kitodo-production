@@ -409,7 +409,7 @@ public class SearchForm {
         if (form != null) {
             form.filter = search;
             form.setDisplayMode(ObjectMode.PROCESS);
-            return form.filterAll();
+            return form.processListPath;
         }
         return null;
     }

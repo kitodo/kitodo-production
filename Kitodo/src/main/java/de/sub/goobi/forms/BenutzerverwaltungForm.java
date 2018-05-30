@@ -29,7 +29,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -89,22 +88,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.userObject.setPassword("");
         this.password = "";
         return userEditPath;
-    }
-
-    /**
-     * This method initializes the user list without any filters whenever the
-     * bean is constructed.
-     */
-    @PostConstruct
-    public void initializeUserList() {
-        filterAll();
-    }
-
-    /**
-     * Anzeige der gefilterten Nutzer.
-     */
-    public String filterAll() {
-        return userListPath;
     }
 
     /**
@@ -195,7 +178,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setErrorMessage("Error, could not save", logger, e);
             return null;
         }
-        return filterAll();
+        return userListPath;
     }
 
     /**

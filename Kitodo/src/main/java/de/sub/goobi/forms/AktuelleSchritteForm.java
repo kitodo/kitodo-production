@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -109,22 +108,6 @@ public class AktuelleSchritteForm extends BasisForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
-    }
-
-    /**
-     * Anzeige der Schritte.
-     */
-    public String filterAll() {
-        return taskListPath;
-    }
-
-    /**
-     * This method initializes the task list without any filter whenever the bean is
-     * created.
-     */
-    @PostConstruct
-    public void initializeTaskList() {
-        filterAll();
     }
 
     /**
@@ -882,5 +865,14 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public List<Task> getTasksInProgress() {
         return serviceManager.getUserService().getTasksInProgress(this.user);
+    }
+
+    /**
+     * Get taskListPath.
+     *
+     * @return value of taskListPath
+     */
+    public String getTaskListPath() {
+        return taskListPath;
     }
 }
