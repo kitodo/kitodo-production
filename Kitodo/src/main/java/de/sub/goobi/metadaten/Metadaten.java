@@ -99,7 +99,6 @@ import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.RequestContext;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
@@ -225,6 +224,13 @@ public class Metadaten {
     private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private int numberOfConvertedImages = 0;
+    private List<String> metadataEditorComponents = Arrays.asList(
+            "structureTreeForm:structureWrapperPanel",
+            "structureTreeForm:paginationWrapperPanel",
+            "metadataWrapperPanel",
+            "commentWrapperPanel",
+            "galleryWrapperPanel");
+
 
     /**
      * Konstruktor.
@@ -3506,15 +3512,14 @@ public class Metadaten {
 
                     ImageIO.write(inputImage, "png", new File(targetPath));
                     numberOfConvertedImages++;
-                    PrimeFaces primeFaces = PrimeFaces.current();
-                    if (primeFaces.isAjaxRequest()) {
-                        primeFaces.ajax().update("convertTIFFDialog");
-                    }
+                    // FIXME: this call to the update function does not work!
+                    updateComponent(metadataEditorComponents);
                 }
 
                 // then, create thumbnails from the converted images
                 generateThumbnails();
 
+                updateComponent(metadataEditorComponents);
             } catch (MalformedURLException e) {
                 Helper.setErrorMessage("ERROR: URL malformed!", logger, e);
             } catch (IOException e) {
@@ -3597,8 +3602,6 @@ public class Metadaten {
         } catch (IOException e) {
             logger.error("ERROR: unable to delete directory '" + thumbnailPath + "' containing PNG thumbnails of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
         }
-
-
     }
 
     /**
@@ -3607,7 +3610,7 @@ public class Metadaten {
     public void generatePNGs() {
         this.numberOfConvertedImages = 0;
         //resetTemporaryFolders();
-        RequestContext.getCurrentInstance().update("convertTIFFDialog");
+        updateComponent(Collections.singletonList("convertTIFFDialog"));
         convertImages();
     }
 
@@ -3836,6 +3839,13 @@ public class Metadaten {
             thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator + THUMBNAIL_FOLDER_NAME + File.separator;
         } else {
             logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator + "' resulted in an empty array!");
+        }
+    }
+
+    private void updateComponent(List<String> componentIDs) {
+        PrimeFaces primeFaces = PrimeFaces.current();
+        if (primeFaces.isAjaxRequest()) {
+            primeFaces.ajax().update(componentIDs);
         }
     }
 }
