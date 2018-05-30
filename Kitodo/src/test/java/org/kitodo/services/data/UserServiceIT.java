@@ -20,7 +20,6 @@ import static org.junit.Assume.assumeTrue;
 import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -34,7 +33,6 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.goobi.production.constants.FileNames;
 import org.junit.AfterClass;
@@ -62,7 +62,7 @@ public class ProjectServiceTest {
 
         // Add templates, still not complete
         Template template = new Template();
-        project.template = new ArrayList<>(Arrays.asList(template));
+        project.template = new ArrayList<>(Collections.singleton(template));
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
         // Add xmls to complete project

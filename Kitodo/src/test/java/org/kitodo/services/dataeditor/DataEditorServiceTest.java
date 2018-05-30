@@ -12,7 +12,6 @@
 package org.kitodo.services.dataeditor;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Paths;
 
 import org.junit.Test;

@@ -577,9 +577,7 @@ public class Metadaten {
          * alle Typen, die einen Unterstrich haben nochmal rausschmeissen
          */
         SelectItem[] typesWithoutUnderscore = new SelectItem[zaehler];
-        for (int i = 0; i < zaehler; i++) {
-            typesWithoutUnderscore[i] = myTypen[i];
-        }
+        System.arraycopy(myTypen, 0, typesWithoutUnderscore, 0, zaehler);
         return typesWithoutUnderscore;
     }
 

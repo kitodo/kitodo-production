@@ -759,7 +759,7 @@ public class CopyProcess extends ProzesskopieForm {
             String token = tokenizer.nextToken();
             // if the string begins and ends with ', then take over the content
             if (token.startsWith("'") && token.endsWith("'")) {
-                newTitle.append(token.substring(1, token.length() - 1));
+                newTitle.append(token, 1, token.length() - 1);
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
                 for (AdditionalField additionalField : this.additionalFields) {

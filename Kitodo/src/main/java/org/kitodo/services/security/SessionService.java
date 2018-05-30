@@ -30,7 +30,7 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 public class SessionService {
 
     private static SessionService instance = null;
-    private SessionRegistry sessionRegistry = null;
+    private SessionRegistry sessionRegistry;
     private static final Logger logger = LogManager.getLogger(SessionService.class);
 
     private SessionService() {
@@ -73,8 +73,7 @@ public class SessionService {
                 user = (SecurityUserDetails) principal;
             }
             if (user != null) {
-                List<SessionInformation> activeSessionInformation = new ArrayList<>();
-                activeSessionInformation.addAll(sessionRegistry.getAllSessions(principal, false));
+                List<SessionInformation> activeSessionInformation = new ArrayList<>(sessionRegistry.getAllSessions(principal, false));
 
                 for (SessionInformation sessionInformation : activeSessionInformation) {
                     SecuritySession securitySession = new SecuritySession();

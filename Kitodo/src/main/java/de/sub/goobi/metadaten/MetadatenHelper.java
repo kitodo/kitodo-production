@@ -556,7 +556,7 @@ public class MetadatenHelper implements Comparator<Object> {
      */
     // TODO: Uses generics, if possible
     public static class MetadataComparator implements Comparator<Object> {
-        private String language = "de";
+        private String language;
 
         public MetadataComparator(String inLanguage) {
             this.language = inLanguage;

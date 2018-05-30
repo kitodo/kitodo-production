@@ -1586,7 +1586,7 @@ public class ProzesskopieForm implements Serializable {
              * übernehmen
              */
             if (token.startsWith("'") && token.endsWith("'")) {
-                newTitle.append(token.substring(1, token.length() - 1));
+                newTitle.append(token, 1, token.length() - 1);
             } else if (token.startsWith("#")) {
                 // resolve strings beginning with # from generic fields
                 if (genericFields != null) {
