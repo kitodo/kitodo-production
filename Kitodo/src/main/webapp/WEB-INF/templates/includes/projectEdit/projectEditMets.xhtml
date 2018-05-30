@@ -132,7 +132,7 @@
                                                  value="#{filegroup}"/>
                 </p:commandLink>
                 <!-- delete button -->
-                <p:commandLink action="#{ProjekteForm.filegroupDelete()}"
+                <p:commandLink action="#{ProjekteForm.deleteFileGroup()}"
                                update="editForm"
                                title="#{msgs.filegroupLoeschen}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
@@ -146,7 +146,7 @@
             </p:column>
         </p:dataTable>
         <!-- add button -->
-        <p:commandButton actionListener="#{ProjekteForm.filegroupAdd()}"
+        <p:commandButton actionListener="#{ProjekteForm.addFileGroup()}"
                          update="@(.editDialog)"
                          oncomplete="PF('editFileGroupDialog').show()"
                          value="#{msgs.filegroupHinzufuegen}"

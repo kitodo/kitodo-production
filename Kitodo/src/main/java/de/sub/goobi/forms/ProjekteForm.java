@@ -39,7 +39,7 @@ import org.kitodo.services.ServiceManager;
 public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
-    private Project myProjekt = new Project();
+    private Project myProjekt;
     private ProjectFileGroup myFilegroup;
     private transient ServiceManager serviceManager = new ServiceManager();
 
@@ -65,24 +65,20 @@ public class ProjekteForm extends BasisForm {
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
     }
 
-    // making sure its cleaned up
-    @Override
-    protected void finalize() {
-        this.cancel();
-    }
-
     /**
-     * this method deletes filegroups by their id's in the list.
+     * This method deletes file groups by their id's in the list.
      *
      * @param fileGroups
      *            List
      */
     private void deleteFileGroups(List<Integer> fileGroups) {
-        for (Integer id : fileGroups) {
-            for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
-                if (f.getId() == null ? id == null : f.getId().equals(id)) {
-                    this.myProjekt.getProjectFileGroups().remove(f);
-                    break;
+        if (Objects.nonNull(this.myProjekt)) {
+            for (Integer id : fileGroups) {
+                for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
+                    if (f.getId() == null ? id == null : f.getId().equals(id)) {
+                        this.myProjekt.getProjectFileGroups().remove(f);
+                        break;
+                    }
                 }
             }
         }
@@ -102,7 +98,9 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * this needs to be executed in order to rollback adding of filegroups.
+     * This needs to be executed in order to rollback adding of file groups.
+     *
+     * @return page address
      */
     public String cancel() {
         // flushing new fileGroups
@@ -152,7 +150,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * Saves current project if title is not empty and redirects to projects page.
      *
-     * @return page or empty String
+     * @return page or null
      */
     public String save() {
         Session session = Helper.getHibernateSession();
@@ -221,7 +219,7 @@ public class ProjekteForm extends BasisForm {
      *
      * @return String
      */
-    public String filegroupAdd() {
+    public String addFileGroup() {
         this.myFilegroup = new ProjectFileGroup();
         this.myFilegroup.setProject(this.myProjekt);
         this.newFileGroups.add(this.myFilegroup.getId());
@@ -231,7 +229,7 @@ public class ProjekteForm extends BasisForm {
     /**
      * Save file group.
      */
-    public void filegroupSave() {
+    public void saveFileGroup() {
         if (this.myProjekt.getProjectFileGroups() == null) {
             this.myProjekt.setProjectFileGroups(new ArrayList<>());
         }
@@ -240,26 +238,23 @@ public class ProjekteForm extends BasisForm {
         }
     }
 
-    public String filegroupEdit() {
-        return this.zurueck;
-    }
-
     /**
      * Delete file group.
      *
      * @return page
      */
-    public String filegroupDelete() {
+    public String deleteFileGroup() {
         // to be deleted fileGroups ids are listed
         // and deleted after a commit
         this.deletedFileGroups.add(this.myFilegroup.getId());
         return null;
     }
 
-    /*
-     * Getter und Setter
+    /**
+     * Get project.
+     * 
+     * @return Project object
      */
-
     public Project getMyProjekt() {
         return this.myProjekt;
     }
@@ -284,7 +279,6 @@ public class ProjekteForm extends BasisForm {
     public boolean isLockedDetail() {
         return lockedDetail;
     }
-
 
     /**
      * Setter for lockedDetail.
