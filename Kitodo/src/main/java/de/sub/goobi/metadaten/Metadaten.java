@@ -3794,7 +3794,7 @@ public class Metadaten {
                     .filter(path -> path.toString().endsWith(".png"))
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .map(filename -> "/kitodo/images/" + this.process.getId() + "/" + this.subfolderName + "/" + FULLSIZE_FOLDER_NAME +"/" + filename)
+                    .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/" + FULLSIZE_FOLDER_NAME + "/" + filename)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
