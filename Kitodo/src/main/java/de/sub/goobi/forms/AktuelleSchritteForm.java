@@ -428,7 +428,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     this.serviceManager.getProcessService().save(process);
                 } catch (DataException e) {
-                    Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+                    Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
                 }
                 this.myDav.downloadToHome(process, false);
             }

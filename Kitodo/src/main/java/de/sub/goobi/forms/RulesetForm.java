@@ -79,7 +79,7 @@ public class RulesetForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
             return null;
         }
     }
@@ -112,7 +112,7 @@ public class RulesetForm extends BasisForm {
                 serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtLoeschbar", logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
             return null;
         }
         return rulesetListPath;

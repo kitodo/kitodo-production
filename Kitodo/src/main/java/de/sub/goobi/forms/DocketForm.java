@@ -80,7 +80,7 @@ public class DocketForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("docket") }, logger, e);
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class DocketForm extends BasisForm {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtLoeschbar", logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
             return null;
         }
         return "/pages/DocketList";

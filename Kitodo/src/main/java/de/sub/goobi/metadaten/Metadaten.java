@@ -726,7 +726,7 @@ public class Metadaten {
                     .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
             serviceManager.getProcessService().save(this.process);
         } catch (DataException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
         } catch (IOException e) {
             Helper.setErrorMessage("error while counting current images", logger, e);
         }
@@ -771,7 +771,7 @@ public class Metadaten {
         try {
             fileService.writeMetadataFile(this.gdzfile, this.process);
         } catch (PreferencesException | WriteException | IOException | RuntimeException e) {
-            Helper.setErrorMessage("fehlerNichtSpeicherbar", logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("metadata") }, logger, e);
             result = false;
         }
         return result;
