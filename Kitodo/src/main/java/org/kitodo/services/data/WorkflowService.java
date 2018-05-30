@@ -12,24 +12,62 @@
 package org.kitodo.services.data;
 
 import java.util.List;
+import java.util.Objects;
+
+import javax.json.JsonObject;
 
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
-import org.kitodo.services.data.base.SearchDatabaseService;
+import org.kitodo.data.elasticsearch.index.Indexer;
+import org.kitodo.data.elasticsearch.index.type.WorkflowType;
+import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
+import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.dto.WorkflowDTO;
+import org.kitodo.services.data.base.SearchService;
 
-public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO> {
+public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
+
+    private static WorkflowService instance = null;
 
     /**
-     * Public constructor.
+     * Private constructor with Searcher and Indexer assigning.
      */
-    public WorkflowService() {
-        super(new WorkflowDAO());
+    private WorkflowService() {
+        super(new WorkflowDAO(), new WorkflowType(), new Indexer<>(Workflow.class), new Searcher(Workflow.class));
+    }
+
+    /**
+     * Return singleton variable of type WorkflowService.
+     *
+     * @return unique instance of WorkflowService
+     */
+    public static WorkflowService getInstance() {
+        if (Objects.equals(instance, null)) {
+            synchronized (WorkflowService.class) {
+                if (Objects.equals(instance, null)) {
+                    instance = new WorkflowService();
+                }
+            }
+        }
+        return instance;
     }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Workflow");
+    }
+
+    @Override
+    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+        WorkflowDTO workflowDTO = new WorkflowDTO();
+        workflowDTO.setId(getIdFromJSONObject(jsonObject));
+        JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");
+        workflowDTO.setTitle(workflowJSONObject.getString(WorkflowTypeField.TITLE.getName()));
+        workflowDTO.setFileName(workflowJSONObject.getString(WorkflowTypeField.FILE_NAME.getName()));
+        workflowDTO.setReady(workflowJSONObject.getBoolean(WorkflowTypeField.READY.getName()));
+        workflowDTO.setActive(workflowJSONObject.getBoolean(WorkflowTypeField.ACTIVE.getName()));
+        return new WorkflowDTO();
     }
 
     /**
