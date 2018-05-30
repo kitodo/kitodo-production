@@ -38,6 +38,7 @@ public class SecurityAccessServiceIT {
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test

@@ -31,4 +31,11 @@ public class SecurityTestUtils {
         Authentication auth = new UsernamePasswordAuthenticationToken(user, null, securityUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
+
+    /**
+     * Explicitly clears the context value from the current thread.
+     */
+    public static void cleanSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
 }
