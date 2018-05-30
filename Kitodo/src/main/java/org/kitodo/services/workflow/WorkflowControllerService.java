@@ -36,6 +36,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -125,6 +126,18 @@ public class WorkflowControllerService {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    /**
+     * Set workflow as ready - available for usage in templates.
+     * 
+     * @param id
+     *            of workflow
+     */
+    public void setWorkflowAsReady(Integer id) throws DAOException, DataException {
+        Workflow workflow = serviceManager.getWorkflowService().getById(id);
+        workflow.setReady(true);
+        serviceManager.getWorkflowService().save(workflow);
     }
 
     /**

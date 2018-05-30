@@ -113,17 +113,22 @@ public class Reader {
         this.workflow = new Diagram(process);
     }
 
+    //TODO: when frontend list exists - use id instead of title/file
     private Workflow determineWorkflow(String title, String file) throws DataException {
         List<Workflow> workflows = serviceManager.getWorkflowService().getWorkflowsForTitleAndFile(title, file);
 
+        //TODO: it will be only one result instead of list
         if (!workflows.isEmpty()) {
             if (workflows.size() == 1) {
-                return workflows.get(0);
+                Workflow workflow = workflows.get(0);
+                if (workflow.isReady()) {
+                    return workflow;
+                }
+                throw new DataException("Workflow is not yet available for use!");
             } else {
                 throw new DataException("There is more than one entry with given data!");
             }
         }
-
         return new Workflow(title, file);
     }
 

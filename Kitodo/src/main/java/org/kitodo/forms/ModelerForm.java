@@ -35,7 +35,11 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.model.Reader;
+import org.kitodo.workflow.model.beans.Diagram;
 
 @Named("ModelerForm")
 @SessionScoped
@@ -178,7 +182,7 @@ public class ModelerForm implements Serializable {
         newXMLDiagramName = "";
         try {
             serviceManager.getFileService().createResource(new File(diagramsFolder).toURI(),
-                    encodeXMLDiagramName(xmlDiagramName));
+                encodeXMLDiagramName(xmlDiagramName));
             xmlDiagramNames.put(decodeXMLDiagramName(xmlDiagramName), encodeXMLDiagramName(xmlDiagramName));
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -197,7 +201,7 @@ public class ModelerForm implements Serializable {
     private void readXMLDiagram(String xmlDiagramName) {
         try (InputStream inputStream = serviceManager.getFileService()
                 .read(new File(diagramsFolder + encodeXMLDiagramName(xmlDiagramName)).toURI());
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -214,14 +218,17 @@ public class ModelerForm implements Serializable {
      * Save updated content of the diagram.
      */
     public void save() {
-        svgDiagram = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("svg");
+        Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap();
+        svgDiagram = requestParameterMap.get("svg");
         if (Objects.nonNull(svgDiagram)) {
             saveSVGDiagram();
         }
 
-        xmlDiagram = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("xml");
+        xmlDiagram = requestParameterMap.get("xml");
         if (Objects.nonNull(xmlDiagram)) {
             saveXMLDiagram();
+            saveWorkflow();
         }
     }
 
@@ -240,10 +247,54 @@ public class ModelerForm implements Serializable {
         return xmlDiagramName;
     }
 
+    private void saveWorkflow() {
+        String decodedXMLDiagramName = decodeXMLDiagramName(xmlDiagramName);
+        try {
+            Reader reader = new Reader(decodedXMLDiagramName);
+            Diagram diagram = reader.getWorkflow();
+            Workflow workflow = getWorkflow(diagram.getId(), decodedXMLDiagramName);
+            if (isWorkflowAlreadyInUse(workflow)) {
+                workflow.setActive(false);
+                Workflow newWorkflow = new Workflow(diagram.getId(), decodedXMLDiagramName);
+                serviceManager.getWorkflowService().save(newWorkflow);
+            }
+            serviceManager.getWorkflowService().save(workflow);
+        } catch (DataException | IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private Workflow getWorkflow(String title, String file) {
+        List<Workflow> workflows = serviceManager.getWorkflowService().getWorkflowsForTitleAndFile(title, file);
+
+        if (workflows.isEmpty()) {
+            return new Workflow(title, file);
+        } else {
+            if (workflows.size() == 1) {
+                return workflows.get(0);
+            } else {
+                return getFirstActiveWorkflow(workflows);
+            }
+        }
+    }
+
+    private Workflow getFirstActiveWorkflow(List<Workflow> workflows) {
+        for (Workflow workflow : workflows) {
+            if (workflow.isActive()) {
+                return workflow;
+            }
+        }
+        throw new UnsupportedOperationException("There is not active workflow!");
+    }
+
+    private boolean isWorkflowAlreadyInUse(Workflow workflow) {
+        return !workflow.getTemplates().isEmpty();
+    }
+
     void saveSVGDiagram() {
         try (OutputStream outputStream = serviceManager.getFileService()
                 .write(new File(diagramsFolder + decodeXMLDiagramName(xmlDiagramName) + ".svg").toURI());
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(svgDiagram);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
