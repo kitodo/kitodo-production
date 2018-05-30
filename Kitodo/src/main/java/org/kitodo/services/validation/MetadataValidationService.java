@@ -70,7 +70,7 @@ public class MetadataValidationService {
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation("MetadataReadError") + process.getTitle(), logger, e);
+            Helper.setErrorMessage("MetadataReadError", new Object[] {process.getTitle()}, logger, e);
             return false;
         }
         return validate(gdzfile, prefs, process);

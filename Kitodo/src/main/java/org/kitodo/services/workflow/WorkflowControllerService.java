@@ -321,7 +321,7 @@ public class WorkflowControllerService {
             }
             this.flagWait = false;
         } catch (DataException e) {
-            Helper.setErrorMessage(Helper.getTranslation("stepSaveError"), logger, e);
+            Helper.setErrorMessage("stepSaveError", logger, e);
         } finally {
             this.flagWaitLock.unlock();
         }

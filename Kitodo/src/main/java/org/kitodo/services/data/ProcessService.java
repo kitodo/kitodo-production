@@ -749,7 +749,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
             } catch (DataException | RuntimeException e) {
-                Helper.setErrorMessage(Helper.getTranslation("userNotFound"), logger, e);
+                Helper.setErrorMessage("userNotFound", logger, e);
             }
         }
         return result;
@@ -767,7 +767,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             try {
                 result = serviceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (DAOException | RuntimeException e) {
-                Helper.setErrorMessage(Helper.getTranslation("userNotFound"), logger, e);
+                Helper.setErrorMessage("userNotFound", logger, e);
             }
         }
         return result;
@@ -1804,7 +1804,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             newFile.setDigitalDocument(gdzFile.getDigitalDocument());
             gdzFile = newFile;
         } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation(EXPORT_ERROR) + process.getTitle(), logger, e);
+            Helper.setErrorMessage(EXPORT_ERROR, new Object[] {process.getTitle()}, logger, e);
             return null;
         }
 
@@ -1992,7 +1992,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {
-                    Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger,
+                    Helper.setErrorMessage(EXPORT_ERROR, "could not create destination directory", logger,
                         e);
                 }
             }

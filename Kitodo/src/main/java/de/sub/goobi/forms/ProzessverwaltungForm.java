@@ -242,7 +242,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 fileService.delete(images);
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("Can not delete metadata directory", logger, e);
+            Helper.setErrorMessage("errorDirectoryDeleting",
+                    new Object[] {Helper.getTranslation("metadata")}, logger, e);
         }
 
         Helper.setMeldung("Content deleted");
@@ -336,7 +337,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 fileService.delete(ocrDirectory);
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("Can not delete metadata directory", logger, e);
+            Helper.setErrorMessage("errorDirectoryDeleting",
+                    new Object[] {Helper.getTranslation("metadata")}, logger, e);
         }
     }
 
@@ -528,7 +530,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitschritt")}, logger, e);
         }
     }
 
@@ -1740,7 +1742,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    Helper.setErrorMessage("Property couldn't be removed: " + e.getMessage(), logger, e);
+                    Helper.setErrorMessage("errorDeleting", new Object[] {"property"}, logger, e);
                 }
             }
         }

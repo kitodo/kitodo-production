@@ -213,7 +213,7 @@ public class ProzesskopieForm implements Serializable {
             try {
                 importHit(hit);
             } catch (PreferencesException | RuntimeException e) {
-                Helper.setErrorMessage("Error on reading opac ", logger, e);
+                Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC"}, logger, e);
             } finally {
                 hitlistPage = -1;
             }
@@ -469,7 +469,7 @@ public class ProzesskopieForm implements Serializable {
                 Helper.setFehlerMeldung("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
         } catch (FileNotFoundException | PreferencesException | RuntimeException e) {
-            Helper.setErrorMessage("Error on reading OPAC '" + opacKatalog + "'", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC " + opacKatalog}, logger, e);
         }
     }
 
@@ -591,7 +591,7 @@ public class ProzesskopieForm implements Serializable {
                 }
             }
         } catch (UghHelperException e) {
-            Helper.setErrorMessage("", logger, e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -674,7 +674,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
-            Helper.setErrorMessage("Error on reading template-metadata ", logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{"template-metadata"}, logger, e);
         }
 
         removeCollectionsForChildren();
@@ -922,7 +922,7 @@ public class ProzesskopieForm implements Serializable {
                     : null;
             Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.", logger, e);
         } catch (UGHException catchAll) {
-            Helper.setErrorMessage(catchAll.getMessage(), logger, catchAll);
+            Helper.setErrorMessage(catchAll.getLocalizedMessage(), logger, catchAll);
         }
     }
 

@@ -522,7 +522,6 @@ public class ExportDms extends ExportMets {
      */
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException, InterruptedException {
-
         // determine the source folder
         URI tifOrdner = serviceManager.getProcessService().getImagesTifDirectory(true, process);
 
@@ -542,10 +541,10 @@ public class ExportDms extends ExportMets {
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (IOException e) {
-                    handleException(e);
+                    handleException(e, process.getTitle());
                     throw e;
                 } catch (RuntimeException e) {
-                    handleException(e);
+                    handleException(e, process.getTitle());
                 }
             }
 
@@ -575,12 +574,12 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void handleException(Exception e) {
+    private void handleException(Exception e, String processTitle) {
         if (exportDmsTask != null) {
             exportDmsTask.setException(e);
             logger.error("Could not create destination directory", e);
         } else {
-            Helper.setErrorMessage("Export canceled, error", "could not create destination directory", logger, e);
+            Helper.setErrorMessage(EXPORT_ERROR, new Object[] {processTitle}, logger, e);
         }
     }
 
@@ -595,7 +594,6 @@ public class ExportDms extends ExportMets {
      *
      */
     private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
-
         String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
 
         for (String processDir : processDirs) {

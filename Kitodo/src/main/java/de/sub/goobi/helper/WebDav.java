@@ -99,7 +99,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink(verzeichnisAlle.resolve(name));
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("Upload stopped, error", logger, e);
+            Helper.setErrorMessage("errorUploading", new Object[] {"Home"}, logger, e);
         }
     }
 
@@ -142,7 +142,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink((destination));
             }
         } catch (IOException e) {
-            Helper.setErrorMessage("Aborted upload from home, error", logger, e);
+            Helper.setErrorMessage("errorUploading", new Object[] {"Home"}, logger, e);
         }
     }
 
@@ -181,7 +181,7 @@ public class WebDav implements Serializable {
 
             fileService.createSymLink(source, destination, onlyRead, currentUser);
         } catch (IOException e) {
-            Helper.setErrorMessage("Aborted download to home, error", logger, e);
+            Helper.setErrorMessage("errorDownloading", new Object[] {"Home"}, logger, e);
         }
     }
 
@@ -225,7 +225,7 @@ public class WebDav implements Serializable {
                 outfile.write(tif.getTiffAlles());
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("Download aborted", logger, e);
+            Helper.setErrorMessage("errorDownloading", new Object[] {"Home"}, logger, e);
         }
     }
 }

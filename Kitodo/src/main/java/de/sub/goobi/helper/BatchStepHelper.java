@@ -140,9 +140,9 @@ public class BatchStepHelper extends BatchHelper {
             }
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-                Helper.setMeldung("Property saved");
+                Helper.setMeldung("propertySaved");
             } catch (DataException e) {
-                Helper.setErrorMessage("Properties could not be saved", logger, e);
+                Helper.setErrorMessage("propertiesNotSaved", logger, e);
             }
         }
     }
@@ -180,7 +180,7 @@ public class BatchStepHelper extends BatchHelper {
                     this.serviceManager.getProcessService().save(process);
                     Helper.setMeldung("propertySaved");
                 } catch (DataException e) {
-                    Helper.setErrorMessage("Properties for process " + process.getTitle() + " could not be saved",
+                    Helper.setErrorMessage("propertiesNotSaved",
                         logger, e);
                 }
             }
@@ -191,7 +191,6 @@ public class BatchStepHelper extends BatchHelper {
         Process process = task.getProcess();
         serviceManager.getProcessService().refresh(process);
         this.properties = process.getProperties();
-
     }
 
     private void saveStep() throws DataException {
@@ -499,7 +498,8 @@ public class BatchStepHelper extends BatchHelper {
                 export.startExport(step.getProcess());
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage("Error on export", logger, e);
+                Helper.setErrorMessage("errorExporting",
+                        new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);;
             }
         }
     }
