@@ -27,8 +27,6 @@ import java.util.List;
 import javax.json.JsonObject;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -52,7 +50,6 @@ import org.kitodo.services.ServiceManager;
  */
 public class UserServiceIT {
 
-    private static final Logger logger = LogManager.getLogger(UserServiceIT.class);
     private static final UserService userService = new ServiceManager().getUserService();
 
     @BeforeClass
@@ -506,7 +503,7 @@ public class UserServiceIT {
         User user = userService.getByLdapLogin("kowalLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
-        assertEquals("Title of task is incorrect!", tasks.get(0).getTitle(), "Processed");
+        assertEquals("Title of task is incorrect!", "Processed", tasks.get(0).getTitle());
     }
 
     @Test

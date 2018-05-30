@@ -39,11 +39,6 @@ public class BatchFormIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Test
     public void shouldFilterProcesses() {
         BatchForm batchForm = new BatchForm();
