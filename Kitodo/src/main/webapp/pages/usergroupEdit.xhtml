@@ -22,19 +22,29 @@
         <f:viewAction action="#{BenutzergruppenForm.loadUserGroup(id)}"/>
     </f:metadata>
 
+    <ui:param name="isEditMode"
+              value="#{BenutzergruppenForm.userGroup.id ne null and SecurityAccessController.isAdminOrHasAuthorityToEditUserGroup(id)}"/>
+    <ui:param name="isCreateMode"
+              value="#{BenutzergruppenForm.userGroup.id eq null and SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUserGroup')}"/>
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode}"/>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.benutzergruppeBearbeiten} (#{BenutzergruppenForm.userGroup.title})"
-                          rendered="#{not empty BenutzergruppenForm.userGroup.title}"/>
+            <h:outputText value="#{msgs.userGroupEdit} (#{BenutzergruppenForm.userGroup.title})"
+                          rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.neueBenutzergruppeAnlegen}"
-                          rendered="#{empty BenutzergruppenForm.userGroup.title}"/>
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.userGroupView} (#{BenutzergruppenForm.userGroup.title})"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
+                         rendered="#{isEditMode || isCreateMode}"
                          value="#{msgs.speichern}"
                          action="#{BenutzergruppenForm.save}"
                          process="editForm:usergroupTabView:authoritiesGlobalPick,
@@ -68,6 +78,7 @@
                             <p:outputLabel for="titleInput" value="#{msgs.titel}"/>
                             <p:inputText id="titleInput"
                                          class="input"
+                                         disabled="#{isViewMode}"
                                          value="#{BenutzergruppenForm.userGroup.title}"
                                          placeholder="#{msgs.titel}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
@@ -87,6 +98,7 @@
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 filterMatchMode="contains"
                                                 responsive="true"
+                                                disabled="#{isViewMode}"
                                                 value="#{BenutzergruppenForm.authorities}"
                                                 converter="#{authorityConverter}"
                                                 var="authority" itemLabel="#{authority.title}"
@@ -122,6 +134,7 @@
                                                 value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
                                                 converter="#{authorityConverter}"
                                                 var="authority"
+                                                disabled="#{isViewMode}"
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 filterMatchMode="contains"
                                                 responsive="true"
@@ -157,6 +170,7 @@
                                                 value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
                                                 converter="#{authorityConverter}"
                                                 showSourceFilter="true" showTargetFilter="true"
+                                                disabled="#{isViewMode}"
                                                 filterMatchMode="contains"
                                                 responsive="true"
                                                 var="authority"
@@ -184,11 +198,14 @@
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{not empty BenutzergruppenForm.userGroup.title}">
-                    #{msgs.benutzergruppeBearbeiten}
+                <ui:fragment rendered="#{isEditMode}">
+                    #{msgs.userGroupEdit}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty BenutzergruppenForm.userGroup.title}">
+                <ui:fragment rendered="#{isCreateMode}">
                     #{msgs.newUserGroup}
+                </ui:fragment>
+                <ui:fragment rendered="#{isViewMode}">
+                    #{msgs.userGroupView}
                 </ui:fragment>
             </a>
         </li>

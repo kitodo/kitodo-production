@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
@@ -48,6 +49,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserGroupService.class);
     private static UserGroupService instance = null;
+    private static String AUTHORITY_TITLE_VIEW_ALL = "viewAllUserGroups";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -99,6 +101,31 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     @Override
     public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size) throws DataException {
         return findAll(sort, offset, size, true);
+    }
+
+    /**
+     * Get all user groups from index and covert results to format accepted by
+     * frontend. Right now there is no usage which demands all relations.
+     *
+     * @param sort
+     *            possible sort query according to which results will be sorted
+     * @param offset
+     *            start point for get results
+     * @param size
+     *            amount of requested results
+     * @param filters
+     *            filter for requestes results
+     * @return list of UserGroupDTO objects
+     */
+    @Override
+    public List<UserGroupDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {
+            return findAll(sort, offset, size, true);
+        }
+        if (serviceManager.getSecurityAccessService().hasAuthorityForAnyClient(AUTHORITY_TITLE_VIEW_ALL)) {
+            return getAllUserGroupsVisibleForCurrentUser();
+        }
+        return new ArrayList<>();
     }
 
     @Override
@@ -245,8 +272,10 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
         userGroupDTO.setTitle(userGroupJSONObject.getString(UserGroupTypeField.TITLE.getName()));
-        userGroupDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
-        userGroupDTO.setAuthorizationsSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
+        userGroupDTO
+                .setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
+        userGroupDTO.setAuthorizationsSize(
+            getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.AUTHORITIES.getName()));
         if (!related) {
             convertRelatedJSONObjects(userGroupJSONObject, userGroupDTO);
         } else {
@@ -256,10 +285,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return userGroupDTO;
     }
 
-    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO)
-            throws DataException {
+    private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
         userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getName(),
-                serviceManager.getUserService()));
+            serviceManager.getUserService()));
     }
 
     private void addBasicAuthorizationsRelation(UserGroupDTO userGroupDTO, JsonObject jsonObject) {
@@ -267,8 +295,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
             subKeys.add(AuthorityTypeField.TITLE.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
-                    jsonObject, UserGroupTypeField.AUTHORITIES.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserGroupTypeField.AUTHORITIES.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
@@ -287,8 +315,8 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
             List<String> subKeys = new ArrayList<>();
             subKeys.add(UserTypeField.NAME.getName());
             subKeys.add(UserTypeField.SURNAME.getName());
-            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(
-                    jsonObject, UserGroupTypeField.USERS.getName(), subKeys);
+            List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
+                UserGroupTypeField.USERS.getName(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());
@@ -320,23 +348,35 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Get all active user groups visible for current user - user assigned to projects
-     * with certain clients.
+     * Get all active user groups visible for current user - user assigned to
+     * projects with certain clients.
      *
      * @return list of user groups
      */
     public List<UserGroupDTO> getAllUserGroupsVisibleForCurrentUser() throws DataException {
         List<Integer> clientIdList = serviceManager.getSecurityAccessService()
-                .getClientIdListForAuthority("viewAllUserGroup");
-        List<UserGroup> userGroups = getAllUserGroupsByClientIds(clientIdList);
-        List<Integer> userGroupIdList = new ArrayList<>();
-        for (UserGroup userGroup : userGroups) {
-            userGroupIdList.add(userGroup.getId());
-        }
-        return convertListIdToDTO(userGroupIdList, this);
+                .getClientIdListForAuthority(AUTHORITY_TITLE_VIEW_ALL);
+        return convertListIdToDTO(getAllUserGroupIdsByClientIds(clientIdList), this);
     }
 
     protected List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
         return dao.getAllUserGroupsByClientIds(clientIdList);
+    }
+
+    /**
+     * Get ids of all user groups which hold users which are assigned to projects of
+     * the given clients.
+     * 
+     * @param clientIdList
+     *            The list of client ids.
+     * @return The list of user ids.
+     */
+    public List<Integer> getAllUserGroupIdsByClientIds(List<Integer> clientIdList) {
+        List<UserGroup> users = getAllUserGroupsByClientIds(clientIdList);
+        List<Integer> userIdList = new ArrayList<>();
+        for (UserGroup userGroup : users) {
+            userIdList.add(userGroup.getId());
+        }
+        return userIdList;
     }
 }

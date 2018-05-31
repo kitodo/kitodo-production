@@ -80,6 +80,18 @@ public class SecurityAccessController {
 
     /**
      * Checks if the current user is admin or has a specified authority globally or
+     * for a client.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean isAdminOrHasAuthorityGlobalOrForAnyClient(String authorityTitle) {
+        return securityAccessService.isAdminOrHasAuthorityGlobalOrForAnyClient(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user is admin or has a specified authority globally or
      * for a client or for a project.
      *
      * @param authorityTitle
@@ -172,5 +184,31 @@ public class SecurityAccessController {
      */
     public boolean isAdmin() {
         return securityAccessService.isAdmin();
+    }
+
+    /**
+     * Checks if the current user is admin or has the authority to edit the user
+     * with the specified id.
+     *
+     * @param userId
+     *            The user id.
+     * @return True if the current user is admin or has the authority to edit the
+     *         user with the specified id.
+     */
+    public boolean isAdminOrHasAuthorityToEditUser(int userId) {
+        return securityAccessService.isAdminOrHasAuthorityToEditUser(userId);
+    }
+
+    /**
+     * Checks if the current user is admin or has the authority to edit the user group
+     * with the specified id.
+     *
+     * @param userGroupId
+     *            The user group id.
+     * @return True if the current user is admin or has the authority to edit the
+     *         user group with the specified id.
+     */
+    public boolean isAdminOrHasAuthorityToEditUserGroup(int userGroupId) {
+        return securityAccessService.isAdminOrHasAuthorityToEditUserGroup(userGroupId);
     }
 }

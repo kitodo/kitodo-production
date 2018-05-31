@@ -43,7 +43,7 @@ public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
-    private static  final String USER_GROUP = "benutzergruppe";
+    private static  final String USER_GROUP = "userGroup";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     @Inject

@@ -20,7 +20,7 @@
     <f:view locale="#{SpracheForm.locale}">
         <!-- edit dialog -->
         <p:dialog widgetVar="addUsergroupDialog"
-                  header="#{msgs.benutzergruppenHinzufuegen}"
+                  header="#{msgs.userGroupsAdd}"
                   width="700px"
                   modal="true"
                   dynamic="true">
@@ -31,7 +31,7 @@
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
                              paginator="true">
-                    <p:column headerText="#{msgs.benutzergruppe}">
+                    <p:column headerText="#{msgs.userGroup}">
                         <h:outputText value="#{usergroup.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.auswahl}">

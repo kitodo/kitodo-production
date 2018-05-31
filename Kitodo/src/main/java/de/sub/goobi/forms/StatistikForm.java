@@ -58,7 +58,7 @@ public class StatistikForm {
         try {
             return serviceManager.getUserGroupService().count();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("benutzergruppe")}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("userGroup")}, logger, e);
             return null;
         }
     }

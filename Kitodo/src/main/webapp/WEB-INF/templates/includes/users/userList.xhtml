@@ -24,13 +24,13 @@
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
-        <p:column headerText="#{msgs.benutzer}">
+        <p:column headerText="#{msgs.user}">
             <h:outputText value="#{item.surname}, #{item.name}"/>
         </p:column>
         <p:column headerText="#{msgs.location}">
             <h:outputText value="#{item.location}"/>
         </p:column>
-        <p:column headerText="#{msgs.benutzergruppen}">
+        <p:column headerText="#{msgs.userGroups}">
             <ui:repeat var="usergroup"
                        value="#{item.userGroups}"
                        varStatus="status">
@@ -47,7 +47,8 @@
             </ui:repeat>
         </p:column>
         <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
-            <h:link outcome="userEdit" title="#{msgs.benutzerBearbeiten}">
+            <h:link outcome="userEdit" title="#{msgs.userEdit}"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
