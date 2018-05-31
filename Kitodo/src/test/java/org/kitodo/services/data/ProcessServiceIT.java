@@ -368,7 +368,7 @@ public class ProcessServiceIT {
 
         process = processService.getById(2);
         actual = processService.getTasksSize(process);
-        assertEquals("Tasks' size is incorrect!", 1, actual);
+        assertEquals("Tasks' size is incorrect!", 2, actual);
 
         process = processService.getById(3);
         actual = processService.getTasksSize(process);

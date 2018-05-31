@@ -851,15 +851,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user and
-     * that are neither "DONE" nor "LOCKED".
+     * Retrieve and return the list of tasks that are assigned to the user and that
+     * are "INWORK" and belong to process, not template.
      *
-     * @return list of tasks that are currently assigned to the user and neither
-     *         "DONE" nor "LOCKED".
+     * @return list of tasks that are currently assigned to the user and that are
+     *         "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
-        return user.getProcessingTasks().stream().filter(task -> !task.getProcessingStatusEnum().equals(TaskStatus.DONE)
-                && !task.getProcessingStatusEnum().equals(TaskStatus.LOCKED)).collect(Collectors.toList());
+        return user.getProcessingTasks().stream().filter(
+            task -> task.getProcessingStatusEnum().equals(TaskStatus.INWORK) && Objects.nonNull(task.getProcess()))
+                .collect(Collectors.toList());
     }
 
     /**

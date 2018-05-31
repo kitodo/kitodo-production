@@ -373,7 +373,7 @@ public class UserServiceIT {
     public void shouldGetProcessingTasksSize() throws Exception {
         UserDTO user = userService.findById(1);
         int actual = user.getProcessingTasksSize();
-        assertEquals("Processing tasks' size is incorrect!", 1, actual);
+        assertEquals("Processing tasks' size is incorrect!", 2, actual);
     }
 
     @Test
@@ -506,7 +506,7 @@ public class UserServiceIT {
         User user = userService.getByLdapLogin("kowalLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
-        assertEquals("Title of task is incorrect!", tasks.get(0).getTitle(), "Testing");
+        assertEquals("Title of task is incorrect!", tasks.get(0).getTitle(), "Processed");
     }
 
     @Test

@@ -969,8 +969,27 @@ public class MockDatabase {
         seventhTask.setScriptPath("../type/automatic/script/path");
         serviceManager.getTaskService().save(seventhTask);
 
+        Task eightTask = new Task();
+        eightTask.setTitle("Processed");
+        eightTask.setOrdering(2);
+        eightTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
+        localDate = new LocalDate(2016, 10, 25);
+        eightTask.setProcessingBegin(localDate.toDate());
+        eightTask.setProcessingUser(firstUser);
+        eightTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        eightTask.setProcess(secondProcess);
+        eightTask.setUsers(serviceManager.getUserService().getAll());
+        eightTask.getUserGroups().add(userGroup);
+        serviceManager.getTaskService().save(eightTask);
+
         secondProcess.getTasks().add(seventhTask);
+        secondProcess.getTasks().add(eightTask);
         serviceManager.getProcessService().save(secondProcess);
+
+        blockedUser.getProcessingTasks().add(seventhTask);
+        firstUser.getProcessingTasks().add(eightTask);
+        serviceManager.getUserService().save(blockedUser);
+        serviceManager.getUserService().save(firstUser);
     }
 
     private static void insertTasksForWorkflow() throws DAOException, DataException {
