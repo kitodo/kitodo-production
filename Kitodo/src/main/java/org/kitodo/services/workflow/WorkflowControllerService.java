@@ -55,7 +55,6 @@ public class WorkflowControllerService {
     private List<Task> tasksToFinish;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
-    private User user = Helper.getCurrentUser();
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -118,14 +117,8 @@ public class WorkflowControllerService {
         this.solution = solution;
     }
 
-    /**
-     * Set user for test purpose.
-     *
-     * @param user
-     *            as User object
-     */
-    public void setUser(User user) {
-        this.user = user;
+    private User getCurrentUser() {
+        return serviceManager.getUserService().getAuthenticatedUser();
     }
 
     /**
@@ -168,7 +161,7 @@ public class WorkflowControllerService {
                 close(task);
             } else {
                 task.setProcessingTime(new Date());
-                serviceManager.getTaskService().replaceProcessingUser(task, this.user);
+                serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
             }
         }
         return task;
@@ -184,7 +177,7 @@ public class WorkflowControllerService {
     public Task setTaskStatusDown(Task task) {
         task.setEditTypeEnum(TaskEditType.ADMIN);
         task.setProcessingTime(new Date());
-        serviceManager.getTaskService().replaceProcessingUser(task, this.user);
+        serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
         setProcessingStatusDown(task);
         return task;
     }
@@ -268,7 +261,7 @@ public class WorkflowControllerService {
     public void close(Task task) throws DataException, IOException {
         task.setProcessingStatus(3);
         task.setProcessingTime(new Date());
-        serviceManager.getTaskService().replaceProcessingUser(task, this.user);
+        serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
         task.setProcessingEnd(new Date());
 
         serviceManager.getTaskService().save(task);
@@ -317,7 +310,7 @@ public class WorkflowControllerService {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
                 task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
                 task.setProcessingTime(new Date());
-                serviceManager.getTaskService().replaceProcessingUser(task, this.user);
+                serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
                 if (task.getProcessingBegin() == null) {
                     task.setProcessingBegin(new Date());
                 }
@@ -395,12 +388,12 @@ public class WorkflowControllerService {
      * @return Task
      */
     public Task reportProblem(Task currentTask) throws DAOException, DataException {
-        this.webDav.uploadFromHome(this.user, currentTask.getProcess());
+        this.webDav.uploadFromHome(getCurrentUser(), currentTask.getProcess());
         Date date = new Date();
         currentTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        serviceManager.getTaskService().replaceProcessingUser(currentTask, this.user);
+        serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
 
         Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
@@ -439,7 +432,7 @@ public class WorkflowControllerService {
         currentTask.setProcessingEnd(date);
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
-        serviceManager.getTaskService().replaceProcessingUser(currentTask, this.user);
+        serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
 
         Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
@@ -506,7 +499,7 @@ public class WorkflowControllerService {
             // TODO: check if this two lines are needed
             // this two lines differs both methods
             currentTask.setProcessingTime(date);
-            serviceManager.getTaskService().replaceProcessingUser(taskInBetween, this.user);
+            serviceManager.getTaskService().replaceProcessingUser(taskInBetween, getCurrentUser());
             // this two lines differs both methods
 
             serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
@@ -527,7 +520,7 @@ public class WorkflowControllerService {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
         processProperty.setValue("[" + this.formatter.format(date) + ", "
-                + serviceManager.getUserService().getFullName(this.user) + "] " + this.problem.getMessage());
+                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
         return processProperty;
     }
@@ -536,7 +529,7 @@ public class WorkflowControllerService {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionPerformed"));
         processProperty.setValue(
-            "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(this.user)
+            "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
                     + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
                     + this.solution.getMessage());
         processProperty.setType(PropertyType.MESSAGE_IMPORTANT);
@@ -545,13 +538,13 @@ public class WorkflowControllerService {
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
         String message = Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
-                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
+                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser()) + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "error", message);
     }
 
     private String prepareSolutionWikiField(Process process, Task correctionTask) {
         String message = Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
-                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(this.user) + ")";
+                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser()) + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "info", message);
     }
 
@@ -630,8 +623,8 @@ public class WorkflowControllerService {
      */
     private void downloadToHome(Task task) {
         task.setProcessingTime(new Date());
-        if (this.user != null) {
-            serviceManager.getTaskService().replaceProcessingUser(task, this.user);
+        if (serviceManager.getSecurityAccessService().isAuthenticated()) {
+            serviceManager.getTaskService().replaceProcessingUser(task, getCurrentUser());
             this.webDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
         }
     }

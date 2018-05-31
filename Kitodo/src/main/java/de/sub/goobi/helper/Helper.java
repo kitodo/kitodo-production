@@ -50,6 +50,7 @@ import org.goobi.mq.WebServiceResult;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.HibernateHelper;
 import org.kitodo.data.database.helper.Util;
+import org.kitodo.services.ServiceManager;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 /**
@@ -440,15 +441,7 @@ public class Helper extends HibernateHelper implements Observer {
      * @return current logged in user
      */
     public static User getCurrentUser() {
-        if (Objects.isNull(currentUser)) {
-            LoginForm login = (LoginForm) Helper.getManagedBeanValue("LoginForm");
-            currentUser = login != null ? login.getMyBenutzer() : null;
-            if (Objects.isNull(currentUser)) {
-                setErrorMessage("noLoggedUser", null);
-                throw new SessionAuthenticationException(getTranslation("noLoggedUser"));
-            }
-        }
-        return currentUser;
+        return new ServiceManager().getUserService().getAuthenticatedUser();
     }
 
     // TODO: find way to test without this method - faces

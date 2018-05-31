@@ -28,7 +28,7 @@ public class SecurityTestUtils {
      */
     public static void addUserDataToSecurityContext(User user) {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-        Authentication auth = new UsernamePasswordAuthenticationToken(user, null, securityUserDetails.getAuthorities());
+        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null, securityUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 

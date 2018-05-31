@@ -63,9 +63,6 @@ import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -250,24 +247,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      *
      * @return The user object or null if no user is authenticated.
      */
-    public User getAuthenticatedUser() throws DAOException {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        if (authentication != null) {
-            Object principal = authentication.getPrincipal();
+    public User getAuthenticatedUser() {
+        SecurityUserDetails userDetails = serviceManager.getSecurityAccessService()
+                .getAuthenticatedSecurityUserDetails();
+//        if (userDetails != null) {
+            return userDetails;
 
-            SecurityUserDetails userDetails = null;
-
-            if (principal instanceof SecurityUserDetails) {
-                userDetails = (SecurityUserDetails) principal;
-            }
-
-            if (userDetails != null) {
-                return getByLogin(userDetails.getUsername());
-            }
+//            return getByLogin(userDetails.getUsername());
         }
-        return null;
-    }
+//        return null;
+
 
     /**
      * Finds the current authenticated user and loads object dto from index.

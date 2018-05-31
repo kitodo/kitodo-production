@@ -407,12 +407,7 @@ public class ProzesskopieForm implements Serializable {
         if (serviceManager.getSecurityAccessService().isAdmin()) {
             processes = serviceManager.getProcessService().getAll();
         } else {
-            User currentUser = null;
-            try {
-                currentUser = serviceManager.getUserService().getAuthenticatedUser();
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+            User currentUser = serviceManager.getUserService().getAuthenticatedUser();
             if (Objects.nonNull(currentUser)) {
                 for (Project project : currentUser.getProjects()) {
                     processes.addAll(project.getProcesses());

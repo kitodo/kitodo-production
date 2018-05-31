@@ -123,15 +123,11 @@ public class LoginForm implements Serializable {
         if (myBenutzer != null) {
             return this.myBenutzer;
         } else {
-            try {
-                this.myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
-                return this.myBenutzer;
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                return null;
-            }
+            this.myBenutzer = serviceManager.getUserService().getAuthenticatedUser();
+            return this.myBenutzer;
         }
     }
+
 
     public void setMyBenutzer(User myClass) {
         this.myBenutzer = myClass;
