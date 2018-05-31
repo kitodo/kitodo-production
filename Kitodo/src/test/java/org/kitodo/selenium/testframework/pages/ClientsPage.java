@@ -11,17 +11,22 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClientsPage {
+public class ClientsPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "clientForm:newElementButton_button")
@@ -35,15 +40,8 @@ public class ClientsPage {
     @FindBy(id = "clientsTabView:clientsTable_data")
     private WebElement clientsTable;
 
-    private final String URL = "pages/clients.jsf";
-
-    /**
-     * Gets URL.
-     *
-     * @return The URL.
-     */
-    public String getUrl() {
-        return URL;
+    public ClientsPage() {
+        super("pages/clients.jsf");
     }
 
     /**
@@ -54,24 +52,6 @@ public class ClientsPage {
     public ClientsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoClients();
         return this;
-    }
-
-    /**
-     * Checks if the browser is currently at clients page.
-     *
-     * @return True if browser is at clients page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains(URL);
-    }
-
-    /**
-     * Checks if the browser is currently not at clients page.
-     *
-     * @return True if browser is not at clients page.
-     */
-    public boolean isNotAt() {
-        return !isAt();
     }
 
     public int countListedClients() throws Exception {
@@ -91,9 +71,12 @@ public class ClientsPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        await("Wait for create new client button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .untilTrue(new AtomicBoolean(newClientButton.isEnabled()));
         newClientButton.click();
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
+        wait.until(ExpectedConditions.urlContains(Pages.getClientEditPage().getUrl()));
         return Pages.getClientEditPage();
     }
 

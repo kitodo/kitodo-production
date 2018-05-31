@@ -19,7 +19,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class UserEditPage {
+public class UserEditPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
     private WebElement saveUserButton;
@@ -47,6 +47,10 @@ public class UserEditPage {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:userTabView:metaDataLanguage")
     private WebElement metaDataLanguageInput;
+
+    public UserEditPage() {
+        super("pages/userEdit.jsf");
+    }
 
     public UserEditPage insertUserData(User user) {
         firstNameInput.sendKeys(user.getName());

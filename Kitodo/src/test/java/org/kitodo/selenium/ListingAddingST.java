@@ -107,9 +107,7 @@ public class ListingAddingST extends BaseTestSelenium {
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
         Pages.getUsersPage().goTo().createNewLdapGroup().insertLdapGroupData(ldapGroup);
-        // We need to wait longer here because the many inputs produces a lot of toggling
-        // on the save button which makes it stale and throws a StaleElementException
-        Thread.sleep(9000);
+
         Pages.getLdapGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
@@ -144,7 +142,6 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
                 .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities();
 
-        Thread.sleep(2000);
         Pages.getUserGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());

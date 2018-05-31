@@ -18,9 +18,7 @@ import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LoginPage {
-
-    private final String URL = "pages/login.jsf";
+public class LoginPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "login")
@@ -33,6 +31,10 @@ public class LoginPage {
     @SuppressWarnings("unused")
     @FindBy(id = "password")
     private WebElement passwordInput;
+
+    public LoginPage() {
+        super("pages/login.jsf");
+    }
 
     /**
      * Goes to login page.

@@ -11,17 +11,13 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.List;
-
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
-public class ProjectsPage {
+public class ProjectsPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView")
@@ -35,6 +31,10 @@ public class ProjectsPage {
     @FindBy(id = "projectsTabView:templateTable_data")
     private WebElement templatesTable;
 
+    public ProjectsPage() {
+       super("pages/projects.jsf");
+    }
+
     /**
      * Goes to projects page.
      *
@@ -43,24 +43,6 @@ public class ProjectsPage {
     public ProjectsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProjects();
         return this;
-    }
-
-    /**
-     * Checks if the browser is currently at projects page.
-     *
-     * @return True if browser is at projects page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("projects");
-    }
-
-    /**
-     * Checks if the browser is currently not at users page.
-     *
-     * @return True if browser is not at users page.
-     */
-    public boolean isNotAt() {
-        return !isAt();
     }
 
     /**
@@ -73,9 +55,7 @@ public class ProjectsPage {
         if (isNotAt()) {
             goTo();
         }
-        List<WebElement> listTabs = projectsTabView.findElements(By.tagName("li"));
-        WebElement tab = listTabs.get(index);
-        tab.click();
+        clickTab(index, projectsTabView);
         return this;
     }
 

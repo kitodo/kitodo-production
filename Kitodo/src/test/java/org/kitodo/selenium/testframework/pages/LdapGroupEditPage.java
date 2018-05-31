@@ -11,6 +11,9 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -19,7 +22,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class LdapGroupEditPage {
+import static org.awaitility.Awaitility.await;
+
+public class LdapGroupEditPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
@@ -101,24 +106,9 @@ public class LdapGroupEditPage {
     @FindBy(id = "editForm:ldabgroupTabView:sambaKickoffTime")
     private WebElement sambaKickoffTimeInput;
 
-    /**
-     * Checks if the browser is currently at ldap group edit page.
-     *
-     * @return True if browser is at ldap group edit page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("ldapgroupEdit");
+    public LdapGroupEditPage() {
+        super("pages/ldapgroupEdit.jsf");
     }
-
-    /**
-     * Checks if the browser is currently not at ldap group edit page.
-     *
-     * @return True if browser is not at ldap group edit page.
-     */
-    public boolean isNotAt() {
-        return !isAt();
-    }
-
 
     public LdapGroupEditPage insertLdapGroupData(LdapGroup ldapGroup) {
         titleInput.sendKeys(ldapGroup.getTitle());
@@ -169,9 +159,11 @@ public class LdapGroupEditPage {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
+        await("Wait for save LDAP group button").pollDelay(8, TimeUnit.SECONDS).atMost(40, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(saveLdapGroupButton.isEnabled()));
         Browser.clickAjaxSaveButton(saveLdapGroupButton);
 
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); //seconds
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
         wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
 
         return Pages.getUsersPage();

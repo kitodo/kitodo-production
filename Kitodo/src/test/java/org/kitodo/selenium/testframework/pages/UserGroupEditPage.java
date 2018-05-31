@@ -12,6 +12,8 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -21,7 +23,9 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class UserGroupEditPage {
+import static org.awaitility.Awaitility.await;
+
+public class UserGroupEditPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -50,6 +54,10 @@ public class UserGroupEditPage {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:usergroupTabView:projectSelect")
     private WebElement projectSelector;
+
+    public UserGroupEditPage() {
+        super("pages/usergroupEdit.jsf");
+    }
 
     private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {
         return picklist.findElement(By.className("ui-picklist-button-add-all"));
@@ -114,28 +122,12 @@ public class UserGroupEditPage {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
+        await("Wait for save user group button").atMost(20, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(saveUserGroupButton.isEnabled()));
         Browser.clickAjaxSaveButton(saveUserGroupButton);
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
         wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
         return Pages.getUsersPage();
-    }
-
-    /**
-     * Checks if the browser is currently at user group edit page.
-     *
-     * @return True if browser is at user group edit page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("usergroupEdit");
-    }
-
-    /**
-     * Checks if the browser is currently not at user group edit page.
-     *
-     * @return True if browser is not at user group edit page.
-     */
-    public boolean isNotAt() {
-        return !isAt();
     }
 
     public int countAssignedGlobalAuthorities() {
