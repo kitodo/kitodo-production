@@ -11,10 +11,10 @@
 
 package org.kitodo.services.workflow;
 
-import de.sub.goobi.helper.Helper;
-
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -29,6 +29,12 @@ public class WorkflowControllerServiceTest {
     @BeforeClass
     public static void setUp() {
         workflowControllerService = new ServiceManager().getWorkflowControllerService();
+        SecurityTestUtils.addUserDataToSecurityContext(new User());
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test

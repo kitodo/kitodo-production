@@ -12,7 +12,6 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.net.URI;

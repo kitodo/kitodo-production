@@ -19,6 +19,7 @@ import java.util.Objects;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -55,8 +56,9 @@ public class SecurityAccessService {
     }
 
     /**
-     * Gets Authentication object of current threads security context
-     * @return
+     * Gets Authentication object of current threads security context.
+     * 
+     * @return authentication object
      */
     public Authentication getCurrentAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
@@ -74,7 +76,7 @@ public class SecurityAccessService {
                 return (SecurityUserDetails) principal;
             }
         }
-        return null;
+        throw new AuthenticationServiceException("There is no authenticated user");
     }
 
     /**
