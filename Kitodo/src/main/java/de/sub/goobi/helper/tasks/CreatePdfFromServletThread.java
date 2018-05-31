@@ -150,7 +150,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 logger.error("URI " + this.targetFolder + this.getProcess().getTitle() + ".PDF-ERROR.log is malformed",
                     e1);
             } catch (IOException e1) {
-                logger.error("Ressource " + uri + " could not be created", e);
+                logger.error("Resource could not be created", e);
             }
             try (BufferedWriter output = new BufferedWriter(new OutputStreamWriter(fileService.write(uri)))) {
                 output.write(text);

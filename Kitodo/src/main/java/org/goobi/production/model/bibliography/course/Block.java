@@ -14,6 +14,7 @@ package org.goobi.production.model.bibliography.course;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
@@ -263,7 +264,8 @@ public class Block {
      * @return whether the given string is equals to the assigned variant
      */
     public boolean isIdentifiedBy(String variant) {
-        return variant == null && this.variant == null || this.variant.equals(variant);
+        return Objects.isNull(variant) && Objects.isNull(this.variant)
+                || Objects.nonNull(this.variant) && this.variant.equals(variant);
     }
 
     /**

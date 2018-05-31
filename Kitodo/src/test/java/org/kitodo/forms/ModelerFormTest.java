@@ -11,6 +11,7 @@
 
 package org.kitodo.forms;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -106,6 +107,6 @@ public class ModelerFormTest {
         modelerForm.setXmlDiagramName("test2.bpmn20.xml");
         modelerForm.saveXMLDiagram();
 
-        assertTrue("Diagram XML was not saved!", modelerForm.getXmlDiagram().equals(xmlDiagram));
+        assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
     }
 }

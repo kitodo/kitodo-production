@@ -80,16 +80,13 @@ public class IndexingPage {
                 attempt++;
             }
         }
-        if (attempt > 3) {
-            throw new StaleElementReferenceException("could not access delete index button");
-        }
+        throw new StaleElementReferenceException("could not access delete index button");
     }
 
     /**
      * Clicks on "create mapping" button.
      */
     public void createMapping() throws InterruptedException {
-
         int attempt = 1;
         while (attempt <= 3) {
             try {
@@ -101,9 +98,7 @@ public class IndexingPage {
                 attempt++;
             }
         }
-        if (attempt > 3) {
-            throw new StaleElementReferenceException("could not access create index button");
-        }
+        throw new StaleElementReferenceException("could not access create index button");
 
     }
 
@@ -123,9 +118,7 @@ public class IndexingPage {
                 attempt++;
             }
         }
-        if (attempt > 3) {
-            throw new StaleElementReferenceException("could not access start index button");
-        }
+        throw new StaleElementReferenceException("could not access start index button");
     }
 
     /**
