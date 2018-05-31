@@ -46,6 +46,7 @@ import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;
 import org.omnifaces.cdi.PushContext;
+import org.omnifaces.util.Ajax;
 
 @Named
 @ApplicationScoped
@@ -204,14 +205,7 @@ public class IndexingForm {
         if (currentIndexState == objectType) {
             indexedObjects.put(objectType, indexWorkers.get(objectType).getIndexedObjects());
         } else if (!indexedObjects.containsKey(objectType)) {
-            try {
-                SearchService searchService = getService(objectType);
-                if (searchService != null) {
-                    indexedObjects.put(objectType, toIntExact(searchService.count()));
-                }
-            } catch (DataException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+            updateCount(objectType);
         }
         return indexedObjects.get(objectType);
     }
@@ -585,4 +579,24 @@ public class IndexingForm {
         return ObjectType.NONE;
     }
 
+    /**
+     * Update the view.
+     */
+    public void updateView() {
+        for (ObjectType objectType : ObjectType.values()) {
+            updateCount(objectType);
+        }
+        Ajax.update("@all");
+    }
+
+    private void updateCount(ObjectType objectType) {
+        SearchService searchService = getService(objectType);
+        if (searchService != null) {
+            try {
+                indexedObjects.put(objectType, toIntExact(searchService.count()));
+            } catch (DataException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
 }
