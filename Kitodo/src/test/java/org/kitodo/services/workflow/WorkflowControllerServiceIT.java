@@ -164,7 +164,6 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldReportProblem() throws Exception {
-        Helper.setCurrentUser(serviceManager.getUserService().getById(1));
 
         Problem problem = new Problem();
         problem.setId(5);

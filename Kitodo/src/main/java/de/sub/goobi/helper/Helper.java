@@ -436,35 +436,6 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     /**
-     * Get current logged in user.
-     *
-     * @return current logged in user
-     */
-    public static User getCurrentUser() {
-        return new ServiceManager().getUserService().getAuthenticatedUser();
-    }
-
-    // TODO: find way to test without this method - faces
-    /**
-     * Set current logged in user. Used for test purpose.
-     *
-     * @param user
-     *            current logged in user as User
-     */
-    public static void setCurrentUser(User user) {
-        currentUser = user;
-    }
-
-    /**
-     * Get metadata language for currently logged user.
-     *
-     * @return metadata language as String
-     */
-    public static String getMetadataLanguageForCurrentUser() {
-        return Helper.getCurrentUser().getMetadataLanguage();
-    }
-
-    /**
      * Get current task form.
      *
      * @return AktuelleSchritteForm

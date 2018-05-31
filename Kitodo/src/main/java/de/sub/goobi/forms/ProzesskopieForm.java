@@ -978,7 +978,7 @@ public class ProzesskopieForm implements Serializable {
             // always save date and user for each step
             task.setProcessingTime(process.getCreationDate());
             task.setEditTypeEnum(TaskEditType.AUTOMATIC);
-            User user = Helper.getCurrentUser();
+            User user = serviceManager.getUserService().getAuthenticatedUser();
             serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             // only if its done, set edit start and end date
@@ -1842,7 +1842,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie.setWikiField(this.template.getWikiField());
         this.addToWikiField = addToWikiField;
         if (addToWikiField != null && !addToWikiField.equals("")) {
-            User user = Helper.getCurrentUser();
+            User user = serviceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.prozessKopie
                     .setWikiField(WikiFieldHelper.getWikiMessage(prozessKopie.getWikiField(), "info", message));

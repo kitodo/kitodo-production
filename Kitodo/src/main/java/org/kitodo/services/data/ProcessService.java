@@ -1988,7 +1988,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                  * wenn kein Agora-Import, dann den Ordner mit
                  * Benutzerberechtigung neu anlegen
                  */
-                User user = Helper.getCurrentUser();
+                User user = serviceManager.getUserService().getAuthenticatedUser();
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {

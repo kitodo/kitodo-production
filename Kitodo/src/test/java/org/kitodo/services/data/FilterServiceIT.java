@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.TaskDTO;
@@ -44,13 +45,14 @@ public class FilterServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        Helper.setCurrentUser(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test

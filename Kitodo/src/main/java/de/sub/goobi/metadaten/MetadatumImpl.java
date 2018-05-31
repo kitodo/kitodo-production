@@ -27,6 +27,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -37,6 +38,7 @@ import org.kitodo.data.database.beans.Process;
  */
 
 public class MetadatumImpl implements Metadatum {
+    private ServiceManager serviceManager = new ServiceManager();
     private MetadataInterface md;
     private int identifier;
     private PrefsInterface myPrefs;
@@ -79,7 +81,7 @@ public class MetadatumImpl implements Metadatum {
 
     @Override
     public String getTyp() {
-        String label = this.md.getMetadataType().getLanguage(Helper.getMetadataLanguageForCurrentUser());
+        String label = this.md.getMetadataType().getLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = this.md.getMetadataType().getName();
         }

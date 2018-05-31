@@ -355,7 +355,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
         // und anschliessend alle Elemente in das Array packen
         zaehler = 0;
-        String language = Helper.getMetadataLanguageForCurrentUser();
+        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         for (DocStructTypeInterface docStructType : newTypes) {
             String label = docStructType.getNameByLanguage(language);
             if (label == null) {
@@ -544,7 +544,7 @@ public class MetadatenHelper implements Comparator<Object> {
      * @return localized Title of metadata type
      */
     public String getMetadatatypeLanguage(MetadataTypeInterface inMdt) {
-        String label = inMdt.getLanguage(Helper.getMetadataLanguageForCurrentUser());
+        String label = inMdt.getLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = inMdt.getName();
         }

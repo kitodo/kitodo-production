@@ -16,14 +16,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class SecurityAccessService {
@@ -79,6 +77,11 @@ public class SecurityAccessService {
         return null;
     }
 
+    /**
+     * Checks if there is currently an authenticated user.
+     * 
+     * @return true if there is currently an authenticated user
+     */
     public boolean isAuthenticated() {
         Authentication currentAuthentication = getCurrentAuthentication();
         if (currentAuthentication != null) {

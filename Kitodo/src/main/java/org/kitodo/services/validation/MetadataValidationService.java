@@ -88,7 +88,7 @@ public class MetadataValidationService {
      * @return boolean
      */
     public boolean validate(FileformatInterface gdzfile, PrefsInterface prefs, Process process) {
-        String metadataLanguage = Helper.getMetadataLanguageForCurrentUser();
+        String metadataLanguage = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         this.process = process;
         boolean result = true;
 

@@ -51,7 +51,7 @@ public class ExportMets {
      */
     public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
             MetadataTypeNotAllowedException, ExportFileException, ReadException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         URI userHome = serviceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
     }
@@ -99,7 +99,7 @@ public class ExportMets {
      *            the folder to prove and maybe create it
      */
     protected void prepareUserDirectory(URI targetFolder) {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         try {
             fileService.createDirectoryForUser(targetFolder, user.getLogin());
         } catch (IOException | RuntimeException e) {

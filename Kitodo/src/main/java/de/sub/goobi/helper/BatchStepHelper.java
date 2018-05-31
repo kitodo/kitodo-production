@@ -435,7 +435,7 @@ public class BatchStepHelper extends BatchHelper {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = Helper.getCurrentUser();
+            User user = serviceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
                     this.currentStep.getProcess().getWikiField(), "user", message));
@@ -453,7 +453,7 @@ public class BatchStepHelper extends BatchHelper {
      */
     public void addToWikiFieldForAll() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            User user = Helper.getCurrentUser();
+            User user = serviceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             for (Task task : this.steps) {
                 task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
@@ -519,7 +519,7 @@ public class BatchStepHelper extends BatchHelper {
             }
             task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
             task.setProcessingTime(new Date());
-            User user = Helper.getCurrentUser();
+            User user = serviceManager.getUserService().getAuthenticatedUser();
             serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             try {

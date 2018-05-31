@@ -248,15 +248,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return The user object or null if no user is authenticated.
      */
     public User getAuthenticatedUser() {
-        SecurityUserDetails userDetails = serviceManager.getSecurityAccessService()
-                .getAuthenticatedSecurityUserDetails();
-//        if (userDetails != null) {
-            return userDetails;
-
-//            return getByLogin(userDetails.getUsername());
-        }
-//        return null;
-
+        return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
+    }
 
     /**
      * Finds the current authenticated user and loads object dto from index.
@@ -264,7 +257,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * @return The user dto or null if no user is authenticated.
      */
     public UserDTO findAuthenticatedUser() throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         return findById(user.getId());
     }
 

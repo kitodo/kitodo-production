@@ -20,11 +20,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityTestUtils {
 
     /**
-     * Adds data and authorities of a given user to security context. It is not a
-     * real authentication and can not be used for front end testing.
+     * Adds a given user as SecurityUserDetails object to security context. Can be used for unit testing.
      * 
      * @param user
-     *            the user object.
+     *            user object
      */
     public static void addUserDataToSecurityContext(User user) {
         SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);

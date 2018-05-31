@@ -27,8 +27,7 @@ public class WorkflowControllerServiceTest {
     private static WorkflowControllerService workflowControllerService;
 
     @BeforeClass
-    public static void prepareUser() {
-        Helper.setCurrentUser(new User());
+    public static void setUp() {
         workflowControllerService = new ServiceManager().getWorkflowControllerService();
     }
 
