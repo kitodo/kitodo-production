@@ -94,7 +94,9 @@ public class SRUHelper {
      */
     public static Node parseResult(String resultString)
             throws IOException, JDOMException, ParserConfigurationException {
-
+        final String recordString = "record";
+        final String tag = "tag";
+        final String occurrence = "occurrence";
         // removed validation against external dtd
         SAXBuilder builder = new SAXBuilder(false);
         builder.setValidation(false);
@@ -111,11 +113,11 @@ public class SRUHelper {
             return null;
         }
         // <srw:record>
-        Element srwRecord = srwRecords.getChild("record", SRW);
+        Element srwRecord = srwRecords.getChild(recordString, SRW);
         // <srw:recordData>
         if (srwRecord != null) {
             Element recordData = srwRecord.getChild("recordData", SRW);
-            Element record = recordData.getChild("record", PICA);
+            Element record = recordData.getChild(recordString, PICA);
 
             // generate an answer document
             DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
@@ -124,19 +126,19 @@ public class SRUHelper {
             org.w3c.dom.Element collection = answer.createElement("collection");
             answer.appendChild(collection);
 
-            org.w3c.dom.Element picaRecord = answer.createElement("record");
+            org.w3c.dom.Element picaRecord = answer.createElement(recordString);
             collection.appendChild(picaRecord);
 
             @SuppressWarnings("unchecked")
             List<Element> data = record.getChildren();
             for (Element datafield : data) {
-                if (datafield.getAttributeValue("tag") != null) {
+                if (datafield.getAttributeValue(tag) != null) {
                     org.w3c.dom.Element field = answer.createElement("field");
                     picaRecord.appendChild(field);
-                    if (datafield.getAttributeValue("occurrence") != null) {
-                        field.setAttribute("occurrence", datafield.getAttributeValue("occurrence"));
+                    if (datafield.getAttributeValue(occurrence) != null) {
+                        field.setAttribute(occurrence, datafield.getAttributeValue(occurrence));
                     }
-                    field.setAttribute("tag", datafield.getAttributeValue("tag"));
+                    field.setAttribute(tag, datafield.getAttributeValue(tag));
                     @SuppressWarnings("unchecked")
                     List<Element> subfields = datafield.getChildren();
                     for (Element sub : subfields) {

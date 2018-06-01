@@ -114,7 +114,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager.getWorkflowControllerService();
     private String doneDirectoryName;
-    private static final String ERROR_LOAD_ONE = "errorLoadingOne";
+    private static final String ERROR_DELETING = "errorDeleting";
+    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String EXPORT_FINISHED = "ExportFinished";
     private static final String PROCESS = "prozess";
     private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
@@ -190,7 +191,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 serviceManager.getProcessService().save(this.process);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
             }
         } else {
             Helper.setFehlerMeldung("titleEmpty");
@@ -220,7 +221,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
             return null;
         }
         return processListPath;
@@ -530,7 +531,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("arbeitschritt")}, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("arbeitschritt")}, logger, e);
         }
     }
 
@@ -605,7 +606,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOAD_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
                 | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
@@ -622,7 +623,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOAD_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                 | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
@@ -639,7 +640,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOAD_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                 | IOException | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
@@ -1742,7 +1743,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    Helper.setErrorMessage("errorDeleting", new Object[] {"property"}, logger, e);
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {"property"}, logger, e);
                 }
             }
         }
@@ -1773,7 +1774,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOAD_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         }
     }
 
@@ -1787,7 +1788,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOAD_ONE, new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("arbeitsschritt"), id },
                 logger, e);
         }
     }

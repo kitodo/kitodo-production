@@ -26,6 +26,7 @@ public class Command implements CommandInterface {
 
     private static final Logger logger = LogManager.getLogger(Command.class);
     private static final String CHARSET = "UTF-8";
+    private static final String MESSAGE = "Execution of Command ";
 
     /**
      * Method executes a script.
@@ -55,11 +56,11 @@ public class Command implements CommandInterface {
 
                 commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
                 if (!commandResult.isSuccessful()) {
-                    logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+                    logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
                             + " failed!: " + commandResult.getMessages());
                 } else {
-                    logger.info("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
-                        + " was succesfull!: " + commandResult.getMessages());
+                    logger.info(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
+                        + " was successful!: " + commandResult.getMessages());
                 }
             }
         } catch (IOException | InterruptedException exception) {
@@ -67,7 +68,7 @@ public class Command implements CommandInterface {
             errorMessages.add(exception.getCause().toString());
             errorMessages.add(exception.getMessage());
             commandResult = new CommandResult(id, command, false, errorMessages);
-            logger.error("Execution of Command " + commandResult.getId() + " " + commandResult.getCommand()
+            logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
                     + " failed!: " + commandResult.getMessages());
             return commandResult;
         }

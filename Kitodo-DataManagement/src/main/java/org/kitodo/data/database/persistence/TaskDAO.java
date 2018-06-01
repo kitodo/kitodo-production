@@ -21,6 +21,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 public class TaskDAO extends BaseDAO<Task> {
 
     private static final long serialVersionUID = -2368830124391080142L;
+    private static final String KEY_PROCESS_ID = "processId";
+    private static final String KEY_PROJECT_ID = "projectId";
+    private static final String KEY_PROCESSING_STATUS = "processingStatus";
 
     @Override
     public Task getById(Integer id) throws DAOException {

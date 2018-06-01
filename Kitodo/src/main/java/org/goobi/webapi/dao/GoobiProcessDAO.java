@@ -71,8 +71,8 @@ public class GoobiProcessDAO {
 
             result = (GoobiProcess) criteria.uniqueResult();
 
-        } catch (HibernateException he) {
-            logger.error("Catched Hibernate exception: " + he.getMessage());
+        } catch (HibernateException e) {
+            logger.error(e.getMessage(), e);
         }
 
         return result;
@@ -103,8 +103,8 @@ public class GoobiProcessDAO {
             if (Objects.nonNull(list) && !list.isEmpty()) {
                 result.addAll(list);
             }
-        } catch (HibernateException he) {
-            logger.error("Catched Hibernate exception: " + he.getMessage());
+        } catch (HibernateException e) {
+            logger.error(e.getMessage(), e);
         }
 
         return result;
@@ -138,8 +138,8 @@ public class GoobiProcessDAO {
             if ((list != null) && (!list.isEmpty())) {
                 result.addAll(list);
             }
-        } catch (HibernateException he) {
-            logger.error("Catched Hibernate exception: " + he.getMessage());
+        } catch (HibernateException e) {
+            logger.error(e.getMessage(), e);
         }
 
         return result;
