@@ -15,6 +15,9 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -33,6 +36,10 @@ public class Ruleset extends BaseIndexedBean {
 
     @Column(name = "active")
     private Boolean active = true;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ruleset_client_id"))
+    private Client client;
 
     public String getTitle() {
         return this.title;
@@ -91,5 +98,24 @@ public class Ruleset extends BaseIndexedBean {
      */
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    /**
+     * Get client.
+     *
+     * @return Client object
+     */
+    public Client getClient() {
+        return this.client;
+    }
+
+    /**
+     * Set client.
+     *
+     * @param client
+     *            as Client object
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 }
