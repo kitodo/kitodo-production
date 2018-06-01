@@ -33,6 +33,7 @@ public class LazyDTOModelIT {
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertClients();
         MockDatabase.insertDockets();
         lazyDTOModel = new LazyDTOModel(docketService);
     }

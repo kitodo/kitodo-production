@@ -33,6 +33,7 @@ public class BeanHelperIT {
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertClients();
         MockDatabase.insertDockets();
         MockDatabase.insertRulesets();
         fileService.createDirectory(URI.create(""), "diagrams");

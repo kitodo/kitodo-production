@@ -146,12 +146,12 @@ public class MockDatabase {
     public static void insertProcessesFull() throws DAOException, DataException {
         insertAuthorities();
         insertBatches();
-        insertDockets();
-        insertRulesets();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
         insertClients();
+        insertDockets();
+        insertRulesets();
         insertProjects();
         insertProjectFileGroups();
         insertTemplates();
@@ -168,12 +168,12 @@ public class MockDatabase {
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
         insertAuthorities();
         insertBatches();
-        insertDockets();
-        insertRulesets();
         insertLdapGroups();
         insertUsers();
         insertUserGroups();
         insertClients();
+        insertDockets();
+        insertRulesets();
         insertProjects();
         insertProjectFileGroups();
         insertProcessForWorkflow();
@@ -422,16 +422,26 @@ public class MockDatabase {
         serviceManager.getBatchService().save(fourthBatch);
     }
 
-    public static void insertDockets() throws DataException {
+    public static void insertDockets() throws DAOException, DataException {
+        Client client = serviceManager.getClientService().getById(1);
+
         Docket firstDocket = new Docket();
         firstDocket.setTitle("default");
         firstDocket.setFile("docket.xsl");
+        firstDocket.setClient(client);
         serviceManager.getDocketService().save(firstDocket);
 
         Docket secondDocket = new Docket();
         secondDocket.setTitle("second");
         secondDocket.setFile("docket.xsl");
+        secondDocket.setClient(client);
         serviceManager.getDocketService().save(secondDocket);
+
+        Docket thirdDocket = new Docket();
+        thirdDocket.setTitle("third");
+        thirdDocket.setFile("third_docket.xsl");
+        thirdDocket.setClient(serviceManager.getClientService().getById(2));
+        serviceManager.getDocketService().save(thirdDocket);
     }
 
     private static void insertLdapServers() throws DAOException {
@@ -691,7 +701,7 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    private static void insertClients() throws DataException {
+    public static void insertClients() throws DataException {
         Client client = new Client();
         client.setName("First client");
         serviceManager.getClientService().save(client);
@@ -699,6 +709,10 @@ public class MockDatabase {
         Client secondClient = new Client();
         secondClient.setName("Second client");
         serviceManager.getClientService().save(secondClient);
+
+        Client thirdClient = new Client();
+        thirdClient.setName("Not used client");
+        serviceManager.getClientService().save(thirdClient);
     }
 
     private static void insertProjects() throws DAOException, DataException {
@@ -819,18 +833,31 @@ public class MockDatabase {
         serviceManager.getProjectService().save(project);
     }
 
-    public static void insertRulesets() throws DataException {
+    public static void insertRulesets() throws DAOException, DataException {
+        Client client = serviceManager.getClientService().getById(1);
+
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("SLUBDD");
         firstRuleset.setFile("ruleset_test.xml");
         firstRuleset.setOrderMetadataByRuleset(false);
+        firstRuleset.setClient(client);
         serviceManager.getRulesetService().save(firstRuleset);
 
         Ruleset secondRuleset = new Ruleset();
         secondRuleset.setTitle("SLUBHH");
         secondRuleset.setFile("ruleset_slubhh.xml");
         secondRuleset.setOrderMetadataByRuleset(false);
+        secondRuleset.setClient(client);
         serviceManager.getRulesetService().save(secondRuleset);
+
+        Client secondClient = serviceManager.getClientService().getById(2);
+
+        Ruleset thirdRuleset = new Ruleset();
+        thirdRuleset.setTitle("SLUBBB");
+        thirdRuleset.setFile("ruleset_slubbb.xml");
+        thirdRuleset.setOrderMetadataByRuleset(false);
+        thirdRuleset.setClient(secondClient);
+        serviceManager.getRulesetService().save(thirdRuleset);
     }
 
     private static void insertTasks() throws DAOException, DataException {
