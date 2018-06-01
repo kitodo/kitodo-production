@@ -11,6 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import java.util.Objects;
+
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -25,10 +27,15 @@ public class DocketType extends BaseType<Docket> {
 
     @Override
     JsonObject getJsonObject(Docket docket) {
+        Integer clientId = Objects.nonNull(docket.getClient()) ? docket.getClient().getId() : 0;
+        String clientName = Objects.nonNull(docket.getClient()) ? docket.getClient().getName() : "";
+
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(DocketTypeField.TITLE.getName(), preventNull(docket.getTitle()));
         jsonObjectBuilder.add(DocketTypeField.FILE.getName(), preventNull(docket.getFile()));
         jsonObjectBuilder.add(DocketTypeField.ACTIVE.getName(), docket.isActive());
+        jsonObjectBuilder.add(DocketTypeField.CLIENT_ID.getName(), clientId);
+        jsonObjectBuilder.add(DocketTypeField.CLIENT_NAME.getName(), clientName);
         return jsonObjectBuilder.build();
     }
 }
