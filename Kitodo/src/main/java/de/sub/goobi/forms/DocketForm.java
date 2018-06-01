@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
@@ -24,6 +25,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -144,5 +146,15 @@ public class DocketForm extends BasisForm {
     public void setMyDocket(Docket docket) {
         Helper.getHibernateSession().clear();
         this.myDocket = docket;
+    }
+
+
+    /**
+     * Get all available clients.
+     *
+     * @return list of Client objects
+     */
+    public List<Client> getClients() {
+        return serviceManager.getClientService().getAll();
     }
 }
