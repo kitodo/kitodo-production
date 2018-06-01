@@ -16,8 +16,6 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -34,7 +32,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketDAO> {
 
-    private static final Logger logger = LogManager.getLogger(DocketService.class);
     private static DocketService instance = null;
 
     /**
@@ -75,6 +72,18 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     JsonObject findByFile(String file) throws DataException {
         QueryBuilder query = createSimpleQuery(DocketTypeField.FILE.getName(), file, true, Operator.AND);
         return searcher.findDocument(query.toString());
+    }
+
+    /**
+     * Find dockets for client id.
+     *
+     * @param clientId
+     *            of the searched dockets
+     * @return search result
+     */
+    List<JsonObject> findByClientId(Integer clientId) throws DataException {
+        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getName(), clientId, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
