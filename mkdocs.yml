@@ -3,7 +3,10 @@ pages:
 - Home: 'index.md'
 - Getting started:
     - 'Building': 'gettingstarted/README.md'
+    - 'Build integrated demo': 'gettingstarted/demo.md'
+    - 'Build development version': 'gettingstarted/development-version.md'
     - 'Eclipse on Windows': 'gettingstarted/eclipse-windows.md'
+    - 'Create VirtualBox Appliance': 'gettingstarted/virtualbox.md'
 - 'Guidelines': 'guidelines/README.md'
 - 'System architecture': 'architecture/README.md'
 - Workflow:
