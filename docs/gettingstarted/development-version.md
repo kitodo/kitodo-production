@@ -38,12 +38,6 @@ mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
 
 Note: If you want to build a release version, you may want to set the version in pom.xml files before packaging
 
-### Remove duplicate version of bcprov dependency
-
-```
-zip -d kitodo-3.war "WEB-INF/lib/bcprov-jdk14-138.jar"
-```
-
 ### Create MySQL database and user
 
 ```
