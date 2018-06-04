@@ -12,7 +12,6 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.selenium.testframework.Browser;
@@ -160,8 +159,7 @@ public class LdapGroupEditPage extends Page {
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
         await("Wait for save LDAP group button").pollDelay(8, TimeUnit.SECONDS).atMost(40, TimeUnit.SECONDS)
-                .untilTrue(new AtomicBoolean(saveLdapGroupButton.isEnabled()));
-        Browser.clickAjaxSaveButton(saveLdapGroupButton);
+                .ignoreExceptions().until(() -> isButtonClicked.matches(saveLdapGroupButton));
 
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
         wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));

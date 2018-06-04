@@ -17,7 +17,6 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
@@ -127,8 +126,8 @@ public class UsersPage extends Page {
         }
         newElementButton.click();
         await("Wait for create new user button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .untilTrue(new AtomicBoolean(newUserButton.isEnabled()));
-        newUserButton.click();
+                .ignoreExceptions().until(() -> isButtonClicked.matches(newUserButton));
+
         Thread.sleep(Browser.getDelayAfterNewItemClick());
         return Pages.getUserEditPage();
     }
@@ -144,9 +143,9 @@ public class UsersPage extends Page {
         }
         newElementButton.click();
         await("Wait for create new LDAP group button")
-                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .untilTrue(new AtomicBoolean(newLdapGroupButton.isEnabled()));
-        newLdapGroupButton.click();
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(newLdapGroupButton));
+
         Thread.sleep(Browser.getDelayAfterNewItemClick());
         return Pages.getLdapGroupEditPage();
     }
@@ -189,9 +188,9 @@ public class UsersPage extends Page {
         }
         newElementButton.click();
         await("Wait for create new user group button")
-                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .untilTrue(new AtomicBoolean(newUserGroupButton.isEnabled()));
-        newUserGroupButton.click();
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(newUserGroupButton));
+
         Thread.sleep(Browser.getDelayAfterNewItemClick());
 
         return Pages.getUserGroupEditPage();

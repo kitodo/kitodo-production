@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 
+import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -57,4 +58,9 @@ public abstract class Page {
         WebElement tab = listTabs.get(index);
         tab.click();
     }
+
+    Predicate<WebElement> isButtonClicked = (webElement) -> {
+        webElement.click();
+        return true;
+    };
 }
