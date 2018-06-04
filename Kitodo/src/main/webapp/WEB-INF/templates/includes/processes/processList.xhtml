@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
         <p:dataTable var="item"
                      id="processesTable"
@@ -48,13 +48,16 @@
                         outcome="/pages/processEdit"
                         title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:param name="id" value="#{item.id}" />
+                    <f:param name="id" value="#{item.id}"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{item.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
+                </h:commandLink>
+                <h:commandLink action="#{ProzessverwaltungForm.exportMets(item.id)}" id="exportMets" title="#{msgs.exportMets}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </h:commandLink>
                 <p:commandLink id="deleteProcess"
                                action="#{ProzessverwaltungForm.delete}"
