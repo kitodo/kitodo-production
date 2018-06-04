@@ -13,8 +13,6 @@ package org.kitodo.data.database.persistence;
 
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -30,7 +28,6 @@ import org.kitodo.data.database.exceptions.InfrastructureException;
 public class HibernateUtil {
     private static StandardServiceRegistry registry;
     private static SessionFactory sessionFactory;
-    private static final Logger logger = LogManager.getLogger(HibernateUtil.class);
     private static final ThreadLocal<Session> threadSession = new ThreadLocal<>();
 
     /**

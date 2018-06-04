@@ -67,23 +67,9 @@ public class SearchRestClient extends KitodoRestClient {
      * @return http entity as String
      */
     String countDocuments(String query) throws DataException {
-        String output = "";
         String wrappedQuery = "{\n \"query\": " + query + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        try {
-            Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_count",
-                    Collections.singletonMap("pretty", "true"), entity);
-            output = EntityUtils.toString(response.getEntity());
-        } catch (ResponseException e) {
-            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-                logger.debug(e.getMessage());
-            } else {
-                throw new DataException(e);
-            }
-        } catch (IOException e) {
-            throw new DataException(e);
-        }
-        return output;
+        return performRequest(entity, "GET", "_count");
     }
 
     /**
@@ -97,23 +83,9 @@ public class SearchRestClient extends KitodoRestClient {
      * @return http entity as String
      */
     String aggregateDocuments(String query, String aggregation) throws DataException {
-        String output = "";
         String wrappedQuery = "{\n \"query\": " + query + "\n,\n \"aggs\": " + aggregation + "\n}";
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
-        try {
-            Response response = restClient.performRequest("POST", "/" + index + "/" + type + "/_search?size=0",
-                    Collections.singletonMap("pretty", "true"), entity);
-            output = EntityUtils.toString(response.getEntity());
-        } catch (ResponseException e) {
-            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-                logger.debug(e.getMessage());
-            } else {
-                throw new DataException(e);
-            }
-        } catch (IOException e) {
-            throw new DataException(e);
-        }
-        return output;
+        return performRequest(entity, "POST", "_search?size=0");
     }
 
     /**
@@ -130,11 +102,7 @@ public class SearchRestClient extends KitodoRestClient {
                     Collections.singletonMap("pretty", "true"));
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
-            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-                logger.debug(e.getMessage());
-            } else {
-                throw new DataException(e);
-            }
+            handleResponseException(e);
         } catch (IOException e) {
             throw new DataException(e);
         }
@@ -182,14 +150,32 @@ public class SearchRestClient extends KitodoRestClient {
                     parameters, entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
-            if (e.getResponse().getStatusLine().getStatusCode() == 404) {
-                logger.debug(e.getMessage());
-            } else {
-                throw new DataException(e);
-            }
+            handleResponseException(e);
         } catch (IOException e) {
             throw new DataException(e);
         }
         return output;
+    }
+
+    private String performRequest(HttpEntity entity, String httpMethod, String urlRequest) throws DataException {
+        String output = "";
+        try {
+            Response response = restClient.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
+                    Collections.singletonMap("pretty", "true"), entity);
+            output = EntityUtils.toString(response.getEntity());
+        } catch (ResponseException e) {
+            handleResponseException(e);
+        } catch (IOException e) {
+            throw new DataException(e);
+        }
+        return output;
+    }
+
+    private void handleResponseException(ResponseException e) throws DataException {
+        if (e.getResponse().getStatusLine().getStatusCode() == 404) {
+            logger.debug(e.getMessage());
+        } else {
+            throw new DataException(e);
+        }
     }
 }
