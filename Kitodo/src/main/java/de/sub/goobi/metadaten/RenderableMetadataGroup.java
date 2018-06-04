@@ -28,7 +28,6 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
-import org.kitodo.data.database.helper.Util;
 import org.kitodo.legacy.UghImplementation;
 
 /**
@@ -94,7 +93,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Creates a RenderableMetadataGroup instance able to add any metadata group
      * that still can be added to the currently selected level of the document
-     * structure hierararchy.
+     * structure hierarchy.
      *
      * @param addableTypes
      *            all metadata group types available for adding to the current
@@ -109,7 +108,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     public RenderableMetadataGroup(Collection<MetadataGroupTypeInterface> addableTypes, String projectName)
             throws ConfigurationException {
         super(addableTypes.iterator().next().getAllLanguages(), null);
-        possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
+        possibleTypes = new LinkedHashMap<>(hashCapacityFor(addableTypes));
         for (MetadataGroupTypeInterface possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
@@ -206,7 +205,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     public RenderableMetadataGroup(RenderableMetadataGroup master,
             Collection<MetadataGroupTypeInterface> addableTypes) {
         super(master.labels, null);
-        possibleTypes = new LinkedHashMap<>(Util.hashCapacityFor(addableTypes));
+        possibleTypes = new LinkedHashMap<>(hashCapacityFor(addableTypes));
         for (MetadataGroupTypeInterface possibleType : addableTypes) {
             possibleTypes.put(possibleType.getName(), possibleType);
         }
@@ -240,7 +239,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     private final void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
         List<MetadataTypeInterface> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
-        members = new LinkedHashMap<>(Util.hashCapacityFor(requiredFields));
+        members = new LinkedHashMap<>(hashCapacityFor(requiredFields));
         for (MetadataTypeInterface field : requiredFields) {
             RenderableGroupableMetadatum member;
             if (!(this instanceof RenderablePersonMetadataGroup)) {
@@ -454,7 +453,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     private final void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
         List<MetadataTypeInterface> requiredMetadataTypes = newGroupType.getMetadataTypeList();
         Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<>(
-                Util.hashCapacityFor(requiredMetadataTypes));
+                hashCapacityFor(requiredMetadataTypes));
         for (MetadataTypeInterface type : requiredMetadataTypes) {
             RenderableGroupableMetadatum member = members.get(type.getName());
             if (member == null) {
@@ -467,5 +466,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
             newMembers.put(type.getName(), member);
         }
         members = newMembers;
+    }
+
+    private static int hashCapacityFor(Collection<?> collection) {
+        return (int) Math.ceil(collection.size() / 0.75);
     }
 }
