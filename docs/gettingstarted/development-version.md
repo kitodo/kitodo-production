@@ -145,6 +145,12 @@ sudo mv kitodo-3.war /var/lib/tomcat8/webapps/kitodo.war
 until curl -s GET "localhost:8080/kitodo/pages/login.jsf" | grep -q -o "KITODO.PRODUCTION" ; do sleep 1; done
 ```
 
+### Install plugins
+
+```
+sudo ln -s /var/lib/tomcat8/webapps/kitodo/plugins/opac/OpacPica-Plugin-1.0-SNAPSHOT.jar /usr/local/kitodo/plugins/opac/
+```
+
 ### Login
 
 http://localhost:8080/kitodo/
