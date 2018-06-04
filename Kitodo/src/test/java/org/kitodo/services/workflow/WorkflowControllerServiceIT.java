@@ -33,6 +33,7 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
+import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -42,8 +43,10 @@ import static org.junit.Assert.assertTrue;
 
 public class WorkflowControllerServiceIT {
 
-    private static final File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
+    private static final File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter("script_createSymLink"));
     private static final ServiceManager serviceManager = new ServiceManager();
+    private static final FileService fileService = serviceManager.getFileService();
     private static final TaskService taskService = serviceManager.getTaskService();
     private static final WorkflowControllerService workflowService = serviceManager.getWorkflowControllerService();
 
@@ -54,7 +57,8 @@ public class WorkflowControllerServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
 
         if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
+            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
+            ExecutionPermission.setExecutePermission(scriptCreateSymLink);
         }
     }
 
@@ -65,13 +69,14 @@ public class WorkflowControllerServiceIT {
         SecurityTestUtils.cleanSecurityContext();
 
         if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
+            ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
         }
     }
 
     @Test
     public void shouldWorkflowAsTemplate() throws Exception {
-        serviceManager.getFileService().createDirectory(URI.create(""), "diagrams");
+        fileService.createDirectory(URI.create(""), "diagrams");
         FileLoader.createExtendedGatewayDiagramTestFile();
 
         workflowService.saveWorkflowAsTemplate("gateway");
@@ -84,7 +89,7 @@ public class WorkflowControllerServiceIT {
         assertEquals("Workflow of template was not saved correctly!", 1, workflows.size());
 
         FileLoader.deleteExtendedGatewayDiagramTestFile();
-        serviceManager.getFileService().delete(URI.create("diagrams"));
+        fileService.delete(URI.create("diagrams"));
     }
 
     @Test
@@ -146,10 +151,16 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldAssignTaskToUser() throws Exception {
+        fileService.createDirectory(URI.create(""), "1");
+        fileService.createDirectory(URI.create("1"), "images");
+
         Task task = taskService.getById(6);
 
         workflowService.assignTaskToUser(task);
         assertEquals("Incorrect user was assigned to the task!", Integer.valueOf(1), task.getProcessingUser().getId());
+
+        fileService.delete(URI.create("1/images"));
+        fileService.delete(URI.create("1"));
     }
 
     @Test
