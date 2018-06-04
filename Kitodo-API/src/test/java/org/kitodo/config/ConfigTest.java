@@ -29,13 +29,13 @@ public class ConfigTest {
     @Test
     public void shouldGetStringParameterWithoutDefault() {
         String param = Config.getParameter("stringParam");
-        assertEquals("Incorrect param!", param, "String");
+        assertEquals("Incorrect param!", "String", param);
     }
 
     @Test
     public void shouldGetStringParameterWithDefault() {
         String param = Config.getParameter("stringParam", "test");
-        assertEquals("Incorrect param!", param, "String");
+        assertEquals("Incorrect param!", "String", param);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class ConfigTest {
     @Test
     public void shouldGetStringParameterForNonexistentWithDefault() {
         String param = Config.getParameter("noStringParam", "Default");
-        assertEquals("Incorrect param!", param, "Default");
+        assertEquals("Incorrect param!", "Default", param);
     }
 
     @Test
@@ -69,24 +69,24 @@ public class ConfigTest {
     @Test
     public void shouldGetIntParameterWithoutDefault() {
         int param = Config.getIntParameter("intParam");
-        assertEquals("Incorrect param!", param, 1);
+        assertEquals("Incorrect param!", 1, param);
     }
 
     @Test
     public void shouldGetIntParameterWithDefault() {
         int param = Config.getIntParameter("intParam", 3);
-        assertEquals("Incorrect param!", param, 1);
+        assertEquals("Incorrect param!", 1, param);
     }
 
     @Test
     public void shouldGetIntParameterForNonexistentWithoutDefault() {
         int param = Config.getIntParameter("noIntParam");
-        assertEquals("Incorrect param!", param, 0);
+        assertEquals("Incorrect param!", 0, param);
     }
 
     @Test
     public void shouldGetIntParameterForNonexistentWithDefault() {
         int param = Config.getIntParameter("noIntParam", 3);
-        assertEquals("Incorrect param!", param, 3);
+        assertEquals("Incorrect param!", 3, param);
     }
 }

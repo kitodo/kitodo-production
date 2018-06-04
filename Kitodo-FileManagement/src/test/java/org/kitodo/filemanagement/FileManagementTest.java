@@ -219,7 +219,7 @@ public class FileManagementTest {
         Assert.assertTrue(fileManagement.fileExist(resource));
 
         String fileName = fileManagement.getFileNameWithExtension(resource);
-        Assert.assertEquals(fileName, "fileName.xml");
+        Assert.assertEquals("File name is incorrect!", "fileName.xml", fileName);
     }
 
     @Test
@@ -238,8 +238,8 @@ public class FileManagementTest {
 
         FilenameFilter filter = new FileNameEndsWithFilter(".xml");
         List subUrisWithFilter = fileManagement.getSubUris(filter, directory);
-        Assert.assertEquals(subUrisWithFilter.size(), 1);
-        Assert.assertEquals(subUrisWithFilter.get(0), secondSub);
+        Assert.assertEquals(1, subUrisWithFilter.size());
+        Assert.assertEquals(secondSub, subUrisWithFilter.get(0));
     }
 
     @Test

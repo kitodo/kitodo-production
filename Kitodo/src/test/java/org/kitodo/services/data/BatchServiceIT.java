@@ -11,17 +11,15 @@
 
 package org.kitodo.services.data;
 
+import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import javax.json.JsonObject;
-
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,6 +40,7 @@ public class BatchServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.setUpAwaitility();
     }
 
     @AfterClass
@@ -50,25 +49,20 @@ public class BatchServiceIT {
         MockDatabase.cleanDatabase();
     }
 
-    @Before
-    public void multipleInit() throws InterruptedException {
-        Thread.sleep(500);
-    }
-
     @Rule
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllBatches() throws Exception {
-        Long amount = batchService.count();
-        assertEquals("Batches were not counted correctly!", Long.valueOf(4), amount);
+    public void shouldCountAllBatches() {
+        await().untilAsserted(
+            () -> assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count()));
     }
 
     @Test
-    public void shouldCountAllBatchesAccordingToQuery() throws Exception {
+    public void shouldCountAllBatchesAccordingToQuery() {
         String query = matchQuery("title", "First batch").operator(Operator.AND).toString();
-        Long amount = batchService.count(query);
-        assertEquals("Batches were not counted correctly!", Long.valueOf(1), amount);
+        await().untilAsserted(
+            () -> assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query)));
     }
 
     @Test
@@ -92,7 +86,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldGetAllBatchesInGivenRange() throws Exception {
-        List<Batch> batches = batchService.getAll(2,10);
+        List<Batch> batches = batchService.getAll(2, 10);
         assertEquals("Not all batches were found in database!", 2, batches.size());
     }
 
@@ -122,103 +116,88 @@ public class BatchServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws Exception {
-        String actual = batchService.findById(1).getTitle();
+    public void shouldFindById() {
         String expected = "First batch";
-        assertEquals("Batch was not found in index!", expected, actual);
+        await().untilAsserted(
+            () -> assertEquals("Batch was not found in index!", expected, batchService.findById(1).getTitle()));
     }
 
     @Test
-    public void shouldFindByTitle() throws Exception {
-        List<JsonObject> batches = batchService.findByTitle("batch", true);
-        Integer actual = batches.size();
-        Integer expected = 3;
-        assertEquals("Batches were not found in index!", expected, actual);
-
-        batches = batchService.findByTitle("First batch", true);
-        actual = batches.size();
-        expected = 1;
-        assertEquals("Batch was not found in index!", expected, actual);
-
-        batches = batchService.findByTitle("noBatch", true);
-        actual = batches.size();
-        expected = 0;
-        assertEquals("Batch was found in index!", expected, actual);
+    public void shouldFindManyByTitle() {
+        await().untilAsserted(
+            () -> assertEquals("Batches were not found in index!", 3, batchService.findByTitle("batch", true).size()));
     }
 
     @Test
-    public void shouldFindByType() throws Exception {
-        List<JsonObject> batches = batchService.findByType(Batch.Type.LOGISTIC, true);
-        Integer actual = batches.size();
-        Integer expected = 2;
-        assertEquals("Batches were not found in index!", expected, actual);
-
-        batches = batchService.findByType(Batch.Type.SERIAL, true);
-        actual = batches.size();
-        expected = 1;
-        assertEquals("Batch was not found in index!", expected, actual);
+    public void shouldFindOneByTitle() {
+        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
+            batchService.findByTitle("First batch", true).size()));
     }
 
     @Test
-    public void shouldFindByTitleAndType() throws Exception {
-        List<JsonObject> batches = batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC);
-        Integer actual = batches.size();
-        Integer expected = 1;
-        assertEquals("Batch was not found in index!", expected, actual);
-
-        batches = batchService.findByTitleAndType("Second batch", Batch.Type.SERIAL);
-        actual = batches.size();
-        expected = 0;
-        assertEquals("Batch was found in index!", expected, actual);
+    public void shouldNotFindByType() {
+        await().untilAsserted(
+            () -> assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size()));
     }
 
     @Test
-    public void shouldFindByTitleOrType() throws Exception {
-        List<JsonObject> batches = batchService.findByTitleOrType("First batch", Batch.Type.SERIAL);
-        Integer actual = batches.size();
-        Integer expected = 2;
-        assertEquals("Batches were not found in index!", expected, actual);
-
-        batches = batchService.findByTitleOrType("None", Batch.Type.SERIAL);
-        actual = batches.size();
-        expected = 1;
-        assertEquals("More batches were found in index!", expected, actual);
+    public void shouldFindByTitleAndType() {
+        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
+            batchService.findByTitleAndType("First batch", Batch.Type.LOGISTIC).size()));
     }
 
     @Test
-    public void shouldFindByProcessId() throws Exception {
-        List<JsonObject> batches = batchService.findByProcessId(1);
-        Integer actual = batches.size();
-        Integer expected = 2;
-        assertEquals("Batches were not found in index!", expected, actual);
-
-        batches = batchService.findByProcessId(2);
-        actual = batches.size();
-        expected = 1;
-        assertEquals("Batch was not found in index!", expected, actual);
-
-        batches = batchService.findByProcessId(3);
-        actual = batches.size();
-        expected = 0;
-        assertEquals("Some batches were found in index!", expected, actual);
+    public void shouldNotFindByTitleAndType() {
+        await().untilAsserted(() -> assertEquals("Batch was found in index!", 0,
+            batchService.findByTitleAndType("Second batch", Batch.Type.SERIAL).size()));
     }
 
     @Test
-    public void shouldFindByProcessTitle() throws Exception {
-        List<JsonObject> batches = batchService.findByProcessTitle("First process");
-        Integer actual = batches.size();
-        Integer expected = 2;
-        assertEquals("Batches were not found in index!", expected, actual);
+    public void shouldFindManyByTitleOrType() {
+        await().untilAsserted(() -> assertEquals("Batches were not found in index!", 2,
+            batchService.findByTitleOrType("First batch", Batch.Type.SERIAL).size()));
+    }
 
-        batches = batchService.findByProcessTitle("Second process");
-        actual = batches.size();
-        expected = 1;
-        assertEquals("Batch was not found in index!", expected, actual);
+    @Test
+    public void shouldFindByTitleOrType() {
+        await().untilAsserted(() -> assertEquals("More batches were found in index!", 1,
+            batchService.findByTitleOrType("None", Batch.Type.SERIAL).size()));
+    }
 
-        batches = batchService.findByProcessTitle("DBConnectionTest");
-        actual = batches.size();
-        expected = 0;
-        assertEquals("Some batches were found in index!", expected, actual);
+    @Test
+    public void shouldFindManyByProcessId() {
+        await().untilAsserted(
+            () -> assertEquals("Batches were not found in index!", 2, batchService.findByProcessId(1).size()));
+    }
+
+    @Test
+    public void shouldFindOneByProcessId() {
+        await().untilAsserted(
+            () -> assertEquals("Batch was not found in index!", 1, batchService.findByProcessId(2).size()));
+    }
+
+    @Test
+    public void shouldNotFindByProcessId() {
+        await().untilAsserted(
+            () -> assertEquals("Some batches were found in index!", 0, batchService.findByProcessId(3).size()));
+    }
+
+    @Test
+    public void shouldFindManyByProcessTitle() {
+        await().untilAsserted(() -> assertEquals("Batches were not found in index!", 2,
+            batchService.findByProcessTitle("First process").size()));
+    }
+
+    @Test
+    public void shouldFindOneByProcessTitle() {
+        await().untilAsserted(() -> assertEquals("Batch was not found in index!", 1,
+            batchService.findByProcessTitle("Second process").size()));
+    }
+
+    @Test
+    public void shouldNotFindByProcessTitle() {
+        await().untilAsserted(() -> assertEquals("Some batches were found in index!", 0,
+            batchService.findByProcessTitle("DBConnectionTest").size()));
     }
 
     @Test

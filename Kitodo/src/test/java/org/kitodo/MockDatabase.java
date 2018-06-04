@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -39,6 +40,8 @@ import javax.json.JsonReader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
 import org.elasticsearch.common.io.FileSystemUtils;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.InternalSettingsPreparer;
@@ -132,6 +135,12 @@ public class MockDatabase {
         indexRestClient.deleteIndex();
         node.close();
         node = null;
+    }
+
+    public static void setUpAwaitility() {
+        Awaitility.setDefaultPollInterval(10, TimeUnit.MILLISECONDS);
+        Awaitility.setDefaultPollDelay(Duration.ZERO);
+        Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
     }
 
     public static void insertProcessesFull() throws DAOException, DataException {
