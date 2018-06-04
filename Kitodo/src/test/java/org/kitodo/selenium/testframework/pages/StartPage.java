@@ -13,9 +13,11 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.selenium.testframework.Browser;
 
-public class StartPage {
+public class StartPage extends Page {
 
-    private final String URL = "pages/start.jsf";
+    public StartPage() {
+        super("pages/start.jsf");
+    }
 
     /**
      * Goes to help page.
@@ -25,14 +27,5 @@ public class StartPage {
     public StartPage goTo() {
         Browser.goTo(URL);
         return this;
-    }
-
-    /**
-     * Checks if the browser is currently at start page.
-     *
-     * @return True if browser is at start page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("start");
     }
 }

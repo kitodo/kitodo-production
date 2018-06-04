@@ -11,10 +11,13 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 
-public class HelpPage {
+public class HelpPage extends Page {
+
+    public HelpPage() {
+        super("help");
+    }
 
     /**
      * Goes to help page.
@@ -25,14 +28,4 @@ public class HelpPage {
         Pages.getTopNavigation().gotoHelp();
         return this;
     }
-
-    /**
-     * Checks if the browser is currently at help page.
-     *
-     * @return True if browser is at help page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("help");
-    }
-
 }

@@ -19,7 +19,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClientEditPage {
+public class ClientEditPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
     private WebElement saveClientButton;
@@ -27,6 +27,10 @@ public class ClientEditPage {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:clientsTabView:nameInput")
     private WebElement nameInput;
+
+    public ClientEditPage() {
+        super("pages/clientEdit.jsf");
+    }
 
     public ClientEditPage insertClientData(Client client) {
         nameInput.sendKeys(client.getName());

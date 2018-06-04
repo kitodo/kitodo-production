@@ -57,7 +57,6 @@ public class Browser {
      * Provides the web driver, sets timeout and window size.
      */
     public static void Initialize() throws IOException {
-
         if (browserType.equals(BrowserType.CHROME)) {
             provideChromeDriver();
         }
@@ -79,8 +78,7 @@ public class Browser {
     private static void provideChromeDriver() throws IOException {
         String userDir = System.getProperty("user.dir");
         String driverFilePath = userDir + "/target/extracts/";
-        String driverFileName = "";
-        driverFileName = "chromedriver";
+        String driverFileName = "chromedriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
         }
@@ -97,8 +95,7 @@ public class Browser {
     private static void provideGeckoDriver() throws IOException {
         String userDir = System.getProperty("user.dir");
         String driverFilePath = userDir + "/target/extracts/";
-        String driverFileName = "";
-        driverFileName = "geckodriver";
+        String driverFileName = "geckodriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
         }
@@ -167,7 +164,6 @@ public class Browser {
     }
 
     public static File captureScreenShot() {
-
         File src = webDriver.getScreenshotAs(OutputType.FILE);
         File screenshotFile = new File(System.getProperty("user.dir") + "/target/Selenium/" + "screen.png");
         try {

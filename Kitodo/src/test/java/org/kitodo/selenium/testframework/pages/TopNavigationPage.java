@@ -11,19 +11,17 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.selenium.testframework.Browser;
-import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.ElementNotVisibleException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class TopNavigationPage {
-
-    private static final Logger logger = LogManager.getLogger(TopNavigationPage.class);
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -76,33 +74,20 @@ public class TopNavigationPage {
     /**
      * Hovers user menu and logs out.
      */
-    public void logout() throws InterruptedException, InstantiationException, IllegalAccessException {
-        int attempt = 1;
-        int maximumAttempts = 10;
-        while (attempt <= maximumAttempts) {
-            try {
-                hoverWebElement(userMenuButton);
-                hoverWebElement(logoutButton);
-                logoutButton.click();
-                break;
-            } catch (ElementNotVisibleException e) {
-                logger.error("User menu icon not visible, retrying now, " + attempt);
-                Thread.sleep(1000);
-                Pages.getStartPage().goTo();
-                attempt++;
-            }
-        }
-        if (attempt > maximumAttempts) {
-            throw new ElementNotVisibleException("User menu icon not visible");
-        }
+    public void logout() throws InterruptedException {
+        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
+        hoverWebElement(userMenuButton);
+        hoverWebElement(logoutButton);
+        logoutButton.click();
         Thread.sleep(Browser.getDelayAfterLogout());
     }
 
     /**
      * Hovers dashboard menu and clicks on link to help page
      */
-    public void gotoHelp() throws InterruptedException {
+    void gotoHelp() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkHelp);
         linkHelp.click();
@@ -112,7 +97,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to tasks page
      */
-    public void gotoTasks() throws InterruptedException {
+     void gotoTasks() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkHelp);
         linkTasks.click();
@@ -122,7 +107,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to processes page
      */
-    public void gotoProcesses() throws InterruptedException {
+    void gotoProcesses() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkProcesses);
         linkProcesses.click();
@@ -132,7 +117,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to projects page
      */
-    public void gotoProjects() throws InterruptedException {
+    void gotoProjects() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkProjects);
         linkProjects.click();
@@ -142,7 +127,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to users page
      */
-    public void gotoUsers() throws InterruptedException {
+    void gotoUsers() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkUsers);
         linkUsers.click();
@@ -152,7 +137,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to modules page
      */
-    public void gotoModules() throws InterruptedException {
+    void gotoModules() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkModules);
         linkModules.click();
@@ -162,7 +147,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to clients page
      */
-    public void gotoClients() throws InterruptedException {
+    void gotoClients() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkClients);
         linkClients.click();
@@ -172,7 +157,7 @@ public class TopNavigationPage {
     /**
      * Hovers dashboard menu and clicks on link to indexing page
      */
-    public void gotoIndexing() throws InterruptedException {
+    void gotoIndexing() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkIndexing);
         linkIndexing.click();
@@ -184,7 +169,7 @@ public class TopNavigationPage {
      * 
      * @return True if "Admin" is displayed.
      */
-    public boolean isShowingAllLinks() throws InterruptedException {
+    public boolean isShowingAllLinks() {
         hoverWebElement(dashboardMenuButton);
         if (!linkHelp.isDisplayed()) {
             return false;

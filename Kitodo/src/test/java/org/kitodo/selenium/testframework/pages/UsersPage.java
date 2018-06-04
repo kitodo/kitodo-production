@@ -11,10 +11,13 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
@@ -24,7 +27,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UsersPage {
+public class UsersPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView")
@@ -58,7 +61,9 @@ public class UsersPage {
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
 
-    private final String URL = "pages/users.jsf";
+    public UsersPage() {
+        super("pages/users.jsf");
+    }
 
     /**
      * Goes to users page.
@@ -68,33 +73,6 @@ public class UsersPage {
     public UsersPage goTo() throws Exception {
         Pages.getTopNavigation().gotoUsers();
         return this;
-    }
-
-    /**
-     * Gets URL.
-     *
-     * @return The URL.
-     */
-    public String getUrl() {
-        return URL;
-    }
-
-    /**
-     * Checks if the browser is currently at users page.
-     * 
-     * @return True if browser is at users page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains(URL);
-    }
-
-    /**
-     * Checks if the browser is currently not at users page.
-     *
-     * @return True if browser is not at users page.
-     */
-    public boolean isNotAt() {
-        return !isAt();
     }
 
     /**
@@ -148,10 +126,10 @@ public class UsersPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        await("Wait for create new user button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .untilTrue(new AtomicBoolean(newUserButton.isEnabled()));
         newUserButton.click();
         Thread.sleep(Browser.getDelayAfterNewItemClick());
-
         return Pages.getUserEditPage();
     }
 
@@ -165,15 +143,17 @@ public class UsersPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        await("Wait for create new LDAP group button")
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .untilTrue(new AtomicBoolean(newLdapGroupButton.isEnabled()));
         newLdapGroupButton.click();
         Thread.sleep(Browser.getDelayAfterNewItemClick());
-
         return Pages.getLdapGroupEditPage();
     }
 
     /**
-     * Returns a list of all ldap groups titles which were displayed on ldap group page.
+     * Returns a list of all ldap groups titles which were displayed on ldap group
+     * page.
      *
      * @return The list of ldap group titles
      */
@@ -194,9 +174,7 @@ public class UsersPage {
         if (isNotAt()) {
             goTo();
         }
-        List<WebElement> listTabs = usersTabView.findElements(By.tagName("li"));
-        WebElement tab = listTabs.get(index);
-        tab.click();
+        clickTab(index, usersTabView);
         return this;
     }
 
@@ -210,7 +188,9 @@ public class UsersPage {
             goTo();
         }
         newElementButton.click();
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        await("Wait for create new user group button")
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .untilTrue(new AtomicBoolean(newUserGroupButton.isEnabled()));
         newUserGroupButton.click();
         Thread.sleep(Browser.getDelayAfterNewItemClick());
 

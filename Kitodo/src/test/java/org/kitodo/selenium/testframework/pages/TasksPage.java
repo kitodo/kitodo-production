@@ -11,10 +11,13 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 
-public class TasksPage {
+public class TasksPage extends Page {
+
+    public TasksPage() {
+        super("pages/tasks.jsf");
+    }
 
     /**
      * Goes to tasks page.
@@ -25,14 +28,4 @@ public class TasksPage {
         Pages.getTopNavigation().gotoTasks();
         return this;
     }
-
-    /**
-     * Checks if the browser is currently at tasks page.
-     *
-     * @return True if browser is at tasks page.
-     */
-    public boolean isAt() {
-        return Browser.getCurrentUrl().contains("tasks");
-    }
-
 }

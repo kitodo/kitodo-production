@@ -12,20 +12,20 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class IndexingPage {
+import static org.awaitility.Awaitility.await;
 
-    private static final Logger logger = LogManager.getLogger(IndexingPage.class);
+public class IndexingPage extends Page {
 
     @SuppressWarnings("unused")
     @FindBy(id = "indexingTabView:indexing_form:indexingTable")
@@ -43,6 +43,10 @@ public class IndexingPage {
     @FindBy(id = "indexingTabView:indexing_form:startIndexingAllButton")
     private WebElement startIndexingAllButton;
 
+    public IndexingPage() {
+        super("pages/indexingPage.jsf");
+    }
+
     /**
      * Goes to indexing page.
      *
@@ -54,71 +58,43 @@ public class IndexingPage {
     }
 
     /**
-     * Checks if the browser is currently at indexing page.
-     *
-     * @return True if browser is at indexing page.
-     */
-    public boolean isAt() throws InterruptedException {
-        return Browser.getCurrentUrl().contains("indexing");
-    }
-
-    /**
      * Clicks on "delete index" button and accept dialog.
      */
-    public void deleteIndex() throws InterruptedException {
-        int attempt = 1;
-        while (attempt <= 3) {
-            try {
-                deleteIndexButton.click();
-                Thread.sleep(Browser.getDelayIndexing());
-                Alert javascriptconfirm = Browser.getDriver().switchTo().alert();
-                javascriptconfirm.accept();
-                Thread.sleep(Browser.getDelayIndexing());
-                return;
-            } catch (StaleElementReferenceException e) {
-                logger.error("Delete index button is not accessible, retrying now, " + attempt);
-                attempt++;
-            }
-        }
-        throw new StaleElementReferenceException("could not access delete index button");
+    private void deleteIndex() throws InterruptedException {
+        await("Wait for delete index button").atMost(20, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(deleteIndexButton.isEnabled()));
+        deleteIndexButton.click();
+
+        Predicate<WebDriver> isAlertPresent = (d) -> {
+            d.switchTo().alert();
+            return true;
+        };
+
+        await("Wait for alert").atMost(5, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isAlertPresent.matches(Browser.getDriver()));
+
+        Browser.getDriver().switchTo().alert().accept();
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     /**
      * Clicks on "create mapping" button.
      */
-    public void createMapping() throws InterruptedException {
-        int attempt = 1;
-        while (attempt <= 3) {
-            try {
-                createMappingButton.click();
-                Thread.sleep(Browser.getDelayIndexing());
-                return;
-            } catch (StaleElementReferenceException e) {
-                logger.error("Create index button is not accessible, retrying now, " + attempt);
-                attempt++;
-            }
-        }
-        throw new StaleElementReferenceException("could not access create index button");
-
+    private void createMapping() throws InterruptedException {
+        await("Wait for create mapping button").atMost(20, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(createMappingButton.isEnabled()));
+        createMappingButton.click();
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     /**
      * Clicks on "start indexing all" button.
      */
-    public void startIndexingAll() throws InterruptedException {
-
-        int attempt = 1;
-        while (attempt <= 3) {
-            try {
-                startIndexingAllButton.click();
-                Thread.sleep(Browser.getDelayIndexing());
-                return;
-            } catch (StaleElementReferenceException e) {
-                logger.error("Start index button is not accessible, retrying now, " + attempt);
-                attempt++;
-            }
-        }
-        throw new StaleElementReferenceException("could not access start index button");
+    private void startIndexingAll() throws InterruptedException {
+        await("Wait for start indexing button").atMost(20, TimeUnit.SECONDS)
+                .untilTrue(new AtomicBoolean(startIndexingAllButton.isEnabled()));
+        startIndexingAllButton.click();
+        Thread.sleep(Browser.getDelayIndexing());
     }
 
     /**
@@ -137,27 +113,8 @@ public class IndexingPage {
      *         is not readable.
      */
     public String getIndexingProgress() {
-        int attempt = 1;
-        while (attempt <= 3) {
-            try {
-                List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
-                WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
-                return lastRow.findElement(By.className("ui-progressbar-label")).getText();
-            } catch (StaleElementReferenceException e) {
-                logger.error("Indexing progress is not readable, retrying now, " + attempt);
-                attempt++;
-            }
-        }
-        logger.error("could not read indexing progress");
-        return "";
-    }
-
-    /**
-     * Checks if the indexing progress is at 100%.
-     *
-     * @return True if indexing is at 100%.
-     */
-    public boolean isIndexingComplete() {
-        return getIndexingProgress().equals("100%");
+        List<WebElement> listOfRows = Browser.getRowsOfTable(indexingTable);
+        WebElement lastRow = listOfRows.get(listOfRows.size() - 1);
+        return lastRow.findElement(By.className("ui-progressbar-label")).getText();
     }
 }
