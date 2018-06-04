@@ -168,7 +168,7 @@ public class ImportZentralblatt {
             gdzfile.write(ConfigCore.getKitodoDataDirectory() + processId + File.separator + "meta.xml");
         } catch (PreferencesException e) {
             Helper.setErrorMessage("errorImporting",
-                    new Object[] {Helper.getTranslation("prozess"), processId}, logger, e);
+                    new Object[] {Helper.getTranslation("process"), processId}, logger, e);
         }
         logger.debug("ParsenZentralblatt() - Ende");
     }

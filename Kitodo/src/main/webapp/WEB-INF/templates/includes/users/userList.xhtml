@@ -38,7 +38,7 @@
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
-        <p:column headerText="#{msgs.projekte}">
+        <p:column headerText="#{msgs.projects}">
             <ui:repeat var="project"
                        value="#{item.projects}"
                        varStatus="status">
@@ -46,13 +46,13 @@
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
-        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:link outcome="userEdit" title="#{msgs.userEdit}"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
-            <p:commandLink action="#{LoginForm.EinloggenAls}" title="#{msgs.benutzerprofilLaden}"><i class="fa fa-user-plus fa-lg"/></p:commandLink>
+            <p:commandLink action="#{LoginForm.EinloggenAls}" title="#{msgs.userLoadProfile}"><i class="fa fa-user-plus fa-lg"/></p:commandLink>
         </p:column>
     </p:dataTable>
 </ui:composition>

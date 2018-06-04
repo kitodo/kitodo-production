@@ -61,9 +61,9 @@ public class LoginForm implements Serializable {
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
-                Helper.setMeldung(Helper.getTranslation("passwortGeaendert"));
+                Helper.setMeldung(Helper.getTranslation("passwordChanged"));
             } catch (DAOException | DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {"benutzer"}, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {"user"}, logger, e);
             } catch (NoSuchAlgorithmException e) {
                 Helper.setErrorMessage("ldap error", logger, e);
             }
@@ -80,7 +80,7 @@ public class LoginForm implements Serializable {
         try {
             serviceManager.getUserService().save(this.myBenutzer);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("benutzer")}, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("user")}, logger, e);
         }
         return null;
     }

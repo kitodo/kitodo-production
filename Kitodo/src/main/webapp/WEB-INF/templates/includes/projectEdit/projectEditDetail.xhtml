@@ -56,14 +56,14 @@
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="startdate" value="#{msgs.startdate}" />
+                <p:outputLabel for="startdate" value="#{msgs.startDate}" />
                 <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.startDate}" showOn="button" disabled="#{ProjekteForm.lockedDetail}">
                     <p:ajax event="dateSelect" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                     <p:ajax event="blur" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:calendar>
             </div>
             <div>
-                <p:outputLabel for="enddate" value="#{msgs.enddate}" />
+                <p:outputLabel for="enddate" value="#{msgs.endDate}" />
                 <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.endDate}" showOn="button" disabled="#{ProjekteForm.lockedDetail}">
                     <p:ajax event="dateSelect" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                     <p:ajax event="blur" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>

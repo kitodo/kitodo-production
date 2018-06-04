@@ -18,13 +18,13 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="workpiecePropertyTable" var="property"
                  value="#{ProzessverwaltungForm.workpieces}">
-        <p:column headerText="#{msgs.eigenschaft}">
+        <p:column headerText="#{msgs.property}">
             <h:outputText value="#{property.title}"/>
         </p:column>
         <p:column headerText="#{msgs.value}">
             <h:outputText value="#{property.value}"/>
         </p:column>
-        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <p:commandLink id="editWorkpieceProperty"
                            title="#{msgs.bearbeiten}"
                            oncomplete="PF('editWorkpieceDialog').show()"
@@ -33,7 +33,7 @@
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.workpieceProperty}" value="#{property}"/>
             </p:commandLink>
             <p:commandLink id="deleteWorkpieceProperty"
-                           title="#{msgs.loeschen}"
+                           title="#{msgs.delete}"
                            action="#{ProzessverwaltungForm.deleteWorkpieceProperty}"
                            oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
                            update="workpiecePropertyTable">

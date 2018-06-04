@@ -772,7 +772,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("prozess")}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("process")}, logger, e);
             return false;
         }
         if (amount > 0) {
@@ -802,7 +802,7 @@ public class ProzesskopieForm implements Serializable {
             serviceManager.getProcessService().save(this.prozessKopie);
             serviceManager.getProcessService().refresh(this.prozessKopie);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+            Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("process") }, logger, e);
             return null;
         }
 

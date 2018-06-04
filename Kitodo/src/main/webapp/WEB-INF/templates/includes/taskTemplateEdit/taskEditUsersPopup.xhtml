@@ -20,7 +20,7 @@
     <f:view locale="#{SpracheForm.locale}">
         <!-- edit dialog -->
         <p:dialog widgetVar="addUserDialog"
-                  header="#{msgs.benutzerHinzufuegen}"
+                  header="#{msgs.userAdd}"
                   width="700px"
                   modal="true"
                   dynamic="true">
@@ -31,10 +31,10 @@
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
                              paginator="true">
-                    <p:column headerText="#{msgs.benutzer}">
+                    <p:column headerText="#{msgs.user}">
                         <h:outputText value="#{user.surname}, #{user.name}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.auswahl}">
+                    <p:column headerText="#{msgs.actions}">
                         <p:commandLink id="addUser"
                                        action="#{TemplateForm.addUser}"
                                        oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"

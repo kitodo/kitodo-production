@@ -35,7 +35,7 @@
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          action="#{RulesetForm.saveRuleset}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -47,7 +47,7 @@
                          actionListener="#{RulesetForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{msgs.abbrechen}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
+        <p:button value="#{msgs.cancel}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -65,10 +65,10 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="file" value="#{msgs.datei}"/>
+                            <p:outputLabel for="file" value="#{msgs.file}"/>
                             <p:inputText id="file"
                                          class="input"
-                                         placeholder="#{msgs.datei}"
+                                         placeholder="#{msgs.file}"
                                          value="#{RulesetForm.ruleset.file}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -86,8 +86,8 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><h:link value="#{msgs.projekte}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">
                 <h:outputText value="#{msgs.regelsatzBearbeiten}"

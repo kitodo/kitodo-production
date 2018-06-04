@@ -64,9 +64,9 @@ public class Paginator {
     }
 
     public enum Type {
-        ARABIC(Helper.getTranslation("arabisch")),
-        ROMAN(Helper.getTranslation("roemisch")),
-        UNCOUNTED(Helper.getTranslation("unnummeriert")),
+        ARABIC(Helper.getTranslation("arabic")),
+        ROMAN(Helper.getTranslation("roman")),
+        UNCOUNTED(Helper.getTranslation("uncounted")),
         FREETEXT(Helper.getTranslation("paginationFreetext"));
 
         private String label;

@@ -724,7 +724,7 @@ public class Metadaten {
                     .getNumberOfFiles(serviceManager.getProcessService().getImagesOrigDirectory(true, this.process)));
             serviceManager.getProcessService().save(this.process);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("prozess") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("process") }, logger, e);
         } catch (IOException e) {
             Helper.setErrorMessage("error while counting current images", logger, e);
         }

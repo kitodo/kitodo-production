@@ -28,11 +28,11 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.datei}">
+        <p:column headerText="#{msgs.file}">
             <h:outputText value="#{item.file}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.auswahl}"
+        <p:column headerText="#{msgs.actions}"
                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('docketEdit')}"
                   styleClass="actionsColumn">
             <h:link outcome="/pages/docketEdit"

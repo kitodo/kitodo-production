@@ -21,7 +21,7 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="editFileGroupDialog"
-                      header="#{empty ProjekteForm.myFilegroup.name ? msgs.filegroupHinzufuegen : msgs.filegroupBearbeiten}"
+                      header="#{empty ProjekteForm.myFilegroup.name ? msgs.fileGroupAdd : msgs.fileGroupEdit}"
                       width="700px"
                       modal="true"
                       dynamic="true"
@@ -60,7 +60,7 @@
                                      oncomplete="PF('editFileGroupDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
                                      value="#{msgs.uebernehmen}"
                                      styleClass="button-filled-blue right"/>
-                    <p:commandButton value="#{msgs.abbrechen}"
+                    <p:commandButton value="#{msgs.cancel}"
                                      onclick="PF('editFileGroupDialog').hide()"/>
                 </h:form>
             </p:dialog>

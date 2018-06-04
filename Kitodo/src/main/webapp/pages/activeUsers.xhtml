@@ -26,7 +26,7 @@
                 <h:form id="activeUsersForm">
                     <p:poll interval="10" update="tableActiveSessions"/>
                     <p:dataTable id="tableActiveSessions" value="#{SessionForm.activeSessions}" var="userItem">
-                        <p:column id="userName" headerText="#{msgs.benutzer}">
+                        <p:column id="userName" headerText="#{msgs.user}">
                             <h:outputText value="#{userItem.userName}"/>
                         </p:column>
                         <p:column id="lastRequest" headerText="#{msgs.letzterZugriff}">
@@ -39,7 +39,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><a href="">#{msgs.aktiveBenutzer}</a></li>
     </ui:define>
 </ui:composition>

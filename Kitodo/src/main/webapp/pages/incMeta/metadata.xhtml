@@ -30,7 +30,7 @@
                 <p:column>
                     <p:panelGrid columns="2" styleClass="ui-noborder">
 
-                        <h:outputText value="#{msgs.rolle}:"/>
+                        <h:outputText value="#{msgs.role}:"/>
                         <p:selectOneMenu value="#{person.rolle}" style="width: 350px;">
                             <f:selectItems value="#{person.addableRollen}"/>
                             <f:ajax event="mouseup"/>
@@ -148,7 +148,7 @@
 
             <p:panelGrid columns="2" styleClass="ui-noborder">
 
-                <h:outputText value="#{msgs.rolle}:"/>
+                <h:outputText value="#{msgs.role}:"/>
                 <p:selectOneMenu value="#{Metadaten.tempPersonRolle}" style="width: 350px;"
                                  id="selectTempPersonRoll">
                     <f:selectItems value="#{Metadaten.addableRollen}"/>

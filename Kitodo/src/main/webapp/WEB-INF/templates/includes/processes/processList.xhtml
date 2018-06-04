@@ -25,7 +25,7 @@
                      rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
-            <p:column id="titleColumn" headerText="#{msgs.prozessTitel}" filterBy="#{item.title}">
+            <p:column id="titleColumn" headerText="#{msgs.processTitle}" filterBy="#{item.title}">
                 <h:outputText value="#{item.title}"/>
             </p:column>
             <p:column style="width:120px;" headerText="#{msgs.status}">
@@ -40,13 +40,13 @@
                                 style="width:#{item.progressLocked * 0.8}px;height:10px"/>
                 <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
             </p:column>
-            <p:column headerText="#{msgs.projekt}">
+            <p:column headerText="#{msgs.project}">
                 <h:outputText value="#{item.project.title}"/>
             </p:column>
-            <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+            <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                 <h:link id="editProcess"
                         outcome="/pages/processEdit"
-                        title="#{msgs.prozessBearbeiten}">
+                        title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{item.id}" />
                 </h:link>

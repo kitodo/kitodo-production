@@ -404,7 +404,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 return false;
             }
             if (amount > 0) {
-                Helper.setFehlerMeldung("processTitleAllreadyInUse");
+                Helper.setFehlerMeldung("processTitleAlreadyInUse");
                 return false;
             }
         } else {

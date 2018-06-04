@@ -140,7 +140,7 @@ public class GranularityForm {
         } catch (TransformerException e) {
             Helper.setErrorMessage("granularity.download.error", "error.TransformerException", logger, e);
         } catch (IOException e) {
-            Helper.setErrorMessage("granularity.download.error", "error.IOException", logger, e);
+            Helper.setErrorMessage("granularity.download.error", e.getLocalizedMessage(), logger, e);
         }
     }
 

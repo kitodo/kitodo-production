@@ -85,7 +85,7 @@
 
         <!-- actions -->
         <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
-                  headerText="#{msgs.auswahl}" id="taskAction" styleClass="actionsColumn">
+                  headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskEdit" id="editTask"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
@@ -94,7 +94,7 @@
             </h:link>
             <p:commandLink id="deleteTask"
                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.process.project.client.id,item.process.project.id)}"
-                           title="#{msgs.loeschen}"
+                           title="#{msgs.delete}"
                            action="#{ProzessverwaltungForm.removeTask}"
                            immediate="true"
                            oncomplete="jQuery('#editForm\\:saveButtonToggler').click();"
@@ -111,7 +111,7 @@
 
         <p:rowExpansion>
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.eigenschaften}">
+                <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.properties}">
                     <h:outputText value="#{msgs.title}: "/>
                     <h:outputText value="#{item.process.title}"/>
 

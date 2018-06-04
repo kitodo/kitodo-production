@@ -21,7 +21,7 @@
         <p:column headerText="#{msgs.titel}">
             <h:outputText value="#{usergroup.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.loeschen}">
+        <p:column headerText="#{msgs.delete}">
             <p:commandLink action="#{ProzessverwaltungForm.deleteUserGroup}"
                            id="deleteUsergroup"
                            immediate="true"
@@ -38,6 +38,6 @@
             type="button"
             class="ui-button ui-widget ui-corner-all button-filled-green"
             style="padding:.7em;border:none;">
-        #{msgs.benutzergruppenHinzufuegen}
+        #{msgs.userGroupsAdd}
     </button>
 </ui:composition>

@@ -24,7 +24,7 @@
                 <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
                         update="tabView:metadata,docStrucForm:docStruc"/>
                 <f:facet name="header">
-                    #{msgs.strukturdaten}
+                    #{msgs.structureData}
                 </f:facet>
                 <p:column headerText="#{msgs.typ}" style="width:30%; text-align:left">
                     <h:outputText value="#{item.type.getNameByLanguage(SpracheForm.locale)}"/>
@@ -55,17 +55,17 @@
                         </p:column>
                     </p:row>
                 </p:column>
-                <p:column headerText="#{msgs.auswahl}" style="width:30%;">
+                <p:column headerText="#{msgs.actions}" style="width:30%;">
                     <!--TODO set selected type on click-->
                     <p:commandButton icon="fa fa-plus"
                                      update="tabView:dialogAddDocStrucTypeForm:docStructAddTypeSelection,tabView:dialogAddDocStrucTypeForm:selectAddableMetadataTypes"
-                                     title="#{msgs.strukturelementHinzufuegen}"
+                                     title="#{msgs.structureElementAdd}"
                                      onclick="PF('dialogAddDocStrucType').show();">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
                     </p:commandButton>
                     <p:commandButton icon="fa fa-trash"
                                      update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
-                                     title="#{msgs.strukturelementLoeschen}" action="#{Metadaten.deleteNode}">
+                                     title="#{msgs.structureElementDelete}" action="#{Metadaten.deleteNode}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.myStrukturelement}"/>
                     </p:commandButton>
                 </p:column>

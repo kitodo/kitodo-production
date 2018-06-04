@@ -27,10 +27,10 @@
                              update="tabView:metadata"/>
             <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/processes"
                       icon="fa fa-times"/>
-            <p:commandButton id="saveBtn" value="#{msgs.speichern}" action="#{Metadaten.saveMetadataToXml}"
+            <p:commandButton id="saveBtn" value="#{msgs.save}" action="#{Metadaten.saveMetadataToXml}"
                              icon="fa fa-floppy-o"
                              update="growl"/>
-            <p:commandButton id="saveAndBackBtn" value="#{msgs.speichernZurueck}"
+            <p:commandButton id="saveAndBackBtn" value="#{msgs.saveExit}"
                              action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
                              icon="fa fa-external-link" update="growl"/>
         </h:form>

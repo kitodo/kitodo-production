@@ -44,7 +44,7 @@
                         <br/>
                         <p:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" class="input" />
                         <p:panel styleClass="content-header">
-                            <p:commandButton id="addMessage" value="#{msgs.nachrichtHinzufuegen}"
+                            <p:commandButton id="addMessage" value="#{msgs.messageAdd}"
                                              action="#{AktuelleSchritteForm.addToWikiField}" ajax="false"
                                              styleClass="button-filled-green"/>
                         </p:panel>
@@ -55,7 +55,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.schritte}" outcome="tasks"/></li>
         <li><a href="">#{msgs.detailsDesArbeitsschritts}</a></li>
     </ui:define>

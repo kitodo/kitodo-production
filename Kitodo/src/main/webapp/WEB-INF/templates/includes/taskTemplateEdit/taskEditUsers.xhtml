@@ -17,11 +17,11 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable var="user" value="#{TemplateForm.task.users}" id="userTable">
-        <p:column headerText="#{msgs.benutzer}">
+        <p:column headerText="#{msgs.user}">
             <h:outputText value="#{user.surname}, #{user.name}"/>
         </p:column>
 
-        <p:column headerText="#{msgs.loeschen}">
+        <p:column headerText="#{msgs.delete}">
             <p:commandLink action="#{TemplateForm.deleteUser}"
                            id="deleteUser"
                            title="#{msgs.removeUser}"
@@ -38,6 +38,6 @@
             type="button"
             class="ui-button ui-widget ui-corner-all button-filled-green"
             style="padding:.7em;border:none;">
-        #{msgs.benutzerHinzufuegen}
+        #{msgs.userAdd}
     </button>
 </ui:composition>

@@ -24,7 +24,7 @@
                 </p:inputText>
             </div>
             <div>
-                <p:outputLabel for="ordering" value="#{msgs.reihenfolge}"/>
+                <p:outputLabel for="ordering" value="#{msgs.order}"/>
                 <p:inputText id="ordering" value="#{TemplateForm.task.ordering}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
@@ -59,7 +59,7 @@
                 </p:selectBooleanCheckbox>
             </div>
             <div>
-                <p:outputLabel for="typeImagesRead" value="#{msgs.imagesLesen}"/>
+                <p:outputLabel for="typeImagesRead" value="#{msgs.imagesRead}"/>
                 <p:selectBooleanCheckbox id="typeImagesRead" value="#{TemplateForm.task.typeImagesRead}" class="input">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>
@@ -67,7 +67,7 @@
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesSchreiben}"/>
+                <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesWrite}"/>
                 <p:selectBooleanCheckbox id="typeImagesWrite" value="#{TemplateForm.task.typeImagesWrite}" class="input">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>

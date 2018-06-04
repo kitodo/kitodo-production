@@ -45,7 +45,7 @@ public class GUIExceptionWrapper extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private final String fallBackErrorMessage = Helper.getTranslation("err_fallBackMessage");
+    private final String fallBackErrorMessage = Helper.getTranslation("errorFallBackMessage");
     private String userSeenErrorMessage = "";
     private String additionalMessage = "";
     private String errLinkText = "";
@@ -86,15 +86,14 @@ public class GUIExceptionWrapper extends Exception {
 
         try {
             if (ConfigCore.getBooleanParameter("err_userHandling")) {
-                this.errLinkText = Helper.getTranslation("err_linkText");
+                this.errLinkText = Helper.getTranslation("errorLinkText");
                 this.errLinkText = this.errLinkText.replace("{0}",
                     ConfigCore.getParameter("err_linkToPage", "./start.jsf"));
 
                 if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
-
-                    this.errEmailMessage = Helper.getTranslation("err_emailMessage");
-                    this.errSubjectLine = Helper.getTranslation("err_subjectLine");
-                    this.errEmailBody = Helper.getTranslation("err_emailBody");
+                    this.errEmailMessage = Helper.getTranslation("errorEmailMessage");
+                    this.errSubjectLine = Helper.getTranslation("errorSubjectLine");
+                    this.errEmailBody = Helper.getTranslation("errorEmailBody");
 
                     Integer emailCounter = 0;
                     String email = "";
@@ -110,7 +109,7 @@ public class GUIExceptionWrapper extends Exception {
 
                 } else {
                     // no email service enabled, build standard message
-                    this.errEmailMessage = Helper.getTranslation("err_noMailService");
+                    this.errEmailMessage = Helper.getTranslation("errorNoMailService");
 
                 }
             } else {
@@ -161,7 +160,7 @@ public class GUIExceptionWrapper extends Exception {
 
         } else {
             // if no address a general text will be provided by this class
-            emailPart = Helper.getTranslation("err_noMailService");
+            emailPart = Helper.getTranslation("errorNoMailService");
         }
 
         this.userSeenErrorMessage = this.internalErrorMsg + linkPart + htmlLineFeed + emailPart;

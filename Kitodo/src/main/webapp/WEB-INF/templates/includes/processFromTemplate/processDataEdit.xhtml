@@ -22,12 +22,12 @@
         <p:row>
             <div>
                 <!-- process title -->
-                <p:outputLabel for="processTitle" value="#{msgs.prozessTitel}"/>
+                <p:outputLabel for="processTitle" value="#{msgs.processTitle}"/>
                 <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button"
                              required="#{empty param['editForm:processFromTemplateTabView:performOpacQuery']}"/>
                 <p:commandButton id="generateTitleButton"
                                  actionListener="#{ProzesskopieForm.calculateProcessTitle}"
-                                 icon="fa fa-cog" title="#{msgs.generieren}"/>
+                                 icon="fa fa-cog" title="#{msgs.generate}"/>
             </div>
 
             <div>
@@ -55,9 +55,9 @@
 
             <div>
                 <!-- digital collection -->
-                <p:outputLabel for="digitaleKollektionen" rendered="#{ProzesskopieForm.standardFields.collections}"
-                               value="#{msgs.digitaleKollektionen}"/>
-                <p:selectManyMenu id="digitaleKollektionen" styleClass="prozessKopieFeldbreite"
+                <p:outputLabel for="digitalCollections" rendered="#{ProzesskopieForm.standardFields.collections}"
+                               value="#{msgs.digitalCollections}"/>
+                <p:selectManyMenu id="digitalCollections" styleClass="prozessKopieFeldbreite"
                                      rendered="#{ProzesskopieForm.standardFields.collections}"
                                      value="#{ProzesskopieForm.digitalCollections}">
                     <f:selectItems value="#{ProzesskopieForm.possibleDigitalCollections}" var="step" itemLabel="#{step}"
@@ -87,7 +87,7 @@
             </div>
 
             <div>
-                <p:outputLabel for="useTemplates" value="#{msgs.inAuswahllisteAnzeigen}" rendered="#{ProzesskopieForm.useTemplates}"/>
+                <p:outputLabel for="useTemplates" value="#{msgs.showInSelectList}" rendered="#{ProzesskopieForm.useTemplates}"/>
                 <p:selectBooleanCheckbox class="input" id="useTemplates" rendered="#{ProzesskopieForm.useTemplates}"
                                          value="#{ProzesskopieForm.prozessKopie.inChoiceListShown}"/>
             </div>

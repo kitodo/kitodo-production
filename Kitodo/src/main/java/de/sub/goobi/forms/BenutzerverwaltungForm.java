@@ -373,7 +373,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll(true);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
             return new LinkedList<>();
         }
     }

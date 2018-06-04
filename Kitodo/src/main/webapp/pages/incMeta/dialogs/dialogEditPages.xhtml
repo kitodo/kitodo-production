@@ -25,7 +25,7 @@
             <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
             <h:panelGrid columns="2">
 
-                <h:outputText value="#{msgs.ersteSeite}:"/>
+                <h:outputText value="#{msgs.firstPage}:"/>
                 <p:selectOneMenu id="selectFirstPage" value="#{Metadaten.allPagesSelectionFirstPage}" filter="true"
                                  filterMatchMode="startsWith">
                     <f:selectItems value="#{Metadaten.allPages}"/>
@@ -48,7 +48,7 @@
 
             <h:panelGrid columns="3" columnClasses="top,centered,top">
                 <h:panelGroup style="margin-left:0px">
-                    <h:outputText value="#{msgs.alleSeiten}"/>
+                    <h:outputText value="#{msgs.allPages}"/>
                     <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}"
                                       style="height:200px">
                         <f:selectItems value="#{Metadaten.allPages}"/>

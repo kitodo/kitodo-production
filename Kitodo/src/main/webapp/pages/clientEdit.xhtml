@@ -43,7 +43,7 @@
         <p:commandButton id="saveButton"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          action="#{ClientForm.save}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
@@ -55,7 +55,7 @@
                          actionListener="#{ClientForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
-        <p:button value="#{msgs.abbrechen}" outcome="clients"
+        <p:button value="#{msgs.cancel}" outcome="clients"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -80,7 +80,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.clients}" outcome="clients"/></li>
         <li>
             <a href="">

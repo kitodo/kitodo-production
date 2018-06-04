@@ -19,7 +19,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.templateTitle}"/>
-                <p:inputText id="title" placeholder="#{msgs.prozessTitel}"
+                <p:inputText id="title" placeholder="#{msgs.processTitle}"
                              value="#{TemplateForm.title}"
                              class="input"
                              required="#{empty param['editForm:saveButtonToggler']}">
@@ -28,7 +28,7 @@
             </div>
 
             <div>
-                <p:outputLabel for="project" value="#{msgs.projekt}"/>
+                <p:outputLabel for="project" value="#{msgs.project}"/>
                 <p:selectOneMenu id="project" value="#{TemplateForm.projectSelect}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
@@ -38,7 +38,7 @@
             </div>
 
             <div>
-                <p:outputLabel for="showInList" value="#{msgs.inAuswahllisteAnzeigen}"/>
+                <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
                 <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{TemplateForm.template.inChoiceListShown}">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>

@@ -45,7 +45,7 @@
         <p:commandButton id="save"
                          widgetVar="save"
                          rendered="#{isEditMode || isCreateMode}"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          action="#{BenutzergruppenForm.save}"
                          process="editForm:usergroupTabView:authoritiesGlobalPick,
                                   editForm:usergroupTabView:authoritiesClientPick,
@@ -64,7 +64,7 @@
                          actionListener="#{BenutzergruppenForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.abbrechen}"
+        <p:button id="cancel" value="#{msgs.cancel}"
                   outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
@@ -194,7 +194,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

@@ -48,11 +48,11 @@
             </h:outputText>
         </p:column>
 
-        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',item.client.id,item.id)}"
                         onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
-                        title="#{msgs.projektBearbeiten}">
+                        title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{item.id}" />
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>

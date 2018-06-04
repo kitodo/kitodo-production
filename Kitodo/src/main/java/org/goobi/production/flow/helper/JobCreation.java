@@ -103,7 +103,7 @@ public class JobCreation {
                 Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving",
-                        new Object[] {Helper.getTranslation("prozess") + " " + processTitle}, logger, e);
+                        new Object[] {Helper.getTranslation("process") + " " + processTitle}, logger, e);
             } catch (WriteException e) {
                 Helper.setErrorMessage("Cannot write file " + processTitle, logger, e);
             }

@@ -41,7 +41,7 @@
                     <p:column headerText="#{msgs.name}">
                         <h:outputText value="#{item.name}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+                    <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                         <h:link outcome="clientEdit" title="#{msgs.clientEdit}"
                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewClient',item.id)}">
                             <f:param name="id" value="#{item.id}"/>
@@ -54,7 +54,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><a href="">#{msgs.clients}</a></li>
     </ui:define>
 </ui:composition>

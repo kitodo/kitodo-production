@@ -800,7 +800,7 @@ public class CalendarForm implements Serializable {
         } catch (TransformerException e) {
             Helper.setErrorMessage("granularity.download.error", "error.TransformerException", logger, e);
         } catch (IOException e) {
-            Helper.setErrorMessage("granularity.download.error", "error.IOException", logger, e);
+            Helper.setErrorMessage("granularity.download.error", e.getLocalizedMessage(), logger, e);
         } finally {
             if (granularityWasTemporarilyAdded) {
                 course.clearProcesses();
@@ -1344,7 +1344,7 @@ public class CalendarForm implements Serializable {
             Helper.setErrorMessage(UPLOAD_ERROR, "error.SAXException", logger, e);
             neglectEmptyBlock();
         } catch (IOException e) {
-            Helper.setErrorMessage(UPLOAD_ERROR, "error.IOException", logger, e);
+            Helper.setErrorMessage(UPLOAD_ERROR, e.getLocalizedMessage(), logger, e);
             neglectEmptyBlock();
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage("calendar.upload.overlappingDateRanges", logger, e);
