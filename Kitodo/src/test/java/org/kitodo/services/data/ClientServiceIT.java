@@ -48,7 +48,7 @@ public class ClientServiceIT {
     @Test
     public void shouldGetAllClients() {
         List<Client> clients = clientService.getAll();
-        assertEquals("Clients were not found database!", 2, clients.size());
+        assertEquals("Clients were not found database!", 3, clients.size());
     }
 
     @Test
@@ -60,7 +60,7 @@ public class ClientServiceIT {
     @Test
     public void shouldFindAllAuthorizations() {
         await().untilAsserted(
-            () -> assertEquals("Not all clients were found in database!", 2, clientService.findAll().size()));
+            () -> assertEquals("Not all clients were found in database!", 3, clientService.findAll().size()));
     }
 
     @Test

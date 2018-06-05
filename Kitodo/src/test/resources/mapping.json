@@ -110,6 +110,22 @@
                 },
                 "active": {
                     "type": "boolean"
+                },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -141,7 +157,7 @@
                         "id": {
                             "type": "long"
                         },
-                        "clientName": {
+                        "name": {
                             "type": "text",
                             "fields": {
                                 "keyword": {
@@ -1036,6 +1052,22 @@
                 },
                 "active": {
                     "type": "boolean"
+                },
+                "client": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },

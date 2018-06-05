@@ -42,6 +42,7 @@ public class RulesetServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertClients();
         MockDatabase.insertRulesets();
         MockDatabase.setUpAwaitility();
 
@@ -62,7 +63,7 @@ public class RulesetServiceIT {
     @Test
     public void shouldCountAllRulesets() {
         await().untilAsserted(
-            () -> assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), rulesetService.count()));
+            () -> assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), rulesetService.count()));
     }
 
     @Test
@@ -75,7 +76,7 @@ public class RulesetServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
         Long amount = rulesetService.countDatabaseRows();
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(2), amount);
+        assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
@@ -88,13 +89,13 @@ public class RulesetServiceIT {
     @Test
     public void shouldFindAllRulesets() {
         List<Ruleset> rulesets = rulesetService.getAll();
-        assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
+        assertEquals("Not all rulesets were found in database!", 3, rulesets.size());
     }
 
     @Test
     public void shouldGetAllRulesetsInGivenRange() throws Exception {
         List<Ruleset> rulesets = rulesetService.getAll(1, 10);
-        assertEquals("Not all rulesets were found in database!", 1, rulesets.size());
+        assertEquals("Not all rulesets were found in database!", 2, rulesets.size());
     }
 
     @Test
@@ -118,41 +119,59 @@ public class RulesetServiceIT {
     }
 
     @Test
+    public void shouldFindManyByClientId() {
+        await().untilAsserted(
+            () -> assertEquals("Rulesets were not found in index!", 2, rulesetService.findByClientId(1).size()));
+    }
+
+    @Test
+    public void shouldFindOneByClientId() {
+        await().untilAsserted(
+            () -> assertEquals("Ruleset was not found in index!", 1, rulesetService.findByClientId(2).size()));
+    }
+
+    @Test
+    public void shouldNotFindByClientId() {
+        await().untilAsserted(
+            () -> assertEquals("Ruleset was found in index!", 0, rulesetService.findByClientId(3).size()));
+    }
+
+    @Test
     public void shouldFindByTitleAndFile() {
         Integer expected = 2;
-        await().untilAsserted(
-                () -> assertEquals("Ruleset was not found in index!", expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml"))));
+        await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", expected,
+            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBHH", "ruleset_slubhh.xml"))));
     }
 
     @Test
     public void shouldNotFindByTitleAndFile() {
         Integer expected = 0;
-        await().untilAsserted(
-                () -> assertEquals("Ruleset was found in index!", expected, rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBDD", "none"))));
+        await().untilAsserted(() -> assertEquals("Ruleset was found in index!", expected,
+            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SLUBDD", "none"))));
     }
 
     @Test
     public void shouldFindManyByTitleOrFile() {
-        await().untilAsserted(
-                () -> assertEquals("Rulesets were not found in index!", 2, rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml").size()));
+        await().untilAsserted(() -> assertEquals("Rulesets were not found in index!", 2,
+            rulesetService.findByTitleOrFile("SLUBDD", "ruleset_slubhh.xml").size()));
     }
 
     @Test
     public void shouldFindOneByTitleOrFile() {
-        await().untilAsserted(
-                () -> assertEquals("Ruleset was not found in index!", 1, rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml").size()));
+        await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", 1,
+            rulesetService.findByTitleOrFile("default", "ruleset_slubhh.xml").size()));
     }
 
     @Test
     public void shouldNotFindByTitleOrFile() {
-        await().untilAsserted(
-                () -> assertEquals("Some rulesets were found in index!", 0, rulesetService.findByTitleOrFile("none", "none").size()));
+        await().untilAsserted(() -> assertEquals("Some rulesets were found in index!", 0,
+            rulesetService.findByTitleOrFile("none", "none").size()));
     }
 
     @Test
     public void shouldFindAllRulesetsDocuments() {
         await().untilAsserted(
-                () -> assertEquals("Not all rulesets were found in index!", 2, rulesetService.findAllDocuments().size()));
+            () -> assertEquals("Not all rulesets were found in index!", 3, rulesetService.findAllDocuments().size()));
     }
 
     @Test
@@ -160,22 +179,22 @@ public class RulesetServiceIT {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("To Remove");
         rulesetService.save(ruleset);
-        Ruleset foundRuleset = rulesetService.getById(3);
+        Ruleset foundRuleset = rulesetService.getById(4);
         assertEquals("Additional ruleset was not inserted in database!", "To Remove", foundRuleset.getTitle());
 
         rulesetService.remove(ruleset);
         exception.expect(DAOException.class);
-        rulesetService.getById(3);
+        rulesetService.getById(4);
 
         ruleset = new Ruleset();
         ruleset.setTitle("To remove");
         rulesetService.save(ruleset);
-        foundRuleset = rulesetService.getById(4);
+        foundRuleset = rulesetService.getById(5);
         assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
 
-        rulesetService.remove(4);
+        rulesetService.remove(5);
         exception.expect(DAOException.class);
-        rulesetService.getById(4);
+        rulesetService.getById(5);
     }
 
     @Test

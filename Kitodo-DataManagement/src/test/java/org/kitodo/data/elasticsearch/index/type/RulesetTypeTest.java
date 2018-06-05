@@ -81,7 +81,7 @@ public class RulesetTypeTest {
         HttpEntity document = rulesetType.createDocument(ruleset);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
     }
 
     @Test

@@ -16,7 +16,9 @@ public enum DocketTypeField {
     ID("id"),
     TITLE("title"),
     FILE("file"),
-    ACTIVE("active");
+    ACTIVE("active"),
+    CLIENT_ID("client.id"),
+    CLIENT_NAME("client.name");
 
     private String name;
 

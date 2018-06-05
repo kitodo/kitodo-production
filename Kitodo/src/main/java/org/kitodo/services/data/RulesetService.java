@@ -30,6 +30,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.RulesetType;
+import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
@@ -92,6 +93,18 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     public List<JsonObject> findByFileContent(String fileContent) throws DataException {
         QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE_CONTENT.getName(), fileContent, true);
         return searcher.findDocuments(queryBuilder.toString());
+    }
+
+    /**
+     * Find rulesets for client id.
+     *
+     * @param clientId
+     *            of the searched rulesets
+     * @return search result
+     */
+    List<JsonObject> findByClientId(Integer clientId) throws DataException {
+        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getName(), clientId, true);
+        return searcher.findDocuments(query.toString());
     }
 
     /**
