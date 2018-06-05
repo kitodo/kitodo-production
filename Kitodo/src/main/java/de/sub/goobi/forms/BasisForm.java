@@ -11,16 +11,12 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
-
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.event.TabChangeEvent;
@@ -29,7 +25,6 @@ public class BasisForm implements Serializable {
     private static final Logger logger = LogManager.getLogger(BasisForm.class);
     private static final long serialVersionUID = 2950419497162710096L;
     private transient ServiceManager serviceManager = new ServiceManager();
-    protected Page page;
     String zurueck = null;
     protected String filter = "";
     protected User user;
@@ -61,10 +56,6 @@ public class BasisForm implements Serializable {
         this.lazyDTOModel = lazyDTOModel;
     }
 
-    public Page getPage() {
-        return this.page;
-    }
-
     public String getZurueck() {
         return this.zurueck;
     }
@@ -80,11 +71,7 @@ public class BasisForm implements Serializable {
      */
     public User getUser() {
         if (this.user == null) {
-            try {
-                this.user = serviceManager.getUserService().getAuthenticatedUser();
-            } catch (DAOException e) {
-                Helper.setErrorMessage("noLoggedUser", logger, e);
-            }
+            this.user = serviceManager.getUserService().getAuthenticatedUser();
         }
         return this.user;
     }

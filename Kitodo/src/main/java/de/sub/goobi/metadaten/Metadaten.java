@@ -812,7 +812,7 @@ public class Metadaten {
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
         List<? extends MetadataInterface> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(
-            inStrukturelement, Helper.getMetadataLanguageForCurrentUser(), false, this.process);
+            inStrukturelement, serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false, this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
                 MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.process);
@@ -825,7 +825,7 @@ public class Metadaten {
          * alle Personen und die DefaultDisplay-Werte ermitteln
          */
         tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(inStrukturelement,
-            Helper.getMetadataLanguageForCurrentUser(), true, this.process);
+            serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), true, this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
                 lsPers.add(new MetaPerson((PersonInterface) metadata, 0, this.myPrefs, inStrukturelement));
@@ -863,7 +863,7 @@ public class Metadaten {
          * Die Struktur als Tree3 aufbereiten
          */
         String label = this.logicalTopstruct.getDocStructType()
-                .getNameByLanguage(Helper.getMetadataLanguageForCurrentUser());
+                .getNameByLanguage(serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage());
         if (label == null) {
             label = this.logicalTopstruct.getDocStructType().getName();
         }
@@ -919,7 +919,7 @@ public class Metadaten {
 
         // vom aktuellen Strukturelement alle Kinder in den Tree packen
         List<DocStructInterface> children = inStrukturelement.getAllChildren();
-        String language = Helper.getMetadataLanguageForCurrentUser();
+        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         if (children != null) {
             // es gibt Kinder-Strukturelemente
             for (DocStructInterface child : children) {
@@ -3180,7 +3180,7 @@ public class Metadaten {
             return Collections.emptyList();
         }
         List<RenderableMetadataGroup> result = new ArrayList<>(records.size());
-        String language = Helper.getMetadataLanguageForCurrentUser();
+        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         String projectName = process.getProject().getTitle();
         for (MetadataGroupInterface record : records) {
             result.add(new RenderableMetadataGroup(record, this, language, projectName));
@@ -3195,7 +3195,7 @@ public class Metadaten {
      * @return a bean to create a new metadata group.
      */
     public RenderableMetadataGroup getNewMetadataGroup() {
-        String language = Helper.getMetadataLanguageForCurrentUser();
+        String language = serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage();
         newMetadataGroup.setLanguage(language);
         return newMetadataGroup;
     }

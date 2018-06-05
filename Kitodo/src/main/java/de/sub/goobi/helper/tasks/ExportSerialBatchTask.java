@@ -156,7 +156,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
-                    exporter.startExport(process, serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()), out);
+                    exporter.startExport(process, serviceManager.getUserService().getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()), out);
                     stepcounter++;
                     setProgress(100 * stepcounter / maxsize);
                 }

@@ -56,7 +56,7 @@ public class WebDav implements Serializable {
      * Retrieve all folders from one directory.
      */
     public List<URI> uploadAllFromHome(String inVerzeichnis) {
-        User currentUser = Helper.getCurrentUser();
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
         List<URI> files = new ArrayList<>();
         FilenameFilter filter = new FileNameEndsWithFilter("]");
 
@@ -92,7 +92,7 @@ public class WebDav implements Serializable {
      */
     public void removeAllFromHome(List<URI> uris, URI directory) {
         URI verzeichnisAlle;
-        User currentUser = Helper.getCurrentUser();
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
         try {
             verzeichnisAlle = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(directory);
             for (URI name : uris) {
@@ -110,7 +110,7 @@ public class WebDav implements Serializable {
      *            Process object
      */
     public void uploadFromHome(Process process) {
-        User currentUser = Helper.getCurrentUser();
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
         uploadFromHome(currentUser, process);
     }
 
@@ -156,7 +156,7 @@ public class WebDav implements Serializable {
      */
     public void downloadToHome(Process process, boolean onlyRead) {
         saveTiffHeader(process);
-        User currentUser = Helper.getCurrentUser();
+        User currentUser = serviceManager.getUserService().getAuthenticatedUser();
         URI source;
         URI userHome;
 

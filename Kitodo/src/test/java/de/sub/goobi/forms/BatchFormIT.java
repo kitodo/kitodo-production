@@ -18,12 +18,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.services.ServiceManager;
 
 public class BatchFormIT {
 
@@ -31,12 +34,14 @@ public class BatchFormIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
@@ -52,10 +57,11 @@ public class BatchFormIT {
         batchForm.setProcessfilter("\"id:1 2 3\"");
         batchForm.filterProcesses();
         processes = batchForm.getCurrentProcesses();
-        assertEquals("Size of filtered processes is incorrect!", 2, processes.size());
+        assertEquals("Size of filtered processes is incorrect!", 3, processes.size());
 
-        assertEquals("First sorted date is incorrect!", "2017-02-10", formatDate(processes.get(0).getCreationDate()));
-        assertEquals("Second sorted date is incorrect!", "2017-01-20", formatDate(processes.get(1).getCreationDate()));
+        assertEquals("First sorted date is incorrect!", new DateTime().toString("YYYY-MM-dd"), formatDate(processes.get(0).getCreationDate()));
+        assertEquals("Second sorted date is incorrect!", "2017-02-10", formatDate(processes.get(1).getCreationDate()));
+        assertEquals("Second sorted date is incorrect!", "2017-01-20", formatDate(processes.get(2).getCreationDate()));
 
         batchForm.setProcessfilter(null);
         batchForm.filterProcesses();

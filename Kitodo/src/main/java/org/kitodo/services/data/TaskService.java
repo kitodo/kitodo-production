@@ -127,14 +127,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public List<TaskDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         BoolQueryBuilder query = createUserTaskQuery(user);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
     }
 
     @Override
     public String createCountQuery(Map filters) {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         BoolQueryBuilder query = createUserTaskQuery(user);
         return query.toString();
     }
@@ -726,7 +726,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksForCurrentUser(String sort) throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -740,7 +740,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
@@ -754,7 +754,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of sorted tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
             sort);
         return convertJSONObjectsToDTOs(results, false);
@@ -769,7 +769,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return the list of tasks as TaskDTO objects
      */
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
-        User user = Helper.getCurrentUser();
+        User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
             10, false, sort);
         return convertJSONObjectsToDTOs(results, false);

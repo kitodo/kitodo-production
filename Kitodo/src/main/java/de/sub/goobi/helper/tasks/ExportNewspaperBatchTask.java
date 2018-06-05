@@ -253,7 +253,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
             new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(process,
-                serviceManager.getUserService().getHomeDirectory(Helper.getCurrentUser()),
+                serviceManager.getUserService().getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),
                 extendedData.getDigitalDocument());
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
         }

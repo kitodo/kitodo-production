@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -497,5 +498,13 @@ public class UserServiceIT {
         clientIds = Collections.singletonList(2);
         users = userService.getAllActiveUsersByClientIds(clientIds);
         assertEquals("Amount of users assigned to client is incorrect!", 1, users.size());
+    }
+
+    @Test
+    public void shouldGetAuthenticatedUser() throws DAOException {
+        SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1));
+        User authenticatedUser = userService.getAuthenticatedUser();
+        assertEquals("Returned authenticated user was wrong","kowal",authenticatedUser.getLogin());
+        SecurityTestUtils.cleanSecurityContext();
     }
 }

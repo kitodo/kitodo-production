@@ -50,6 +50,7 @@ import org.goobi.mq.WebServiceResult;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.HibernateHelper;
 import org.kitodo.data.database.helper.Util;
+import org.kitodo.services.ServiceManager;
 import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 /**
@@ -432,43 +433,6 @@ public class Helper extends HibernateHelper implements Observer {
         } else {
             Helper.setFehlerMeldung((String) arg);
         }
-    }
-
-    /**
-     * Get current logged in user.
-     *
-     * @return current logged in user
-     */
-    public static User getCurrentUser() {
-        if (Objects.isNull(currentUser)) {
-            LoginForm login = (LoginForm) Helper.getManagedBeanValue("LoginForm");
-            currentUser = login != null ? login.getMyBenutzer() : null;
-            if (Objects.isNull(currentUser)) {
-                setErrorMessage("noLoggedUser", null);
-                throw new SessionAuthenticationException(getTranslation("noLoggedUser"));
-            }
-        }
-        return currentUser;
-    }
-
-    // TODO: find way to test without this method - faces
-    /**
-     * Set current logged in user. Used for test purpose.
-     *
-     * @param user
-     *            current logged in user as User
-     */
-    public static void setCurrentUser(User user) {
-        currentUser = user;
-    }
-
-    /**
-     * Get metadata language for currently logged user.
-     *
-     * @return metadata language as String
-     */
-    public static String getMetadataLanguageForCurrentUser() {
-        return Helper.getCurrentUser().getMetadataLanguage();
     }
 
     /**

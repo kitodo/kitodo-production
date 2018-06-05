@@ -12,15 +12,12 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.Page;
 
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -40,10 +37,6 @@ public class LdapGruppenForm extends BasisForm {
     private String ldapgrouopListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapgrouopEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
-    @Inject
-    @Named("BenutzerverwaltungForm")
-    private BenutzerverwaltungForm userForm;
-
     /**
      * Create new LDAP group.
      *
@@ -52,6 +45,15 @@ public class LdapGruppenForm extends BasisForm {
     public String newLdapGroup() {
         this.myLdapGruppe = new LdapGroup();
         return ldapgrouopEditPath;
+    }
+
+    /**
+     * Gets all ldap groups.
+     * 
+     * @return list of LdapGroup objects.
+     */
+    public List<LdapGroup> getLdapGroups() {
+        return serviceManager.getLdapGroupService().getAll();
     }
 
     /**
@@ -85,15 +87,6 @@ public class LdapGruppenForm extends BasisForm {
     }
 
     /**
-     * Get all ldap groups with no filter.
-     */
-    @SuppressWarnings("unchecked")
-    private void filterKein() {
-        List<LdapGroup> ldapGroups = serviceManager.getLdapGroupService().getAll();
-        this.page = new Page(0, ldapGroups);
-    }
-
-    /**
      * Method being used as viewAction for ldap group edit form.
      *
      * @param id
@@ -109,14 +102,6 @@ public class LdapGruppenForm extends BasisForm {
                 e);
         }
         setSaveDisabled(true);
-    }
-
-    /**
-     * This method initializes the ldap group list without filters.
-     */
-    @PostConstruct
-    public void initializeLdapGroupList() {
-        filterKein();
     }
 
     /*

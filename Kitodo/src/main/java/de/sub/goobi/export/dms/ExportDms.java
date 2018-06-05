@@ -537,7 +537,7 @@ public class ExportDms extends ExportMets {
             } else {
                 // if no async import, then create the folder with user
                 // authorization again
-                User user = Helper.getCurrentUser();
+                User user = serviceManager.getUserService().getAuthenticatedUser();
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (IOException e) {

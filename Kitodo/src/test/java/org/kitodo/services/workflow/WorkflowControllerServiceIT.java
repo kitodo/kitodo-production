@@ -12,7 +12,6 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.net.URI;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -51,7 +51,7 @@ public class WorkflowControllerServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
-        workflowService.setUser(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
 
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -62,6 +62,7 @@ public class WorkflowControllerServiceIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        SecurityTestUtils.cleanSecurityContext();
 
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
@@ -162,7 +163,6 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldReportProblem() throws Exception {
-        Helper.setCurrentUser(serviceManager.getUserService().getById(1));
 
         Problem problem = new Problem();
         problem.setId(5);

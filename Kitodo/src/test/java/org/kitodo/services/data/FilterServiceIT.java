@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.TaskDTO;
@@ -44,13 +45,14 @@ public class FilterServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
-        Helper.setCurrentUser(new ServiceManager().getUserService().getById(1));
+        SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+        SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
@@ -110,9 +112,8 @@ public class FilterServiceIT {
         await().untilAsserted(() -> assertEquals("Incorrect id for found process!", Integer.valueOf(2),
             processService.findByQuery(secondQuery, true).get(0).getId()));
 
-        // TODO: here should be 2
         QueryBuilder thirdQuery = filterService.queryBuilder("\"id:2 3\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 1,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes with id equal 2 or 3!", 2,
             processService.findByQuery(thirdQuery, true).size()));
     }
 
@@ -189,7 +190,7 @@ public class FilterServiceIT {
             processService.findByQuery(secondQuery, true).size()));
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-batch:1 2\"", ObjectType.PROCESS, false, false);
-        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 2,
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processes for batch with id 1 or 2!", 3,
             processService.findByQuery(thirdQuery, true).size()));
     }
 
