@@ -17,7 +17,6 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -72,8 +71,7 @@ public class ClientsPage extends Page {
         }
         newElementButton.click();
         await("Wait for create new client button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .untilTrue(new AtomicBoolean(newClientButton.isEnabled()));
-        newClientButton.click();
+                .ignoreExceptions().until(() -> isButtonClicked.matches(newClientButton));
 
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
         wait.until(ExpectedConditions.urlContains(Pages.getClientEditPage().getUrl()));

@@ -13,7 +13,6 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
@@ -61,9 +60,8 @@ public class IndexingPage extends Page {
      * Clicks on "delete index" button and accept dialog.
      */
     private void deleteIndex() throws InterruptedException {
-        await("Wait for delete index button").atMost(20, TimeUnit.SECONDS)
-                .untilTrue(new AtomicBoolean(deleteIndexButton.isEnabled()));
-        deleteIndexButton.click();
+        await("Wait for delete index button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(deleteIndexButton));
 
         Predicate<WebDriver> isAlertPresent = (d) -> {
             d.switchTo().alert();
@@ -81,9 +79,8 @@ public class IndexingPage extends Page {
      * Clicks on "create mapping" button.
      */
     private void createMapping() throws InterruptedException {
-        await("Wait for create mapping button").atMost(20, TimeUnit.SECONDS)
-                .untilTrue(new AtomicBoolean(createMappingButton.isEnabled()));
-        createMappingButton.click();
+        await("Wait for create mapping button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(createMappingButton));
         Thread.sleep(Browser.getDelayIndexing());
     }
 
@@ -91,9 +88,8 @@ public class IndexingPage extends Page {
      * Clicks on "start indexing all" button.
      */
     private void startIndexingAll() throws InterruptedException {
-        await("Wait for start indexing button").atMost(20, TimeUnit.SECONDS)
-                .untilTrue(new AtomicBoolean(startIndexingAllButton.isEnabled()));
-        startIndexingAllButton.click();
+        await("Wait for start indexing button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(startIndexingAllButton));
         Thread.sleep(Browser.getDelayIndexing());
     }
 

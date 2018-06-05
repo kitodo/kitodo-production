@@ -13,7 +13,6 @@ package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -122,9 +121,9 @@ public class UserGroupEditPage extends Page {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        await("Wait for save user group button").atMost(20, TimeUnit.SECONDS)
-                .untilTrue(new AtomicBoolean(saveUserGroupButton.isEnabled()));
-        Browser.clickAjaxSaveButton(saveUserGroupButton);
+        await("Wait for save user group button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(saveUserGroupButton));
+
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
         wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
         return Pages.getUsersPage();
