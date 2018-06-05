@@ -36,7 +36,7 @@ public class VariableReplacerTest {
         VariableReplacer variableReplacer = new VariableReplacer(prepareProcess());
 
         String replaced = variableReplacer.replace("-prefs (prefs) -hardcoded test");
-        String expected = "-prefs src/test/resources/ruleset_test.xml -hardcoded test";
+        String expected = "-prefs src/test/resources/rulesets/ruleset_test.xml -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }

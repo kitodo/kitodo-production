@@ -18,6 +18,7 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -71,7 +72,7 @@ public class ExportMets {
          * Read Document
          */
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = process.getTitle();
+        String atsPpnBand = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
         FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
         if (serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
@@ -88,9 +89,11 @@ public class ExportMets {
         prepareUserDirectory(userHome);
 
         String targetFileName = atsPpnBand + "_mets.xml";
-        URI metaFile = userHome.resolve(targetFileName);
+        URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
         return writeMetsFile(process, metaFile, gdzfile, false);
     }
+
+
 
     /**
      * prepare user directory.
