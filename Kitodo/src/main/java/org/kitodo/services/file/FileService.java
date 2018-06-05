@@ -771,7 +771,7 @@ public class FileService {
      * @return the URI to the temporal directory.
      */
     public URI getTemporalDirectory() {
-        return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toUri();
+        return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/")).toUri();
     }
 
     /**
