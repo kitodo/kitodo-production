@@ -134,7 +134,7 @@
                 <!-- delete button -->
                 <p:commandLink action="#{ProjekteForm.deleteFileGroup()}"
                                update="editForm"
-                               title="#{msgs.filegroupLoeschen}"
+                               title="#{msgs.fileGroupDelete}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
                                oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
                                styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}"
@@ -149,7 +149,7 @@
         <p:commandButton actionListener="#{ProjekteForm.addFileGroup()}"
                          update="@(.editDialog)"
                          oncomplete="PF('editFileGroupDialog').show()"
-                         value="#{msgs.filegroupHinzufuegen}"
+                         value="#{msgs.fileGroupAdd}"
                          styleClass="button-filled-green"
                          icon="fa fa-plus-circle fa-lg"
                          iconPos="right"

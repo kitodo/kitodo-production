@@ -57,7 +57,7 @@
             <h:panelGrid id="AddDocStrucTypeSpecs" columns="1">
                 <h:panelGroup rendered="#{!Metadaten.addServeralStructuralElementsMode}">
                     <h:panelGrid columns="2">
-                        <h:outputText value="#{msgs.ersteSeite}:"/>
+                        <h:outputText value="#{msgs.firstPage}:"/>
                         <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
                                          filterMatchMode="startsWith">
                             <f:selectItems value="#{Metadaten.allPages}"/>

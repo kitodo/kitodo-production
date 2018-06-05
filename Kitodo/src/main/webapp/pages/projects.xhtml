@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui"
         >
     <ui:define name="contentHeader">
-        <h3>#{msgs.projekte}</h3>
+        <h3>#{msgs.projects}</h3>
         <h:form
             rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
             <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
@@ -62,7 +62,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><a href="">#{msgs.projekte}</a></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><a href="">#{msgs.projects}</a></li>
     </ui:define>
 </ui:composition>

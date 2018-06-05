@@ -28,12 +28,12 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.prozessBearbeiten} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.processEdit} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
             <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          action="#{ProzessverwaltungForm.saveAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
@@ -44,14 +44,14 @@
                          actionListener="#{ProzessverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.abbrechen}"
+        <p:button id="cancel" value="#{msgs.cancel}"
                   outcome="#{'processes'}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="tabs" cache="false">
-            <p:tab title="#{msgs.prozessDetails}" id="details">
+            <p:tab title="#{msgs.processDetails}" id="details">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.arbeitsschritte}" id="taskOrder">
@@ -63,7 +63,7 @@
             <p:tab title="#{msgs.workpieceProperties}" id="workpieces">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/workpieceList.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.eigenschaften}" id="properties">
+            <p:tab title="#{msgs.properties}" id="properties">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/propertyList.xhtml"/>
             </p:tab>
         </p:tabView>
@@ -76,10 +76,10 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
-        <li><h:link value="#{msgs.prozesse}" outcome="processes"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
         <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.prozessBearbeiten}</a></li>
+            <li><a href="">#{msgs.processEdit}</a></li>
         </ui:fragment>
         <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
             <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>

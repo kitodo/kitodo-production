@@ -83,7 +83,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final String ERROR_LOADING = "errorLoadingOne";
     private static final String ERROR_SAVING = "errorSaving";
-    private static final String PROCESS = "prozess";
+    private static final String PROCESS = "process";
     private static final String WORK_TASK = "arbeitsschritt";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");

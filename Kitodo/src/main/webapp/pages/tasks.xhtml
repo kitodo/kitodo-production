@@ -35,10 +35,10 @@
                     <p:column headerText="#{msgs.arbeitsschritt}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.prozess}">
+                    <p:column headerText="#{msgs.process}">
                         <h:outputText value="#{item.process.title}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.projekt}">
+                    <p:column headerText="#{msgs.project}">
                         <h:outputText value="#{item.process.project.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.status}">
@@ -48,7 +48,7 @@
                         <h:outputText value="!!" rendered="#{item.priority == 2}"/>
                         <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
                     </p:column>
-                    <p:column headerText="#{msgs.auswahl}">
+                    <p:column headerText="#{msgs.actions}">
                         <h:form>
                             <!-- assign task -->
                             <h:commandLink id="take" action="#{AktuelleSchritteForm.schrittDurchBenutzerUebernehmen}"
@@ -103,7 +103,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><a href="">#{msgs.schritte}</a></li>
     </ui:define>
 </ui:composition>

@@ -24,7 +24,7 @@
         <!--Inserted dummy button with no functionality  https://stackoverflow.com/a/27268362-->
         <p:commandButton id="dummy" style="display:none;"/>
         <h:panelGrid colums="1">
-            <h:outputText value="#{msgs.aktuellerOrdner}: "/>
+            <h:outputText value="#{msgs.currentFolder}: "/>
             <p:selectOneMenu id="TifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}">
                 <f:selectItems value="#{Metadaten.allTifFolders}"/>
                 <p:ajax update="currentImage,imageNumberSpinner" listener="#{Metadaten.goToFirstImage}"/>

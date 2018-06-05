@@ -117,7 +117,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private static final String ERROR_DELETING = "errorDeleting";
     private static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String EXPORT_FINISHED = "ExportFinished";
-    private static final String PROCESS = "prozess";
+    private static final String PROCESS = "process";
     private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
     private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
@@ -1728,7 +1728,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMeldung("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("eigenschaft") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("property") }, logger, e);
         }
         loadProcessProperties();
     }

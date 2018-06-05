@@ -25,14 +25,14 @@
             <p:tab title="#{msgs.settings}">
                 <ui:include src="/WEB-INF/templates/includes/userConfiguration/userSettings.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.passwortAendern}">
+            <p:tab title="#{msgs.passwordChange}">
                 <ui:include src="/WEB-INF/templates/includes/userConfiguration/changePassword.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><a href="">#{msgs.userConfiguration}</a></li>
     </ui:define>
 </ui:composition>

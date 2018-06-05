@@ -52,7 +52,7 @@ public class ProjekteForm extends BasisForm {
     private boolean lockedDetail;
     private boolean lockedMets;
     private boolean lockedTechnical;
-    private static final String PROJECT = "projekt";
+    private static final String PROJECT = "project";
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
@@ -383,7 +383,7 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projekte") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
             return new LinkedList<>();
         }
     }

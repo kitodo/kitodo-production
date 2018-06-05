@@ -27,7 +27,7 @@
         <p:column headerText="#{msgs.userGroup}">
             <h:outputText value="#{item.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.auswahl}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:link outcome="usergroupEdit" title="#{msgs.userGroupEdit}"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUserGroup')}">
                 <f:param name="id" value="#{item.id}" />

@@ -42,6 +42,7 @@ public class WebDav implements Serializable {
     private final FileService fileService = new FileService();
     private static final long serialVersionUID = -1929234096626965538L;
     private static final Logger logger = LogManager.getLogger(WebDav.class);
+    private static final String ERROR_UPLOADING = "errorUploading";
 
     /*
      * Kopieren bzw. symbolische Links für einen Prozess in das Benutzerhome
@@ -64,7 +65,7 @@ public class WebDav implements Serializable {
             URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
             files = fileService.getSubUris(filter, directoryName);
         } catch (IOException e) {
-            Helper.setErrorMessage("uploadFromHomeAlle abgebrochen, Fehler", logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
             return files;
         }
 
@@ -99,7 +100,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink(verzeichnisAlle.resolve(name));
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorUploading", new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
         }
     }
 
@@ -142,7 +143,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink((destination));
             }
         } catch (IOException e) {
-            Helper.setErrorMessage("errorUploading", new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
         }
     }
 

@@ -80,15 +80,6 @@
 
                             <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
                             <br/>
-                            <br/>
-                            <h:commandLink value="#{msgs.abbrechen}" id="login-cancel"
-                                           action="#{LoginForm.Ausloggen}"/>
-                            <br/>
-                            <h:commandLink value="#{msgs.alteSessionsAufraeumen}" id="login-clean"
-                                           action="#{LoginForm.EigeneAlteSessionsAufraeumen}"/>
-                            <br/>
-                            <h:commandLink value="#{msgs.dennochEinloggen}" id="login-go"
-                                           action="#{LoginForm.NochmalEinloggen}"/>
                         </h:panelGroup>
                     </h:panelGrid>
                 </sec:authorize>

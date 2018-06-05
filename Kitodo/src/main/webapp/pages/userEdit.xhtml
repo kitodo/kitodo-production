@@ -42,7 +42,7 @@
             <h:outputText value="#{msgs.userView}"
                           rendered="#{isViewMode}"/>
         </h3>
-        <p:commandButton value="#{msgs.speichern}"
+        <p:commandButton value="#{msgs.save}"
                          action="#{BenutzerverwaltungForm.save}"
                          id="save"
                          rendered="#{isEditMode || isCreateMode}"
@@ -57,7 +57,7 @@
                          actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.abbrechen}" outcome="users"
+        <p:button id="cancel" value="#{msgs.cancel}" outcome="users"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -151,7 +151,7 @@
                     <p:column headerText="#{msgs.userGroup}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                         <p:commandLink id="deleteFromUserGroup"
                                        rendered="#{isEditMode || isCreateMode}"
                                        action="#{BenutzerverwaltungForm.deleteFromGroup}"
@@ -179,7 +179,7 @@
                     <p:column headerText="#{msgs.projectList}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
-                    <p:column styleClass="actionsColumn" headerText="#{msgs.auswahl}">
+                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                         <p:commandLink id="deleteFromProject"
                                        action="#{BenutzerverwaltungForm.deleteFromProject}"
                                        title="#{msgs.deleteFromProject}"
@@ -204,7 +204,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

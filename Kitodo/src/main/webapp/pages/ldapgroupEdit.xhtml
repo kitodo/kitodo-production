@@ -45,7 +45,7 @@
         <p:commandButton id="saveButton"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          action="#{LdapGruppenForm.saveLdapGroup}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
@@ -57,7 +57,7 @@
                          actionListener="#{LdapGruppenForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.abbrechen}"
+        <p:button id="cancel" value="#{msgs.cancel}"
                   outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
@@ -226,7 +226,7 @@
                 <p:panel styleClass="content-header"
                          rendered="#{not isViewMode}">
                     <p:commandButton id="delete"
-                                     value="#{msgs.loeschen}"
+                                     value="#{msgs.delete}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
                                     action="#{LdapGruppenForm.deleteLdapGroup}"
                                      rendered="#{isEditMode and SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
@@ -247,7 +247,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startseite}" outcome="start"/></li>
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

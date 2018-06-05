@@ -18,8 +18,8 @@
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="title" value="#{msgs.prozessTitel}"/>
-                <p:inputText id="title" placeholder="#{msgs.prozessTitel}"
+                <p:outputLabel for="title" value="#{msgs.processTitle}"/>
+                <p:inputText id="title" placeholder="#{msgs.processTitle}"
                              value="#{ProzessverwaltungForm.newProcessTitle}"
                              class="input"
                              required="#{empty param['editForm:saveButtonToggler'] and
@@ -31,7 +31,7 @@
             </div>
 
             <div>
-                <p:outputLabel for="project" value="#{msgs.projekt}"/>
+                <p:outputLabel for="project" value="#{msgs.project}"/>
                 <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projectSelect}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and

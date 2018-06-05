@@ -221,7 +221,7 @@ public class GoobiScript {
                     Helper.setMeldung("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
-                            new Object[] {Helper.getTranslation("prozess") + " " + title}, logger, e);
+                            new Object[] {Helper.getTranslation("process") + " " + title}, logger, e);
                 }
             }
         }
