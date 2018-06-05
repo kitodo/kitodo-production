@@ -135,9 +135,8 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI rename(URI uri, String newName) throws IOException {
-        final int SLEEP_INTERVAL_MILLIS = 20;
-        final int MAX_WAIT_MILLIS = 150000; // 2½ minutes
-        int millisWaited = 0;
+        final int sleepIntervalMilliseconds = 20;
+        final int maxWaitMilliseconds = 150000; // 2½ minutes
 
         if ((uri == null) || (newName == null)) {
             return null;
@@ -151,6 +150,7 @@ public class FileManagement implements FileManagementInterface {
         URI mappedFileURI = fileMapper.mapAccordingToMappingType(uri);
         URI mappedNewFileURI = fileMapper.mapAccordingToMappingType(newFileUri);
         boolean success;
+        int millisWaited = 0;
 
         if (!fileExist(mappedFileURI)) {
             logger.debug("File {} does not exist for renaming.", uri.getPath());
@@ -166,7 +166,7 @@ public class FileManagement implements FileManagementInterface {
         File fileToRename = new File(mappedFileURI);
         File renamedFile = new File(mappedNewFileURI);
         do {
-            if (SystemUtils.IS_OS_WINDOWS && millisWaited == SLEEP_INTERVAL_MILLIS) {
+            if (SystemUtils.IS_OS_WINDOWS && millisWaited == sleepIntervalMilliseconds) {
                 logger.warn("Renaming " + uri
                         + " failed. This is Windows. Running the garbage collector may yield good results. "
                         + "Forcing immediate garbage collection now!");
@@ -174,28 +174,32 @@ public class FileManagement implements FileManagementInterface {
             }
             success = fileToRename.renameTo(renamedFile);
             if (!success) {
-                if (millisWaited == 0 && logger.isInfoEnabled()) {
+                if (millisWaited == 0) {
                     logger.info("Renaming " + uri + " failed. File may be locked. Retrying...");
                 }
-                try {
-                    Thread.sleep(SLEEP_INTERVAL_MILLIS);
-                } catch (InterruptedException e) {
-                    logger.warn("The thread was interrupted");
-                    Thread.currentThread().interrupt();
-                }
-                millisWaited += SLEEP_INTERVAL_MILLIS;
+                waitForThread(sleepIntervalMilliseconds);
+                millisWaited += sleepIntervalMilliseconds;
             }
-        } while (!success && millisWaited < MAX_WAIT_MILLIS);
+        } while (!success && millisWaited < maxWaitMilliseconds);
 
         if (!success) {
             logger.error("Rename " + uri + " failed. This is a permanent error. Giving up.");
             throw new IOException("Renaming of " + uri + " into " + newName + " failed.");
         }
 
-        if (millisWaited > 0 && logger.isInfoEnabled()) {
+        if (millisWaited > 0) {
             logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
         }
         return fileMapper.unmapAccordingToMappingType(Paths.get(renamedFile.getPath()).toUri());
+    }
+
+    private void waitForThread(int sleepIntervalMilliseconds) {
+        try {
+            Thread.sleep(sleepIntervalMilliseconds);
+        } catch (InterruptedException e) {
+            logger.warn("The thread was interrupted");
+            Thread.currentThread().interrupt();
+        }
     }
 
     @Override
