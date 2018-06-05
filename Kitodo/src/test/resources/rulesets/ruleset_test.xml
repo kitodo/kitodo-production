@@ -139,6 +139,12 @@
         <group num="*">Contributor</group>
     </DocStrctType>
     <DocStrctType>
+        <Name>Monograph</Name>
+        <language name="de">Monographie</language>
+        <language name="en">Monograph</language>
+        <metadata DefaultDisplay="true" num="1o">TitleDocMain</metadata>
+    </DocStrctType>
+    <DocStrctType>
         <Name>Cover</Name>
         <language name="de">Deckblatt</language>
         <language name="en">Cover</language>

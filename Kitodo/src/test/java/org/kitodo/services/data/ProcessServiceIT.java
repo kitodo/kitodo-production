@@ -469,7 +469,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldReadMetadataFile() throws Exception {
-        FileLoader.createRulesetFile();
         FileLoader.createMetadataFile();
 
         Process process = processService.getById(1);
@@ -480,12 +479,10 @@ public class ProcessServiceIT {
         assertEquals("It was not possible to read metadata file!", processTitle, processTitleFromMetadata);
 
         FileLoader.deleteMetadataFile();
-        FileLoader.deleteRulesetFile();
     }
 
     @Test
     public void shouldReadMetadataAsTemplateFile() throws Exception {
-        FileLoader.createRulesetFile();
         FileLoader.createMetadataTemplateFile();
 
         Process process = processService.getById(1);
@@ -495,14 +492,11 @@ public class ProcessServiceIT {
         assertEquals("It was not possible to read metadata as template file!", 1, metadataSize);
 
         FileLoader.deleteMetadataTemplateFile();
-        FileLoader.deleteRulesetFile();
     }
 
     @Ignore("PreferencesException: Can't obtain DigitalDocument! Maybe wrong preferences file? - METS node")
     @Test
     public void shouldWriteMetadataAsTemplateFile() throws Exception {
-        FileLoader.createRulesetFile();
-
         Process process = processService.getById(1);
         PrefsInterface preferences = new ServiceManager().getRulesetService().getPreferences(process.getRuleset());
         fileService.writeMetadataAsTemplateFile(UghImplementation.INSTANCE.createMetsMods(preferences), process);
@@ -510,7 +504,6 @@ public class ProcessServiceIT {
         assertTrue("It was not possible to write metadata as template file!", condition);
 
         Files.deleteIfExists(Paths.get(ConfigCore.getKitodoDataDirectory() + "1/template.xml"));
-        FileLoader.deleteRulesetFile();
     }
 
     @Test
@@ -562,7 +555,6 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetDigitalDocument() throws Exception {
-        FileLoader.createRulesetFile();
         FileLoader.createMetadataFile();
 
         DigitalDocumentInterface actual = processService.getDigitalDocument(processService.getById(1));
@@ -570,7 +562,6 @@ public class ProcessServiceIT {
             actual.getLogicalDocStruct().getAllMetadata().size());
 
         FileLoader.deleteMetadataFile();
-        FileLoader.deleteRulesetFile();
     }
 
     @Test

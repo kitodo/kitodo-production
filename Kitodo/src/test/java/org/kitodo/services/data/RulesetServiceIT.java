@@ -45,16 +45,12 @@ public class RulesetServiceIT {
         MockDatabase.insertClients();
         MockDatabase.insertRulesets();
         MockDatabase.setUpAwaitility();
-
-        FileLoader.createRulesetFile();
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
-
-        FileLoader.deleteRulesetFile();
     }
 
     @Rule
@@ -203,15 +199,15 @@ public class RulesetServiceIT {
         List<DocStructTypeInterface> docStructTypes = rulesetService.getPreferences(ruleset).getAllDocStructTypes();
 
         int actual = docStructTypes.size();
-        assertEquals("Size of docstruct types in ruleset file is incorrect!", 3, actual);
+        assertEquals("Size of docstruct types in ruleset file is incorrect!", 6, actual);
 
         String firstName = docStructTypes.get(0).getName();
-        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Acknowledgment", firstName);
+        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "page", firstName);
 
         String secondName = docStructTypes.get(1).getName();
-        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Article", secondName);
+        assertEquals("Name of second docstruct type in ruleset file is incorrect!", "BoundBook", secondName);
 
         String thirdName = docStructTypes.get(2).getName();
-        assertEquals("Name of first docstruct type in ruleset file is incorrect!", "Monograph", thirdName);
+        assertEquals("Name of third docstruct type in ruleset file is incorrect!", "Chapter", thirdName);
     }
 }
