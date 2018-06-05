@@ -76,7 +76,7 @@ public class SecurityAccessService {
                 return (SecurityUserDetails) principal;
             }
         }
-        throw new AuthenticationServiceException("There is no authenticated user");
+        return null;
     }
 
     /**
