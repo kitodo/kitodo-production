@@ -22,7 +22,7 @@
         <p:commandButton id="save"
                          widgetVar="save"
                          action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
-                         value="#{msgs.speichern}"
+                         value="#{msgs.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
@@ -33,6 +33,6 @@
                          icon="fa fa-check fa-lg"
                          iconPos="right"
                          styleClass="secondary-button"/>
-        <p:button value="#{msgs.abbrechen}" outcome="processes" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        <p:button value="#{msgs.cancel}" outcome="processes" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </p:panel>
 </ui:composition>
