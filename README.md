@@ -17,4 +17,4 @@ Getting started
 
 * [Installation Guides](https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung)
 * [User documentation](https://github.com/kitodo/kitodo-production/wiki/)
-* [Developer documentation](http://kitodo-production.readthedocs.io)
+* [Developer documentation](https://kitodo-production.readthedocs.io/en/latest/)

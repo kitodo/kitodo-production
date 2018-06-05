@@ -10,9 +10,12 @@ and packaging of the application is [Maven](https://maven.apache.org/).
 Available dependencies are fetched from Maven Central. Further dependencies (not available in Maven Central) are located in Kitodo/src/main/webapp/WEB-INF/lib.
 Two things that are not shipped are a Tomcat specific servlet API and an ElasticSearch server. First thing should come along with the Tomcat distribution you are building against. Second, you need to download by yourself from [ElasticSearch 5.4.3](https://www.elastic.co/downloads/past-releases/elasticsearch-5-4-3) and start before Maven build. On the Windows system ElasticSearch starts after open elasticsearch.bat file from bin folder. Additional information about running of ElasticSearch can be found [here](https://www.elastic.co/downloads/elasticsearch).
 
-## Vanilla build using Maven
+## Building manuals
 
-Execute "mvn clean package" and put generated war file in Tomcat.
+* [Build integrated demo](demo.md)
+* [Build development version](development-version.md)
+* [Eclipse on Windows](eclipse-windows.md)
+* [Create VirtualBox Appliance](virtualbox.md)
 
 ## Configuring your distribution
 
