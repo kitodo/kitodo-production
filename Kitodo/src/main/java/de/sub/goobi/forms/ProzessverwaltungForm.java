@@ -906,6 +906,18 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
+     * Set process by ID.
+     * @param processID ID of process to set.
+     */
+    public void setProcessByID(int processID) {
+        try {
+            setProcess(serviceManager.getProcessService().getById(processID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find process with ID " + processID, logger, e);
+        }
+    }
+
+    /**
      * Set process.
      *
      * @param process

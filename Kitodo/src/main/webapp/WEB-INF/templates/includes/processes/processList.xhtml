@@ -56,7 +56,21 @@
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
                 </h:commandLink>
+                <p:commandLink id="deleteProcess"
+                               action="#{ProzessverwaltungForm.delete}"
+                               title="#{msgs.delete}"
+                               update="processesTabView:processesForm:processesTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteProcess}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
             </p:column>
         </p:dataTable>
+        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
+            <p:commandButton id="yesButton" value="#{msgs.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" immediate="true" update="processesTabView:processesForm:processesTable"/>
+            <p:commandButton id="noButton" value="#{msgs.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+        </p:confirmDialog>
     </h:form>
 </ui:composition>
