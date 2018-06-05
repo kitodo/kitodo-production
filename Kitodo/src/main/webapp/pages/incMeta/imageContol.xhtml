@@ -98,7 +98,7 @@
                              rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}">
                 <f:selectItems value="#{Metadaten.allPages}"/>
             </h:selectOneMenu>
-            <h:commandButton action="#{Metadaten.saveMetadataToXml}" value="#{msgs.uebernehmen}"
+            <h:commandButton action="#{Metadaten.saveMetadataToXml}" value="#{msgs.apply}"
                              rendered="#{Metadaten.allPages != null and Metadaten.checkForRepresentative}"/>
         </h:panelGrid>
     </h:form>

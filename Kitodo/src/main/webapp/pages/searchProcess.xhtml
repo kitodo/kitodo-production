@@ -35,7 +35,7 @@
                 <p:panelGrid id="processSearch-grid" rendered="#{ProzessverwaltungForm.initialize}">
                     <!-- process title -->
                     <p:row>
-                        <p:column><p:outputLabel for="processtitle" value="#{msgs.title}"/></p:column>
+                        <p:column><p:outputLabel for="processtitle" value="#{msgs.processTitle}"/></p:column>
                         <p:column>
                             <p:selectOneMenu for="processtitle" value="#{SearchForm.processOperand}" style="width:200px; margin-right:3px; margin-left:3px">
                                 <f:selectItems value="#{SearchForm.operands}"/>

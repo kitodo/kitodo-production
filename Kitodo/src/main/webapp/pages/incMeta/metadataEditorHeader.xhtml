@@ -22,10 +22,10 @@
                 Saving <br/>
                 <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif"/>
             </p:blockUI>
-            <p:commandButton value="#{msgs.validieren}" icon="fa fa-refresh"
+            <p:commandButton value="#{msgs.validate}" icon="fa fa-refresh"
                              action="#{Metadaten.validate}"
                              update="tabView:metadata"/>
-            <p:button id="backBtn" value="#{msgs.zurueck}" outcome="/pages/processes"
+            <p:button id="backBtn" value="#{msgs.back}" outcome="/pages/processes"
                       icon="fa fa-times"/>
             <p:commandButton id="saveBtn" value="#{msgs.save}" action="#{Metadaten.saveMetadataToXml}"
                              icon="fa fa-floppy-o"

@@ -57,7 +57,7 @@
                             rendered="#{SessionForm.activeSessions.size() gt 0}"
                             class="batch-count bc-info">#{SessionForm.activeSessions.size()}</h:panelGroup></a>
                         <ul>
-                            <li><h3>#{msgs.aktiveBenutzer}</h3></li>
+                            <li><h3>#{msgs.activeUsers}</h3></li>
                             <ui:repeat
                                 value="#{SessionForm.activeSessions.subList(0, (SessionForm.activeSessions.size() gt 3) ? 3 : SessionForm.activeSessions.size())}"
                                 var="activeSession">
@@ -82,7 +82,7 @@
 
                             <h:panelGroup
                                 rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllTasks')}">
-                                <li class="nav-pic-text"><h:link value="#{msgs.schritte}" id="linkTasks"
+                                <li class="nav-pic-text"><h:link value="#{msgs.tasks}" id="linkTasks"
                                                                  outcome="tasks"><i
                                     class="fa fa-bell fa-lg"/></h:link></li>
                             </h:panelGroup>

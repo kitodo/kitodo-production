@@ -236,7 +236,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
         } catch (IOException | ReadException | PreferencesException | WriteException | DataException
                 | RuntimeException e) {
             String message = currentTitle != null
-                    ? Helper.getTranslation("CreateNewspaperProcessesTask.MetadataNotAllowedException",
+                    ? Helper.getTranslation("createNewspaperProcessesTask.MetadataNotAllowedException",
                         currentTitle)
                     : e.getClass().getSimpleName();
             setException(new ProcessCreationException(message + ": " + e.getMessage(), e));
@@ -445,7 +445,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("CreateNewspaperProcessesTask");
+        return Helper.getTranslation("createNewspaperProcessesTask");
     }
 
     /**

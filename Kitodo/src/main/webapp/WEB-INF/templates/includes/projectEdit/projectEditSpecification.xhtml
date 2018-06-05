@@ -49,7 +49,7 @@
                 <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportErrorDir')" disabled="#{ProjekteForm.lockedTechnical}"/>
             </div>
             <div>
-                <p:outputLabel for="automaticExport" value="#{msgs.automatischerDmsImport}" />
+                <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
                 <p:selectBooleanCheckbox id="automaticExport" value="#{ProjekteForm.myProjekt.useDmsImport}" class="input" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>

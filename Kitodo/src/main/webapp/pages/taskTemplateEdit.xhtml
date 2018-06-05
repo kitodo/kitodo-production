@@ -28,9 +28,8 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.schrittHinzufuegen}"
-                          rendered="#{empty TemplateForm.task.title}"/>
-            <h:outputText value="#{msgs.schrittDetails} (#{TemplateForm.task.title})"
+            <h:outputText value="#{msgs.taskAdd}" rendered="#{empty TemplateForm.task.title}"/>
+            <h:outputText value="#{msgs.taskDetails} (#{TemplateForm.task.title})"
                           rendered="#{not empty TemplateForm.task.title}"/>
         </h3>
         <p:commandButton id="save" value="#{msgs.save}"
@@ -71,6 +70,6 @@
         <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
         <li><h:link value="#{msgs.prozessvorlage}" outcome="projects"/></li>
         <li><h:link value="#{msgs.editTemplate}" outcome="templateEdit?id=#{TemplateForm.template.id}"/></li>
-        <li><a href="">#{msgs.schrittDetails}</a></li>
+        <li><a href="">#{msgs.taskDetails}</a></li>
     </ui:define>
 </ui:composition>

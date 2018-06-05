@@ -27,7 +27,7 @@
             <h:outputLink title="#{item.value}" value="#{item.value}" rendered="#{item.type.name eq 'link'}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-            <p:commandLink id="editProperty" title="#{msgs.bearbeiten}"
+            <p:commandLink id="editProperty" title="#{msgs.edit}"
                            oncomplete="PF('editPropertyDialog').show()"
                            update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>

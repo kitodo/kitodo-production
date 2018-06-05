@@ -43,7 +43,7 @@
                             <p:ajax event="blur"/>
                         </h:inputText>
 
-                        <h:outputText value="#{msgs.vorname}:"/>
+                        <h:outputText value="#{msgs.firstName}:"/>
                         <h:inputText value="#{person.vorname}"
                                      style="width: 350px;"
                                      id="firstname">
@@ -159,7 +159,7 @@
                              style="width: 350px;"
                              id="addPersonRecord"/>
 
-                <h:outputText value="#{msgs.vorname}:"/>
+                <h:outputText value="#{msgs.firstName}:"/>
                 <h:inputText value="#{Metadaten.tempPersonVorname}"
                              style="width: 350px;"
                              id="addPersonFirstname"/>
@@ -170,7 +170,7 @@
                              id="addPersonLastname"/>
             </p:panelGrid>
 
-            <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.savePerson}"
+            <p:commandButton value="#{msgs.apply}" action="#{Metadaten.savePerson}"
                              update="tabView:metadata"
                              oncomplete="PF('dialogAddPerson').hide();">
             </p:commandButton>

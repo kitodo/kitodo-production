@@ -43,7 +43,7 @@
         </p:column>
 
         <!-- title -->
-        <p:column headerText="#{msgs.arbeitsschritt}" id="taskTitle">
+        <p:column headerText="#{msgs.task}" id="taskTitle">
             <p:rowToggler />
             <h:outputText value="#{item.title}"/>
         </p:column>
@@ -112,25 +112,25 @@
         <p:rowExpansion>
             <div class="row-expansion-wrapper">
                 <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.properties}">
-                    <h:outputText value="#{msgs.title}: "/>
+                    <h:outputText value="#{msgs.processTitle}: "/>
                     <h:outputText value="#{item.process.title}"/>
 
                     <h:outputText value="#{msgs.prioritaet}: "/>
                     <h:outputText value="#{item.priority}"/>
 
-                    <h:outputText value="#{msgs.bearbeitungsbeginn}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.processingBegin}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.zuletztBearbeitet}: "  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.lastEdited}: " rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.bearbeitungsende}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.processingsEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.letzteAktualisierungDurch}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingUser.fullName}" rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.aktualisierungstyp}: " rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editTypeEnum ne null}"/>
                     <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
 
                     <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
@@ -148,7 +148,7 @@
     </p:confirmDialog>
 
     <p:commandButton action="#{ProzessverwaltungForm.newTask}"
-                     value="#{msgs.schrittHinzufuegen}"
+                     value="#{msgs.taskAdd}"
                      rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"

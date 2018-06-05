@@ -43,7 +43,7 @@
             <br/>
 
             <h:panelGrid columns="2" columnClasses="top,top">
-                <h:outputText value="#{msgs.vorgaben}:"/>
+                <h:outputText value="#{msgs.defaults}:"/>
 
                 <h:panelGroup>
                     <p:selectOneRadio layout="grid" columns="1" value="#{Metadaten.addServeralStructuralElementsMode}">
@@ -63,13 +63,13 @@
                             <f:selectItems value="#{Metadaten.allPages}"/>
                         </p:selectOneMenu>
 
-                        <h:outputText value="#{msgs.letzteSeite}:"/>
+                        <h:outputText value="#{msgs.lastPage}:"/>
                         <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
                                          filterMatchMode="startsWith">
                             <f:selectItems value="#{Metadaten.allPages}"/>
                         </p:selectOneMenu>
 
-                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSingleNodeWithPages}"
+                        <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
                                          update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>
@@ -88,7 +88,7 @@
                         <h:outputLabel value="#{msgs.value}:" for="inputMetaDataValue"/>
                         <h:inputTextarea id="inputMetaDataValue" value="#{Metadaten.addMetaDataValue}"/>
 
-                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.uebernehmen}" action="#{Metadaten.addSeveralNodesWithMetadata}"
+                        <p:commandButton id="addMultiDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSeveralNodesWithMetadata}"
                                          update="tabView:structureData:structureDataTable,tabView:structureData:messagesStructureData,docStrucForm:docStruc"
                                          oncomplete="PF('dialogAddDocStrucType').hide();"/>
                     </h:panelGrid>

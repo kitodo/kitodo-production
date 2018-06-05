@@ -23,7 +23,7 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="tasksTabView">
-            <p:tab id="tasksTab" title="#{msgs.tasklist}">
+            <p:tab id="tasksTab" title="#{msgs.taskList}">
                 <p:dataTable id="taskTable"
                              var="item"
                              value="#{AktuelleSchritteForm.lazyDTOModel}"
@@ -32,7 +32,7 @@
                              rows="#{LoginForm.myBenutzer.tableSize}"
                              paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                              paginatorPosition="bottom">
-                    <p:column headerText="#{msgs.arbeitsschritt}">
+                    <p:column headerText="#{msgs.task}">
                         <h:outputText value="#{item.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.process}">
@@ -104,6 +104,6 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
-        <li><a href="">#{msgs.schritte}</a></li>
+        <li><a href="">#{msgs.tasks}</a></li>
     </ui:define>
 </ui:composition>

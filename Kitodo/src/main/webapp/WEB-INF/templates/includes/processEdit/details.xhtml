@@ -37,7 +37,7 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
+                    <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
                     <f:selectItems value="#{ProzessverwaltungForm.projectsSelectList}"/>
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectOneMenu>

@@ -238,7 +238,7 @@ public class TemplateBaseForm extends BasisForm {
         try {
             serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("arbeitsschritt") }, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
         }
     }
 
