@@ -18,7 +18,7 @@
     xmlns:p="http://primefaces.org/ui"
 >
 
-    <p:dialog id="dialogEditPagesId" header="#{msgs.seitenzuordnung}" resizable="false"
+    <p:dialog id="dialogEditPagesId" header="#{msgs.pageAllocation}" resizable="false"
               widgetVar="dialogEditPages" width="400">
         <h:form id="dialogEditPagesForm">
 
@@ -40,7 +40,7 @@
                 <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
                                  action="#{Metadaten.takePagesFromChildren}"
                                  update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
-                <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.seitenZuweisen}"
+                <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.pageAssign}"
                                  action="#{Metadaten.setPageStartAndEnd}"
                                  update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
             </h:panelGrid>

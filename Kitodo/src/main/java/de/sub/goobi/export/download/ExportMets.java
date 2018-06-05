@@ -129,7 +129,7 @@ public class ExportMets {
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {
             mm.write(metaFile.getRawPath());
-            Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+            Helper.setMeldung(null, process.getTitle() + ": ", "exportFinished");
             return true;
         }
         Helper.setFehlerMeldung(process.getTitle() + ": was not finished!");

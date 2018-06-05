@@ -279,7 +279,7 @@ public class ProzesskopieForm implements Serializable {
     private String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processFromTemplatePath = MessageFormat.format(REDIRECT_PATH, "processFromTemplate");
 
-    protected static final String INCOMPLETE_DATA = "UnvollstaendigeDaten";
+    protected static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
     /**
      * Prepare.
@@ -715,7 +715,7 @@ public class ProzesskopieForm implements Serializable {
         if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("ProcessCreationErrorNoCollection"));
+                    + Helper.getTranslation("processCreationErrorNoCollection"));
         }
 
         /*
@@ -726,7 +726,7 @@ public class ProzesskopieForm implements Serializable {
                     && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
                 Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
-                        + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
+                        + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
 
             }
         }
@@ -739,13 +739,13 @@ public class ProzesskopieForm implements Serializable {
         if (process.getTitle() == null || process.getTitle().equals("")) {
             valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("ProcessCreationErrorTitleEmpty"));
+                    + Helper.getTranslation("processCreationErrorTitleEmpty"));
         }
 
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
-            Helper.setFehlerMeldung("UngueltigerTitelFuerVorgang");
+            Helper.setFehlerMeldung("processTitleInvalid");
         }
 
         if (process.getTitle() != null) {
@@ -772,7 +772,7 @@ public class ProzesskopieForm implements Serializable {
         }
         if (amount > 0) {
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA)
-                    + Helper.getTranslation("ProcessCreationErrorTitleAlreadyInUse"));
+                    + Helper.getTranslation("processCreationErrorTitleAlreadyInUse"));
             return false;
         }
         return true;

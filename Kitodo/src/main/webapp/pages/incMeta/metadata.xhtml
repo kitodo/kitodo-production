@@ -97,13 +97,13 @@
 
                 <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
                                  icon="fa fa-clipboard" immediate="true"
-                                 title="#{msgs.metadatenKopieren}" action="#{Metadaten.copy}">
+                                 title="#{msgs.metadataCopy}" action="#{Metadaten.copy}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                 </p:commandButton>
 
                 <p:commandButton update="tabView:metadata:metadataTable,tabView:metadata:messagesMetadata"
                                  icon="fa fa-trash" immediate="true"
-                                 title="#{msgs.metadatenLoeschen}" action="#{Metadaten.delete}">
+                                 title="#{msgs.metadataDelete}" action="#{Metadaten.delete}">
                     <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                 </p:commandButton>
             </p:column>

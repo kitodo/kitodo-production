@@ -118,7 +118,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
-    private static final String EXPORT_ERROR = "exportError";
+    private static final String ERROR_EXPORT = "errorExport";
     private static final String CLOSED = "closed";
     private static final String IN_PROCESSING = "inProcessing";
     private static final String LOCKED = "locked";
@@ -1750,7 +1750,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             directoryDownload(process, targetDirectory);
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(EXPORT_ERROR, new Object[]{process.getTitle()}, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORT, new Object[]{process.getTitle()}, logger, e);
             return false;
         }
 
@@ -1804,7 +1804,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             newFile.setDigitalDocument(gdzFile.getDigitalDocument());
             gdzFile = newFile;
         } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(EXPORT_ERROR, new Object[] {process.getTitle()}, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle()}, logger, e);
             return null;
         }
 
@@ -1818,21 +1818,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         Project project = process.getProject();
         // remove old import folder
         if (!fileService.delete(userHome)) {
-            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
         // remove old success folder
         File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
         if (!fileService.delete(successFile.toURI())) {
-            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
         File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
         if (!fileService.delete(errorFile.toURI())) {
-            Helper.setFehlerMeldung(Helper.getTranslation(EXPORT_ERROR, Collections.singletonList(process.getTitle())),
+            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
@@ -1992,7 +1992,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {
-                    Helper.setErrorMessage(EXPORT_ERROR, "could not create destination directory", logger,
+                    Helper.setErrorMessage(ERROR_EXPORT, "could not create destination directory", logger,
                         e);
                 }
             }
@@ -2157,7 +2157,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.error(e.getMessage(), e);
         }
         mm.write(targetFileName);
-        Helper.setMeldung(null, process.getTitle() + ": ", "ExportFinished");
+        Helper.setMeldung(null, process.getTitle() + ": ", "exportFinished");
         return true;
     }
 

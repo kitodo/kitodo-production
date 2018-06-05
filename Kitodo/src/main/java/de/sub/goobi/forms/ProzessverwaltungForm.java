@@ -116,7 +116,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private String doneDirectoryName;
     private static final String ERROR_DELETING = "errorDeleting";
     private static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String EXPORT_FINISHED = "ExportFinished";
+    private static final String EXPORT_FINISHED = "exportFinished";
     private static final String PROCESS = "process";
     private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
     private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
@@ -255,7 +255,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
             this.editMode = ObjectMode.PROCESS;
-            Helper.setFehlerMeldung(Helper.getTranslation("UngueltigerTitelFuerVorgang"));
+            Helper.setFehlerMeldung(Helper.getTranslation("processTitleInvalid"));
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());
@@ -680,7 +680,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 Helper.setMeldung(null, EXPORT_FINISHED, "");
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | DAOException | RuntimeException e) {
-                Helper.setErrorMessage("ExportError", logger, e);
+                Helper.setErrorMessage("errorExport", new Object[] {processDTO.getTitle()}, logger, e);
             }
         }
     }
@@ -691,12 +691,12 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @SuppressWarnings("unchecked")
     public void exportDMSHits() {
         ExportDms export = new ExportDms();
-        for (Process proz : (List<Process>) lazyDTOModel.getEntities()) {
+        for (Process process : (List<Process>) lazyDTOModel.getEntities()) {
             try {
-                export.startExport(proz);
+                export.startExport(process);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage("ExportError", logger, e);
+                Helper.setErrorMessage("errorExport", new Object[] {process.getTitle()}, logger, e);
             }
         }
         logger.info(Helper.getTranslation(EXPORT_FINISHED));

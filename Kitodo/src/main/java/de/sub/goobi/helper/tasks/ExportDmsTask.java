@@ -70,7 +70,7 @@ public class ExportDmsTask extends EmptyTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("ExportDmsTask");
+        return Helper.getTranslation("exportDmsTask");
     }
 
     /**

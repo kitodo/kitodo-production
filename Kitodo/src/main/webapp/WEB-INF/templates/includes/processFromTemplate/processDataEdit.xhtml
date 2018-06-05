@@ -43,7 +43,7 @@
 
             <div>
                 <!-- Preferences -->
-                <p:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.regelsatz}" value="#{msgs.regelsatz}"/>
+                <p:outputLabel for="Regelsatz" rendered="#{ProzesskopieForm.standardFields.regelsatz}" value="#{msgs.ruleset}"/>
                 <h:panelGroup rendered="#{ProzesskopieForm.standardFields.regelsatz}">
                     <p:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
                                      onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"

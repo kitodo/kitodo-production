@@ -104,7 +104,7 @@ public class ExportSerialBatchTask extends EmptyTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("ExportSerialBatchTask");
+        return Helper.getTranslation("exportSerialBatchTask");
     }
 
     /**
