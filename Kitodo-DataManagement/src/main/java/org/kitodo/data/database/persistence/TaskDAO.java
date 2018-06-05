@@ -105,7 +105,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("orderingMax", orderingMax);
         parameters.put("orderingMin", orderingMin);
-        parameters.put("processId", processId);
+        parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
                 + " AND ordering > :orderingMax ORDER BY ordering ASC", parameters);
     }
@@ -122,7 +122,7 @@ public class TaskDAO extends BaseDAO<Task> {
     public List<Task> getNextTasksForProblemSolution(Integer ordering, Integer processId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
-        parameters.put("processId", processId);
+        parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery(
                 "FROM Task WHERE process_id = :processId AND ordering > :ordering AND priority = 10", parameters);
     }
@@ -139,7 +139,7 @@ public class TaskDAO extends BaseDAO<Task> {
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
-        parameters.put("processId", processId);
+        parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :ordering"
                 + " ORDER BY ordering DESC", parameters);
     }
@@ -154,7 +154,7 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Task> getTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectId", projectId);
+        parameters.put(KEY_PROJECT_ID, projectId);
         return getByQuery(
                 "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
@@ -170,7 +170,7 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Long> getSizeOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectId", projectId);
+        parameters.put(KEY_PROJECT_ID, projectId);
         return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
     }
@@ -185,7 +185,7 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     public List<Double> getAverageOrderingOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectId", projectId);
+        parameters.put(KEY_PROJECT_ID, projectId);
         return getAverage("SELECT AVG(t.ordering) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId GROUP BY t.title ORDER BY t.ordering", parameters);
     }
@@ -201,8 +201,8 @@ public class TaskDAO extends BaseDAO<Task> {
     public List<Task> getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("processingStatus", processingStatus);
-        parameters.put("projectId", projectId);
+        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
+        parameters.put(KEY_PROJECT_ID, projectId);
         return getByQuery(
                 "SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
@@ -220,8 +220,8 @@ public class TaskDAO extends BaseDAO<Task> {
     public List<Long> getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectId", projectId);
-        parameters.put("processingStatus", processingStatus);
+        parameters.put(KEY_PROJECT_ID, projectId);
+        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
         return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
                         + "GROUP BY t.title ORDER BY t.ordering", parameters);
@@ -238,8 +238,8 @@ public class TaskDAO extends BaseDAO<Task> {
     public List<Long> getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("projectId", projectId);
-        parameters.put("processingStatus", processingStatus);
+        parameters.put(KEY_PROJECT_ID, projectId);
+        parameters.put(KEY_PROCESSING_STATUS, processingStatus);
         return getSum(
                 "SELECT SUM(p.sortHelperImages) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
                         + "WITH pr.id = :projectId WHERE t.processingStatus = :processingStatus "
