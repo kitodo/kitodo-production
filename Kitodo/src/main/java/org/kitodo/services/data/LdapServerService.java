@@ -174,7 +174,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 logger.debug("HomeVerzeichnis existiert schon");
             }
         } else {
-            Helper.setMessage(Helper.getTranslation("ldapIsReadOnly"));
+            Helper.setMessage("ldapIsReadOnly");
         }
     }
 

@@ -140,7 +140,7 @@ public class FileManipulation {
                 logger.trace("update pagination for {}", metadataBean.getProcess().getTitle());
                 updatePagination(filename);
             }
-            Helper.setMessage(Helper.getTranslation("metsEditorFileUploadSuccessful"));
+            Helper.setMessage("metsEditorFileUploadSuccessful");
         } catch (IOException | MetadataTypeNotAllowedException e) {
             Helper.setErrorMessage("uploadFailed", logger, e);
         }

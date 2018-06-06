@@ -61,7 +61,7 @@ public class LoginForm implements Serializable {
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
-                Helper.setMessage(Helper.getTranslation("passwordChanged"));
+                Helper.setMessage("passwordChanged");
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {"user"}, logger, e);
             } catch (NoSuchAlgorithmException e) {
