@@ -712,8 +712,7 @@ public class ProzesskopieForm implements Serializable {
         /* keine Collektion ausgewählt */
         if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
-            Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("processCreationErrorNoCollection"));
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
         }
 
         /*
@@ -723,7 +722,7 @@ public class ProzesskopieForm implements Serializable {
             if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
                     && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
-                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
+                Helper.setErrorMessage(INCOMPLETE_DATA, " " + field.getTitle() + " "
                         + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
 
             }
@@ -736,8 +735,7 @@ public class ProzesskopieForm implements Serializable {
 
         if (process.getTitle() == null || process.getTitle().equals("")) {
             valid = false;
-            Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("processCreationErrorTitleEmpty"));
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorTitleEmpty");
         }
 
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");

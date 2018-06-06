@@ -143,7 +143,7 @@ public class MetadataValidationService {
         DocStructInterface logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<>();
         if (logicalTop == null) {
-            Helper.setErrorMessage(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationError"));
+            Helper.setErrorMessage(process.getTitle(), "metadataPaginationError");
             result = false;
         } else {
             checkDocStructsOhneSeiten(logicalTop);
@@ -151,7 +151,7 @@ public class MetadataValidationService {
 
         if (!this.docStructsOhneSeiten.isEmpty()) {
             for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
-                Helper.setErrorMessage(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationStructure")
+                Helper.setErrorMessage(process.getTitle(), Helper.getTranslation("metadataPaginationStructure")
                         + docStructWithoutPages.getDocStructType().getNameByLanguage(metadataLanguage));
             }
             result = false;
