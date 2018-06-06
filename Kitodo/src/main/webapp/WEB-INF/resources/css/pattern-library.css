@@ -262,6 +262,10 @@ tr.ui-widget-content {
     border: 0px;
 }
 
+tr.ui-widget-content:not(:first-child) {
+    border-top: 1px solid #e2e2e2 !important;
+}
+
 tbody.ui-widget-content {
     border: 0px;
 }
