@@ -55,15 +55,15 @@
                 <p:commandLink update="paginationStyle">
                     <p:graphicImage value="/pages/images/buttons/paginierung_seite.svg"
                                     styleClass="#{Metadaten.paginationPagesProImage == 1 ? 'pagination-active' : 'pagination-inactive'}"
-                                    title="#{msgs.seitenzaehlung}"
-                                    alt="#{msgs.seitenzaehlung}"/>
+                                    title="#{msgs.pageCount}"
+                                    alt="#{msgs.pageCount}"/>
                     <f:setPropertyActionListener value="1" target="#{Metadaten.paginationPagesProImage}"/>
                 </p:commandLink>
                 <p:commandLink update="paginationStyle">
                     <p:graphicImage value="/pages/images/buttons/paginierung_spalte.svg"
                                     styleClass="#{Metadaten.paginationPagesProImage == 2 ? 'pagination-active' : 'pagination-inactive'}"
-                                    title="#{msgs.spaltenzaehlung}"
-                                    alt="#{msgs.spaltenzaehlung}"/>
+                                    title="#{msgs.columnCount}"
+                                    alt="#{msgs.columnCount}"/>
                     <f:setPropertyActionListener value="2" target="#{Metadaten.paginationPagesProImage}"/>
                 </p:commandLink>
                 <p:commandLink update="paginationStyle">
@@ -83,15 +83,15 @@
                 <p:commandLink update="paginationStyle">
                     <p:graphicImage value="/pages/images/buttons/paginierung_seite_rectoverso.svg"
                                     styleClass="#{Metadaten.paginationPagesProImage == 5 ? 'pagination-active' : 'pagination-inactive'}"
-                                    title="#{msgs.seitenzaehlungrectoverso}"
-                                    alt="#{msgs.seitenzaehlungrectoverso}"/>
+                                    title="#{msgs.pageCountRectoVerso}"
+                                    alt="#{msgs.pageCountRectoVerso}"/>
                     <f:setPropertyActionListener value="5" target="#{Metadaten.paginationPagesProImage}"/>
                 </p:commandLink>
                 <p:commandLink update="paginationStyle">
                     <p:graphicImage value="/pages/images/buttons/paginierung_doppelseite.svg"
                                     styleClass="#{Metadaten.paginationPagesProImage == 6 ? 'pagination-active' : 'pagination-inactive'}"
-                                    title="#{msgs.seitenzaehlungdoppelseiten}"
-                                    alt="#{msgs.seitenzaehlungdoppelseiten}"/>
+                                    title="#{msgs.pageCountDouble}"
+                                    alt="#{msgs.pageCountDouble}"/>
                     <f:setPropertyActionListener value="6" target="#{Metadaten.paginationPagesProImage}"/>
                 </p:commandLink>
             </p:panel>
@@ -101,7 +101,7 @@
             </p:selectOneMenu>
             <p:commandLink id="createPaginationButton"
                            action="#{Metadaten.createPagination}"
-                           value="#{msgs.paginierungEinlesen}"
+                           value="#{msgs.paginationRead}"
                            update="metadataEditor"
                            immediate="true"/>
             <p:commandButton id="okButton" value="OK"
