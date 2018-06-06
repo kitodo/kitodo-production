@@ -659,7 +659,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
-                Helper.setMessage(null, EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED, "");
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
@@ -677,7 +677,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             try {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
-                Helper.setMessage(null, EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED, "");
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | DAOException | RuntimeException e) {
                 Helper.setErrorMessage("errorExport", new Object[] {processDTO.getTitle()}, logger, e);
@@ -700,7 +700,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
         }
         logger.info(Helper.getTranslation(EXPORT_FINISHED));
-        Helper.setMessage(null, EXPORT_FINISHED, "");
+        Helper.setMessage(EXPORT_FINISHED, "");
     }
 
     /**
@@ -712,7 +712,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         WebDav myDav = new WebDav();
         List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
         myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
-        Helper.setMessage(null, "directoryRemovedAll", doneDirectoryName);
+        Helper.setMessage("directoryRemovedAll", doneDirectoryName);
         return null;
     }
 
@@ -724,7 +724,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public String uploadFromHome() {
         WebDav myDav = new WebDav();
         myDav.uploadFromHome(this.process);
-        Helper.setMessage(null, "directoryRemoved", this.process.getTitle());
+        Helper.setMessage("directoryRemoved", this.process.getTitle());
         return null;
     }
 
@@ -741,8 +741,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, false);
         } else {
-            Helper.setMessage(null,
-                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
+            Helper.setMessage(Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
                         + Helper.getTranslation("isInUse"),
                 serviceManager.getUserService()
                         .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
@@ -760,7 +759,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             download(webDav, process);
         }
-        Helper.setMessage(null, "createdInUserHome", "");
+        Helper.setMessage("createdInUserHome", "");
     }
 
     /**
@@ -772,7 +771,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             download(myDav, processDTO);
         }
-        Helper.setMessage(null, "createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll", "");
     }
 
     private void download(WebDav webDav, ProcessDTO processDTO) {
@@ -781,8 +780,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(processDTO)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMessage(null,
-                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                Helper.setMessage(Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
@@ -803,15 +801,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(process)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMessage(null,
-                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                Helper.setMessage(Helper.getTranslation("directory ") + " " + process.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         }
-        Helper.setMessage(null, "createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll", "");
     }
 
     /**

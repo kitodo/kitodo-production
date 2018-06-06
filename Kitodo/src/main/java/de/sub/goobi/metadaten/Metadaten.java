@@ -1291,7 +1291,7 @@ public class Metadaten {
         try {
             document = this.gdzfile.getDigitalDocument();
         } catch (PreferencesException e) {
-            Helper.setMessage(null, "Can not get DigitalDocument: ", e.getMessage());
+            Helper.setMessage("Can not get DigitalDocument: ", e.getMessage());
             return;
         }
 
@@ -1819,7 +1819,7 @@ public class Metadaten {
                     this.docStruct.addChild(addRdf.getDigitalDocument().getLogicalDocStruct());
                     readMetadataAsFirstTree();
                 } else {
-                    Helper.setMessage(null, "Opac abgefragt: ", "kein Ergebnis");
+                    Helper.setMessage("Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (TypeNotAllowedAsChildException | PreferencesException | RuntimeException e) {
                 logger.error(e.getMessage(), e);
@@ -1843,7 +1843,7 @@ public class Metadaten {
                     addMetadataToDocStruct(addRdf);
                     readMetadataAsFirstTree();
                 } else {
-                    Helper.setMessage(null, "Opac abgefragt: ", "kein Ergebnis");
+                    Helper.setMessage("Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (MetadataTypeNotAllowedException | PreferencesException | RuntimeException e) {
                 logger.error(e.getMessage(), e);

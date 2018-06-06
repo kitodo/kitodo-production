@@ -335,7 +335,7 @@ public class MetadatenHelper implements Comparator<Object> {
             if (dst != null) {
                 newTypes.add(dst);
             } else {
-                Helper.setMessage(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
+                Helper.setMessage("Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
                 logger.error(
                     "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
             }

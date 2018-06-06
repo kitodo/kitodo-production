@@ -364,7 +364,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
-        Helper.setMessage(null, "removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
+        Helper.setMessage("removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
         return null;
     }
 
@@ -376,7 +376,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String downloadToHomePage() {
         download();
         // calcHomeImages();
-        Helper.setMessage(null, "Created directories in user home", "");
+        Helper.setMessage("Created directories in user home", "");
         return null;
     }
 
@@ -388,7 +388,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String downloadToHomeHits() {
         download();
         // calcHomeImages();
-        Helper.setMessage(null, "Created directories in user home", "");
+        Helper.setMessage("Created directories in user home", "");
         return null;
     }
 

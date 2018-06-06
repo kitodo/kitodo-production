@@ -335,7 +335,7 @@ public class ExportDms extends ExportMets {
                 gdzfile, false);
         }
 
-        Helper.setMessage(null, process.getTitle() + ": ", "DMS-Export started");
+        Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
             exportWithTimeLimit(process);
         }
@@ -376,7 +376,7 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setProgress(100);
             } else {
-                Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
+                Helper.setMessage(process.getTitle() + ": ", "exportFinished");
             }
             // delete success folder again
             if (process.getProject().isDmsImportCreateProcessFolder()) {
@@ -396,7 +396,7 @@ public class ExportDms extends ExportMets {
             gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
         }
 
-        Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
+        Helper.setMessage(process.getTitle() + ": ", "exportFinished");
     }
 
     /**

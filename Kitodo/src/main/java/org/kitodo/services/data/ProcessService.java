@@ -1774,7 +1774,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
-            Helper.setMessage(null, process.getTitle() + ": ", "DMS-Export started");
+            Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
 
             if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit") && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
@@ -2157,7 +2157,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             logger.error(e.getMessage(), e);
         }
         mm.write(targetFileName);
-        Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
+        Helper.setMessage(process.getTitle() + ": ", "exportFinished");
         return true;
     }
 
