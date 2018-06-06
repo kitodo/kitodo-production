@@ -68,6 +68,11 @@ public class ExportMetsIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
+
+        File userdataDirectory = new File(Config.getParameter("dir_Users"));
+        if (!userdataDirectory.exists() && !userdataDirectory.mkdir()) {
+            throw new IOException("Could not create users directory");
+        }
     }
 
     @AfterClass
@@ -90,10 +95,6 @@ public class ExportMetsIT {
             // This is a workaround for the problem that the startExport method is calling
             // an external shell script for creating directories. This code only does the work of that script.
             //TODO Find a better way for changing script selection corresponding to OS
-            File userdataDirectory = new File(Config.getParameter("dir_Users"));
-            if (!userdataDirectory.exists() && !userdataDirectory.mkdir()) {
-                throw new IOException("Could not create users directory");
-            }
             fileService.createDirectory(Paths.get(Config.getParameter("dir_Users")).toUri(), userDirectory);
         }
 
