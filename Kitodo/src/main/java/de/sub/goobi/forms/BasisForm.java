@@ -14,15 +14,13 @@ package de.sub.goobi.forms;
 import java.io.Serializable;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.event.TabChangeEvent;
 
 public class BasisForm implements Serializable {
-    private static final Logger logger = LogManager.getLogger(BasisForm.class);
+
     private static final long serialVersionUID = 2950419497162710096L;
     private transient ServiceManager serviceManager = new ServiceManager();
     String zurueck = null;

@@ -14,8 +14,6 @@ package de.sub.goobi.export.dms;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
@@ -29,7 +27,6 @@ public class ExportDmsCorrectRusdml {
     private final Process process;
     private final DigitalDocumentInterface digitalDocument;
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ExportDmsCorrectRusdml.class);
 
     /**
      * Constructor.

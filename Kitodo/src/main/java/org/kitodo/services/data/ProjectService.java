@@ -26,8 +26,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.kitodo.data.database.beans.Client;
@@ -55,7 +53,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class ProjectService extends TitleSearchService<Project, ProjectDTO, ProjectDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ProjectService.class);
     private static ProjectService instance = null;
 
     /**

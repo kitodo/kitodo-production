@@ -16,8 +16,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.services.ServiceManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +27,6 @@ import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuc
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(CustomLogoutSuccessHandler.class);
     private String onSuccessUrl;
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 

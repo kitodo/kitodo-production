@@ -17,8 +17,6 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -37,7 +35,6 @@ import org.kitodo.services.data.base.SearchService;
 public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(ClientService.class);
     private static ClientService instance = null;
 
     @Override

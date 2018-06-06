@@ -18,8 +18,6 @@ import java.util.Objects;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -40,7 +38,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class PropertyService extends TitleSearchService<Property, PropertyDTO, PropertyDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(PropertyService.class);
     private static PropertyService instance = null;
 
     /**
