@@ -255,7 +255,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
             this.editMode = ObjectMode.PROCESS;
-            Helper.setErrorMessage(Helper.getTranslation("processTitleInvalid"));
+            Helper.setErrorMessage("processTitleInvalid");
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());

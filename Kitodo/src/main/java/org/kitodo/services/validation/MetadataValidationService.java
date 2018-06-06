@@ -131,7 +131,7 @@ public class MetadataValidationService {
                 logger.info("no firstChild or no identifier");
             }
         } else {
-            Helper.setErrorMessage(Helper.getTranslation("metadataMissingIdentifier"));
+            Helper.setErrorMessage("metadataMissingIdentifier");
             result = false;
         }
 

@@ -308,7 +308,7 @@ public class TemplateForm extends TemplateBaseForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.title.matches(validateRegEx)) {
-            Helper.setErrorMessage(Helper.getTranslation("processTitleInvalid"));
+            Helper.setErrorMessage("processTitleInvalid");
             return false;
         } else {
             this.template.setTitle(this.title);

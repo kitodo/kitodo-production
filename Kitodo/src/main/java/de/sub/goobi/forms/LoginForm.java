@@ -52,7 +52,7 @@ public class LoginForm implements Serializable {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
         if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-            Helper.setErrorMessage(Helper.getTranslation("passwordsDontMatch"));
+            Helper.setErrorMessage("passwordsDontMatch");
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */
