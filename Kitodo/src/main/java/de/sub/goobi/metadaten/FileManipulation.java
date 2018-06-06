@@ -118,9 +118,7 @@ public class FileManipulation {
         logger.trace("filename to import: {}", filename);
 
         if (fileService.fileExist(filename)) {
-            List<String> parameterList = new ArrayList<>();
-            parameterList.add(baseName);
-            Helper.setErrorMessage(Helper.getTranslation("fileExists", parameterList));
+            Helper.setErrorMessage("fileExists", new Object[] {baseName});
             return;
         }
 
@@ -300,11 +298,7 @@ public class FileManipulation {
         }
 
         if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            List<String> paramList = new ArrayList<>();
-            // paramList.add(metadataBean.getMyProzess().getTitel());
-            paramList.add(filenamePrefix);
-            paramList.add(currentFolder);
-            Helper.setErrorMessage(Helper.getTranslation("MetsEditorMissingFile", paramList));
+            Helper.setErrorMessage("MetsEditorMissingFile", new Object[] {filenamePrefix, this.currentFolder});
             return;
         }
 

@@ -116,11 +116,9 @@ public class MetadataValidationService {
                 MetadataInterface identifierFirstChild = allChildIdentifierMetadata.get(0);
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
-                    List<String> parameter = new ArrayList<>();
-                    parameter.add(identifierTopStruct.getMetadataType().getName());
-                    parameter.add(logical.getDocStructType().getName());
-                    parameter.add(firstChild.getDocStructType().getName());
-                    Helper.setErrorMessage(Helper.getTranslation("invalidIdentifierSame", parameter));
+                    Object[] parameter = new Object[] {identifierTopStruct.getMetadataType().getName(),
+                            logical.getDocStructType().getName(), firstChild.getDocStructType().getName()};
+                    Helper.setErrorMessage("invalidIdentifierSame", parameter);
                     result = false;
                 }
 
@@ -208,10 +206,7 @@ public class MetadataValidationService {
             int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
             int sizeOfImages = images.size();
             if (sizeOfPagination != sizeOfImages) {
-                List<String> param = new ArrayList<>();
-                param.add(String.valueOf(sizeOfPagination));
-                param.add(String.valueOf(sizeOfImages));
-                Helper.setErrorMessage(Helper.getTranslation("imagePaginationError", param));
+                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
                 return false;
             }
         } catch (InvalidImagesException e) {
@@ -240,10 +235,9 @@ public class MetadataValidationService {
 
         if (!metadata.getValue().replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "")
                 .equals("")) {
-            List<String> parameter = new ArrayList<>();
-            parameter.add(metadata.getMetadataType().getNameByLanguage(metadataLanguage));
-            parameter.add(docStruct.getDocStructType().getNameByLanguage(metadataLanguage));
-            Helper.setErrorMessage(Helper.getTranslation("invalidIdentifierCharacter", parameter));
+            Object[] parameters = new Object[] {metadata.getMetadataType().getNameByLanguage(metadataLanguage),
+                    docStruct.getDocStructType().getNameByLanguage(metadataLanguage)};
+            Helper.setErrorMessage("invalidIdentifierCharacter", parameters);
             return true;
         }
         return false;

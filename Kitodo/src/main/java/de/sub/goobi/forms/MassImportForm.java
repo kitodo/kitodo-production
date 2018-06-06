@@ -117,9 +117,7 @@ public class MassImportForm implements Serializable {
             for (Task task : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
                         && serviceManager.getTaskService().getUsersSize(task) == 0) {
-                    List<String> param = new ArrayList<>();
-                    param.add(task.getTitle());
-                    Helper.setErrorMessage(Helper.getTranslation("noUserInStep", param));
+                    Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle()});
                 }
             }
             return null;
@@ -389,10 +387,7 @@ public class MassImportForm implements Serializable {
 
     private void removeImportFileNameFromSelectedFileNames(ImportObject io) {
         URI importFileName = io.getImportFileName();
-        List<String> param = new ArrayList<>();
-        param.add(io.getProcessTitle());
-        param.add(io.getErrorMessage());
-        Helper.setErrorMessage(Helper.getTranslation("importFailedError", param));
+        Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage()});
         if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
                 && selectedFilenames != null && !selectedFilenames.isEmpty()
                 && selectedFilenames.contains(importFileName.getRawPath())) {

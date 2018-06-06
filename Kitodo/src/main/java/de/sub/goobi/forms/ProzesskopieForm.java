@@ -303,9 +303,7 @@ public class ProzesskopieForm implements Serializable {
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    List<String> param = new ArrayList<>();
-                    param.add(s.getTitle());
-                    Helper.setErrorMessage(Helper.getTranslation("noUserInStep", param));
+                    Helper.setErrorMessage("noUserInStep", new Object[] {s.getTitle()});
                 }
             }
             return null;

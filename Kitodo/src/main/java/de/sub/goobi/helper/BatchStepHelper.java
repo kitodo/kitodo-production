@@ -601,10 +601,8 @@ public class BatchStepHelper extends BatchHelper {
 
     private boolean isPropertyInvalid(Property property, Task task) {
         if (property.getValue() == null || property.getValue().equals("")) {
-            List<String> parameter = new ArrayList<>();
-            parameter.add(property.getTitle());
-            parameter.add(task.getProcess().getTitle());
-            Helper.setErrorMessage(Helper.getTranslation("BatchPropertyEmpty", parameter));
+            Helper.setErrorMessage("BatchPropertyEmpty",
+                    new Object[] {property.getTitle(), task.getProcess().getTitle()});
             return true;
         }
         return false;

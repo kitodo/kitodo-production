@@ -2147,10 +2147,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (sizeOfPagination == sizeOfImages) {
                 dd.overrideContentFiles(imageStrings);
             } else {
-                List<String> param = new ArrayList<>();
-                param.add(String.valueOf(sizeOfPagination));
-                param.add(String.valueOf(sizeOfImages));
-                Helper.setErrorMessage(Helper.getTranslation("imagePaginationError", param));
+                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
                 return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {

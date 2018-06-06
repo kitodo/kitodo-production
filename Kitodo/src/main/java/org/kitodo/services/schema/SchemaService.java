@@ -241,10 +241,7 @@ public class SchemaService {
                 if (sizeOfPagination == sizeOfImages) {
                     digitalDocument.overrideContentFiles(imageStrings);
                 } else {
-                    List<String> param = new ArrayList<>();
-                    param.add(String.valueOf(sizeOfPagination));
-                    param.add(String.valueOf(sizeOfImages));
-                    Helper.setErrorMessage(Helper.getTranslation("imagePaginationError", param));
+                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
                     return true;
                 }
             }
