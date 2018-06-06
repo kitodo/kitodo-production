@@ -18,7 +18,6 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -92,8 +91,6 @@ public class ExportMets {
         URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
         return writeMetsFile(process, metaFile, gdzfile, false);
     }
-
-
 
     /**
      * prepare user directory.
