@@ -13,7 +13,6 @@ package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.forms.AktuelleSchritteForm;
-import de.sub.goobi.forms.LoginForm;
 import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
@@ -47,11 +46,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.HibernateHelper;
-import org.kitodo.data.database.helper.Util;
-import org.kitodo.services.ServiceManager;
-import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 
 /**
  * Extends Helper from Kitodo Data Management module.
@@ -64,7 +59,6 @@ public class Helper extends HibernateHelper implements Observer {
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> localMessages = null;
     private static String compoundMessage;
-    private static User currentUser = null;
 
     /**
      * Determine a specific parameter of the request.
@@ -246,7 +240,7 @@ public class Helper extends HibernateHelper implements Observer {
      * @return a map with all language id strings and the corresponding resource
      */
     public static Map<String, String> getAllStrings(String key) {
-        Map<String, String> result = new HashMap<>(Util.hashCapacityFor(commonMessages.entrySet()));
+        Map<String, String> result = new HashMap<>((int) Math.ceil(commonMessages.entrySet().size() / 0.75));
         @SuppressWarnings("unchecked")
         Iterator<Locale> languages = FacesContext.getCurrentInstance().getApplication().getSupportedLocales();
         while (languages.hasNext()) {
