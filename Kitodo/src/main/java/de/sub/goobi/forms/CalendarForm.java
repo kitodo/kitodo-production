@@ -726,22 +726,22 @@ public class CalendarForm implements Serializable {
     private void checkBlockPlausibility() {
         if (blockShowing.getFirstAppearance() != null && blockShowing.getLastAppearance() != null) {
             if (blockShowing.getFirstAppearance().plusYears(100).isBefore(blockShowing.getLastAppearance())) {
-                Helper.setMeldung(BLOCK + "long");
+                Helper.setMessage(BLOCK + "long");
             }
             if (blockShowing.getFirstAppearance().isAfter(blockShowing.getLastAppearance())) {
-                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
+                Helper.setErrorMessage(BLOCK_NEGATIVE);
             }
             if (blockShowing.getFirstAppearance().isBefore(START_RELATION)) {
-                Helper.setMeldung(BLOCK + "firstAppearance.early");
+                Helper.setMessage(BLOCK + "firstAppearance.early");
             }
             if (blockShowing.getFirstAppearance().isAfter(today)) {
-                Helper.setMeldung(BLOCK + "firstAppearance.fiction");
+                Helper.setMessage(BLOCK + "firstAppearance.fiction");
             }
             if (blockShowing.getLastAppearance().isBefore(START_RELATION)) {
-                Helper.setMeldung(BLOCK + "lastAppearance.early");
+                Helper.setMessage(BLOCK + "lastAppearance.early");
             }
             if (blockShowing.getLastAppearance().isAfter(today)) {
-                Helper.setMeldung(BLOCK + "lastAppearance.fiction");
+                Helper.setMessage(BLOCK + "lastAppearance.fiction");
             }
         }
     }
@@ -788,7 +788,7 @@ public class CalendarForm implements Serializable {
         boolean granularityWasTemporarilyAdded = false;
         try {
             if (course == null || course.countIndividualIssues() == 0) {
-                Helper.setFehlerMeldung("errorDataIncomplete", "calendar.isEmpty");
+                Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
                 return;
             }
             if (course.getNumberOfProcesses() == 0) {
@@ -1048,7 +1048,7 @@ public class CalendarForm implements Serializable {
      */
     public String nextClick() {
         if (course == null || course.countIndividualIssues() < 1) {
-            Helper.setFehlerMeldung("errorDataIncomplete", "calendar.isEmpty");
+            Helper.setErrorMessage("errorDataIncomplete", "calendar.isEmpty");
             return null;
         }
         return "/pages/granularity";
@@ -1088,7 +1088,7 @@ public class CalendarForm implements Serializable {
                 if (numbers[2] > today.getYear()) {
                     numbers[2] -= 100;
                 }
-                Helper.setMeldung(Helper.getTranslation(BLOCK + input + ".yearCompleted",
+                Helper.setMessage(Helper.getTranslation(BLOCK + input + ".yearCompleted",
                         Arrays.asList(dateParser.group(3), Integer.toString(numbers[2]))));
             }
             try {
@@ -1096,7 +1096,7 @@ public class CalendarForm implements Serializable {
             } catch (IllegalFieldValueException invalidDate) {
                 try {
                     LocalDate swapped = new LocalDate(numbers[2], numbers[0], numbers[1]);
-                    Helper.setMeldung(BLOCK + input + ".swapped");
+                    Helper.setMessage(BLOCK + input + ".swapped");
                     return swapped;
                 } catch (IllegalFieldValueException stillInvalid) {
                     Helper.setErrorMessage(invalidDate.getLocalizedMessage(), logger, stillInvalid);
@@ -1104,7 +1104,7 @@ public class CalendarForm implements Serializable {
             }
         }
         if (!uploadShowing && !value.contains("\u00A0")) {
-            Helper.setFehlerMeldung(BLOCK + input + ".invalid");
+            Helper.setErrorMessage(BLOCK + input + ".invalid");
         }
         return null;
     }
@@ -1272,7 +1272,7 @@ public class CalendarForm implements Serializable {
                 || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (blockShowing.getFirstAppearance() != null
                     && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
-                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
+                Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setLastAppearance(newLastAppearance);
@@ -1285,14 +1285,14 @@ public class CalendarForm implements Serializable {
         if (blockShowing.getLastAppearance() == null
                 || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
-                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
+                Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setPublicationPeriod(firstAppearanceIsToChange, newLastAppearance);
         } else {
             if (blockShowing.getLastAppearance() != null
                     && blockShowing.getLastAppearance().isBefore(firstAppearanceIsToChange)) {
-                Helper.setFehlerMeldung(BLOCK_NEGATIVE);
+                Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;
             }
             blockShowing.setFirstAppearance(firstAppearanceIsToChange);
@@ -1332,7 +1332,7 @@ public class CalendarForm implements Serializable {
     public void uploadClick() {
         try {
             if (uploadedFile == null) {
-                Helper.setMeldung(UPLOAD_ERROR, "calendar.upload.isEmpty");
+                Helper.setMessage(UPLOAD_ERROR, "calendar.upload.isEmpty");
                 return;
             }
             Document xml = XMLUtils.load(uploadedFile.getInputStream());

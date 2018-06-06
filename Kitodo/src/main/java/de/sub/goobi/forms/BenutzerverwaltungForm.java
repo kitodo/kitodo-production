@@ -117,7 +117,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 return userListPath;
 
             } else {
-                Helper.setFehlerMeldung("", Helper.getTranslation("loginInUse"));
+                Helper.setErrorMessage("", Helper.getTranslation("loginInUse"));
                 return null;
             }
         } catch (DataException e) {
@@ -133,7 +133,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         Matcher matcher = pattern.matcher(inLogin);
         valid = matcher.matches();
         if (!valid) {
-            Helper.setFehlerMeldung("", Helper.getTranslation("loginNotValid"));
+            Helper.setErrorMessage("", Helper.getTranslation("loginNotValid"));
         }
 
         /* Pfad zur Datei ermitteln */
@@ -152,7 +152,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             while ((str = in.readLine()) != null) {
                 if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
                     valid = false;
-                    Helper.setFehlerMeldung("", "Login " + str + Helper.getTranslation("loginNotValid"));
+                    Helper.setErrorMessage("", "Login " + str + Helper.getTranslation("loginNotValid"));
                 }
             }
         } catch (IOException e) {

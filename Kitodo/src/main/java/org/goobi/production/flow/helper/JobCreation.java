@@ -148,7 +148,7 @@ public class JobCreation {
         if (title != null) {
             Long amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
             if (amount > 0) {
-                Helper.setFehlerMeldung("processTitleAlreadyInUse");
+                Helper.setErrorMessage("processTitleAlreadyInUse");
                 return false;
             }
         } else {

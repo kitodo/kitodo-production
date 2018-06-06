@@ -127,7 +127,7 @@ public class CopyProcess extends ProzesskopieForm {
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    Helper.setFehlerMeldung("Kein Benutzer festgelegt für: ", s.getTitle());
+                    Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
                 }
             }
             return "";
@@ -389,7 +389,7 @@ public class CopyProcess extends ProzesskopieForm {
         /* keine Collektion ausgewählt */
         if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
-            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
+            Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + " "
                     + Helper.getTranslation("processCreationErrorNoCollection"));
         }
 
@@ -400,7 +400,7 @@ public class CopyProcess extends ProzesskopieForm {
             if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
                     && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
-                Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
+                Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
                         + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
             }
         }
@@ -448,7 +448,7 @@ public class CopyProcess extends ProzesskopieForm {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
                     + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
-            Helper.setFehlerMeldung(message);
+            Helper.setErrorMessage(message);
             return null;
         }
 

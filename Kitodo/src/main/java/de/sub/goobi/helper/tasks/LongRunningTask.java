@@ -61,7 +61,7 @@ public abstract class LongRunningTask extends EmptyTask {
      * The method setShowMessages() can be used to set a flag whether this long
      * running task is executing asynchronously or not, in the latter case it
      * shall show messages to the user using
-     * {@link de.sub.goobi.helper.Helper#setMeldung(String)}, otherwise not.
+     * {@link de.sub.goobi.helper.Helper#setMessage(String)}, otherwise not.
      *
      * @param show
      *            whether to show messages to the user
@@ -177,7 +177,7 @@ public abstract class LongRunningTask extends EmptyTask {
     protected void setStatusMessage(String statusMessage) {
         super.setWorkDetail(statusMessage);
         if (!this.isSingleThread) {
-            Helper.setMeldung(statusMessage);
+            Helper.setMessage(statusMessage);
             logger.debug(statusMessage);
         }
     }

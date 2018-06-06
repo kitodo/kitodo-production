@@ -119,7 +119,7 @@ public class MetadatenHelper implements Comparator<Object> {
                         newDocstruct.addMetadata(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung(
+                    Helper.setErrorMessage(
                         Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("metadata"),
                             old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
@@ -134,14 +134,14 @@ public class MetadatenHelper implements Comparator<Object> {
                         && !newDocstruct.getPossibleMetadataTypes().isEmpty()) {
                     boolean match = isFoundMatchForMetadata(newDocstruct, old);
                     if (!match) {
-                        Helper.setFehlerMeldung(
+                        Helper.setErrorMessage(
                                 Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("person"),
                                         old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     } else {
                         newDocstruct.addPerson(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung(
+                    Helper.setErrorMessage(
                             Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("person"),
                                     old.getMetadataType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
@@ -164,7 +164,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
                     if (!newDocstruct.getDocStructType().getAllAllowedDocStructTypes()
                             .contains(old.getDocStructType().getName())) {
-                        Helper.setFehlerMeldung(
+                        Helper.setErrorMessage(
                                 Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
                                         old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
                         return inOldDocstruct;
@@ -172,7 +172,7 @@ public class MetadatenHelper implements Comparator<Object> {
                         newDocstruct.addChild(old);
                     }
                 } else {
-                    Helper.setFehlerMeldung(
+                    Helper.setErrorMessage(
                             Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
                                     old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
                     return inOldDocstruct;
@@ -335,7 +335,7 @@ public class MetadatenHelper implements Comparator<Object> {
             if (dst != null) {
                 newTypes.add(dst);
             } else {
-                Helper.setMeldung(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
+                Helper.setMessage(null, "Regelsatz-Fehler: ", " DocstructType " + tempTitel + " nicht definiert");
                 logger.error(
                     "getAddableDocStructTypen() - Regelsatz-Fehler: DocstructType " + tempTitel + " nicht definiert");
             }

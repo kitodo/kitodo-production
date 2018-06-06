@@ -80,7 +80,7 @@ public class GoobiScript {
         while (tokenizer.hasNext()) {
             String tok = tokenizer.nextToken();
             if (Objects.isNull(tok) || !tok.contains(":")) {
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "missing delimiter / unknown parameter: ", tok);
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing delimiter / unknown parameter: ", tok);
             } else {
                 String key = tok.substring(0, tok.indexOf(':'));
                 String value = tok.substring(tok.indexOf(':') + 1);
@@ -90,7 +90,7 @@ public class GoobiScript {
 
         // pass the appropriate method with the correct parameters
         if (this.parameters.get("action") == null) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "missing action",
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing action",
                 " - possible: 'action:swapsteps, action:adduser, action:addusergroup, "
                         + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                         + "action:importFromFileSystem'");
@@ -158,7 +158,7 @@ public class GoobiScript {
                 String taskName = this.parameters.get("stepname");
                 String scriptName = this.parameters.get(SCRIPT);
                 if (scriptName == null) {
-                    Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "", "Missing parameter");
+                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "", "Missing parameter");
                 } else {
                     runScript(processes, taskName, scriptName);
                 }
@@ -172,14 +172,14 @@ public class GoobiScript {
                 deleteProcess(processes, contentOnly);
                 break;
             default:
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown action",
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown action",
                     " - use: 'action:swapsteps, action:adduser, action:addusergroup, "
                             + "action:swapprozessesout, action:swapprozessesin, action:deleteTiffHeaderFile, "
                             + "action:importFromFileSystem'");
                 return;
         }
 
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "kitodoScript finished");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "kitodoScript finished");
     }
 
     private void updateContentFiles(List<Process> processes) {
@@ -188,12 +188,12 @@ public class GoobiScript {
                 FileformatInterface rdf = serviceManager.getProcessService().readMetadataFile(process);
                 rdf.getDigitalDocument().addAllContentFiles();
                 serviceManager.getFileService().writeMetadataFile(rdf, process);
-                Helper.setMeldung(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
+                Helper.setMessage(KITODO_SCRIPT_FIELD, "ContentFiles updated: ", process.getTitle());
             } catch (PreferencesException | IOException | ReadException | WriteException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating content files", logger, e);
             }
         }
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateContentFiles finished");
     }
 
     private void deleteProcess(List<Process> processes, boolean contentOnly) {
@@ -209,7 +209,7 @@ public class GoobiScript {
                     if (fileService.fileExist(images)) {
                         fileService.delete(images);
                     }
-                    Helper.setMeldung("Content deleted for " + title);
+                    Helper.setMessage("Content deleted for " + title);
                 } catch (IOException | RuntimeException e) {
                     Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title}, logger, e);
                 }
@@ -218,7 +218,7 @@ public class GoobiScript {
                 try {
                     deleteMetadataDirectory(process);
                     serviceManager.getProcessService().remove(process);
-                    Helper.setMeldung("Process " + title + " deleted.");
+                    Helper.setMessage("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
                             new Object[] {Helper.getTranslation("process") + " " + title}, logger, e);
@@ -262,7 +262,7 @@ public class GoobiScript {
         URI sourceFolder = new File(this.parameters.get(SOURCE_FOLDER)).toURI();
         try {
             if (!fileService.isDirectory(sourceFolder)) {
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD,
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD,
                     "Directory " + this.parameters.get(SOURCE_FOLDER) + " does not exisist");
                 return;
             }
@@ -271,19 +271,19 @@ public class GoobiScript {
                 String processTitle = process.getTitle();
                 URI imagesFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, process);
                 if (!fileService.getSubUris(imagesFolder).isEmpty()) {
-                    Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "",
+                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
                         "The process " + processTitle + " [" + processId + "] has already data in image folder");
                 } else {
                     URI sourceFolderProcess = fileService.createResource(sourceFolder, processTitle);
                     if (!fileService.isDirectory(sourceFolder)) {
-                        Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "",
+                        Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
                             "The directory for process " + processTitle + " [" + processId + "] is not existing");
                     } else {
                         fileService.copyDirectory(sourceFolderProcess, imagesFolder);
-                        Helper.setMeldung(KITODO_SCRIPT_FIELD, "",
+                        Helper.setMessage(KITODO_SCRIPT_FIELD, "",
                             "The directory for process " + processTitle + " [" + processId + "] is copied");
                     }
-                    Helper.setMeldung(KITODO_SCRIPT_FIELD, "",
+                    Helper.setMessage(KITODO_SCRIPT_FIELD, "",
                         "The process " + processTitle + " [" + processId + "] is copied");
                 }
             }
@@ -307,7 +307,7 @@ public class GoobiScript {
             List<Ruleset> rulesets = serviceManager.getRulesetService()
                     .getByQuery("from Ruleset where title='" + this.parameters.get(RULESET) + "'");
             if (rulesets.isEmpty()) {
-                Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
+                Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Could not find ruleset: ", RULESET);
                 return;
             }
             Ruleset ruleset = rulesets.get(0);
@@ -317,7 +317,7 @@ public class GoobiScript {
                 serviceManager.getProcessService().save(process);
             }
         } catch (DataException | RuntimeException e) {
-            Helper.setFehlerMeldung(e);
+            Helper.setErrorMessage(e);
             logger.error(e.getMessage(), e);
         }
     }
@@ -340,13 +340,13 @@ public class GoobiScript {
             firstOrder = Integer.parseInt(this.parameters.get(SWAP_1_NR));
             secondOrder = Integer.parseInt(this.parameters.get(SWAP_2_NR));
         } catch (NumberFormatException e1) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Invalid order number used: ",
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Invalid order number used: ",
                 this.parameters.get(SWAP_1_NR) + " - " + this.parameters.get(SWAP_2_NR));
             return;
         }
 
         executeActionForSwapTasks(processes, firstOrder, secondOrder);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "swapsteps finished: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "swapsteps finished: ");
     }
 
     private void executeActionForSwapTasks(List<Process> processes, int firstOrder, int secondOrder) {
@@ -371,13 +371,13 @@ public class GoobiScript {
                     serviceManager.getTaskService().save(firstTask);
                     serviceManager.getTaskService().save(secondTask);
                 } catch (DataException e) {
-                    Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Error on save while swapping tasks in process: ",
+                    Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error on save while swapping tasks in process: ",
                         process.getTitle() + " - " + firstTask.getTitle() + " : " + secondTask.getTitle());
                     logger.error("Error on save while swapping process: " + process.getTitle() + " - "
                             + firstTask.getTitle() + " : " + secondTask.getTitle(),
                         e);
                 }
-                Helper.setMeldung(KITODO_SCRIPT_FIELD, "Swapped tasks in: ", process.getTitle());
+                Helper.setMessage(KITODO_SCRIPT_FIELD, "Swapped tasks in: ", process.getTitle());
             }
 
         }
@@ -395,7 +395,7 @@ public class GoobiScript {
         }
 
         executeActionForDeleteTask(processes);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "deleteStep finished: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteStep finished: ");
     }
 
     private void executeActionForDeleteTask(List<Process> processes) {
@@ -405,7 +405,7 @@ public class GoobiScript {
                     if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                         process.getTasks().remove(task);
                         saveProcess(process);
-                        Helper.setMeldung(KITODO_SCRIPT_FIELD, "Removed step from process: ", process.getTitle());
+                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Removed step from process: ", process.getTitle());
                         break;
                     }
                 }
@@ -426,7 +426,7 @@ public class GoobiScript {
         }
 
         executeActionForAddTask(processes);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "addStep finished: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addStep finished: ");
     }
 
     private void executeActionForAddTask(List<Process> processes) {
@@ -437,7 +437,7 @@ public class GoobiScript {
             task.setProcess(process);
             process.getTasks().add(task);
             saveProcess(process);
-            Helper.setMeldung(KITODO_SCRIPT_FIELD, "Added task to process: ", process.getTitle());
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added task to process: ", process.getTitle());
         }
     }
 
@@ -454,7 +454,7 @@ public class GoobiScript {
         }
 
         executeActionForAddShellToScript(processes);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "addShellScriptToStep finished: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addShellScriptToStep finished: ");
     }
 
     private void executeActionForAddShellToScript(List<Process> processes) {
@@ -465,7 +465,7 @@ public class GoobiScript {
                         task.setScriptPath(this.parameters.get(SCRIPT));
                         task.setScriptName(this.parameters.get("label"));
                         saveProcess(process);
-                        Helper.setMeldung(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
+                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Added script to step: ", process.getTitle());
                         break;
                     }
                 }
@@ -491,19 +491,19 @@ public class GoobiScript {
         if (!property.equals("metadata") && !property.equals("readimages") && !property.equals("writeimages")
                 && !property.equals("validate") && !property.equals("exportdms") && !property.equals("batch")
                 && !property.equals("automatic")) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "",
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "",
                 "wrong parameter 'property'; possible values: metadata, readimages, writeimages, "
                         + "validate, exportdms");
             return;
         }
 
         if (!value.equals("true") && !value.equalsIgnoreCase(String.valueOf(Boolean.FALSE))) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "wrong parameter 'value'; possible " + "values: true, false");
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "wrong parameter 'value'; possible " + "values: true, false");
             return;
         }
 
         executeActionForSetTaskProperty(processes, property, value);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "setTaskProperty abgeschlossen: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setTaskProperty abgeschlossen: ");
     }
 
     private void executeActionForSetTaskProperty(List<Process> processes, String property, String value) {
@@ -535,7 +535,7 @@ public class GoobiScript {
                         }
 
                         saveProcess(process);
-                        Helper.setMeldung(KITODO_SCRIPT_FIELD, "Error while saving process: ", process.getTitle());
+                        Helper.setMessage(KITODO_SCRIPT_FIELD, "Error while saving process: ", process.getTitle());
                         break;
                     }
                 }
@@ -556,13 +556,13 @@ public class GoobiScript {
 
         if (!this.parameters.get(STATUS).equals("0") && !this.parameters.get(STATUS).equals("1")
                 && !this.parameters.get(STATUS).equals("2") && !this.parameters.get(STATUS).equals("3")) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Wrong status parameter: status ",
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Wrong status parameter: status ",
                 "(possible: 0=closed, 1=open, 2=in work, 3=finished");
             return;
         }
 
         executeActionForSetTaskStatus(processes);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "setStepStatus finished: ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setStepStatus finished: ");
     }
 
     private void executeActionForSetTaskStatus(List<Process> processes) {
@@ -572,7 +572,7 @@ public class GoobiScript {
                     task.setProcessingStatus(
                         serviceManager.getTaskService().setProcessingStatusAsString(this.parameters.get(STATUS)));
                     saveTask(process.getTitle(), task);
-                    Helper.setMeldung(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
+                    Helper.setMessage(KITODO_SCRIPT_FIELD, "stepstatus set in process: ", process.getTitle());
                     break;
                 }
             }
@@ -592,7 +592,7 @@ public class GoobiScript {
         }
 
         executeActionForSetTaskNumber(processes);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "setStepNumber finished ");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "setStepNumber finished ");
     }
 
     private void executeActionForSetTaskNumber(List<Process> processes) {
@@ -601,7 +601,7 @@ public class GoobiScript {
                 if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
                     task.setOrdering(Integer.parseInt(this.parameters.get(NUMBER)));
                     saveTask(process.getTitle(), task);
-                    Helper.setMeldung(KITODO_SCRIPT_FIELD, "step order changed in process: ", process.getTitle());
+                    Helper.setMessage(KITODO_SCRIPT_FIELD, "step order changed in process: ", process.getTitle());
                     break;
                 }
             }
@@ -626,12 +626,12 @@ public class GoobiScript {
         if (!foundUsers.isEmpty()) {
             user = foundUsers.get(0);
         } else {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
             return;
         }
 
         executeActionForAddUser(processes, user);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "adduser finished.");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "adduser finished.");
     }
 
     private void executeActionForAddUser(List<Process> processes, User user) {
@@ -645,7 +645,7 @@ public class GoobiScript {
                     }
                 }
             }
-            Helper.setMeldung(KITODO_SCRIPT_FIELD, "Added user to step: ", process.getTitle());
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added user to step: ", process.getTitle());
         }
     }
 
@@ -667,12 +667,12 @@ public class GoobiScript {
         if (!foundUserGroups.isEmpty()) {
             userGroup = foundUserGroups.get(0);
         } else {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown group: ", this.parameters.get(USER_GROUP));
             return;
         }
 
         executeActionForAddUserGroup(processes, userGroup);
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "addusergroup finished");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "addusergroup finished");
     }
 
     private void executeActionForAddUserGroup(List<Process> processes, UserGroup userGroup) {
@@ -686,7 +686,7 @@ public class GoobiScript {
                     }
                 }
             }
-            Helper.setMeldung(KITODO_SCRIPT_FIELD, "added usergroup to step: ", process.getTitle());
+            Helper.setMessage(KITODO_SCRIPT_FIELD, "added usergroup to step: ", process.getTitle());
         }
     }
 
@@ -704,12 +704,12 @@ public class GoobiScript {
                 if (tiffHeaderFile.exists()) {
                     Files.delete(tiffHeaderFile.toPath());
                 }
-                Helper.setMeldung(KITODO_SCRIPT_FIELD, "TiffHeaderFile deleted: ", process.getTitle());
+                Helper.setMessage(KITODO_SCRIPT_FIELD, "TiffHeaderFile deleted: ", process.getTitle());
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while deleting TiffHeader", logger, e);
             }
         }
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "deleteTiffHeaderFile finished");
     }
 
     /**
@@ -738,13 +738,13 @@ public class GoobiScript {
                 }
                 rdf.getDigitalDocument().getPhysicalDocStruct().addMetadata(newMetadata);
                 serviceManager.getFileService().writeMetadataFile(rdf, process);
-                Helper.setMeldung(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
+                Helper.setMessage(KITODO_SCRIPT_FIELD, "ImagePath updated: ", process.getTitle());
             } catch (UghHelperException | MetadataTypeNotAllowedException | PreferencesException | IOException
                     | ReadException | WriteException | RuntimeException e) {
                 Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Error while updating imagepath", logger, e);
             }
         }
-        Helper.setMeldung(KITODO_SCRIPT_FIELD, "", "updateImagePath finished");
+        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "updateImagePath finished");
     }
 
     private void exportDms(List<Process> processes, String exportImages, boolean exportFulltext) {
@@ -765,7 +765,7 @@ public class GoobiScript {
 
     private boolean isActionParameterInvalid(String parameter) {
         if (Objects.isNull(this.parameters.get(parameter)) || Objects.equals(this.parameters.get(parameter), "")) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "missing parameter: ", parameter);
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "missing parameter: ", parameter);
             return true;
         }
         return false;
@@ -773,7 +773,7 @@ public class GoobiScript {
 
     private boolean isActionParameterInvalidNumber() {
         if (!StringUtils.isNumeric(this.parameters.get(NUMBER))) {
-            Helper.setFehlerMeldung(KITODO_SCRIPT_FIELD, "Wrong number parameter", "(only numbers allowed)");
+            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Wrong number parameter", "(only numbers allowed)");
             return true;
         }
         return false;

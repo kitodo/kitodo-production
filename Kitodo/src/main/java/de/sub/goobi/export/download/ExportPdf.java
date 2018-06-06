@@ -63,8 +63,8 @@ public class ExportPdf extends ExportMets {
         URI targetFileName = fileService.createResource(process.getTitle() + ".xml");
         URI metaFile = userHome.resolve(targetFileName);
         writeMetsFile(process, metaFile, gdzfile, true);
-        Helper.setMeldung(null, process.getTitle() + ": ", "mets file created");
-        Helper.setMeldung(null, process.getTitle() + ": ", "start pdf generation now");
+        Helper.setMessage(null, process.getTitle() + ": ", "mets file created");
+        Helper.setMessage(null, process.getTitle() + ": ", "start pdf generation now");
 
         logger.debug("METS file created: " + targetFileName);
 

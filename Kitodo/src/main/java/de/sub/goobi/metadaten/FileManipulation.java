@@ -89,7 +89,7 @@ public class FileManipulation {
      */
     public void uploadFile() {
         if (this.uploadedFile == null) {
-            Helper.setFehlerMeldung(NO_FILE_SELECTED);
+            Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
 
@@ -120,7 +120,7 @@ public class FileManipulation {
         if (fileService.fileExist(filename)) {
             List<String> parameterList = new ArrayList<>();
             parameterList.add(baseName);
-            Helper.setFehlerMeldung(Helper.getTranslation("fileExists", parameterList));
+            Helper.setErrorMessage(Helper.getTranslation("fileExists", parameterList));
             return;
         }
 
@@ -140,7 +140,7 @@ public class FileManipulation {
                 logger.trace("update pagination for {}", metadataBean.getProcess().getTitle());
                 updatePagination(filename);
             }
-            Helper.setMeldung(Helper.getTranslation("metsEditorFileUploadSuccessful"));
+            Helper.setMessage(Helper.getTranslation("metsEditorFileUploadSuccessful"));
         } catch (IOException | MetadataTypeNotAllowedException e) {
             Helper.setErrorMessage("uploadFailed", logger, e);
         }
@@ -304,7 +304,7 @@ public class FileManipulation {
             // paramList.add(metadataBean.getMyProzess().getTitel());
             paramList.add(filenamePrefix);
             paramList.add(currentFolder);
-            Helper.setFehlerMeldung(Helper.getTranslation("MetsEditorMissingFile", paramList));
+            Helper.setErrorMessage(Helper.getTranslation("MetsEditorMissingFile", paramList));
             return;
         }
 
@@ -337,7 +337,7 @@ public class FileManipulation {
      */
     public void exportFiles() throws IOException {
         if (selectedFiles == null || selectedFiles.isEmpty()) {
-            Helper.setFehlerMeldung(NO_FILE_SELECTED);
+            Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
         List<DocStructInterface> allPages = metadataBean.getDigitalDocument().getPhysicalDocStruct().getAllChildren();
@@ -449,7 +449,7 @@ public class FileManipulation {
     public void importFiles() throws IOException {
 
         if (selectedFiles == null || selectedFiles.isEmpty()) {
-            Helper.setFehlerMeldung(NO_FILE_SELECTED);
+            Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
         String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");

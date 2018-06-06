@@ -120,7 +120,7 @@ public class MetadataValidationService {
                     parameter.add(identifierTopStruct.getMetadataType().getName());
                     parameter.add(logical.getDocStructType().getName());
                     parameter.add(firstChild.getDocStructType().getName());
-                    Helper.setFehlerMeldung(Helper.getTranslation("invalidIdentifierSame", parameter));
+                    Helper.setErrorMessage(Helper.getTranslation("invalidIdentifierSame", parameter));
                     result = false;
                 }
 
@@ -131,7 +131,7 @@ public class MetadataValidationService {
                 logger.info("no firstChild or no identifier");
             }
         } else {
-            Helper.setFehlerMeldung(Helper.getTranslation("metadataMissingIdentifier"));
+            Helper.setErrorMessage(Helper.getTranslation("metadataMissingIdentifier"));
             result = false;
         }
 
@@ -145,7 +145,7 @@ public class MetadataValidationService {
         DocStructInterface logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<>();
         if (logicalTop == null) {
-            Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationError"));
+            Helper.setErrorMessage(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationError"));
             result = false;
         } else {
             checkDocStructsOhneSeiten(logicalTop);
@@ -153,7 +153,7 @@ public class MetadataValidationService {
 
         if (!this.docStructsOhneSeiten.isEmpty()) {
             for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationStructure")
+                Helper.setErrorMessage(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationStructure")
                         + docStructWithoutPages.getDocStructType().getNameByLanguage(metadataLanguage));
             }
             result = false;
@@ -211,7 +211,7 @@ public class MetadataValidationService {
                 List<String> param = new ArrayList<>();
                 param.add(String.valueOf(sizeOfPagination));
                 param.add(String.valueOf(sizeOfImages));
-                Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                Helper.setErrorMessage(Helper.getTranslation("imagePaginationError", param));
                 return false;
             }
         } catch (InvalidImagesException e) {
@@ -228,7 +228,7 @@ public class MetadataValidationService {
         boolean incorrect = false;
         if (Objects.nonNull(strings)) {
             for (String string : strings) {
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation(messageTitle), string);
+                Helper.setErrorMessage(process.getTitle() + ": " + Helper.getTranslation(messageTitle), string);
             }
             incorrect = true;
         }
@@ -243,7 +243,7 @@ public class MetadataValidationService {
             List<String> parameter = new ArrayList<>();
             parameter.add(metadata.getMetadataType().getNameByLanguage(metadataLanguage));
             parameter.add(docStruct.getDocStructType().getNameByLanguage(metadataLanguage));
-            Helper.setFehlerMeldung(Helper.getTranslation("invalidIdentifierCharacter", parameter));
+            Helper.setErrorMessage(Helper.getTranslation("invalidIdentifierCharacter", parameter));
             return true;
         }
         return false;
@@ -256,7 +256,7 @@ public class MetadataValidationService {
             if (Objects.nonNull(allMetadata) && !allMetadata.isEmpty()) {
                 return true;
             } else {
-                Helper.setFehlerMeldung(this.process.getTitle() + ": " + "Can not verify, image path is not set", "");
+                Helper.setErrorMessage(this.process.getTitle() + ": " + "Can not verify, image path is not set", "");
                 return false;
             }
         } catch (UghHelperException e) {
@@ -490,7 +490,7 @@ public class MetadataValidationService {
         StringBuilder value = new StringBuilder();
         for (PersonInterface p : persons) {
             if (p.getRole() == null) {
-                Helper.setFehlerMeldung(
+                Helper.setErrorMessage(
                     "[" + this.process.getTitle() + " " + docStruct.getDocStructType().getNameByLanguage(language)
                             + "] " + Helper.getTranslation("metadataPersonWithoutRole"));
                 break;

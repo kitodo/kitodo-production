@@ -239,7 +239,7 @@ public class WorkflowControllerService {
                 MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
                 URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
-                    Helper.setFehlerMeldung("Error on image validation!");
+                    Helper.setErrorMessage("Error on image validation!");
                     return null;
                 }
             }
@@ -323,7 +323,7 @@ public class WorkflowControllerService {
                     downloadToHome(task);
                 }
             } else {
-                Helper.setFehlerMeldung("stepInWorkError");
+                Helper.setErrorMessage("stepInWorkError");
             }
             this.flagWait = false;
         } catch (DataException e) {

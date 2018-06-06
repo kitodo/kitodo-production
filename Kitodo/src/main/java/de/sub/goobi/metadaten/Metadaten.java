@@ -249,7 +249,7 @@ public class Metadaten {
         calculateMetadataAndImages();
         cleanupMetadata();
         if (storeMetadata()) {
-            Helper.setMeldung("XML saved");
+            Helper.setMessage("XML saved");
         }
     }
 
@@ -262,7 +262,7 @@ public class Metadaten {
         if (storeMetadata()) {
             return "/pages/processes?faces-redirect=true";
         } else {
-            Helper.setMeldung("XML could not be saved");
+            Helper.setMessage("XML could not be saved");
             return "";
         }
     }
@@ -279,7 +279,7 @@ public class Metadaten {
             md.setStringValue(this.curMetadatum.getMd().getValue());
             this.docStruct.addMetadata(md);
         } catch (MetadataTypeNotAllowedException e) {
-            Helper.setFehlerMeldung(e.getMessage());
+            Helper.setErrorMessage(e.getMessage());
             logger.error("Error at Metadata copy (MetadataTypeNotAllowedException): " + e.getMessage());
         }
         saveMetadataAsBean(this.docStruct);
@@ -596,7 +596,7 @@ public class Metadaten {
                 xmlReadingLock.unlock();
             }
         } else {
-            Helper.setFehlerMeldung("metadataEditorThreadLock");
+            Helper.setErrorMessage("metadataEditorThreadLock");
             return redirect;
         }
         redirect = "/pages/metadataEditor?faces-redirect=true";
@@ -1291,7 +1291,7 @@ public class Metadaten {
         try {
             document = this.gdzfile.getDigitalDocument();
         } catch (PreferencesException e) {
-            Helper.setMeldung(null, "Can not get DigitalDocument: ", e.getMessage());
+            Helper.setMessage(null, "Can not get DigitalDocument: ", e.getMessage());
             return;
         }
 
@@ -1616,7 +1616,7 @@ public class Metadaten {
             if (dataList.size() >= pageNumber) {
                 this.image = dataList.get(pageNumber - 1);
             } else {
-                Helper.setFehlerMeldung(
+                Helper.setErrorMessage(
                     "Image file for page " + pageNumber + " not found in metadata folder: " + this.currentTifFolder);
                 this.image = null;
             }
@@ -1651,7 +1651,7 @@ public class Metadaten {
                 if (!fileService.fileExist(tifFile)) {
                     tifFile = serviceManager.getProcessService().getImagesTifDirectory(true, this.process)
                             .resolve(this.image);
-                    Helper.setFehlerMeldung("formularOrdner:TifFolders", "",
+                    Helper.setErrorMessage("formularOrdner:TifFolders", "",
                         "image " + this.image + " does not exist in folder " + this.currentTifFolder
                                 + ", using image from "
                                 + new File(serviceManager.getProcessService().getImagesTifDirectory(true, this.process))
@@ -1819,7 +1819,7 @@ public class Metadaten {
                     this.docStruct.addChild(addRdf.getDigitalDocument().getLogicalDocStruct());
                     readMetadataAsFirstTree();
                 } else {
-                    Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
+                    Helper.setMessage(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (TypeNotAllowedAsChildException | PreferencesException | RuntimeException e) {
                 logger.error(e.getMessage(), e);
@@ -1843,7 +1843,7 @@ public class Metadaten {
                     addMetadataToDocStruct(addRdf);
                     readMetadataAsFirstTree();
                 } else {
-                    Helper.setMeldung(null, "Opac abgefragt: ", "kein Ergebnis");
+                    Helper.setMessage(null, "Opac abgefragt: ", "kein Ergebnis");
                 }
             } catch (MetadataTypeNotAllowedException | PreferencesException | RuntimeException e) {
                 logger.error(e.getMessage(), e);
@@ -2000,7 +2000,7 @@ public class Metadaten {
         if (startPageOk && endPageOk) {
             setPageStartAndEnd();
         } else {
-            Helper.setFehlerMeldung("Selected image(s) unavailable");
+            Helper.setErrorMessage("Selected image(s) unavailable");
         }
     }
 
@@ -2022,7 +2022,7 @@ public class Metadaten {
                 zaehler++;
             }
         } else {
-            Helper.setFehlerMeldung("Last page before first page is not allowed");
+            Helper.setErrorMessage("Last page before first page is not allowed");
         }
         determinePagesStructure(this.docStruct);
 
@@ -2618,7 +2618,7 @@ public class Metadaten {
         DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
 
         if (event.getDropNode().getParent().getData().equals("root")) {
-            Helper.setFehlerMeldung("Only one root element allowed");
+            Helper.setErrorMessage("Only one root element allowed");
         } else {
 
             if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getDocStructType())) {
@@ -2631,7 +2631,7 @@ public class Metadaten {
                     Helper.setErrorMessage(e.getMessage(), logger, e);
                 }
             } else {
-                Helper.setFehlerMeldung(
+                Helper.setErrorMessage(
                     dragDocStruct.getDocStructType() + " not allowed as child of " + dropDocStruct.getDocStructType());
             }
         }
@@ -2979,7 +2979,7 @@ public class Metadaten {
         URI imageDirectory;
         imageDirectory = fileService.getImagesDirectory(process);
         if (imageDirectory.getRawPath().equals("")) {
-            Helper.setFehlerMeldung("errorMetsEditorImageRenaming");
+            Helper.setErrorMessage("errorMetsEditorImageRenaming");
             return;
         }
 

@@ -1385,7 +1385,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (process.getDocket() != null) {
             xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
             if (!fileService.fileExist(xsltFile)) {
-                Helper.setFehlerMeldung("docketMissing");
+                Helper.setErrorMessage("docketMissing");
             }
         } else {
             xsltFile = serviceManager.getFileService().createResource(rootPath, "docket.xsl");
@@ -1774,7 +1774,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 writeMetsFile(process, userHome + File.separator + atsPpnBand + ".mets.xml", gdzfile, false);
             }
 
-            Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
+            Helper.setMessage(null, process.getTitle() + ": ", "DMS-Export started");
 
             if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit") && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
@@ -1818,21 +1818,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         Project project = process.getProject();
         // remove old import folder
         if (!fileService.delete(userHome)) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
         // remove old success folder
         File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
         if (!fileService.delete(successFile.toURI())) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
         File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
         if (!fileService.delete(errorFile.toURI())) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
@@ -2031,7 +2031,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         DigitalDocumentInterface dd = gdzfile.getDigitalDocument();
         if (dd.getFileSet() == null) {
-            Helper.setFehlerMeldung(process.getTitle() + ": digital document does not contain images; aborting");
+            Helper.setErrorMessage(process.getTitle() + ": digital document does not contain images; aborting");
             return false;
         }
 
@@ -2056,14 +2056,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (topElement.getAllToReferences("logical_physical") == null
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (dd.getPhysicalDocStruct() != null && dd.getPhysicalDocStruct().getAllChildren() != null) {
-                Helper.setMeldung(process.getTitle()
+                Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
                 for (DocStructInterface mySeitenDocStruct : dd.getPhysicalDocStruct().getAllChildren()) {
                     topElement.addReferenceTo(mySeitenDocStruct, "logical_physical");
                 }
             } else {
-                Helper.setFehlerMeldung(process.getTitle() + ": could not find any referenced images, export aborted");
+                Helper.setErrorMessage(process.getTitle() + ": could not find any referenced images, export aborted");
                 return false;
             }
         }
@@ -2150,14 +2150,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 List<String> param = new ArrayList<>();
                 param.add(String.valueOf(sizeOfPagination));
                 param.add(String.valueOf(sizeOfImages));
-                Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                Helper.setErrorMessage(Helper.getTranslation("imagePaginationError", param));
                 return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
             logger.error(e.getMessage(), e);
         }
         mm.write(targetFileName);
-        Helper.setMeldung(null, process.getTitle() + ": ", "exportFinished");
+        Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
         return true;
     }
 

@@ -424,7 +424,7 @@ public class MetadatenImagesHelper {
         if (fileService.fileExist(folder)) {
             List<URI> files = fileService.getSubUris(Helper.dataFilter, folder);
             if (files.isEmpty()) {
-                Helper.setFehlerMeldung("[" + title + "] No objects found");
+                Helper.setErrorMessage("[" + title + "] No objects found");
                 return false;
             }
 
@@ -439,7 +439,7 @@ public class MetadatenImagesHelper {
                         currentFileName = fileService.getFileName(iterator.next());
                         int curFileNumber = Integer.parseInt(currentFileName);
                         if (curFileNumber != counter + myDiff) {
-                            Helper.setFehlerMeldung("[" + title + "] expected Image " + (counter + myDiff)
+                            Helper.setErrorMessage("[" + title + "] expected Image " + (counter + myDiff)
                                     + " but found File " + currentFileName);
                             myDiff = curFileNumber - counter;
                             isValid = false;
@@ -447,14 +447,14 @@ public class MetadatenImagesHelper {
                     }
                 } catch (NumberFormatException e1) {
                     isValid = false;
-                    Helper.setFehlerMeldung(
+                    Helper.setErrorMessage(
                         "[" + title + "] Filename of image wrong - not an 8-digit-number: " + currentFileName);
                 }
                 return isValid;
             }
             return true;
         }
-        Helper.setFehlerMeldung("[" + title + "] No image-folder found");
+        Helper.setErrorMessage("[" + title + "] No image-folder found");
         return false;
     }
 

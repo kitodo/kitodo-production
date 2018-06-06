@@ -249,7 +249,7 @@ public class BatchForm extends BasisForm {
     public String downloadDocket() throws IOException {
         logger.debug("generate docket for process list");
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
                 serviceManager.getProcessService().downloadDocket(
@@ -259,7 +259,7 @@ public class BatchForm extends BasisForm {
                 return null;
             }
         } else {
-            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
+            Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         }
         return null;
     }
@@ -271,7 +271,7 @@ public class BatchForm extends BasisForm {
     public void deleteBatch() {
         int selectedBatchesSize = this.selectedBatches.size();
         if (selectedBatchesSize == 0) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
             return;
         }
         List<Integer> ids = new ArrayList<>(selectedBatchesSize);
@@ -289,11 +289,11 @@ public class BatchForm extends BasisForm {
      */
     public void addProcessesToBatch() {
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
             return;
         }
         if (this.selectedProcesses.isEmpty()) {
-            Helper.setFehlerMeldung("noProcessSelected");
+            Helper.setErrorMessage("noProcessSelected");
             return;
         }
         try {
@@ -321,11 +321,11 @@ public class BatchForm extends BasisForm {
      */
     public void removeProcessesFromBatch() throws DAOException, DataException {
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
             return;
         }
         if (this.selectedProcesses.isEmpty()) {
-            Helper.setFehlerMeldung("noProcessSelected");
+            Helper.setErrorMessage("noProcessSelected");
             return;
         }
 
@@ -349,9 +349,9 @@ public class BatchForm extends BasisForm {
      */
     public void renameBatch() {
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() > 1) {
-            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
+            Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
                 Integer selected = selectedBatches.get(0);
@@ -404,10 +404,10 @@ public class BatchForm extends BasisForm {
      */
     public String editProperties() {
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
             return null;
         } else if (this.selectedBatches.size() > 1) {
-            Helper.setFehlerMeldung(TOO_MANY_BATCHES_SELECTED);
+            Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
             return null;
         } else {
             if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals(0)) {
@@ -421,7 +421,7 @@ public class BatchForm extends BasisForm {
                     return null;
                 }
             } else {
-                Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+                Helper.setErrorMessage(NO_BATCH_SELECTED);
                 return null;
             }
         }
@@ -465,7 +465,7 @@ public class BatchForm extends BasisForm {
      */
     public String exportBatch() {
         if (this.selectedBatches.isEmpty()) {
-            Helper.setFehlerMeldung(NO_BATCH_SELECTED);
+            Helper.setErrorMessage(NO_BATCH_SELECTED);
             return null;
         }
 

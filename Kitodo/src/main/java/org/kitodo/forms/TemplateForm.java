@@ -220,7 +220,7 @@ public class TemplateForm extends TemplateBaseForm {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
             }
         } else {
-            Helper.setFehlerMeldung("titleEmpty");
+            Helper.setErrorMessage("titleEmpty");
         }
         reload();
         return null;
@@ -308,7 +308,7 @@ public class TemplateForm extends TemplateBaseForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.title.matches(validateRegEx)) {
-            Helper.setFehlerMeldung(Helper.getTranslation("processTitleInvalid"));
+            Helper.setErrorMessage(Helper.getTranslation("processTitleInvalid"));
             return false;
         } else {
             this.template.setTitle(this.title);

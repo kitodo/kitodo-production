@@ -157,7 +157,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             ctx.bind(buildUserDN(user), ldapUser);
             ctx.close();
             setNextUidNumber(user.getLdapGroup().getLdapServer());
-            Helper.setMeldung(null,
+            Helper.setMessage(null,
                 Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user), "");
             /*
              * check if HomeDir exists, else create it
@@ -174,7 +174,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 logger.debug("HomeVerzeichnis existiert schon");
             }
         } else {
-            Helper.setMeldung(Helper.getTranslation("ldapIsReadOnly"));
+            Helper.setMessage(Helper.getTranslation("ldapIsReadOnly"));
         }
     }
 

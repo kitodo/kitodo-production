@@ -158,7 +158,7 @@ public class ProjekteForm extends BasisForm {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
-            Helper.setFehlerMeldung("errorProjectNoTitleGiven");
+            Helper.setErrorMessage("errorProjectNoTitleGiven");
             return null;
         } else {
             try {
@@ -180,12 +180,12 @@ public class ProjekteForm extends BasisForm {
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
-            Helper.setFehlerMeldung("Can not save project with empty title!");
+            Helper.setErrorMessage("Can not save project with empty title!");
             return null;
         } else {
             try {
                 serviceManager.getProjectService().save(this.myProjekt);
-                Helper.setMeldung("Project saved!");
+                Helper.setMessage("Project saved!");
                 return null;
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
@@ -201,7 +201,7 @@ public class ProjekteForm extends BasisForm {
      */
     public String delete() {
         if (!this.myProjekt.getUsers().isEmpty()) {
-            Helper.setFehlerMeldung("userAssignedError");
+            Helper.setErrorMessage("userAssignedError");
             return null;
         } else {
             try {

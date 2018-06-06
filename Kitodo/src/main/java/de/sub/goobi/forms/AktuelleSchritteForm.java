@@ -119,7 +119,7 @@ public class AktuelleSchritteForm extends BasisForm {
         Helper.getHibernateSession().refresh(this.mySchritt);
 
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
-            Helper.setFehlerMeldung("stepInWorkError");
+            Helper.setErrorMessage("stepInWorkError");
             return null;
         } else {
             this.setMySchritt(serviceManager.getWorkflowControllerService().assignTaskToUser(this.getMySchritt()));
@@ -150,7 +150,7 @@ public class AktuelleSchritteForm extends BasisForm {
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
             Type.LOGISTIC);
         if (batches.size() > 1) {
-            Helper.setFehlerMeldung("multipleBatchesAssigned");
+            Helper.setErrorMessage("multipleBatchesAssigned");
             return null;
         }
         List<Task> currentStepsOfBatch;
@@ -223,7 +223,7 @@ public class AktuelleSchritteForm extends BasisForm {
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
             Type.LOGISTIC);
         if (batches.size() > 1) {
-            Helper.setFehlerMeldung("multipleBatchesAssigned");
+            Helper.setErrorMessage("multipleBatchesAssigned");
             return null;
         }
         if (!batches.isEmpty()) {
@@ -235,7 +235,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
         // if only one step is assigned for this batch, use the single
 
-        // Helper.setMeldung("found " + currentStepsOfBatch.size() + " elements
+        // Helper.setMessage("found " + currentStepsOfBatch.size() + " elements
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
@@ -364,7 +364,7 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
-        Helper.setMeldung(null, "removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
+        Helper.setMessage(null, "removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
         return null;
     }
 
@@ -376,7 +376,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String downloadToHomePage() {
         download();
         // calcHomeImages();
-        Helper.setMeldung(null, "Created directories in user home", "");
+        Helper.setMessage(null, "Created directories in user home", "");
         return null;
     }
 
@@ -388,7 +388,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String downloadToHomeHits() {
         download();
         // calcHomeImages();
-        Helper.setMeldung(null, "Created directories in user home", "");
+        Helper.setMessage(null, "Created directories in user home", "");
         return null;
     }
 
@@ -785,7 +785,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 this.myProcess.getProperties().add(this.property);
             }
             serviceManager.getProcessService().save(this.myProcess);
-            Helper.setMeldung("propertiesSaved");
+            Helper.setMessage("propertiesSaved");
         } catch (DataException e) {
             Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }
@@ -801,7 +801,7 @@ public class AktuelleSchritteForm extends BasisForm {
             newProperty.getProcesses().add(this.myProcess);
             this.myProcess.getProperties().add(newProperty);
             serviceManager.getPropertyService().save(newProperty);
-            Helper.setMeldung("propertySaved");
+            Helper.setMessage("propertySaved");
         } catch (DataException e) {
             Helper.setErrorMessage("propertiesNotSaved", logger, e);
         }

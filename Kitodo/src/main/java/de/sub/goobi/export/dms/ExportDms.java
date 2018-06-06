@@ -88,7 +88,7 @@ public class ExportDms extends ExportMets {
         if (process.getProject().isUseDmsImport()
                 && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
-            Helper.setMeldung(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
+            Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
             return true;
         } else {
@@ -186,7 +186,7 @@ public class ExportDms extends ExportMets {
             // if the home exists, first delete and then create again
             userHome = zielVerzeichnis;
             if (!fileService.delete(userHome)) {
-                Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
+                Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                         Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
                 return false;
             }
@@ -241,21 +241,21 @@ public class ExportDms extends ExportMets {
             throws IOException {
         // delete old import folder
         if (!fileService.delete(userHomeProcess)) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
         // delete old success folder
         URI successFolder = URI.create(project.getDmsImportSuccessPath() + "/" + processTitle);
         if (!fileService.delete(successFolder)) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // delete old error folder
         URI errorFolder = URI.create(project.getDmsImportErrorPath() + "/" + processTitle);
         if (!fileService.delete(errorFolder)) {
-            Helper.setFehlerMeldung(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
+            Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
                     Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
@@ -335,7 +335,7 @@ public class ExportDms extends ExportMets {
                 gdzfile, false);
         }
 
-        Helper.setMeldung(null, process.getTitle() + ": ", "DMS-Export started");
+        Helper.setMessage(null, process.getTitle() + ": ", "DMS-Export started");
         if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
             exportWithTimeLimit(process);
         }
@@ -370,13 +370,13 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(new RuntimeException(processTitle + ": " + result));
             } else {
-                Helper.setFehlerMeldung(processTitle + ": ", result);
+                Helper.setErrorMessage(processTitle + ": ", result);
             }
         } else {
             if (exportDmsTask != null) {
                 exportDmsTask.setProgress(100);
             } else {
-                Helper.setMeldung(null, process.getTitle() + ": ", "exportFinished");
+                Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
             }
             // delete success folder again
             if (process.getProject().isDmsImportCreateProcessFolder()) {
@@ -396,7 +396,7 @@ public class ExportDms extends ExportMets {
             gdzfile.write(destinationDirectory + atsPpnBand + ".xml");
         }
 
-        Helper.setMeldung(null, process.getTitle() + ": ", "exportFinished");
+        Helper.setMessage(null, process.getTitle() + ": ", "exportFinished");
     }
 
     /**
