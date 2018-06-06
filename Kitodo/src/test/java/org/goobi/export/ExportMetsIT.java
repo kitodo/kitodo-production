@@ -11,6 +11,7 @@
 
 package org.goobi.export;
 
+import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.download.ExportMets;
 
 import java.io.File;
@@ -25,6 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -36,6 +38,7 @@ import org.kitodo.services.file.FileService;
 
 public class ExportMetsIT {
 
+    private static final File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
     private static ServiceManager serviceManager = new ServiceManager();
     private static FileService fileService = serviceManager.getFileService();
     private static String userDirectory;
@@ -61,6 +64,10 @@ public class ExportMetsIT {
         fileService.renameFile(URI.create(metadataDirectory + "/testmetaOldFormat.xml"), "meta.xml");
         SecurityTestUtils.addUserDataToSecurityContext(user);
         FileLoader.createConfigProjectsFile();
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
+        }
     }
 
     @AfterClass
@@ -71,6 +78,10 @@ public class ExportMetsIT {
         fileService.delete(URI.create(metadataDirectory));
         fileService.delete(Paths.get(Config.getParameter("dir_Users")).toUri());
         FileLoader.deleteConfigProjectsFile();
+
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
+        }
     }
 
     @Test
