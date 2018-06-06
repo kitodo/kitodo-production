@@ -76,11 +76,11 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="firstName" value="#{msgs.vorname}"/>
+                            <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
                             <p:inputText id="firstName"
                                          class="input"
                                          disabled="#{isViewMode}"
-                                         placeholder="#{msgs.vorname}"
+                                         placeholder="#{msgs.firstName}"
                                          value="#{BenutzerverwaltungForm.userObject.name}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -94,7 +94,7 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="active" value="#{msgs.istAktiv}"/>
+                            <p:outputLabel for="active" value="#{msgs.isActive}"/>
                             <p:selectBooleanCheckbox id="active"
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"

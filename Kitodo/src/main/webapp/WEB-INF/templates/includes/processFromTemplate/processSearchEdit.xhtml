@@ -23,7 +23,7 @@
         <!-- choose from existing processes  -->
         <p:row rendered="#{ProzesskopieForm.useTemplates}">
             <div>
-                <p:outputLabel for="processSelect" value="#{msgs.AuswaehlenAusVorhandenenProzessen}"/>
+                <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
                 <p:selectOneMenu id="processSelect"
                                  value="#{ProzesskopieForm.auswahl}">
                     <f:selectItems value="#{ProzesskopieForm.processesForChoiceList}"/>
@@ -32,8 +32,8 @@
             <div>
                 <p:commandButton id="copyProcessData"
                                  action="#{ProzesskopieForm.templateAuswahlAuswerten}"
-                                 value="#{msgs.uebernehmen}"
-                                 title="#{msgs.AuswaehlenAusVorhandenenProzessen}"
+                                 value="#{msgs.apply}"
+                                 title="#{msgs.selectFromExistingProcesses}"
                                  update="editForm"
                                  icon="fa fa-download" iconPos="right"/>
             </div>

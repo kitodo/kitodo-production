@@ -26,7 +26,7 @@
                 <!--TODO check addable types-->
                 <f:selectItems value="#{Metadaten.addableDocStructTypenAlsNachbar}"/>
             </p:selectOneMenu>
-            <p:commandButton value="#{msgs.uebernehmen}" action="#{Metadaten.changeCurrentDocstructType}"
+            <p:commandButton value="#{msgs.apply}" action="#{Metadaten.changeCurrentDocstructType}"
                              update="tabView:structureData,docStrucForm:docStruc"
                              oncomplete="PF('dialogEditDocStrucType').hide();">
             </p:commandButton>

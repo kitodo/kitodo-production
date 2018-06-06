@@ -320,7 +320,7 @@ public class TemplateForm extends TemplateBaseForm {
      * Reload task and template.
      */
     private void reload() {
-        reload(this.task, "arbeitsschritt");
+        reload(this.task, "task");
         reload(this.template, "template");
     }
 
@@ -382,7 +382,7 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("task"), id },
                     logger, e);
         }
     }

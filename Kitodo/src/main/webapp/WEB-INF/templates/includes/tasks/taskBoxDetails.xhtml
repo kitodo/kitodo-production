@@ -16,7 +16,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item" value="#{AktuelleSchritteForm.mySchritt}">
-        <p:column headerText="#{msgs.titel}">
+        <p:column headerText="#{msgs.title}">
             <h:outputText value="#{AktuelleSchritteForm.mySchritt.localizedTitle}"/>
         </p:column>
         <p:column headerText="#{msgs.processTitle}">
@@ -35,15 +35,15 @@
             <h:outputText value="#{item.processingStatusEnum.title}"/>
         </p:column>
         <ui:fragment rendered="#{item.processingBegin !=null and !HelperForm.anonymized}">
-            <p:column headerText="#{msgs.bearbeitungsbeginn}:"/>
+            <p:column headerText="#{msgs.processingBegin}:"/>
             <h:outputText value="#{item.processingBeginAsFormattedString}"/>
         </ui:fragment>
         <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
-            <p:column headerText="#{msgs.zuletztBearbeitet}:"/>
+            <p:column headerText="#{msgs.lastEdited}:"/>
             <h:outputText value="#{item.processingTimeAsFormattedString}"/>
         </ui:fragment>
         <ui:fragment rendered="#{item.processingTime !=null and !HelperForm.anonymized}">
-            <p:column headerText="#{msgs.aktualisierungstyp}:"/>
+            <p:column headerText="#{msgs.editType}:"/>
             <h:outputText value="#{item.editTypeEnum.title}"/>
         </ui:fragment>
     </p:dataTable>

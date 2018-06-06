@@ -404,7 +404,7 @@ public class Metadaten {
                 boundary = valueURI.lastIndexOf('/');
             }
             if (boundary == -1) {
-                throw new IncompletePersonObjectException("URI_malformed");
+                throw new IncompletePersonObjectException("uriMalformed");
             } else {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {

@@ -31,7 +31,7 @@
                     <f:selectItems value="#{Metadaten.allPages}"/>
                 </p:selectOneMenu>
 
-                <h:outputText value="#{msgs.letzteSeite}:"/>
+                <h:outputText value="#{msgs.lastPage}:"/>
                 <p:selectOneMenu id="selectLastPage" value="#{Metadaten.allPagesSelectionLastPage}" filter="true"
                                  filterMatchMode="startsWith">
                     <f:selectItems value="#{Metadaten.allPages}"/>
@@ -66,7 +66,7 @@
                 </h:panelGroup>
 
                 <h:panelGroup>
-                    <h:outputText value="#{msgs.zugehoerigeSeiten}"/>
+                    <h:outputText value="#{msgs.relatedPages}"/>
                     <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}"
                                       style="height:200px">
                         <f:selectItems value="#{Metadaten.structSeiten}"/>

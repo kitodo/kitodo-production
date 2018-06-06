@@ -1023,7 +1023,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Reload task and process.
      */
     private void reload() {
-        reload(this.task, "arbeitsschritt");
+        reload(this.task, "task");
         reload(this.process, PROCESS);
     }
 
@@ -1788,7 +1788,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("arbeitsschritt"), id },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("task"), id },
                 logger, e);
         }
     }

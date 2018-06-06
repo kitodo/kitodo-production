@@ -84,7 +84,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final String ERROR_LOADING = "errorLoadingOne";
     private static final String ERROR_SAVING = "errorSaving";
     private static final String PROCESS = "process";
-    private static final String WORK_TASK = "arbeitsschritt";
+    private static final String WORK_TASK = "task";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
 

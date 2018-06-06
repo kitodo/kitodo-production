@@ -31,7 +31,7 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="tasksTabView">
-            <p:tab title="#{msgs.schrittDetails}">
+            <p:tab title="#{msgs.taskDetails}">
                 <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxDetails.xhtml"/>
                 <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxActivities.xhtml"/>
             </p:tab>
@@ -56,7 +56,7 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
-        <li><h:link value="#{msgs.schritte}" outcome="tasks"/></li>
+        <li><h:link value="#{msgs.tasks}" outcome="tasks"/></li>
         <li><a href="">#{msgs.detailsDesArbeitsschritts}</a></li>
     </ui:define>
 </ui:composition>

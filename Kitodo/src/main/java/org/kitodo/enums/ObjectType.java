@@ -22,7 +22,7 @@ public enum ObjectType {
     PROJECT("projects"),
     PROPERTY("properties"),
     RULESET("regelsaetze"),
-    TASK("schritte"),
+    TASK("tasks"),
     TEMPLATE("template"),
     USER("users"),
     USERGROUP("benutzergruppen"),

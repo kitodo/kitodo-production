@@ -18,7 +18,7 @@
     <p:panelGrid columns="2" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="title" value="#{msgs.titel}"/>
+                <p:outputLabel for="title" value="#{msgs.title}"/>
                 <p:inputText id="title" value="#{TemplateForm.task.title}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
@@ -38,8 +38,8 @@
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
                 <p:selectOneMenu id="status" value="#{TemplateForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
-                    <f:selectItem itemValue="" itemLabel="#{msgs.bitteAuswaehlen}"/>
-                    <f:selectItem itemValue="0" itemLabel="#{msgs.statusGesperrt}"/>
+                    <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
+                    <f:selectItem itemValue="0" itemLabel="#{msgs.locked}"/>
                     <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
                     <f:selectItem itemValue="2" itemLabel="#{msgs.statusInBearbeitung}"/>
                     <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
@@ -85,7 +85,7 @@
                 </p:selectBooleanCheckbox>
             </div>
             <div>
-                <p:outputLabel for="typeAcceptClose" value="#{msgs.schrittBeimAnnehmenAbschliessen}"/>
+                <p:outputLabel for="typeAcceptClose" value="#{msgs.taskCloseByAccept}"/>
                 <p:selectBooleanCheckbox id="typeAcceptClose" value="#{TemplateForm.task.typeAcceptClose}" class="input">
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
                 </p:selectBooleanCheckbox>

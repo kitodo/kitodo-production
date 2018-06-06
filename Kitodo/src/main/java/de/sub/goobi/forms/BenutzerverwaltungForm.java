@@ -117,11 +117,11 @@ public class BenutzerverwaltungForm extends BasisForm {
                 return userListPath;
 
             } else {
-                Helper.setFehlerMeldung("", Helper.getTranslation("loginBereitsVergeben"));
+                Helper.setFehlerMeldung("", Helper.getTranslation("loginInUse"));
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer")}, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("user")}, logger, e);
             return null;
         }
     }

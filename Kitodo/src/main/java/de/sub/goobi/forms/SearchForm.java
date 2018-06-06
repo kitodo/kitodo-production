@@ -169,7 +169,7 @@ public class SearchForm {
             this.user.addAll(serviceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
         } catch (RuntimeException e) {
             logger.warn("RuntimeException caught. List of users could be empty!");
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("aktiveBenutzer") }, logger, e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
         }
     }
 

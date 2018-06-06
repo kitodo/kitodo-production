@@ -70,7 +70,7 @@ public class MetadataValidationService {
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
-            Helper.setErrorMessage("MetadataReadError", new Object[] {process.getTitle()}, logger, e);
+            Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle()}, logger, e);
             return false;
         }
         return validate(gdzfile, prefs, process);
@@ -96,7 +96,7 @@ public class MetadataValidationService {
         try {
             dd = gdzfile.getDigitalDocument();
         } catch (PreferencesException | RuntimeException e) {
-            Helper.setErrorMessage(Helper.getTranslation("MetadataDigitalDocumentError") + process.getTitle(), logger,
+            Helper.setErrorMessage(Helper.getTranslation("metadataDigitalDocumentError") + process.getTitle(), logger,
                 e);
             return false;
         }
@@ -131,7 +131,7 @@ public class MetadataValidationService {
                 logger.info("no firstChild or no identifier");
             }
         } else {
-            Helper.setFehlerMeldung(Helper.getTranslation("MetadataMissingIdentifier"));
+            Helper.setFehlerMeldung(Helper.getTranslation("metadataMissingIdentifier"));
             result = false;
         }
 
@@ -145,7 +145,7 @@ public class MetadataValidationService {
         DocStructInterface logicalTop = dd.getLogicalDocStruct();
         this.docStructsOhneSeiten = new ArrayList<>();
         if (logicalTop == null) {
-            Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationError"));
+            Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationError"));
             result = false;
         } else {
             checkDocStructsOhneSeiten(logicalTop);
@@ -153,7 +153,7 @@ public class MetadataValidationService {
 
         if (!this.docStructsOhneSeiten.isEmpty()) {
             for (DocStructInterface docStructWithoutPages : this.docStructsOhneSeiten) {
-                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("MetadataPaginationStructure")
+                Helper.setFehlerMeldung(process.getTitle() + ": " + Helper.getTranslation("metadataPaginationStructure")
                         + docStructWithoutPages.getDocStructType().getNameByLanguage(metadataLanguage));
             }
             result = false;
@@ -169,7 +169,7 @@ public class MetadataValidationService {
             Helper.setErrorMessage("[" + process.getTitle() + "] Can not check pages without docstructs: ", logger, e);
             result = false;
         }
-        if (isStringListIncorrect(seitenOhneDocstructs, "MetadataPaginationPages")) {
+        if (isStringListIncorrect(seitenOhneDocstructs, "metadataPaginationPages")) {
             result = false;
         }
 
@@ -178,7 +178,7 @@ public class MetadataValidationService {
          */
         List<String> mandatoryList = checkMandatoryValues(dd.getLogicalDocStruct(), new ArrayList<>(),
             metadataLanguage);
-        if (isStringListIncorrect(mandatoryList, "MetadataMandatoryElement")) {
+        if (isStringListIncorrect(mandatoryList, "metadataMandatoryElement")) {
             result = false;
         }
 
@@ -188,7 +188,7 @@ public class MetadataValidationService {
          */
         List<String> configuredList = checkConfiguredValidationValues(dd.getLogicalDocStruct(), new ArrayList<>(),
             prefs, metadataLanguage);
-        if (isStringListIncorrect(configuredList, "MetadataInvalidData")) {
+        if (isStringListIncorrect(configuredList, "metadataInvalidData")) {
             result = false;
         }
 
@@ -325,22 +325,22 @@ public class MetadataValidationService {
                     && (ll.get(0).getValue() == null || ll.get(0).getValue().equals(""))) {
 
                 list.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-                        + Helper.getTranslation("MetadataIsEmpty"));
+                        + Helper.getTranslation("metadataIsEmpty"));
             }
             // check types
             if (number.equals("1m") && real != 1) {
                 list.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-                        + Helper.getTranslation("MetadataNotOneElement") + " " + real
-                        + Helper.getTranslation("MetadataTimes"));
+                        + Helper.getTranslation("metadataNotOneElement") + " " + real
+                        + Helper.getTranslation("metadataTimes"));
             }
             if (number.equals("1o") && real > 1) {
                 list.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-                        + Helper.getTranslation("MetadataToManyElements") + " " + real + " "
-                        + Helper.getTranslation("MetadataTimes"));
+                        + Helper.getTranslation("metadataToManyElements") + " " + real + " "
+                        + Helper.getTranslation("metadataTimes"));
             }
             if (number.equals("+") && real == 0) {
                 list.add(mdt.getNameByLanguage(language) + " in " + dst.getNameByLanguage(language) + " "
-                        + Helper.getTranslation("MetadataNotEnoughElements"));
+                        + Helper.getTranslation("metadataNotEnoughElements"));
             }
         }
         // }
@@ -492,7 +492,7 @@ public class MetadataValidationService {
             if (p.getRole() == null) {
                 Helper.setFehlerMeldung(
                     "[" + this.process.getTitle() + " " + docStruct.getDocStructType().getNameByLanguage(language)
-                            + "] " + Helper.getTranslation("MetadataPersonWithoutRole"));
+                            + "] " + Helper.getTranslation("metadataPersonWithoutRole"));
                 break;
             } else {
                 if (p.getRole().equals(metadataType.getName())) {
@@ -542,8 +542,8 @@ public class MetadataValidationService {
                     }
                     if (!isOk && !this.autoSave) {
                         errorList.add(md.getMetadataType().getNameByLanguage(language) + " "
-                                + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
-                                + Helper.getTranslation("MetadataDoesNotStartWith") + " " + propStartsWith);
+                                + Helper.getTranslation("metadataWithValue") + " " + md.getValue() + " "
+                                + Helper.getTranslation("metadataDoesNotStartWith") + " " + propStartsWith);
                     }
                     if (!isOk && this.autoSave) {
                         md.setStringValue(new StringTokenizer(propStartsWith, "|").nextToken() + md.getValue());
@@ -561,8 +561,8 @@ public class MetadataValidationService {
                     }
                     if (!isOk && !this.autoSave) {
                         errorList.add(md.getMetadataType().getNameByLanguage(language) + " "
-                                + Helper.getTranslation("MetadataWithValue") + " " + md.getValue() + " "
-                                + Helper.getTranslation("MetadataDoesNotEndWith") + " " + propEndsWith);
+                                + Helper.getTranslation("metadataWithValue") + " " + md.getValue() + " "
+                                + Helper.getTranslation("metadataDoesNotEndWith") + " " + propEndsWith);
                     }
                     if (!isOk && this.autoSave) {
                         md.setStringValue(md.getValue() + new StringTokenizer(propEndsWith, "|").nextToken());
