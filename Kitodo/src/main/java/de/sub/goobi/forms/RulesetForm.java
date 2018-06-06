@@ -77,7 +77,7 @@ public class RulesetForm extends BasisForm {
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
-                Helper.setFehlerMeldung("RulesetNotFound");
+                Helper.setFehlerMeldung("rulesetNotFound");
                 return null;
             }
         } catch (DataException e) {
@@ -108,7 +108,7 @@ public class RulesetForm extends BasisForm {
     public String removeRuleset() {
         try {
             if (hasAssignedProcesses(this.ruleset)) {
-                Helper.setFehlerMeldung("RulesetInUse");
+                Helper.setFehlerMeldung("rulesetInUse");
                 return null;
             } else {
                 serviceManager.getRulesetService().remove(this.ruleset);

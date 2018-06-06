@@ -42,7 +42,7 @@
                                           styleClass="batch-count bc-alert">#{tasks.size()}</h:panelGroup>
                         </a>
                         <ul>
-                            <li><h3>#{msgs.aktuelleSchritte}</h3></li>
+                            <li><h3>#{msgs.tasksCurrent}</h3></li>
                             <ui:repeat value="#{tasks}" var="task" size="#{tasks.size() gt 3 ? 3 : tasks.size()}">
                                 <li><div><span class="nav-item-col">#{task.title}</span><span
                                     class="nav-item-col">#{task.process.title}</span><span class="nav-item-col"><i

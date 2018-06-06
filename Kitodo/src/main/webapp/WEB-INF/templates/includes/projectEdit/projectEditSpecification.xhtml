@@ -28,7 +28,7 @@
     <p:panelGrid id="technischeDatenForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="internalFormat" value="#{msgs.internesSpeicherformat}" />
+                <p:outputLabel for="internalFormat" value="#{msgs.internFileFormat}" />
                 <p:selectOneMenu id="internalFormat" value="#{ProjekteForm.myProjekt.fileFormatInternal}" disabled="#{ProjekteForm.lockedTechnical}">
                     <f:selectItems value="#{HelperForm.fileFormatsInternalOnly}" />
                     <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>

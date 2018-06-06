@@ -24,7 +24,7 @@
                    class="eingabeBoxen" style="margin-top:20px">
                 <tr>
                     <td class="eingabeBoxen_row1">
-                        <h:outputText value="#{msgs.metadatenImportieren}"/>
+                        <h:outputText value="#{msgs.metadataImport}"/>
                     </td>
                 </tr>
                 <tr>
@@ -49,8 +49,7 @@
                                     <h:inputFile id="fileupload" accept="image/*"
                                                  value="#{Import.uploadedFile}" storage="file"
                                                  styleClass="fileUploadInput" required="false"/>
-                                    <h:commandButton value="#{msgs.metadatenImportieren}" id="button1"
-                                                     action="#{Import.start}">
+                                    <h:commandButton value="#{msgs.metadataImport}" id="button1" action="#{Import.start}">
                                         <f:setPropertyActionListener target="#{Import.task}"
                                                                      value="#{AktuelleSchritteForm.mySchritt}"/>
                                     </h:commandButton>
@@ -154,10 +153,10 @@
                                 <h:commandLink id="action10"
                                                rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
                                                action="#{Metadaten.readXml}"
-                                               title="#{msgs.metadatenBearbeiten}">
+                                               title="#{msgs.metadataEdit}">
                                     <h:graphicImage value="/pages/images/buttons/view1.gif" alt="read xml"
                                                     style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.metadatenBearbeiten}"/>
+                                    <h:outputText value="#{msgs.metadataEdit}"/>
                                     <f:setPropertyActionListener
                                             value="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"
                                             target="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"/>

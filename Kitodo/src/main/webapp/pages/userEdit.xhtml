@@ -125,17 +125,17 @@
                                         redisplay="true"/>
                         </div>
                         <div>
-                            <p:outputLabel for="metaDataLanguage" value="#{msgs.spracheFuerMetadaten}"/>
+                            <p:outputLabel for="metaDataLanguage" value="#{msgs.metadataLanguage}"/>
                             <p:inputText id="metaDataLanguage"
                                          class="input"
                                          disabled="#{isViewMode}"
-                                         placeholder="#{msgs.spracheFuerMetadaten}"
+                                         placeholder="#{msgs.metadataLanguage}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
                                          onchange="jQuery('#editForm\\:saveButtonToggler').click()"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="withMassDownload" value="#{msgs.massendownload}"/>
+                            <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
                             <p:selectBooleanCheckbox id="withMassDownload"
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"

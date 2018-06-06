@@ -28,7 +28,7 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.regelsatzBearbeiten} (#{RulesetForm.ruleset.title})"
+            <h:outputText value="#{msgs.rulesetEdit} (#{RulesetForm.ruleset.title})"
                           rendered="#{not empty RulesetForm.ruleset.title}"/>
             <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
                           rendered="#{empty RulesetForm.ruleset.title}"/>
@@ -57,10 +57,10 @@
                 <p:panelGrid columns="2" layout="grid">
                     <p:row>
                         <div>
-                            <p:outputLabel for="title" value="#{msgs.titel}"/>
+                            <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title"
                                          class="input"
-                                         placeholder="#{msgs.titel}"
+                                         placeholder="#{msgs.title}"
                                          value="#{RulesetForm.ruleset.title}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
@@ -86,7 +86,7 @@
                             </p:selectOneMenu>
                         </div>
                         <div>
-                            <p:outputLabel for="sortByRuleset" value="#{msgs.metadatenSortierungNachRegelsatz}"/>
+                            <p:outputLabel for="sortByRuleset" value="#{msgs.metadataSortByRuleset}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset"
                                                      value="#{RulesetForm.ruleset.orderMetadataByRuleset}"
                                                      onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
@@ -102,10 +102,8 @@
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">
-                <h:outputText value="#{msgs.regelsatzBearbeiten}"
-                              rendered="#{RulesetForm.ruleset.id ne null}"/>
-                <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
-                              rendered="#{RulesetForm.ruleset.id eq null}"/>
+                <h:outputText value="#{msgs.rulesetEdit}" rendered="#{RulesetForm.ruleset.id ne null}"/>
+                <h:outputText value="#{msgs.neuenRegelsatzAnlegen}" rendered="#{RulesetForm.ruleset.id eq null}"/>
             </a>
         </li>
     </ui:define>

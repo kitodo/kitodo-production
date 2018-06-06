@@ -47,7 +47,7 @@
 
         <p:row>
             <div>
-                <p:outputLabel for="ruleset" value="#{msgs.regelsatz}"/>
+                <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}" converter="#{rulesetConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{HelperForm.regelsaetze}"/>

@@ -29,12 +29,12 @@ import org.kitodo.legacy.UghImplementation;
 public class Paginator {
 
     public enum Mode {
-        PAGES(Helper.getTranslation("seitenzaehlung"), "paginierung_seite.svg"),
-        COLUMNS(Helper.getTranslation("spaltenzaehlung"), "paginierung_spalte.svg"),
+        PAGES(Helper.getTranslation("pageCount"), "paginierung_seite.svg"),
+        COLUMNS(Helper.getTranslation("columnCount"), "paginierung_spalte.svg"),
         FOLIATION(Helper.getTranslation("blattzaehlung"), "paginierung_blatt.svg"),
         RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"), "paginierung_blatt_rectoverso.svg"),
-        RECTOVERSO(Helper.getTranslation("seitenzaehlungrectoverso"), "paginierung_seite_rectoverso.svg"),
-        DOUBLE_PAGES(Helper.getTranslation("seitenzaehlungdoppelseiten"), "paginierung_doppelseite.svg");
+        RECTOVERSO(Helper.getTranslation("pageCountRectoVerso"), "paginierung_seite_rectoverso.svg"),
+        DOUBLE_PAGES(Helper.getTranslation("pageCountDouble"), "paginierung_doppelseite.svg");
 
         private String label;
         private String image;

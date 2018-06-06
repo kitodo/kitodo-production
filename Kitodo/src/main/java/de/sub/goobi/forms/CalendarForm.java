@@ -788,7 +788,7 @@ public class CalendarForm implements Serializable {
         boolean granularityWasTemporarilyAdded = false;
         try {
             if (course == null || course.countIndividualIssues() == 0) {
-                Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
+                Helper.setFehlerMeldung("errorDataIncomplete", "calendar.isEmpty");
                 return;
             }
             if (course.getNumberOfProcesses() == 0) {
@@ -1048,7 +1048,7 @@ public class CalendarForm implements Serializable {
      */
     public String nextClick() {
         if (course == null || course.countIndividualIssues() < 1) {
-            Helper.setFehlerMeldung("UnvollstaendigeDaten", "calendar.isEmpty");
+            Helper.setFehlerMeldung("errorDataIncomplete", "calendar.isEmpty");
             return null;
         }
         return "/pages/granularity";

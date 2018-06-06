@@ -120,7 +120,7 @@ public class MetadataValidationService {
                     parameter.add(identifierTopStruct.getMetadataType().getName());
                     parameter.add(logical.getDocStructType().getName());
                     parameter.add(firstChild.getDocStructType().getName());
-                    Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierSame", parameter));
+                    Helper.setFehlerMeldung(Helper.getTranslation("invalidIdentifierSame", parameter));
                     result = false;
                 }
 
@@ -243,7 +243,7 @@ public class MetadataValidationService {
             List<String> parameter = new ArrayList<>();
             parameter.add(metadata.getMetadataType().getNameByLanguage(metadataLanguage));
             parameter.add(docStruct.getDocStructType().getNameByLanguage(metadataLanguage));
-            Helper.setFehlerMeldung(Helper.getTranslation("InvalidIdentifierCharacter", parameter));
+            Helper.setFehlerMeldung(Helper.getTranslation("invalidIdentifierCharacter", parameter));
             return true;
         }
         return false;

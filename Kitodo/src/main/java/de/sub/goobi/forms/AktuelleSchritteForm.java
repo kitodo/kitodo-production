@@ -651,7 +651,7 @@ public class AktuelleSchritteForm extends BasisForm {
             export.startExport(this.mySchritt.getProcess());
         } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                 | IOException | ExportFileException | RuntimeException e) {
-            Helper.setErrorMessage("exportError", new Object[] {this.mySchritt.getProcess().getTitle()}, logger, e);
+            Helper.setErrorMessage("errorExport", new Object[] {this.mySchritt.getProcess().getTitle()}, logger, e);
         }
     }
 

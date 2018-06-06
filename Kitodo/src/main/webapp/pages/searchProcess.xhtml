@@ -20,7 +20,7 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.extendedSearch}</h3>
         <p:commandButton id="absenden"
-                         value="#{msgs.nachEinemBandSuchen}"
+                         value="#{msgs.searchForVolume}"
                          action="#{SearchForm.filter}"
                          icon="fa fa-search"
                          iconPos="right"
@@ -118,7 +118,7 @@
                     </p:row>
                     <!--steps -->
                     <p:row>
-                        <p:column><p:outputLabel value="#{msgs.step}"/></p:column>
+                        <p:column><p:outputLabel value="#{msgs.task}"/></p:column>
                         <p:column>
                             <p:selectOneMenu value="#{SearchForm.stepOperand}">
                                 <f:selectItems value="#{SearchForm.operands}"/>

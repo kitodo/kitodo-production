@@ -596,7 +596,7 @@ public class Metadaten {
                 xmlReadingLock.unlock();
             }
         } else {
-            Helper.setFehlerMeldung("metadatenEditorThreadLock");
+            Helper.setFehlerMeldung("metadataEditorThreadLock");
             return redirect;
         }
         redirect = "/pages/metadataEditor?faces-redirect=true";
@@ -668,7 +668,7 @@ public class Metadaten {
 
         // this exception needs some serious feedback because data is corrupted
         if (this.logicalTopstruct == null) {
-            throw new ReadException(Helper.getTranslation("metaDataError"));
+            throw new ReadException(Helper.getTranslation("metadataError"));
         }
 
         identifyImage(1);
@@ -2975,10 +2975,11 @@ public class Metadaten {
      * Reorder pagination.
      */
     public void reOrderPagination() throws IOException {
+        final String bak = "_bak";
         URI imageDirectory;
         imageDirectory = fileService.getImagesDirectory(process);
         if (imageDirectory.getRawPath().equals("")) {
-            Helper.setFehlerMeldung("ErrorMetsEditorImageRenaming");
+            Helper.setFehlerMeldung("errorMetsEditorImageRenaming");
             return;
         }
 
@@ -2990,7 +2991,7 @@ public class Metadaten {
         for (URI imagename : oldFileNames) {
             for (URI folder : allTifFolders) {
                 URI filename = imageDirectory.resolve(folder).resolve(imagename);
-                String newFileName = filename + "_bak";
+                String newFileName = filename + bak;
                 fileService.renameFile(filename, newFileName);
             }
             URI ocrFolder = fileService.getProcessSubTypeURI(process, ProcessSubType.OCR, null);
@@ -2998,7 +2999,7 @@ public class Metadaten {
                 List<URI> allOcrFolder = fileService.getSubUris(ocrFolder);
                 for (URI folder : allOcrFolder) {
                     URI filename = folder.resolve(imagename);
-                    String newFileName = filename + "_bak";
+                    String newFileName = filename + bak;
                     fileService.renameFile(filename, newFileName);
                 }
             }
@@ -3009,9 +3010,9 @@ public class Metadaten {
                 for (URI folder : allTifFolders) {
                     URI fileToSort = imageDirectory.resolve(folder).resolve(oldImageName);
                     String fileExtension = Metadaten
-                            .getFileExtension(fileService.getFileName(fileToSort).replace("_bak", ""));
+                            .getFileExtension(fileService.getFileName(fileToSort).replace(bak, ""));
                     URI tempFileName = imageDirectory.resolve(folder)
-                            .resolve(fileService.getFileName(fileToSort) + "_bak");
+                            .resolve(fileService.getFileName(fileToSort) + bak);
                     String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
                     fileService.renameFile(tempFileName, sortedName);
                     digitalDocument.getPhysicalDocStruct().getAllChildren().get(counter - 1).setImageName(sortedName);
@@ -3023,8 +3024,8 @@ public class Metadaten {
                         for (URI folder : allOcrFolder) {
                             URI fileToSort = folder.resolve(imagename);
                             String fileExtension = Metadaten
-                                    .getFileExtension(fileService.getFileName(fileToSort).replace("_bak", ""));
-                            URI tempFileName = fileToSort.resolve("_bak");
+                                    .getFileExtension(fileService.getFileName(fileToSort).replace(bak, ""));
+                            URI tempFileName = fileToSort.resolve(bak);
                             String sortedName = newfilenamePrefix + fileExtension.toLowerCase();
                             fileService.renameFile(tempFileName, sortedName);
                         }
@@ -3259,7 +3260,7 @@ public class Metadaten {
             newMetadataGroup = new RenderableMetadataGroup(docStruct.getAddableMetadataGroupTypes(),
                     process.getProject().getTitle());
         } catch (ConfigurationException e) {
-            Helper.setErrorMessage("Form_configuration_mismatch", logger, e);
+            Helper.setErrorMessage("formConfigurationMismatch", logger, e);
             return "";
         }
         modeAdd = false;

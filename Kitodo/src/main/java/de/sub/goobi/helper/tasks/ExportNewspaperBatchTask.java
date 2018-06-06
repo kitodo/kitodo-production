@@ -410,7 +410,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
      */
     @Override
     public String getDisplayName() {
-        return Helper.getTranslation("ExportNewspaperBatchTask");
+        return Helper.getTranslation("exportNewspaperBatchTask");
     }
 
     /**

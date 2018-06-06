@@ -390,7 +390,7 @@ public class CopyProcess extends ProzesskopieForm {
         if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
             Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("ProcessCreationErrorNoCollection"));
+                    + Helper.getTranslation("processCreationErrorNoCollection"));
         }
 
         /*
@@ -401,7 +401,7 @@ public class CopyProcess extends ProzesskopieForm {
                     && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
                 Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
-                        + Helper.getTranslation("ProcessCreationErrorFieldIsEmpty"));
+                        + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
             }
         }
         return valid;

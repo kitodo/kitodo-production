@@ -21,11 +21,11 @@ public enum ObjectType {
     PROCESS("processes"),
     PROJECT("projects"),
     PROPERTY("properties"),
-    RULESET("regelsaetze"),
+    RULESET("rulesets"),
     TASK("tasks"),
     TEMPLATE("template"),
     USER("users"),
-    USERGROUP("benutzergruppen"),
+    USERGROUP("userGroups"),
     FILTER("filter"),
     NONE("");
 

@@ -115,7 +115,7 @@
                     <h:outputText value="#{msgs.processTitle}: "/>
                     <h:outputText value="#{item.process.title}"/>
 
-                    <h:outputText value="#{msgs.prioritaet}: "/>
+                    <h:outputText value="#{msgs.priority}: "/>
                     <h:outputText value="#{item.priority}"/>
 
                     <h:outputText value="#{msgs.processingBegin}: " rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
@@ -124,7 +124,7 @@
                     <h:outputText value="#{msgs.lastEdited}: " rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
-                    <h:outputText value="#{msgs.processingsEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{msgs.processingEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastUpdatedBy}: " rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
