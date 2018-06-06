@@ -130,10 +130,11 @@
             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
         </p:confirmDialog>
 
+    </ui:define>
+    <ui:define name="dialog">
         <p:dialog header="Generating PNGs" modal="true" id="convertTIFFDialog" widgetVar="convertTIFFDialog">
             <h:outputText value="#{Metadaten.numberOfConvertedImages} / #{Metadaten.numberOfImagesInCurrentTifFolder}" />
         </p:dialog>
-
     </ui:define>
     <ui:define name="breadcrumbs">
             <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
