@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

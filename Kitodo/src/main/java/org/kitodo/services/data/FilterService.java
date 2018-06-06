@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
