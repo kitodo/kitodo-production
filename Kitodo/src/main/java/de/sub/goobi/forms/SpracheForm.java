@@ -144,16 +144,6 @@ public class SpracheForm implements Serializable {
     }
 
     /**
-     * The procedure switchLanguage is called from /pages/Metadaten2oben.xhtml
-     * to switch the language.
-     */
-    public void switchLanguage() throws IOException {
-        String languageCodeCombined = FacesContext.getCurrentInstance().getExternalContext().getRequestLocale()
-                .toLanguageTag();
-        switchLanguage(languageCodeCombined);
-    }
-
-    /**
      * Get locale.
      *
      * @return Locale object
