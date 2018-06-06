@@ -250,7 +250,7 @@ public class MetadataValidationService {
             if (Objects.nonNull(allMetadata) && !allMetadata.isEmpty()) {
                 return true;
             } else {
-                Helper.setErrorMessage(this.process.getTitle() + ": " + "Can not verify, image path is not set", "");
+                Helper.setErrorMessage(this.process.getTitle(), "Can not verify, image path is not set");
                 return false;
             }
         } catch (UghHelperException e) {
