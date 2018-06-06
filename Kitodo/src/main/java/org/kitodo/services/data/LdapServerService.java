@@ -157,7 +157,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             ctx.bind(buildUserDN(user), ldapUser);
             ctx.close();
             setNextUidNumber(user.getLdapGroup().getLdapServer());
-            Helper.setMessage(Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user), "");
+            Helper.setMessage(Helper.getTranslation("ldapWritten") + " " + serviceManager.getUserService().getFullName(user));
             /*
              * check if HomeDir exists, else create it
              */

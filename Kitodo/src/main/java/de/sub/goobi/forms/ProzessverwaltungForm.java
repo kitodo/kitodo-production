@@ -659,7 +659,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
-                Helper.setMessage(EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED);
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
@@ -677,7 +677,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             try {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
-                Helper.setMessage(EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | DAOException | RuntimeException e) {
                 Helper.setErrorMessage("errorExport", new Object[] {processDTO.getTitle()}, logger, e);
@@ -700,7 +700,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
         }
         logger.info(Helper.getTranslation(EXPORT_FINISHED));
-        Helper.setMessage(EXPORT_FINISHED, "");
+        Helper.setMessage(EXPORT_FINISHED);
     }
 
     /**
@@ -759,7 +759,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             download(webDav, process);
         }
-        Helper.setMessage("createdInUserHome", "");
+        Helper.setMessage("createdInUserHome");
     }
 
     /**
@@ -771,7 +771,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             download(myDav, processDTO);
         }
-        Helper.setMessage("createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll");
     }
 
     private void download(WebDav webDav, ProcessDTO processDTO) {
@@ -808,7 +808,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 webDav.downloadToHome(process, true);
             }
         }
-        Helper.setMessage("createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll");
     }
 
     /**
