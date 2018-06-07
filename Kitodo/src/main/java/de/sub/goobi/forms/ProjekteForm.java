@@ -207,7 +207,7 @@ public class ProjekteForm extends BasisForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("project") }, logger, e);
+                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
                 return null;
             }
         }
