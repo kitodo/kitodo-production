@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDateTime;
 import org.kitodo.security.SecurityConfig;
 import org.kitodo.security.SecuritySession;
@@ -31,7 +29,6 @@ public class SessionService {
 
     private static SessionService instance = null;
     private SessionRegistry sessionRegistry;
-    private static final Logger logger = LogManager.getLogger(SessionService.class);
 
     private SessionService() {
         SecurityConfig securityConfig = SecurityConfig.getInstance();

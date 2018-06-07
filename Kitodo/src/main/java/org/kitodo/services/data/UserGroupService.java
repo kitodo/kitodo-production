@@ -19,8 +19,6 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
@@ -47,7 +45,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO, UserGroupDAO> {
 
     private final ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(UserGroupService.class);
     private static UserGroupService instance = null;
     private static String AUTHORITY_TITLE_VIEW_ALL = "viewAllUserGroups";
 
