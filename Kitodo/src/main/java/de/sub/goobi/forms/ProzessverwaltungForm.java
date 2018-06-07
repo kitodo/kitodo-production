@@ -61,6 +61,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
+import org.hibernate.Hibernate;
 import org.jdom.transform.XSLTransformException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
@@ -208,6 +209,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         deleteMetadataDirectory();
         this.process.getProject().getProcesses().remove(this.process);
         try {
+            Hibernate.initialize(process.getBatches());
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
@@ -892,6 +894,18 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     public Process getProcess() {
         return this.process;
+    }
+
+    /**
+     * Set process by ID.
+     * @param processID ID of process to set.
+     */
+    public void setProcessByID(int processID) {
+        try {
+            setProcess(serviceManager.getProcessService().getById(processID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find process with ID " + processID, logger, e);
+        }
     }
 
     /**
