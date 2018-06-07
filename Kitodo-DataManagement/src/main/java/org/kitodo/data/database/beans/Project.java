@@ -585,11 +585,4 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     public int hashCode() {
         return this.title == null ? 0 : this.title.hashCode();
     }
-
-    // Here will be methods which should be in ProjectService but are used by
-    // jsp files
-
-    public boolean isDeleteAble() {
-        return this.processes.isEmpty();
-    }
 }
