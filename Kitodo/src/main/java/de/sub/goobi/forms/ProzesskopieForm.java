@@ -1622,29 +1622,29 @@ public class ProzesskopieForm implements Serializable {
             // if nothing was specified, then show
             if (isDocType.equals("") && isNotDocType.equals("")) {
                 titleDefinition = title;
-                break;
-            }
-
-            // if both were specified
-            if (!isDocType.equals("") && !isNotDocType.equals("")
+                // if both were specified
+            } else if (!isDocType.equals("") && !isNotDocType.equals("")
                     && StringUtils.containsIgnoreCase(isDocType, docType)
                     && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
                 titleDefinition = title;
-                break;
+                // if only duty was specified
+            } else if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)) {
+                titleDefinition = title;
+                // if only "may not" was specified
+            } else if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
+                titleDefinition = title;
             }
 
-            // if only duty was specified
-            if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)) {
-                titleDefinition = title;
-                break;
-            }
-            // if only "may not" was specified
-            if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
-                titleDefinition = title;
+            // break loop after title definition was found
+            if (isTitleDefinitionFound(titleDefinition)) {
                 break;
             }
         }
         return titleDefinition;
+    }
+
+    private boolean isTitleDefinitionFound(String titleDefinition) {
+        return !titleDefinition.equals("");
     }
 
     private String evaluateAdditionalFieldsForTitle(String currentTitle, String currentAuthors, String token) {
