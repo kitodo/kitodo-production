@@ -81,11 +81,13 @@ public class WorkflowControllerServiceIT {
 
         workflowService.saveWorkflowAsTemplate("gateway");
 
-        Template template = serviceManager.getTemplateService().getByQuery("FROM Template WHERE title = 'test-gateway'").get(0);
+        Template template = serviceManager.getTemplateService().getByQuery("FROM Template WHERE title = 'test-gateway'")
+                .get(0);
         assertEquals("Tasks of template were not saved correctly!", "Test Gateway", template.getOutputName());
         assertEquals("Tasks of template were not saved correctly!", 5, template.getTasks().size());
 
-        List<Workflow> workflows = serviceManager.getWorkflowService().getByQuery("FROM Workflow WHERE title = 'Process_1'");
+        List<Workflow> workflows = serviceManager.getWorkflowService()
+                .getByQuery("FROM Workflow WHERE title = 'Process_1'");
         assertEquals("Workflow of template was not saved correctly!", 1, workflows.size());
 
         FileLoader.deleteExtendedGatewayDiagramTestFile();
@@ -169,12 +171,12 @@ public class WorkflowControllerServiceIT {
 
         workflowService.unassignTaskFromUser(task);
         assertNull("User was not unassigned from the task!", task.getProcessingUser());
-        assertEquals("Task was not set up to open after unassing of the user!", TaskStatus.OPEN, task.getProcessingStatusEnum());
+        assertEquals("Task was not set up to open after unassing of the user!", TaskStatus.OPEN,
+            task.getProcessingStatusEnum());
     }
 
     @Test
     public void shouldReportProblem() throws Exception {
-
         Problem problem = new Problem();
         problem.setId(5);
         problem.setMessage("Fix it!");
@@ -184,14 +186,17 @@ public class WorkflowControllerServiceIT {
         workflowService.reportProblem(currentTask);
 
         Task correctionTask = taskService.getById(5);
-        assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
+        assertEquals("Report of problem was incorrect - task is not set up to open!", TaskStatus.OPEN,
+            correctionTask.getProcessingStatusEnum());
 
-        assertTrue("Report of problem was incorrect - task is not a correction task!", workflowService.isCorrectionTask(correctionTask));
+        assertTrue("Report of problem was incorrect - task is not a correction task!",
+            workflowService.isCorrectionTask(correctionTask));
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
             if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
-                assertEquals("Report of problem was incorrect - tasks between were not set up to locked!", TaskStatus.LOCKED, task.getProcessingStatusEnum());
+                assertEquals("Report of problem was incorrect - tasks between were not set up to locked!",
+                    TaskStatus.LOCKED, task.getProcessingStatusEnum());
             }
         }
 
@@ -203,28 +208,33 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldSolveProblem() throws Exception {
         Problem problem = new Problem();
-        problem.setId(1);
+        problem.setId(5);
         problem.setMessage("Fix it!");
 
         Solution solution = new Solution();
-        solution.setId(1);
+        solution.setId(7);
         solution.setMessage("Fixed");
 
         workflowService.setProblem(problem);
         workflowService.setSolution(solution);
 
-        Task currentTask = taskService.getById(6);
+        Task currentTask = taskService.getById(7);
         workflowService.reportProblem(currentTask);
+        currentTask = taskService.getById(5);
         workflowService.solveProblem(currentTask);
 
-        Task correctionTask = taskService.getById(1);
+        Task correctionTask = taskService.getById(7);
 
         Process process = currentTask.getProcess();
         for (Task task : process.getTasks()) {
-            if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
-                assertEquals("Solve of problem was incorrect - tasks between were not set up to done!", TaskStatus.DONE, task.getProcessingStatusEnum());
+            if (currentTask.getOrdering() < task.getOrdering() && task.getOrdering() < correctionTask.getOrdering()) {
+                assertEquals("Solve of problem was incorrect - tasks between were not set up to done!", TaskStatus.DONE,
+                    task.getProcessingStatusEnum());
             }
         }
+
+        assertEquals("Solve of problem was incorrect - tasks from which correction was send was not set up to open!",
+            TaskStatus.OPEN, correctionTask.getProcessingStatusEnum());
 
         // set up tasks to previous states
         MockDatabase.cleanDatabase();

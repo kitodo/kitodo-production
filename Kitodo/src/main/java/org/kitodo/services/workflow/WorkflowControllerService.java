@@ -422,7 +422,7 @@ public class WorkflowControllerService {
      * Unified method for solve problem with task.
      *
      * @param currentTask
-     *            as Task object
+     *            task which was send to correction and now was fixed as Task object
      * @return Task
      */
     public Task solveProblem(Task currentTask) throws DAOException, DataException {
@@ -434,9 +434,12 @@ public class WorkflowControllerService {
         currentTask.setProcessingTime(date);
         serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
 
+        // TODO: find more suitable name for this task
+        // tasks which was executed at the moment of correction reporting
         Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
 
         closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
+        openTaskForProcessing(correctionTask);
 
         currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
 
@@ -487,33 +490,21 @@ public class WorkflowControllerService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date)
-            throws DataException {
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-            correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
+            currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
-
-            // TODO: check if this two lines are needed
-            // this two lines differs both methods
-            currentTask.setProcessingTime(date);
-            serviceManager.getTaskService().replaceProcessingUser(taskInBetween, getCurrentUser());
-            // this two lines differs both methods
-
-            serviceManager.getTaskService().save(prepareTaskForClose(currentTask, taskInBetween, date));
         }
     }
 
-    private Task prepareTaskForClose(Task currentTask, Task taskInBetween, Date date) {
-        if (taskInBetween.getId().intValue() == currentTask.getId().intValue()) {
-            taskInBetween.setProcessingStatusEnum(TaskStatus.OPEN);
-            taskInBetween = setCorrectionTask(taskInBetween);
-            taskInBetween.setProcessingEnd(null);
-            taskInBetween.setProcessingTime(date);
-        }
-        return taskInBetween;
+    private void openTaskForProcessing(Task correctionTask) {
+        correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
+        correctionTask = setCorrectionTask(correctionTask);
+        correctionTask.setProcessingEnd(null);
+        correctionTask.setProcessingTime(new Date());
     }
 
     private Property prepareProblemMessageProperty(Date date) {
