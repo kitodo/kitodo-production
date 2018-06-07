@@ -162,17 +162,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Create new process.
-     */
-    public String newProcess() {
-        this.process = new Process();
-        this.newProcessTitle = "";
-        this.editMode = ObjectMode.PROCESS;
-        setProperties(new ArrayList<>());
-        return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
-    }
-
-    /**
      * Save process.
      *
      * @return null
@@ -1769,8 +1758,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));
-            } else {
-                newProcess();
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
