@@ -26,6 +26,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 
 public class MetsKitodoWriterTest {
 
@@ -33,27 +34,17 @@ public class MetsKitodoWriterTest {
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
-
-
     @BeforeClass
     public static void setUp() throws IOException, JAXBException {
-        
+
         metsKitodoWriter = new MetsKitodoWriter();
 
-        String manifest =
-            "Manifest-Version: 1.0\n" +
-            "Archiver-Version: Plexus Archiver\n" +
-            "Created-By: Apache Maven\n" +
-            "Built-By: tester\n" +
-            "Build-Jdk: 1.8.0_144\n" +
-            "Specification-Title: Kitodo - Data Editor\n" +
-            "Specification-Version: 3.0-SNAPSHOT\n" +
-            "Specification-Vendor: kitodo.org\n" +
-            "Implementation-Title: Kitodo - Data Editor\n" +
-            "Implementation-Version: 3.0-SNAPSHOT\n" +
-            "Implementation-Vendor-Id: org.kitodo\n" +
-            "Implementation-Vendor: kitodo.org\n" +
-            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+        String manifest = "Manifest-Version: 1.0\n" + "Archiver-Version: Plexus Archiver\n"
+                + "Created-By: Apache Maven\n" + "Built-By: tester\n" + "Build-Jdk: 1.8.0_144\n"
+                + "Specification-Title: Kitodo - Data Editor\n" + "Specification-Version: 3.0-SNAPSHOT\n"
+                + "Specification-Vendor: kitodo.org\n" + "Implementation-Title: Kitodo - Data Editor\n"
+                + "Implementation-Version: 3.0-SNAPSHOT\n" + "Implementation-Vendor-Id: org.kitodo\n"
+                + "Implementation-Vendor: kitodo.org\n" + "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
@@ -71,13 +62,14 @@ public class MetsKitodoWriterTest {
         URI xmlTestFile = Paths.get(System.getProperty("user.dir") + "/target/test-classes/newtestmeta.xml").toUri();
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
-        metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
         metsKitodoWriter.writeSerializedToFile(metsKitodoWrapper.getMets(), xmlTestFile);
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
-        String loadedMetadata = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0).getValue();
-        String savedMetadata = savedMetsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0)
+        String loadedMetadata = MetsKitodoMdSecHandler
+                .getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0).getValue();
+        String savedMetadata = MetsKitodoMdSecHandler
+                .getKitodoTypeOfDmdSecElement(savedMetsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0)
                 .getValue();
 
         Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
@@ -98,8 +90,10 @@ public class MetsKitodoWriterTest {
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
-        String loadedMetadata = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0).getValue();
-        String savedMetadata = savedMetsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0000").getMetadata().get(0)
+        String loadedMetadata = MetsKitodoMdSecHandler
+                .getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0).getValue();
+        String savedMetadata = MetsKitodoMdSecHandler
+                .getKitodoTypeOfDmdSecElement(savedMetsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0)
                 .getValue();
 
         Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
@@ -109,5 +103,27 @@ public class MetsKitodoWriterTest {
 
         Assert.assertEquals("Conversation note was not inserted to mets header", 2,
             metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getNote().size());
+    }
+
+    @Test
+    public void shouldWriteMetsString()
+        throws TransformerException, JAXBException, IOException, DatatypeConfigurationException {
+        URI xmlFile = Paths.get("./src/test/resources/testmeta.xml").toUri();
+
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
+        String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
+
+        String expectedResult =
+            "   <mets:dmdSec ID=\"DMDLOG_0001\">\n" +
+            "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
+            "            <mets:xmlData>\n" +
+            "                <kitodo:kitodo version=\"1.0\">\n" +
+            "                    <kitodo:metadata name=\"TitleDocMain\">[Seite 134r-156v]</kitodo:metadata>\n" +
+            "                </kitodo:kitodo>\n" +
+            "            </mets:xmlData>\n" +
+            "        </mets:mdWrap>\n" +
+            "    </mets:dmdSec>";
+
+        Assert.assertTrue("The written String of the loaded mets was wrong", result.contains(expectedResult));
     }
 }

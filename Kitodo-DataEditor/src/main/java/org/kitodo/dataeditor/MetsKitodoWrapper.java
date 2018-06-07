@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerException;
 import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
+import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -51,14 +52,26 @@ public class MetsKitodoWrapper {
 
     /**
      * Constructor which creates a Mets object with corresponding object factory and
-     * also inserts the basic mets elements (FileSec with local file group, StructLink, MetsHdr, physical
-     * and logical StructMap).
+     * also inserts the basic mets elements (FileSec with local file group,
+     * StructLink, MetsHdr, physical and logical StructMap).
+     * 
+     * @param documentType
+     *            The type of the document which will be used for setting the
+     *            logical root div type.
      */
-    public MetsKitodoWrapper() throws DatatypeConfigurationException, IOException {
-        this.mets = createBasicMetsElements(objectFactory.createMets());
+    public MetsKitodoWrapper(String documentType) throws DatatypeConfigurationException, IOException {
+        this.mets = objectFactory.createMets();
+        createBasicMetsElements(this.mets);
+        createLogicalRootDiv(this.mets, documentType);
     }
 
-    private Mets createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
+    private void createLogicalRootDiv(Mets mets, String type) {
+        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByMetadata(null, "DMDLOG_ROOT");
+        mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
+        getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
+    }
+
+    private void createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
             MetsType.FileSec.FileGrp fileGroup = objectFactory.createMetsTypeFileSecFileGrpLocal();
@@ -77,7 +90,6 @@ public class MetsKitodoWrapper {
             StructMapType physicalStructMapType = objectFactory.createPhysicalStructMapType();
             mets.getStructMap().add(physicalStructMapType);
         }
-        return mets;
     }
 
     /**
@@ -92,7 +104,8 @@ public class MetsKitodoWrapper {
      */
     public MetsKitodoWrapper(URI xmlFile, URI xsltFile)
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        this.mets = createBasicMetsElements(MetsKitodoReader.readAndValidateUriToMets(xmlFile, xsltFile));
+        this.mets = MetsKitodoReader.readAndValidateUriToMets(xmlFile, xsltFile);
+        createBasicMetsElements(this.mets);
     }
 
     /**
@@ -120,55 +133,6 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Gets KitodoType object of specified MdSec index.
-     * 
-     * @param index
-     *            The index as int.
-     * @return The KitodoType object.
-     */
-    public KitodoType getKitodoTypeByMdSecIndex(int index) {
-        if (this.mets.getDmdSec().size() > index) {
-            List<Object> xmlData = getXmlDataByMdSecIndex(index);
-            try {
-                return MetsKitodoMdSecHandler.getFirstGenericTypeFromJaxbObjectList(xmlData, KitodoType.class);
-            } catch (NoSuchElementException e) {
-                throw new NoSuchElementException(
-                        "MdSec element with index: " + index + " does not have kitodo metadata");
-            }
-        }
-        throw new NoSuchElementException("MdSec element with index: " + index + " does not exist");
-    }
-
-    /**
-     * Gets xml data object of specified MdSec index.
-     *
-     * @param index
-     *            The index as int.
-     * @return The KitodoType object.
-     */
-    private List<Object> getXmlDataByMdSecIndex(int index) {
-        return MetsKitodoMdSecHandler.getXmlDataOfMetsByMdSecIndex(this.mets, index);
-    }
-
-    /**
-     * Gets KitodoType object of specified MdSec id.
-     *
-     * @param id
-     *            The id as String.
-     * @return The KitodoType object.
-     */
-    public KitodoType getKitodoTypeByMdSecId(String id) {
-        int index = 0;
-        for (MdSecType mdSecType : this.mets.getDmdSec()) {
-            if (mdSecType.getID().equals(id)) {
-                return getKitodoTypeByMdSecIndex(index);
-            }
-            index++;
-        }
-        throw new NoSuchElementException("MdSec element with id: " + id + " was not found");
-    }
-
-    /**
      * Inserts MediaFile objects into fileSec of mets document and creates
      * corresponding physical structMap.
      * 
@@ -177,7 +141,7 @@ public class MetsKitodoWrapper {
      */
     public void insertMediaFiles(List<MediaFile> files) {
         MetsKitodoFileSecHandler.insertMediaFilesToLocalFileGroupOfMets(this.mets, files);
-        //TODO implement logic to check if pagination is set to automatic or not
+        // TODO implement logic to check if pagination is set to automatic or not
         MetsKitodoStructMapHandler.fillPhysicalStructMapByMetsFileSec(mets);
     }
 
@@ -197,5 +161,22 @@ public class MetsKitodoWrapper {
      */
     public StructMapType getLogicalStructMap() {
         return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL");
+    }
+
+    /**
+     * Returns the KitodoType object of an DmdSec element which is referenced by a
+     * given logical divType object.
+     * 
+     * @param div
+     *            The DivType object which is referencing the DmdSec by DMDID.
+     * @return The KitodoType object.
+     */
+    public KitodoType getFirstKitodoTypeOfLogicalDiv(DivType div) {
+        List<Object> objects = div.getDMDID();
+        if (!objects.isEmpty()) {
+            MdSecType mdSecType = (MdSecType) div.getDMDID().get(0);
+            return MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(mdSecType);
+        }
+        throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
     }
 }

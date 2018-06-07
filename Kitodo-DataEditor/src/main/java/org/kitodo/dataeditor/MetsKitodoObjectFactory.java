@@ -12,11 +12,17 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.namespace.QName;
 
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
+import org.kitodo.dataformat.metskitodo.MdSecType;
+import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
 import org.kitodo.dataformat.metskitodo.StructMapType;
@@ -109,5 +115,68 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         divType.setID("PHYS_0000");
         divType.setTYPE("physSequence");
         return divType;
+    }
+
+    /**
+     * Creates a DivType object for using as root div in mets logical sruct map.
+     *
+     * @return The DivType object.
+     */
+    public DivType createRootDivTypeForLogicalStructMap(String type, MdSecType dmdSecOfLogicalRootDiv) {
+        DivType divType = super.createDivType();
+        divType.setID("LOG_0000");
+        divType.setTYPE(type);
+        divType.getDMDID().add(dmdSecOfLogicalRootDiv);
+        return divType;
+    }
+
+
+    /**
+     * Creates a MdSecType object which wraps a list of MetadataTypes.
+     *
+     * @param metadata
+     *            The list MetadataType objects.
+     * @param id
+     *            The id of this DmdSec element.
+     * @return The MdSecType object.
+     */
+    public MdSecType createDmdSecByMetadata(List<MetadataType> metadata, String id) {
+        JAXBElement<KitodoType> kitodoType = createKitodoTypeJAXBElement();
+        if (Objects.nonNull(metadata)) {
+            for (MetadataType metadataType : metadata) {
+                kitodoType.getValue().getMetadata().add(metadataType);
+            }
+        }
+        MdSecType mdSec = super.createMdSecType();
+        mdSec.setMdWrap(wrapKitodoTypeJAXBIntoMdWrap(kitodoType));
+        mdSec.setID(id);
+        return mdSec;
+    }
+
+    /**
+     * Created a MdWrap object for kitodo metadata by setting MDTYPE and
+     * OTHERMDTYPE.
+     *
+     * @return The MdWrap object.
+     */
+    private MdSecType.MdWrap createKitodoMdSecTypeMdWrap() {
+        MdSecType.MdWrap mdWrap = super.createMdSecTypeMdWrap();
+        mdWrap.setMDTYPE("OTHER");
+        mdWrap.setOTHERMDTYPE("KITODO");
+        return mdWrap;
+    }
+
+    private JAXBElement<KitodoType> createKitodoTypeJAXBElement() {
+        KitodoType kitodoType = super.createKitodoType();
+        QName qName = new QName(MetsKitodoPrefixMapper.getKitodoUri(), MetsKitodoPrefixMapper.getKitodoPrefix());
+        return new JAXBElement<>(qName, KitodoType.class, kitodoType);
+    }
+
+    private MdSecType.MdWrap wrapKitodoTypeJAXBIntoMdWrap(JAXBElement<KitodoType> kitodoTypeJAXBElement) {
+        MdSecType.MdWrap mdWrap = createKitodoMdSecTypeMdWrap();
+        MdSecType.MdWrap.XmlData xmlData = super.createMdSecTypeMdWrapXmlData();
+        xmlData.getAny().add(kitodoTypeJAXBElement);
+        mdWrap.setXmlData(xmlData);
+        return mdWrap;
     }
 }

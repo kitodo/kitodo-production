@@ -34,6 +34,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.dataeditor.enums.FileLocationType;
+import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -42,31 +43,23 @@ import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
 import org.kitodo.dataformat.metskitodo.StructLinkType;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MetsKitodoWrapperTest {
 
     private URI xmlfile = Paths.get("./src/test/resources/testmeta.xml").toUri();
     private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
-    private ObjectFactory objectFactory = new ObjectFactory();
     private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
 
     @BeforeClass
     public static void setUp() throws IOException {
 
-        String manifest =
-            "Manifest-Version: 1.0\n" +
-            "Archiver-Version: Plexus Archiver\n" +
-            "Created-By: Apache Maven\n" +
-            "Built-By: tester\n" +
-            "Build-Jdk: 1.8.0_144\n" +
-            "Specification-Title: Kitodo - Data Editor\n" +
-            "Specification-Version: 3.0-SNAPSHOT\n" +
-            "Specification-Vendor: kitodo.org\n" +
-            "Implementation-Title: Kitodo - Data Editor\n" +
-            "Implementation-Version: 3.0-SNAPSHOT\n" +
-            "Implementation-Vendor-Id: org.kitodo\n" +
-            "Implementation-Vendor: kitodo.org\n" +
-            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+        String manifest = "Manifest-Version: 1.0\n" + "Archiver-Version: Plexus Archiver\n"
+                + "Created-By: Apache Maven\n" + "Built-By: tester\n" + "Build-Jdk: 1.8.0_144\n"
+                + "Specification-Title: Kitodo - Data Editor\n" + "Specification-Version: 3.0-SNAPSHOT\n"
+                + "Specification-Vendor: kitodo.org\n" + "Implementation-Title: Kitodo - Data Editor\n"
+                + "Implementation-Version: 3.0-SNAPSHOT\n" + "Implementation-Vendor-Id: org.kitodo\n"
+                + "Implementation-Vendor: kitodo.org\n" + "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
@@ -81,7 +74,7 @@ public class MetsKitodoWrapperTest {
         String from = "from test";
         String to = "to test";
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         metsKitodoWrapper.addSmLink(from, to);
 
         StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsKitodoWrapper.getMets().getStructLink()
@@ -94,7 +87,7 @@ public class MetsKitodoWrapperTest {
     @Test
     public void shouldAddMetsHeader() throws DatatypeConfigurationException, IOException {
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         String role = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getROLE();
         String name = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getName();
         String type = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getTYPE();
@@ -125,7 +118,8 @@ public class MetsKitodoWrapperTest {
     public void shouldReadKitodoMetadata()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
+
+        KitodoType kitodoType = MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0));
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
@@ -138,7 +132,7 @@ public class MetsKitodoWrapperTest {
     public void shouldReadKitodoMetadataGroup()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
+        KitodoType kitodoType = MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0));
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0).getMetadataGroup().get(0);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "subTypIdentifierPPN",
@@ -152,7 +146,7 @@ public class MetsKitodoWrapperTest {
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         URI oldXmlfile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
-        KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
+        KitodoType kitodoType = MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0));
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
@@ -166,26 +160,13 @@ public class MetsKitodoWrapperTest {
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         URI oldXmlfile = Paths.get("./src/test/resources/testmetaOldFormat.xml").toUri();
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(oldXmlfile, xsltFile);
-        KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
+        KitodoType kitodoType = MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0));
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0);
         Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "typIdentifierPPN",
             metadataGroupType.getMetadata().get(1).getName());
         Assert.assertEquals("Reading value out of kitodo metadata was not correct", "10457187X",
             metadataGroupType.getMetadata().get(1).getValue());
-    }
-
-    @Test
-    public void shouldReadKitodoMetadataById()
-            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        KitodoType kitodoType = metsKitodoWrapper.getKitodoTypeByMdSecId("DMDLOG_0002");
-
-        MetadataType metadataType = kitodoType.getMetadata().get(0);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "TitleDocMain",
-            metadataType.getName());
-        Assert.assertEquals("Reading value out of kitodo metadata was not correct", "[Seite 157r-181v]",
-            metadataType.getValue());
     }
 
     @Test
@@ -198,7 +179,7 @@ public class MetsKitodoWrapperTest {
                 new MediaFile(Paths.get(path + "/0000" + i + ".tif").toUri(), FileLocationType.URL, "image/tiff"));
         }
 
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         metsKitodoWrapper.insertMediaFiles(mediaFiles);
 
         Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
@@ -222,32 +203,36 @@ public class MetsKitodoWrapperTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void shouldNotReadKitodoMetadataByNotExistingId()
+    public void shouldInsertRootLogicalDivAndMdSecAtCreation()
+            throws DatatypeConfigurationException, IOException {
+        String documentType = "Manuscript";
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(documentType);
+        StructMapType logicalStructMap = metsKitodoWrapper.getLogicalStructMap();
+        MdSecType rootDmdSec = (MdSecType) logicalStructMap.getDiv().getDMDID().get(0);
+
+        Assert.assertEquals("Type of logical root div was wrong", documentType, logicalStructMap.getDiv().getTYPE());
+        Assert.assertEquals("Id of root div related DmdSec was wrong", "DMDLOG_ROOT", rootDmdSec.getID());
+    }
+
+    @Test
+    public void shouldGetKitodoTypeByDiv()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
+        KitodoType kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(rootDiv);
+        Assert.assertEquals("Reading metadata of dmdSec logical root div was wrong", "Test Publisher",
+            kitodoTypeOfDiv.getMetadata().get(1).getValue());
+
+        DivType div = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
+        kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(div);
+        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "[Seite 134r-156v]",
+            kitodoTypeOfDiv.getMetadata().get(0).getValue());
+
+        DivType divWithoutMetadata = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
         expectedException.expect(NoSuchElementException.class);
-        expectedException.expectMessage("MdSec element with id: not existing was not found");
-        metsKitodoWrapper.getKitodoTypeByMdSecId("not existing");
+        expectedException.expectMessage("Div element with id: LOG_0001 does not have metadata!");
+        metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(divWithoutMetadata);
     }
 
-    @Test
-    public void shouldNotReadNotExistingMdSecByIndex() throws DatatypeConfigurationException, IOException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
-        expectedException.expect(NoSuchElementException.class);
-        expectedException.expectMessage("MdSec element with index: 0 does not exist");
-        metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
-    }
-
-    @Test
-    public void shouldNotReadNotExistingKitodoMetadataByIndex() throws DatatypeConfigurationException, IOException {
-        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper();
-        MdSecType mdSecType = objectFactory.createMdSecType();
-        MdSecType.MdWrap mdSecTypeMdWrap = objectFactory.createMdSecTypeMdWrap();
-        mdSecTypeMdWrap.setXmlData(objectFactory.createMdSecTypeMdWrapXmlData());
-        mdSecType.setMdWrap(mdSecTypeMdWrap);
-        metsKitodoWrapper.getMets().getDmdSec().add(mdSecType);
-        expectedException.expect(NoSuchElementException.class);
-        expectedException.expectMessage("MdSec element with index: 0 does not have kitodo metadata");
-        metsKitodoWrapper.getKitodoTypeByMdSecIndex(0);
-    }
 }

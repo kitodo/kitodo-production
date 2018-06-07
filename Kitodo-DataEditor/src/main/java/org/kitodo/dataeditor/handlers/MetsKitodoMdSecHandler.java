@@ -18,11 +18,27 @@ import java.util.Optional;
 import javax.xml.bind.JAXBElement;
 
 import org.kitodo.dataeditor.JaxbXmlUtils;
+import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
 public class MetsKitodoMdSecHandler {
-    
+
+    /**
+     * Returns the KitodoType object of an MdSecType object.
+     * 
+     * @param dmdSecElement
+     *            The DmdSecElement as MdSecType object.
+     * @return The KitodoType object.
+     */
+    public static KitodoType getKitodoTypeOfDmdSecElement(MdSecType dmdSecElement) {
+        Optional<List<Object>> xmlDataOfMdSec = getXmlDataOfMdSec(dmdSecElement);
+        if (xmlDataOfMdSec.isPresent()) {
+            return getFirstGenericTypeFromJaxbObjectList(xmlDataOfMdSec.get(), KitodoType.class);
+        }
+        throw new NoSuchElementException("DmdSec element with id " + dmdSecElement.getID() + " does not have xml data");
+    }
+
     /**
      * Gets the xml metadata of the specified mdSec element of an Mets object.
      *
@@ -67,7 +83,7 @@ public class MetsKitodoMdSecHandler {
      *            The type of object to return.
      * @return The first object that corresponds to the given type.
      */
-    public static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
+    private static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
         if (JaxbXmlUtils.objectListContainsType(objects, type)) {
             for (Object object : objects) {
                 if (object instanceof JAXBElement) {
