@@ -33,6 +33,7 @@
         <maxAllowedViolations>95</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
+        <cargo.plugin.version>1.6.8</cargo.plugin.version>
     </properties>
 
     <dependencies>
@@ -782,7 +783,7 @@
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>${cargo.plugin.version}</version>
 
                         <configuration>
                             <!-- Provide Tomcat -->
@@ -898,7 +899,7 @@
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>${cargo.plugin.version}</version>
 
                         <configuration>
                             <!-- Provide Tomcat -->
