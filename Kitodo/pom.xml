@@ -267,12 +267,24 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
             <version>3.6.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-io</artifactId>
+                    <groupId>commons-io</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-container-default -->
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-container-default</artifactId>
             <version>1.7.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>plexus-utils</artifactId>
+                    <groupId>org.codehaus.plexus</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
