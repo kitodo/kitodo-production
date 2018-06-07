@@ -72,22 +72,62 @@ public class Helper extends HibernateHelper implements Observer {
         return (String) requestParams.get(parameter);
     }
 
+    /**
+     * Set error message for user.
+     *
+     * @param message
+     *            for user
+     */
     public static void setErrorMessage(String message) {
         setMessage(null, message, "", false);
     }
 
+    /**
+     * Set error message and description for user.
+     *
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
     public static void setErrorMessage(String message, String description) {
         setMessage(null, message, description != null ? description : "", false);
     }
 
+    /**
+     * Set error message and description for user.
+     *
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
     public static void setErrorMessage(String control, String message, String description) {
         setMessage(control, message, description != null ? description : "", false);
     }
 
+    /**
+     * Set error message for user with usage of exception.
+     * 
+     * @param e
+     *            thrown exception
+     */
     public static void setErrorMessage(Exception e) {
         setErrorMessage("Error (" + e.getClass().getName() + "): ", getExceptionMessage(e));
     }
 
+    /**
+     * Set error message for user with usage of exception.
+     *
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param e
+     *            thrown exception
+     */
     public static void setErrorMessage(String control, String message, Exception e) {
         setErrorMessage(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
     }
@@ -189,14 +229,38 @@ public class Helper extends HibernateHelper implements Observer {
         return message;
     }
 
+    /**
+     * Set message for user.
+     * 
+     * @param message
+     *            for user
+     */
     public static void setMessage(String message) {
         setMessage(null, message, "", true);
     }
 
+    /**
+     * Set message and description for user.
+     *
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
     public static void setMessage(String message, String description) {
         setMessage(null, message, description, true);
     }
 
+    /**
+     * Set message and description for user.
+     * 
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
     public static void setMessage(String control, String message, String description) {
         setMessage(control, message, description, true);
     }
@@ -518,7 +582,8 @@ public class Helper extends HibernateHelper implements Observer {
     /**
      * Set activeMQReporting.
      *
-     * @param activeMQReporting as Map of Strings
+     * @param activeMQReporting
+     *            as Map of Strings
      */
     public static void setActiveMQReporting(Map<String, String> activeMQReporting) {
         Helper.activeMQReporting = activeMQReporting;
