@@ -427,7 +427,7 @@ public class FileManipulation {
      * @return URI list of import folders
      */
     public List<URI> getAllImportFolder() {
-        URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/")).toURI();
+        URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/")).toURI();
         URI fileuploadFolder = tempDirectory.resolve(FILE_UPLOAD);
 
         allImportFolder = new ArrayList<>();
@@ -452,7 +452,7 @@ public class FileManipulation {
             Helper.setFehlerMeldung(NO_FILE_SELECTED);
             return;
         }
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/tmp/");
+        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/");
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
