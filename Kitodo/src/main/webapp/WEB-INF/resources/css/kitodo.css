@@ -133,6 +133,11 @@ body.first-visit #portal-header {
     margin: 15px 0;
     }
 
+#portal-header section.login-screen {
+    width: 100% !important;
+    text-align: center;
+}
+
 #portal-header #portal-search {
     width: 100%;
     }
@@ -425,7 +430,7 @@ main {
     position: relative;
     z-index: 2;
     margin-bottom: 80px;
-    padding: 0 16px;
+    padding: 0;
     }
 
 body.first-visit main {
@@ -439,7 +444,7 @@ section#content-section {
 }
 
 #listWrapper, section#content-section {
-    margin: auto;
+    margin: auto 16px;
     border-radius: 3px;
     padding: 0;
     -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
@@ -658,6 +663,76 @@ main i.fa {
     display: inline-block;
 }
 
+#login-section {
+    background: #fff;
+    border-radius: 3px;
+    padding: 32px 32px 0 32px;
+    -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    max-width: 560px;
+    margin: 0 auto;
+}
+
+#login-section h3 {
+    font-size: 22px;
+    margin-bottom: 1.3em;
+}
+
+#login-section input[type=text], #login-section input[type=password] {
+    border: 1px solid #0071bc;
+    border-radius: 3px;
+    padding: 10px;
+    line-height: 0px;
+    font-size: 16px;
+    color: #0071bc;
+    display: block;
+    width: 100%;
+}
+
+#login-section input[type=text]:hover {
+    border: 1px solid #005182;
+    color: #005182;
+}
+
+#login-section div {
+    margin-bottom: 1.3em;
+}
+
+#login-section button {
+    background: #0071bc;
+    border-radius: 3px;
+    border: 1px solid #0071bc;
+    color: #fff;
+    padding: 10px;
+}
+
+#login-section button .button-text {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+#login-section button .ui-icon {
+    padding-left: 10px;
+    font-size: 16px;
+    display: inline;
+}
+
+#login-section button:hover {
+    background: #005182;
+    border: 1px solid #005182;
+    cursor: pointer;
+}
+
+.login-note {
+    background: #999;
+    margin: 32px -32px 0 -32px;
+    padding: 32px;
+    color: #d8d8d8;
+    hyphens: auto;
+    line-height: 22px;
+}
+
 /*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
@@ -855,7 +930,7 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 20px;
+        margin-top: 30px;
         }
 
     #portal-header .wrapper {
@@ -887,10 +962,21 @@ min 700px
         right: auto;
         }
 
+    #portal-header section.login-screen {
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 32px;
+    }
+
     #kitodo-logo {
         display: inline-block;
         margin-right: 30px;
         }
+
+    .login-screen #kitodo-logo {
+        margin: 0;
+    }
 
     #kitodo-icon {
         display: none;
