@@ -267,6 +267,7 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
             <version>3.6.0</version>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-io</artifactId>
@@ -279,6 +280,7 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-container-default</artifactId>
             <version>1.7.1</version>
+            <scope>test</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>plexus-utils</artifactId>
@@ -793,7 +795,7 @@
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.6.4</version>
+                        <version>1.6.8</version>
 
                         <configuration>
                             <!-- Provide Tomcat -->
@@ -909,7 +911,7 @@
                     <plugin>
                         <groupId>org.codehaus.cargo</groupId>
                         <artifactId>cargo-maven2-plugin</artifactId>
-                        <version>1.6.4</version>
+                        <version>1.6.8</version>
 
                         <configuration>
                             <!-- Provide Tomcat -->
