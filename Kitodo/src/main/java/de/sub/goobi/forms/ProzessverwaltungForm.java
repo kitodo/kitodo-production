@@ -67,6 +67,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -221,6 +222,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.process.getProject().getProcesses().remove(this.process);
         try {
             Hibernate.initialize(process.getBatches());
+            for (Batch batch : process.getBatches()) {
+                batch.getProcesses().remove(this.process);
+            }
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
