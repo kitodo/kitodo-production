@@ -39,7 +39,7 @@ public class ConfigProjectsTest {
     @Test
     public void shouldGetConfigProjectsForItems() {
         List<String> items = configProjects.getParamList("createNewProcess.itemlist.item");
-        assertEquals("Incorrect amount of items!", 2, items.size());
+        assertEquals("Incorrect amount of items!", 6, items.size());
     }
 
     @Test
@@ -51,6 +51,6 @@ public class ConfigProjectsTest {
     @Test
     public void shouldGetConfigProjectsForProcessTitles() {
         List<String> processTitles = configProjects.getParamList("createNewProcess.itemlist.processtitle");
-        assertEquals("Incorrect amount of process titles!", 3, processTitles.size());
+        assertEquals("Incorrect amount of process titles!", 5, processTitles.size());
     }
 }
