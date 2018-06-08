@@ -39,14 +39,14 @@
                 <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportImagesPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportImagesPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                 </p:inputText>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportImageDir');" disabled="#{ProjekteForm.lockedTechnical}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportImageDir');"/>
             </div>
             <div>
                 <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPfad}" />
                 <p:inputText id="dmsExportErrorDir" placeholder="#{msgs.dmsImportErrorPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportErrorPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                 </p:inputText>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportErrorDir')" disabled="#{ProjekteForm.lockedTechnical}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportErrorDir')"/>
             </div>
             <div>
                 <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
@@ -74,14 +74,14 @@
                 <p:inputText id="dmsExportDir" placeholder="#{msgs.dmsImportPfadXmlDatei}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportRootPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                 </p:inputText>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportDir');" disabled="#{ProjekteForm.lockedTechnical}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportDir');"/>
             </div>
             <div>
                 <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPfad}" />
                 <p:inputText id="dmsExportSuccessDir" placeholder="#{msgs.dmsImportSuccessPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                 </p:inputText>
-                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportSuccessDir');" disabled="#{ProjekteForm.lockedTechnical}"/>
+                <p:commandButton type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:tabs:dmsExportSuccessDir');"/>
             </div>
             <div>
                 <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />
