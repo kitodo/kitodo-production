@@ -52,6 +52,10 @@ public class ProjectsPage extends Page {
     private WebElement newElementButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectForm:newProjectButton")
+    private WebElement newProjectButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newDocketButton")
     private WebElement newDocketButton;
 
@@ -116,6 +120,18 @@ public class ProjectsPage extends Page {
     }
 
     /**
+     * Return a list of all project titles which were displayed on clients page.
+     *
+     * @return list of project titles
+     */
+    public List<String> getProjectsTitles() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(projectsTable, 1);
+    }
+
+    /**
      * Returns a list of all docket titles which were displayed on dockets page.
      *
      * @return list of docket titles
@@ -137,6 +153,24 @@ public class ProjectsPage extends Page {
             goTo();
         }
         return getTableDataByColumn(rulesetsTable, 0);
+    }
+
+    /**
+     * Go to edit page for creating a new project.
+     *
+     * @return project edit page
+     */
+    public ProjectEditPage createNewProject() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        await("Wait for create new project button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .ignoreExceptions().until(() -> isButtonClicked.matches(newProjectButton));
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
+        wait.until(ExpectedConditions.urlContains(Pages.getProjectEditPage().getUrl()));
+        return Pages.getProjectEditPage();
     }
 
     /**
@@ -174,5 +208,4 @@ public class ProjectsPage extends Page {
         wait.until(ExpectedConditions.urlContains(Pages.getRulesetEditPage().getUrl()));
         return Pages.getRulesetEditPage();
     }
-
 }

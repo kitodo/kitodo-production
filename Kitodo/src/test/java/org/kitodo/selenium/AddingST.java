@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -25,6 +26,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
+import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
 
@@ -33,13 +35,22 @@ public class AddingST extends BaseTestSelenium {
     private ServiceManager serviceManager = new ServiceManager();
 
     @Test
+    public void addProjectTest() throws Exception {
+        Project project = ProjectGenerator.generateProject();
+        Pages.getProjectsPage().createNewProject().insertProjectData(project).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
+        Assert.assertTrue("Created Project was not listed at projects table!", projectAvailable);
+    }
+
+    @Test
     public void addDocketTest() throws Exception {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
         docket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
-        Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
+        Pages.getProjectsPage().createNewDocket().insertDocketData(docket).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
-        List<String> docketTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(3).getDocketTitles();
+        List<String> docketTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.DOCKETS.getIndex()).getDocketTitles();
         boolean docketAvailable = docketTitles.contains(docket.getTitle());
         Assert.assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
     }
@@ -49,9 +60,9 @@ public class AddingST extends BaseTestSelenium {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");
         ruleset.setFile("ruleset_test.xml");
-        Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
+        Pages.getProjectsPage().createNewRuleset().insertRulesetData(ruleset).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
-        List<String> rulesetTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(4).getRulesetTitles();
+        List<String> rulesetTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.RULESETS.getIndex()).getRulesetTitles();
         boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
         Assert.assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
@@ -59,7 +70,7 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
-        Pages.getUsersPage().goTo().createNewUser().insertUserData(user).save();
+        Pages.getUsersPage().createNewUser().insertUserData(user).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
@@ -69,13 +80,13 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
-        Pages.getUsersPage().goTo().createNewLdapGroup().insertLdapGroupData(ldapGroup);
+        Pages.getUsersPage().createNewLdapGroup().insertLdapGroupData(ldapGroup);
 
         Pages.getLdapGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex()).getLdapGroupNames()
+        boolean ldapGroupAvailable = Pages.getUsersPage().switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex()).getLdapGroupNames()
                 .contains(ldapGroup.getTitle());
 
         Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
@@ -88,9 +99,9 @@ public class AddingST extends BaseTestSelenium {
     public void addClientTest() throws Exception {
         Client client = new Client();
         client.setName("MockClient");
-        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).createNewClient().insertClientData(client).save();
+        Pages.getUsersPage().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).createNewClient().insertClientData(client).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
-        boolean clientAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).getClientNames().contains(client.getName());
+        boolean clientAvailable = Pages.getUsersPage().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).getClientNames().contains(client.getName());
         Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
     
@@ -99,14 +110,14 @@ public class AddingST extends BaseTestSelenium {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
 
-        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex()).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
+        Pages.getUsersPage().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex()).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
                 .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities();
 
         Pages.getUserGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        List<String> userGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex())
+        List<String> userGroupTitles = Pages.getUsersPage().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex())
                 .getUserGroupTitles();
         Assert.assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
