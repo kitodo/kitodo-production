@@ -16,6 +16,7 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -44,6 +45,7 @@ public class JaxbXmlUtils {
         StreamSource styleSource = new StreamSource(xslFile.getPath());
 
         TransformerFactory factory = TransformerFactory.newInstance();
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = factory.newTransformer(styleSource);
 
         try (StringWriter stringWriter = new StringWriter()) {
