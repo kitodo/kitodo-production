@@ -140,7 +140,7 @@ public class BatchStepHelper extends BatchHelper {
             }
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
-                Helper.setMeldung("propertySaved");
+                Helper.setMessage("propertySaved");
             } catch (DataException e) {
                 Helper.setErrorMessage("propertiesNotSaved", logger, e);
             }
@@ -178,7 +178,7 @@ public class BatchStepHelper extends BatchHelper {
 
                 try {
                     this.serviceManager.getProcessService().save(process);
-                    Helper.setMeldung("propertySaved");
+                    Helper.setMessage("propertySaved");
                 } catch (DataException e) {
                     Helper.setErrorMessage("propertiesNotSaved",
                         logger, e);
@@ -583,7 +583,7 @@ public class BatchStepHelper extends BatchHelper {
             MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
                     serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
-                Helper.setFehlerMeldung("Error on image validation!");
+                Helper.setErrorMessage("Error on image validation!");
                 return true;
             }
         }
@@ -601,10 +601,8 @@ public class BatchStepHelper extends BatchHelper {
 
     private boolean isPropertyInvalid(Property property, Task task) {
         if (property.getValue() == null || property.getValue().equals("")) {
-            List<String> parameter = new ArrayList<>();
-            parameter.add(property.getTitle());
-            parameter.add(task.getProcess().getTitle());
-            Helper.setFehlerMeldung(Helper.getTranslation("BatchPropertyEmpty", parameter));
+            Helper.setErrorMessage("BatchPropertyEmpty",
+                    new Object[] {property.getTitle(), task.getProcess().getTitle()});
             return true;
         }
         return false;

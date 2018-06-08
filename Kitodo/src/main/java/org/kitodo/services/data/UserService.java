@@ -117,7 +117,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         try {
             user = getByLogin(username);
         } catch (DAOException e) {
-            Helper.setFehlerMeldung(e);
+            Helper.setErrorMessage(e);
             throw new UsernameNotFoundException(e.getMessage(), e);
         }
         return new SecurityUserDetails(user);

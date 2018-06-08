@@ -78,7 +78,7 @@ public class DocketForm extends BasisForm {
                 this.serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {
-                Helper.setFehlerMeldung("docketNotFound");
+                Helper.setErrorMessage("docketNotFound");
                 return null;
             }
         } catch (DataException e) {
@@ -100,7 +100,7 @@ public class DocketForm extends BasisForm {
     public String deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
-                Helper.setFehlerMeldung("docketInUse");
+                Helper.setErrorMessage("docketInUse");
                 return null;
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);

@@ -112,14 +112,12 @@ public class MassImportForm implements Serializable {
         }
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             if (this.template.getTasks().isEmpty()) {
-                Helper.setFehlerMeldung("noStepsInWorkflow");
+                Helper.setErrorMessage("noStepsInWorkflow");
             }
             for (Task task : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
                         && serviceManager.getTaskService().getUsersSize(task) == 0) {
-                    List<String> param = new ArrayList<>();
-                    param.add(task.getTitle());
-                    Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
+                    Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle()});
                 }
             }
             return null;
@@ -138,7 +136,7 @@ public class MassImportForm implements Serializable {
         ArrayList<String> defaultCollections = new ArrayList<>();
         String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
         if (!(new File(filename).exists())) {
-            Helper.setFehlerMeldung("File not found: ", filename);
+            Helper.setErrorMessage("File not found: ", filename);
             return;
         }
         this.digitalCollections = new ArrayList<>();
@@ -221,7 +219,7 @@ public class MassImportForm implements Serializable {
     public String convertData() throws IOException, DataException {
         this.processList = new ArrayList<>();
         if (StringUtils.isEmpty(currentPlugin)) {
-            Helper.setFehlerMeldung("missingPlugin");
+            Helper.setErrorMessage("missingPlugin");
             return null;
         }
         if (testForData()) {
@@ -253,7 +251,7 @@ public class MassImportForm implements Serializable {
                 return null;
             }
         } else {
-            Helper.setFehlerMeldung("missingData");
+            Helper.setErrorMessage("missingData");
             return null;
         }
 
@@ -299,7 +297,7 @@ public class MassImportForm implements Serializable {
     public void uploadFile() throws IOException {
 
         if (this.uploadedFile == null) {
-            Helper.setFehlerMeldung("noFileSelected");
+            Helper.setErrorMessage("noFileSelected");
             return;
         }
 
@@ -378,21 +376,18 @@ public class MassImportForm implements Serializable {
                     && selectedFilenames.contains(importFileName.getRawPath())) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
-            Helper.setFehlerMeldung(
+            Helper.setErrorMessage(
                     "import failed for " + io.getProcessTitle() + ", process generation failed");
 
         } else {
-            Helper.setMeldung(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());
+            Helper.setMessage(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());
             this.processList.add(process);
         }
     }
 
     private void removeImportFileNameFromSelectedFileNames(ImportObject io) {
         URI importFileName = io.getImportFileName();
-        List<String> param = new ArrayList<>();
-        param.add(io.getProcessTitle());
-        param.add(io.getErrorMessage());
-        Helper.setFehlerMeldung(Helper.getTranslation("importFailedError", param));
+        Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage()});
         if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
                 && selectedFilenames != null && !selectedFilenames.isEmpty()
                 && selectedFilenames.contains(importFileName.getRawPath())) {
@@ -727,7 +722,7 @@ public class MassImportForm implements Serializable {
      */
     public String nextPage() {
         if (!testForData()) {
-            Helper.setFehlerMeldung("missingData");
+            Helper.setErrorMessage("missingData");
             return null;
         }
         java.lang.reflect.Method method;

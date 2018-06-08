@@ -52,7 +52,7 @@ public class LoginForm implements Serializable {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
         if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
-            Helper.setFehlerMeldung(Helper.getTranslation("passwordsDontMatch"));
+            Helper.setErrorMessage("passwordsDontMatch");
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */
@@ -61,7 +61,7 @@ public class LoginForm implements Serializable {
                 temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
-                Helper.setMeldung(Helper.getTranslation("passwordChanged"));
+                Helper.setMessage("passwordChanged");
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {"user"}, logger, e);
             } catch (NoSuchAlgorithmException e) {

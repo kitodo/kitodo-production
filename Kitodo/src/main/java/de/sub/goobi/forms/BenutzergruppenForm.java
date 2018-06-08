@@ -170,7 +170,7 @@ public class BenutzergruppenForm extends BasisForm {
                 this.serviceManager.getUserGroupService().save(this.userGroup);
             }
             if (!this.userGroup.getTasks().isEmpty()) {
-                Helper.setFehlerMeldung("userGroupAssignedError");
+                Helper.setErrorMessage("userGroupAssignedError");
                 return null;
             }
             for (UserGroupClientAuthorityRelation relation : userGroup.getUserGroupClientAuthorityRelations()) {

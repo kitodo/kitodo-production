@@ -81,7 +81,7 @@ public class SchemaService {
          */
         DigitalDocumentInterface digitalDocument = gdzfile.getDigitalDocument();
         if (digitalDocument.getFileSet() == null) {
-            Helper.setMeldung(process.getTitle()
+            Helper.setMessage(process.getTitle()
                     + ": digital document does not contain images; temporarily adding them for mets file creation");
             MetadatenImagesHelper mih = new MetadatenImagesHelper(prefs, digitalDocument);
             mih.createPagination(process, null);
@@ -107,7 +107,7 @@ public class SchemaService {
                 || topElement.getAllToReferences("logical_physical").isEmpty()) {
             if (digitalDocument.getPhysicalDocStruct() != null
                     && digitalDocument.getPhysicalDocStruct().getAllChildren() != null) {
-                Helper.setMeldung(process.getTitle()
+                Helper.setMessage(process.getTitle()
                         + ": topstruct element does not have any referenced images yet; temporarily adding them "
                         + "for mets file creation");
                 for (DocStructInterface mySeitenDocStruct : digitalDocument.getPhysicalDocStruct().getAllChildren()) {
@@ -118,7 +118,7 @@ public class SchemaService {
                     ((ExportDms) exportMets).getExportDmsTask().setException(new RuntimeException(
                             process.getTitle() + ": could not find any referenced images, export aborted"));
                 } else {
-                    Helper.setFehlerMeldung(
+                    Helper.setErrorMessage(
                         process.getTitle() + ": could not find any referenced images, export aborted");
                 }
                 return null;
@@ -241,10 +241,7 @@ public class SchemaService {
                 if (sizeOfPagination == sizeOfImages) {
                     digitalDocument.overrideContentFiles(imageStrings);
                 } else {
-                    List<String> param = new ArrayList<>();
-                    param.add(String.valueOf(sizeOfPagination));
-                    param.add(String.valueOf(sizeOfImages));
-                    Helper.setFehlerMeldung(Helper.getTranslation("imagePaginationError", param));
+                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
                     return true;
                 }
             }

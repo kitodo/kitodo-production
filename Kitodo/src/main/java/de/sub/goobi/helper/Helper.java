@@ -72,24 +72,64 @@ public class Helper extends HibernateHelper implements Observer {
         return (String) requestParams.get(parameter);
     }
 
-    public static void setFehlerMeldung(String message) {
-        setMeldung(null, message, "", false);
+    /**
+     * Set error message for user.
+     *
+     * @param message
+     *            for user
+     */
+    public static void setErrorMessage(String message) {
+        setMessage(null, message, "", false);
     }
 
-    public static void setFehlerMeldung(String message, String description) {
-        setMeldung(null, message, description != null ? description : "", false);
+    /**
+     * Set error message and description for user.
+     *
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
+    public static void setErrorMessage(String message, String description) {
+        setMessage(null, message, description != null ? description : "", false);
     }
 
-    public static void setFehlerMeldung(String control, String message, String description) {
-        setMeldung(control, message, description != null ? description : "", false);
+    /**
+     * Set error message and description for user.
+     *
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
+    public static void setErrorMessage(String control, String message, String description) {
+        setMessage(control, message, description != null ? description : "", false);
     }
 
-    public static void setFehlerMeldung(Exception e) {
-        setFehlerMeldung("Error (" + e.getClass().getName() + "): ", getExceptionMessage(e));
+    /**
+     * Set error message for user with usage of exception.
+     * 
+     * @param e
+     *            thrown exception
+     */
+    public static void setErrorMessage(Exception e) {
+        setErrorMessage("Error (" + e.getClass().getName() + "): ", getExceptionMessage(e));
     }
 
-    public static void setFehlerMeldung(String control, String message, Exception e) {
-        setFehlerMeldung(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
+    /**
+     * Set error message for user with usage of exception.
+     *
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param e
+     *            thrown exception
+     */
+    public static void setErrorMessage(String control, String message, Exception e) {
+        setErrorMessage(control, message + " (" + e.getClass().getSimpleName() + "): ", getExceptionMessage(e));
     }
 
     /**
@@ -103,9 +143,9 @@ public class Helper extends HibernateHelper implements Observer {
      */
     public static void setErrorMessage(String title, final Object[] parameters) {
         if (Objects.nonNull(parameters) && parameters.length > 0) {
-            setFehlerMeldung(MessageFormat.format(getTranslation(title), parameters));
+            setErrorMessage(MessageFormat.format(getTranslation(title), parameters));
         } else {
-            setFehlerMeldung(getTranslation(title));
+            setErrorMessage(getTranslation(title));
         }
     }
 
@@ -127,9 +167,9 @@ public class Helper extends HibernateHelper implements Observer {
     public static void setErrorMessage(String title, Logger logger, Exception exception) {
         logger.error(title, exception);
         if (Objects.isNull(exception.getMessage()) || exception.getMessage().equals(title)) {
-            setFehlerMeldung(title);
+            setErrorMessage(title);
         } else {
-            setFehlerMeldung(title, exception.getMessage());
+            setErrorMessage(title, exception.getMessage());
         }
     }
 
@@ -176,7 +216,7 @@ public class Helper extends HibernateHelper implements Observer {
      */
     public static void setErrorMessage(String title, String description, Logger logger, Exception exception) {
         logger.error(title, exception);
-        setFehlerMeldung(title, description);
+        setErrorMessage(title, description);
     }
 
     private static String getExceptionMessage(Throwable e) {
@@ -189,23 +229,47 @@ public class Helper extends HibernateHelper implements Observer {
         return message;
     }
 
-    public static void setMeldung(String message) {
-        setMeldung(null, message, "", true);
+    /**
+     * Set message for user.
+     * 
+     * @param message
+     *            for user
+     */
+    public static void setMessage(String message) {
+        setMessage(null, message, "", true);
     }
 
-    public static void setMeldung(String message, String description) {
-        setMeldung(null, message, description, true);
+    /**
+     * Set message and description for user.
+     *
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
+    public static void setMessage(String message, String description) {
+        setMessage(null, message, description, true);
     }
 
-    public static void setMeldung(String control, String message, String description) {
-        setMeldung(control, message, description, true);
+    /**
+     * Set message and description for user.
+     * 
+     * @param control
+     *            what is it - no documentation for clientId in FacesContext
+     * @param message
+     *            for user
+     * @param description
+     *            additional information to message
+     */
+    public static void setMessage(String control, String message, String description) {
+        setMessage(control, message, description, true);
     }
 
     /**
      * Dem aktuellen Formular eine Fehlermeldung für ein bestimmtes Control
      * übergeben.
      */
-    private static void setMeldung(String control, String message, String description, boolean onlyInfo) {
+    private static void setMessage(String control, String message, String description, boolean onlyInfo) {
         // Never forget: Strings are immutable
         message = message.replaceAll("<", "&lt;");
         message = message.replaceAll(">", "&gt;");
@@ -421,11 +485,11 @@ public class Helper extends HibernateHelper implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (!(arg instanceof String)) {
-            Helper.setFehlerMeldung("User notification failed by object: '" + arg.toString()
+            Helper.setErrorMessage("User notification failed by object: '" + arg.toString()
                     + "' which isn't an expected String Object. This error is caused by an implementation of "
                     + "the Observer Interface in Helper");
         } else {
-            Helper.setFehlerMeldung((String) arg);
+            Helper.setErrorMessage((String) arg);
         }
     }
 
@@ -518,7 +582,8 @@ public class Helper extends HibernateHelper implements Observer {
     /**
      * Set activeMQReporting.
      *
-     * @param activeMQReporting as Map of Strings
+     * @param activeMQReporting
+     *            as Map of Strings
      */
     public static void setActiveMQReporting(Map<String, String> activeMQReporting) {
         Helper.activeMQReporting = activeMQReporting;

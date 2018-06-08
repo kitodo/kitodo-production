@@ -113,7 +113,7 @@ public class GranularityForm {
             return null;
         }
         if (course == null || course.getNumberOfProcesses() < 1) {
-            Helper.setFehlerMeldung("errorDataIncomplete", "granularity.header");
+            Helper.setErrorMessage("errorDataIncomplete", "granularity.header");
             return null;
         }
         Helper.removeManagedBean("ProzesskopieForm");
@@ -130,7 +130,7 @@ public class GranularityForm {
     public void downloadClick() {
         try {
             if (course == null || course.getNumberOfProcesses() < 1) {
-                Helper.setFehlerMeldung("errorDataIncomplete", "granularity.header");
+                Helper.setErrorMessage("errorDataIncomplete", "granularity.header");
                 return;
             }
             course.recalculateRegularityOfIssues();

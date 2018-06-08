@@ -378,7 +378,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 JobCreation.moveFiles(metsfilename, basepath, p);
 
             } catch (ReadException | PreferencesException | WriteException | IOException e) {
-                Helper.setFehlerMeldung(e);
+                Helper.setErrorMessage(e);
                 logger.error(e.getMessage(), e);
             }
         } else {
@@ -404,7 +404,7 @@ public class HotfolderJob extends AbstractGoobiJob {
                 return false;
             }
             if (amount > 0) {
-                Helper.setFehlerMeldung("processTitleAlreadyInUse");
+                Helper.setErrorMessage("processTitleAlreadyInUse");
                 return false;
             }
         } else {

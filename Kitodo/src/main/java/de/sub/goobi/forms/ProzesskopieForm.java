@@ -292,20 +292,18 @@ public class ProzesskopieForm implements Serializable {
             this.template = serviceManager.getTemplateService().getById(id);
         } catch (DAOException e) {
             logger.error(e.getMessage());
-            Helper.setFehlerMeldung("Process " + id + " not found.");
+            Helper.setErrorMessage("Process " + id + " not found.");
             return null;
         }
 
         if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
             if (this.template.getTasks().isEmpty()) {
-                Helper.setFehlerMeldung("noStepsInWorkflow");
+                Helper.setErrorMessage("noStepsInWorkflow");
             }
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    List<String> param = new ArrayList<>();
-                    param.add(s.getTitle());
-                    Helper.setFehlerMeldung(Helper.getTranslation("noUserInStep", param));
+                    Helper.setErrorMessage("noUserInStep", new Object[] {s.getTitle()});
                 }
             }
             return null;
@@ -448,20 +446,20 @@ public class ProzesskopieForm implements Serializable {
 
                 switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
                     case 0:
-                        Helper.setFehlerMeldung(message);
+                        Helper.setErrorMessage(message);
                         break;
                     case 1:
                         importHit(importCatalogue.getHit(hitlist, 0, timeout));
-                        Helper.setMeldung(message);
+                        Helper.setMessage(message);
                         break;
                     default:
                         hitlistPage = 0; // show first page of hitlist
-                        Helper.setMeldung(message);
+                        Helper.setMessage(message);
                         RequestContext.getCurrentInstance().execute("PF('hitlistDialog').show()");
                         break;
                 }
             } else {
-                Helper.setFehlerMeldung("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
+                Helper.setErrorMessage("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
         } catch (FileNotFoundException | PreferencesException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC " + opacKatalog}, logger, e);
@@ -486,7 +484,7 @@ public class ProzesskopieForm implements Serializable {
             importCatalogue = PluginLoader.getCataloguePluginForCatalogue(catalogue);
         }
         if (importCatalogue == null) {
-            Helper.setFehlerMeldung("NoCataloguePluginForCatalogue", catalogue);
+            Helper.setErrorMessage("NoCataloguePluginForCatalogue", catalogue);
             return false;
         } else {
             importCatalogue
@@ -714,8 +712,7 @@ public class ProzesskopieForm implements Serializable {
         /* keine Collektion ausgewählt */
         if (this.standardFields.get("collections") && getDigitalCollections().isEmpty()) {
             valid = false;
-            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("processCreationErrorNoCollection"));
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorNoCollection");
         }
 
         /*
@@ -725,7 +722,7 @@ public class ProzesskopieForm implements Serializable {
             if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
                     && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
-                Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " " + field.getTitle() + " "
+                Helper.setErrorMessage(INCOMPLETE_DATA, " " + field.getTitle() + " "
                         + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
 
             }
@@ -738,14 +735,13 @@ public class ProzesskopieForm implements Serializable {
 
         if (process.getTitle() == null || process.getTitle().equals("")) {
             valid = false;
-            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA) + " "
-                    + Helper.getTranslation("processCreationErrorTitleEmpty"));
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorTitleEmpty");
         }
 
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
-            Helper.setFehlerMeldung("processTitleInvalid");
+            Helper.setErrorMessage("processTitleInvalid");
         }
 
         if (process.getTitle() != null) {
@@ -771,7 +767,7 @@ public class ProzesskopieForm implements Serializable {
             return false;
         }
         if (amount > 0) {
-            Helper.setFehlerMeldung(Helper.getTranslation(INCOMPLETE_DATA)
+            Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA)
                     + Helper.getTranslation("processCreationErrorTitleAlreadyInUse"));
             return false;
         }
@@ -808,7 +804,7 @@ public class ProzesskopieForm implements Serializable {
             String message = "Metadata directory: " + baseProcessDirectory + "in path:"
                     + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
-            Helper.setFehlerMeldung(message);
+            Helper.setErrorMessage(message);
             return null;
         }
 

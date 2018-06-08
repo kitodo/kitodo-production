@@ -184,7 +184,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
             }
         } else {
-            Helper.setFehlerMeldung("titleEmpty");
+            Helper.setErrorMessage("titleEmpty");
         }
         reload();
         return null;
@@ -238,7 +238,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     new Object[] {Helper.getTranslation("metadata")}, logger, e);
         }
 
-        Helper.setMeldung("Content deleted");
+        Helper.setMessage("Content deleted");
         return null;
     }
 
@@ -246,7 +246,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
             this.editMode = ObjectMode.PROCESS;
-            Helper.setFehlerMeldung(Helper.getTranslation("processTitleInvalid"));
+            Helper.setErrorMessage("processTitleInvalid");
             return false;
         } else {
             renamePropertiesValuesForProcessTitle(this.process.getProperties());
@@ -451,7 +451,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 this.process.getTemplates().add(this.templateProperty);
             }
             serviceManager.getProcessService().save(this.process);
-            Helper.setMeldung(PROPERTIES_SAVED);
+            Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
             Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
         }
@@ -468,7 +468,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 this.process.getWorkpieces().add(this.workpieceProperty);
             }
             serviceManager.getProcessService().save(this.process);
-            Helper.setMeldung(PROPERTIES_SAVED);
+            Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
             Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
         }
@@ -650,7 +650,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
                 export.startExport(process);
-                Helper.setMeldung(null, EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED);
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException e) {
                 Helper.setErrorMessage("errorExporting",
@@ -668,7 +668,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             try {
                 export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
-                Helper.setMeldung(null, EXPORT_FINISHED, "");
+                Helper.setMessage(EXPORT_FINISHED);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | DAOException | RuntimeException e) {
                 Helper.setErrorMessage("errorExport", new Object[] {processDTO.getTitle()}, logger, e);
@@ -691,7 +691,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
         }
         logger.info(Helper.getTranslation(EXPORT_FINISHED));
-        Helper.setMeldung(null, EXPORT_FINISHED, "");
+        Helper.setMessage(EXPORT_FINISHED);
     }
 
     /**
@@ -703,7 +703,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         WebDav myDav = new WebDav();
         List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
         myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
-        Helper.setMeldung(null, "directoryRemovedAll", doneDirectoryName);
+        Helper.setMessage("directoryRemovedAll", doneDirectoryName);
         return null;
     }
 
@@ -715,7 +715,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public String uploadFromHome() {
         WebDav myDav = new WebDav();
         myDav.uploadFromHome(this.process);
-        Helper.setMeldung(null, "directoryRemoved", this.process.getTitle());
+        Helper.setMessage("directoryRemoved", this.process.getTitle());
         return null;
     }
 
@@ -732,8 +732,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, false);
         } else {
-            Helper.setMeldung(null,
-                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
+            Helper.setMessage(Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
                         + Helper.getTranslation("isInUse"),
                 serviceManager.getUserService()
                         .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
@@ -751,7 +750,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             download(webDav, process);
         }
-        Helper.setMeldung(null, "createdInUserHome", "");
+        Helper.setMessage("createdInUserHome");
     }
 
     /**
@@ -763,7 +762,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         for (ProcessDTO processDTO : this.getSelectedProcesses()) {
             download(myDav, processDTO);
         }
-        Helper.setMeldung(null, "createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll");
     }
 
     private void download(WebDav webDav, ProcessDTO processDTO) {
@@ -772,8 +771,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(processDTO)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMeldung(null,
-                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                Helper.setMessage(Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
@@ -794,15 +792,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(process)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMeldung(null,
-                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                Helper.setMessage(Helper.getTranslation("directory ") + " " + process.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         }
-        Helper.setMeldung(null, "createdInUserHomeAll", "");
+        Helper.setMessage("createdInUserHomeAll");
     }
 
     /**
@@ -1695,7 +1692,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 this.process.getProperties().add(this.property);
             }
             serviceManager.getProcessService().save(this.process);
-            Helper.setMeldung(PROPERTIES_SAVED);
+            Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
             Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
         }
@@ -1729,7 +1726,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             newProperty.getProcesses().add(this.process);
             this.process.getProperties().add(newProperty);
             serviceManager.getPropertyService().save(newProperty);
-            Helper.setMeldung("propertySaved");
+            Helper.setMessage("propertySaved");
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("property") }, logger, e);
         }

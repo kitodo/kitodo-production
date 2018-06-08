@@ -111,7 +111,7 @@ public class BatchProcessHelper extends BatchHelper {
             }
             try {
                 serviceManager.getProcessService().save(this.currentProcess);
-                Helper.setMeldung("propertySaved");
+                Helper.setMessage("propertySaved");
             } catch (DataException e) {
                 Helper.setErrorMessage("propertyNotSaved", logger, e);
             }
@@ -149,7 +149,7 @@ public class BatchProcessHelper extends BatchHelper {
 
                 try {
                     serviceManager.getProcessService().save(process);
-                    Helper.setMeldung("propertiesSaved");
+                    Helper.setMessage("propertiesSaved");
                 } catch (DataException e) {
                     List<String> param = new ArrayList<>();
                     param.add(process.getTitle());
