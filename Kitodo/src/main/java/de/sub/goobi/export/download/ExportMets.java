@@ -71,7 +71,7 @@ public class ExportMets {
          * Read Document
          */
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = process.getTitle();
+        String atsPpnBand = serviceManager.getProcessService().getNormalizedTitle(process.getTitle());
         FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
 
         if (serviceManager.getProcessService().handleExceptionsForConfiguration(gdzfile, process)) {
@@ -88,7 +88,7 @@ public class ExportMets {
         prepareUserDirectory(userHome);
 
         String targetFileName = atsPpnBand + "_mets.xml";
-        URI metaFile = userHome.resolve(targetFileName);
+        URI metaFile = userHome.resolve(userHome.getRawPath() + "/" + targetFileName);
         return writeMetsFile(process, metaFile, gdzfile, false);
     }
 
