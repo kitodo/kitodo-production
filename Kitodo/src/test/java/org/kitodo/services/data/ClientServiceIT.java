@@ -46,7 +46,7 @@ public class ClientServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldGetAllClients() {
+    public void shouldGetAllClients() throws Exception {
         List<Client> clients = clientService.getAll();
         assertEquals("Clients were not found database!", 3, clients.size());
     }

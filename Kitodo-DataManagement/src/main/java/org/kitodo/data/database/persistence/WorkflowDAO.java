@@ -32,7 +32,7 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     @Override
-    public List<Workflow> getAll() {
+    public List<Workflow> getAll() throws DAOException {
         return retrieveAllObjects(Workflow.class);
     }
 

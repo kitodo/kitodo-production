@@ -87,7 +87,7 @@ public class AuthorityServiceIT {
     }
 
     @Test
-    public void shouldGetAllAuthorities() {
+    public void shouldGetAllAuthorities() throws Exception {
         List<Authority> authorities = authorityService.getAll();
         assertEquals("Authorizations were not found database!", EXPECTED_AUTHORITIES_COUNT, authorities.size());
     }

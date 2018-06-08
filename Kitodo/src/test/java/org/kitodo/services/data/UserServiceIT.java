@@ -109,10 +109,13 @@ public class UserServiceIT {
         User user = userService.getById(1);
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
         assertTrue("User was not found in database!", condition);
+
+        assertEquals("User was found but tasks were not inserted!", 4, user.getTasks().size());
+        assertEquals("User was found but tasks were not inserted!", 2, user.getProcessingTasks().size());
     }
 
     @Test
-    public void shouldGetAllUsers() {
+    public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
         assertEquals("Not all users were found in database!", 3, users.size());
     }
@@ -347,11 +350,11 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetTasksSize() {
-        Integer firstExpected = 2;
+        Integer firstExpected = 7;
         await().untilAsserted(
             () -> assertEquals("Tasks' size is incorrect!", firstExpected, userService.findById(2).getTasksSize()));
 
-        Integer secondExpected = 1;
+        Integer secondExpected = 6;
         await().untilAsserted(
             () -> assertEquals("Tasks' size is incorrect!", secondExpected, userService.findById(3).getTasksSize()));
     }

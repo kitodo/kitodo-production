@@ -50,7 +50,7 @@ public class MockitoTest {
     }
 
     @Test
-    public void testMock() {
+    public void testMock() throws Exception {
         when(mockedProcessService.getAll()).thenReturn(Arrays.asList(process1, process2));
         List<Process> allProcesses = mockedProcessService.getAll();
         Process testProcess = allProcesses.get(1);

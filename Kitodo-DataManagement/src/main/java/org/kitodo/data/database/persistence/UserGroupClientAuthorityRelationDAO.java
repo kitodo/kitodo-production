@@ -30,7 +30,7 @@ public class UserGroupClientAuthorityRelationDAO extends BaseDAO<UserGroupClient
     }
 
     @Override
-    public List<UserGroupClientAuthorityRelation> getAll() {
+    public List<UserGroupClientAuthorityRelation> getAll() throws DAOException {
         return retrieveAllObjects(UserGroupClientAuthorityRelation.class);
     }
 

@@ -38,7 +38,7 @@ public class LdapServerDAO extends BaseDAO<LdapServer> {
     }
 
     @Override
-    public List<LdapServer> getAll() {
+    public List<LdapServer> getAll() throws DAOException {
         return retrieveAllObjects(LdapServer.class);
     }
 

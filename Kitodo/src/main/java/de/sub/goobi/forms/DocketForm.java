@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -145,7 +145,6 @@ public class DocketForm extends BasisForm {
     }
 
     public void setMyDocket(Docket docket) {
-        HibernateUtil.getSession().clear();
         this.myDocket = docket;
     }
 
@@ -156,6 +155,11 @@ public class DocketForm extends BasisForm {
      * @return list of Client objects
      */
     public List<Client> getClients() {
-        return serviceManager.getClientService().getAll();
+        try {
+            return serviceManager.getClientService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
+            return new ArrayList<>();
+        }
     }
 }

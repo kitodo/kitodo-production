@@ -41,6 +41,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -49,6 +50,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.list.SynchronizedList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -206,14 +208,19 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     public String delete() {
         deleteMetadataDirectory();
-        this.process.getProject().getProcesses().remove(this.process);
         try {
-            Hibernate.initialize(process.getBatches());
-            for (Batch batch : process.getBatches()) {
+            this.process.getProject().getProcesses().remove(this.process);
+            this.process.setProject(null);
+            this.process.getTemplate().getProcesses().remove(this.process);
+            this.process.setTemplate(null);
+            List<Batch> batches = new CopyOnWriteArrayList<>(process.getBatches());
+            for (Batch batch : batches) {
                 batch.getProcesses().remove(this.process);
+                this.process.getBatches().remove(batch);
+                serviceManager.getBatchService().save(batch);
             }
             serviceManager.getProcessService().remove(this.process);
-        } catch (DataException e) {
+        } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
             return null;
         }
@@ -439,19 +446,12 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Save task.
-     */
-    public void saveTask() {
-        saveTask(this.task);
-    }
-
-    /**
      * Save task and redirect to processEdit view.
      *
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask();
+        saveTask(this.task, this.process, PROCESS);
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 

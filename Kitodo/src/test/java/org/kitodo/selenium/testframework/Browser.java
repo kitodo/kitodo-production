@@ -52,7 +52,7 @@ public class Browser {
     private static int delayAfterHoverMenu = 500;
     private static int delayAfterNewItemClick = 500;
     private static int delayAfterPickListClick = 1500;
-    private static int delayAfterDelete = 5000;
+    private static int delayAfterDelete = 7000;
 
     /**
      * Provides the web driver, sets timeout and window size.

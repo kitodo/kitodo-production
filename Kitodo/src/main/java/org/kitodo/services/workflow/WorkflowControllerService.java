@@ -478,7 +478,6 @@ public class WorkflowControllerService {
         }
     }
 
-    // TODO: find out if method should save or not task
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
@@ -490,21 +489,23 @@ public class WorkflowControllerService {
         }
     }
 
-    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) {
+    private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
             currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
             taskInBetween.setPriority(0);
+            serviceManager.getTaskService().save(taskInBetween);
         }
     }
 
-    private void openTaskForProcessing(Task correctionTask) {
+    private void openTaskForProcessing(Task correctionTask) throws DataException {
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
         correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
         correctionTask.setProcessingTime(new Date());
+        serviceManager.getTaskService().save(correctionTask);
     }
 
     private Property prepareProblemMessageProperty(Date date) {

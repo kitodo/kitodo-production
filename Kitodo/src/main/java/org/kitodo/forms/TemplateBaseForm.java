@@ -15,7 +15,6 @@ import de.sub.goobi.forms.BasisForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +30,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
@@ -224,20 +222,11 @@ public class TemplateBaseForm extends BasisForm {
         }
     }
 
-    /**
-     * Save task.
-     *
-     * @param task
-     *            to save
-     */
-    protected void saveTask(Task task) {
-        task.setEditTypeEnum(TaskEditType.ADMIN);
-        task.setProcessingTime(new Date());
-        User user = getUser();
-        serviceManager.getTaskService().replaceProcessingUser(task, user);
-
+    protected void saveTask(Task task, BaseBean baseBean, String message) {
         try {
             serviceManager.getTaskService().save(task);
+            HibernateUtil.getSession().evict(task);
+            reload(baseBean, message);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
         }

@@ -59,22 +59,22 @@ public class UserGroupProjectAuthorityRelationServiceIT {
     }
 
     @Test
-    public void shouldgetAutorities() throws Exception {
-        List<Authority> authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1,
+    public void shouldGetAuthorities() throws Exception {
+        List<Authority> authorities = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1,
             1);
-        assertEquals("Number of returned authorities is not matching", 3, authorites.size());
+        assertEquals("Number of returned authorities is not matching", 3, authorities.size());
 
-        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(2, 1);
-        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
+        authorities = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(2, 1);
+        assertEquals("Number of returned authorities is not matching", 1, authorities.size());
 
-        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1, 2);
-        assertEquals("Number of returned authorities is not matching", 0, authorites.size());
+        authorities = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(1, 2);
+        assertEquals("Number of returned authorities is not matching", 0, authorities.size());
 
-        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 2);
-        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
+        authorities = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 2);
+        assertEquals("Number of returned authorities is not matching", 1, authorities.size());
 
-        authorites = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 3);
-        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
+        authorities = userGroupProjectAuthorityRelationService.getAuthoritiesByUserGroupAndProjectId(3, 3);
+        assertEquals("Number of returned authorities is not matching", 1, authorities.size());
 
     }
 }

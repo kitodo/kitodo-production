@@ -35,7 +35,7 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     @Override
-    public List<Task> getAll() {
+    public List<Task> getAll() throws DAOException {
         return retrieveAllObjects(Task.class);
     }
 
@@ -70,7 +70,7 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     public Task load(int id) throws DAOException {
-        return loadObjects(Task.class, id);
+        return loadObject(Task.class, id);
     }
 
     /**

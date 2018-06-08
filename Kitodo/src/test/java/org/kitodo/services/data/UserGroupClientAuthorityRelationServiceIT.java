@@ -59,18 +59,18 @@ public class UserGroupClientAuthorityRelationServiceIT {
     }
 
     @Test
-    public void shouldgetAutorities() throws Exception {
-        List<Authority> authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 1);
-        assertEquals("Number of returned authorities is not matching", 3, authorites.size());
+    public void shouldGetAuthorities() throws Exception {
+        List<Authority> authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 1);
+        assertEquals("Number of returned authorities is not matching", 3, authorities.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(2, 1);
-        assertEquals("Number of returned authorities is not matching", 2, authorites.size());
+        authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(2, 1);
+        assertEquals("Number of returned authorities is not matching", 2, authorities.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 2);
-        assertEquals("Number of returned authorities is not matching", 0, authorites.size());
+        authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 2);
+        assertEquals("Number of returned authorities is not matching", 0, authorities.size());
 
-        authorites = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(3, 2);
-        assertEquals("Number of returned authorities is not matching", 1, authorites.size());
+        authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(3, 2);
+        assertEquals("Number of returned authorities is not matching", 1, authorities.size());
 
     }
 }

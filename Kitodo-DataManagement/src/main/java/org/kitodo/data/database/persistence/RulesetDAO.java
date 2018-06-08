@@ -36,7 +36,7 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
     }
 
     @Override
-    public List<Ruleset> getAll() {
+    public List<Ruleset> getAll() throws DAOException {
         return retrieveAllObjects(Ruleset.class);
     }
 

@@ -60,7 +60,17 @@ public class TemplateServiceIT {
     }
 
     @Test
-    public void shouldGetTemplates() {
+    public void shouldGetTemplate() throws Exception {
+        Template template = templateService.getById(1);
+        boolean condition = template.getTitle().equals("First template") && template.getId().equals(1);
+        assertTrue("Template was not found in database!", condition);
+
+        assertEquals("Template was found but processes were not inserted!", 2, template.getProcesses().size());
+        assertEquals("Template was found but tasks were not inserted!", 1, template.getTasks().size());
+    }
+
+    @Test
+    public void shouldGetTemplates() throws Exception {
         List<Template> templates = templateService.getAll();
         assertEquals("Found incorrect amount of templates!", 3, templates.size());
     }

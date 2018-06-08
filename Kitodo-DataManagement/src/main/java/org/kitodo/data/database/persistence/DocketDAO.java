@@ -30,7 +30,7 @@ public class DocketDAO extends BaseDAO<Docket> {
     }
 
     @Override
-    public List<Docket> getAll() {
+    public List<Docket> getAll() throws DAOException {
         return retrieveAllObjects(Docket.class);
     }
 

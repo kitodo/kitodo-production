@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import org.goobi.webapi.beans.ProjectsRootNode;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -37,7 +38,6 @@ import org.kitodo.services.ServiceManager;
  */
 @Path("/projects")
 public class Projects {
-
     /**
      * Get all projects with their respective templates.
      *
@@ -48,19 +48,23 @@ public class Projects {
     public ProjectsRootNode getAllProjectsWithTheirRespectiveTemplates() {
         Map<Project, Set<Template>> data = new HashMap<>();
 
-        List<Template> processTemplates = new ServiceManager().getTemplateService().getAll();
-        for (Template processTemplate : processTemplates) {
-            Project project = processTemplate.getProject();
-            Set<Template> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
-            templates.add(processTemplate);
-            data.put(project, templates);
+        try {
+            List<Template> processTemplates = new ServiceManager().getTemplateService().getAll();
+            for (Template processTemplate : processTemplates) {
+                Project project = processTemplate.getProject();
+                Set<Template> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
+                templates.add(processTemplate);
+                data.put(project, templates);
+            }
+            List<Project> result = new ArrayList<>();
+            for (Map.Entry<Project, Set<Template>> entry : data.entrySet()) {
+                Project key = entry.getKey();
+                key.template = new ArrayList<>(entry.getValue());
+                result.add(key);
+            }
+            return new ProjectsRootNode(result);
+        } catch (DAOException e) {
+            return new ProjectsRootNode();
         }
-        List<Project> result = new ArrayList<>();
-        for (Map.Entry<Project, Set<Template>> entry : data.entrySet()) {
-            Project key = entry.getKey();
-            key.template = new ArrayList<>(entry.getValue());
-            result.add(key);
-        }
-        return new ProjectsRootNode(result);
     }
 }

@@ -98,10 +98,13 @@ public class ProjectServiceIT {
         Project project = projectService.getById(1);
         boolean condition = project.getTitle().equals("First project") && project.getId().equals(1);
         assertTrue("Project was not found in database!", condition);
+
+        assertEquals("Project was found but templates were not inserted!", 1, project.getTemplates().size());
+        assertEquals("Project was found but templates were not inserted!", 2, project.getProcesses().size());
     }
 
     @Test
-    public void shouldGetAllProjects() {
+    public void shouldGetAllProjects() throws Exception {
         List<Project> projects = projectService.getAll();
         assertEquals("Not all projects were found in database!", 3, projects.size());
     }

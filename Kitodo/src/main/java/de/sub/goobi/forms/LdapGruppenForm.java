@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,7 +54,12 @@ public class LdapGruppenForm extends BasisForm {
      * @return list of LdapGroup objects.
      */
     public List<LdapGroup> getLdapGroups() {
-        return serviceManager.getLdapGroupService().getAll();
+        try {
+            return serviceManager.getLdapGroupService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("ldapGroups") }, logger, e);
+            return new ArrayList<>();
+        }
     }
 
     /**

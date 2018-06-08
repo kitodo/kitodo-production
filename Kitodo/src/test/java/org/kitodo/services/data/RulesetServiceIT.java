@@ -83,7 +83,7 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindAllRulesets() {
+    public void shouldFindAllRulesets() throws Exception {
         List<Ruleset> rulesets = rulesetService.getAll();
         assertEquals("Not all rulesets were found in database!", 3, rulesets.size());
     }

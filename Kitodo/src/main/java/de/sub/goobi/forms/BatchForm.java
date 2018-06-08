@@ -86,7 +86,11 @@ public class BatchForm extends BasisForm {
      */
     public void loadBatchData() {
         if (this.selectedProcesses.isEmpty()) {
-            this.currentBatches = serviceManager.getBatchService().getAll();
+            try {
+                this.currentBatches = serviceManager.getBatchService().getAll();
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("batches") }, logger, e);
+            }
         } else {
             selectedBatches = new ArrayList<>();
             List<Batch> batchesToSelect = new ArrayList<>();
@@ -155,7 +159,13 @@ public class BatchForm extends BasisForm {
      */
     public void filterBatches() {
         currentBatches = new ArrayList<>();
-        for (Batch batch : serviceManager.getBatchService().getAll()) {
+        List<Batch> batches = new ArrayList<>();
+        try {
+            batches = serviceManager.getBatchService().getAll();
+        } catch (DAOException e) {
+            logger.error(e);
+        }
+        for (Batch batch : batches) {
             if (serviceManager.getBatchService().contains(batch, batchfilter)) {
                 currentBatches.add(batch);
             }

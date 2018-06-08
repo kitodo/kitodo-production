@@ -30,7 +30,7 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     }
 
     @Override
-    public List<Authority> getAll() {
+    public List<Authority> getAll() throws DAOException {
         return retrieveAllObjects(Authority.class);
     }
 
