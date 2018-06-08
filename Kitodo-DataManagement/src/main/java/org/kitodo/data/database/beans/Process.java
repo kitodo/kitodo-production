@@ -402,41 +402,6 @@ public class Process extends BaseTemplateBean {
         this.blockedSeconds = blockedSeconds;
     }
 
-    // Here will be methods which should be in ProcessService but are used by
-    // jsp files
-
-    public int getPropertiesSize() {
-        return this.getProperties().size();
-    }
-
-    public int getWorkpiecesSize() {
-        return this.getWorkpieces().size();
-    }
-
-    public int getTemplatesSize() {
-        return this.getTemplates().size();
-    }
-
-    /**
-     * The function getBatchID returns the batches the process is associated with as
-     * readable text as read-only property "batchID".
-     *
-     * @return the batches the process is in
-     */
-    public String getBatchID() {
-        if (this.getBatches().isEmpty()) {
-            return null;
-        }
-        StringBuilder result = new StringBuilder();
-        for (Batch batch : this.getBatches()) {
-            if (result.length() > 0) {
-                result.append(", ");
-            }
-            result.append(batch.getLabel());
-        }
-        return result.toString();
-    }
-
     /**
      * Determines whether or not two processes are equal. Two instances of
      * {@code Process} are equal if the values of their {@code Id}, {@code Title},

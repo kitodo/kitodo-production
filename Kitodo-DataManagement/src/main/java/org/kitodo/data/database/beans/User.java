@@ -358,19 +358,6 @@ public class User extends BaseIndexedBean {
     // Here will be methods which should be in UserService but are used by jsp
     // files
 
-    /**
-     * Get size of user group result.
-     *
-     * @return size
-     */
-    public int getUserGroupSize() {
-        if (this.getUserGroups() == null) {
-            return 0;
-        } else {
-            return this.getUserGroups().size();
-        }
-    }
-
     public String getFullName() {
         return this.getSurname() + ", " + this.getName();
     }
