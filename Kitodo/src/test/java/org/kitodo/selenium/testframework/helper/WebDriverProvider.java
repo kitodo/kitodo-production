@@ -11,30 +11,24 @@
 
 package org.kitodo.selenium.testframework.helper;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.archiver.UnArchiver;
+import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
+import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.kitodo.ExecutionPermission;
-import org.xeustechnologies.jtar.TarEntry;
-import org.xeustechnologies.jtar.TarInputStream;
 
 public class WebDriverProvider {
 
     private static final Logger logger = LogManager.getLogger(WebDriverProvider.class);
-    private static final int BUFFER_SIZE = 8 * 1024;
+    private static UnArchiver zipUnArchiver = new ZipUnArchiver();
+    private static UnArchiver tarGZipUnArchiver = new TarGZipUnArchiver();
 
     /**
      * Downloads Geckodriver, extracts archive file and set system property
@@ -67,13 +61,13 @@ public class WebDriverProvider {
             if (!theDir.exists()) {
                 theDir.mkdir();
             }
-            extractTarFileToFolder(geckoDriverTarFile, theDir, true);
+            extractTarFileToFolder(geckoDriverTarFile, theDir);
         } else {
             geckoDriverFileName = "geckodriver";
             File geckoDriverTarFile = new File(downloadFolder + "geckodriver.tar.gz");
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-linux64.tar.gz"),
                 geckoDriverTarFile);
-            extractTarFileToFolder(geckoDriverTarFile, new File(extractFolder), true);
+            extractTarFileToFolder(geckoDriverTarFile, new File(extractFolder));
         }
         File geckoDriverFile = new File(extractFolder, geckoDriverFileName);
 
@@ -149,39 +143,8 @@ public class WebDriverProvider {
     }
 
     private static void extractZipFileToFolder(File zipFile, File destinationFolder) {
-        try {
-            ZipFile zip = new ZipFile(zipFile);
-
-            destinationFolder.mkdir();
-            Enumeration zipFileEntries = zip.entries();
-
-            while (zipFileEntries.hasMoreElements()) {
-                ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
-                String currentEntry = entry.getName();
-
-                File destFile = new File(destinationFolder, currentEntry);
-                File destinationParent = destFile.getParentFile();
-
-                destinationParent.mkdirs();
-
-                if (!entry.isDirectory()) {
-                    int currentByte;
-                    byte data[] = new byte[BUFFER_SIZE];
-
-                    try (BufferedInputStream bufferedInputStream = new BufferedInputStream(zip.getInputStream(entry));
-                            FileOutputStream fileOutputStream = new FileOutputStream(destFile);
-                            BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream,
-                                    BUFFER_SIZE)) {
-
-                        while ((currentByte = bufferedInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
-                            bufferedOutputStream.write(data, 0, currentByte);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
+        zipUnArchiver.setSourceFile(zipFile);
+        zipUnArchiver.extract("", destinationFolder);
     }
 
     /**
@@ -189,57 +152,11 @@ public class WebDriverProvider {
      *
      * @param file
      *            The tar or tar.gz file.
-     * @param outputDir
-     *            The destination directory.
-     * @param isGZipped
-     *            True if the file is gzipped.
-     */
-    private static void extractTarFileToFolder(File file, File outputDir, boolean isGZipped) {
-        try (FileInputStream fileInputStream = new FileInputStream(file);
-                TarInputStream tarArchiveInputStream = (isGZipped)
-                        ? new TarInputStream(new GZIPInputStream(fileInputStream, BUFFER_SIZE))
-                        : new TarInputStream(new BufferedInputStream(fileInputStream, BUFFER_SIZE))) {
-
-            unTar(tarArchiveInputStream, outputDir);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
-    }
-
-    /**
-     * Unpack data from the stream to specified directory.
-     *
-     * @param tarInputStream
-     *            Stream with tar data.
-     * @param outputDir
+     * @param destinationFolder
      *            The destination directory.
      */
-    private static void unTar(TarInputStream tarInputStream, File outputDir) {
-        try {
-            TarEntry tarEntry;
-            while ((tarEntry = tarInputStream.getNextEntry()) != null) {
-                final File file = new File(outputDir, tarEntry.getName());
-                if (tarEntry.isDirectory()) {
-                    if (!file.exists()) {
-                        if (!file.mkdirs()) {
-                            logger.error(file + " failure to create directory");
-                        }
-                    }
-                } else {
-                    try (BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(file))) {
-                        int length;
-                        byte data[] = new byte[BUFFER_SIZE];
-                        while ((length = tarInputStream.read(data, 0, BUFFER_SIZE)) != -1) {
-                            out.write(data, 0, length);
-                        }
-                    } catch (IOException e) {
-                        logger.error(e.getMessage());
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    private static void extractTarFileToFolder(File file, File destinationFolder) {
+        tarGZipUnArchiver.setSourceFile(file);
+        tarGZipUnArchiver.extract("", destinationFolder);
     }
-
 }
