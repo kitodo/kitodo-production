@@ -20,6 +20,8 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
@@ -31,6 +33,7 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
  * call, reading and decoding the source image into memory only once.
  */
 class ImageConverter {
+    private static final Logger logger = LogManager.getLogger(ImageConverter.class);
 
     /**
      * ImageMagick file type prefix to request no file being written.
@@ -154,6 +157,7 @@ class ImageConverter {
             convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
         }
         try {
+            logger.debug("Executing: convert {}", commandLine);
             convertCmd.run(commandLine);
         } catch (InterruptedException | IM4JavaException e) {
             throw new IOException(e.getMessage(), e);
