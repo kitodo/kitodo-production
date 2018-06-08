@@ -60,8 +60,8 @@
         </div>
         <div>
             <h:form id="xmlDiagramSaveForm" enctype="multipart/form-data">
-                <p:outputLabel for="xmlDiagramName" value="#{msgs.titel}" />
-                <p:inputText id="xmlDiagramName" placeholder="#{msgs.titel}" class="input" value="#{ModelerForm.xmlDiagramName}"/>
+                <p:outputLabel for="xmlDiagramName" value="#{msgs.title}" />
+                <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input" value="#{ModelerForm.xmlDiagramName}"/>
                 <p:remoteCommand name="svgContent" actionListener="#{ModelerForm.save}" />
                 <p:remoteCommand name="xmlContent" actionListener="#{ModelerForm.save}" />
                 <p:commandButton id="btnSaveXmlDiagram" value="Save XML diagram" update="projectsTabView:xmlDiagramReadForm" />
