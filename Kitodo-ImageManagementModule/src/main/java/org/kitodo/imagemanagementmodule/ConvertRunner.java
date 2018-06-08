@@ -15,6 +15,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.NoSuchElementException;
+import java.util.Random;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -40,6 +42,12 @@ class ConvertRunner {
     private static final String CONVERT_COMMAND = "convert";
 
     /**
+     * Randomness generator used to distribute the requests evenly on several
+     * configured SSH hosts.
+     */
+    private static final Random RANDOMNESS_GENERATOR = new Random();
+
+    /**
      * Default timeout of two hours.
      */
     private static final int TWO_HOURS = 7200;
@@ -59,13 +67,27 @@ class ConvertRunner {
      */
     void run(IMOperation commandLine) throws IOException {
         Executor executor = new DefaultExecutor();
-        OutputStream stdout = new ByteArrayOutputStream();
-        OutputStream stderr = new ByteArrayOutputStream();
-        executor.setStreamHandler(new PumpStreamHandler(stdout, stderr));
-        long timeoutMillis = Config.getIntParameter("ImageManagementModule.timeoutSec", TWO_HOURS) * 1000;
+
+        OutputStream outAndErr = new ByteArrayOutputStream();
+        executor.setStreamHandler(new PumpStreamHandler(outAndErr));
+
+        long timeoutMillis = 1000 * Config.getIntParameter("ImageManagementModule.timeoutSec", TWO_HOURS);
         executor.setWatchdog(new ExecuteWatchdog(timeoutMillis));
-        CommandLine command = new CommandLine(convertCommand);
-        command.addArguments(commandLine.toString());
+
+        CommandLine command;
+        try {
+            String sshHosts = Config.getParameter("ImageManagementModule.sshHosts");
+            command = new CommandLine("ssh");
+            String[] hosts = sshHosts.split(",");
+            String host = hosts[RANDOMNESS_GENERATOR.nextInt(hosts.length)];
+            command.addArgument(host, false);
+            command.addArgument(convertCommand + ' ' + commandLine.toString(), false);
+        } catch (NoSuchElementException e) {
+            logger.trace("SSH not configured.", e);
+            command = new CommandLine(convertCommand);
+            command.addArguments(commandLine.toString());
+        }
+
         boolean exception = false;
         try {
             logger.debug("Executing: {}", command);
@@ -75,15 +97,10 @@ class ConvertRunner {
             exception = true;
             throw e;
         } finally {
-            String output = stdout.toString();
+            String output = outAndErr.toString();
             if (!output.isEmpty()) {
-                logger.log(exception ? Level.ERROR : Level.TRACE, "Command output:{}{}", System.lineSeparator(),
+                logger.log(exception ? Level.ERROR : Level.DEBUG, "Command output:{}{}", System.lineSeparator(),
                     output);
-            }
-            String errorOutput = stderr.toString();
-            if (!errorOutput.isEmpty()) {
-                logger.log(exception ? Level.ERROR : Level.DEBUG, "Error output:{}{}", System.lineSeparator(),
-                    errorOutput);
             }
         }
     }
