@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.config.Config;
 
 /**
  * An ImageManagementInterface implementation using ImageMagick.
@@ -40,7 +41,8 @@ public class ImageManagementModule implements ImageManagementInterface {
     /**
      * Temporary directory location.
      */
-    private static final File TMPDIR = new File(System.getProperty("java.io.tmpdir"));
+    private static final File TMPDIR = new File(
+            Config.getParameter("ImageManagementModule.tmpDir", System.getProperty("java.io.tmpdir")));
 
     /**
      * Image format used internally to create web images, optimized for small
@@ -50,38 +52,31 @@ public class ImageManagementModule implements ImageManagementInterface {
     private static final String WEB_IMAGE_FORMAT = ".jpeg";
 
     /**
-     * Memory size limit for ImageMagick. Larger images will be processed from a
-     * memory-mapped file, or directly from disk.
-     */
-    private int memorySizeLimitMB = 40;
-
-    /**
      * {@inheritDoc}
      *
      * @see org.kitodo.api.imagemanagement.ImageManagementInterface#getScaledWebImage(java.net.URI,
      *      double)
      */
     @Override
-    public Image getScaledWebImage(URI sourceUri, double scale) throws IOException {
+    public Image getScaledWebImage(URI sourceUri, double factor) throws IOException {
 
         if (!new File(sourceUri).exists()) {
             throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
         }
-        if (Double.isNaN(scale)) {
-            throw new IllegalArgumentException("scale must be a number, but was " + Double.toString(scale));
+        if (Double.isNaN(factor)) {
+            throw new IllegalArgumentException("factor must be a number, but was " + Double.toString(factor));
         }
-        if (scale <= 0.0) {
-            throw new IllegalArgumentException("scale must be > 0.0, but was " + Double.toString(scale));
+        if (factor <= 0.0) {
+            throw new IllegalArgumentException("factor must be > 0.0, but was " + Double.toString(factor));
         }
 
         File tempFile = File.createTempFile("scaledWebImage-", WEB_IMAGE_FORMAT, TMPDIR);
         try {
             tempFile.deleteOnExit();
             ImageConverter imageConverter = new ImageConverter(sourceUri);
-            imageConverter.addResult(tempFile.toURI()).resize(scale);
+            imageConverter.addResult(tempFile.toURI()).resize(factor);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-            logger.info("Generating scaled web image from {} as {}, scale {}%", sourceUri, tempFile, 100 * scale);
+            logger.info("Generating scaled web image from {} as {}, factor {}%", sourceUri, tempFile, 100 * factor);
             imageConverter.run();
 
             logger.trace("Loading {}", tempFile);
@@ -103,26 +98,26 @@ public class ImageManagementModule implements ImageManagementInterface {
      *      org.kitodo.api.imagemanagement.ImageFileFormat)
      */
     @Override
-    public boolean createDerivative(URI sourceUri, double scale, URI resultUri, ImageFileFormat format)
+    public boolean createDerivative(URI sourceUri, double factor, URI resultUri, ImageFileFormat format)
             throws IOException {
 
         if (!new File(sourceUri).exists()) {
             throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
         }
-        if (Double.isNaN(scale)) {
-            throw new IllegalArgumentException("scale must be a number, but was " + Double.toString(scale));
+        if (Double.isNaN(factor)) {
+            throw new IllegalArgumentException("factor must be a number, but was " + Double.toString(factor));
         }
-        if (scale <= 0.0) {
-            throw new IllegalArgumentException("scale must be > 0.0, but was " + Double.toString(scale));
+        if (factor <= 0.0) {
+            throw new IllegalArgumentException("factor must be > 0.0, but was " + Double.toString(factor));
         }
         if (resultUri == null) {
             throw new NullPointerException("resultUri must not be null");
         }
 
         ImageConverter imageConverter = new ImageConverter(sourceUri);
-        imageConverter.addResult(resultUri, format).resize(scale);
-        imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-        logger.info("Creating derivative from {} as {}, type {}, scale {}%", sourceUri, resultUri, format, 100 * scale);
+        imageConverter.addResult(resultUri, format).resize(factor);
+        logger.info("Creating derivative from {} as {}, format {}, factor {}%", sourceUri, resultUri, format,
+            100 * factor);
         imageConverter.run();
         return new File(resultUri).exists();
     }
@@ -149,7 +144,6 @@ public class ImageManagementModule implements ImageManagementInterface {
             ImageConverter imageConverter = new ImageConverter(sourceUri);
             imageConverter.addResult(imageUri).resizeToDpi(dpi);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
             logger.info("Resizing {} as {} to {} DPI", sourceUri, tempFile, dpi);
             imageConverter.run();
 
@@ -187,8 +181,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             ImageConverter imageConverter = new ImageConverter(sourceUri);
             imageConverter.addResult(webImageUri).resizeToWidth(width);
 
-            imageConverter.useAMaximumOfRAM(memorySizeLimitMB);
-            logger.info("Generating sized web image from {} as {}, width {}px", sourceUri, tempFile, width);
+            logger.info("Generating sized web image from {} as {}, width {} px", sourceUri, tempFile, width);
             imageConverter.run();
 
             logger.trace("Loading {}", tempFile);

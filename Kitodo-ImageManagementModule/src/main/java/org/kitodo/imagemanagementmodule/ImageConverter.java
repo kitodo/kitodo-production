@@ -16,16 +16,17 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
+import org.kitodo.config.Config;
 
 /**
  * An image conversion task. One conversion task can create multiple result
@@ -39,27 +40,6 @@ class ImageConverter {
      * ImageMagick file type prefix to request no file being written.
      */
     private static final String FORMAT_OFF = "NULL:";
-
-    /**
-     * ImageMagick option {@code -limit}.
-     *
-     * @see "https://www.imagemagick.org/script/command-line-options.php?#limit"
-     */
-    private static final String OPTION_LIMIT = "-limit";
-
-    /**
-     * ImageMagick {@code map} limit.
-     *
-     * @see "https://www.imagemagick.org/script/command-line-options.php?#limit"
-     */
-    private static final String OPTION_LIMIT_TYPE_MAP = "map";
-
-    /**
-     * ImageMagick {@code memory} limit.
-     *
-     * @see "https://www.imagemagick.org/script/command-line-options.php?#limit"
-     */
-    private static final String OPTION_LIMIT_TYPE_MEMORY = "memory";
 
     /**
      * ImageMagick option {@code -units}. Note that {@code -units} must be set
@@ -86,8 +66,6 @@ class ImageConverter {
      * Conversion results to create.
      */
     private final Collection<FutureDerivative> results = new LinkedList<>();
-
-    private String memoryLimit;
 
     /**
      * Creates a new image conversion task.
@@ -127,18 +105,55 @@ class ImageConverter {
         return result;
     }
 
-    static String pathToTheWindowsInstallation() {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            throw new IllegalStateException(
-                    "pathToTheWindowsInstallation() can only be called on Windows operating systems");
+    /**
+     * Reads further arguments from the configuration and passes them to
+     * ImageMagick. Arguments can be added to the configuration with the prefix
+     * {@code ImageManagementModule.param.}.
+     *
+     * <p>
+     * Examples:
+     *
+     * <p>
+     * <table border=2 cellspacing=1 cellpadding=2>
+     * <tr>
+     * <th>Configuration entry</th>
+     * <th>Arguments sent to ImageMagick</th>
+     * </tr>
+     * <tr>
+     * <td><code>ImageManagementModule.param.limit.memory=40MB</code></td>
+     * <td><code>-limit memory 40MB</code></td>
+     * </tr>
+     * <tr>
+     * <td><code>ImageManagementModule.param.+set=date\:create</code></td>
+     * <td><code>+set date:create</code></td>
+     * </tr>
+     * <tr>
+     * <td><code>ImageManagementModule.param.quiet=</code></td>
+     * <td><code>-quiet</code></td>
+     * </tr>
+     * </table>
+     *
+     * @param commandLine
+     *            command line to which to add the arguments
+     */
+    private static void configureImageMagick(IMOperation commandLine) {
+        final String configOptionsPrefix = "ImageManagementModule.param.";
+        Iterator<?> keys = Config.getConfig().getKeys(configOptionsPrefix);
+        while (keys.hasNext()) {
+            Object keyObject = keys.next();
+            if (keyObject instanceof String) {
+                String key = (String) keyObject;
+                String option = key.substring(configOptionsPrefix.length());
+                if (!(option.startsWith("+") || option.startsWith("-"))) {
+                    option = "-".concat(option);
+                }
+                commandLine.addRawArgs(Arrays.asList(option.split("\\.")));
+                String value = Config.getParameter(key);
+                if (!value.isEmpty()) {
+                    commandLine.addRawArgs(value);
+                }
+            }
         }
-        File programFiles = new File(System.getenv("ProgramFiles"));
-        File[] candidates = programFiles
-                .listFiles(file -> file.isDirectory() && file.getName().toUpperCase().startsWith("IMAGEMAGICK"));
-        if (candidates == null || candidates.length == 0) {
-            throw new NoSuchElementException("ImageMagick was not found in " + programFiles);
-        }
-        return candidates[candidates.length - 1].getAbsolutePath();
     }
 
     /**
@@ -146,18 +161,22 @@ class ImageConverter {
      */
     void run() throws IOException {
         IMOperation commandLine = new IMOperation();
-        commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MEMORY, memoryLimit));
-        commandLine.addRawArgs(Arrays.asList(OPTION_LIMIT, OPTION_LIMIT_TYPE_MAP, memoryLimit));
+        configureImageMagick(commandLine);
         commandLine.addRawArgs(Arrays.asList(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH));
         commandLine.addImage(source);
         results.forEach(result -> result.addToCommandLine(commandLine));
         commandLine.addImage(FORMAT_OFF);
         ConvertCmd convertCmd = new ConvertCmd();
-        if (SystemUtils.IS_OS_WINDOWS) {
-            convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
+        String searchPath = "";
+        try {
+            searchPath = Config.getParameter("ImageManagementModule.searchPath");
+            convertCmd.setSearchPath(searchPath);
+        } catch (NoSuchElementException e) {
+            logger.trace("No deviant search path configured.", e);
         }
         try {
-            logger.debug("Executing: convert {}", commandLine);
+            logger.debug("Executing: {}{}convert {}", searchPath,
+                searchPath.endsWith(File.separator) ? "" : File.separator, commandLine);
             convertCmd.run(commandLine);
         } catch (InterruptedException | IM4JavaException e) {
             throw new IOException(e.getMessage(), e);
@@ -173,12 +192,5 @@ class ImageConverter {
      */
     private static String uriToPath(URI uri) {
         return new File(uri).getAbsolutePath();
-    }
-
-    void useAMaximumOfRAM(int ofMB) {
-        if (ofMB <= 0) {
-            throw new IllegalArgumentException("ofMB must be > 0, but was " + Integer.toString(ofMB));
-        }
-        memoryLimit = Integer.toString(ofMB) + "MB";
     }
 }

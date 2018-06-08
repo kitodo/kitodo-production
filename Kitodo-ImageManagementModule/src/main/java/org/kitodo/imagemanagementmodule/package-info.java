@@ -11,7 +11,11 @@
 
 /**
  * A JAR file implementing the ImageManagementInterface by calling ImageMagick.
- * To use this plug-in, ImageMagick must be available on the path (Linux) or in
- * the “Program files” directory (Windows).
+ *
+ * <p>
+ * To use this plug-in, ImageMagick must be available on the system’s search
+ * path, or the ImageMagick home must be configured as
+ * <code>ImageManagementModule.searchPath</code> in
+ * <code>kitodo_config.properties</code>.
  */
 package org.kitodo.imagemanagementmodule;

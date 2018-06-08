@@ -31,9 +31,19 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.config.Config;
 
 /**
- * Tests the Almighty Content Module.
+ * Tests the Image Management Module.
+ *
+ * <p>
+ * To successfully run this test on Windows, create the file
+ * <code>C:\Users\</code><i>your user
+ * name</i><code>\kitodo_config.properties</code> with path to the your
+ * ImageMagick program folder in it, like:
+ *
+ * <p>
+ * {@code ImageManagementModule.searchPath=C:\\Program Files\\ImageMagick-7.0.7-Q16}
  */
 public class ImageManagementModuleIT {
     /**
@@ -70,7 +80,8 @@ public class ImageManagementModuleIT {
         operation.addRawArgs(Arrays.asList("wizard:", "-compress", "None", _00000001_TIF));
         ConvertCmd convertCmd = new ConvertCmd();
         if (SystemUtils.IS_OS_WINDOWS) {
-            convertCmd.setSearchPath(ImageConverter.pathToTheWindowsInstallation());
+            String parameter = Config.getParameter("ImageManagementModule.searchPath");
+            convertCmd.setSearchPath(parameter);
         }
         convertCmd.run(operation);
     }
