@@ -14,7 +14,6 @@ package org.kitodo.imagemanagementmodule;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,8 +21,6 @@ import java.util.NoSuchElementException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.config.Config;
@@ -147,7 +144,7 @@ class ImageConverter {
                 if (!(option.startsWith("+") || option.startsWith("-"))) {
                     option = "-".concat(option);
                 }
-                commandLine.addRawArgs(Arrays.asList(option.split("\\.")));
+                commandLine.addRawArgs(option.split("\\."));
                 String value = Config.getParameter(key);
                 if (!value.isEmpty()) {
                     commandLine.addRawArgs(value);
@@ -162,25 +159,19 @@ class ImageConverter {
     void run() throws IOException {
         IMOperation commandLine = new IMOperation();
         configureImageMagick(commandLine);
-        commandLine.addRawArgs(Arrays.asList(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH));
+        commandLine.addRawArgs(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH);
         commandLine.addImage(source);
         results.forEach(result -> result.addToCommandLine(commandLine));
         commandLine.addImage(FORMAT_OFF);
-        ConvertCmd convertCmd = new ConvertCmd();
+        ConvertRunner convertRunner = new ConvertRunner();
         String searchPath = "";
         try {
             searchPath = Config.getParameter("ImageManagementModule.searchPath");
-            convertCmd.setSearchPath(searchPath);
+            convertRunner.setSearchPath(searchPath);
         } catch (NoSuchElementException e) {
             logger.trace("No deviant search path configured.", e);
         }
-        try {
-            logger.debug("Executing: {}{}convert {}", searchPath,
-                searchPath.endsWith(File.separator) ? "" : File.separator, commandLine);
-            convertCmd.run(commandLine);
-        } catch (InterruptedException | IM4JavaException e) {
-            throw new IOException(e.getMessage(), e);
-        }
+        convertRunner.run(commandLine);
     }
 
     /**
