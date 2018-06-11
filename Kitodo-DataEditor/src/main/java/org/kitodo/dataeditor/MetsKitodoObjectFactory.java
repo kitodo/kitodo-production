@@ -12,8 +12,6 @@
 package org.kitodo.dataeditor;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -22,7 +20,6 @@ import javax.xml.namespace.QName;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
-import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
 import org.kitodo.dataformat.metskitodo.StructMapType;
@@ -35,7 +32,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      * @return The KitodoType object.
      */
     public KitodoType createKitodoType() {
-        KitodoType kitodoType = new KitodoType();
+        KitodoType kitodoType = super.createKitodoType();
         // TODO this version value should come from data format module. Think about how
         // implement this.
         kitodoType.setVersion("1.0");
@@ -112,7 +109,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      */
     public DivType createRootDivTypeForPhysicalStructMap() {
         DivType divType = super.createDivType();
-        divType.setID("PHYS_0000");
+        divType.setID("PHYS_ROOT");
         divType.setTYPE("physSequence");
         return divType;
     }
@@ -124,31 +121,24 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      */
     public DivType createRootDivTypeForLogicalStructMap(String type, MdSecType dmdSecOfLogicalRootDiv) {
         DivType divType = super.createDivType();
-        divType.setID("LOG_0000");
+        divType.setID("LOG_ROOT");
         divType.setTYPE(type);
         divType.getDMDID().add(dmdSecOfLogicalRootDiv);
         return divType;
     }
 
-
     /**
-     * Creates a MdSecType object which wraps a list of MetadataTypes.
+     * Creates a MdSecType object which wraps a KitodoType object.
      *
-     * @param metadata
-     *            The list MetadataType objects.
+     * @param kitodoMetadata
+     *            The KitodoType object which is holding the metadata.
      * @param id
      *            The id of this DmdSec element.
      * @return The MdSecType object.
      */
-    public MdSecType createDmdSecByMetadata(List<MetadataType> metadata, String id) {
-        JAXBElement<KitodoType> kitodoType = createKitodoTypeJAXBElement();
-        if (Objects.nonNull(metadata)) {
-            for (MetadataType metadataType : metadata) {
-                kitodoType.getValue().getMetadata().add(metadataType);
-            }
-        }
+    public MdSecType createDmdSecByKitodoMetadata(KitodoType kitodoMetadata, String id) {
         MdSecType mdSec = super.createMdSecType();
-        mdSec.setMdWrap(wrapKitodoTypeJAXBIntoMdWrap(kitodoType));
+        mdSec.setMdWrap(wrapKitodoTypeIntoMdWrap(kitodoMetadata));
         mdSec.setID(id);
         return mdSec;
     }
@@ -166,16 +156,10 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         return mdWrap;
     }
 
-    private JAXBElement<KitodoType> createKitodoTypeJAXBElement() {
-        KitodoType kitodoType = super.createKitodoType();
-        QName qName = new QName(MetsKitodoPrefixMapper.getKitodoUri(), MetsKitodoPrefixMapper.getKitodoPrefix());
-        return new JAXBElement<>(qName, KitodoType.class, kitodoType);
-    }
-
-    private MdSecType.MdWrap wrapKitodoTypeJAXBIntoMdWrap(JAXBElement<KitodoType> kitodoTypeJAXBElement) {
+    private MdSecType.MdWrap wrapKitodoTypeIntoMdWrap(KitodoType kitodoMetadata) {
         MdSecType.MdWrap mdWrap = createKitodoMdSecTypeMdWrap();
         MdSecType.MdWrap.XmlData xmlData = super.createMdSecTypeMdWrapXmlData();
-        xmlData.getAny().add(kitodoTypeJAXBElement);
+        xmlData.getAny().add(super.createKitodo(kitodoMetadata));
         mdWrap.setXmlData(xmlData);
         return mdWrap;
     }

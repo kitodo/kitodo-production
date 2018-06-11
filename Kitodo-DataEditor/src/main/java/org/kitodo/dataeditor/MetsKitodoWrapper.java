@@ -21,6 +21,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.kitodo.dataeditor.enums.PositionOfNewDiv;
 import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
@@ -66,7 +67,8 @@ public class MetsKitodoWrapper {
     }
 
     private void createLogicalRootDiv(Mets mets, String type) {
-        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByMetadata(null, "DMDLOG_ROOT");
+        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),
+            "DMDLOG_ROOT");
         mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
         getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
     }
@@ -164,8 +166,8 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Returns the KitodoType object of an DmdSec element which is referenced by a
-     * given logical divType object.
+     * Returns the KitodoType object and its metadata of an DmdSec element which is
+     * referenced by a given logical divType object.
      * 
      * @param div
      *            The DivType object which is referencing the DmdSec by DMDID.
@@ -178,5 +180,21 @@ public class MetsKitodoWrapper {
             return MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(mdSecType);
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
+    }
+
+    /**
+     * Adds a new DivType object which specified type and position to the given
+     * DivType object.
+     * 
+     * @param presentDiv
+     *            The DivType object to which the new DivType should be added to.
+     * @param type
+     *            The type of the DivType object.
+     * @param position
+     *            The position in relation to the given DivType object.
+     */
+    public void addNewDivToLogicalSructMap(DivType presentDiv, String type, PositionOfNewDiv position) {
+        MetsKitodoStructMapHandler.addNewLogicalDivToDivOfStructMap(presentDiv, type, getLogicalStructMap(), position);
+        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
     }
 }
