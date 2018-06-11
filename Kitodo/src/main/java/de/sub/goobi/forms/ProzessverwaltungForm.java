@@ -57,7 +57,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
 import org.goobi.production.flow.helper.SearchResultGeneration;
@@ -79,7 +78,6 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectMode;
-import org.kitodo.enums.ObjectType;
 import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -331,57 +329,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (IOException | RuntimeException e) {
             Helper.setErrorMessage("errorDirectoryDeleting",
                     new Object[] {Helper.getTranslation("metadata")}, logger, e);
-        }
-    }
-
-    /**
-     * Filter current processes.
-     *
-     * @return page
-     */
-    public String filterCurrentProcesses() {
-        this.processCounterObjects = null;
-
-        try {
-            if (this.filter.equals("")) {
-                filterProcessesWithoutFilter();
-            } else {
-                filterProcessesWithFilter();
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage("ProzessverwaltungForm.filterCurrentProcesses", logger, e);
-            return null;
-        }
-        this.displayMode = ObjectMode.PROCESS;
-        return processListPath;
-    }
-
-    private void filterProcessesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS,
-                false, false);
-        if (!this.showClosedProcesses) {
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-        }
-        if (!this.showInactiveProjects) {
-            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
-        }
-        processDTOS = serviceManager.getProcessService().findByQuery(query, sortList(), false);
-    }
-
-    private void filterProcessesWithoutFilter() throws DataException {
-        if (!this.showClosedProcesses) {
-            if (!this.showInactiveProjects) {
-                processDTOS = serviceManager.getProcessService()
-                        .findOpenAndActiveProcessesWithoutTemplates(sortList());
-            } else {
-                processDTOS = serviceManager.getProcessService().findNotClosedProcessesWithoutTemplates(sortList());
-            }
-        } else {
-            if (!this.showInactiveProjects) {
-                processDTOS = serviceManager.getProcessService().findAllActiveWithoutTemplates(sortList());
-            } else {
-                processDTOS = serviceManager.getProcessService().findAll(sortList());
-            }
         }
     }
 
