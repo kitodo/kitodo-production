@@ -24,7 +24,7 @@
                 <!-- process title -->
                 <p:outputLabel for="processTitle" value="#{msgs.processTitle}"/>
                 <p:inputText id="processTitle" value="#{ProzesskopieForm.prozessKopie.title}" styleClass="input-with-button"
-                             required="#{empty param['editForm:processFromTemplateTabView:performOpacQuery']}"/>
+                             required="#{empty param['editForm:processFromTemplateTabView:performOpacQuery'] and empty param['editForm:processFromTemplateTabView:generateTitleButton']}"/>
                 <p:commandButton id="generateTitleButton"
                                  actionListener="#{ProzesskopieForm.calculateProcessTitle}"
                                  icon="fa fa-cog" title="#{msgs.generate}"/>
