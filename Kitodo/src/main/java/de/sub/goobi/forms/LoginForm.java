@@ -35,9 +35,8 @@ public class LoginForm implements Serializable {
     private String password;
     private User myBenutzer;
     private boolean alreadyLoggedIn = false;
-    private String passwortAendernAlt;
-    private String passwortAendernNeu1;
-    private String passwortAendernNeu2;
+    private String passwordChanged;
+    private String passwordChangedRepeat;
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
@@ -51,19 +50,19 @@ public class LoginForm implements Serializable {
     public String saveChangedPassword() {
         /* ist das aktuelle Passwort korrekt angegeben ? */
         /* ist das neue Passwort beide Male gleich angegeben? */
-        if (!this.passwortAendernNeu1.equals(this.passwortAendernNeu2)) {
+        if (!this.passwordChanged.equals(this.passwordChangedRepeat)) {
             Helper.setErrorMessage("passwordsDontMatch");
         } else {
             try {
                 /* wenn alles korrekt, dann jetzt speichern */
-                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwortAendernNeu1);
+                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwordChanged);
                 User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-                temp.setPassword(passwordEncoder.encrypt(this.passwortAendernNeu1));
+                temp.setPassword(passwordEncoder.encrypt(this.passwordChanged));
                 serviceManager.getUserService().save(temp);
                 this.myBenutzer = temp;
                 Helper.setMessage("passwordChanged");
             } catch (DAOException | DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {"user"}, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {"user" }, logger, e);
             } catch (NoSuchAlgorithmException e) {
                 Helper.setErrorMessage("ldap error", logger, e);
             }
@@ -80,7 +79,7 @@ public class LoginForm implements Serializable {
         try {
             serviceManager.getUserService().save(this.myBenutzer);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("user")}, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("user") }, logger, e);
         }
         return null;
     }
@@ -128,33 +127,46 @@ public class LoginForm implements Serializable {
         }
     }
 
-
     public void setMyBenutzer(User myClass) {
         this.myBenutzer = myClass;
     }
 
-    public String getPasswortAendernAlt() {
-        return this.passwortAendernAlt;
+    /**
+     * Get changed password.
+     * 
+     * @return changed password
+     */
+    public String getPasswordChanged() {
+        return this.passwordChanged;
     }
 
-    public void setPasswortAendernAlt(String passwortAendernAlt) {
-        this.passwortAendernAlt = passwortAendernAlt;
+    /**
+     * Set changed password.
+     * 
+     * @param passwordChanged
+     *            as String
+     */
+    public void setPasswordChanged(String passwordChanged) {
+        this.passwordChanged = passwordChanged;
     }
 
-    public String getPasswortAendernNeu1() {
-        return this.passwortAendernNeu1;
+    /**
+     * Get repeated changed password.
+     * 
+     * @return repeated changed password
+     */
+    public String getPasswordChangedRepeat() {
+        return this.passwordChangedRepeat;
     }
 
-    public void setPasswortAendernNeu1(String passwortAendernNeu1) {
-        this.passwortAendernNeu1 = passwortAendernNeu1;
-    }
-
-    public String getPasswortAendernNeu2() {
-        return this.passwortAendernNeu2;
-    }
-
-    public void setPasswortAendernNeu2(String passwortAendernNeu2) {
-        this.passwortAendernNeu2 = passwortAendernNeu2;
+    /**
+     * Set repeated changed password.
+     * 
+     * @param passwordChangedRepeat
+     *            as String
+     */
+    public void setPasswordChangedRepeat(String passwordChangedRepeat) {
+        this.passwordChangedRepeat = passwordChangedRepeat;
     }
 
     /**
