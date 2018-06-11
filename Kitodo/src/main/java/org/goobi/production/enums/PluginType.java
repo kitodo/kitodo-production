@@ -11,13 +11,11 @@
 
 package org.goobi.production.enums;
 
-import org.goobi.production.plugin.interfaces.ICommandPlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 
 public enum PluginType {
     IMPORT(1, "import", IImportPlugin.class),
-    COMMAND(4, "command", ICommandPlugin.class),
     CATALOGUE(5, "opac", null);
 
     private int id;
