@@ -51,7 +51,7 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{BenutzerverwaltungForm.saveDisabled}"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          styleClass="button-filled-blue"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
