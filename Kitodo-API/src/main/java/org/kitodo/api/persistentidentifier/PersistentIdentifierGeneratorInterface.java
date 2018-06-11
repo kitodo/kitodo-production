@@ -16,10 +16,12 @@ public interface PersistentIdentifierGeneratorInterface {
 
     /**
      * Registers the given identifier.
-     * 
+     *
      * @param urn
      *            the identifier to register.
      * @return true, if successful, false otherwise.
+     * @throws UnsupportedOperationException
+     *             if the register operation is not supported by this generator
      */
     boolean register(String urn);
 
