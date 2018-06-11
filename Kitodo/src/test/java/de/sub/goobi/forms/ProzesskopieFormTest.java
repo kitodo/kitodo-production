@@ -17,14 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.kitodo.FileLoader;
 
 /**
  * Created for test switch statement.
  */
 public class ProzesskopieFormTest {
 
-    static Map<String, Map<String, String>> testData;
-    static Map<String, String> authorTitle;
+    private static Map<String, Map<String, String>> testData;
 
     static {
         testData = new HashMap<>();
@@ -80,4 +80,33 @@ public class ProzesskopieFormTest {
             }
         }
     }
+
+    @Test
+    public void shouldGetTitleDefinition() throws Exception {
+        FileLoader.createConfigProjectsFile();
+
+        ProzesskopieForm prozesskopieForm = new ProzesskopieForm();
+        String titleDefinition = prozesskopieForm.getTitleDefinition("", "");
+        String expected = "ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+
+        titleDefinition = prozesskopieForm.getTitleDefinition("", "monograph");
+        expected = "ATS+TSL+'_'+PPN digital a-Satz";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+
+        titleDefinition = prozesskopieForm.getTitleDefinition("", "multivolume");
+        expected = "ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+
+        titleDefinition = prozesskopieForm.getTitleDefinition("", "periodical");
+        expected = "TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+
+        titleDefinition = prozesskopieForm.getTitleDefinition("", "some");
+        expected = "TSL+'_'+PPN digital c/a-Aufnahmel+'_'+Bandnummer";
+        assertEquals("Title definition is incorrect!", expected, titleDefinition);
+
+        FileLoader.deleteConfigProjectsFile();
+    }
+
 }

@@ -213,7 +213,7 @@ public class ProzesskopieForm implements Serializable {
             try {
                 importHit(hit);
             } catch (PreferencesException | RuntimeException e) {
-                Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC"}, logger, e);
+                Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC" }, logger, e);
             } finally {
                 hitlistPage = -1;
             }
@@ -303,7 +303,7 @@ public class ProzesskopieForm implements Serializable {
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    Helper.setErrorMessage("noUserInStep", new Object[] {s.getTitle()});
+                    Helper.setErrorMessage("noUserInStep", new Object[] {s.getTitle() });
                 }
             }
             return null;
@@ -385,8 +385,7 @@ public class ProzesskopieForm implements Serializable {
                 fa.setSelectList(new ArrayList<>());
             }
             for (int j = 0; j < selectItemCount; j++) {
-                String svalue = cp
-                        .getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
+                String svalue = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
                 String sid = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")");
                 fa.getSelectList().add(new SelectItem(sid, svalue, null));
             }
@@ -442,7 +441,7 @@ public class ProzesskopieForm implements Serializable {
                 hits = importCatalogue.getNumberOfHits(hitlist, timeout);
 
                 String message = MessageFormat.format(Helper.getTranslation("newProcess.catalogueSearch.results"),
-                        hits);
+                    hits);
 
                 switch ((int) Math.min(hits, Integer.MAX_VALUE)) {
                     case 0:
@@ -462,7 +461,7 @@ public class ProzesskopieForm implements Serializable {
                 Helper.setErrorMessage("ERROR: No suitable plugin available for OPAC '" + opacKatalog + "'");
             }
         } catch (FileNotFoundException | PreferencesException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC " + opacKatalog}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {"OPAC " + opacKatalog }, logger, e);
         }
     }
 
@@ -575,8 +574,8 @@ public class ProzesskopieForm implements Serializable {
             } else {
                 // evaluate the content in normal fields
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                        serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
-                        field.getMetadata());
+                    serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset()),
+                    field.getMetadata());
                 MetadataInterface md = UghHelper.getMetadata(docStruct, mdt);
                 if (md != null) {
                     field.setValue(md.getValue());
@@ -667,7 +666,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"template-metadata"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
         }
 
         removeCollectionsForChildren();
@@ -722,8 +721,8 @@ public class ProzesskopieForm implements Serializable {
             if ((field.getValue() == null || field.getValue().equals("")) && field.isRequired()
                     && field.getShowDependingOnDoctype() && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA, " " + field.getTitle() + " "
-                        + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
+                Helper.setErrorMessage(INCOMPLETE_DATA,
+                    " " + field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
 
             }
         }
@@ -763,7 +762,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             amount = serviceManager.getProcessService().findNumberOfProcessesWithTitle(title);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation("process")}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation("process") }, logger, e);
             return false;
         }
         if (amount > 0) {
@@ -853,8 +852,7 @@ public class ProzesskopieForm implements Serializable {
                 tempStruct = this.rdf.getDigitalDocument().getLogicalDocStruct().getAllChildren().get(0);
             } catch (RuntimeException e) {
                 Helper.setErrorMessage(
-                        e.getMessage() + " The first child below the top structure could not be determined!",
-                        logger, e);
+                    e.getMessage() + " The first child below the top structure could not be determined!", logger, e);
             }
         }
         // if topstruct and first child should get the metadata
@@ -872,7 +870,8 @@ public class ProzesskopieForm implements Serializable {
         try {
             // except for the authors, take all additional into the metadata
             if (!field.getMetadata().equals(LIST_OF_CREATORS)) {
-                PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.prozessKopie.getRuleset());
+                PrefsInterface prefs = serviceManager.getRulesetService()
+                        .getPreferences(this.prozessKopie.getRuleset());
                 MetadataTypeInterface mdt = UghHelper.getMetadataType(prefs, field.getMetadata());
                 MetadataInterface metadata = UghHelper.getMetadata(tempStruct, mdt);
                 if (Objects.nonNull(metadata)) {
@@ -900,18 +899,19 @@ public class ProzesskopieForm implements Serializable {
         try {
             populizer = rdf.getDigitalDocument().getLogicalDocStruct();
             if (populizer.getAnchorClass() != null && populizer.getAllChildren() == null) {
-                PrefsInterface ruleset = serviceManager.getRulesetService()
-                        .getPreferences(prozessKopie.getRuleset());
+                PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(prozessKopie.getRuleset());
                 DocStructTypeInterface docStructType = populizer.getDocStructType();
                 while (docStructType.getAnchorClass() != null) {
-                    populizer = populizer.createChild(
-                            docStructType.getAllAllowedDocStructTypes().get(0), rdf.getDigitalDocument(), ruleset);
+                    populizer = populizer.createChild(docStructType.getAllAllowedDocStructTypes().get(0),
+                        rdf.getDigitalDocument(), ruleset);
                 }
             }
         } catch (NullPointerException | IndexOutOfBoundsException e) {
-            String name = populizer != null && populizer.getDocStructType() != null ? populizer.getDocStructType().getName()
+            String name = populizer != null && populizer.getDocStructType() != null
+                    ? populizer.getDocStructType().getName()
                     : null;
-            Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.", logger, e);
+            Helper.setErrorMessage("DocStrctType: " + name + " is configured as anchor but has no allowedchildtype.",
+                logger, e);
         } catch (UGHException catchAll) {
             Helper.setErrorMessage(catchAll.getLocalizedMessage(), logger, catchAll);
         }
@@ -927,9 +927,7 @@ public class ProzesskopieForm implements Serializable {
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
-                Helper.setErrorMessage(
-                        "The first child below the top structure could not be determined!", logger,
-                        e);
+                Helper.setErrorMessage("The first child below the top structure could not be determined!", logger, e);
             }
         }
     }
@@ -1015,12 +1013,13 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void iterateOverAllMetadata(Map<String, Map<String, MetadataInterface>> higherLevelMetadata,
-                                        List<MetadataInterface> allMetadata) {
+            List<MetadataInterface> allMetadata) {
         for (MetadataInterface available : allMetadata) {
             String availableKey = available.getMetadataType().getName();
             String availableValue = available.getValue();
             Map<String, MetadataInterface> availableMetadata = higherLevelMetadata.containsKey(availableKey)
-                    ? higherLevelMetadata.get(availableKey) : new HashMap<>();
+                    ? higherLevelMetadata.get(availableKey)
+                    : new HashMap<>();
             if (!availableMetadata.containsKey(availableValue)) {
                 availableMetadata.put(availableValue, available);
             }
@@ -1029,9 +1028,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private void iterateOverHigherLevelMetadata(DocStructInterface enricher,
-                                                Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
-        for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata
-                .entrySet()) {
+            Map<String, Map<String, MetadataInterface>> higherLevelMetadata) {
+        for (Entry<String, Map<String, MetadataInterface>> availableHigherMetadata : higherLevelMetadata.entrySet()) {
             String enrichable = availableHigherMetadata.getKey();
             boolean addable = false;
             List<MetadataTypeInterface> addableTypesNotNull = enricher.getAddableMetadataTypes();
@@ -1062,8 +1060,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     enricher.addMetadata(higherElement.getValue());
                 } catch (UGHException e) {
-                    Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") },
-                            logger, e);
+                    Helper.setErrorMessage("errorAdding", new Object[] {Helper.getTranslation("metadata") }, logger, e);
                 }
             }
         }
@@ -1103,8 +1100,7 @@ public class ProzesskopieForm implements Serializable {
     protected void removeCollections(DocStructInterface colStruct, Process process) {
         try {
             MetadataTypeInterface mdt = UghHelper.getMetadataType(
-                    serviceManager.getRulesetService().getPreferences(process.getRuleset()),
-                "singleDigCollection");
+                serviceManager.getRulesetService().getPreferences(process.getRuleset()), "singleDigCollection");
             ArrayList<MetadataInterface> myCollections = new ArrayList<>(colStruct.getAllMetadataByType(mdt));
             for (MetadataInterface md : myCollections) {
                 colStruct.removeMetadata(md);
@@ -1175,7 +1171,7 @@ public class ProzesskopieForm implements Serializable {
         } catch (TypeNotAllowedAsChildException | PreferencesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
     }
 
@@ -1369,7 +1365,8 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         if (unknownField && strict) {
-            throw new ProcessCreationException("Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
+            throw new ProcessCreationException(
+                    "Couldn’t set “" + key + "” to “" + value + "”: No such field in record.");
         }
     }
 
@@ -1432,7 +1429,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1446,7 +1443,7 @@ public class ProzesskopieForm implements Serializable {
         try {
             return ConfigOpac.getAllDoctypes();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -1615,21 +1612,7 @@ public class ProzesskopieForm implements Serializable {
             isDocType = processNullValues(isDocType);
             isNotDocType = processNullValues(isNotDocType);
 
-            // if nothing was specified, then show
-            if (isDocType.equals("") && isNotDocType.equals("")) {
-                titleDefinition = title;
-                // if both were specified
-            } else if (!isDocType.equals("") && !isNotDocType.equals("")
-                    && StringUtils.containsIgnoreCase(isDocType, docType)
-                    && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
-                titleDefinition = title;
-                // if only duty was specified
-            } else if (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)) {
-                titleDefinition = title;
-                // if only "may not" was specified
-            } else if (isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)) {
-                titleDefinition = title;
-            }
+            titleDefinition = findTitleDefinition(title, docType, isDocType, isNotDocType);
 
             // break loop after title definition was found
             if (isTitleDefinitionFound(titleDefinition)) {
@@ -1637,6 +1620,30 @@ public class ProzesskopieForm implements Serializable {
             }
         }
         return titleDefinition;
+    }
+
+    /**
+     * Conditions:
+     * isDocType.equals("") && isNotDocType.equals("")
+     *     - nothing was specified
+     * isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
+     *     - only duty was specified
+     * isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)
+     *    - only may not was specified
+     * !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
+     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)
+     *    - both were specified
+     */
+    private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
+        if ((isDocType.equals("")
+                && (isNotDocType.equals("") || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
+                || (!isDocType.equals("") && !isNotDocType.equals("")
+                && StringUtils.containsIgnoreCase(isDocType, docType)
+                && !StringUtils.containsIgnoreCase(isNotDocType, docType))
+                || (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType))) {
+            return title;
+        }
+        return "";
     }
 
     private boolean isTitleDefinitionFound(String titleDefinition) {
@@ -1663,8 +1670,7 @@ public class ProzesskopieForm implements Serializable {
             // add the content to the title
             if (additionalField.getTitle().equals(token) && additionalField.getShowDependingOnDoctype()
                     && additionalField.getValue() != null) {
-                newTitle.append(
-                        calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
+                newTitle.append(calculateProcessTitleCheck(additionalField.getTitle(), additionalField.getValue()));
             }
         }
         return newTitle.toString();
@@ -1688,11 +1694,11 @@ public class ProzesskopieForm implements Serializable {
                 rueckgabe = df.format(bandint);
             } catch (NumberFormatException e) {
                 if (inFeldName.equals("Bandnummer")) {
-                    Helper.setErrorMessage(
-                            Helper.getTranslation(INCOMPLETE_DATA) + "Bandnummer ist keine gültige Zahl", logger, e);
+                    Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA) + "Bandnummer ist keine gültige Zahl",
+                        logger, e);
                 } else {
                     Helper.setErrorMessage(
-                            Helper.getTranslation(INCOMPLETE_DATA) + "Volume number is not a valid number", logger, e);
+                        Helper.getTranslation(INCOMPLETE_DATA) + "Volume number is not a valid number", logger, e);
                 }
             }
             if (rueckgabe != null && rueckgabe.length() < 4) {
@@ -1740,7 +1746,7 @@ public class ProzesskopieForm implements Serializable {
                 try {
                     this.tifHeaderImageDescription += ConfigOpac.getDoctypeByName(this.docType).getTifHeaderType();
                 } catch (FileNotFoundException | RuntimeException e) {
-                    Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+                    Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
                 }
             } else {
                 /* andernfalls den string als Feldnamen auswerten */
@@ -1995,7 +2001,7 @@ public class ProzesskopieForm implements Serializable {
             // restart of the servlet container
             return false;
         } catch (FileNotFoundException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
             return false;
         }
     }
@@ -2022,7 +2028,8 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Set workflow conditions.
      *
-     * @param workflowConditions as List of Strings
+     * @param workflowConditions
+     *            as List of Strings
      */
     public void setWorkflowConditions(List<String> workflowConditions) {
         this.workflowConditions = workflowConditions;
