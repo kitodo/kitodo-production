@@ -16,13 +16,12 @@ import de.sub.goobi.config.ConfigCore;
 import java.io.File;
 
 import org.apache.commons.lang.SystemUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
 
 public class RemovingST extends BaseTestSelenium {
 
@@ -35,11 +34,12 @@ public class RemovingST extends BaseTestSelenium {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
-        int numberOfProcessesDisplayed = Pages.getProcessesPage().countListedProcesses();
-        Assert.assertTrue("Process list is empty", numberOfProcessesDisplayed > 0);
+        ProcessesPage processesPage = Pages.getProcessesPage();
+        int numberOfProcessesDisplayed = processesPage.countListedProcesses();
+        Assert.assertTrue("Process list is empty", processesPage.isResultSetNotEmpty(processesPage.getListOfProcessTitles()));
         Pages.getProcessesPage().deleteFirstProcess();
         Assert.assertTrue("Removal of first process was not successful!",
-                Pages.getProcessesPage().countListedProcesses() < numberOfProcessesDisplayed);
+                processesPage.countListedProcesses() < numberOfProcessesDisplayed);
 
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));

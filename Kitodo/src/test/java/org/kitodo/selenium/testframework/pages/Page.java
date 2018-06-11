@@ -44,6 +44,18 @@ public abstract class Page {
         return Browser.getCurrentUrl().contains(URL);
     }
 
+    public boolean isResultSetNotEmpty(List<String> recordTitles) {
+        if (recordTitles.isEmpty()) {
+            return false;
+        } else {
+            if (recordTitles.size() == 1) {
+                return !recordTitles.get(0).equals("No records found.");
+            } else {
+                return true;
+            }
+        }
+    }
+
     /**
      * Check if the browser is currently not at given page.
      *

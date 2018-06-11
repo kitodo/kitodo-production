@@ -18,10 +18,12 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProcessesPage extends Page {
 
@@ -60,6 +62,19 @@ public class ProcessesPage extends Page {
             goTo();
         }
         return getRowsOfTable(processesTable).size();
+    }
+
+    /**
+     * Returns a list of all processes titles which were displayed on process
+     * page.
+     *
+     * @return list of processes titles
+     */
+    public List<String> getListOfProcessTitles() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(processesTable, 0);
     }
 
     public void deleteFirstProcess() throws Exception {
