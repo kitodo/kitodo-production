@@ -70,9 +70,6 @@ public class BenutzerverwaltungForm extends BasisForm {
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
-    @Inject
-    private SessionForm sessionForm;
-
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
@@ -425,7 +422,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return whether given UserDTO is checked in
      */
     public boolean checkUserLoggedIn(UserDTO user) {
-        for (SecuritySession securitySession : sessionForm.getActiveSessions()) {
+        for (SecuritySession securitySession : serviceManager.getSessionService().getActiveSessions()) {
             if (securitySession.getUserName().equals(user.getLogin())) {
                 return true;
             }
