@@ -80,6 +80,11 @@ public class MetsKitodoWriterTest {
 
         Assert.assertEquals("Lastmoddate of Mets header was wrong", savedMetsKitodoWrapper.getMets().getMetsHdr().getLASTMODDATE().getHour(),
             new DateTime().getHourOfDay());
+
+        String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
+
+        Assert.assertTrue("Prefix mapping for kitodo namespace is wrong", result.contains("kitodo:metadata"));
+        Assert.assertTrue("Prefix mapping for mets namespace is wrong", result.contains("mets:dmdSec"));
     }
 
     @Test
@@ -129,5 +134,16 @@ public class MetsKitodoWriterTest {
             "    </mets:dmdSec>";
 
         Assert.assertTrue("The written String of the loaded mets was wrong", result.contains(expectedResult));
+    }
+
+    @Test
+    public void shouldWriteMetsStringWithPrefixes()
+        throws JAXBException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
+        MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
+        metsKitodoWrapper.getDmdSecs().add(objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),"testId"));
+        String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
+        Assert.assertTrue("Prefix mapping for kitodo namespace is wrong", result.contains("kitodo:kitodo"));
+        Assert.assertTrue("Prefix mapping for mets namespace is wrong", result.contains("mets:dmdSec"));
     }
 }
