@@ -11,27 +11,42 @@
 
 package org.kitodo.selenium.testframework;
 
+import java.net.URI;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
+import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 public class BaseTestSelenium {
+
+    private static final FileService fileService = new ServiceManager().getFileService();
 
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.startDatabaseServer();
+
+        fileService.createDirectory(URI.create(""), "diagrams");
+        FileLoader.createDiagramBaseFile();
+
         Browser.Initialize();
     }
 
     @AfterClass
     public static void tearDown() throws Exception {
         Browser.close();
+
+        FileLoader.deleteDiagramBaseFile();
+        fileService.delete(URI.create("diagrams"));
+
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
