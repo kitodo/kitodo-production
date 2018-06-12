@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -194,8 +193,7 @@ public class MetsKitodoWrapper {
      * @param position
      *            The position in relation to the given DivType object.
      */
-    public void addNewDivToLogicalSructMap(DivType presentDiv, String type, PositionOfNewDiv position)
-            throws OperationNotSupportedException {
+    public void addNewDivToLogicalSructMap(DivType presentDiv, String type, PositionOfNewDiv position) {
         MetsKitodoStructMapHandler.addNewLogicalDivToDivOfStructMap(presentDiv, type, getLogicalStructMap(), position);
         MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
     }

@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import javax.naming.OperationNotSupportedException;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Config;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataeditor.enums.PositionOfNewDiv;
@@ -31,6 +31,7 @@ import org.kitodo.exceptions.NotImplementedException;
 public class MetsKitodoStructMapHandler {
 
     private static final MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
+    private static final Logger logger = LogManager.getLogger(MetsKitodoStructMapHandler.class);
 
     private MetsKitodoStructMapHandler() {
     }
@@ -113,7 +114,7 @@ public class MetsKitodoStructMapHandler {
      *            The position of the new added div.
      */
     public static void addNewLogicalDivToDivOfStructMap(DivType existingDiv, String type, StructMapType structMap,
-            PositionOfNewDiv position) throws OperationNotSupportedException {
+            PositionOfNewDiv position) {
         DivType newDiv = objectFactory.createDivType();
         newDiv.setTYPE(type);
         switch (position) {
@@ -130,7 +131,7 @@ public class MetsKitodoStructMapHandler {
                 addDivAfterExistingDiv(existingDiv, newDiv, structMap);
                 break;
             default:
-                throw new NotImplementedException("Position of new div element is not implemented");
+                throw new IllegalArgumentException("Position of new div element is not supported");
         }
     }
 
@@ -142,7 +143,7 @@ public class MetsKitodoStructMapHandler {
         existingDiv.getDiv().add(0, newDiv);
     }
 
-    private static void addDivBeforExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
+    private static void addDivBeforExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) {
         DivType parentDiv = getParentDivOfDivFromStructMap(existingDiv, structMap);
         int count = parentDiv.getDiv().size();
         for (int i = 0; i < count; i++) {
@@ -153,7 +154,7 @@ public class MetsKitodoStructMapHandler {
         }
     }
 
-    private static void addDivAfterExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
+    private static void addDivAfterExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) {
         DivType parentDiv = getParentDivOfDivFromStructMap(existingDiv, structMap);
         int count = parentDiv.getDiv().size();
         for (int i = 0; i < count; i++) {
@@ -164,7 +165,7 @@ public class MetsKitodoStructMapHandler {
         }
     }
 
-    private static DivType getParentDivOfDivFromStructMap(DivType div, StructMapType structMap) throws OperationNotSupportedException {
+    private static DivType getParentDivOfDivFromStructMap(DivType div, StructMapType structMap) {
         DivType currentParentDiv = structMap.getDiv();
         if (currentParentDiv.getDiv().contains(div)) {
             return currentParentDiv;
@@ -172,23 +173,25 @@ public class MetsKitodoStructMapHandler {
         return getParentDivOfChildDivFromDivList(div, currentParentDiv.getDiv());
     }
 
-    private static DivType getParentDivOfChildDivFromDivList(DivType childDiv, List<DivType> divTypeList) throws OperationNotSupportedException {
+    private static DivType getParentDivOfChildDivFromDivList(DivType childDiv, List<DivType> divTypeList) {
         if (childDiv.getID().contains("ROOT")) {
-            throw new OperationNotSupportedException("Root element can not have a parent!");
+            throw new UnsupportedOperationException("Root element can not have a parent!");
         }
         for (DivType div : divTypeList) {
             if (div.getDiv().contains(childDiv)) {
                 return div;
             }
-            try {
-                return getParentDivOfChildDivFromDivList(childDiv, div.getDiv());
-            } catch (NoSuchElementException e) {
-                // we do nothing here
-                // this method is calling its self so we need to catch the exception that
-                // the for loop can run farther
+            if (!div.getDiv().isEmpty()) {
+                try {
+                    return getParentDivOfChildDivFromDivList(childDiv, div.getDiv());
+                } catch (NoSuchElementException e) {
+                    logger.debug("Div element with Id " + div.getID() + " does not contain div element with Id: " + childDiv.getID());
+                    // this method is calling recursive its self for handling a complex structure of nested divs
+                    // we need to catch the below exception internally that the for loop can run farther
+                }
             }
         }
-        throw new NoSuchElementException("Parent div element not found");
+        throw new NoSuchElementException("Child div element not found");
     }
 
     /**

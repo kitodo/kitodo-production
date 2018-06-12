@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.naming.OperationNotSupportedException;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -240,7 +239,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldGenerateIdsForDivsOfLogicalStructMap() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldGenerateIdsForDivsOfLogicalStructMap() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
 
@@ -259,7 +258,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldAddDivsAsFirstChild() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldAddDivsAsFirstChild() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
@@ -268,7 +267,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldAddDivsBefor() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldAddDivsBefor() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
@@ -278,7 +277,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldAddDivsAfter() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldAddDivsAfter() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
@@ -289,7 +288,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldDeepAddDivsAfter() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldDeepAddDivsAfter() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
@@ -301,16 +300,16 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldNotAddDivAfterRoot() throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+    public void shouldNotAddDivAfterRoot() throws IOException, DatatypeConfigurationException{
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
-        expectedException.expect(OperationNotSupportedException.class);
+        expectedException.expect(UnsupportedOperationException.class);
         expectedException.expectMessage("Root element can not have a parent!");
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
     }
 
-    private void fillLogicalStructMap(MetsKitodoWrapper metsKitodoWrapper) throws OperationNotSupportedException {
+    private void fillLogicalStructMap(MetsKitodoWrapper metsKitodoWrapper) {
         DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         metsKitodoWrapper.addNewDivToLogicalSructMap(rootDiv, "Chapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
         metsKitodoWrapper.addNewDivToLogicalSructMap(rootDiv, "Chapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
@@ -342,7 +341,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldRemoveNestedLogicalDiv()
-            throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+            throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
@@ -353,7 +352,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldMovedLogicalDiv()
-            throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+            throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
@@ -365,5 +364,16 @@ public class MetsKitodoWrapperTest {
 
         Assert.assertEquals("Could not remove div al logical structMap", 3, movedDivs.size());
         Assert.assertEquals("Could not remove div al logical structMap", "SubSubChapter", movedDivs.get(0).getTYPE());
+    }
+
+    @Test
+    public void shouldAddNewDivBeforNotExistingDiv() throws IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
+        fillLogicalStructMap(metsKitodoWrapper);
+        DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
+        fifthSubDiv.setID("notExisting");
+        expectedException.expect(NoSuchElementException.class);
+        expectedException.expectMessage("Child div element not found");
+        metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
     }
 }
