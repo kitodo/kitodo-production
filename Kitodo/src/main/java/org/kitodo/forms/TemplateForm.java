@@ -24,15 +24,12 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.TemplateDTO;
-import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -47,7 +44,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Template template = new Template();
     private Task task = new Task();
     private String title;
-    private List<TemplateDTO> templateDTOS;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -122,24 +118,6 @@ public class TemplateForm extends TemplateBaseForm {
         this.template = new Template();
         this.template.setTitle("");
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
-    }
-
-    /**
-     * Filter templates.
-     *
-     * @return page
-     */
-    public String filterTemplates() {
-        try {
-            if (this.filter.equals("")) {
-                filterTemplatesWithoutFilter();
-            } else {
-                filterTemplatesWithFilter();
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return templateListPath;
     }
 
     /**
@@ -283,26 +261,6 @@ public class TemplateForm extends TemplateBaseForm {
     public String saveTaskAndRedirect() {
         saveTask();
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
-    }
-
-    private void filterTemplatesWithFilter() throws DataException {
-        BoolQueryBuilder query = serviceManager.getFilterService().queryBuilder(this.filter, ObjectType.PROCESS,
-                false, false);
-        if (!this.showClosedProcesses) {
-            query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-        }
-        if (!this.showInactiveProjects) {
-            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
-        }
-        templateDTOS = serviceManager.getTemplateService().findByQuery(query, sortList(), false);
-    }
-
-    private void filterTemplatesWithoutFilter() throws DataException {
-        if (!this.showInactiveProjects) {
-            templateDTOS = serviceManager.getTemplateService().findTemplatesOfActiveProjects(sortList());
-        } else {
-            templateDTOS = serviceManager.getTemplateService().findAll(sortList());
-        }
     }
 
     private boolean renameAfterProcessTitleChanged() {
