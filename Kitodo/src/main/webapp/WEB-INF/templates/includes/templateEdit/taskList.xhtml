@@ -51,7 +51,7 @@
         <!-- actions -->
         <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
-            <h:link outcome="taskEdit" id="editTask"
+            <h:link outcome="taskTemplateEdit" id="editTask"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
@@ -87,7 +87,7 @@
                     <h:outputText value="#{item.processingBeginAsFormattedString}" rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.lastEdited}: " rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
-                    <h:outputText value="#{item.processingTimeAsFormattedString}"  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingTimeAsFormattedString}" rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
 
                     <h:outputText value="#{msgs.processingEnd}: " rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
                     <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}" rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
@@ -100,7 +100,6 @@
 
                     <h:outputText value="#{msgs.automaticTask}: " rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
                     <h:outputText value="#{item.scriptPath}" rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
-
                 </p:panelGrid>
             </div>
         </p:rowExpansion>
