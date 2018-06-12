@@ -46,6 +46,13 @@
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
+        <p:column headerText="#{msgs.active}" styleClass="checkboxColumn">
+            <h:outputText>
+                <ui:fragment rendered="#{BenutzerverwaltungForm.checkUserLoggedIn(item)}">
+                    <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+                </ui:fragment>
+            </h:outputText>
+        </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:link outcome="userEdit" title="#{msgs.userEdit}"
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
