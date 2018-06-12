@@ -39,6 +39,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -150,6 +151,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     protected void manageDependenciesForIndex(Task task)
             throws CustomResponseException, DAOException, DataException, IOException {
         manageProcessDependenciesForIndex(task);
+        manageTemplateDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
         manageUsersDependenciesForIndex(task);
         manageUserGroupsDependenciesForIndex(task);
@@ -165,6 +167,19 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             Process process = task.getProcess();
             serviceManager.getProcessService().saveToIndex(process);
+        }
+    }
+
+    private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+        if (task.getIndexAction().equals(IndexAction.DELETE)) {
+            Template template = task.getTemplate();
+            if (Objects.nonNull(template)) {
+                template.getTasks().remove(task);
+                serviceManager.getTemplateService().saveToIndex(template);
+            }
+        } else {
+            Template template = task.getTemplate();
+            serviceManager.getTemplateService().saveToIndex(template);
         }
     }
 

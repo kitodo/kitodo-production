@@ -13,6 +13,8 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,7 +25,9 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.persistence.TemplateDAO;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -69,6 +73,97 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return countDatabaseRows("SELECT COUNT(*) FROM Template");
     }
 
+    /**
+     * Method saves or removes tasks and project related to modified template.
+     *
+     * @param template
+     *            object
+     */
+    @Override
+    protected void manageDependenciesForIndex(Template template)
+            throws CustomResponseException, DAOException, DataException, IOException {
+        manageProjectDependenciesForIndex(template);
+        manageTaskDependenciesForIndex(template);
+    }
+
+    /**
+     * Add process to project, if project is assigned to process.
+     *
+     * @param template
+     *            object
+     */
+    private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, IOException {
+        if (Objects.nonNull(template.getProject())) {
+            serviceManager.getProjectService().saveToIndex(template.getProject());
+        }
+    }
+
+    /**
+     * Check IndexAction flag in for process object. If DELETE remove all tasks from
+     * index, if other call saveOrRemoveTaskInIndex() method.
+     *
+     * @param template
+     *            object
+     */
+    private void manageTaskDependenciesForIndex(Template template)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        if (template.getIndexAction().equals(IndexAction.DELETE)) {
+            for (Task task : template.getTasks()) {
+                serviceManager.getTaskService().removeFromIndex(task);
+            }
+        } else {
+            saveOrRemoveTasksInIndex(template);
+        }
+    }
+
+    /**
+     * Compare index and database, according to comparisons results save or remove
+     * tasks.
+     *
+     * @param template
+     *            object
+     */
+    private void saveOrRemoveTasksInIndex(Template template)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        List<Integer> database = new ArrayList<>();
+        List<Integer> index = new ArrayList<>();
+
+        for (Task task : template.getTasks()) {
+            database.add(task.getId());
+            serviceManager.getTaskService().saveToIndex(task);
+        }
+
+        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(template.getId());
+        for (JsonObject object : searchResults) {
+            index.add(getIdFromJSONObject(object));
+        }
+
+        List<Integer> missingInIndex = findMissingValues(database, index);
+        List<Integer> notNeededInIndex = findMissingValues(index, database);
+        for (Integer missing : missingInIndex) {
+            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing));
+        }
+
+        for (Integer notNeeded : notNeededInIndex) {
+            serviceManager.getTaskService().removeFromIndex(notNeeded);
+        }
+    }
+
+    /**
+     * Compare two list and return difference between them.
+     *
+     * @param firstList
+     *            list from which records can be remove
+     * @param secondList
+     *            records stored here will be removed from firstList
+     * @return difference between two lists
+     */
+    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
+        List<Integer> newList = new ArrayList<>(firstList);
+        newList.removeAll(secondList);
+        return newList;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public List<TemplateDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
@@ -78,7 +173,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
             return convertJSONObjectsToDTOs(
-                findBySort(false, true, sort, offset, size), false);
+                    findBySort(false, true, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
