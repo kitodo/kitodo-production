@@ -24,12 +24,25 @@
         <property name="hibernate.connection.driver_class">org.h2.Driver</property>
 
         <property name="hibernate.connection.username">sa</property>
-        <property name="hibernate.connection.password"></property>
-        <property name="hibernate.connection.url">
-            jdbc:h2:mem:test
-        </property>
+        <property name="hibernate.connection.password"/>
+        <property name="hibernate.connection.url">jdbc:h2:mem:test</property>
+
+        <!-- connection pool -->
+        <property name="hibernate.c3p0.max_size">5000</property>
+        <property name="hibernate.c3p0.min_size">10</property>
+        <property name="hibernate.c3p0.timeout">180</property>
+        <property name="hibernate.c3p0.max_statements">0</property>
+        <property name="hibernate.c3p0.idle_test_period">10</property>
+        <property name="hibernate.c3p0.acquire_increment">1</property>
+        <property name="hibernate.c3p0.validate">true</property>
+
+        <!-- hibernate caching -->
+        <property name="hibernate.cache.use_second_level_cache">true</property>
+        <property name="hibernate.cache.use_query_cache">true</property>
+        <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+
         <!-- Enable Hibernate's automatic session context management -->
-        <property name="current_session_context_class">managed</property>
+        <property name="current_session_context_class">thread</property>
 
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
 

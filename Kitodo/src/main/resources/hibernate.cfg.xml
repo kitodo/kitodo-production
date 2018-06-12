@@ -52,7 +52,7 @@
         <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
 
         <!-- Enable Hibernate's automatic session context management -->
-        <property name="current_session_context_class">managed</property>
+        <property name="current_session_context_class">thread</property>
 
         <!-- Fix org.hibernate.LazyInitializationException: could not initialize proxy - no Session -->
         <property name="hibernate.enable_lazy_load_no_trans">true</property>
