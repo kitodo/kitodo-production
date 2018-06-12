@@ -22,6 +22,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
+import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -76,6 +77,9 @@ public class MetsKitodoWriterTest {
             savedMetadata);
         Assert.assertEquals("The number of dmdSec elements of the loaded and the saved mets file are not equal",
             metsKitodoWrapper.getDmdSecs().size(), savedMetsKitodoWrapper.getDmdSecs().size());
+
+        Assert.assertEquals("Lastmoddate of Mets header was wrong", savedMetsKitodoWrapper.getMets().getMetsHdr().getLASTMODDATE().getHour(),
+            new DateTime().getHourOfDay());
     }
 
     @Test

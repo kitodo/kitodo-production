@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.kitodo.config.Config;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataeditor.enums.PositionOfNewDiv;
@@ -98,53 +100,71 @@ public class MetsKitodoStructMapHandler {
         return "other";
     }
 
-    public static void addNewLogicalDivToDivOfStructMap(DivType presentDiv, String type, StructMapType structMap,
-            PositionOfNewDiv position) {
+    /**
+     * Adds a new logical div to an existing div of a structMap.
+     * 
+     * @param existingDiv
+     *            The existing div.
+     * @param type
+     *            The type of the new div.
+     * @param structMap
+     *            The complete structMap for searching the parent divs.
+     * @param position
+     *            The position of the new added div.
+     */
+    public static void addNewLogicalDivToDivOfStructMap(DivType existingDiv, String type, StructMapType structMap,
+            PositionOfNewDiv position) throws OperationNotSupportedException {
         DivType newDiv = objectFactory.createDivType();
-        DivType parentDiv;
-        int count;
         newDiv.setTYPE(type);
         switch (position) {
             case LAST_CHILD_OF_ELEMENT:
-                addDivToDivAsLastChild(presentDiv, newDiv);
+                addDivToDivAsLastChild(existingDiv, newDiv);
                 break;
             case FIRST_CHILD_OF_ELEMENT:
-                addDivToDivAsFirstChild(presentDiv, newDiv);
+                addDivToDivAsFirstChild(existingDiv, newDiv);
                 break;
             case BEFOR_ELEMENT:
-                parentDiv = getParentDivOfDivByStructMap(presentDiv, structMap);
-                count = parentDiv.getDiv().size();
-                for (int i = 0; i < count; i++) {
-                    if (Objects.equals(parentDiv.getDiv().get(i).getID(), presentDiv.getID())) {
-                        parentDiv.getDiv().add(i, newDiv);
-                        break;
-                    }
-                }
+                addDivBeforExistingDiv(existingDiv, newDiv, structMap);
                 break;
             case AFTER_ELEMENT:
-                parentDiv = getParentDivOfDivByStructMap(presentDiv, structMap);
-                count = parentDiv.getDiv().size();
-                for (int i = 0; i < count; i++) {
-                    if (Objects.equals(parentDiv.getDiv().get(i).getID(), presentDiv.getID())) {
-                        parentDiv.getDiv().add(i + 1, newDiv);
-                        break;
-                    }
-                }
+                addDivAfterExistingDiv(existingDiv, newDiv, structMap);
                 break;
             default:
                 throw new NotImplementedException("Position of new div element is not implemented");
         }
     }
 
-    private static void addDivToDivAsLastChild(DivType presentDiv, DivType newDiv) {
-        presentDiv.getDiv().add(newDiv);
+    private static void addDivToDivAsLastChild(DivType existingDiv, DivType newDiv) {
+        existingDiv.getDiv().add(newDiv);
     }
 
-    private static void addDivToDivAsFirstChild(DivType presentDiv, DivType newDiv) {
-        presentDiv.getDiv().add(0, newDiv);
+    private static void addDivToDivAsFirstChild(DivType existingDiv, DivType newDiv) {
+        existingDiv.getDiv().add(0, newDiv);
     }
 
-    private static DivType getParentDivOfDivByStructMap(DivType div, StructMapType structMap) {
+    private static void addDivBeforExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
+        DivType parentDiv = getParentDivOfDivByStructMap(existingDiv, structMap);
+        int count = parentDiv.getDiv().size();
+        for (int i = 0; i < count; i++) {
+            if (Objects.equals(parentDiv.getDiv().get(i).getID(), existingDiv.getID())) {
+                parentDiv.getDiv().add(i, newDiv);
+                break;
+            }
+        }
+    }
+
+    private static void addDivAfterExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
+        DivType parentDiv = getParentDivOfDivByStructMap(existingDiv, structMap);
+        int count = parentDiv.getDiv().size();
+        for (int i = 0; i < count; i++) {
+            if (Objects.equals(parentDiv.getDiv().get(i).getID(), existingDiv.getID())) {
+                parentDiv.getDiv().add(i + 1, newDiv);
+                break;
+            }
+        }
+    }
+
+    private static DivType getParentDivOfDivByStructMap(DivType div, StructMapType structMap) throws OperationNotSupportedException {
         DivType currentParentDiv = structMap.getDiv();
         if (divTypeListContainsDiv(currentParentDiv.getDiv(), div)) {
             return currentParentDiv;
@@ -161,7 +181,10 @@ public class MetsKitodoStructMapHandler {
         return false;
     }
 
-    private static DivType getParentDivOfDivByDivList(DivType div, List<DivType> divTypeList) {
+    private static DivType getParentDivOfDivByDivList(DivType div, List<DivType> divTypeList) throws OperationNotSupportedException {
+        if (div.getID().contains("ROOT")) {
+            throw new OperationNotSupportedException("Root element can not have a parent!");
+        }
         for (DivType divInList : divTypeList) {
             DivType currentParentDiv = divInList;
             if (divTypeListContainsDiv(currentParentDiv.getDiv(), div)) {
