@@ -12,7 +12,16 @@
 function copyToClipboard(inputFieldName) {
     try {
         var inputField = document.getElementById(inputFieldName);
-        inputField.select();
+
+        // Temporarily activate deactivated inputFields to enable selecting
+        if (inputField.getAttribute('disabled') && inputField.getAttribute('disabled').localeCompare('disabled') === 0) {
+            inputField.removeAttribute('disabled');
+            inputField.select();
+            inputField.setAttribute('disabled', 'disabled');
+        } else {
+            inputField.select();
+        }
+
         document.execCommand('copy');
 
         PF('notifications').renderMessage({
