@@ -24,7 +24,6 @@ import org.apache.commons.exec.ExecuteWatchdog;
 import org.apache.commons.exec.Executor;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.im4java.core.IMOperation;
@@ -88,20 +87,14 @@ class ConvertRunner {
             command.addArguments(commandLine.toString());
         }
 
-        boolean exception = false;
         try {
             logger.debug("Executing: {}", command);
             logger.trace("Timeout: {} mins", timeoutMillis / 60000d);
             executor.execute(command);
+            logger.debug("Command output:{}{}", System.lineSeparator(), outAndErr.toString());
         } catch (IOException | RuntimeException e) {
-            exception = true;
+            logger.error("Command output:{}{}", System.lineSeparator(), outAndErr.toString());
             throw e;
-        } finally {
-            String output = outAndErr.toString();
-            if (!output.isEmpty()) {
-                logger.log(exception ? Level.ERROR : Level.DEBUG, "Command output:{}{}", System.lineSeparator(),
-                    output);
-            }
         }
     }
 

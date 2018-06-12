@@ -164,10 +164,8 @@ class ImageConverter {
         results.forEach(result -> result.addToCommandLine(commandLine));
         commandLine.addImage(FORMAT_OFF);
         ConvertRunner convertRunner = new ConvertRunner();
-        String searchPath = "";
         try {
-            searchPath = Config.getParameter("ImageManagementModule.searchPath");
-            convertRunner.setSearchPath(searchPath);
+            convertRunner.setSearchPath(Config.getParameter("ImageManagementModule.searchPath"));
         } catch (NoSuchElementException e) {
             logger.trace("No deviant search path configured.", e);
         }

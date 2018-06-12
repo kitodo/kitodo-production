@@ -99,7 +99,6 @@ class FutureDerivative {
      *            image file format to create
      */
     FutureDerivative(String outputFile, ImageFileFormat outputFormat) {
-        this.outputFile = outputFile;
         switch (outputFormat) {
             case BMP:
                 this.outputFile = FORMAT_BITMAP_PREFIX.concat(outputFile);
