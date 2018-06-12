@@ -350,4 +350,20 @@ public class MetsKitodoWrapperTest {
         Assert.assertEquals("Could not remove div al logical structMap", 4,
             metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().size());
     }
+
+    @Test
+    public void shouldMovedLogicalDiv()
+            throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
+        fillLogicalStructMap(metsKitodoWrapper);
+        DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
+        DivType firstDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
+        metsKitodoWrapper.moveDivToDivAtIndexAtLogicalStructMap(fifthSubDiv, firstDiv, 0);
+
+        List<DivType> movedDivs = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0).getDiv().get(0)
+                .getDiv();
+
+        Assert.assertEquals("Could not remove div al logical structMap", 3, movedDivs.size());
+        Assert.assertEquals("Could not remove div al logical structMap", "SubSubChapter", movedDivs.get(0).getTYPE());
+    }
 }

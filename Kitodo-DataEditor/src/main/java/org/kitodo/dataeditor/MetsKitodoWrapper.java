@@ -201,10 +201,27 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Removed the given div element from current logical structMap.
+     * Moves a given DivType object by removing it from logical structMap and
+     * inserting it as a child of a new parent div.
+     * 
+     * @param movedDiv
+     *            The DivType object which has to be moved.
+     * @param parentDiv
+     *            The DivType object which is the new parent div.
+     * @param index
+     *            The index position where the moved div needs to be inserted.
+     */
+    public void moveDivToDivAtIndexAtLogicalStructMap(DivType movedDiv, DivType parentDiv, int index) {
+        removeDivFromLogicalStructMap(movedDiv);
+        parentDiv.getDiv().add(index, movedDiv);
+        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
+    }
+
+    /**
+     * Removed the given DivType object from current logical structMap.
      * 
      * @param divToRemove
-     *            The div element which should be removed.
+     *            The DivType object which should be removed.
      */
     public void removeDivFromLogicalStructMap(DivType divToRemove) {
         MetsKitodoStructMapHandler.removeDivFromStructMap(divToRemove, getLogicalStructMap());
