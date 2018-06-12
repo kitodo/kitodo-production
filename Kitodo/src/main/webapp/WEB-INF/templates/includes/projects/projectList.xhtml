@@ -25,6 +25,8 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+
         <p:column style="width: 16px;">
             <p:rowToggler/>
         </p:column>
@@ -65,15 +67,15 @@
 
         <p:rowExpansion styleClass="expansion-class">
             <div class="row-expansion-wrapper">
-                <p:panelGrid columns="2" columnClasses="label,value">
+                <p:panelGrid columns="2" columnClasses="label, value" id="projectDetailTable">
                     <h:outputText value="#{msgs.internFileFormat}:"/>
                     <h:outputText value="#{item.fileFormatInternal}"/>
 
                     <h:outputText value="#{msgs.dmsExportformat}:"/>
                     <h:outputText value="#{item.fileFormatDmsExport}"/>
 
-                    <h:outputText value="#{msgs.prozessvorlagen}:"/>
-                    <h:outputText value="#{ProjekteForm.getProjectTemplateTitles(item.id)}"/>
+                    <h:outputText value="#{msgs.metsRightsOwner}:"/>
+                    <h:outputText value="#{item.metsRightsOwner}"/>
                 </p:panelGrid>
             </div>
         </p:rowExpansion>

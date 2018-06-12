@@ -266,6 +266,11 @@ tr.ui-widget-content:not(:first-child) {
     border-top: 1px solid #e2e2e2 !important;
 }
 
+tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
+div.row-expansion-wrapper tr.ui-widget-content{
+    border: 0 !important;
+}
+
 tbody.ui-widget-content {
     border: 0px;
 }
@@ -379,6 +384,15 @@ tr.ui-widget-content,
     animation-duration: 0.5s;
 }
 
+.row-expansion-wrapper tr.ui-widget-content {
+    background: transparent none !important;
+}
+
+.row-expansion-wrapper tr.ui-widget-content td.label {
+    width: 200px;
+    padding-left: 0 !important;
+}
+
 tr.ui-expanded-row-content,
 tr.ui-expanded-row-content tr.ui-widget-header,
 .ui-dialog-content tr.ui-widget-header,
@@ -388,12 +402,19 @@ tr.ui-expanded-row-content tr.ui-widget-header,
 }
 
 .ui-expanded-row-content table.ui-widget {
-    border-top: 1px solid black;
+    border-top: 1px solid #0071bc;
 }
 
 .ui-expanded-row-content tr {
     background-color: lightgray !important;
 }
+
+tr.ui-expanded-row.row-hover,
+tr.ui-expanded-row-content.row-hover {
+    background: #f0faff !important;
+    color: #1b2b36 !important;
+}
+
 
 .ui-picklist-caption {
     border-bottom: 1px solid #000 !important;
@@ -408,7 +429,11 @@ tr.ui-expanded-row-content tr.ui-widget-header,
 
 tr.ui-expanded-row-content .ui-panelgrid {
     width: 70%;
-    margin-left: 35px;
+    margin-left: 48px;
+}
+
+tr.ui-expanded-row-content > td {
+    padding-top: 0 !important;
 }
 
 tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,

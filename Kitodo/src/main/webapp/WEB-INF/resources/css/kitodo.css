@@ -735,19 +735,28 @@ footer {
 
 
 .ui-row-toggler {
-    width: 16px;
-    height:16px;
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
+    display: inline;
+    font: normal normal normal x-large/1 FontAwesome !important;
     text-rendering: auto;
+    color: #0071bc;
+    background: none !important;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-.ui-row-toggler:before {
+.ui-row-toggler.ui-icon-circle-triangle-e:before {
     content: "\f13a";
 }
+
+.ui-row-toggler.ui-icon-circle-triangle-s:before {
+    content: "\f139";
+}
+
+tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
 
 .ui-tabs.ui-tabs-top > .ui-tabs-nav li {
     color: #999;
