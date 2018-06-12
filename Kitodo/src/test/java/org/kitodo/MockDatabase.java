@@ -16,8 +16,6 @@ import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
 import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +75,7 @@ import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.security.SecurityPasswordEncoder;
@@ -1330,7 +1329,7 @@ public class MockDatabase {
      * session.
      */
     public static void cleanDatabase() {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateUtil.getSession();
         Transaction transaction = session.beginTransaction();
         session.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
 

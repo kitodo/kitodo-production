@@ -18,36 +18,12 @@ import javax.el.ELContext;
 import javax.el.ELResolver;
 import javax.faces.context.FacesContext;
 
-import org.hibernate.Session;
-import org.kitodo.data.database.persistence.HibernateUtil;
-
 /**
  * Class contains methods needed for beans and persistence.
  */
 public class HibernateHelper implements Serializable {
 
     private static final long serialVersionUID = -7449236652821237059L;
-
-    /**
-     * Get Hibernate Session.
-     *
-     * @return Hibernate Session
-     */
-    public static Session getHibernateSession() {
-        Session session;
-        try {
-            session = (Session) getManagedBeanValue("HibernateSessionLong.session");
-            if (session == null) {
-                session = HibernateUtil.getSession();
-            }
-        } catch (RuntimeException e) {
-            session = HibernateUtil.getSession();
-        }
-        if (!session.isOpen()) {
-            session = HibernateUtil.getSession();
-        }
-        return session;
-    }
 
     /**
      * Get managed bean value.

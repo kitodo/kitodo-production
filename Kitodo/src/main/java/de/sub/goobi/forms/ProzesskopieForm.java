@@ -80,6 +80,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.legacy.UghImplementation;
@@ -779,7 +780,7 @@ public class ProzesskopieForm implements Serializable {
     public String createNewProcess() throws ReadException, IOException, PreferencesException, WriteException {
 
         // evict set up id to null
-        Helper.getHibernateSession().evict(this.prozessKopie);
+        HibernateUtil.getSession().evict(this.prozessKopie);
         if (!isContentValid()) {
             return null;
         }
@@ -1068,7 +1069,7 @@ public class ProzesskopieForm implements Serializable {
 
     private void startTaskScriptThreads() {
         /* damit die Sortierung stimmt nochmal einlesen */
-        Helper.getHibernateSession().refresh(this.prozessKopie);
+        HibernateUtil.getSession().refresh(this.prozessKopie);
 
         List<Task> tasks = this.prozessKopie.getTasks();
         for (Task task : tasks) {

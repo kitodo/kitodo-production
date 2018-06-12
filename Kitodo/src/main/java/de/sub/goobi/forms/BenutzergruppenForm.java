@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -230,7 +231,7 @@ public class BenutzergruppenForm extends BasisForm {
      *            The user group.
      */
     public void setUserGroup(UserGroup userGroup) {
-        Helper.getHibernateSession().clear();
+        HibernateUtil.getSession().clear();
         this.userGroup = userGroup;
     }
 
