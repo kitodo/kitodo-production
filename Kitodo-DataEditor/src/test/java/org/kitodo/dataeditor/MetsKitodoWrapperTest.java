@@ -264,7 +264,7 @@ public class MetsKitodoWrapperTest {
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthDiv, "AddedSubChapter", PositionOfNewDiv.FIRST_CHILD_OF_ELEMENT);
-        Assert.assertEquals("", "AddedSubChapter", fifthDiv.getDiv().get(0).getTYPE());
+        Assert.assertEquals("New div was not added", "AddedSubChapter", fifthDiv.getDiv().get(0).getTYPE());
     }
 
     @Test
@@ -274,7 +274,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthDiv, "AddedSubChapter", PositionOfNewDiv.BEFOR_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
-        Assert.assertEquals("", "AddedSubChapter", addedDiv.getTYPE());
+        Assert.assertEquals("New div was not added", "AddedSubChapter", addedDiv.getTYPE());
     }
 
     @Test
@@ -284,7 +284,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthDiv, "AddedSubChapter", PositionOfNewDiv.AFTER_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(5);
-        Assert.assertEquals("", "AddedSubChapter", addedDiv.getTYPE());
+        Assert.assertEquals("New div was not added", "AddedSubChapter", addedDiv.getTYPE());
 
     }
 
@@ -297,7 +297,7 @@ public class MetsKitodoWrapperTest {
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "AddedSubSubChapter", PositionOfNewDiv.BEFOR_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
-        Assert.assertEquals("", "AddedSubSubChapter", addedDiv.getTYPE());
+        Assert.assertEquals("New div was not added", "AddedSubSubChapter", addedDiv.getTYPE());
     }
 
     @Test
@@ -338,5 +338,16 @@ public class MetsKitodoWrapperTest {
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
         metsKitodoWrapper.addNewDivToLogicalSructMap(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+    }
+
+    @Test
+    public void shouldRemoveNestedLogicalDiv()
+            throws IOException, DatatypeConfigurationException, OperationNotSupportedException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
+        fillLogicalStructMap(metsKitodoWrapper);
+        DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
+        metsKitodoWrapper.removeDivFromLogicalStructMap(fifthSubDiv);
+        Assert.assertEquals("Could not remove div al logical structMap", 4,
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().size());
     }
 }

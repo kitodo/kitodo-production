@@ -199,4 +199,15 @@ public class MetsKitodoWrapper {
         MetsKitodoStructMapHandler.addNewLogicalDivToDivOfStructMap(presentDiv, type, getLogicalStructMap(), position);
         MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
     }
+
+    /**
+     * Removed the given div element from current logical structMap.
+     * 
+     * @param divToRemove
+     *            The div element which should be removed.
+     */
+    public void removeDivFromLogicalStructMap(DivType divToRemove) {
+        MetsKitodoStructMapHandler.removeDivFromStructMap(divToRemove, getLogicalStructMap());
+        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
+    }
 }

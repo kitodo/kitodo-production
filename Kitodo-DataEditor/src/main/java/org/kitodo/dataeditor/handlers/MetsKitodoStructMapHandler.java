@@ -143,55 +143,45 @@ public class MetsKitodoStructMapHandler {
     }
 
     private static void addDivBeforExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
-        DivType parentDiv = getParentDivOfDivByStructMap(existingDiv, structMap);
+        DivType parentDiv = getParentDivOfDivFromStructMap(existingDiv, structMap);
         int count = parentDiv.getDiv().size();
         for (int i = 0; i < count; i++) {
             if (Objects.equals(parentDiv.getDiv().get(i).getID(), existingDiv.getID())) {
                 parentDiv.getDiv().add(i, newDiv);
-                break;
+                return;
             }
         }
     }
 
     private static void addDivAfterExistingDiv(DivType existingDiv, DivType newDiv, StructMapType structMap) throws OperationNotSupportedException {
-        DivType parentDiv = getParentDivOfDivByStructMap(existingDiv, structMap);
+        DivType parentDiv = getParentDivOfDivFromStructMap(existingDiv, structMap);
         int count = parentDiv.getDiv().size();
         for (int i = 0; i < count; i++) {
             if (Objects.equals(parentDiv.getDiv().get(i).getID(), existingDiv.getID())) {
                 parentDiv.getDiv().add(i + 1, newDiv);
-                break;
+                return;
             }
         }
     }
 
-    private static DivType getParentDivOfDivByStructMap(DivType div, StructMapType structMap) throws OperationNotSupportedException {
+    private static DivType getParentDivOfDivFromStructMap(DivType div, StructMapType structMap) throws OperationNotSupportedException {
         DivType currentParentDiv = structMap.getDiv();
-        if (divTypeListContainsDiv(currentParentDiv.getDiv(), div)) {
+        if (currentParentDiv.getDiv().contains(div)) {
             return currentParentDiv;
         }
-        return getParentDivOfDivByDivList(div, currentParentDiv.getDiv());
+        return getParentDivOfChildDivFromDivList(div, currentParentDiv.getDiv());
     }
 
-    private static boolean divTypeListContainsDiv(List<DivType> divTypeList, DivType div) {
-        for (DivType divInList : divTypeList) {
-            if (Objects.equals(divInList.getID(), div.getID())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static DivType getParentDivOfDivByDivList(DivType div, List<DivType> divTypeList) throws OperationNotSupportedException {
-        if (div.getID().contains("ROOT")) {
+    private static DivType getParentDivOfChildDivFromDivList(DivType childDiv, List<DivType> divTypeList) throws OperationNotSupportedException {
+        if (childDiv.getID().contains("ROOT")) {
             throw new OperationNotSupportedException("Root element can not have a parent!");
         }
-        for (DivType divInList : divTypeList) {
-            DivType currentParentDiv = divInList;
-            if (divTypeListContainsDiv(currentParentDiv.getDiv(), div)) {
-                return currentParentDiv;
+        for (DivType div : divTypeList) {
+            if (div.getDiv().contains(childDiv)) {
+                return div;
             }
             try {
-                return getParentDivOfDivByDivList(div, currentParentDiv.getDiv());
+                return getParentDivOfChildDivFromDivList(childDiv, div.getDiv());
             } catch (NoSuchElementException e) {
                 // we do nothing here
                 // this method is calling its self so we need to catch the exception that
@@ -227,5 +217,28 @@ public class MetsKitodoStructMapHandler {
             }
         }
         return startingIndex;
+    }
+
+    /**
+     * Removed a div element from a structMap. Does nothing if the given div does
+     * not exist at structMap.
+     * 
+     * @param divToRemove
+     *            The divType object to remove.
+     * @param structMap
+     *            The structMap in which the given div should be removed.
+     */
+    public static void removeDivFromStructMap(DivType divToRemove, StructMapType structMap) {
+        removeDivFromDivList(divToRemove, structMap.getDiv().getDiv());
+    }
+
+    private static void removeDivFromDivList(DivType divToRemove, List<DivType> divList) {
+        if (!divList.remove(divToRemove)) {
+            for (DivType div : divList) {
+                if (!div.getDiv().isEmpty()) {
+                    removeDivFromDivList(divToRemove, div.getDiv());
+                }
+            }
+        }
     }
 }
