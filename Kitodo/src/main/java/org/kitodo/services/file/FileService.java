@@ -499,7 +499,7 @@ public class FileService {
 
         numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
 
-        if (numberOfBackups != 0) {
+        if (numberOfBackups != ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS) {
             BackupFileRotation bfr = new BackupFileRotation();
             bfr.setNumberOfBackups(numberOfBackups);
             bfr.setFormat("meta.*\\.xml");

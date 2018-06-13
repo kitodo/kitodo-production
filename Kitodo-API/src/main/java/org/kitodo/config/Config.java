@@ -13,6 +13,7 @@ package org.kitodo.config;
 
 import java.util.NoSuchElementException;
 
+import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -26,126 +27,158 @@ public class Config {
     private static final String CONFIG_FILE = "kitodo_config.properties";
     private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
     private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
+    public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
 
     /**
-     * Get Kitodo data directory.
+     * Returns the directory that contains the process directories.
      *
-     * @return String
+     * @return the directory for the process directories
      */
     public static String getKitodoDataDirectory() {
         return getParameter(METADATA_DIRECTORY);
     }
 
     /**
-     * Get Kitodo config directory.
+     * Returns the directory that contains XML configuration files.
      *
-     * @return String
+     * @return the directory for XML configuration files
      */
     public static String getKitodoConfigDirectory() {
         return getParameter(CONFIG_DIR);
     }
 
     /**
-     * Request selected parameter from configuration.
+     * Returns the selected parameter from the configuration file. Throws a
+     * {@code NoSuchElementException} if no such parameter exists.
      *
-     * @return Parameter as String
+     * @param key
+     *            key whose value is to be returned
+     * @return value for the requested key
+     * @throws NoSuchElementException
+     *             if parameter taken from config file is null or exception
+     *             occurred
      */
-    public static String getParameter(String parameter) {
+    public static String getParameter(String key) {
         try {
-            return getConfig().getString(parameter);
+            return getConfig().getString(key);
         } catch (NoSuchElementException e) {
-            throw new NoSuchElementException(
-                    "No configuration found in kitodo_config.properties for key " + parameter + "!");
+            logger.catching(e);
+            throw new NoSuchElementException("No configuration found in kitodo_config.properties for key " + key + "!");
         }
     }
 
     /**
-     * Request selected parameter with given default value from configuration.
+     * Returns the selected parameter from the configuration file. If no such
+     * parameter exists, returns the given default value.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @param defaultValue
+     *            default value in case parameter taken from config file does
+     *            not exist or exception occurred
+     * @return value for the requested key, or {@code defaultIfNull} if not
+     *         found
+     */
+    public static String getParameter(String key, String defaultValue) {
+        try {
+            return getConfig().getString(key, defaultValue);
+        } catch (ConversionException e) {
+            logger.catching(e);
+            logger.warn("Configuration found in kitodo_config.properties for key {} is defined, but not a String!",
+                key);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the selected boolean parameter from the configuration file. If no
+     * such parameter exists, or the value cannot be parsed to {@code boolean},
+     * returns {@code false}.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @return boolean value for the requested key, or {@code false} if not
+     *         found or not parsing
+     */
+    public static boolean getBooleanParameter(String key) {
+        return getBooleanParameter(key, false);
+    }
+
+    /**
+     * Returns the selected boolean parameter from the configuration file. If no
+     * such parameter exists, or the value cannot be parsed to {@code boolean},
+     * returns the provided default value.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @param defaultValue
+     *            default value in case parameter taken from config file does
+     *            not exist or exception occurred
+     * @return boolean value for the requested key, or {@code defaultIfNull} if
+     *         not found or not parsing
+     */
+    public static boolean getBooleanParameter(String key, boolean defaultValue) {
+        try {
+            return getConfig().getBoolean(key, defaultValue);
+        } catch (ConversionException e) {
+            logger.catching(e);
+            logger.warn(
+                "Configuration found in kitodo_config.properties for key {} is defined, but cannot be converted to boolean!",
+                key);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the selected int parameter from the configuration file. If no
+     * such parameter exists, or the value cannot be parsed to {@code int},
+     * returns {@code 0}.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @return int value for the requested key, or {@code 0} if not found or not
+     *         parsing
+     */
+    public static int getIntParameter(String key) {
+        return getIntParameter(key, INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS);
+    }
+
+    /**
+     * Returns the selected int parameter from the configuration file. If no
+     * such parameter exists, or the value cannot be parsed to {@code int},
+     * returns the provided default value.
      *
      * @param parameter
-     *            name of parameter in config file
+     *            key whose value is to be returned
      * @param defaultIfNull
-     *            default value in case parameter taken from config file is null or
-     *            exception occurred
-     * @return Parameter as String
+     *            default value in case parameter taken from config file does
+     *            not exist or exception occurred
+     * @return int value for the requested key, or {@code defaultIfNull} if not
+     *         found or not parsing
      */
-    public static String getParameter(String parameter, String defaultIfNull) {
+    public static int getIntParameter(String key, int defaultValue) {
         try {
-            return getConfig().getString(parameter, defaultIfNull);
+            return getConfig().getInt(key, defaultValue);
         } catch (ConversionException e) {
-            return defaultIfNull;
+            logger.catching(e);
+            logger.warn(
+                "Configuration found in kitodo_config.properties for key {} is defined, but cannot be converted to int!",
+                key);
+            return defaultValue;
         }
     }
 
     /**
-     * Request boolean parameter from configuration, default if missing: false.
-     * 
-     * @param inParameter
-     *            name of parameter in config file
-     * @return Parameter as boolean
-     */
-    public static boolean getBooleanParameter(String inParameter) {
-        return getBooleanParameter(inParameter, false);
-    }
-
-    /**
-     * Request boolean parameter from configuration.
+     * Returns the configuration.
      *
-     * @param parameter
-     *            name of parameter in config file
-     * @param defaultIfNull
-     *            default value in case parameter taken from config file is null or
-     *            exception occurred
-     * @return Parameter as boolean
-     */
-    public static boolean getBooleanParameter(String parameter, boolean defaultIfNull) {
-        try {
-            return getConfig().getBoolean(parameter, defaultIfNull);
-        } catch (ConversionException e) {
-            return defaultIfNull;
-        }
-    }
-
-    /**
-     * Request int-parameter from Configuration.
-     *
-     * @param inParameter
-     *            name of parameter in config file
-     * @return Parameter as int
-     */
-    public static int getIntParameter(String inParameter) {
-        return getIntParameter(inParameter, 0);
-    }
-
-    /**
-     * Request int-parameter from Configuration with default-value.
-     *
-     * @param inParameter
-     *            name of parameter in config file
-     * @param inDefault
-     *            default value in case parameter taken from config file is null or
-     *            exception occurred
-     * @return Parameter as int
-     */
-    public static int getIntParameter(String inParameter, int inDefault) {
-        try {
-            return getConfig().getInt(inParameter, inDefault);
-        } catch (ConversionException e) {
-            return inDefault;
-        }
-    }
-
-    /**
-     * Gets the configuration.
-     *
-     * @return the PropertyConfiguration
+     * @return the configuration
      */
     public static PropertiesConfiguration getConfig() {
         if (config == null) {
             synchronized (Config.class) {
                 PropertiesConfiguration initialized = config;
                 if (initialized == null) {
-                    PropertiesConfiguration.setDefaultListDelimiter('&');
+                    AbstractConfiguration.setDefaultListDelimiter('&');
                     try {
                         initialized = new PropertiesConfiguration(CONFIG_FILE);
                     } catch (ConfigurationException e) {
