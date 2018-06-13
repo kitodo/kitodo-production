@@ -77,16 +77,6 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
-     * Refresh process object after some changes.
-     *
-     * @param process
-     *            object
-     */
-    public void refresh(Process process) {
-        refreshObject(process);
-    }
-
-    /**
      * Update process object after some changes.
      *
      * @param process

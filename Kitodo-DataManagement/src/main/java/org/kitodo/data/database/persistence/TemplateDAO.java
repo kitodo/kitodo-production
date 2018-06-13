@@ -66,16 +66,6 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     /**
-     * Refresh process object after some changes.
-     *
-     * @param process
-     *            object
-     */
-    public void refresh(Template process) {
-        refreshObject(process);
-    }
-
-    /**
      * Update process object after some changes.
      *
      * @param process

@@ -124,5 +124,14 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     public List<T> getAll(int offset, int size) throws DAOException {
         return dao.getAll(offset, size);
     }
-}
 
+    /**
+     * Refresh given bean object.
+     *
+     * @param baseBean
+     *            bean object
+     */
+    public void refresh(T baseBean) {
+        this.dao.refresh(baseBean);
+    }
+}

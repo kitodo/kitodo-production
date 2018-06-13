@@ -52,16 +52,6 @@ public class UserGroupClientAuthorityRelationDAO extends BaseDAO<UserGroupClient
     }
 
     /**
-     * Refresh UserGroupClientAuthorityRelation object after some changes.
-     *
-     * @param userGroupClientAuthorityRelation
-     *            object
-     */
-    public void refresh(UserGroupClientAuthorityRelation userGroupClientAuthorityRelation) {
-        refreshObject(userGroupClientAuthorityRelation);
-    }
-
-    /**
      * Get all UserGroupClientAuthorityRelations which contains given client and
      * user group id.
      * 

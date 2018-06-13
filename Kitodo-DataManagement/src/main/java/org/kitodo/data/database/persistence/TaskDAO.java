@@ -55,16 +55,6 @@ public class TaskDAO extends BaseDAO<Task> {
         removeObject(Task.class, id);
     }
 
-    /**
-     * Refresh task object after some changes.
-     * 
-     * @param task
-     *            object
-     */
-    public void refresh(Task task) {
-        refreshObject(task);
-    }
-
     public void update(Task task) {
         updateObject(task);
     }

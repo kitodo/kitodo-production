@@ -111,6 +111,16 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Refresh given bean object.
+     * 
+     * @param baseBean
+     *            bean to refresh
+     */
+    public void refresh(T baseBean) {
+        refreshObject(baseBean);
+    }
+
+    /**
      * Retrieves BaseBean objects from database by given query.
      *
      * @param query

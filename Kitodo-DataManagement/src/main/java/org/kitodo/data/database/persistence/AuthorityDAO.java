@@ -49,14 +49,4 @@ public class AuthorityDAO extends BaseDAO<Authority> {
     public void remove(Integer id) throws DAOException {
         removeObject(Authority.class, id);
     }
-
-    /**
-     * Refresh Authority object after some changes.
-     *
-     * @param authority
-     *            object
-     */
-    public void refresh(Authority authority) {
-        refreshObject(authority);
-    }
 }
