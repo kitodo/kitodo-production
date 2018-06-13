@@ -121,6 +121,16 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Evict given bean object.
+     *
+     * @param baseBean
+     *            bean to evict
+     */
+    public void evict(T baseBean) {
+        evictObject(baseBean);
+    }
+
+    /**
      * Retrieves BaseBean objects from database by given query.
      *
      * @param query
@@ -384,12 +394,24 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Evict object associated with the session.
+     *
+     * @param object
+     *            associated with the session
+     */
+    private void evictObject(T object) {
+        try (Session session = HibernateUtil.getSession()) {
+            session.evict(object);
+        }
+    }
+
+    /**
      * Refresh object associated with the session.
      *
      * @param object
      *            associated with the session
      */
-    void refreshObject(T object) {
+    private void refreshObject(T object) {
         try (Session session = HibernateUtil.getSession()) {
             session.refresh(object);
         }
@@ -415,4 +437,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             session.update(object);
         }
     }
+
+
 }

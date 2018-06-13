@@ -126,6 +126,16 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
+     * Evict given bean object.
+     *
+     * @param baseBean
+     *            bean to evict
+     */
+    public void evict(T baseBean) {
+        this.dao.evict(baseBean);
+    }
+
+    /**
      * Refresh given bean object.
      *
      * @param baseBean
