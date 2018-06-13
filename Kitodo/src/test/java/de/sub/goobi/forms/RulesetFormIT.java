@@ -19,7 +19,7 @@ import org.kitodo.data.database.beans.Ruleset;
 
 public class RulesetFormIT {
 
-    private RulesetForm rulesetForm = new RulesetForm();
+    private RulesetForm rulesetForm = new RulesetForm(new ProjekteForm());
     private Ruleset ruleset;
 
     @Test

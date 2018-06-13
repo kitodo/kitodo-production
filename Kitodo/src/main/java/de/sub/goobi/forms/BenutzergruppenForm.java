@@ -46,7 +46,6 @@ public class BenutzergruppenForm extends BasisForm {
     private static  final String USER_GROUP = "userGroup";
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    @Inject
     @Named("BenutzerverwaltungForm")
     private BenutzerverwaltungForm userForm;
 
@@ -101,9 +100,11 @@ public class BenutzergruppenForm extends BasisForm {
      * Empty default constructor that also sets the LazyDTOModel instance of this
      * bean.
      */
-    public BenutzergruppenForm() {
+    @Inject
+    public BenutzergruppenForm(BenutzerverwaltungForm userForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
+        this.userForm = userForm;
     }
 
     /**

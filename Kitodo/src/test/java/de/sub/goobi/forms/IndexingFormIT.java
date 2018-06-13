@@ -11,11 +11,18 @@
 
 package de.sub.goobi.forms;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.omnifaces.cdi.PushContext;
 
 public class IndexingFormIT {
 
