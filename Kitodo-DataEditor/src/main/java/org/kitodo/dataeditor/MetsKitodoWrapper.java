@@ -160,7 +160,7 @@ public class MetsKitodoWrapper {
     /**
      * Returns the logical StructMap of mets document.
      *
-     * @return The StructMapType object.
+     * @return The LogicalStructMapType object.
      */
     public LogicalStructMapType getLogicalStructMap() {
         if (Objects.isNull(this.logicalStructMapType)) {

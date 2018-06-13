@@ -26,6 +26,12 @@ public class LogicalStructMapType extends StructMapType {
 
     private static final Logger logger = LogManager.getLogger(LogicalStructMapType.class);
 
+    /**
+     * Constructor to copy the data from parent class.
+     *
+     * @param structMapType
+     *            The structMapType object.
+     */
     public LogicalStructMapType(StructMapType structMapType) {
         super.div = structMapType.getDiv();
         super.id = structMapType.getID();
