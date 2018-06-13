@@ -11,8 +11,6 @@
 
 package org.goobi.webapi.dao;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +29,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 public class GoobiProcessDAO {
 
@@ -54,7 +53,7 @@ public class GoobiProcessDAO {
         Session session;
         GoobiProcess result = null;
 
-        session = Helper.getHibernateSession();
+        session = HibernateUtil.getSession();
 
         try {
 
@@ -84,7 +83,7 @@ public class GoobiProcessDAO {
      * @return List of GoobiProcess objects
      */
     public static List<GoobiProcess> getAllProcesses() {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateUtil.getSession();
         List<GoobiProcess> result = new ArrayList<>();
 
         try {
@@ -119,7 +118,7 @@ public class GoobiProcessDAO {
      */
     public static List<GoobiProcessStep> getAllProcessSteps(IdentifierPPN ppn) {
         List<GoobiProcessStep> result = new ArrayList<>();
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateUtil.getSession();
 
         try {
             Criteria criteria = session.createCriteria(Task.class).createAlias("process", "p")

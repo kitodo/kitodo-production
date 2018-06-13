@@ -32,6 +32,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
@@ -245,7 +246,7 @@ public class TemplateBaseForm extends BasisForm {
     protected void reload(BaseBean baseBean, String message) {
         if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
             try {
-                Helper.getHibernateSession().refresh(baseBean);
+                HibernateUtil.getSession().refresh(baseBean);
             } catch (RuntimeException e) {
                 Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
             }

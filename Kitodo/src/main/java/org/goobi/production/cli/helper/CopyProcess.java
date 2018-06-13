@@ -52,6 +52,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
@@ -425,7 +426,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
 
     public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
-        Helper.getHibernateSession().evict(this.prozessKopie);
+        HibernateUtil.getSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
 
@@ -464,7 +465,7 @@ public class CopyProcess extends ProzesskopieForm {
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        Helper.getHibernateSession().refresh(this.prozessKopie);
+        HibernateUtil.getSession().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
@@ -477,7 +478,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     public Process createProcess(ImportObject io)
             throws ReadException, IOException, PreferencesException, WriteException {
-        Helper.getHibernateSession().evict(this.prozessKopie);
+        HibernateUtil.getSession().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
         addProperties(io);
@@ -507,7 +508,7 @@ public class CopyProcess extends ProzesskopieForm {
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        Helper.getHibernateSession().refresh(this.prozessKopie);
+        HibernateUtil.getSession().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 

@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.services.data.base.SearchService;
 
@@ -62,7 +63,7 @@ public class IndexWorker implements Runnable {
 
     @SuppressWarnings("unchecked")
     private void indexChunks(int batchSize) throws CustomResponseException, DAOException, IOException {
-        Session session = Helper.getHibernateSession();
+        Session session = HibernateUtil.getSession();
         List<Object> objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
         indexObjects(objectsToIndex);
         session.clear();

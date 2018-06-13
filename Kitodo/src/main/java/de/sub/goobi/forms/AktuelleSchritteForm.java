@@ -48,6 +48,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectMode;
@@ -116,7 +117,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        Helper.getHibernateSession().refresh(this.mySchritt);
+        HibernateUtil.getSession().refresh(this.mySchritt);
 
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
@@ -133,9 +134,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String editStep() {
-
-        Helper.getHibernateSession().refresh(mySchritt);
-
+        HibernateUtil.getSession().refresh(mySchritt);
         return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
     }
 
