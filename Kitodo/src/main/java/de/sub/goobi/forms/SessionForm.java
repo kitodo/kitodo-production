@@ -11,6 +11,7 @@
 
 package de.sub.goobi.forms;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -21,8 +22,9 @@ import org.kitodo.services.ServiceManager;
 
 @Named
 @ApplicationScoped
-public class SessionForm {
+public class SessionForm implements Serializable {
 
+    private static final long serialVersionUID = -7449236123765282059L;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
