@@ -146,9 +146,6 @@ public abstract class UnspecificPlugin {
      */
     static UnspecificPlugin create(PluginType type, Object implementation) throws NoSuchMethodException {
         switch (type) {
-            case COMMAND:
-                // return new CommandPlugin(implementation);
-                throw new NotImplementedException();
             case IMPORT:
                 // return new ImportPlugin(implementation);
                 throw new NotImplementedException();
