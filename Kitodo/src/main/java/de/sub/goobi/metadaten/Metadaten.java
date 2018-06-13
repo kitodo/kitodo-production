@@ -18,6 +18,7 @@ import de.sub.goobi.helper.Transliteration;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
+import de.sub.goobi.helper.BatchStepHelper;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
@@ -91,6 +92,8 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
@@ -98,6 +101,7 @@ import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.kitodo.workflow.Problem;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -158,6 +162,14 @@ public class Metadaten {
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
     private boolean showPagination = false;
+
+    private boolean showNewComment = false;
+    private boolean correctionComment = false;
+    private String addToWikiField;
+    private String[] wikiField;
+    protected User user;
+    private Problem problem = new Problem();
+
     private String viewMode = "list";
     private String currentImage = "";
 
@@ -3460,6 +3472,14 @@ public class Metadaten {
         this.showPagination = showPagination;
     }
 
+    public boolean isShowNewComment() {
+        return showNewComment;
+    }
+
+    public void setShowNewComment(boolean showNewComment) {
+        this.showNewComment = showNewComment;
+    }
+
     public String getViewMode() {
         return viewMode;
     }
@@ -3848,4 +3868,200 @@ public class Metadaten {
             primeFaces.ajax().update(componentIDs);
         }
     }
+
+    /**
+     * Get current user.
+     *
+     * @return User
+     */
+    public User getCurrentUser() {
+        if (this.user == null) {
+            this.user = serviceManager.getUserService().getAuthenticatedUser();
+        }
+        return this.user;
+    }
+
+    /**
+     * Get wiki field.
+     *
+     * @return values for wiki field
+     */
+    public String[] getWikiField() {
+        refreshProcess(this.process);
+        String wiki = getProcess().getWikiField();
+        if (!wiki.isEmpty()) {
+            wiki = wiki.replace("</p>", "");
+            String[] comments = wiki.split("<p>");
+            if (comments[0].isEmpty()) {
+                List<String> list = new ArrayList<>(Arrays.asList(comments));
+                list.remove(list.get(0));
+                comments = null;
+                comments = list.toArray(new String[list.size()]);
+            }
+            return comments;
+        }
+        return null;
+    }
+
+    /**
+     * Sets new value for wiki field.
+     *
+     * @param inString
+     *            input String
+     */
+    public void setWikiField(String[] inString) {
+        this.wikiField = inString;
+    }
+
+
+    /**
+     * Get add to wiki field.
+     *
+     * @return values for add to wiki field
+     */
+    public String getAddToWikiField() {
+        return this.addToWikiField;
+    }
+
+    /**
+     * Set add to wiki field.
+     *
+     * @param addToWikiField
+     *            String
+     */
+    public void setAddToWikiField(String addToWikiField) {
+        this.addToWikiField = addToWikiField;
+    }
+
+    /**
+     * Add to wiki field.
+     */
+    public void addToWikiField() {
+
+        if (addToWikiField != null && addToWikiField.length() > 0) {
+            String comment =  serviceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
+            serviceManager.getProcessService().addToWikiField(comment, this.process);
+            this.addToWikiField = "";
+            try {
+                serviceManager.getProcessService().save(process);
+                refreshProcess(process);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorReloading", new Object[]{Helper.getTranslation("wikiField")}, logger, e);
+            }
+        }
+        setShowNewComment(false);
+        setWikiField(getWikiField());
+    }
+
+    /**
+     * Get correction comment.
+     *
+     * @return value of correction comment
+     */
+    public boolean isCorrectionComment() {
+        return correctionComment;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+
+    /**
+     * Set correction comment.
+     *
+     * @param correctionComment
+     *            as boolean
+     */
+    public void setCorrectionComment(boolean correctionComment) {
+        this.correctionComment = correctionComment;
+    }
+
+    /**
+     * Get problem.
+     *
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
+    }
+
+    /**
+     * Set problem.
+     *
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
+
+    /**
+     * Correction message to previous Tasks.
+     */
+    public List<Task> getPreviousStepsForProblemReporting() {
+        refreshProcess(this.process);
+        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(serviceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
+                this.process.getId());
+    }
+
+    public int getSizeOfPreviousStepsForProblemReporting() {
+        return getPreviousStepsForProblemReporting().size();
+    }
+
+    /**
+     * Report the problem.
+     *
+     *
+     */
+    public void reportProblem() {
+        List<Task> taskList = new  ArrayList<Task>();
+        taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
+        BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
+        batchStepHelper.setProblem(getProblem());
+        batchStepHelper.reportProblemForSingle();
+        refreshProcess(this.process);
+        setShowNewComment(false);
+        setCorrectionComment(false);
+        setProblem(null);
+    }
+
+    /**
+     * solve the problem.
+     *
+     *
+     */
+    public void solveProblem(String comment) {
+        BatchStepHelper batchStepHelper = new BatchStepHelper();
+        batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
+        String wikiField = getProcess().getWikiField();
+        wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
+        serviceManager.getProcessService().setWikiField(wikiField, this.process);
+        try {
+            serviceManager.getProcessService().save(process);
+        } catch (DataException e) {
+            e.printStackTrace();
+        }
+        refreshProcess(process);
+    }
+
+    /**
+     * refresh the process in the session.
+     *
+     * @param process Object
+     *            process to refresh
+     */
+    public void refreshProcess(Process process) {
+        try {
+            if (process.getId() != 0) {
+                serviceManager.getProcessService().refresh(process);
+
+                setProcess(this.serviceManager.getProcessService().getById(process.getId()));
+
+            }
+
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
+        }
+    }
+
 }

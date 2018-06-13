@@ -1533,6 +1533,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Sets new value for wiki field.
+     *
+     * @param wikiField
+     *            string
+     * @param process
+     *            object
+     */
+    public void setWikiField(String wikiField, Process process) {
+        process.setWikiField(wikiField);
+    }
+
+    /**
      * The method addToWikiField() adds a message with a given level to the wiki
      * field of the process. Four level strings will be recognized and result in
      * different colors:

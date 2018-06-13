@@ -382,12 +382,12 @@ public class WorkflowControllerService {
         serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
 
-        Task correctionTask = serviceManager.getTaskService().getById(this.problem.getId());
+        Task correctionTask = serviceManager.getTaskService().getById(getProblem().getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
         correctionTask = setCorrectionTask(correctionTask);
         correctionTask.setProcessingEnd(null);
 
-        Property processProperty = prepareProblemMessageProperty(date);
+        Property processProperty = prepareProblemMessageProperty(date, currentTask, correctionTask);
         processProperty.getProcesses().add(currentTask.getProcess());
         currentTask.getProcess().getProperties().add(processProperty);
 
@@ -399,8 +399,6 @@ public class WorkflowControllerService {
 
         updateProcessSortHelperStatus(currentTask.getProcess());
 
-        this.problem.setMessage("");
-        this.problem.setId(0);
         return currentTask;
     }
 
@@ -423,21 +421,20 @@ public class WorkflowControllerService {
 
         // TODO: find more suitable name for this task
         // tasks which was executed at the moment of correction reporting
-        Task correctionTask = serviceManager.getTaskService().getById(this.solution.getId());
+        List<Property> properties = currentTask.getProcess().getProperties();
+        for (Property property : properties) {
+            if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary")) && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
+                int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14, property.getValue().indexOf(" CorrectionTask: ")));
+                Task correctionTask = serviceManager.getTaskService().getById(id);
+                closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
+                openTaskForProcessing(correctionTask);
+                Property processProperty = prepareSolveMessageProperty(property, currentTask);
+                serviceManager.getPropertyService().save(processProperty);
+                updateProcessSortHelperStatus(currentTask.getProcess());
 
-        closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
-        openTaskForProcessing(correctionTask);
+            }
+        }
 
-        currentTask.getProcess().setWikiField(prepareSolutionWikiField(currentTask.getProcess(), correctionTask));
-
-        Property processProperty = prepareSolveMessageProperty(correctionTask);
-        processProperty.getProcesses().add(currentTask.getProcess());
-        currentTask.getProcess().getProperties().add(processProperty);
-
-        updateProcessSortHelperStatus(currentTask.getProcess());
-
-        this.solution.setMessage("");
-        this.solution.setId(0);
         return currentTask;
     }
 
@@ -467,7 +464,7 @@ public class WorkflowControllerService {
 
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DataException {
         List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-            correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
+                correctionTask.getOrdering(), currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.LOCKED);
             taskInBetween = setCorrectionTask(taskInBetween);
@@ -477,8 +474,8 @@ public class WorkflowControllerService {
     }
 
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) throws DataException {
-        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(currentTask.getOrdering(),
-            correctionTask.getOrdering(), currentTask.getProcess().getId());
+        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
+                currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
@@ -495,38 +492,31 @@ public class WorkflowControllerService {
         serviceManager.getTaskService().save(correctionTask);
     }
 
-    private Property prepareProblemMessageProperty(Date date) {
+    private Property prepareProblemMessageProperty(Date date, Task currentTask, Task correctionTask) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
         processProperty.setValue("[" + this.formatter.format(date) + ", "
-                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + this.problem.getMessage());
+                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: " + currentTask.getId().toString()
+                + " CorrectionTask: " + correctionTask.getId().toString() + ") " + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
         return processProperty;
     }
 
-    private Property prepareSolveMessageProperty(Task correctionTask) {
-        Property processProperty = new Property();
-        processProperty.setTitle(Helper.getTranslation("correctionPerformed"));
-        processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
-                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] "
-                + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
-                    + this.solution.getMessage());
-        processProperty.setType(PropertyType.MESSAGE_IMPORTANT);
-        return processProperty;
+    private Property prepareSolveMessageProperty(Property property, Task correctionTask) {
+        property.setTitle(Helper.getTranslation("correctionPerformed"));
+        property.setValue(
+                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
+                        + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
+        property.setType(PropertyType.MESSAGE_IMPORTANT);
+        return property;
     }
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
-                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser())
-                + ")";
-        return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "error", message);
-    }
+        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser()) + " " + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
+                + this.problem.getMessage();
 
-    private String prepareSolutionWikiField(Process process, Task correctionTask) {
-        String message = Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
-                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser())
-                + ")";
-        return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "info", message);
+        serviceManager.getProcessService().addToWikiField(message, process);
+        return process.getWikiField();
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
