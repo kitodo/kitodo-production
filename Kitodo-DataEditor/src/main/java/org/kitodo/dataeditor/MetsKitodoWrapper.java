@@ -21,8 +21,9 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
-import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
+import org.kitodo.dataeditor.entities.PhysicalStructMapType;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -42,6 +43,8 @@ public class MetsKitodoWrapper {
     private Mets mets;
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
     private LogicalStructMapType logicalStructMapType;
+    private PhysicalStructMapType physicalStructMapType;
+    private FileSec fileSec;
 
     /**
      * Gets the mets object.
@@ -67,13 +70,6 @@ public class MetsKitodoWrapper {
         createLogicalRootDiv(this.mets, documentType);
     }
 
-    private void createLogicalRootDiv(Mets mets, String type) {
-        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),
-            "DMDLOG_ROOT");
-        mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
-        getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
-    }
-
     private void createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
@@ -93,6 +89,13 @@ public class MetsKitodoWrapper {
             StructMapType physicalStructMapType = objectFactory.createPhysicalStructMapType();
             mets.getStructMap().add(physicalStructMapType);
         }
+    }
+
+    private void createLogicalRootDiv(Mets mets, String type) {
+        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),
+            "DMDLOG_ROOT");
+        mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
+        getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
     }
 
     /**
@@ -143,9 +146,9 @@ public class MetsKitodoWrapper {
      *            The list of MediaFile objects.
      */
     public void insertMediaFiles(List<MediaFile> files) {
-        MetsKitodoFileSecHandler.insertMediaFilesToLocalFileGroupOfMets(this.mets, files);
+        getFileSec().insertMediaFiles(files);
         // TODO implement logic to check if pagination is set to automatic or not
-        MetsKitodoStructMapHandler.fillPhysicalStructMapByMetsFileSec(mets);
+        getPhysicalStructMap().createDivsByFileSec(getFileSec());
     }
 
     /**
@@ -153,8 +156,12 @@ public class MetsKitodoWrapper {
      *
      * @return The StructMapType object.
      */
-    public StructMapType getPhysicalStructMap() {
-        return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL");
+    public PhysicalStructMapType getPhysicalStructMap() {
+        if (Objects.isNull(this.physicalStructMapType)) {
+            this.physicalStructMapType = new PhysicalStructMapType(
+                MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL"));
+        }
+        return this.physicalStructMapType;
     }
 
     /**
@@ -168,6 +175,18 @@ public class MetsKitodoWrapper {
                     MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL"));
         }
         return this.logicalStructMapType;
+    }
+
+    /**
+     * Returns the FileSec of mets document.
+     *
+     * @return The FileSec object.
+     */
+    public FileSec getFileSec() {
+        if (Objects.isNull(this.fileSec)) {
+            this.fileSec = new FileSec(getMets().getFileSec());
+        }
+        return this.fileSec;
     }
 
     /**
@@ -186,6 +205,4 @@ public class MetsKitodoWrapper {
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
     }
-
-
 }

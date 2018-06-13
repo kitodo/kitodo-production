@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataeditor.handlers;
+package org.kitodo.dataeditor.entities;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,32 +17,37 @@ import java.util.NoSuchElementException;
 import org.kitodo.dataeditor.MediaFile;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataformat.metskitodo.FileType;
-import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
 
-public class MetsKitodoFileSecHandler {
+public class FileSec extends MetsType.FileSec {
 
-    private MetsKitodoFileSecHandler() {
+    private final MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
+
+    /**
+     * Constructor to copy the data from parent class.
+     *
+     * @param fileSec
+     *            The MetsType.FileSec object.
+     */
+    public FileSec(MetsType.FileSec fileSec) {
+        super.fileGrp = fileSec.getFileGrp();
+        super.id = fileSec.getID();
     }
-
-    private static final MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
 
     /**
      * Inserts MediaFile objects into fileSec of mets object.
      *
-     * @param mets
-     *            The Mets object.
      * @param mediaFiles
      *            The list of media files.
      */
-    public static void insertMediaFilesToLocalFileGroupOfMets(Mets mets, List<MediaFile> mediaFiles) {
+    public void insertMediaFiles(List<MediaFile> mediaFiles) {
         for (MediaFile mediaFile : mediaFiles) {
-            insertFileToFileGroupOfMets(mets, mediaFile);
+            insertFileToFileGroupOfMets(mediaFile);
         }
-        writeFileIdsToMets(mets);
+        writeFileIds();
     }
 
-    private static void insertFileToFileGroupOfMets(Mets mets, MediaFile mediaFile) {
+    private void insertFileToFileGroupOfMets(MediaFile mediaFile) {
         FileType.FLocat fLocat = objectFactory.createFileTypeFLocat();
         fLocat.setLOCTYPE(mediaFile.getLocationType().toString());
         fLocat.setHref(mediaFile.getFilePath().getPath());
@@ -51,18 +56,16 @@ public class MetsKitodoFileSecHandler {
         fileType.setMIMETYPE(mediaFile.getMimeType());
         fileType.getFLocat().add(fLocat);
 
-        getLocalFileGroupOfMets(mets).getFile().add(fileType);
+        getLocalFileGroup().getFile().add(fileType);
     }
 
     /**
      * Returns the local file group of given mets object as FileGrp object.
      *
-     * @param mets
-     *            The Mets object.
      * @return The FileGrp object.
      */
-    public static MetsType.FileSec.FileGrp getLocalFileGroupOfMets(Mets mets) {
-        for (MetsType.FileSec.FileGrp fileGrp : mets.getFileSec().getFileGrp()) {
+    public MetsType.FileSec.FileGrp getLocalFileGroup() {
+        for (MetsType.FileSec.FileGrp fileGrp : this.getFileGrp()) {
             if (fileGrp.getUSE().equals("LOCAL")) {
                 return fileGrp;
             }
@@ -70,11 +73,12 @@ public class MetsKitodoFileSecHandler {
         throw new NoSuchElementException("No local file group in mets object");
     }
 
-    private static void writeFileIdsToMets(Mets mets) {
+    private void writeFileIds() {
         int counter = 1;
-        for (FileType file : mets.getFileSec().getFileGrp().get(0).getFile()) {
+        for (FileType file : getLocalFileGroup().getFile()) {
             file.setID("FILE_" + String.format("%04d", counter));
             counter++;
         }
     }
+
 }
