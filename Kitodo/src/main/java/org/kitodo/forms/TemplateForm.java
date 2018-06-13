@@ -29,7 +29,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -211,7 +210,7 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String saveAndRedirect() {
         save();
-        HibernateUtil.getSession().evict(this.template);
+        serviceManager.getTemplateService().evict(this.template);
         this.template = null;
         return templateListPath;
     }

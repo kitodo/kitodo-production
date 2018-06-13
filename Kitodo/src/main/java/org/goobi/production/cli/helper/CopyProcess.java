@@ -424,9 +424,8 @@ public class CopyProcess extends ProzesskopieForm {
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
-
     public Process neuenProzessAnlegen() throws ReadException, IOException, PreferencesException, WriteException {
-        HibernateUtil.getSession().evict(this.prozessKopie);
+        serviceManager.getProcessService().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
 
@@ -478,7 +477,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     public Process createProcess(ImportObject io)
             throws ReadException, IOException, PreferencesException, WriteException {
-        HibernateUtil.getSession().evict(this.prozessKopie);
+        serviceManager.getProcessService().evict(this.prozessKopie);
 
         this.prozessKopie.setId(null);
         addProperties(io);

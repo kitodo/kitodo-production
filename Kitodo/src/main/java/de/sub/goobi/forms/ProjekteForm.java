@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.model.LazyDTOModel;
@@ -153,7 +152,7 @@ public class ProjekteForm extends BasisForm {
      * @return page or null
      */
     public String save() {
-        HibernateUtil.getSession().evict(this.myProjekt);
+        serviceManager.getProjectService().evict(this.myProjekt);
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {

@@ -226,7 +226,7 @@ public class TemplateBaseForm extends BasisForm {
     protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
             serviceManager.getTaskService().save(task);
-            HibernateUtil.getSession().evict(task);
+            serviceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
