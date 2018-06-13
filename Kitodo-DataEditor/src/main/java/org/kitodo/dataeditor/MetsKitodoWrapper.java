@@ -21,7 +21,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
-import org.kitodo.dataeditor.enums.PositionOfNewDiv;
+import org.kitodo.dataeditor.entities.LogicalStructMapType;
 import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
@@ -41,6 +41,7 @@ public class MetsKitodoWrapper {
 
     private Mets mets;
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
+    private LogicalStructMapType logicalStructMapType;
 
     /**
      * Gets the mets object.
@@ -161,13 +162,17 @@ public class MetsKitodoWrapper {
      * 
      * @return The StructMapType object.
      */
-    public StructMapType getLogicalStructMap() {
-        return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL");
+    public LogicalStructMapType getLogicalStructMap() {
+        if (Objects.isNull(this.logicalStructMapType)) {
+            this.logicalStructMapType = new LogicalStructMapType(
+                    MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL"));
+        }
+        return this.logicalStructMapType;
     }
 
     /**
-     * Returns the KitodoType object and its metadata of an DmdSec element which is
-     * referenced by a given logical divType object.
+     * Returns the first KitodoType object and its metadata of an DmdSec element
+     * which is referenced by a given logical divType object.
      * 
      * @param div
      *            The DivType object which is referencing the DmdSec by DMDID.
@@ -180,49 +185,5 @@ public class MetsKitodoWrapper {
             return MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(mdSecType);
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
-    }
-
-    /**
-     * Adds a new DivType object which specified type and position to the given
-     * DivType object.
-     * 
-     * @param presentDiv
-     *            The DivType object to which the new DivType should be added to.
-     * @param type
-     *            The type of the DivType object.
-     * @param position
-     *            The position in relation to the given DivType object.
-     */
-    public void addNewDivToLogicalSructMap(DivType presentDiv, String type, PositionOfNewDiv position) {
-        MetsKitodoStructMapHandler.addNewLogicalDivToDivOfStructMap(presentDiv, type, getLogicalStructMap(), position);
-        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
-    }
-
-    /**
-     * Moves a given DivType object by removing it from logical structMap and
-     * inserting it as a child of a new parent div.
-     * 
-     * @param movedDiv
-     *            The DivType object which has to be moved.
-     * @param parentDiv
-     *            The DivType object which is the new parent div.
-     * @param index
-     *            The index position where the moved div needs to be inserted.
-     */
-    public void moveDivToDivAtIndexAtLogicalStructMap(DivType movedDiv, DivType parentDiv, int index) {
-        removeDivFromLogicalStructMap(movedDiv);
-        parentDiv.getDiv().add(index, movedDiv);
-        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
-    }
-
-    /**
-     * Removed the given DivType object from current logical structMap.
-     * 
-     * @param divToRemove
-     *            The DivType object which should be removed.
-     */
-    public void removeDivFromLogicalStructMap(DivType divToRemove) {
-        MetsKitodoStructMapHandler.removeDivFromStructMap(divToRemove, getLogicalStructMap());
-        MetsKitodoStructMapHandler.generateIdsForLogicalStructMapElements(getLogicalStructMap());
     }
 }

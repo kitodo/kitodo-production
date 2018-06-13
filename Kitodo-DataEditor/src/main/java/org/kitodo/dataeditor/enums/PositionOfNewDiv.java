@@ -15,8 +15,8 @@ package org.kitodo.dataeditor.enums;
  * The position of a new div element for inserting in logical structmap.
  */
 public enum PositionOfNewDiv {
-    BEFOR_ELEMENT,
     AFTER_ELEMENT,
+    BEFOR_ELEMENT,
     FIRST_CHILD_OF_ELEMENT,
     LAST_CHILD_OF_ELEMENT
 }

@@ -26,7 +26,7 @@ public class MetsKitodoMdSecHandler {
 
     /**
      * Returns the KitodoType object of an MdSecType object.
-     * 
+     *
      * @param dmdSecElement
      *            The DmdSecElement as MdSecType object.
      * @return The KitodoType object.

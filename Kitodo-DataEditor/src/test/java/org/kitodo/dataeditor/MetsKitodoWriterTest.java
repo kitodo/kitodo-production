@@ -40,12 +40,20 @@ public class MetsKitodoWriterTest {
 
         metsKitodoWriter = new MetsKitodoWriter();
 
-        String manifest = "Manifest-Version: 1.0\n" + "Archiver-Version: Plexus Archiver\n"
-                + "Created-By: Apache Maven\n" + "Built-By: tester\n" + "Build-Jdk: 1.8.0_144\n"
-                + "Specification-Title: Kitodo - Data Editor\n" + "Specification-Version: 3.0-SNAPSHOT\n"
-                + "Specification-Vendor: kitodo.org\n" + "Implementation-Title: Kitodo - Data Editor\n"
-                + "Implementation-Version: 3.0-SNAPSHOT\n" + "Implementation-Vendor-Id: org.kitodo\n"
-                + "Implementation-Vendor: kitodo.org\n" + "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
+        String manifest =
+            "Manifest-Version: 1.0\n" +
+            "Archiver-Version: Plexus Archiver\n" +
+            "Created-By: Apache Maven\n" +
+            "Built-By: tester\n" +
+            "Build-Jdk: 1.8.0_144\n" +
+            "Specification-Title: Kitodo - Data Editor\n" +
+            "Specification-Version: 3.0-SNAPSHOT\n" +
+            "Specification-Vendor: kitodo.org\n" +
+            "Implementation-Title: Kitodo - Data Editor\n" +
+            "Implementation-Version: 3.0-SNAPSHOT\n" +
+            "Implementation-Vendor-Id: org.kitodo\n" +
+            "Implementation-Vendor: kitodo.org\n" +
+            "Implementation-Build-Date: 2018-05-03T08:41:49Z\n";
 
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
