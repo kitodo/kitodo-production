@@ -1073,7 +1073,7 @@ public class ProzesskopieForm implements Serializable {
 
     private void startTaskScriptThreads() {
         /* damit die Sortierung stimmt nochmal einlesen */
-        HibernateUtil.getSession().refresh(this.prozessKopie);
+        serviceManager.getProcessService().refresh(this.prozessKopie);
 
         List<Task> tasks = this.prozessKopie.getTasks();
         for (Task task : tasks) {

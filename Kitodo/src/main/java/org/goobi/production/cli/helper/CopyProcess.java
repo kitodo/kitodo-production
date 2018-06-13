@@ -465,7 +465,7 @@ public class CopyProcess extends ProzesskopieForm {
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        HibernateUtil.getSession().refresh(this.prozessKopie);
+        serviceManager.getProcessService().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
@@ -508,7 +508,7 @@ public class CopyProcess extends ProzesskopieForm {
         serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
 
         /* damit die Sortierung stimmt nochmal einlesen */
-        HibernateUtil.getSession().refresh(this.prozessKopie);
+        serviceManager.getProcessService().refresh(this.prozessKopie);
         return this.prozessKopie;
     }
 
