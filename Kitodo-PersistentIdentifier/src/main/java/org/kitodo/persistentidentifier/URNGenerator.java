@@ -15,8 +15,6 @@ import java.util.HashMap;
 
 import org.kitodo.api.persistentidentifier.urn.UnifiedResourceNameGeneratorInterface;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 /**
  * Class for generation and registration DBNURN identifier.
  */
@@ -95,7 +93,7 @@ public class URNGenerator implements UnifiedResourceNameGeneratorInterface {
 
     @Override
     public boolean register(String urn) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     /**
