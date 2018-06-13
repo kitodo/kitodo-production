@@ -14,6 +14,7 @@ package org.kitodo.command;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -39,7 +40,6 @@ public class Command implements CommandInterface {
      */
     @Override
     public CommandResult runCommand(Integer id, String command) {
-
         CommandResult commandResult;
         Process process;
         String[] callSequence = command.split("[\\r\\n\\s]+");
@@ -63,10 +63,15 @@ public class Command implements CommandInterface {
                         + " was successful!: " + commandResult.getMessages());
                 }
             }
-        } catch (IOException | InterruptedException exception) {
+        } catch (InterruptedException e) {
+            commandResult = new CommandResult(id, command, false, Collections.singletonList(e.getMessage()));
+            logger.error(MESSAGE + "Thread was interrupted!");
+            Thread.currentThread().interrupt();
+            return commandResult;
+        } catch (IOException e) {
             List<String> errorMessages = new ArrayList<>();
-            errorMessages.add(exception.getCause().toString());
-            errorMessages.add(exception.getMessage());
+            errorMessages.add(e.getCause().toString());
+            errorMessages.add(e.getMessage());
             commandResult = new CommandResult(id, command, false, errorMessages);
             logger.error(MESSAGE + commandResult.getId() + " " + commandResult.getCommand()
                     + " failed!: " + commandResult.getMessages());
