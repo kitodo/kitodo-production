@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +34,6 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.forms.TemplateForm;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -44,6 +41,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
     private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
+    private boolean showInactiveTemplates = false;
+    private boolean showInactiveProjects = false;
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -207,19 +206,15 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        TemplateForm form = (TemplateForm) Helper.getManagedBeanValue("TemplateForm");
-        if (Objects.isNull(form)) {
-            form = new TemplateForm();
-        }
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
             query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
                 false);
-            if (!form.isShowClosedProcesses()) {
+            if (!showInactiveTemplates) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
-            if (!form.isShowInactiveProjects()) {
+            if (!showInactiveProjects) {
                 query.must(serviceManager.getProcessService().getQueryProjectActive(true));
             }
         }
@@ -303,6 +298,24 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             }
         }
         return false;
+    }
+
+    /**
+     * Set show inactive projects.
+     *
+     * @param showInactiveProjects as boolean
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
+    }
+
+    /**
+     * Set show inactive templates.
+     *
+     * @param showInactiveTemplates as boolean
+     */
+    public void setShowInactiveTemplates(boolean showInactiveTemplates) {
+        this.showInactiveTemplates = showInactiveTemplates;
     }
 
     /**
