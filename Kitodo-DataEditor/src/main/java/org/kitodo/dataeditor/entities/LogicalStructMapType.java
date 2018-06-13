@@ -172,7 +172,6 @@ public class LogicalStructMapType extends StructMapType {
     /**
      * Generating and setting of ids of all div elements in given StructMapType
      * object.
-     *
      */
     private void generateIdsForDivs() {
         if (Objects.nonNull(super.getDiv())) {

@@ -22,7 +22,7 @@ public class MediaFile {
 
     /**
      * The constructor for setting fields.
-     * 
+     *
      * @param filePath
      *            The file path as URI object.
      * @param locationType

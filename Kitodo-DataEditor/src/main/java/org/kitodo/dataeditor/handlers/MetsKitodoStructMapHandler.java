@@ -17,11 +17,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Config;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
-import org.kitodo.dataeditor.enums.PositionOfNewDiv;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.Mets;
@@ -30,14 +27,13 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
 public class MetsKitodoStructMapHandler {
 
     private static final MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
-    private static final Logger logger = LogManager.getLogger(MetsKitodoStructMapHandler.class);
 
     private MetsKitodoStructMapHandler() {
     }
 
     /**
      * Returns the StructMap element of the given type from given mets object.
-     * 
+     *
      * @param mets
      *            The mets object from which the StructMap element should be
      *            returned.
@@ -58,7 +54,7 @@ public class MetsKitodoStructMapHandler {
     /**
      * Reads the FileSec of mets object and inserts corresponding physical
      * structMap.
-     * 
+     *
      * @param mets
      *            The mets object.
      */
@@ -99,6 +95,4 @@ public class MetsKitodoStructMapHandler {
         }
         return "other";
     }
-
-
 }

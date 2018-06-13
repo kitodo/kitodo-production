@@ -45,7 +45,7 @@ public class MetsKitodoWriter {
      * Updating Mets header by inserting a new header if no one exists, updating
      * last modification date and writing the serialized Mets object to specified file path in
      * xml format.
-     * 
+     *
      * @param mets
      *            The Mets object.
      * @param filePath
@@ -59,7 +59,7 @@ public class MetsKitodoWriter {
 
     /**
      * Serializes a given Mets object to xml format and returns as String.
-     * 
+     *
      * @param mets
      *            The mets object.
      */

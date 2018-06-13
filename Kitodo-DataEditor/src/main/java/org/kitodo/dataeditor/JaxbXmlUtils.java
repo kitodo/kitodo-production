@@ -32,7 +32,7 @@ public class JaxbXmlUtils {
 
     /**
      * Transforms a xml file by xslt and returns the result as string.
-     * 
+     *
      * @param xmlFile
      *            The xml file to transform.
      * @param xslFile
@@ -55,7 +55,7 @@ public class JaxbXmlUtils {
 
     /**
      * Gets current time as XMLGregorianCalender.
-     * 
+     *
      * @return The current time as XMLGregorianCalender object.
      */
     static XMLGregorianCalendar getXmlTime() throws DatatypeConfigurationException {

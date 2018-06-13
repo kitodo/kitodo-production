@@ -56,7 +56,7 @@ public class MetsKitodoWrapper {
      * Constructor which creates a Mets object with corresponding object factory and
      * also inserts the basic mets elements (FileSec with local file group,
      * StructLink, MetsHdr, physical and logical StructMap).
-     * 
+     *
      * @param documentType
      *            The type of the document which will be used for setting the
      *            logical root div type.
@@ -98,7 +98,7 @@ public class MetsKitodoWrapper {
     /**
      * Constructor which creates Mets object by unmarshalling given xml file of
      * mets-kitodo format.
-     * 
+     *
      * @param xmlFile
      *            The xml file in mets-kitodo format as URI.
      * @param xsltFile
@@ -113,7 +113,7 @@ public class MetsKitodoWrapper {
 
     /**
      * Adds a smLink to the structLink section of mets file.
-     * 
+     *
      * @param from
      *            The from value.
      * @param to
@@ -138,7 +138,7 @@ public class MetsKitodoWrapper {
     /**
      * Inserts MediaFile objects into fileSec of mets document and creates
      * corresponding physical structMap.
-     * 
+     *
      * @param files
      *            The list of MediaFile objects.
      */
@@ -150,7 +150,7 @@ public class MetsKitodoWrapper {
 
     /**
      * Returns the physical StructMap of mets document.
-     * 
+     *
      * @return The StructMapType object.
      */
     public StructMapType getPhysicalStructMap() {
@@ -159,7 +159,7 @@ public class MetsKitodoWrapper {
 
     /**
      * Returns the logical StructMap of mets document.
-     * 
+     *
      * @return The StructMapType object.
      */
     public LogicalStructMapType getLogicalStructMap() {
@@ -173,7 +173,7 @@ public class MetsKitodoWrapper {
     /**
      * Returns the first KitodoType object and its metadata of an DmdSec element
      * which is referenced by a given logical divType object.
-     * 
+     *
      * @param div
      *            The DivType object which is referencing the DmdSec by DMDID.
      * @return The KitodoType object.
@@ -186,4 +186,6 @@ public class MetsKitodoWrapper {
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
     }
+
+
 }

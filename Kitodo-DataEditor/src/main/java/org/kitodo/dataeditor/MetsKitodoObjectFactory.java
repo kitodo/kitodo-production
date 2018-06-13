@@ -13,9 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.namespace.QName;
 
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -28,7 +26,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
 
     /**
      * Creates KitodoType object which version indication of used kitodo format.
-     * 
+     *
      * @return The KitodoType object.
      */
     public KitodoType createKitodoType() {
@@ -41,7 +39,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
 
     /**
      * Creates a kitodo data editor specific MetsHdr.Agent object.
-     * 
+     *
      * @return The MetsHdr.Agent object.
      */
     public MetsType.MetsHdr.Agent createKitodoMetsAgent() throws IOException {
@@ -56,7 +54,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     /**
      * Creates a kitodo data editor specific MetsHdr object, which sets CREATEDATE
      * and agent.
-     * 
+     *
      * @return The MetsHdr object.
      */
     public MetsType.MetsHdr createKitodoMetsHeader() throws DatatypeConfigurationException, IOException {
@@ -69,7 +67,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
 
     /**
      * Creates a StructMap object of type "PHYSICAL".
-     * 
+     *
      * @return The StructMap object.
      */
     public StructMapType createPhysicalStructMapType() {
@@ -93,7 +91,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
 
     /**
      * Creates a Mets FileGrp object where the attribute USE is set to LOCAL.
-     * 
+     *
      * @return The FileGrp object.
      */
     public MetsType.FileSec.FileGrp createMetsTypeFileSecFileGrpLocal() {
@@ -104,7 +102,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
 
     /**
      * Creates a DivType object for using as root div in mets physical sruct map.
-     * 
+     *
      * @return The DivType object.
      */
     public DivType createRootDivTypeForPhysicalStructMap() {
