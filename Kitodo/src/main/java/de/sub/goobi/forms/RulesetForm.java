@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -74,7 +75,7 @@ public class RulesetForm extends BasisForm {
      */
     public String saveRuleset() {
         try {
-            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {

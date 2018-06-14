@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -118,8 +119,7 @@ public class SearchForm {
     protected void initProcessPropertyTitles() {
         List<String> processPropertiesTitlesDistinct = new ArrayList<>();
         try {
-            processPropertiesTitlesDistinct = serviceManager.getPropertyService()
-                    .findProcessPropertiesTitlesDistinct();
+            processPropertiesTitlesDistinct = serviceManager.getPropertyService().findProcessPropertiesTitlesDistinct();
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -365,11 +365,11 @@ public class SearchForm {
         }
         if (!this.processPropertyValue.isEmpty()) {
             if (!this.processPropertyTitle.isEmpty()) {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()  + this.processPropertyTitle
-                        + ":" + this.processPropertyValue + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()
+                        + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
             } else {
-                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()  + this.processPropertyValue
-                        + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROCESSPROPERTY.getFilterEnglish()
+                        + this.processPropertyValue + "\" ";
             }
         }
         if (!this.masterpiecePropertyValue.isEmpty()) {
@@ -383,11 +383,11 @@ public class SearchForm {
         }
         if (!this.templatePropertyValue.isEmpty()) {
             if (!this.templatePropertyTitle.isEmpty()) {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()  + this.templatePropertyTitle + ":"
-                        + this.templatePropertyValue + "\" ";
+                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()
+                        + this.templatePropertyTitle + ":" + this.templatePropertyValue + "\" ";
             } else {
-                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()  + this.templatePropertyValue
-                        + "\" ";
+                search += "\"" + this.templatePropertyOperand + FilterString.TEMPLATE.getFilterEnglish()
+                        + this.templatePropertyValue + "\" ";
             }
         }
 
@@ -395,7 +395,7 @@ public class SearchForm {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
-                && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
+                && ConfigCore.getBooleanParameter(Parameters.WITH_USER_STEP_DONE_SEARCH)) {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
@@ -403,7 +403,7 @@ public class SearchForm {
         Bean<ProzessverwaltungForm> bean = (Bean<ProzessverwaltungForm>) beanManager
                 .resolve(beanManager.getBeans(ProzessverwaltungForm.class));
         ProzessverwaltungForm form = beanManager.getContext(bean.getScope()).get(bean,
-                beanManager.createCreationalContext(bean));
+            beanManager.createCreationalContext(bean));
 
         if (form != null) {
             form.filter = search;

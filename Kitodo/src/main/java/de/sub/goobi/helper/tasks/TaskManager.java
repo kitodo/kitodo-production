@@ -12,6 +12,7 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 import java.util.ArrayList;
@@ -61,7 +62,8 @@ public class TaskManager {
      */
     private TaskManager() {
         taskSitter = Executors.newSingleThreadScheduledExecutor();
-        long delay = ConfigCore.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
+        long delay = ConfigCore.getLongParameter(Parameters.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS,
+            Parameters.DefaultValues.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS);
         taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
     }
 

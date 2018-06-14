@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -699,8 +700,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameter("automaticExportWithImages", true);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter("automaticExportWithOcr", true);
+        boolean automaticExportWithImages = ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true);
+        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter(Parameters.AUTOMATIC_EXPORT_WITH_OCR, true);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,

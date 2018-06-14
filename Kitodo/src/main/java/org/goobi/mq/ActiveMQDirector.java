@@ -12,6 +12,9 @@
 package org.goobi.mq;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
+
+import java.util.Optional;
 
 import javax.jms.Connection;
 import javax.jms.DeliveryMode;
@@ -78,13 +81,15 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
-        String activeMQHost = ConfigCore.getParameter("activeMQ.hostURL", null);
-        if (activeMQHost != null) {
-            session = connectToServer(activeMQHost);
+        Optional<String> activeMQHost = ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_HOST_URL);
+        if (activeMQHost.isPresent()) {
+            session = connectToServer(activeMQHost.get());
             if (session != null) {
                 registerListeners(services);
-                if (ConfigCore.getParameter("activeMQ.results.topic", null) != null) {
-                    resultsTopic = setUpReportChannel(ConfigCore.getParameter("activeMQ.results.topic"));
+                Optional<String> activeMQResultsTopic = ConfigCore
+                        .getOptionalString(Parameters.ACTIVE_MQ_RESULTS_TOPIC);
+                if (activeMQResultsTopic.isPresent()) {
+                    resultsTopic = setUpReportChannel(activeMQResultsTopic.get());
                 }
             }
         }
@@ -158,7 +163,8 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             Destination channel = session.createTopic(topic);
             result = session.createProducer(channel);
             result.setDeliveryMode(DeliveryMode.PERSISTENT);
-            result.setTimeToLive(ConfigCore.getLongParameter("activeMQ.results.timeToLive", 604800000));
+            result.setTimeToLive(ConfigCore.getLongParameter(Parameters.ACTIVE_MQ_RESULTS_TTL,
+                Parameters.DefaultValues.ACTIVE_MQ_RESULTS_TTL));
             return result;
         } catch (JMSException | RuntimeException e) {
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);

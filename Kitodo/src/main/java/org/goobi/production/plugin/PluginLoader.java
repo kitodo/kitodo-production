@@ -12,6 +12,7 @@
 package org.goobi.production.plugin;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import net.xeoh.plugins.base.util.PluginManagerUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
@@ -153,7 +153,7 @@ public class PluginLoader {
         short entries = 2;
         HashMap<String, String> conf = new HashMap<>((int) Math.ceil(entries / 0.75));
         conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
-        conf.put("tempDir", ConfigCore.getParameter(Parameters.PLUGIN_TEMP_DIR));
+        conf.put("tempDir", ConfigCore.getParameter(Parameters.DIR_PLUGINS_TEMP));
         return conf;
     }
 
@@ -225,7 +225,7 @@ public class PluginLoader {
      */
     private static PluginManagerUtil getPluginLoader(PluginType type) {
         PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-        String path = FilenameUtils.concat(ConfigCore.getParameter(Parameters.PLUGIN_FOLDER), type.getName());
+        String path = FilenameUtils.concat(ConfigCore.getParameter(Parameters.DIR_PLUGINS), type.getName());
         pluginManager.addPluginsFrom(new File(path).toURI());
         return new PluginManagerUtil(pluginManager);
     }

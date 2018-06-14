@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
@@ -507,7 +508,7 @@ public class BatchStepHelper extends BatchHelper {
     }
 
     private boolean invalidMetadataExists(Task task) {
-        if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+        if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)) {
             serviceManager.getMetadataValidationService().setAutoSave(true);
             return !serviceManager.getMetadataValidationService().validate(task.getProcess());
         }

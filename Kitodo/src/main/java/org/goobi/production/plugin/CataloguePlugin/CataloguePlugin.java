@@ -12,13 +12,12 @@
 package org.goobi.production.plugin.CataloguePlugin;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
-import org.goobi.production.constants.Parameters;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
@@ -39,7 +38,7 @@ import org.kitodo.api.ugh.PrefsInterface;
  * <code>void configure(Map)</code><br>
  * See {@link UnspecificPlugin}.
  * </p>
- * 
+ *
  * <p>
  * <code>Object find(String, long)</code><br>
  * The function find() is to perform a search request in a library catalogue.
@@ -64,7 +63,7 @@ import org.kitodo.api.ugh.PrefsInterface;
  * and shall throw a javax.persistence.QueryTimeoutException if it was cancelled
  * by the timer. The method may throw exceptions.
  * </p>
- * 
+ *
  * <p>
  * <code>long getNumberOfHits(Object, long)</code><br>
  * The function getNumberOfHits() shall return the number of hits scored by the
@@ -104,15 +103,6 @@ import org.kitodo.api.ugh.PrefsInterface;
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 public class CataloguePlugin extends UnspecificPlugin {
-
-    /**
-     * The constant field THIRTY_MINUTES holds the milliseconds value
-     * representing 30 minutes. This is the default for catalogue operations
-     * timeout. Note that on large, database-backed catalogues, searches for
-     * common title terms may take more than 15 minutes, so 30 minutes is a fair
-     * deal for an internal default value here.
-     */
-    private static final long THIRTY_MINUTES = TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES);
 
     /**
      * The field find holds a Method reference to the method find() of the
@@ -251,7 +241,7 @@ public class CataloguePlugin extends UnspecificPlugin {
     @SuppressWarnings("unchecked")
     public Hit getHit(Object searchResult, long index, long timeout) {
         Map<String, Object> data = invokeQuietly(plugin, getHit, new Object[] {searchResult, index, timeout },
-                Map.class);
+            Map.class);
         return new Hit(data);
     }
 
@@ -285,7 +275,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the timeout for catalogue access
      */
     public static long getTimeout() {
-        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, THIRTY_MINUTES);
+        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, Parameters.DefaultValues.CATALOGUE_TIMEOUT);
     }
 
     /**

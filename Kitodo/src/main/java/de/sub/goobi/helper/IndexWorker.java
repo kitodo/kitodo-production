@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,8 +33,8 @@ public class IndexWorker implements Runnable {
     private static final Logger logger = LogManager.getLogger(IndexWorker.class);
 
     /**
-     * Constructor initializing an IndexWorker object with the given SearchService
-     * and list of objects that will be indexed.
+     * Constructor initializing an IndexWorker object with the given
+     * SearchService and list of objects that will be indexed.
      *
      * @param searchService
      *            SearchService instance used for indexing
@@ -46,7 +47,8 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
-        int batchSize = ConfigCore.getIntParameter("elasticsearch.batch", 1000);
+        int batchSize = ConfigCore.getIntParameter(Parameters.ELASTICSEARCH_BATCH,
+            Parameters.DefaultValues.ELASTICSEARCH_BATCH);
         try {
             int amountToIndex = searchService.countDatabaseRows().intValue();
             if (amountToIndex < batchSize) {

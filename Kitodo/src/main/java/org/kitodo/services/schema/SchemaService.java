@@ -12,6 +12,7 @@
 package org.kitodo.services.schema;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.BeanHelper;
@@ -180,7 +181,7 @@ public class SchemaService {
         String metsPointer = vp.replace(metsPointerToReplace);
         metsMods.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
+        if (ConfigCore.getBooleanParameter(Parameters.EXPORT_VALIDATE_IMAGES, true)) {
             if (containsInvalidImages(prefs, digitalDocument, process)) {
                 return null;
             }
@@ -241,7 +242,7 @@ public class SchemaService {
                 if (sizeOfPagination == sizeOfImages) {
                     digitalDocument.overrideContentFiles(imageStrings);
                 } else {
-                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
+                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
                     return true;
                 }
             }

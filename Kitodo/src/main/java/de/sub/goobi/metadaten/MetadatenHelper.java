@@ -11,6 +11,7 @@
 
 package de.sub.goobi.metadaten;
 
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 
@@ -163,9 +164,9 @@ public class MetadatenHelper {
 
                     if (!newDocstruct.getDocStructType().getAllAllowedDocStructTypes()
                             .contains(old.getDocStructType().getName())) {
-                        Helper.setErrorMessage(
-                                Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
-                                        old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
+                        Helper.setErrorMessage(Helper.getTranslation(METADATA_NOT_ALLOWED,
+                            Arrays.asList(Helper.getTranslation("childElement"), old.getDocStructType().getName(),
+                                newDocstruct.getDocStructType().getName())));
                         return inOldDocstruct;
                     } else {
                         newDocstruct.addChild(old);

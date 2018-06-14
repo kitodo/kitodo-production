@@ -12,6 +12,7 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -108,14 +109,13 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * This method initializes the template list without any filter whenever the bean
-     * is constructed.
+     * This method initializes the template list without any filter whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeTemplateList() {
         setFilter("");
     }
-
 
     /**
      * Create new template.
@@ -276,7 +276,8 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+            Parameters.DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.title.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");
             return false;
@@ -322,8 +323,9 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Method being used as viewAction for template edit form. If the given parameter
-     * 'id' is '0', the form for creating a new template will be displayed.
+     * Method being used as viewAction for template edit form. If the given
+     * parameter 'id' is '0', the form for creating a new template will be
+     * displayed.
      *
      * @param id
      *            of the template to load
@@ -354,8 +356,7 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("task"), id },
-                    logger, e);
+            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("task"), id }, logger, e);
         }
     }
 
@@ -371,7 +372,8 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set template.
      *
-     * @param template as Template
+     * @param template
+     *            as Template
      */
     public void setTemplate(Template template) {
         this.title = template.getTitle();
@@ -390,7 +392,8 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set task.
      *
-     * @param task as Task
+     * @param task
+     *            as Task
      */
     public void setTask(Task task) {
         this.task = task;
@@ -408,7 +411,8 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set title.
      *
-     * @param title as String
+     * @param title
+     *            as String
      */
     public void setTitle(String title) {
         this.title = title;

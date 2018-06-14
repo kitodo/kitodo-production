@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.BatchStepHelper;
@@ -108,7 +109,8 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
+            Parameters.DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -334,7 +336,8 @@ public class AktuelleSchritteForm extends BasisForm {
         List<URI> fertigListe = this.myDav.uploadAllFromHome(doneDirectoryName);
         List<URI> geprueft = new ArrayList<>();
         /*
-         * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen setzen
+         * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
+         * setzen
          */
         if (!fertigListe.isEmpty() && this.nurOffeneSchritte) {
             this.nurOffeneSchritte = false;
@@ -585,8 +588,8 @@ public class AktuelleSchritteForm extends BasisForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.currentTask.getProcess());
-        } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException
-                | IOException | ExportFileException | RuntimeException e) {
+        } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException | IOException
+                | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle()}, logger, e);
         }
     }
@@ -790,8 +793,8 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user that are
-     * currently in progress.
+     * Retrieve and return the list of tasks that are assigned to the user that
+     * are currently in progress.
      *
      * @return list of tasks that are currently assigned to the user that are
      *         currently in progress.

@@ -12,6 +12,7 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
@@ -35,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -54,7 +56,6 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
 import org.goobi.api.display.enums.BindState;
 import org.goobi.api.display.helper.ConfigDisplayRules;
-import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -701,7 +702,7 @@ public class Metadaten {
     }
 
     private void createDefaultValues(DocStructInterface element) {
-        if (ConfigCore.getBooleanParameter("MetsEditorEnableDefaultInitialisation", true)) {
+        if (ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
             saveMetadataAsBean(element);
             List allChildren = element.getAllChildren();
             if (Objects.nonNull(allChildren)) {
@@ -812,7 +813,8 @@ public class Metadaten {
          * alle Metadaten und die DefaultDisplay-Werte anzeigen
          */
         List<? extends MetadataInterface> tempMetadata = this.metaHelper.getMetadataInclDefaultDisplay(
-            inStrukturelement, serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false, this.process);
+            inStrukturelement, serviceManager.getUserService().getAuthenticatedUser().getMetadataLanguage(), false,
+            this.process);
         if (tempMetadata != null) {
             for (MetadataInterface metadata : tempMetadata) {
                 MetadatumImpl meta = new MetadatumImpl(metadata, 0, this.myPrefs, this.process);
@@ -1542,14 +1544,14 @@ public class Metadaten {
 
         /* nur die _tif-Ordner anzeigen, die mit orig_ anfangen */
         FilenameFilter filterDirectory = new IsDirectoryFilter();
-        List<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE,
-            "");
+        List<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE, "");
         this.allTifFolders.addAll(subUris);
 
-        if (ConfigCore.getParameter("MetsEditorDefaultSuffix", null) != null) {
-            String suffix = ConfigCore.getParameter("MetsEditorDefaultSuffix");
+        Optional<String> suffix = ConfigCore.getOptionalString(Parameters.METS_EDITOR_DEFAULT_SUFFIX);
+        if (suffix.isPresent()) {
             for (URI directoryUri : this.allTifFolders) {
-                if (directoryUri.toString().endsWith(suffix) || directoryUri.toString().endsWith(suffix + "/")) {
+                if (directoryUri.toString().endsWith(suffix.get())
+                        || directoryUri.toString().endsWith(suffix.get().concat("/"))) {
                     this.currentTifFolder = directoryUri;
                     break;
                 }
@@ -1940,8 +1942,8 @@ public class Metadaten {
 
     private int pageNumber = 0;
 
-    private SelectOne<Separator> paginationSeparators = new SelectOne<>(
-            Separator.factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, "\" \"")));
+    private SelectOne<Separator> paginationSeparators = new SelectOne<>(Separator
+            .factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, Parameters.DefaultValues.PAGE_SEPARATORS)));
 
     public int getPageNumber() {
         return this.pageNumber;
@@ -2143,7 +2145,7 @@ public class Metadaten {
      * OCR.
      */
     public boolean isShowOcrButton() {
-        return ConfigCore.getBooleanParameter("showOcrButton");
+        return ConfigCore.getBooleanParameter(Parameters.SHOW_OCR_BUTTON);
     }
 
     /**
@@ -2206,7 +2208,7 @@ public class Metadaten {
     }
 
     private String getOcrBasisUrl(int... seiten) {
-        String url = ConfigCore.getParameter("ocrUrl");
+        String url = ConfigCore.getParameter(Parameters.OCR_URL);
         VariableReplacer replacer = new VariableReplacer(this.digitalDocument, this.myPrefs, this.process, null);
         url = replacer.replace(url);
         url += "/&imgrange=" + seiten[0];
@@ -3122,7 +3124,7 @@ public class Metadaten {
     }
 
     public Boolean getDisplayFileManipulation() {
-        return ConfigCore.getBooleanParameter("MetsEditorDisplayFileManipulation", false);
+        return ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_DISPLAY_FILE_MANIPULATION);
     }
 
     /**

@@ -12,6 +12,7 @@
 package org.kitodo.selenium;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 
@@ -28,25 +29,26 @@ public class RemovingST extends BaseTestSelenium {
     @Test
     public void removeProcessTest() throws Exception {
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
         ProcessesPage processesPage = Pages.getProcessesPage();
         int numberOfProcessesDisplayed = processesPage.countListedProcesses();
-        Assert.assertTrue("Process list is empty", processesPage.isResultSetNotEmpty(processesPage.getListOfProcessTitles()));
+        Assert.assertTrue("Process list is empty",
+            processesPage.isResultSetNotEmpty(processesPage.getListOfProcessTitles()));
         Pages.getProcessesPage().deleteFirstProcess();
         Assert.assertTrue("Removal of first process was not successful!",
-                processesPage.countListedProcesses() < numberOfProcessesDisplayed);
+            processesPage.countListedProcesses() < numberOfProcessesDisplayed);
 
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }
     }
-    
+
 }

@@ -12,6 +12,7 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
@@ -35,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -116,7 +118,8 @@ public class MetadatenImagesHelper {
             return;
         }
 
-        String defaultPagination = ConfigCore.getParameter("MetsEditorDefaultPagination", "uncounted");
+        String defaultPagination = ConfigCore.getParameter(Parameters.METS_EDITOR_DEFAULT_PAGINATION,
+            Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_UNCOUNTED);
         Map<String, DocStructInterface> assignedImages = new HashMap<>();
         List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
 
@@ -330,14 +333,14 @@ public class MetadatenImagesHelper {
      * @return pagination value as String
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
-        if (defaultPagination.equalsIgnoreCase("arabic")) {
+        if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_ARABIC)) {
             return String.valueOf(currentPhysicalOrder);
-        } else if (defaultPagination.equalsIgnoreCase("roman")) {
+        } else if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_ROMAN)) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
-            return "uncounted";
+            return Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_UNCOUNTED;
         }
     }
 
@@ -352,7 +355,8 @@ public class MetadatenImagesHelper {
             tmpSize = 1;
         }
         logger.trace("tmpSize: {}", tmpSize);
-        if (ConfigCore.getParameter("kitodoContentServerUrl", "").equals("")) {
+        Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(Parameters.KITODO_CONTENT_SERVER_URL);
+        if (!kitodoContentServerUrl.isPresent()) {
             logger.trace("api");
             // TODO source image files are locked under windows forever after
             // converting to png begins.
@@ -371,15 +375,16 @@ public class MetadatenImagesHelper {
             outputFileStream.close();
             logger.trace("close stream");
         } else {
-            String cs = ConfigCore.getParameter("kitodoContentServerUrl") + inFileName + "&scale=" + tmpSize
-                    + "&rotate=" + intRotation + "&format=jpg";
+            String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
+                    + "&format=jpg";
             cs = cs.replace("\\", "/");
             logger.trace("url: {}", cs);
             URL csUrl = new URL(cs);
             HttpClient httpclient = new HttpClient();
             GetMethod method = new GetMethod(csUrl.toString());
             logger.trace("get");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                Parameters.DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
             method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
             int statusCode = httpclient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
@@ -428,7 +433,8 @@ public class MetadatenImagesHelper {
             }
 
             this.myLastImage = files.size();
-            if (ConfigCore.getParameter("ImagePrefix", "\\d{8}").equals("\\d{8}")) {
+            if (ConfigCore.getParameter(Parameters.IMAGE_PREFIX, Parameters.DefaultValues.IMAGE_PREFIX)
+                    .equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;
                 int myDiff = 0;

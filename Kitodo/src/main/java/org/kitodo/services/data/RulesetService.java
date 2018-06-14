@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.util.List;
 import java.util.Objects;
@@ -146,7 +147,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
         rulesetDTO.setTitle(rulesetJSONObject.getString(RulesetTypeField.TITLE.getName()));
         rulesetDTO.setFile(rulesetJSONObject.getString(RulesetTypeField.FILE.getName()));
-        rulesetDTO.setOrderMetadataByRuleset(rulesetJSONObject.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
+        rulesetDTO.setOrderMetadataByRuleset(
+            rulesetJSONObject.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
         return rulesetDTO;
     }
 
@@ -160,7 +162,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     public PrefsInterface getPreferences(Ruleset ruleset) {
         PrefsInterface myPreferences = UghImplementation.INSTANCE.createPrefs();
         try {
-            myPreferences.loadPrefs(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
+            myPreferences.loadPrefs(ConfigCore.getParameter(Parameters.DIR_RULESETS) + ruleset.getFile());
         } catch (PreferencesException e) {
             logger.error(e.getMessage(), e);
         }

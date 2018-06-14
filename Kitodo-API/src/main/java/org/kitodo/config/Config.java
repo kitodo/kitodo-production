@@ -11,13 +11,17 @@
 
 package org.kitodo.config;
 
+import java.net.URI;
+import java.nio.file.Paths;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,9 +29,28 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
-    private static final String METADATA_DIRECTORY = "MetadatenVerzeichnis";
-    private static final String CONFIG_DIR = "KonfigurationVerzeichnis";
     public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
+
+    public static final String DIR_MODULES = "moduleFolder";
+
+    /**
+     * Absolute path to the directory that process directories will be created
+     * in, terminated by a directory separator ("/"). The servlet container must
+     * have write permission to that directory.
+     */
+    private static final String DIR_PROCESSES = "MetadatenVerzeichnis";
+
+    /**
+     * Absolute path to the directory that the configuration files are stored
+     * in, terminated by a directory separator ("/").
+     *
+     * <p>
+     * Note: Several, but not all configuration files are read from that
+     * directory. You may want to decide to point this path to the directory
+     * where the servlet container will extract the configuration files to (like
+     * webapps/kitodo/WEB-INF/classes) in order to make sure they are found.
+     */
+    private static final String DIR_XML_CONFIG = "KonfigurationVerzeichnis";
 
     /**
      * Returns the directory that contains the process directories.
@@ -35,7 +58,7 @@ public class Config {
      * @return the directory for the process directories
      */
     public static String getKitodoDataDirectory() {
-        return getParameter(METADATA_DIRECTORY);
+        return getParameter(DIR_PROCESSES);
     }
 
     /**
@@ -44,7 +67,7 @@ public class Config {
      * @return the directory for XML configuration files
      */
     public static String getKitodoConfigDirectory() {
-        return getParameter(CONFIG_DIR);
+        return getParameter(DIR_XML_CONFIG);
     }
 
     /**
@@ -188,11 +211,59 @@ public class Config {
                     }
                     initialized.setListDelimiter('&');
                     initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
+                    initialized.setThrowExceptionOnMissing(true);
                     config = initialized;
-                    config.setThrowExceptionOnMissing(true);
                 }
             }
         }
         return config;
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file, if any.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @return Optional holding the value for the requested key, else empty.
+     */
+    public static Optional<String> getOptionalString(String key) {
+        try {
+            return Optional.of(getConfig().getString(key));
+        } catch (NoSuchElementException e) {
+            logger.catching(e);
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Returns the selected URI from the configuration file. Throws a
+     * {@code NoSuchElementException} if no such parameter exists.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @return URI value for the requested key
+     * @throws NoSuchElementException
+     *             if parameter taken from config file is null or exception
+     *             occurred
+     */
+    public static URI getUri(String key) {
+        return Paths.get(getParameter(key)).toUri();
+    }
+
+    /**
+     * Returns the selected URI from the configuration file. Throws a
+     * {@code NoSuchElementException} if no such parameter exists.
+     *
+     * @param key
+     *            key whose value is to be returned
+     * @param fullFilenameToAdd
+     *            the filename (or path) to attach to the base
+     * @return URI value for the requested key
+     * @throws NoSuchElementException
+     *             if parameter taken from config file is null or exception
+     *             occurred
+     */
+    public static URI getUri(String key, String fullFilenameToAdd) {
+        return Paths.get(FilenameUtils.concat(getParameter(key), fullFilenameToAdd)).toUri();
     }
 }

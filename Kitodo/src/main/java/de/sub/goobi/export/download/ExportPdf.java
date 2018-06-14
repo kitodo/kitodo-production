@@ -12,6 +12,7 @@
 package de.sub.goobi.export.download;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 
@@ -74,14 +75,16 @@ public class ExportPdf extends ExportMets {
         String servletPath = context.getExternalContext().getRequestServletPath();
         String basisUrl = fullPath.substring(0, fullPath.indexOf(servletPath));
 
-        if (!ConfigCore.getBooleanParameter("pdfAsDownload")) {
+        if (!ConfigCore.getBooleanParameter(Parameters.PDF_AS_DOWNLOAD)) {
             useContentServerForPdfCreation(metaFile, userHome, process, basisUrl);
         } else {
 
             GetMethod method = null;
             try {
                 // define path for mets and pdfs
-                Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
+                Integer contentServerTimeOut = ConfigCore.getIntParameter(
+                    Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                    Parameters.DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
                 URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 
                 // get pdf from servlet and forward response to file
@@ -111,16 +114,17 @@ public class ExportPdf extends ExportMets {
     }
 
     private URL getKitodoContentServerURL(URI metaFile, Process process, String basisUrl) throws IOException {
-        String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
+        String contentServerUrl = ConfigCore.getParameter(Parameters.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
         if (serviceManager.getMetadataValidationService().validate(process)) {
-            // if no contentServerUrl defined use internal goobiContentServerServlet
+            // if no contentServerUrl defined use internal
+            // goobiContentServerServlet
             if (contentServerUrl == null || contentServerUrl.length() == 0) {
                 contentServerUrl = basisUrl + "/gcs/gcs?action=pdf&metsFile=";
             }
-            return new URL(contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS
-                    + process.getTitle() + PDF_EXTENSION);
+            return new URL(
+                    contentServerUrl + metaFile.toURL() + AND_TARGET_FILE_NAME_IS + process.getTitle() + PDF_EXTENSION);
             // mets data does not exist or is invalid
         } else {
             if (contentServerUrl == null || contentServerUrl.length() == 0) {

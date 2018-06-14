@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -75,7 +76,7 @@ public class DocketForm extends BasisForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
+            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(Parameters.DIR_XSLT))) {
                 this.serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {

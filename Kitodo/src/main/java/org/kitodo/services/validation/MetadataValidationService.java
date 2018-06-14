@@ -13,6 +13,7 @@ package org.kitodo.services.validation;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
@@ -70,7 +71,7 @@ public class MetadataValidationService {
         try {
             gdzfile = serviceManager.getProcessService().readMetadataFile(process);
         } catch (PreferencesException | IOException | ReadException | RuntimeException e) {
-            Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle()}, logger, e);
+            Helper.setErrorMessage("metadataReadError", new Object[] {process.getTitle() }, logger, e);
             return false;
         }
         return validate(gdzfile, prefs, process);
@@ -117,7 +118,8 @@ public class MetadataValidationService {
                 if (identifierTopStruct.getValue() != null && !identifierTopStruct.getValue().isEmpty()
                         && identifierTopStruct.getValue().equals(identifierFirstChild.getValue())) {
                     Object[] parameter = new Object[] {identifierTopStruct.getMetadataType().getName(),
-                            logical.getDocStructType().getName(), firstChild.getDocStructType().getName()};
+                                                       logical.getDocStructType().getName(),
+                                                       firstChild.getDocStructType().getName() };
                     Helper.setErrorMessage("invalidIdentifierSame", parameter);
                     result = false;
                 }
@@ -206,7 +208,7 @@ public class MetadataValidationService {
             int sizeOfPagination = dd.getPhysicalDocStruct().getAllChildren().size();
             int sizeOfImages = images.size();
             if (sizeOfPagination != sizeOfImages) {
-                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
+                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
                 return false;
             }
         } catch (InvalidImagesException e) {
@@ -233,10 +235,10 @@ public class MetadataValidationService {
     private boolean isMetadataValueReplaced(DocStructInterface docStruct, MetadataInterface metadata,
             String metadataLanguage) {
 
-        if (!metadata.getValue().replaceAll(ConfigCore.getParameter("validateIdentifierRegex", "[\\w|-]"), "")
-                .equals("")) {
+        if (!metadata.getValue().replaceAll(ConfigCore.getParameter(Parameters.VALIDATE_IDENTIFIER_REGEX,
+            Parameters.DefaultValues.VALIDATE_IDENTIFIER_REGEX), "").equals("")) {
             Object[] parameters = new Object[] {metadata.getMetadataType().getNameByLanguage(metadataLanguage),
-                    docStruct.getDocStructType().getNameByLanguage(metadataLanguage)};
+                                                docStruct.getDocStructType().getNameByLanguage(metadataLanguage) };
             Helper.setErrorMessage("invalidIdentifierCharacter", parameters);
             return true;
         }

@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.net.URI;
@@ -398,9 +399,9 @@ public class UserServiceIT {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         User user = userService.getById(1);
-        String homeDirectory = ConfigCore.getParameter("dir_Users");
+        String homeDirectory = ConfigCore.getParameter(Parameters.DIR_USERS);
 
-        File script = new File(ConfigCore.getParameter("script_createDirUserHome"));
+        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
         ExecutionPermission.setExecutePermission(script);
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);
@@ -498,7 +499,7 @@ public class UserServiceIT {
     public void shouldGetAuthenticatedUser() throws DAOException {
         SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1));
         User authenticatedUser = userService.getAuthenticatedUser();
-        assertEquals("Returned authenticated user was wrong","kowal",authenticatedUser.getLogin());
+        assertEquals("Returned authenticated user was wrong", "kowal", authenticatedUser.getLogin());
         SecurityTestUtils.cleanSecurityContext();
     }
 }

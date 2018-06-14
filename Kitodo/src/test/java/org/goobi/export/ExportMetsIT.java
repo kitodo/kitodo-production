@@ -12,6 +12,7 @@
 package org.goobi.export;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.download.ExportMets;
 
 import java.io.File;
@@ -38,7 +39,8 @@ import org.kitodo.services.file.FileService;
 
 public class ExportMetsIT {
 
-    private static final File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+    private static final File scriptCreateDirUserHome = new File(
+            ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
     private static ServiceManager serviceManager = new ServiceManager();
     private static FileService fileService = serviceManager.getFileService();
     private static String userDirectory;
@@ -57,7 +59,7 @@ public class ExportMetsIT {
         process = serviceManager.getProcessService().getById(1);
         metadataDirectory = process.getId().toString();
         userDirectory = user.getLogin();
-        exportUri = Paths.get(Config.getParameter("dir_Users") + userDirectory).toUri();
+        exportUri = Config.getUri(Parameters.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
         fileService.copyFileToDirectory(URI.create("metadata/testmetaOldFormat.xml"), URI.create(metadataDirectory));
@@ -69,7 +71,7 @@ public class ExportMetsIT {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
-        File userdataDirectory = new File(Config.getParameter("dir_Users"));
+        File userdataDirectory = new File(Config.getParameter(Parameters.DIR_USERS));
         if (!userdataDirectory.exists() && !userdataDirectory.mkdir()) {
             throw new IOException("Could not create users directory");
         }
@@ -81,7 +83,7 @@ public class ExportMetsIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create(metadataDirectory));
-        fileService.delete(Paths.get(Config.getParameter("dir_Users")).toUri());
+        fileService.delete(Config.getUri(Parameters.DIR_USERS));
         FileLoader.deleteConfigProjectsFile();
 
         if (!SystemUtils.IS_OS_WINDOWS) {
@@ -92,19 +94,24 @@ public class ExportMetsIT {
     @Test
     public void exportMetsTest() throws Exception {
         if (SystemUtils.IS_OS_WINDOWS) {
-            // This is a workaround for the problem that the startExport method is calling
-            // an external shell script for creating directories. This code only does the work of that script.
-            //TODO Find a better way for changing script selection corresponding to OS
-            fileService.createDirectory(Paths.get(Config.getParameter("dir_Users")).toUri(), userDirectory);
+            // This is a workaround for the problem that the startExport method
+            // is calling
+            // an external shell script for creating directories. This code only
+            // does the work of that script.
+            // TODO Find a better way for changing script selection
+            // corresponding to OS
+            fileService.createDirectory(Config.getUri(Parameters.DIR_USERS), userDirectory);
         }
 
         exportMets.startExport(process, exportUri);
-        List<String> strings = Files.readAllLines(Paths.get(Config.getParameter("dir_Users") + userDirectory + "/"
-                + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
+        List<String> strings = Files.readAllLines(Paths.get(Config.getParameter(Parameters.DIR_USERS) + userDirectory
+                + "/" + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
 
-        Assert.assertTrue("Export of metadata was wrong", strings.get(1).contains("<mods:publisher>Test Publisher</mods:publisher>"));
+        Assert.assertTrue("Export of metadata was wrong",
+            strings.get(1).contains("<mods:publisher>Test Publisher</mods:publisher>"));
         Assert.assertTrue("Export of person was wrong", strings.get(1).contains("<mods:title>Test Title</mods:title>"));
-        Assert.assertTrue("Export of metadata group was wrong", strings.get(1).contains("<mods:namePart type=\"given\">FirstTestName</mods:namePart>"));
+        Assert.assertTrue("Export of metadata group was wrong",
+            strings.get(1).contains("<mods:namePart type=\"given\">FirstTestName</mods:namePart>"));
 
     }
 }

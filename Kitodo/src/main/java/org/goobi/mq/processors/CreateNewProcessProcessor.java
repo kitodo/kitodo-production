@@ -12,6 +12,7 @@
 package org.goobi.mq.processors;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.forms.AdditionalField;
 import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.Helper;
@@ -79,12 +80,12 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final String ERROR_CREATE = "errorCreating";
 
     public CreateNewProcessProcessor() {
-        super(ConfigCore.getParameter("activeMQ.createNewProcess.queue", null));
+        super(ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
     }
 
     @Override
-    protected void process(MapMessageObjectReader args) throws IOException, JMSException, PreferencesException,
-            ReadException, WriteException {
+    protected void process(MapMessageObjectReader args)
+            throws IOException, JMSException, PreferencesException, ReadException, WriteException {
         Set<String> collections = args.getMandatorySetOfString("collections");
         String id = args.getMandatoryString("id");
         String template = args.getMandatoryString("template");
@@ -146,12 +147,14 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
             newProcess.calculateProcessTitle();
             String state = newProcess.createNewProcess();
             if (!state.equals("NewProcess/Page3")) {
-                throw new ProcessCreationException(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
+                throw new ProcessCreationException(
+                        Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
             }
             logger.info("Created new process: {}", id);
         } catch (RuntimeException e) {
             logger.error(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)), e);
-            throw new ProcessCreationException(Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
+            throw new ProcessCreationException(
+                    Helper.getTranslation(ERROR_CREATE, Collections.singletonList("process: " + id)));
         }
     }
 

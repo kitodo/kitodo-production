@@ -12,6 +12,7 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -78,7 +79,8 @@ public class FileManipulation {
     /**
      * Constructor with parameter.
      *
-     * @param metadataBean as Metadaten
+     * @param metadataBean
+     *            as Metadaten
      */
     public FileManipulation(Metadaten metadataBean) {
         this.metadataBean = metadataBean;
@@ -114,16 +116,16 @@ public class FileManipulation {
         }
         logger.trace("folder to import: {}", currentFolder);
         URI filename = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
+            ProcessSubType.IMAGE, currentFolder + File.separator + baseName);
         logger.trace("filename to import: {}", filename);
 
         if (fileService.fileExist(filename)) {
-            Helper.setErrorMessage("fileExists", new Object[] {baseName});
+            Helper.setErrorMessage("fileExists", new Object[] {baseName });
             return;
         }
 
         try (InputStream inputStream = fileService.read(uploadedFile.toURI());
-             OutputStream outputStream = fileService.write(filename)) {
+                OutputStream outputStream = fileService.write(filename)) {
             byte[] buf = new byte[1024];
             int len;
             while ((len = inputStream.read(buf)) > 0) {
@@ -134,7 +136,7 @@ public class FileManipulation {
             // sequence
             if (serviceManager.getProcessService().getImagesTifDirectory(false, metadataBean.getProcess())
                     .equals(serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                            ProcessSubType.IMAGE, currentFolder + File.separator))) {
+                        ProcessSubType.IMAGE, currentFolder + File.separator))) {
                 logger.trace("update pagination for {}", metadataBean.getProcess().getTitle());
                 updatePagination(filename);
             }
@@ -286,7 +288,7 @@ public class FileManipulation {
         String imageName = page.getImageName();
         String filenamePrefix = imageName.substring(0, imageName.lastIndexOf('.'));
         URI processSubTypeURI = serviceManager.getFileService().getProcessSubTypeURI(metadataBean.getProcess(),
-                ProcessSubType.IMAGE, currentFolder);
+            ProcessSubType.IMAGE, currentFolder);
         List<URI> filesInFolder = fileService.getSubUris(processSubTypeURI);
         for (URI currentFile : filesInFolder) {
             String currentFileName = fileService.getFileName(currentFile);
@@ -298,7 +300,7 @@ public class FileManipulation {
         }
 
         if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            Helper.setErrorMessage("MetsEditorMissingFile", new Object[] {filenamePrefix, this.currentFolder});
+            Helper.setErrorMessage("MetsEditorMissingFile", new Object[] {filenamePrefix, this.currentFolder });
             return;
         }
 
@@ -345,7 +347,7 @@ public class FileManipulation {
                 logger.error(e.getMessage(), e);
             }
         }
-        URI tempDirectory = fileService.getTemporalDirectory();
+        URI tempDirectory = fileService.getTemporaryDirectory();
         URI fileuploadFolder = fileService.createDirectory(tempDirectory, FILE_UPLOAD);
 
         URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getProcess().getTitle());
@@ -417,7 +419,8 @@ public class FileManipulation {
      * @return URI list of import folders
      */
     public List<URI> getAllImportFolder() {
-        URI tempDirectory = new File(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/")).toURI();
+        URI tempDirectory = new File(
+                ConfigCore.getParameter(Parameters.DIR_TEMP, Parameters.DefaultValues.TEMPFOLDER)).toURI();
         URI fileuploadFolder = tempDirectory.resolve(FILE_UPLOAD);
 
         allImportFolder = new ArrayList<>();
@@ -442,13 +445,14 @@ public class FileManipulation {
             Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
-        String tempDirectory = ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/");
+        String tempDirectory = ConfigCore.getParameter(Parameters.DIR_TEMP, Parameters.DefaultValues.TEMPFOLDER);
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
-        if (ConfigCore.getBooleanParameter("useOrigFolder", true)) {
+        if (ConfigCore.getBooleanParameter(Parameters.USE_ORIG_FOLDER, true)) {
             useMasterFolder = true;
-            masterPrefix = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
+            masterPrefix = ConfigCore.getParameter(Parameters.DIRECTORY_PREFIX,
+                Parameters.DefaultValues.DIRECTORY_PREFIX);
         }
         Process currentProcess = metadataBean.getProcess();
         List<URI> importedFileNames = new ArrayList<>();
@@ -460,7 +464,7 @@ public class FileManipulation {
                     // check if current import folder is master folder
                     if (fileService.getFileName(subFolder).startsWith(masterPrefix)) {
                         URI masterDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
-                                currentProcess);
+                            currentProcess);
                         List<URI> objectInFolder = fileService.getSubUris(subFolder);
                         Collections.sort(objectInFolder);
                         for (URI file : objectInFolder) {
@@ -468,11 +472,11 @@ public class FileManipulation {
                         }
                     } else {
                         importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
-                                importedFileNames);
+                            importedFileNames);
                     }
                 } else {
                     importedFileNames = copyFileToDirectoryForNamesWithUnderscore(subFolder, currentProcess,
-                            importedFileNames);
+                        importedFileNames);
                 }
             }
         }
@@ -539,7 +543,7 @@ public class FileManipulation {
 
         String afterLastSlash = fileName.substring(fileName.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
-        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, Parameters.DefaultValues.IMAGE_PREFIX);
 
         return afterLastBackslash.matches(prefix + "\\..+");
     }

@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.FilenameFilter;
 import java.io.Serializable;
@@ -48,7 +49,7 @@ public class HelperForm implements Serializable {
     }
 
     public boolean getAnonymized() {
-        return ConfigCore.getBooleanParameter("anonymize");
+        return ConfigCore.getBooleanParameter(Parameters.ANONYMIZE);
     }
 
     /**
@@ -102,7 +103,7 @@ public class HelperForm implements Serializable {
      * @return true or false
      */
     public boolean getMassImportAllowed() {
-        return ConfigCore.getBooleanParameter("massImportAllowed", false)
+        return ConfigCore.getBooleanParameter(Parameters.MASS_IMPORT_ALLOWED)
                 && !PluginLoader.getPluginList(PluginType.IMPORT).isEmpty();
     }
 
@@ -113,6 +114,6 @@ public class HelperForm implements Serializable {
      * @return boolean
      */
     public boolean getUserStepDoneSearchEnabled() {
-        return ConfigCore.getBooleanParameter("withUserStepDoneSearch");
+        return ConfigCore.getBooleanParameter(Parameters.WITH_USER_STEP_DONE_SEARCH);
     }
 }

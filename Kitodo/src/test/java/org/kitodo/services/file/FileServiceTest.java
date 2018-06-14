@@ -11,7 +11,10 @@
 
 package org.kitodo.services.file;
 
+import static org.junit.Assume.assumeTrue;
+
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,8 +32,6 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
-
-import static org.junit.Assume.assumeTrue;
 
 public class FileServiceTest {
 
@@ -54,7 +55,7 @@ public class FileServiceTest {
     public void testCreateMetaDirectory() throws IOException {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        File script = new File(ConfigCore.getParameter("script_createDirMeta"));
+        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);
 
         boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
@@ -75,7 +76,8 @@ public class FileServiceTest {
         Assert.assertTrue("Created resource is not directory!", file.isDirectory());
         Assert.assertFalse("Created resource is file!", file.isFile());
         Assert.assertTrue("Directory was not created!", file.exists());
-        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        Assert.assertTrue("Incorrect path!",
+            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test
@@ -101,7 +103,8 @@ public class FileServiceTest {
         file = fileService.getFile(URI.create("fileServiceTest/testMetaExisting"));
 
         Assert.assertTrue(file.exists());
-        Assert.assertTrue("Incorrect path!", Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
+        Assert.assertTrue("Incorrect path!",
+            Paths.get(file.getPath()).toUri().getPath().contains(testMetaUri.getPath()));
     }
 
     @Test
@@ -328,7 +331,7 @@ public class FileServiceTest {
     public void testCopyFileToDirectoryWithMissingSource() throws IOException {
         URI originFile = URI.create("fileServiceTest/copyFileToDirectoryMissingSource");
         URI targetDirectory = fileService.createDirectory(URI.create("fileServiceTest"),
-                "copyFileToDirectoryMissingSourceTarget");
+            "copyFileToDirectoryMissingSourceTarget");
 
         Assert.assertFalse(fileService.fileExist(originFile));
         Assert.assertTrue(fileService.fileExist(targetDirectory));
@@ -541,7 +544,7 @@ public class FileServiceTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File script = new File(ConfigCore.getParameter("script_createSymLink"));
+        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
@@ -551,7 +554,7 @@ public class FileServiceTest {
         ExecutionPermission.setNoExecutePermission(script);
         Assert.assertTrue("Create symbolic link has failed!", result);
 
-        File scriptClean = new File(ConfigCore.getParameter("script_deleteSymLink"));
+        File scriptClean = new File(ConfigCore.getParameter(Parameters.SCRIPT_DELETE_SYMLINK));
         ExecutionPermission.setExecutePermission(scriptClean);
         fileService.deleteSymLink(symLinkTarget);
         ExecutionPermission.setNoExecutePermission(scriptClean);
@@ -566,7 +569,7 @@ public class FileServiceTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File scriptPrepare = new File(ConfigCore.getParameter("script_createSymLink"));
+        File scriptPrepare = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
@@ -575,7 +578,7 @@ public class FileServiceTest {
         fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
         ExecutionPermission.setNoExecutePermission(scriptPrepare);
 
-        File script = new File(ConfigCore.getParameter("script_deleteSymLink"));
+        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_DELETE_SYMLINK));
         ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.deleteSymLink(symLinkTarget);
         ExecutionPermission.setNoExecutePermission(script);

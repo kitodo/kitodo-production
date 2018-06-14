@@ -12,6 +12,7 @@
 package org.goobi.mq.processors;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * ActiveMQDirector.registerListeners() from starting this service.
      */
     public FinaliseStepProcessor() {
-        super(ConfigCore.getParameter("activeMQ.finaliseStep.queue", null));
+        super(ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_FINALIZE_STEP_QUEUE).orElse(null));
     }
 
     /**
@@ -59,7 +60,8 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * @see org.goobi.mq.ActiveMQProcessor#process(org.goobi.mq.MapMessageObjectReader)
      */
     @Override
-    protected void process(MapMessageObjectReader ticket) throws DAOException, DataException, IOException, JMSException {
+    protected void process(MapMessageObjectReader ticket)
+            throws DAOException, DataException, IOException, JMSException {
         AktuelleSchritteForm dialog = new AktuelleSchritteForm();
         Integer stepID = ticket.getMandatoryInteger("id");
         dialog.setCurrentTask(serviceManager.getTaskService().getById(stepID));

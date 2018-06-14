@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
@@ -114,7 +115,7 @@ public class VariableReplacer {
             String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
             String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
             String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
-            String prefs = ConfigCore.getParameter("RegelsaetzeVerzeichnis") + this.process.getRuleset().getFile();
+            String prefs = ConfigCore.getParameter(Parameters.DIR_RULESETS) + this.process.getRuleset().getFile();
 
             inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
             inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);

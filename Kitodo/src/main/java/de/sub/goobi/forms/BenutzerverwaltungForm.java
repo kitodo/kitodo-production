@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
@@ -68,8 +69,8 @@ public class BenutzerverwaltungForm extends BasisForm {
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Empty default constructor that also sets the LazyDTOModel instance of
+     * this bean.
      */
     public BenutzerverwaltungForm() {
         super();
@@ -121,7 +122,7 @@ public class BenutzerverwaltungForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("user")}, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("user") }, logger, e);
             return null;
         }
     }
@@ -176,7 +177,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer")}, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer") }, logger, e);
             return null;
         }
         return userListPath;
@@ -217,7 +218,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("userGroup"), userGroupId}, logger, e);
+                new Object[] {Helper.getTranslation("userGroup"), userGroupId }, logger, e);
             return null;
         }
         return null;
@@ -234,8 +235,8 @@ public class BenutzerverwaltungForm extends BasisForm {
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
+                logger, e);
             return null;
         }
         return null;
@@ -257,8 +258,8 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
             this.userObject.getProjects().add(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("project"), projectId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
+                logger, e);
             return null;
         }
         return null;
@@ -305,7 +306,7 @@ public class BenutzerverwaltungForm extends BasisForm {
             try {
                 this.userObject.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapGroup")}, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapGroup") }, logger, e);
             }
         }
     }
@@ -344,7 +345,7 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     public boolean getLdapUsage() {
-        return ConfigCore.getBooleanParameter("ldap_use");
+        return ConfigCore.getBooleanParameter(Parameters.LDAP_USE);
     }
 
     /**
@@ -387,8 +388,7 @@ public class BenutzerverwaltungForm extends BasisForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroup") }, logger,
-                e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroup") }, logger, e);
             return new LinkedList<>();
         }
     }

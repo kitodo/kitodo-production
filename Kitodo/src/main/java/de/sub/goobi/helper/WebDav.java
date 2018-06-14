@@ -12,6 +12,7 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.BufferedWriter;
@@ -50,7 +51,8 @@ public class WebDav implements Serializable {
     private String doneDirectoryName;
 
     public WebDav() {
-        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
+            Parameters.DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -65,7 +67,7 @@ public class WebDav implements Serializable {
             URI directoryName = serviceManager.getUserService().getHomeDirectory(currentUser).resolve(inVerzeichnis);
             files = fileService.getSubUris(filter, directoryName);
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);
             return files;
         }
 
@@ -100,7 +102,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink(verzeichnisAlle.resolve(name));
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);
         }
     }
 
@@ -133,7 +135,7 @@ public class WebDav implements Serializable {
                 if (!fileService.fileExist(destination)
                         && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
                     String param = new File(destination).getPath().replaceAll(" ", "__");
-                    Helper.setErrorMessage("MassDownloadProjectCreationError", new Object[] {param});
+                    Helper.setErrorMessage("MassDownloadProjectCreationError", new Object[] {param });
                     logger.error("Can not create project directory "
                             + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
                     return;
@@ -142,7 +144,7 @@ public class WebDav implements Serializable {
                 fileService.deleteSymLink((destination));
             }
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage(ERROR_UPLOADING, new Object[] {"Home" }, logger, e);
         }
     }
 
@@ -181,7 +183,7 @@ public class WebDav implements Serializable {
 
             fileService.createSymLink(source, destination, onlyRead, currentUser);
         } catch (IOException e) {
-            Helper.setErrorMessage("errorDownloading", new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage("errorDownloading", new Object[] {"Home" }, logger, e);
         }
     }
 
@@ -225,7 +227,7 @@ public class WebDav implements Serializable {
                 outfile.write(tif.getTiffAlles());
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorDownloading", new Object[] {"Home"}, logger, e);
+            Helper.setErrorMessage("errorDownloading", new Object[] {"Home" }, logger, e);
         }
     }
 }

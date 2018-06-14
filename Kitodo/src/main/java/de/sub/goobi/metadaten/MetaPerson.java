@@ -12,12 +12,12 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.production.constants.Parameters;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;

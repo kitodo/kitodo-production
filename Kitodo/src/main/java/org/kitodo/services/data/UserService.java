@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -693,10 +694,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public URI getHomeDirectory(User user) throws IOException {
         URI result;
         if (Objects.nonNull(user)) {
-            if (ConfigCore.getBooleanParameter("ldap_use")) {
+            if (ConfigCore.getBooleanParameter(Parameters.LDAP_USE)) {
                 result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
             } else {
-                result = Paths.get(ConfigCore.getParameter("dir_Users"), user.getLogin()).toUri();
+                result = Paths.get(ConfigCore.getParameter(Parameters.DIR_USERS), user.getLogin()).toUri();
             }
 
             if (!new File(result).exists()) {
@@ -810,11 +811,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user and that
-     * are "INWORK" and belong to process, not template.
+     * Retrieve and return the list of tasks that are assigned to the user and
+     * that are "INWORK" and belong to process, not template.
      *
-     * @return list of tasks that are currently assigned to the user and that are
-     *         "INWORK" and belong to process, not template
+     * @return list of tasks that are currently assigned to the user and that
+     *         are "INWORK" and belong to process, not template
      */
     public List<Task> getTasksInProgress(User user) {
         return user.getProcessingTasks().stream().filter(

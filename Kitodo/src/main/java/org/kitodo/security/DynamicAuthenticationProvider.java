@@ -12,6 +12,7 @@
 package org.kitodo.security;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.util.Objects;
 
@@ -37,8 +38,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private ServiceManager serviceManager = new ServiceManager();
 
     /**
-     * Package-private Constructor for DynamicAuthenticationProvider which also sets
-     * instance variable for singleton usage.
+     * Package-private Constructor for DynamicAuthenticationProvider which also
+     * sets instance variable for singleton usage.
      */
     DynamicAuthenticationProvider() {
         if (Objects.equals(instance, null)) {
@@ -72,8 +73,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     /**
-     * This method activates ldap authentication and configures ldap url and userDn
-     * pattern.
+     * This method activates ldap authentication and configures ldap url and
+     * userDn pattern.
      *
      * @param ldapGroup
      *            The ldapGroup Object.
@@ -121,7 +122,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      * This method reads local config and sets authentication flag.
      */
     public void readLocalConfig() {
-        ldapAuthentication = ConfigCore.getBooleanParameter("ldap_use", false);
+        ldapAuthentication = ConfigCore.getBooleanParameter(Parameters.LDAP_USE);
     }
 
     /**

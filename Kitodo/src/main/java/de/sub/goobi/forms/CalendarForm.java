@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
@@ -676,9 +677,7 @@ public class CalendarForm implements Serializable {
      * </p>
      */
     public CalendarForm() {
-        issueColours = ConfigCore
-                .getParameter("issue.colours",
-                        "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000")
+        issueColours = ConfigCore.getParameter(Parameters.ISSUE_COLOURS, Parameters.DefaultValues.ISSUE_COLOURS)
                 .split(";");
         course = new Course();
         blockChangerResolver = new HashMap<>();
@@ -1089,7 +1088,7 @@ public class CalendarForm implements Serializable {
                     numbers[2] -= 100;
                 }
                 Helper.setMessage(Helper.getTranslation(BLOCK + input + ".yearCompleted",
-                        Arrays.asList(dateParser.group(3), Integer.toString(numbers[2]))));
+                    Arrays.asList(dateParser.group(3), Integer.toString(numbers[2]))));
             }
             try {
                 return new LocalDate(numbers[2], numbers[1], numbers[0]);
@@ -1268,8 +1267,7 @@ public class CalendarForm implements Serializable {
     }
 
     private void executeForFirstAppearanceToChangeNull(LocalDate newLastAppearance) {
-        if (blockShowing.getLastAppearance() == null
-                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+        if (blockShowing.getLastAppearance() == null || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (blockShowing.getFirstAppearance() != null
                     && newLastAppearance.isBefore(blockShowing.getFirstAppearance())) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
@@ -1282,8 +1280,7 @@ public class CalendarForm implements Serializable {
     }
 
     private void executeForFirstAppearanceToChange(LocalDate newLastAppearance) {
-        if (blockShowing.getLastAppearance() == null
-                || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
+        if (blockShowing.getLastAppearance() == null || !blockShowing.getLastAppearance().isEqual(newLastAppearance)) {
             if (newLastAppearance.isBefore(firstAppearanceIsToChange)) {
                 Helper.setErrorMessage(BLOCK_NEGATIVE);
                 return;

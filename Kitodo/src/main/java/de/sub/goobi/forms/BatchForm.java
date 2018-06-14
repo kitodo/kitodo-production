@@ -12,6 +12,7 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
@@ -34,7 +35,6 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.goobi.production.constants.Parameters;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
@@ -67,7 +67,6 @@ public class BatchForm extends BasisForm {
     private static final String ERROR_READ = "errorReading";
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
-    private static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     // TODO; for what is it needed - right now it is used only in new tests
@@ -125,8 +124,8 @@ public class BatchForm extends BasisForm {
 
         if (this.processfilter != null) {
             try {
-                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS,
-                        false, false);
+                query = serviceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
+                    false);
             } catch (DataException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
@@ -240,8 +239,8 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * This method initializes the batch list without any filter whenever the bean
-     * is constructed.
+     * This method initializes the batch list without any filter whenever the
+     * bean is constructed.
      */
     @PostConstruct
     public void initializeBatchList() {
@@ -308,10 +307,10 @@ public class BatchForm extends BasisForm {
                 Batch batch = serviceManager.getBatchService().getById(entry);
                 serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
                 serviceManager.getBatchService().save(batch);
-                if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
+                if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
-                        serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                            serviceManager.getBatchService().getLabel(batch)), p);
+                        serviceManager.getProcessService().addToWikiField(
+                            Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
                     }
                     this.serviceManager.getProcessService().saveList(this.selectedProcesses);
                 }
@@ -340,10 +339,10 @@ public class BatchForm extends BasisForm {
             Batch batch = serviceManager.getBatchService().getById(entry);
             serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
+            if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(Helper.getTranslation("removeFromBatch",
-                        serviceManager.getBatchService().getLabel(batch)), p);
+                    serviceManager.getProcessService().addToWikiField(
+                        Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(batch)), p);
                 }
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
@@ -388,10 +387,10 @@ public class BatchForm extends BasisForm {
             }
 
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter(BATCHES_LOG_CHANGES, false)) {
+            if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
                 for (Process p : selectedProcesses) {
-                    serviceManager.getProcessService().addToWikiField(Helper.getTranslation("addToBatch",
-                        serviceManager.getBatchService().getLabel(batch)), p);
+                    serviceManager.getProcessService().addToWikiField(
+                        Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
                 }
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
@@ -443,13 +442,13 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * Creates a batch export task to export the selected batch. The type of export
-     * task depends on the batch type. If asynchronous tasks have been created, the
-     * user will be redirected to the task manager page where it can observe the
-     * task progressing.
+     * Creates a batch export task to export the selected batch. The type of
+     * export task depends on the batch type. If asynchronous tasks have been
+     * created, the user will be redirected to the task manager page where it
+     * can observe the task progressing.
      *
-     * @return the next page to show as named in a &lt;from-outcome&gt; element in
-     *         faces_config.xml
+     * @return the next page to show as named in a &lt;from-outcome&gt; element
+     *         in faces_config.xml
      */
     public String exportBatch() {
         if (this.selectedBatches.isEmpty()) {
@@ -509,8 +508,8 @@ public class BatchForm extends BasisForm {
     }
 
     /**
-     * Sets the type of all currently selected batches to the named one, overriding
-     * a previously set type, if any.
+     * Sets the type of all currently selected batches to the named one,
+     * overriding a previously set type, if any.
      *
      * @param type
      *            type to set

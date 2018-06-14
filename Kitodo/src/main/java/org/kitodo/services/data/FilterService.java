@@ -12,6 +12,7 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.config.Parameters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,10 +119,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * This method builds a criteria depending on a filter string and some other
      * parameters passed on along the initial criteria. The filter is parsed and
      * depending on which data structures are used for applying filtering
-     * restrictions conjunctions are formed and collect the restrictions and then
-     * will be applied on the corresponding criteria. A criteria is only added if
-     * needed for the presence of filters applying to it. Prefix "-" means that
-     * negated query should be created.
+     * restrictions conjunctions are formed and collect the restrictions and
+     * then will be applied on the corresponding criteria. A criteria is only
+     * added if needed for the presence of filters applying to it. Prefix "-"
+     * means that negated query should be created.
      *
      * @param filter
      *            as String
@@ -169,7 +170,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONEUSER, null)
-                    && ConfigCore.getBooleanParameter("withUserStepDoneSearch")) {
+                    && ConfigCore.getBooleanParameter(Parameters.WITH_USER_STEP_DONE_SEARCH)) {
                 query.must(filterTaskDoneUser(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKAUTOMATIC, null)) {
                 query.must(filterAutomaticTasks(tokenizedFilter, objectType));
@@ -282,9 +283,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Prepare list of values for given filter. Regexp checks if it contains only
-     * numbers and white spaces. In that case it treats it as list of ids. If value
-     * contains words and white spaces or single word it treats it as text search.
+     * Prepare list of values for given filter. Regexp checks if it contains
+     * only numbers and white spaces. In that case it treats it as list of ids.
+     * If value contains words and white spaces or single word it treats it as
+     * text search.
      *
      * @param filter
      *            full filter String
@@ -305,15 +307,15 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Filters for properties are special type. They can contain two times : e.g.
-     * 'processproperty:title:value'.
+     * Filters for properties are special type. They can contain two times :
+     * e.g. 'processproperty:title:value'.
      *
      * @param filter
      *            full filter String
      * @param filterString
      *            contains only name of filter e.g. 'processproperty:' as String
-     * @return list of values in format property title and property value or only
-     *         property value
+     * @return list of values in format property title and property value or
+     *         only property value
      */
     private List<String> getFilterValueFromFilterStringForProperty(String filter, FilterString filterString) {
         List<String> titleValue = new ArrayList<>();
@@ -328,15 +330,15 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Prepare list of values in format property title and property value or only
-     * property value.
+     * Prepare list of values in format property title and property value or
+     * only property value.
      *
      * @param filter
      *            full filter String
      * @param filterName
      *            contains only name of filter e.g. 'processproperty:' as String
-     * @return list of values in format property title and property value or only
-     *         property value.
+     * @return list of values in format property title and property value or
+     *         only property value.
      */
     private List<String> prepareStringsForProperty(String filter, String filterName) {
         List<String> titleValue = new ArrayList<>();
@@ -379,8 +381,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param filterString
      *            as FilterString object
      * @param prefix
-     *            possible prefix is '-', if prefix not null it means that we are
-     *            filtering for negated value
+     *            possible prefix is '-', if prefix not null it means that we
+     *            are filtering for negated value
      * @return true or false
      */
     private boolean evaluateFilterString(String stringFilterString, FilterString filterString, String prefix) {
@@ -394,8 +396,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * Limit query to projects assigned to user. Restriction to specific projects if
-     * not with admin rights.
+     * Limit query to projects assigned to user. Restriction to specific
+     * projects if not with admin rights.
      *
      * @return query as {@link BoolQueryBuilder}
      */
@@ -454,7 +456,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             logger.error(e.getMessage(), e);
         }
 
-        // only processes which are not templates and are part of assigned projects
+        // only processes which are not templates and are part of assigned
+        // projects
         try {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService()
                     .findByProjectIds(collectIds(assignedProjects), true);
@@ -492,8 +495,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 taskOrdering = Integer.parseInt(taskTitle);
             } catch (NumberFormatException e) {
                 taskTitle = filterPart.substring(filterPart.indexOf(':') + 1);
-                historicFilter.must(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.OPEN.getValue(),
-                        SearchCondition.EQUAL_OR_BIGGER));
+                historicFilter.must(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(),
+                    TaskStatus.OPEN.getValue(), SearchCondition.EQUAL_OR_BIGGER));
                 if (taskTitle.startsWith("-")) {
                     taskTitle = taskTitle.substring(1);
                     historicFilter.mustNot(createSimpleWildcardQuery(TaskTypeField.TITLE.getName(), taskTitle));
@@ -510,7 +513,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("_id", filterValuesAsStrings(filter, FilterString.ID), true);
         } else if (objectType == ObjectType.TASK) {
-            return createSetQuery(TaskTypeField.PROCESS_ID.getName(), filterValuesAsIntegers(filter, FilterString.ID), true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getName(), filterValuesAsIntegers(filter, FilterString.ID),
+                true);
         }
         return new BoolQueryBuilder();
     }
@@ -530,7 +534,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true);
         } else if (objectType == ObjectType.TASK) {
             List<ProcessDTO> processDTOS = serviceManager.getProcessService().findByQuery(
-                    createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
+                createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), true), true);
             return createSetQuery(TaskTypeField.PROCESS_ID.getName(), collectIds(processDTOS), true);
         }
         return new BoolQueryBuilder();
@@ -546,22 +550,24 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched step
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
      */
     private QueryBuilder createTaskFilters(String filter, FilterString filterString, TaskStatus taskStatus,
             boolean negate, ObjectType objectType) {
-        // extracting the substring into parameter (filter parameters e.g. 5, -5,
+        // extracting the substring into parameter (filter parameters e.g. 5,
+        // -5,
         // 5-10, 5- or "Qualitätssicherung")
 
         String parameters = getFilterValueFromFilterString(filter, filterString);
 
         /*
-         * Analyzing the parameters and what user intended (5->exact, -5 ->max, 5-10
-         * ->range, 5- ->min., Qualitätssicherung ->name) handling the filter according
-         * to the parameters
+         * Analyzing the parameters and what user intended (5->exact, -5 ->max,
+         * 5-10 ->range, 5- ->min., Qualitätssicherung ->name) handling the
+         * filter according to the parameters
          */
         switch (FilterService.getTaskFilter(parameters)) {
             case EXACT:
@@ -681,8 +687,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * This enum represents the result of parsing the step&lt;modifier&gt;: filter
-     * Restrictions.
+     * This enum represents the result of parsing the step&lt;modifier&gt;:
+     * filter Restrictions.
      */
     private enum TaskFilter {
         EXACT,
@@ -701,7 +707,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched step
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
@@ -710,19 +717,19 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             ObjectType objectType) throws DataException {
         BoolQueryBuilder taskRange = new BoolQueryBuilder();
         if (!negate) {
-            taskRange.must(
-                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
-            taskRange.must(
-                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
+            taskRange.must(createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters),
+                SearchCondition.EQUAL_OR_BIGGER));
+            taskRange.must(createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters),
+                SearchCondition.EQUAL_OR_SMALLER));
             taskRange.must(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(),
-                    SearchCondition.EQUAL));
+                SearchCondition.EQUAL));
         } else {
-            taskRange.mustNot(
-                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters), SearchCondition.EQUAL_OR_BIGGER));
-            taskRange.mustNot(
-                    createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters), SearchCondition.EQUAL_OR_SMALLER));
-            taskRange.mustNot(
-                    createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), SearchCondition.EQUAL));
+            taskRange.mustNot(createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskStart(parameters),
+                SearchCondition.EQUAL_OR_BIGGER));
+            taskRange.mustNot(createSimpleCompareQuery(TaskTypeField.ORDERING.getName(), getTaskEnd(parameters),
+                SearchCondition.EQUAL_OR_SMALLER));
+            taskRange.mustNot(createSimpleCompareQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(),
+                SearchCondition.EQUAL));
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, taskRange);
     }
@@ -735,7 +742,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param parameters
      *            part of filter string to use
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
@@ -756,7 +764,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched step
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
@@ -777,7 +786,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched task
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
@@ -798,7 +808,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @param taskStatus
      *            {@link TaskStatus} of searched task
      * @param negate
-     *            true or false, if true create simple queries with contains false
+     *            true or false, if true create simple queries with contains
+     *            false
      * @param objectType
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
@@ -855,7 +866,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         BoolQueryBuilder typeAutomatic = new BoolQueryBuilder();
         String value = getFilterValueFromFilterString(filter, FilterString.TASKAUTOMATIC);
         if (value != null) {
-            typeAutomatic.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), value.equalsIgnoreCase("true"), true));
+            typeAutomatic.must(
+                createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), value.equalsIgnoreCase("true"), true));
         }
         return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.TASK, typeAutomatic);
     }
@@ -1037,8 +1049,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * This functions extracts the Integer from the parameters passed with the step
-     * filter in first position.
+     * This functions extracts the Integer from the parameters passed with the
+     * step filter in first position.
      *
      * @param parameter
      *            the string, where the integer should be extracted
@@ -1050,8 +1062,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     /**
-     * This functions extracts the Integer from the parameters passed with the step
-     * filter in last position.
+     * This functions extracts the Integer from the parameters passed with the
+     * step filter in last position.
      *
      * @param parameter
      *            String
