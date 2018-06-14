@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerException;
 import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
 import org.kitodo.dataeditor.entities.PhysicalStructMapType;
+import org.kitodo.dataeditor.entities.StructLink;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -31,7 +32,6 @@ import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
-import org.kitodo.dataformat.metskitodo.StructLinkType;
 import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
@@ -45,6 +45,7 @@ public class MetsKitodoWrapper {
     private LogicalStructMapType logicalStructMapType;
     private PhysicalStructMapType physicalStructMapType;
     private FileSec fileSec;
+    private StructLink structLink;
 
     /**
      * Gets the mets object.
@@ -115,21 +116,6 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Adds a smLink to the structLink section of mets file.
-     *
-     * @param from
-     *            The from value.
-     * @param to
-     *            The to value.
-     */
-    public void addSmLink(String from, String to) {
-        StructLinkType.SmLink structLinkTypeSmLink = objectFactory.createStructLinkTypeSmLink();
-        structLinkTypeSmLink.setFrom(from);
-        structLinkTypeSmLink.setTo(to);
-        mets.getStructLink().getSmLinkOrSmLinkGrp().add(structLinkTypeSmLink);
-    }
-
-    /**
      * Gets all dmdSec elements.
      *
      * @return All dmdSec elements as list of MdSecType objects.
@@ -139,8 +125,8 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Inserts MediaFile objects into fileSec of mets document and creates
-     * corresponding physical structMap.
+     * Inserts MediaFile objects into fileSec of the wrapped mets document and
+     * creates corresponding physical structMap.
      *
      * @param files
      *            The list of MediaFile objects.
@@ -152,20 +138,20 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Returns the physical StructMap of mets document.
+     * Returns the physical StructMap of the wrapped mets document.
      *
      * @return The StructMapType object.
      */
     public PhysicalStructMapType getPhysicalStructMap() {
         if (Objects.isNull(this.physicalStructMapType)) {
             this.physicalStructMapType = new PhysicalStructMapType(
-                MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL"));
+                    MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL"));
         }
         return this.physicalStructMapType;
     }
 
     /**
-     * Returns the logical StructMap of mets document.
+     * Returns the logical StructMap of the wrapped mets document.
      *
      * @return The LogicalStructMapType object.
      */
@@ -178,7 +164,7 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Returns the FileSec of mets document.
+     * Returns the FileSec of the wrapped mets document.
      *
      * @return The FileSec object.
      */
@@ -187,6 +173,18 @@ public class MetsKitodoWrapper {
             this.fileSec = new FileSec(getMets().getFileSec());
         }
         return this.fileSec;
+    }
+
+    /**
+     * Returns the structLink of the wrapped mets document.
+     * 
+     * @return The StructLink Object.
+     */
+    public StructLink getSructLink() {
+        if (Objects.isNull(this.structLink)) {
+            this.structLink = new StructLink(getMets().getStructLink());
+        }
+        return this.structLink;
     }
 
     /**
@@ -204,5 +202,17 @@ public class MetsKitodoWrapper {
             return MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(mdSecType);
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
+    }
+
+    /**
+     * Returns a list of divs from physical structMap which are linked by a given
+     * div from logical structMap.
+     * 
+     * @param logicalDiv
+     *            The logical div which links to physical divs.
+     * @return A list of physical divs.
+     */
+    public List<DivType> getPhysicalDivsByLogicalDiv(DivType logicalDiv) {
+        return getPhysicalStructMap().getDivsByIds(getSructLink().getPhysicalDivIdsByLogicalDiv(logicalDiv));
     }
 }

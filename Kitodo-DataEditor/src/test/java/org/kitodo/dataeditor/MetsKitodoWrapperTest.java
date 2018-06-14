@@ -78,18 +78,27 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException {
-        String from = "from test";
-        String to = "to test";
+    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException, JAXBException {
+        List<DivType> physicalDivTypes = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            DivType physicalDiv = new DivType();
+            physicalDiv.setID("test_ID_PHY" + i);
+            physicalDivTypes.add(physicalDiv);
+        }
+
+        DivType logicalDiv = new DivType();
+        logicalDiv.setID("test_ID_LOG");
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
-        metsKitodoWrapper.addSmLink(from, to);
+        metsKitodoWrapper.getSructLink().addSmLinks(logicalDiv, physicalDivTypes);
 
         StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsKitodoWrapper.getMets().getStructLink()
                 .getSmLinkOrSmLinkGrp().get(0);
+        int objectCount = metsKitodoWrapper.getMets().getStructLink().getSmLinkOrSmLinkGrp().size();
 
-        Assert.assertEquals("'from' attribute of smLink was wrong", from, smLink.getFrom());
-        Assert.assertEquals("'to' attribute of smLink was wrong", to, smLink.getTo());
+        Assert.assertEquals("'from' attribute of smLink was wrong", logicalDiv.getID(), smLink.getFrom());
+        Assert.assertEquals("'to' attribute of smLink was wrong", physicalDivTypes.get(0).getID(), smLink.getTo());
+        Assert.assertEquals("Number of inserted smLinks was wrong", physicalDivTypes.size(), objectCount);
     }
 
     @Test
@@ -119,7 +128,7 @@ public class MetsKitodoWrapperTest {
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         String id = metsKitodoWrapper.getMets().getDmdSec().get(0).getID();
-        Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_0000", id);
+        Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_ROOT", id);
     }
 
     @Test
@@ -237,7 +246,7 @@ public class MetsKitodoWrapperTest {
 
         DivType div = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
         kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(div);
-        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "[Seite 134r-156v]",
+        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "Chapter 1",
             kitodoTypeOfDiv.getMetadata().get(0).getValue());
 
         DivType divWithoutMetadata = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
@@ -383,5 +392,25 @@ public class MetsKitodoWrapperTest {
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("Child div element not found");
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
+    }
+
+    @Test
+    public void shouldGetPhysicalDivsByLogicalDiv()
+        throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLogicalDiv(firstChapterDiv);
+        Assert.assertEquals("Number of physical divs of first chapter was wrong", 3,
+            physicalDivs.size());
+        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "3",
+            physicalDivs.get(2).getORDERLABEL());
+
+        DivType secondChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2);
+        physicalDivs = metsKitodoWrapper.getPhysicalDivsByLogicalDiv(secondChapterDiv);
+        Assert.assertEquals("Number of physical divs of second chapter was wrong", 2,
+            physicalDivs.size());
+        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "5",
+            physicalDivs.get(1).getORDERLABEL());
     }
 }

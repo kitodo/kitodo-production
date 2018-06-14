@@ -135,7 +135,7 @@ public class MetsKitodoWriterTest {
             "        <mets:mdWrap MDTYPE=\"OTHER\" OTHERMDTYPE=\"KITODO\">\n" +
             "            <mets:xmlData>\n" +
             "                <kitodo:kitodo version=\"1.0\">\n" +
-            "                    <kitodo:metadata name=\"TitleDocMain\">[Seite 134r-156v]</kitodo:metadata>\n" +
+            "                    <kitodo:metadata name=\"TitleDocMain\">Chapter 1</kitodo:metadata>\n" +
             "                </kitodo:kitodo>\n" +
             "            </mets:xmlData>\n" +
             "        </mets:mdWrap>\n" +

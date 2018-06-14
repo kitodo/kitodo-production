@@ -14,6 +14,8 @@ package org.kitodo.dataeditor.entities;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.kitodo.config.Config;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
@@ -79,5 +81,29 @@ public class PhysicalStructMapType extends StructMapType {
             return "track";
         }
         return "other";
+    }
+
+    private DivType getDivById(String id) {
+        for (DivType div : this.getDiv().getDiv()) {
+            if (Objects.equals(div.getID(),id)) {
+                return div;
+            }
+        }
+        throw new NoSuchElementException("Div with id " + id + " does not exist at physical struct map");
+    }
+
+    /**
+     * Returns a list of divs with the given ids.
+     * 
+     * @param ids
+     *            The list of ids as String objects.
+     * @return The list of DivType objects.
+     */
+    public List<DivType> getDivsByIds(List<String> ids) {
+        List<DivType> divs = new ArrayList<>();
+        for (String id : ids) {
+            divs.add(getDivById(id));
+        }
+        return divs;
     }
 }

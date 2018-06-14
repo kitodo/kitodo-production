@@ -24,7 +24,6 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class LogicalStructMapType extends StructMapType {
 
-    private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
     private static final Logger logger = LogManager.getLogger(LogicalStructMapType.class);
 
     /**
