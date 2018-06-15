@@ -87,8 +87,8 @@
             <version>${commons-httpclient.version}</version>
             <exclusions>
                 <exclusion>
-                    <artifactId>.</artifactId>
-                    <groupId>.</groupId>
+                    <artifactId>*</artifactId>
+                    <groupId>*</groupId>
                 </exclusion>
             </exclusions>
         </dependency>

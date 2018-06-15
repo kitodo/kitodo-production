@@ -11,17 +11,17 @@
 
 package org.kitodo.production.plugin.opac.pica;
 
-import java.util.ArrayList;
+import java.util.List;
 
 class ConfigOpacDoctype {
     private final String title;
     private final boolean periodical;
     private final boolean multiVolume;
     private final boolean containedWork;
-    private final ArrayList<String> mappings;
+    private final List<String> mappings;
 
     ConfigOpacDoctype(String inTitle, boolean periodical, boolean multiVolume, boolean containedWork,
-            ArrayList<String> mappings) {
+            List<String> mappings) {
         this.title = inTitle;
         this.periodical = periodical;
         this.multiVolume = multiVolume;
@@ -45,7 +45,7 @@ class ConfigOpacDoctype {
         return containedWork;
     }
 
-    ArrayList<String> getMappings() {
+    List<String> getMappings() {
         return mappings;
     }
 

@@ -11,7 +11,6 @@
 
 package de.unigoettingen.sub.search.opac;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +29,7 @@ public class ConfigOpacDoctype {
     private boolean periodical;
     private boolean multiVolume;
     private HashMap<String, String> labels;
-    private ArrayList<String> mappings;
+    private List<String> mappings;
     private boolean newspaper;
 
     public ConfigOpacDoctype() {
@@ -39,7 +38,7 @@ public class ConfigOpacDoctype {
 
     ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
             boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
-            ArrayList<String> inMappings) {
+            List<String> inMappings) {
         this.title = inTitle;
         this.rulesetType = inRulesetType;
         this.tifHeaderType = inTifHeaderType;
