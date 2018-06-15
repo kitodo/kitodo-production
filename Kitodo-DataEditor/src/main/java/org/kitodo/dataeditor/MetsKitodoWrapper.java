@@ -13,6 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -212,7 +213,22 @@ public class MetsKitodoWrapper {
      *            The logical div which links to physical divs.
      * @return A list of physical divs.
      */
-    public List<DivType> getPhysicalDivsByLogicalDiv(DivType logicalDiv) {
+    public List<DivType> getPhysicalDivsByLinkingLogicalDiv(DivType logicalDiv) {
         return getPhysicalStructMap().getDivsByIds(getSructLink().getPhysicalDivIdsByLogicalDiv(logicalDiv));
+    }
+
+    /**
+     * Adds smLinks to structLink section for a given logical div by checking the
+     * linked physical divs of the logical child divs.
+     * 
+     * @param logicalDiv
+     *            The logical div.
+     */
+    public void linkLogicalDivByInheritFromChildDivs(DivType logicalDiv) {
+        List<DivType> physicalDivs = new ArrayList<>();
+        for (DivType div : logicalDiv.getDiv()) {
+            physicalDivs.addAll(getPhysicalDivsByLinkingLogicalDiv(div));
+        }
+        getSructLink().addSmLinks(logicalDiv, physicalDivs);
     }
 }

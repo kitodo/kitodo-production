@@ -73,8 +73,7 @@ public class StructLink extends MetsType.StructLink {
      * @return The list of ids.
      */
     public List<String> getPhysicalDivIdsByLogicalDiv(DivType logicalDiv) {
-        @SuppressWarnings("unchecked")
-        List<SmLink> smLinks = (List) getSmLinkOrSmLinkGrp();
+        List<SmLink> smLinks = getSmLinks();
         List<String> ids = new ArrayList<>();
         for (SmLink smLink : smLinks) {
             if (Objects.equals(smLink.getFrom(), logicalDiv.getID())) {
@@ -82,5 +81,16 @@ public class StructLink extends MetsType.StructLink {
             }
         }
         return ids;
+    }
+
+    /**
+     * Returns a list of smLink objects. This method must be modified in case we
+     * start to support smLinkGroups in mets structLink section.
+     * 
+     * @return The list of smLinks.
+     */
+    @SuppressWarnings("unchecked")
+    public List<SmLink> getSmLinks() {
+        return (List) getSmLinkOrSmLinkGrp();
     }
 }

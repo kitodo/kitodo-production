@@ -120,7 +120,7 @@ public class MetsKitodoWrapperTest {
     public void shouldCreateMetsByFile()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsKitodoWrapper.getDmdSecs().size());
+        Assert.assertEquals("Number of dmdSec elements was wrong!", 6, metsKitodoWrapper.getDmdSecs().size());
     }
 
     @Test
@@ -399,18 +399,30 @@ public class MetsKitodoWrapperTest {
         throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
 
-        DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
-        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLogicalDiv(firstChapterDiv);
-        Assert.assertEquals("Number of physical divs of first chapter was wrong", 3,
+        DivType firstSubChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getDiv().get(0);
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstSubChapterDiv);
+        Assert.assertEquals("Number of physical divs of first chapter was wrong", 4,
             physicalDivs.size());
         Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "3",
             physicalDivs.get(2).getORDERLABEL());
 
         DivType secondChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2);
-        physicalDivs = metsKitodoWrapper.getPhysicalDivsByLogicalDiv(secondChapterDiv);
-        Assert.assertEquals("Number of physical divs of second chapter was wrong", 2,
+        physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(secondChapterDiv);
+        Assert.assertEquals("Number of physical divs of second chapter was wrong", 3,
             physicalDivs.size());
-        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "5",
-            physicalDivs.get(1).getORDERLABEL());
+        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "9",
+            physicalDivs.get(2).getORDERLABEL());
+    }
+
+    @Test
+    public void shouldInheritPhysicalDivsByChildLogicalDivs()
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
+        metsKitodoWrapper.linkLogicalDivByInheritFromChildDivs(firstChapterDiv);
+
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
+        Assert.assertEquals("Number of created linked physical divs was wrong", 7, physicalDivs.size());
     }
 }
