@@ -28,6 +28,11 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jvnet.jaxb2_commons</groupId>
+            <artifactId>jaxb2-basics-runtime</artifactId>
+            <version>${jaxb2-basics-runtime.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -101,6 +106,16 @@
                                 <include>kitodo.xjb</include>
                             </bindingIncludes>
                             <generateDirectory>${project.build.directory}/generated-sources/xjc</generateDirectory>
+                            <args>
+                                <arg>-Xequals</arg>
+                            </args>
+                            <plugins>
+                                <plugin>
+                                    <groupId>org.jvnet.jaxb2_commons</groupId>
+                                    <artifactId>jaxb2-basics</artifactId>
+                                    <version>1.11.1</version>
+                                </plugin>
+                            </plugins>
                         </configuration>
                     </execution>
                 </executions>

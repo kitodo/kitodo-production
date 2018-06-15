@@ -65,6 +65,22 @@ public class StructLink extends MetsType.StructLink {
     }
 
     /**
+     * Removes a smLink which links a logical div to a physical div.
+     *
+     * @param logicalDiv
+     *            The logical DivType object which links from.
+     * @param physicalDiv
+     *            The physical DivType object which links to.
+     */
+    public void removeSmLink(DivType logicalDiv, DivType physicalDiv) {
+        StructLinkType.SmLink smLinkToDelete = objectFactory.createStructLinkTypeSmLink();
+        smLinkToDelete.setFrom(logicalDiv.getID());
+        smLinkToDelete.setTo(physicalDiv.getID());
+        List<Object> smLinkOrSmLinkGrp = this.getSmLinkOrSmLinkGrp();
+        smLinkOrSmLinkGrp.remove(smLinkToDelete);
+    }
+
+    /**
      * Returns a list of ids of physical div objects which are linked by a given
      * logical div.
      * 
