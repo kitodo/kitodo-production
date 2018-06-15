@@ -391,20 +391,13 @@ public class Helper extends HibernateHelper implements Observer {
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
                 File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/kitodo/messages/"));
                 if (file.exists()) {
-                    // Load local message bundle from file system only if file
-                    // exists;
-                    // if value not exists in bundle, use default bundle from
-                    // classpath
+                    // Load local message bundle from file system only if file exists;
+                    // if value not exists in bundle, use default bundle from classpath
 
                     try {
                         final URL resourceURL = file.toURI().toURL();
                         URLClassLoader urlLoader = AccessController
-                                .doPrivileged(new PrivilegedAction<URLClassLoader>() {
-                                    @Override
-                                    public URLClassLoader run() {
-                                        return new URLClassLoader(new URL[] {resourceURL });
-                                    }
-                                });
+                                .doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
                         ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
                         if (localBundle != null) {
                             localMessages.put(language, localBundle);
@@ -507,66 +500,67 @@ public class Helper extends HibernateHelper implements Observer {
         return currentTaskForm;
     }
 
-    public static final FilenameFilter imageNameFilter = new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-            boolean fileOk = false;
-            String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+    public static final FilenameFilter imageNameFilter = (dir, name) -> {
+        List<String> regexList = getImageNameRegexList();
 
-            List<String> regexList = new ArrayList<>();
-            regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
-            regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
-            regexList.add(prefix + "\\.[jJ][pP][2]");
-            regexList.add(prefix + "\\.[pP][nN][gG]");
-            regexList.add(prefix + "\\.[gG][iI][fF]");
-
-            for (String regex : regexList) {
-                if (name.matches(regex)) {
-                    fileOk = true;
-                }
+        for (String regex : regexList) {
+            if (name.matches(regex)) {
+                return true;
             }
-
-            return fileOk;
         }
+
+        return false;
     };
 
-    public static final FilenameFilter dataFilter = new FilenameFilter() {
+    public static final FilenameFilter dataFilter = (dir, name) -> {
+        List<String> regexList = getDataRegexList();
 
-        @Override
-        public boolean accept(File dir, String name) {
-            boolean fileOk = false;
-            String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
-
-            List<String> regexList = new ArrayList<>();
-            regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
-            regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
-            regexList.add(prefix + "\\.[jJ][pP][2]");
-            regexList.add(prefix + "\\.[pP][nN][gG]");
-            regexList.add(prefix + "\\.[gG][iI][fF]");
-            regexList.add(prefix + "\\.[pP][dD][fF]");
-            regexList.add(prefix + "\\.[aA][vV][iI]");
-            regexList.add(prefix + "\\.[mM][pP][gG]");
-            regexList.add(prefix + "\\.[mM][pP]4");
-            regexList.add(prefix + "\\.[mM][pP]3");
-            regexList.add(prefix + "\\.[wW][aA][vV]");
-            regexList.add(prefix + "\\.[wW][mM][vV]");
-            regexList.add(prefix + "\\.[fF][lL][vV]");
-            regexList.add(prefix + "\\.[oO][gG][gG]");
-            regexList.add(prefix + "\\.docx");
-            regexList.add(prefix + "\\.xls");
-            regexList.add(prefix + "\\.xlsx");
-            regexList.add(prefix + "\\.pptx");
-            regexList.add(prefix + "\\.ppt");
-
-            for (String regex : regexList) {
-                if (name.matches(regex)) {
-                    fileOk = true;
-                }
+        for (String regex : regexList) {
+            if (name.matches(regex)) {
+                return true;
             }
-
-            return fileOk;
         }
+
+        return false;
     };
+
+    private static List<String> getImageNameRegexList() {
+        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+
+        List<String> regexList = new ArrayList<>();
+        regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
+        regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
+        regexList.add(prefix + "\\.[jJ][pP][2]");
+        regexList.add(prefix + "\\.[pP][nN][gG]");
+        regexList.add(prefix + "\\.[gG][iI][fF]");
+        return regexList;
+    }
+
+    private static List<String> getDataRegexList() {
+        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+
+        List<String> regexList = new ArrayList<>();
+        regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
+        regexList.add(prefix + "\\.[jJ][pP][eE]?[gG]");
+        regexList.add(prefix + "\\.[jJ][pP][2]");
+        regexList.add(prefix + "\\.[pP][nN][gG]");
+        regexList.add(prefix + "\\.[gG][iI][fF]");
+        regexList.add(prefix + "\\.[pP][dD][fF]");
+        regexList.add(prefix + "\\.[aA][vV][iI]");
+        regexList.add(prefix + "\\.[mM][pP][gG]");
+        regexList.add(prefix + "\\.[mM][pP]4");
+        regexList.add(prefix + "\\.[mM][pP]3");
+        regexList.add(prefix + "\\.[wW][aA][vV]");
+        regexList.add(prefix + "\\.[wW][mM][vV]");
+        regexList.add(prefix + "\\.[fF][lL][vV]");
+        regexList.add(prefix + "\\.[oO][gG][gG]");
+        regexList.add(prefix + "\\.docx");
+        regexList.add(prefix + "\\.xls");
+        regexList.add(prefix + "\\.xlsx");
+        regexList.add(prefix + "\\.pptx");
+        regexList.add(prefix + "\\.ppt");
+        return regexList;
+    }
 
     /**
      * The function getLastMessage() returns the last message processed to be shown

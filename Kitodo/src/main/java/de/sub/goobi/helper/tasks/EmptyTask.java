@@ -58,20 +58,10 @@ public class EmptyTask extends Thread implements INameableTask {
      * which will automatically be attached to all task threads. Otherwise
      * exceptions might get lost or even bring the runtime to crash.
      */
-    public static final Thread.UncaughtExceptionHandler CATCH_ALL = new Thread.UncaughtExceptionHandler() {
-        /**
-         * The function uncaughtException() will catch any uncaught exception
-         * that might occur in the task and will store it in the
-         *
-         * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,
-         *      java.lang.Throwable)
-         */
-        @Override
-        public void uncaughtException(Thread origin, Throwable exception) {
-            if (origin instanceof EmptyTask) {
-                EmptyTask task = (EmptyTask) origin;
-                task.setException(exception);
-            }
+    public static final Thread.UncaughtExceptionHandler CATCH_ALL = (origin, exception) -> {
+        if (origin instanceof EmptyTask) {
+            EmptyTask task = (EmptyTask) origin;
+            task.setException(exception);
         }
     };
 

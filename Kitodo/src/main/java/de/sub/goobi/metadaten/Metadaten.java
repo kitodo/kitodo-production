@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -1323,40 +1322,34 @@ public class Metadaten {
         if (inStrukturelement == null) {
             return;
         }
-        List<ReferenceInterface> listReferenzen = inStrukturelement.getAllReferences("to");
+        List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
         int zaehler = 0;
         int imageNr = 0;
-        if (listReferenzen != null) {
-            /*
-             * Referenzen sortieren
-             */
-            Collections.sort(listReferenzen, new Comparator<ReferenceInterface>() {
-                @Override
-                public int compare(final ReferenceInterface firstObject, final ReferenceInterface secondObject) {
-                    Integer firstPage = 0;
-                    Integer secondPage = 0;
+        if (references != null) {
+            Collections.sort(references, (firstObject, secondObject) -> {
+                Integer firstPage = 0;
+                Integer secondPage = 0;
 
-                    MetadataTypeInterface mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
-                    List<? extends MetadataInterface> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
-                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
-                        MetadataInterface meineSeite = listMetadaten.get(0);
-                        firstPage = Integer.parseInt(meineSeite.getValue());
-                    }
-                    listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
-                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
-                        MetadataInterface meineSeite = listMetadaten.get(0);
-                        secondPage = Integer.parseInt(meineSeite.getValue());
-                    }
-                    return firstPage.compareTo(secondPage);
+                MetadataTypeInterface mdt = Metadaten.this.myPrefs.getMetadataTypeByName("physPageNumber");
+                List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
+                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+                    MetadataInterface page = listMetadata.get(0);
+                    firstPage = Integer.parseInt(page.getValue());
                 }
+                listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
+                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+                    MetadataInterface page = listMetadata.get(0);
+                    secondPage = Integer.parseInt(page.getValue());
+                }
+                return firstPage.compareTo(secondPage);
             });
 
             /* die Größe der Arrays festlegen */
-            this.structSeiten = new SelectItem[listReferenzen.size()];
-            this.structSeitenNeu = new MetadatumImpl[listReferenzen.size()];
+            this.structSeiten = new SelectItem[references.size()];
+            this.structSeitenNeu = new MetadatumImpl[references.size()];
 
             /* alle Referenzen durchlaufen und deren Metadaten ermitteln */
-            for (ReferenceInterface ref : listReferenzen) {
+            for (ReferenceInterface ref : references) {
                 DocStructInterface target = ref.getTarget();
                 determineSecondPagesStructure(target, zaehler);
                 if (imageNr == 0) {
