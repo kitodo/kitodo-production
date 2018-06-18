@@ -372,8 +372,7 @@ public class MassImportForm implements Serializable {
         Process process = JobCreation.generateProcess(io, this.template);
         if (process == null) {
             if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
-                    && selectedFilenames != null && !selectedFilenames.isEmpty()
-                    && selectedFilenames.contains(importFileName.getRawPath())) {
+                    && selectedFilenames != null && !selectedFilenames.isEmpty()) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
             Helper.setErrorMessage(
@@ -389,8 +388,7 @@ public class MassImportForm implements Serializable {
         URI importFileName = io.getImportFileName();
         Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage()});
         if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
-                && selectedFilenames != null && !selectedFilenames.isEmpty()
-                && selectedFilenames.contains(importFileName.getRawPath())) {
+                && selectedFilenames != null && !selectedFilenames.isEmpty()) {
             selectedFilenames.remove(importFileName.getRawPath());
         }
     }
