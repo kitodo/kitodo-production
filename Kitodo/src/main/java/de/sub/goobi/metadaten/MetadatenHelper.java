@@ -22,7 +22,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -348,7 +347,7 @@ public class MetadatenHelper implements Comparator<Object> {
         HelperComparator c = new HelperComparator();
         c.setSortType(SortType.DOC_STRUCT_TYPE);
         // TODO: Uses generics, if possible
-        Collections.sort(newTypes, c);
+        newTypes.sort(c);
 
         // nun ein Array mit der richtigen Größe anlegen
         int zaehler = newTypes.size();
@@ -393,7 +392,7 @@ public class MetadatenHelper implements Comparator<Object> {
         }
         List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
         if (Objects.nonNull(references) && !references.isEmpty()) {
-            Collections.sort(references, (firstObject, secondObject) -> {
+            references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;
                 Integer secondPage = 0;
                 final MetadataTypeInterface mdt = MetadatenHelper.this.prefs
@@ -471,13 +470,13 @@ public class MetadatenHelper implements Comparator<Object> {
         if (inIsPerson) {
             List<PersonInterface> person = inStruct.getAllPersons();
             if (person != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                Collections.sort(person, new MetadataComparator(inLanguage));
+                person.sort(new MetadataComparator(inLanguage));
             }
             return person;
         } else {
             List<MetadataInterface> metadata = inStruct.getAllMetadata();
             if (metadata != null && !inProzess.getRuleset().isOrderMetadataByRuleset()) {
-                Collections.sort(metadata, new MetadataComparator(inLanguage));
+                metadata.sort(new MetadataComparator(inLanguage));
             }
             return getAllVisibleMetadataHack(inStruct);
 
@@ -646,7 +645,7 @@ public class MetadatenHelper implements Comparator<Object> {
 
         HelperComparator c = new HelperComparator();
         c.setSortType(SortType.METADATA_TYPE);
-        Collections.sort(types, c);
+        types.sort(c);
 
         for (MetadataTypeInterface mdt : types) {
             myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));

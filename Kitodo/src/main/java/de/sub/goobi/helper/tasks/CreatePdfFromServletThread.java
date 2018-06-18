@@ -28,7 +28,6 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.httpclient.HttpClient;
@@ -192,7 +191,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 String file = basePath + data.getRawPath();
                 fileNames.add(file);
             }
-            Collections.sort(fileNames, new MetadatenHelper(null, null));
+            fileNames.sort(new MetadatenHelper(null, null));
             for (String f : fileNames) {
                 url.append(f);
                 url.append("$");

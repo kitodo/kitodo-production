@@ -519,7 +519,7 @@ public class Metadaten {
         // sort the metadata types
         HelperComparator c = new HelperComparator();
         c.setSortType(SortType.METADATA_TYPE);
-        Collections.sort(types, c);
+        types.sort(c);
 
         int counter = types.size();
 

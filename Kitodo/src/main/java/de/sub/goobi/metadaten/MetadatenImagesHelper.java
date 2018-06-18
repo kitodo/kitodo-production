@@ -508,7 +508,7 @@ public class MetadatenImagesHelper {
             if (orderedFileNameList.size() == dataList.size()) {
                 return orderedFileNameList;
             } else {
-                Collections.sort(dataList, new GoobiImageFileComparator());
+                dataList.sort(new GoobiImageFileComparator());
                 return dataList;
             }
         } else {
@@ -574,7 +574,7 @@ public class MetadatenImagesHelper {
         List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         if (!files.isEmpty()) {
             dataList.addAll(files);
-            Collections.sort(dataList, new GoobiImageFileComparator());
+            dataList.sort(new GoobiImageFileComparator());
         }
         return dataList;
     }
