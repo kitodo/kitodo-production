@@ -237,7 +237,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a single value metadata field is configured to show a
      *             multi-select input
      */
-    private final void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
+    private void createMembers(MetadataGroupInterface data, boolean autoUpdate) throws ConfigurationException {
         List<MetadataTypeInterface> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
         members = new LinkedHashMap<>(hashCapacityFor(requiredFields));
         for (MetadataTypeInterface field : requiredFields) {
@@ -450,7 +450,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *             if a metadata field designed for a single value is
      *             misconfigured to show a multi-value input element
      */
-    private final void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
+    private void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
         List<MetadataTypeInterface> requiredMetadataTypes = newGroupType.getMetadataTypeList();
         Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<>(
                 hashCapacityFor(requiredMetadataTypes));
