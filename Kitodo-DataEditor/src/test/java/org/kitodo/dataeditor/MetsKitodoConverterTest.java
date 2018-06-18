@@ -14,6 +14,7 @@ package org.kitodo.dataeditor;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
@@ -21,6 +22,7 @@ import javax.xml.transform.TransformerException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.dataformat.metskitodo.KitodoType;
+import org.kitodo.dataformat.metskitodo.MetadataGroupType;
 import org.kitodo.dataformat.metskitodo.MetadataType;
 import org.kitodo.dataformat.metskitodo.Mets;
 
@@ -39,5 +41,14 @@ public class MetsKitodoConverterTest {
             metadataType.getName());
         Assert.assertEquals("Reading content metadata out of kitodo format was not correct", "Test Publisher",
             metadataType.getValue());
+
+        MetadataGroupType metadataGroup = kitodoType.getMetadataGroup().get(0);
+        Assert.assertEquals("Converting of metadata group was wrong at name attribute","TypeOfResource", metadataGroup.getName());
+        Assert.assertEquals("Converting of metadata group was wrong at metadata child element","Handschrift", metadataGroup.getMetadata().get(0).getValue());
+
+        MetadataGroupType personMetadataGroup = kitodoType.getMetadataGroup().get(1);
+        Assert.assertEquals("Converting of person was wrong at name attribute","person", personMetadataGroup.getName());
+        Assert.assertEquals("Converting of person was wrong at metadata child element","FormerOwner", personMetadataGroup.getMetadata().get(0).getValue());
+
     }
 }

@@ -70,10 +70,10 @@
     </xsl:template>
     <!--This replaces the person metadata element by metadata group element-->
     <xsl:template match="goobi:metadata[@type='person']" mode="pass2">
-        <kitodo:metadataGroup>
-            <xsl:attribute name="name">
+        <kitodo:metadataGroup name="person">
+            <kitodo:metadata name="role">
                 <xsl:value-of select="@name"/>
-            </xsl:attribute>
+            </kitodo:metadata>
             <xsl:for-each select="node()">
                 <kitodo:metadata>
                     <xsl:attribute name="name">
