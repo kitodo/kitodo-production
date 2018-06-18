@@ -20,12 +20,12 @@ package org.kitodo.dataeditor.pagination;
  */
 interface Fragment {
     /**
-     * Returns the value formatted according to the type and configuration of
-     * the fragment. For example, a value of 3.5 may be formatted as "3"
-     * (decimal), "III" (roman), or "v" (text, for ‘verso’, the back of a
-     * sheet). {@code DecimalNumeral} and {@code RomanNumeral} will ignore the
-     * half part of the integer, where {@code StaticText} may return text or an
-     * empty string for full and half values.
+     * Returns the value formatted according to the type and configuration of the
+     * fragment. For example, a value of 3.5 may be formatted as "3" (decimal),
+     * "III" (roman), or "v" (text, for ‘verso’, the back of a sheet).
+     * {@code DecimalNumeral} and {@code RomanNumeral} will ignore the half part of
+     * the integer, where {@code StaticText} may return text or an empty string for
+     * full and half values.
      *
      * @param value
      *            value to format
@@ -43,8 +43,8 @@ interface Fragment {
     HalfInteger getIncrement();
 
     /**
-     * Returns the initial value of the fragment. This is where pagination will
-     * be started.
+     * Returns the initial value of the fragment. This is where pagination will be
+     * started.
      *
      * @return the pagination start value
      */

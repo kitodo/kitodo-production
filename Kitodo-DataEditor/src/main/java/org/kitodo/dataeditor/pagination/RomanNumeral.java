@@ -26,7 +26,13 @@ public class RomanNumeral implements Fragment {
     /**
      * These are the numerical values of the letters used for roman numerals.
      */
-    private static final int I = 1, V = 5, X = 10, L = 50, C = 100, D = 500, M = 1000;
+    private static final int I = 1;
+    private static final int V = 5;
+    private static final int X = 10;
+    private static final int L = 50;
+    private static final int C = 100;
+    private static final int D = 500;
+    private static final int M = 1000;
 
     /**
      * These are the string constants that represent the ones of the roman numeral.
@@ -58,6 +64,11 @@ public class RomanNumeral implements Fragment {
         result.append(TENS[value / 10]);
         result.append(ONES[value % 10]);
         return uppercase ? result.toString().toUpperCase() : result.toString();
+    }
+
+    @Override
+    public String format(HalfInteger value) {
+        return format(value.intValue(), uppercase);
     }
 
     /**
@@ -146,33 +157,16 @@ public class RomanNumeral implements Fragment {
         this.uppercase = uppercase;
     }
 
-    /**
-     * Returns the value formatted as a roman numeral.
-     */
-    @Override
-    public String format(HalfInteger value) {
-        return format(value.intValue(), uppercase);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HalfInteger getIncrement() {
         return increment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Integer intValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setIncrement(HalfInteger increment) {
         this.increment = increment;

@@ -50,25 +50,16 @@ public class DecimalNumeral implements Fragment {
         return String.format(digits, value.intValue());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HalfInteger getIncrement() {
         return increment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Integer intValue() {
         return value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setIncrement(HalfInteger increment) {
         this.increment = increment;

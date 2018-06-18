@@ -38,9 +38,6 @@ public class StaticText implements Fragment {
         this.page = odd;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String format(HalfInteger value) {
         if (page == null || page == value.isHalf()) {
@@ -50,36 +47,22 @@ public class StaticText implements Fragment {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HalfInteger getIncrement() {
         return increment;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Integer intValue() {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void setIncrement(HalfInteger increment) {
         this.increment = increment;
 
     }
 
-    /**
-     * Returns a concise string representation of this instance.
-     *
-     * @return a string representing this instance
-     */
     @Override
     public String toString() {
         return '"' + value + "\" (" + (increment != null ? increment : "default") + (page != null ? ", " + page : "")

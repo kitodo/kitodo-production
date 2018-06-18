@@ -79,8 +79,8 @@ public enum PaginatorMode {
     },
 
     /**
-     * Alternating a front side (“r”), then a back side (“v”) (1r, 1v, 2r, 2v, …
-     * / [1]r, [1]v, [2]r, [2]v, …).
+     * Alternating a front side (“r”), then a back side (“v”) (1r, 1v, 2r, 2v, … /
+     * [1]r, [1]v, [2]r, [2]v, …).
      */
     RECTOVERSO(4) {
         @Override
@@ -94,9 +94,8 @@ public enum PaginatorMode {
     },
 
     /**
-     * One back side (“v”) with the subsequent front side (“r”) on one image
-     * (1v␣2r, 2v␣3r, 3v␣4r, 4v␣5r, … / [1]v␣[2]r, [2]v␣[3]r, [3]v␣[4]r,
-     * [4]v␣[5]r, …).
+     * One back side (“v”) with the subsequent front side (“r”) on one image (1v␣2r,
+     * 2v␣3r, 3v␣4r, 4v␣5r, … / [1]v␣[2]r, [2]v␣[3]r, [3]v␣[4]r, [4]v␣[5]r, …).
      */
 
     RECTOVERSO_FOLIATION(5) {
@@ -114,7 +113,7 @@ public enum PaginatorMode {
      * Map for the look-up of codes.
      */
     private static final Map<Integer, PaginatorMode> codeMap = new HashMap<Integer, PaginatorMode>(
-        (int) Math.ceil(values().length / .75)) {
+            (int) Math.ceil(values().length / .75)) {
         private static final long serialVersionUID = 1L;
         {
             for (PaginatorMode member : PaginatorMode.values()) {

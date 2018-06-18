@@ -78,8 +78,11 @@ public class HalfInteger extends Number {
 
     /**
      * Creates a new half integer.
-     * @param value integer value
-     * @param aHalf if true, is one half above the value
+     * 
+     * @param value
+     *            integer value
+     * @param aHalf
+     *            if true, is one half above the value
      */
     public HalfInteger(int value, boolean aHalf) {
         this.value = value;
@@ -87,7 +90,9 @@ public class HalfInteger extends Number {
     }
 
     HalfInteger add(HalfInteger increment) {
-        if (increment == null) return this;
+        if (increment == null) {
+            return this;
+        }
         if (aHalf && increment.aHalf) {
             return new HalfInteger(value + increment.value + 1, false);
         } else {
@@ -95,29 +100,16 @@ public class HalfInteger extends Number {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public double doubleValue() {
         return aHalf ? value + .5 : value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public float floatValue() {
         return aHalf ? value + .5f : value;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>
-     * This instance returns the value <b>rounded down</b>, which is critical
-     * for the package to work as expected.
-     */
     @Override
     public int intValue() {
         return value;
@@ -127,9 +119,6 @@ public class HalfInteger extends Number {
         return aHalf;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public long longValue() {
         return value;
