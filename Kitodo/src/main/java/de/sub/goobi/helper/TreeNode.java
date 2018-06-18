@@ -123,7 +123,7 @@ public class TreeNode {
      * alle Children des übergebenen Knotens expanden oder collapsen.
      */
     public void expandNodes(Boolean inExpand) {
-        expandNode(this, inExpand.booleanValue());
+        expandNode(this, inExpand);
     }
 
     private void expandNode(TreeNode inNode, boolean inExpand) {
