@@ -179,9 +179,9 @@ public class MetsKitodoWrapper {
     /**
      * Returns the structLink of the wrapped mets document.
      * 
-     * @return The StructLink Object.
+     * @return The StructLink object.
      */
-    public StructLink getSructLink() {
+    public StructLink getStructLink() {
         if (Objects.isNull(this.structLink)) {
             this.structLink = new StructLink(getMets().getStructLink());
         }
@@ -214,7 +214,7 @@ public class MetsKitodoWrapper {
      * @return A list of physical divs.
      */
     public List<DivType> getPhysicalDivsByLinkingLogicalDiv(DivType logicalDiv) {
-        return getPhysicalStructMap().getDivsByIds(getSructLink().getPhysicalDivIdsByLogicalDiv(logicalDiv));
+        return getPhysicalStructMap().getDivsByIds(getStructLink().getPhysicalDivIdsByLogicalDiv(logicalDiv));
     }
 
     /**
@@ -229,6 +229,6 @@ public class MetsKitodoWrapper {
         for (DivType div : logicalDiv.getDiv()) {
             physicalDivs.addAll(getPhysicalDivsByLinkingLogicalDiv(div));
         }
-        getSructLink().addSmLinks(logicalDiv, physicalDivs);
+        getStructLink().addSmLinks(logicalDiv, physicalDivs);
     }
 }

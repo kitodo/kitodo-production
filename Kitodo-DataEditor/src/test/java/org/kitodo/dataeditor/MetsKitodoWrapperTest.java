@@ -90,7 +90,7 @@ public class MetsKitodoWrapperTest {
         logicalDiv.setID("test_ID_LOG");
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
-        metsKitodoWrapper.getSructLink().addSmLinks(logicalDiv, physicalDivTypes);
+        metsKitodoWrapper.getStructLink().addSmLinks(logicalDiv, physicalDivTypes);
 
         StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsKitodoWrapper.getMets().getStructLink()
                 .getSmLinkOrSmLinkGrp().get(0);
@@ -446,7 +446,7 @@ public class MetsKitodoWrapperTest {
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
 
         for (DivType physicalDiv : physicalDivs) {
-            metsKitodoWrapper.getSructLink().removeSmLink(firstChapterDiv, physicalDiv);
+            metsKitodoWrapper.getStructLink().removeSmLink(firstChapterDiv, physicalDiv);
         }
 
         Assert.assertEquals("Removing of smLinks was not successful", 0,
