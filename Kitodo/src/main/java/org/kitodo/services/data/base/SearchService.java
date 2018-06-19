@@ -197,12 +197,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param baseIndexedBean
      *            object
+     * @param forceRefresh
+     *            force index refresh - if true, time of execution is longer but
+     *            object is right after that available for display
      */
     @SuppressWarnings("unchecked")
-    public void saveToIndex(T baseIndexedBean) throws CustomResponseException, IOException {
+    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
         if (baseIndexedBean != null) {
-            indexer.performSingleRequest(baseIndexedBean, type);
+            indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
     }
 
@@ -228,12 +231,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param baseIndexedBean
      *            object
+     * @param forceRefresh
+     *            force index refresh - if true, time of execution is longer but
+     *            object is right after that available for display
      */
     @SuppressWarnings("unchecked")
-    public void removeFromIndex(T baseIndexedBean) throws CustomResponseException, IOException {
+    public void removeFromIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
         if (baseIndexedBean != null) {
-            indexer.performSingleRequest(baseIndexedBean, type);
+            indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
     }
 
@@ -242,10 +248,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *
      * @param id
      *            of object
+     * @param forceRefresh
+     *            force index refresh - if true, time of execution is longer but
+     *            object is right after that available for display
      */
-    public void removeFromIndex(Integer id) throws CustomResponseException, IOException {
+    public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.DELETE);
-        indexer.performSingleRequest(id);
+        indexer.performSingleRequest(id, forceRefresh);
     }
 
     /**
@@ -283,7 +292,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
             T savedBean = saveToDatabase(baseIndexedBean);
-            saveToIndex(savedBean);
+            saveToIndex(savedBean, true);
             manageDependenciesForIndex(savedBean);
             savedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(savedBean);
@@ -295,7 +304,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             int maxTries = 5;
             while (true) {
                 try {
-                    saveToIndex(baseIndexedBean);
+                    saveToIndex(baseIndexedBean, true);
                     manageDependenciesForIndex(baseIndexedBean);
                     baseIndexedBean.setIndexAction(IndexAction.DONE);
                     saveToDatabase(baseIndexedBean);
@@ -340,7 +349,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         try {
             baseIndexedBean.setIndexAction(IndexAction.DELETE);
             T savedBean = saveToDatabase(baseIndexedBean);
-            removeFromIndex(savedBean);
+            removeFromIndex(savedBean, true);
             manageDependenciesForIndex(savedBean);
             removeFromDatabase(savedBean);
         } catch (DAOException e) {
@@ -351,7 +360,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             int maxTries = 5;
             while (true) {
                 try {
-                    removeFromIndex(baseIndexedBean);
+                    removeFromIndex(baseIndexedBean, true);
                     removeFromDatabase(baseIndexedBean);
                     break;
                 } catch (CustomResponseException | IOException ee) {
@@ -554,8 +563,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         }
     }
 
-    protected <O extends BaseDTO> List<O> convertListIdToDTO(List<Integer> listId,
-            SearchService<?, O, ?> service) throws DataException {
+    protected <O extends BaseDTO> List<O> convertListIdToDTO(List<Integer> listId, SearchService<?, O, ?> service)
+            throws DataException {
         return service.findByQuery(createSetQueryForIds(listId), true);
     }
 

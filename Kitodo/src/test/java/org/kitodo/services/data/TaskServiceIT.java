@@ -164,7 +164,7 @@ public class TaskServiceIT {
         taskService.save(task);
         taskDTO = taskService.findById(6, false);
         assertEquals("Incorrect id of processing user!", Integer.valueOf(2), taskDTO.getProcessingUser().getId());
-        Thread.sleep(500);
+        Thread.sleep(1000);
         size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
     }

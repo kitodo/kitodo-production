@@ -11,11 +11,11 @@
 
 package org.kitodo.data.elasticsearch.search;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,7 +60,7 @@ public class SearcherIT {
         removeOldDataDirectories("target/" + nodeName);
 
         Settings settings = Settings.builder().put(settingsMap).build();
-        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
         node.start();
     }
 
@@ -79,10 +79,10 @@ public class SearcherIT {
     @Before
     public void createIndex() throws Exception {
         indexRestClient.createIndex();
-        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1);
-        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2);
-        indexRestClient.addDocument(MockEntity.createEntities().get(3), 3);
-        indexRestClient.addDocument(MockEntity.createEntities().get(4), 4);
+        indexRestClient.addDocument(MockEntity.createEntities().get(1), 1, false);
+        indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
+        indexRestClient.addDocument(MockEntity.createEntities().get(3), 3, false);
+        indexRestClient.addDocument(MockEntity.createEntities().get(4), 4, false);
         indexRestClient.enableSortingByTextField("testsearch", "title");
     }
 

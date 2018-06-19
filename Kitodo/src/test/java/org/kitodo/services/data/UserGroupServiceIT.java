@@ -93,7 +93,6 @@ public class UserGroupServiceIT {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("To Remove");
         userGroupService.save(userGroup);
-        Thread.sleep(1000);
         UserGroup foundUserGroup = userGroupService
                 .convertJSONObjectToBean(userGroupService.findByTitle("To Remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundUserGroup.getTitle());
@@ -105,7 +104,6 @@ public class UserGroupServiceIT {
         userGroup = new UserGroup();
         userGroup.setTitle("To remove");
         userGroupService.save(userGroup);
-        Thread.sleep(1000);
         foundUserGroup = userGroupService
                 .convertJSONObjectToBean(userGroupService.findByTitle("To remove", true).get(0));
         assertEquals("Additional user group was not inserted in database!", "To remove", foundUserGroup.getTitle());

@@ -134,11 +134,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Project project : user.getProjects()) {
                 project.getUsers().remove(user);
-                serviceManager.getProjectService().saveToIndex(project);
+                serviceManager.getProjectService().saveToIndex(project, false);
             }
         } else {
             for (Project project : user.getProjects()) {
-                serviceManager.getProjectService().saveToIndex(project);
+                serviceManager.getProjectService().saveToIndex(project, false);
             }
         }
     }
@@ -153,11 +153,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private void manageFiltersDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Filter filter : user.getFilters()) {
-                serviceManager.getFilterService().removeFromIndex(filter);
+                serviceManager.getFilterService().removeFromIndex(filter, false);
             }
         } else {
             for (Filter filter : user.getFilters()) {
-                serviceManager.getFilterService().saveToIndex(filter);
+                serviceManager.getFilterService().saveToIndex(filter, false);
             }
         }
     }
@@ -173,18 +173,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (Task task : user.getTasks()) {
                 task.getUsers().remove(user);
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
             for (Task task : user.getProcessingTasks()) {
                 task.setProcessingUser(null);
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
             for (Task task : user.getTasks()) {
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
             for (Task task : user.getProcessingTasks()) {
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
         }
     }
@@ -200,11 +200,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         if (user.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : user.getUserGroups()) {
                 userGroup.getUsers().remove(user);
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
             for (UserGroup userGroup : user.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
     }

@@ -156,11 +156,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Authority authority : userGroup.getGlobalAuthorities()) {
                 authority.getUserGroups().remove(userGroup);
-                serviceManager.getAuthorityService().saveToIndex(authority);
+                serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         } else {
             for (Authority authority : userGroup.getGlobalAuthorities()) {
-                serviceManager.getAuthorityService().saveToIndex(authority);
+                serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         }
     }
@@ -176,11 +176,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (Task task : userGroup.getTasks()) {
                 task.getUserGroups().remove(userGroup);
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
             for (Task task : userGroup.getTasks()) {
-                serviceManager.getTaskService().saveToIndex(task);
+                serviceManager.getTaskService().saveToIndex(task, false);
             }
         }
     }
@@ -196,11 +196,11 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
             for (User user : userGroup.getUsers()) {
                 user.getUserGroups().remove(userGroup);
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             for (User user : userGroup.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         }
     }

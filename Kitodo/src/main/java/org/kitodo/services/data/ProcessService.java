@@ -239,11 +239,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Batch batch : process.getBatches()) {
                 batch.getProcesses().remove(process);
-                serviceManager.getBatchService().saveToIndex(batch);
+                serviceManager.getBatchService().saveToIndex(batch, false);
             }
         } else {
             for (Batch batch : process.getBatches()) {
-                serviceManager.getBatchService().saveToIndex(batch);
+                serviceManager.getBatchService().saveToIndex(batch, false);
             }
         }
     }
@@ -256,7 +256,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void manageProjectDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getProject() != null) {
-            serviceManager.getProjectService().saveToIndex(process.getProject());
+            serviceManager.getProjectService().saveToIndex(process.getProject(), false);
         }
     }
 
@@ -270,11 +270,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void managePropertiesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property property : process.getProperties()) {
-                serviceManager.getPropertyService().removeFromIndex(property);
+                serviceManager.getPropertyService().removeFromIndex(property, false);
             }
         } else {
             for (Property property : process.getProperties()) {
-                serviceManager.getPropertyService().saveToIndex(property);
+                serviceManager.getPropertyService().saveToIndex(property, false);
             }
         }
     }
@@ -290,7 +290,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throws CustomResponseException, DAOException, IOException, DataException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Task task : process.getTasks()) {
-                serviceManager.getTaskService().removeFromIndex(task);
+                serviceManager.getTaskService().removeFromIndex(task, false);
             }
         } else {
             saveOrRemoveTasksInIndex(process);
@@ -311,7 +311,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (Task task : process.getTasks()) {
             database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task);
+            serviceManager.getTaskService().saveToIndex(task, false);
         }
 
         List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
@@ -322,11 +322,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<Integer> missingInIndex = findMissingValues(database, index);
         List<Integer> notNeededInIndex = findMissingValues(index, database);
         for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing));
+            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
         }
 
         for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded);
+            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
         }
     }
 
@@ -340,11 +340,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void manageTemplatesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property template : process.getTemplates()) {
-                serviceManager.getPropertyService().removeFromIndex(template);
+                serviceManager.getPropertyService().removeFromIndex(template, false);
             }
         } else {
             for (Property template : process.getTemplates()) {
-                serviceManager.getPropertyService().saveToIndex(template);
+                serviceManager.getPropertyService().saveToIndex(template, false);
             }
         }
     }
@@ -359,11 +359,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private void manageWorkpiecesDependenciesForIndex(Process process) throws CustomResponseException, IOException {
         if (process.getIndexAction() == IndexAction.DELETE) {
             for (Property workpiece : process.getWorkpieces()) {
-                serviceManager.getPropertyService().removeFromIndex(workpiece);
+                serviceManager.getPropertyService().removeFromIndex(workpiece, false);
             }
         } else {
             for (Property workpiece : process.getWorkpieces()) {
-                serviceManager.getPropertyService().saveToIndex(workpiece);
+                serviceManager.getPropertyService().saveToIndex(workpiece, false);
             }
         }
     }
