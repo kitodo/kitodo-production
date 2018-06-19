@@ -113,7 +113,7 @@
                                 <plugin>
                                     <groupId>org.jvnet.jaxb2_commons</groupId>
                                     <artifactId>jaxb2-basics</artifactId>
-                                    <version>1.11.1</version>
+                                    <version>${jaxb2-basics-runtime.version}</version>
                                 </plugin>
                             </plugins>
                         </configuration>
