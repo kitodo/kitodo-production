@@ -41,7 +41,8 @@ public class IndexRestClient extends KitodoRestClient {
      */
     private static IndexRestClient instance = null;
 
-    private IndexRestClient() {}
+    private IndexRestClient() {
+    }
 
     /**
      * Return singleton variable of type IndexRestClient.
@@ -71,38 +72,38 @@ public class IndexRestClient extends KitodoRestClient {
      */
     public void addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
         Response indexResponse = restClient.performRequest("PUT",
-                "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.emptyMap(),
-                entity);
+            "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.singletonMap("refresh", "wait_for"),
+            entity);
         processStatusCode(indexResponse.getStatusLine());
     }
 
     /**
-     * Add list of documents to the index. This method will be used for add
-     * whole table to the index. It performs asynchronous request.
+     * Add list of documents to the index. This method will be used for add whole
+     * table to the index. It performs asynchronous request.
      *
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    public void addType(Map<Integer, HttpEntity> documentsToIndex)
+    void addType(Map<Integer, HttpEntity> documentsToIndex)
             throws InterruptedException, CustomResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final ArrayList<String> output = new ArrayList<>();
 
         for (Map.Entry<Integer, HttpEntity> entry : documentsToIndex.entrySet()) {
             restClient.performRequestAsync("PUT", "/" + this.getIndex() + "/" + this.getType() + "/" + entry.getKey(),
-                    Collections.emptyMap(), entry.getValue(), new ResponseListener() {
-                        @Override
-                        public void onSuccess(Response response) {
-                            output.add(response.toString());
-                            latch.countDown();
-                        }
+                Collections.emptyMap(), entry.getValue(), new ResponseListener() {
+                    @Override
+                    public void onSuccess(Response response) {
+                        output.add(response.toString());
+                        latch.countDown();
+                    }
 
-                        @Override
-                        public void onFailure(Exception exception) {
-                            output.add(exception.getMessage());
-                            latch.countDown();
-                        }
-                    });
+                    @Override
+                    public void onFailure(Exception exception) {
+                        output.add(exception.getMessage());
+                        latch.countDown();
+                    }
+                });
         }
         latch.await();
         filterAsynchronousResponses(output);
@@ -114,10 +115,10 @@ public class IndexRestClient extends KitodoRestClient {
      * @param id
      *            of the document
      */
-    public void deleteDocument(Integer id) throws IOException, CustomResponseException {
+    void deleteDocument(Integer id) throws IOException, CustomResponseException {
         try {
-            restClient.performRequest("DELETE",
-                    "/" + this.getIndex() + "/" + this.getType() + "/" + id);
+            restClient.performRequest("DELETE", "/" + this.getIndex() + "/" + this.getType() + "/" + id,
+                Collections.singletonMap("refresh", "wait_for"));
         } catch (ResponseException e) {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());
@@ -136,21 +137,12 @@ public class IndexRestClient extends KitodoRestClient {
      *            as String
      */
     public void enableSortingByTextField(String type, String field) throws IOException, CustomResponseException {
-        String query = "{\n \"properties\": {\n\""
-                + field
-                + "\": {\n"
-                + "      \"type\": \"text\",\n"
-                + "      \"fielddata\": true,\n"
-                + "      \"fields\": {\n"
-                + "        \"raw\": {\n"
-                + "          \"type\":  \"text\",\n"
-                + "          \"index\": false}\n"
-                + "    }\n"
-                + "  }}}";
+        String query = "{\n \"properties\": {\n\"" + field + "\": {\n" + "      \"type\": \"text\",\n"
+                + "      \"fielddata\": true,\n" + "      \"fields\": {\n" + "        \"raw\": {\n"
+                + "          \"type\":  \"text\",\n" + "          \"index\": false}\n" + "    }\n" + "  }}}";
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Response indexResponse = restClient.performRequest("PUT",
-                "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types",
-                Collections.emptyMap(), entity);
+            "/" + this.getIndex() + "/_mapping/" + type + "?update_all_types", Collections.emptyMap(), entity);
         processStatusCode(indexResponse.getStatusLine());
     }
 
