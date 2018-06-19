@@ -77,11 +77,11 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         if (batch.getIndexAction() == IndexAction.DELETE) {
             for (Process process : batch.getProcesses()) {
                 process.getBatches().remove(batch);
-                serviceManager.getProcessService().saveToIndex(process);
+                serviceManager.getProcessService().saveToIndex(process, false);
             }
         } else {
             for (Process process : batch.getProcesses()) {
-                serviceManager.getProcessService().saveToIndex(process);
+                serviceManager.getProcessService().saveToIndex(process, false);
             }
         }
     }

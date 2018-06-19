@@ -69,11 +69,19 @@ public class IndexRestClient extends KitodoRestClient {
      *            with document which is going to be indexed
      * @param id
      *            of document - equal to the id from table in database
+     * @param waitForRefresh
+     *            wait until index is refreshed - if true, time of execution is
+     *            longer but object is right after that available for display
      */
-    public void addDocument(HttpEntity entity, Integer id) throws IOException, CustomResponseException {
+    public void addDocument(HttpEntity entity, Integer id, boolean waitForRefresh)
+            throws IOException, CustomResponseException {
+        Map<String, String> parameters = Collections.emptyMap();
+        if (waitForRefresh) {
+            parameters = Collections.singletonMap("refresh", "wait_for");
+        }
+
         Response indexResponse = restClient.performRequest("PUT",
-            "/" + this.getIndex() + "/" + this.getType() + "/" + id, Collections.singletonMap("refresh", "wait_for"),
-            entity);
+            "/" + this.getIndex() + "/" + this.getType() + "/" + id, parameters, entity);
         processStatusCode(indexResponse.getStatusLine());
     }
 
@@ -84,8 +92,7 @@ public class IndexRestClient extends KitodoRestClient {
      * @param documentsToIndex
      *            list of json documents to the index
      */
-    void addType(Map<Integer, HttpEntity> documentsToIndex)
-            throws InterruptedException, CustomResponseException {
+    void addType(Map<Integer, HttpEntity> documentsToIndex) throws InterruptedException, CustomResponseException {
         final CountDownLatch latch = new CountDownLatch(documentsToIndex.size());
         final ArrayList<String> output = new ArrayList<>();
 
@@ -114,11 +121,18 @@ public class IndexRestClient extends KitodoRestClient {
      *
      * @param id
      *            of the document
+     * @param waitForRefresh
+     *            wait until index is refreshed - if true, time of execution is
+     *            longer but object is right after that available for display
      */
-    void deleteDocument(Integer id) throws IOException, CustomResponseException {
+    void deleteDocument(Integer id, boolean waitForRefresh) throws IOException, CustomResponseException {
+        Map<String, String> parameters = Collections.emptyMap();
+        if (waitForRefresh) {
+            parameters = Collections.singletonMap("refresh", "wait_for");
+        }
+
         try {
-            restClient.performRequest("DELETE", "/" + this.getIndex() + "/" + this.getType() + "/" + id,
-                Collections.singletonMap("refresh", "wait_for"));
+            restClient.performRequest("DELETE", "/" + this.getIndex() + "/" + this.getType() + "/" + id, parameters);
         } catch (ResponseException e) {
             if (e.getResponse().getStatusLine().getStatusCode() == 404) {
                 logger.debug(e.getMessage());

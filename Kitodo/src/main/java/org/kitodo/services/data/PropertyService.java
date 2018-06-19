@@ -72,13 +72,13 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     @Override
     protected void manageDependenciesForIndex(Property property) throws CustomResponseException, IOException {
         for (Process process : property.getProcesses()) {
-            serviceManager.getProcessService().saveToIndex(process);
+            serviceManager.getProcessService().saveToIndex(process, false);
         }
         for (Process template : property.getTemplates()) {
-            serviceManager.getProcessService().saveToIndex(template);
+            serviceManager.getProcessService().saveToIndex(template, false);
         }
         for (Process workpiece : property.getWorkpieces()) {
-            serviceManager.getProcessService().saveToIndex(workpiece);
+            serviceManager.getProcessService().saveToIndex(workpiece, false);
         }
     }
 
