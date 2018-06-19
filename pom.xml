@@ -162,7 +162,7 @@
                                     <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
-                                    <logViolationsToConsole>true</logViolationsToConsole>
+                                    <logViolationsToConsole>false</logViolationsToConsole>
                                     <maxAllowedViolations>${maxAllowedViolations}</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>

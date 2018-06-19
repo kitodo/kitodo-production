@@ -13,6 +13,9 @@ package org.kitodo.dataeditor.pagination;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.kitodo.dataformat.metskitodo.DivType;
 
 /**
  * Class to generate different sorts of paginations.
@@ -20,73 +23,6 @@ import java.util.LinkedList;
  * @author Matthias Ronge
  */
 public class Paginator implements Iterator<String> {
-
-    /**
-     * Type of character and state of the buffer.
-     */
-    private enum State {
-        /**
-         * A decimal number.
-         */
-        DECIMAL,
-
-        /**
-         * The buffer is currently empty. (Not a character class.)
-         */
-        EMPTY,
-
-        /**
-         * Final run, clear the buffer. (Fictitious character class and not a buffer
-         * state.)
-         */
-        END,
-
-        /**
-         * The next element is only to display if the counter value is full (1, 2, 3).
-         * (Not a buffer state.)
-         */
-        FULL_INTEGER,
-
-        /**
-         * The next element is only to display if the counter value is half (1.5, 2.5,
-         * 3.5). (Not a buffer state.)
-         */
-        HALF_INTEGER,
-
-        /**
-         * Elements to set the counter increment.
-         */
-        INCREMENT,
-
-        /**
-         * An lower-case Roman numeral. This may still turn into a static text if the
-         * next character is a letter.
-         */
-        LOWERCASE_ROMAN,
-
-        /**
-         * Other characters. If the next character is {@code LOWERCASE_ROMAN} or
-         * {@code UPPERCASE_ROMAN}, it may be treated as Roman numeral.
-         */
-        SYMBOL,
-
-        /**
-         * Letters. If the next character is of type {@code LOWERCASE_ROMAN} or
-         * {@code UPPERCASE_ROMAN}, it will be treated as text.
-         */
-        TEXT,
-
-        /**
-         * A text escape marker. Whatever the buffer contains, treat it as text..
-         */
-        TEXT_ESCAPE_TRANSITION,
-
-        /**
-         * An upper-case Roman numeral. This may still turn into a static text if the
-         * next character is a letter.
-         */
-        UPPERCASE_ROMAN
-    }
 
     /**
      * Fragments a pagination is composed of (text elements, counters, …).
@@ -103,10 +39,10 @@ public class Paginator implements Iterator<String> {
      */
     private HalfInteger value;
 
-    private final void parse(String initializer) {
+    private void parse(String initializer) {
 
         StringBuilder buffer = new StringBuilder();
-        State bufferState = State.EMPTY;
+        PaginatorState bufferState = PaginatorState.EMPTY;
 
         /*
          * iterate through the code points of the initializer string plus one more
@@ -117,9 +53,9 @@ public class Paginator implements Iterator<String> {
         int length = initializer.length();
         for (int offset = 0; offset <= length;) {
             int codePoint;
-            State codePointClass;
+            PaginatorState codePointClass;
             if (offset == length) {
-                codePointClass = State.END;
+                codePointClass = PaginatorState.END;
                 codePoint = 0;
             } else {
                 codePoint = initializer.codePointAt(offset);
@@ -128,32 +64,32 @@ public class Paginator implements Iterator<String> {
 
             // Whatever is in back-ticks is not interpreted
 
-            if (codePointClass.equals(State.TEXT_ESCAPE_TRANSITION)) {
-                if (bufferState.equals(State.EMPTY)) {
-                    bufferState = State.TEXT_ESCAPE_TRANSITION;
+            if (codePointClass.equals(PaginatorState.TEXT_ESCAPE_TRANSITION)) {
+                if (bufferState.equals(PaginatorState.EMPTY)) {
+                    bufferState = PaginatorState.TEXT_ESCAPE_TRANSITION;
                 } else {
                     createFragment(buffer, bufferState, page);
                     page = null;
-                    bufferState = bufferState.equals(State.TEXT_ESCAPE_TRANSITION) ? State.EMPTY
-                            : State.TEXT_ESCAPE_TRANSITION;
+                    bufferState = bufferState.equals(PaginatorState.TEXT_ESCAPE_TRANSITION) ? PaginatorState.EMPTY
+                            : PaginatorState.TEXT_ESCAPE_TRANSITION;
                 }
-            } else if (bufferState.equals(State.TEXT_ESCAPE_TRANSITION)) {
+            } else if (bufferState.equals(PaginatorState.TEXT_ESCAPE_TRANSITION)) {
                 buffer.appendCodePoint(codePoint);
-            } else if (codePointClass.equals(State.HALF_INTEGER) || codePointClass.equals(State.FULL_INTEGER)) {
+            } else if (codePointClass.equals(PaginatorState.HALF_INTEGER) || codePointClass.equals(PaginatorState.FULL_INTEGER)) {
                 /*
                  * Recto/verso-only symbols cause a buffer write (or they would be applied to
                  * the current buffer content (modify their left side), but they shall be
                  * applied on the next write (modify their right side)). They set the page
                  * variable and are not written to the buffer by themselves.
                  */
-                if (!bufferState.equals(State.EMPTY)) {
+                if (!bufferState.equals(PaginatorState.EMPTY)) {
                     createFragment(buffer, bufferState, page);
-                    bufferState = State.EMPTY;
+                    bufferState = PaginatorState.EMPTY;
                 }
-                page = codePointClass.equals(State.HALF_INTEGER);
-            } else if (bufferState.equals(codePointClass) || bufferState.equals(State.EMPTY)
-                    || (bufferState.equals(State.TEXT) && codePointClass.equals(State.SYMBOL))
-                    || (bufferState.equals(State.SYMBOL) && codePointClass.equals(State.TEXT))) {
+                page = codePointClass.equals(PaginatorState.HALF_INTEGER);
+            } else if (bufferState.equals(codePointClass) || bufferState.equals(PaginatorState.EMPTY)
+                    || (bufferState.equals(PaginatorState.TEXT) && codePointClass.equals(PaginatorState.SYMBOL))
+                    || (bufferState.equals(PaginatorState.SYMBOL) && codePointClass.equals(PaginatorState.TEXT))) {
                 /*
                  * If the buffer is empty or contains the same sort of content as the current
                  * input, just write it to the buffer. If the buffer contains text, we can write
@@ -163,10 +99,10 @@ public class Paginator implements Iterator<String> {
                 buffer.appendCodePoint(codePoint);
                 bufferState = codePointClass;
 
-            } else if ((bufferState.equals(State.TEXT)
-                    && (codePointClass.equals(State.LOWERCASE_ROMAN) || codePointClass.equals(State.UPPERCASE_ROMAN)))
-                    || ((bufferState.equals(State.LOWERCASE_ROMAN) || bufferState.equals(State.UPPERCASE_ROMAN))
-                            && codePointClass.equals(State.TEXT))) {
+            } else if ((bufferState.equals(PaginatorState.TEXT)
+                    && (codePointClass.equals(PaginatorState.LOWERCASE_ROMAN) || codePointClass.equals(PaginatorState.UPPERCASE_ROMAN)))
+                    || ((bufferState.equals(PaginatorState.LOWERCASE_ROMAN) || bufferState.equals(PaginatorState.UPPERCASE_ROMAN))
+                            && codePointClass.equals(PaginatorState.TEXT))) {
                 /*
                  * If we got text, and the content of the buffer is a Roman numeral, or the
                  * other way round, we can still write to the buffer, but the result of the
@@ -176,7 +112,7 @@ public class Paginator implements Iterator<String> {
                  */
 
                 buffer.appendCodePoint(codePoint);
-                bufferState = State.TEXT;
+                bufferState = PaginatorState.TEXT;
 
             } else {
                 // In any other case, we have to write out the buffer.
@@ -192,7 +128,7 @@ public class Paginator implements Iterator<String> {
 
     /**
      * Stores the buffer as fragment and resets the buffer. The type of fragment is
-     * derived from the the buffer’s state and the page directive. A page directive
+     * derived from the the buffer’s PaginatorState and the page directive. A page directive
      * causes what is immediately thereafter to be treated as text in any case.
      *
      * @param buffer
@@ -202,15 +138,15 @@ public class Paginator implements Iterator<String> {
      * @param pageType
      *            page information
      */
-    private final void createFragment(StringBuilder buffer, State fragmentType, Boolean pageType) {
-        if (pageType == null && fragmentType.equals(State.DECIMAL)) {
+    private void createFragment(StringBuilder buffer, PaginatorState fragmentType, Boolean pageType) {
+        if (pageType == null && fragmentType.equals(PaginatorState.DECIMAL)) {
             fragments.addLast(new DecimalNumeral(buffer.toString()));
         } else if (pageType == null
-                && (fragmentType.equals(State.UPPERCASE_ROMAN) || fragmentType.equals(State.LOWERCASE_ROMAN))) {
-            fragments.addLast(new RomanNumeral(buffer.toString(), fragmentType.equals(State.UPPERCASE_ROMAN)));
-        } else if (fragmentType.equals(State.INCREMENT)) {
+                && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN) || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
+            fragments.addLast(new RomanNumeral(buffer.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
+        } else if (fragmentType.equals(PaginatorState.INCREMENT)) {
             fragments.peekLast().setIncrement(HalfInteger.valueOf(buffer.toString()));
-        } else if (!fragmentType.equals(State.EMPTY)) {
+        } else if (!fragmentType.equals(PaginatorState.EMPTY)) {
             fragments.addLast(new StaticText(buffer.toString(), pageType));
         }
         buffer.setLength(0);
@@ -239,7 +175,7 @@ public class Paginator implements Iterator<String> {
      * Initialises missing increments, finds the initial value and, optional, a
      * reverse operation mode.
      */
-    private final void initializeIncrements(boolean aHalf) {
+    private void initializeIncrements(boolean aHalf) {
         Fragment first = null;
         Fragment last = null;
         int valueFull;
@@ -308,7 +244,7 @@ public class Paginator implements Iterator<String> {
         value = new HalfInteger(valueFull, aHalf);
     }
 
-    private static State codePointClassOf(int codePoint) {
+    private static PaginatorState codePointClassOf(int codePoint) {
         switch (codePoint) {
             case '0':
             case '1':
@@ -320,7 +256,7 @@ public class Paginator implements Iterator<String> {
             case '7':
             case '8':
             case '9':
-                return State.DECIMAL;
+                return PaginatorState.DECIMAL;
             case 'C':
             case 'D':
             case 'I':
@@ -328,9 +264,9 @@ public class Paginator implements Iterator<String> {
             case 'M':
             case 'V':
             case 'X':
-                return State.UPPERCASE_ROMAN;
+                return PaginatorState.UPPERCASE_ROMAN;
             case '`':
-                return State.TEXT_ESCAPE_TRANSITION;
+                return PaginatorState.TEXT_ESCAPE_TRANSITION;
             case 'c':
             case 'd':
             case 'i':
@@ -338,17 +274,17 @@ public class Paginator implements Iterator<String> {
             case 'm':
             case 'v':
             case 'x':
-                return State.LOWERCASE_ROMAN;
+                return PaginatorState.LOWERCASE_ROMAN;
             case '¡':
-                return State.FULL_INTEGER;
+                return PaginatorState.FULL_INTEGER;
             case '°':
             case '²':
             case '³':
             case '¹':
             case '½':
-                return State.INCREMENT;
+                return PaginatorState.INCREMENT;
             case '¿':
-                return State.HALF_INTEGER;
+                return PaginatorState.HALF_INTEGER;
             default:
                 switch (Character.getType(codePoint)) {
                     case Character.UPPERCASE_LETTER:
@@ -357,9 +293,9 @@ public class Paginator implements Iterator<String> {
                     case Character.MODIFIER_LETTER:
                     case Character.OTHER_LETTER:
                     case Character.NON_SPACING_MARK:
-                        return State.TEXT;
+                        return PaginatorState.TEXT;
                     default:
-                        return State.SYMBOL;
+                        return PaginatorState.SYMBOL;
                 }
         }
     }
@@ -412,4 +348,9 @@ public class Paginator implements Iterator<String> {
         return value + (operateReverse ? ", reversed, " : ", ") + fragments;
     }
 
+    public void run(List<DivType> physicalDivTypes) {
+        for(DivType div : physicalDivTypes) {
+            div.setORDERLABEL(this.next());
+        }
+    }
 }

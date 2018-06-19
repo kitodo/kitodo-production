@@ -46,24 +46,6 @@ public class HalfInteger extends Number {
                     break;
                 case '⁰':
                     break;
-                case '⁴':
-                    x += 4;
-                    break;
-                case '⁵':
-                    x += 5;
-                    break;
-                case '⁶':
-                    x += 6;
-                    break;
-                case '⁷':
-                    x += 7;
-                    break;
-                case '⁸':
-                    x += 8;
-                    break;
-                case '⁹':
-                    x += 9;
-                    break;
                 default:
                     throw new IllegalArgumentException("For string: " + string);
             }

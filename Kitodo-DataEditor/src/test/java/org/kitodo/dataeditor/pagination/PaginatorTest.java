@@ -72,6 +72,26 @@ public class PaginatorTest {
     }
 
     @Test
+    public void inteleavePaginationHalf() {
+        Paginator p = new Paginator("1½");
+        assertEquals("1", p.next());
+        assertEquals("1", p.next());
+        assertEquals("2", p.next());
+        assertEquals("2", p.next());
+        assertEquals("3", p.next());
+    }
+
+    @Test
+    public void inteleavePaginationThree() {
+        Paginator p = new Paginator("1³");
+        assertEquals("1", p.next());
+        assertEquals("4", p.next());
+        assertEquals("7", p.next());
+        assertEquals("10", p.next());
+        assertEquals("13", p.next());
+    }
+
+    @Test
     public void rectoVersoPagination() {
         Paginator p = new Paginator("1° ¡r¿v½");
         assertEquals("1 r", p.next());
