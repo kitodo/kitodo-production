@@ -25,7 +25,7 @@ class MetsKitodoValidator {
 
     /**
      * Checks if the first metadata element of a Mets object is an instance of KitodoType.
-     * 
+     *
      * @param mets
      *            The Mets object.
      * @return True if the first metadata element of given Mets object is an instance

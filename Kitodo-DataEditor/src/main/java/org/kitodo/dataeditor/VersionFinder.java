@@ -27,7 +27,7 @@ public class VersionFinder {
 
     /**
      * Reading version info out of the manifest file of current jar.
-     * 
+     *
      * @param applicationName
      *            The name of the application or module.
      * @return The version info as String. (module or application name - version -

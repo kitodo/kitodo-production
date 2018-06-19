@@ -36,7 +36,7 @@ class MetsKitodoReader {
 
     /**
      * Reads a mets-kitodo formated xml String to a Mets object.
-     * 
+     *
      * @param xmlString
      *            The mets-kitodo formated xml String.
      * 
@@ -52,7 +52,7 @@ class MetsKitodoReader {
 
     /**
      * Reads an URI mets-kitodo formated xml file to a Mets object.
-     * 
+     *
      * @param xmlFile
      *            The file as URI object.
      * @return The Mets object in mets-kitodo format.
@@ -72,7 +72,7 @@ class MetsKitodoReader {
      * the file contains metadata. If yes, it is also checked if the first metadata
      * is in kitodo format. If not, it is tried to convert to kitodo format,
      * assuming that the file contains old goobi format metadata.
-     * 
+     *
      * @param xmlFile
      *            The file as URI object.
      * @param xsltFile

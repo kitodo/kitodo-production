@@ -29,7 +29,7 @@ public class MetsKitodoFileSecHandler {
 
     /**
      * Inserts MediaFile objects into fileSec of mets object.
-     * 
+     *
      * @param mets
      *            The Mets object.
      * @param mediaFiles
@@ -56,7 +56,7 @@ public class MetsKitodoFileSecHandler {
 
     /**
      * Returns the local file group of given mets object as FileGrp object.
-     * 
+     *
      * @param mets
      *            The Mets object.
      * @return The FileGrp object.

@@ -33,7 +33,7 @@ public class MetsKitodoStructMapHandler {
 
     /**
      * Returns the StructMap element of the given type from given mets object.
-     * 
+     *
      * @param mets
      *            The mets object from which the StructMap element should be
      *            returned.
@@ -52,14 +52,16 @@ public class MetsKitodoStructMapHandler {
     }
 
     /**
-     * Reads the FileSec of mets object and inserts corresponding physical structMap.
-     * 
+     * Reads the FileSec of mets object and inserts corresponding physical
+     * structMap.
+     *
      * @param mets
      *            The mets object.
      */
     public static void fillPhysicalStructMapByMetsFileSec(Mets mets) {
         DivType rootDiv = objectFactory.createRootDivTypeForPhysicalStructMap();
-        rootDiv.getDiv().addAll(getDivTypesByFileTypes(MetsKitodoFileSecHandler.getLocalFileGroupOfMets(mets).getFile()));
+        rootDiv.getDiv()
+                .addAll(getDivTypesByFileTypes(MetsKitodoFileSecHandler.getLocalFileGroupOfMets(mets).getFile()));
         StructMapType physicalStructMap = getMetsStructMapByType(mets, "PHYSICAL");
         physicalStructMap.setDiv(rootDiv);
     }

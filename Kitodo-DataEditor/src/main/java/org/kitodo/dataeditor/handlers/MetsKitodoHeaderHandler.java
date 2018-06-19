@@ -24,7 +24,7 @@ public class MetsKitodoHeaderHandler {
     /**
      * Adds a note to the first {@code agent} element in mets header. Does nothing
      * if no {@code agent} element exists.
-     * 
+     *
      * @param noteMessage
      *            The note message.
      * @param mets
