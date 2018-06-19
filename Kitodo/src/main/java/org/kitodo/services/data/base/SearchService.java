@@ -285,7 +285,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             T savedBean = saveToDatabase(baseIndexedBean);
             saveToIndex(savedBean);
             manageDependenciesForIndex(savedBean);
-            waitForIndexUpdate();
             savedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(savedBean);
         } catch (DAOException e) {
@@ -343,7 +342,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             saveToDatabase(baseIndexedBean);
             removeFromIndex(baseIndexedBean);
             manageDependenciesForIndex(baseIndexedBean);
-            waitForIndexUpdate();
             removeFromDatabase(baseIndexedBean);
         } catch (DAOException e) {
             logger.debug(e);
@@ -366,16 +364,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
                     throw new DataException(daoe);
                 }
             }
-        }
-    }
-
-    // TODO: search for some more elegant way
-    private void waitForIndexUpdate() {
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
         }
     }
 
