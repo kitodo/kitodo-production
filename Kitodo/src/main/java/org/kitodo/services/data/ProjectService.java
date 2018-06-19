@@ -98,15 +98,15 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
             Client client = project.getClient();
             if (Objects.nonNull(client)) {
                 client.getProjects().remove(project);
-                serviceManager.getClientService().saveToIndex(client);
+                serviceManager.getClientService().saveToIndex(client, false);
             }
         } else {
             JsonObject clients = serviceManager.getClientService().findByProjectId(project.getId());
             Integer id = getIdFromJSONObject(clients);
             if (id > 0 && !Objects.equals(id, project.getClient().getId())) {
                 Client oldClient = serviceManager.getClientService().getById(id);
-                serviceManager.getClientService().saveToIndex(oldClient);
-                serviceManager.getClientService().saveToIndex(project.getClient());
+                serviceManager.getClientService().saveToIndex(oldClient, false);
+                serviceManager.getClientService().saveToIndex(project.getClient(), false);
             }
         }
     }
@@ -120,11 +120,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private void manageProcessesDependenciesForIndex(Project project) throws CustomResponseException, IOException {
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (Process process : project.getProcesses()) {
-                serviceManager.getProcessService().removeFromIndex(process);
+                serviceManager.getProcessService().removeFromIndex(process, false);
             }
         } else {
             for (Process process : project.getProcesses()) {
-                serviceManager.getProcessService().saveToIndex(process);
+                serviceManager.getProcessService().saveToIndex(process, false);
             }
         }
     }
@@ -139,11 +139,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         if (project.getIndexAction() == IndexAction.DELETE) {
             for (User user : project.getUsers()) {
                 user.getProjects().remove(project);
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             for (User user : project.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         }
     }

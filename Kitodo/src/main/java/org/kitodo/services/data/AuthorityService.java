@@ -143,11 +143,11 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         if (authority.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : authority.getUserGroups()) {
                 userGroup.getGlobalAuthorities().remove(authority);
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
             for (UserGroup userGroup : authority.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
     }

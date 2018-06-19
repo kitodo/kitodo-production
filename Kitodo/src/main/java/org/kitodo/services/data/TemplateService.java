@@ -94,7 +94,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      */
     private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, IOException {
         if (Objects.nonNull(template.getProject())) {
-            serviceManager.getProjectService().saveToIndex(template.getProject());
+            serviceManager.getProjectService().saveToIndex(template.getProject(), false);
         }
     }
 
@@ -109,7 +109,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             throws CustomResponseException, DAOException, IOException, DataException {
         if (template.getIndexAction().equals(IndexAction.DELETE)) {
             for (Task task : template.getTasks()) {
-                serviceManager.getTaskService().removeFromIndex(task);
+                serviceManager.getTaskService().removeFromIndex(task, false);
             }
         } else {
             saveOrRemoveTasksInIndex(template);
@@ -130,7 +130,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
         for (Task task : template.getTasks()) {
             database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task);
+            serviceManager.getTaskService().saveToIndex(task, false);
         }
 
         List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(template.getId());
@@ -141,11 +141,11 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         List<Integer> missingInIndex = findMissingValues(database, index);
         List<Integer> notNeededInIndex = findMissingValues(index, database);
         for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing));
+            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
         }
 
         for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded);
+            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
         }
     }
 

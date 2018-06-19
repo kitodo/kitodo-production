@@ -162,11 +162,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Process process = task.getProcess();
             if (process != null) {
                 process.getTasks().remove(task);
-                serviceManager.getProcessService().saveToIndex(process);
+                serviceManager.getProcessService().saveToIndex(process, false);
             }
         } else {
             Process process = task.getProcess();
-            serviceManager.getProcessService().saveToIndex(process);
+            serviceManager.getProcessService().saveToIndex(process, false);
         }
     }
 
@@ -175,11 +175,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Template template = task.getTemplate();
             if (Objects.nonNull(template)) {
                 template.getTasks().remove(task);
-                serviceManager.getTemplateService().saveToIndex(template);
+                serviceManager.getTemplateService().saveToIndex(template, false);
             }
         } else {
             Template template = task.getTemplate();
-            serviceManager.getTemplateService().saveToIndex(template);
+            serviceManager.getTemplateService().saveToIndex(template, false);
         }
     }
 
@@ -189,12 +189,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             User user = task.getProcessingUser();
             if (user != null) {
                 user.getProcessingTasks().remove(task);
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             User user = task.getProcessingUser();
             if (user != null) {
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
             reIndexUserAfterRemoveFromProcessing(task);
         }
@@ -204,7 +204,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             throws CustomResponseException, DAOException, DataException, IOException {
         List<UserDTO> userDTOS = serviceManager.getUserService().findByProcessingTask(task.getId(), true);
         for (UserDTO userDTO : userDTOS) {
-            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()));
+            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()), false);
         }
     }
 
@@ -212,11 +212,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (task.getIndexAction() == IndexAction.DELETE) {
             for (User user : task.getUsers()) {
                 user.getTasks().remove(task);
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         } else {
             for (User user : task.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user);
+                serviceManager.getUserService().saveToIndex(user, false);
             }
         }
     }
@@ -225,11 +225,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (task.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : task.getUserGroups()) {
                 userGroup.getTasks().remove(task);
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
             for (UserGroup userGroup : task.getUserGroups()) {
-                serviceManager.getUserGroupService().saveToIndex(userGroup);
+                serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
     }
