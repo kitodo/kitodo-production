@@ -451,7 +451,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, PROCESS);
+        saveTask(this.task, this.process, PROCESS, serviceManager.getTaskService());
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -974,8 +974,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Reload task and process.
      */
     private void reload() {
-        reload(this.task, "task");
-        reload(this.process, PROCESS);
+        reload(this.task, "task", serviceManager.getTaskService());
+        reload(this.process, PROCESS, serviceManager.getProcessService());
     }
 
     /**

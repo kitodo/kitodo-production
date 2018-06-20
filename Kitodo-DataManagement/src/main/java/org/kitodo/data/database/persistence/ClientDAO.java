@@ -49,14 +49,4 @@ public class ClientDAO extends BaseDAO<Client> {
     public void remove(Integer id) throws DAOException {
         removeObject(Client.class, id);
     }
-
-    /**
-     * Refresh Client object after some changes.
-     *
-     * @param client
-     *            object
-     */
-    public void refresh(Client client) {
-        refreshObject(client);
-    }
 }

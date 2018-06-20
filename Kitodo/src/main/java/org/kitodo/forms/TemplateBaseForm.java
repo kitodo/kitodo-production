@@ -33,6 +33,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class TemplateBaseForm extends BasisForm {
 
@@ -222,20 +223,21 @@ public class TemplateBaseForm extends BasisForm {
         }
     }
 
-    protected void saveTask(Task task, BaseBean baseBean, String message) {
+    protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
             serviceManager.getTaskService().save(task);
-            HibernateUtil.getSession().evict(task);
-            reload(baseBean, message);
+            serviceManager.getTaskService().evict(task);
+            reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
         }
     }
 
-    protected void reload(BaseBean baseBean, String message) {
+    @SuppressWarnings("unchecked")
+    protected void reload(BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
             try {
-                HibernateUtil.getSession().refresh(baseBean);
+                searchDatabaseService.refresh(baseBean);
             } catch (RuntimeException e) {
                 Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
             }

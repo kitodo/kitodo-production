@@ -117,7 +117,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        HibernateUtil.getSession().refresh(this.mySchritt);
+        serviceManager.getTaskService().refresh(this.mySchritt);
 
         if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
@@ -134,7 +134,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String editStep() {
-        HibernateUtil.getSession().refresh(mySchritt);
+        serviceManager.getTaskService().refresh(mySchritt);
         return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
     }
 

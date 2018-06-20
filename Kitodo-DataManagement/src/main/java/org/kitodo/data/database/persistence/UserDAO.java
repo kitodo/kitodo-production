@@ -81,16 +81,6 @@ public class UserDAO extends BaseDAO<User> {
     }
 
     /**
-     * Refresh user object after some changes.
-     *
-     * @param user
-     *            object
-     */
-    public void refresh(User user) {
-        refreshObject(user);
-    }
-
-    /**
      * Get all active users sorted by surname and name.
      *
      * @return sorted list of all active users as User objects

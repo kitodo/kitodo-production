@@ -52,16 +52,6 @@ public class UserGroupProjectAuthorityRelationDAO extends BaseDAO<UserGroupProje
     }
 
     /**
-     * Refresh UserGroupProjectAuthorityRelation object after some changes.
-     *
-     * @param userGroupProjectAuthorityRelation
-     *            object
-     */
-    public void refresh(UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation) {
-        refreshObject(userGroupProjectAuthorityRelation);
-    }
-
-    /**
      * Get all UserGroupProjectAuthorityRelations which contains given project and
      * user group id.
      *

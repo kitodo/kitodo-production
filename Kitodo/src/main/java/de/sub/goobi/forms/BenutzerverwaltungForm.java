@@ -43,7 +43,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserGroupDTO;
@@ -97,7 +96,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return page or empty String
      */
     public String save() {
-        HibernateUtil.getSession().evict(this.userObject);
+        serviceManager.getUserService().evict(this.userObject);
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {

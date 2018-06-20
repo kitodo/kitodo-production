@@ -55,16 +55,6 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
     }
 
     /**
-     * Refresh user's group object after some changes.
-     *
-     * @param userGroup
-     *            object
-     */
-    public void refresh(UserGroup userGroup) {
-        refreshObject(userGroup);
-    }
-
-    /**
      * Get all user groups visible for current user - user groups of users assigned
      * to projects with certain clients.
      *
