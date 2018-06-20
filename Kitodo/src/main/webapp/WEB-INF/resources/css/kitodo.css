@@ -156,8 +156,15 @@ body.first-visit #portal-header {
     box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5) inset;
     }
 
-#portal-search input {
+#search-form\:search-field {
+    display: none;
+    }
+
+#search-form\:search-field-short {
     display: table-cell;
+    }
+
+#search-form\:search-field, #search-form\:search-field-short {
     width: -webkit-calc(100% - 50px);
     width: -moz-calc(100% - 50px);
     width: calc(100% - 50px);
@@ -853,6 +860,14 @@ min 700px
     #portal-header #portal-search {
         width: 50%;
         }
+
+    #search-form\:search-field {
+        display: table-cell;
+    }
+
+    #search-form\:search-field-short {
+        display: none;
+    }
 
     #portal-header #portal-nav {
         width: 25%;
