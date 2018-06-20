@@ -360,9 +360,9 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)));
             } else {
+                Thread.currentThread().interrupt();
                 Helper.setErrorMessage(ERROR_EXPORT, new Object[]{processTitle}, logger, e);
             }
-            Thread.currentThread().interrupt();
         }
 
         String result = asyncThread.getResult();

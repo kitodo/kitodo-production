@@ -407,6 +407,9 @@ public class EmptyTask extends Thread implements INameableTask {
      *            exception to save
      */
     public void setException(Throwable exception) {
+        if (exception instanceof InterruptedException) {
+            Thread.currentThread().interrupt();
+        }
         if (this.exception == null && (!isInterrupted() || !(exception instanceof InterruptedException))) {
             if (exception instanceof Exception) {
                 this.exception = (Exception) exception;
