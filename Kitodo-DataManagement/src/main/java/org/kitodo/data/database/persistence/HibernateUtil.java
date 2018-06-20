@@ -20,7 +20,6 @@ import org.hibernate.boot.Metadata;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.kitodo.data.database.exceptions.InfrastructureException;
 
 /**
  * Current version of HibernateUtil.
@@ -44,20 +43,13 @@ public class HibernateUtil {
      */
     public static Session getSession() {
         Session session = threadSession.get();
-        try {
-            if (Objects.isNull(session)) {
-                SessionFactory sessionFactory = getSessionFactory();
-                if (Objects.nonNull(sessionFactory)) {
-                    session = sessionFactory.openSession();
-                }
-            }
-            if (!session.isOpen()) {
+        if (Objects.isNull(session)) {
+            SessionFactory sessionFactory = getSessionFactory();
+            if (Objects.nonNull(sessionFactory)) {
                 session = sessionFactory.openSession();
             }
-            threadSession.set(session);
-        } catch (HibernateException ex) {
-            throw new InfrastructureException(ex);
         }
+        threadSession.set(session);
         return session;
     }
 
