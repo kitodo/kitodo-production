@@ -12,7 +12,6 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -99,7 +98,7 @@ public class SearchRestClient extends KitodoRestClient {
         String output = "";
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
-                    Collections.singletonMap("pretty", "true"));
+                    getParameter());
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -125,25 +124,24 @@ public class SearchRestClient extends KitodoRestClient {
     String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
         String output = "";
         String wrappedQuery;
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("pretty", "true");
-        if (sort != null && offset != null && size != null) {
+        Map<String, String> parameters;
+        if (Objects.nonNull(sort)) {
             String wrappedSort = "\n \"sort\": [" + sort + "]\n";
             wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
-            parameters.put("from", offset.toString());
-            parameters.put("size", size.toString());
-        } else if (sort != null && offset == null && size == null) {
-            String wrappedSort = "\n \"sort\": [" + sort + "]\n";
-            wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
-            parameters.put("size", "10000");
-        } else if (sort == null && offset != null && size != null) {
-            wrappedQuery = "{\n \"query\": " + query + "\n}";
-            parameters.put("from", offset.toString());
-            parameters.put("size", size.toString());
         } else {
             wrappedQuery = "{\n \"query\": " + query + "\n}";
-            parameters.put("size", "10000");
         }
+
+        if ( Objects.nonNull(offset) && Objects.nonNull(size)) {
+            parameters = getParameter(offset.toString(), size.toString());
+        } else if (Objects.isNull(offset) && Objects.nonNull(size)) {
+            parameters = getParameter(null, size.toString());
+        } else if (Objects.nonNull(offset) && Objects.isNull(size)) {
+            parameters = getParameter(offset.toString(),"10000");
+        } else {
+            parameters = getParameter(null, "10000");
+        }
+
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/_search?",
@@ -161,7 +159,7 @@ public class SearchRestClient extends KitodoRestClient {
         String output = "";
         try {
             Response response = restClient.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
-                    Collections.singletonMap("pretty", "true"), entity);
+                    getParameter(), entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -169,6 +167,26 @@ public class SearchRestClient extends KitodoRestClient {
             throw new DataException(e);
         }
         return output;
+    }
+
+    private Map<String, String> getParameter() {
+        return getParameter(null, null);
+    }
+
+    private Map<String, String> getParameter(String offset, String size) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("pretty", "true");
+
+        if (Objects.nonNull(offset) && Objects.nonNull(size)) {
+            parameters.put("from", offset);
+            parameters.put("size", size);
+            return parameters;
+        } else if (Objects.isNull(offset) && Objects.nonNull(size)) {
+            parameters.put("size", size);
+            return parameters;
+        } else {
+            return parameters;
+        }
     }
 
     private void handleResponseException(ResponseException e) throws DataException {
