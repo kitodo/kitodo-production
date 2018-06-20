@@ -11,8 +11,7 @@
 
 function registerRowToggleEvents(event) {
     // add listener to expanded rows
-    var $expandedRow = $(".ui-expanded-row");
-    $expandedRow.hover(function() {
+    $(".ui-expanded-row").hover(function() {
             $(this).next(".ui-expanded-row-content").addClass("row-hover");
         }, function () {
             $(this).next(".ui-expanded-row-content").removeClass("row-hover");
@@ -21,8 +20,7 @@ function registerRowToggleEvents(event) {
     $(".ui-expanded-row:hover").next(".ui-expanded-row-content").addClass("row-hover");
 
     // add listener to expanded rows content
-    var $expandedRowContent = $(".ui-expanded-row-content");
-    $expandedRowContent.hover(function() {
+    $(".ui-expanded-row-content").hover(function() {
             $(this).prev(".ui-expanded-row:last").addClass("row-hover");
         }, function () {
             $(this).prev(".ui-expanded-row:last").removeClass("row-hover");
