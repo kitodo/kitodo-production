@@ -130,7 +130,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *            a metadata type which represents a person
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
-    private static final MetadataGroupTypeInterface getGroupTypeFor(MetadataTypeInterface type) {
+    private static MetadataGroupTypeInterface getGroupTypeFor(MetadataTypeInterface type) {
         MetadataGroupTypeInterface result = UghImplementation.INSTANCE.createMetadataGroupType();
         result.setName(type.getName());
         result.setAllLanguages(type.getAllLanguages());
@@ -154,7 +154,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *            a field of the person record
      * @return a fictitious MetadataGroupType with the person’s subfields
      */
-    private static final MetadataTypeInterface getMetadataTypeFor(MetadataTypeInterface type, Field field) {
+    private static MetadataTypeInterface getMetadataTypeFor(MetadataTypeInterface type, Field field) {
         MetadataTypeInterface result = UghImplementation.INSTANCE.createMetadataType();
         result.setName(type.getName() + '.' + field.toString());
         if (type.getNum() != null) {
@@ -174,7 +174,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *             if one of the sub-fields was configured to display a
      *             multi-select metadata
      */
-    private final void checkConfiguration() throws ConfigurationException {
+    private void checkConfiguration() throws ConfigurationException {
         for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
             if (!(entry.getValue() instanceof SingleValueRenderableMetadatum)) {
                 throw new ConfigurationException(

@@ -270,7 +270,7 @@ public class MetadataPathSelector extends MetadataSelector {
      * @return the integer value of the string, or Integer.MAX_VALUE for the
      *         symbol ">".
      */
-    private final Object getIndexValue(String indexSymbol) {
+    private Object getIndexValue(String indexSymbol) {
         try {
             return Integer.valueOf(indexSymbol);
         } catch (NumberFormatException cannotParseInt) {
@@ -376,7 +376,7 @@ public class MetadataPathSelector extends MetadataSelector {
      * @throws ConfigurationException
      *             if the path cannot be parsed
      */
-    private final String matchCurrentPathSegment(String path) throws ConfigurationException {
+    private String matchCurrentPathSegment(String path) throws ConfigurationException {
         Matcher metadataPathSplitter = METADATA_SPLIT_PATH_SCHEME.matcher(path);
         if (!metadataPathSplitter.find()) {
             throw new ConfigurationException(
