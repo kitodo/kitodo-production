@@ -26,6 +26,8 @@
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"/>
         <property name="hibernate.connection.url">jdbc:h2:mem:test</property>
+        <property name="hibernate.connection.autoReconnect">true</property>
+        <property name="hibernate.connection.autoReconnectForPools">true</property>
 
         <!-- connection pool -->
         <property name="hibernate.c3p0.max_size">5000</property>

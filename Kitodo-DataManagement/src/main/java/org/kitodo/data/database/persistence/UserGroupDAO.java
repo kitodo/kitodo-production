@@ -34,7 +34,7 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
     }
 
     @Override
-    public List<UserGroup> getAll() {
+    public List<UserGroup> getAll() throws DAOException {
         return retrieveAllObjects(UserGroup.class);
     }
 

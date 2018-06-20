@@ -32,7 +32,7 @@ public class TemplateDAO extends BaseDAO<Template> {
     }
 
     @Override
-    public List<Template> getAll() {
+    public List<Template> getAll() throws DAOException {
         return retrieveAllObjects(Template.class);
     }
 

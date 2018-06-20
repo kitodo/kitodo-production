@@ -81,7 +81,7 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindAllDockets() {
+    public void shouldFindAllDockets() throws Exception {
         List<Docket> dockets = docketService.getAll();
         assertEquals("Not all dockets were found in database!", 3, dockets.size());
     }

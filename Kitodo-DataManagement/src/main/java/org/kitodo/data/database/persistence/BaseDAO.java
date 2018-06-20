@@ -31,6 +31,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     private static final long serialVersionUID = 4676125965631365912L;
+    private static final Object lockObject = new Object();
 
     /**
      * Retrieves a BaseBean identified by the given id from the database.
@@ -48,7 +49,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @return all persisted beans
      */
-    public abstract List<T> getAll();
+    public abstract List<T> getAll() throws DAOException;
 
     /**
      * Retrieves all BaseBean objects in given range.
@@ -95,18 +96,15 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void remove(T baseBean) throws DAOException {
         if (baseBean.getId() != null) {
-            Transaction transaction = null;
-            try {
-                Session session = HibernateUtil.getSession();
-                transaction = session.beginTransaction();
-                Object merged = session.merge(baseBean);
-                session.delete(merged);
-                session.flush();
-                transaction.commit();
-            } catch (RuntimeException e) {
-                if (transaction != null) {
-                    transaction.rollback();
+            try (Session session = HibernateUtil.getSession()) {
+                Transaction transaction = session.beginTransaction();
+                synchronized (lockObject) {
+                    Object merged = session.merge(baseBean);
+                    session.delete(merged);
+                    session.flush();
+                    transaction.commit();
                 }
+            } catch (HibernateException e) {
                 throw new DAOException(e);
             }
         }
@@ -123,16 +121,17 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
-        Session session = HibernateUtil.getSession();
-        Query q = session.createQuery(query);
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-            if (parameter.getValue() instanceof List) {
-                q.setParameterList(parameter.getKey(), (List) parameter.getValue());
-            } else {
-                q.setParameter(parameter.getKey(), parameter.getValue());
+        try (Session session = HibernateUtil.getSession()) {
+            Query q = session.createQuery(query);
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                if (parameter.getValue() instanceof List) {
+                    q.setParameterList(parameter.getKey(), (List) parameter.getValue());
+                } else {
+                    q.setParameter(parameter.getKey(), parameter.getValue());
+                }
             }
+            return (List<T>) q.list();
         }
-        return (List<T>) q.list();
     }
 
     /**
@@ -144,26 +143,28 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
-        Session session = HibernateUtil.getSession();
-        List<T> result = session.createQuery(query).list();
-        if (Objects.isNull(result)) {
-            result = new ArrayList<>();
+        try (Session session = HibernateUtil.getSession()) {
+            List<T> result = session.createQuery(query).list();
+            if (Objects.isNull(result)) {
+                result = new ArrayList<>();
+            }
+            return result;
         }
-        return result;
     }
 
     @SuppressWarnings("unchecked")
     List<Double> getAverage(String query, Map<String, Object> parameters) {
-        Session session = HibernateUtil.getSession();
-        Query q = session.createQuery(query);
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-            q.setParameter(parameter.getKey(), parameter.getValue());
+        try (Session session = HibernateUtil.getSession()) {
+            Query q = session.createQuery(query);
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                q.setParameter(parameter.getKey(), parameter.getValue());
+            }
+            List<Double> result = q.list();
+            if (Objects.isNull(result)) {
+                result = new ArrayList<>();
+            }
+            return result;
         }
-        List<Double> result = q.list();
-        if (Objects.isNull(result)) {
-            result = new ArrayList<>();
-        }
-        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -177,16 +178,17 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     @SuppressWarnings("unchecked")
     private List<Long> getLongList(String query, Map<String, Object> parameters) {
-        Session session = HibernateUtil.getSession();
-        Query q = session.createQuery(query);
-        for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
-            q.setParameter(parameter.getKey(), parameter.getValue());
+        try (Session session = HibernateUtil.getSession()) {
+            Query q = session.createQuery(query);
+            for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                q.setParameter(parameter.getKey(), parameter.getValue());
+            }
+            List<Long> result = q.list();
+            if (Objects.isNull(result)) {
+                result = new ArrayList<>();
+            }
+            return result;
         }
-        List<Long> result = q.list();
-        if (Objects.isNull(result)) {
-            result = new ArrayList<>();
-        }
-        return result;
     }
 
     /**
@@ -197,11 +199,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return amount of rows in database according to given query
      */
     public Long count(String query) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+        try (Session session = HibernateUtil.getSession()) {
             return (Long) session.createQuery(query).uniqueResult();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -218,20 +219,15 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     static void removeObject(Class cls, Integer id) throws DAOException {
-        Transaction transaction = null;
-        try {
-            Session session = HibernateUtil.getSession();
-            transaction = session.beginTransaction();
-            synchronized (cls) {
+        try (Session session = HibernateUtil.getSession()) {
+            Transaction transaction = session.beginTransaction();
+            synchronized (lockObject) {
                 Object object = session.load(cls, id);
                 session.delete(object);
                 session.flush();
                 transaction.commit();
             }
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+        } catch (HibernateException e) {
             throw new DAOException(e);
         }
     }
@@ -248,11 +244,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings({"unchecked" })
     T retrieveObject(Class cls, Integer id) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+        try (Session session = HibernateUtil.getSession()) {
             return (T) session.get(cls, id);
-        } catch (HibernateException he) {
-            throw new DAOException(he);
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -269,14 +264,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, int first, int max) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+        try (Session session = HibernateUtil.getSession()) {
             Query q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
             return (List<T>) q.list();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -291,8 +285,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, String parameter) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+        try (Session session = HibernateUtil.getSession()) {
             Query q = session.createQuery(query);
             q.setParameter(0, parameter);
             return (List<T>) q.list();
@@ -314,13 +307,12 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, String namedParameter, String parameter) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+        try (Session session = HibernateUtil.getSession()) {
             Query q = session.createQuery(query);
             q.setParameter(namedParameter, parameter, StringType.INSTANCE);
             return (List<T>) q.list();
-        } catch (HibernateException he) {
-            throw new DAOException(he);
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -332,10 +324,13 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * @return List of all objects
      */
     @SuppressWarnings("unchecked")
-    List<T> retrieveAllObjects(Class cls) {
-        Session session = HibernateUtil.getSession();
-        Query query = session.createQuery("FROM " + cls.getSimpleName());
-        return (List<T>) query.list();
+    List<T> retrieveAllObjects(Class cls) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
+            Query query = session.createQuery("FROM " + cls.getSimpleName());
+            return (List<T>) query.list();
+        } catch (HibernateException e) {
+            throw new DAOException(e);
+        }
     }
 
     /**
@@ -345,10 +340,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            to persist
      */
     void storeObject(T object) throws DAOException {
-        Transaction transaction = null;
-        try {
-            Session session = HibernateUtil.getSession();
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSession()) {
+            Transaction transaction = session.beginTransaction();
             if (object.getId() != null) {
                 session.merge(object);
             } else {
@@ -356,10 +349,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
             session.flush();
             transaction.commit();
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
+        } catch (HibernateException e) {
             throw new DAOException(e);
         }
     }
@@ -371,19 +361,14 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            of objects
      */
     void storeList(List<T> list) throws DAOException {
-        Transaction transaction = null;
-        try {
-            Session session = HibernateUtil.getSession();
-            transaction = session.beginTransaction();
+        try (Session session = HibernateUtil.getSession()) {
+            Transaction transaction = session.beginTransaction();
             for (Object obj : list) {
                 session.saveOrUpdate(obj);
             }
             session.flush();
             transaction.commit();
         } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             throw new DAOException(e);
         }
     }
@@ -395,17 +380,17 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            associated with the session
      */
     void refreshObject(T object) {
-        Session session = HibernateUtil.getSession();
-        session.refresh(object);
+        try (Session session = HibernateUtil.getSession()) {
+            session.refresh(object);
+        }
     }
 
     @SuppressWarnings("unchecked")
-    T loadObjects(Class cls, Integer id) throws DAOException {
-        try {
-            Session session = HibernateUtil.getSession();
+    T loadObject(Class cls, Integer id) throws DAOException {
+        try (Session session = HibernateUtil.getSession()) {
             return (T) session.load(cls, id);
-        } catch (HibernateException he) {
-            throw new DAOException(he);
+        } catch (HibernateException e) {
+            throw new DAOException(e);
         }
     }
 
@@ -416,7 +401,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *            to update
      */
     void updateObject(T object) {
-        Session session = HibernateUtil.getSession();
-        session.update(object);
+        try (Session session = HibernateUtil.getSession()) {
+            session.update(object);
+        }
     }
 }

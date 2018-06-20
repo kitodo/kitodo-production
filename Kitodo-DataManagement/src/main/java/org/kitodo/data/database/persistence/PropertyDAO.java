@@ -30,7 +30,7 @@ public class PropertyDAO extends BaseDAO<Property> {
     }
 
     @Override
-    public List<Property> getAll() {
+    public List<Property> getAll() throws DAOException {
         return retrieveAllObjects(Property.class);
     }
 

@@ -103,7 +103,7 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldGetAllTasks() {
+    public void shouldGetAllTasks() throws Exception {
         List<Task> tasks = taskService.getAll();
         assertEquals("Not all tasks were found in database!", 8, tasks.size());
     }

@@ -32,6 +32,7 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -93,14 +94,16 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindProcess() throws Exception {
+    public void shouldGetProcess() throws Exception {
         Process process = processService.getById(1);
         boolean condition = process.getTitle().equals("First process") && process.getOutputName().equals("Testowy");
         assertTrue("Process was not found in database!", condition);
+
+        assertEquals("Process was found but tasks were not inserted!", 3, process.getTasks().size());
     }
 
     @Test
-    public void shouldGetAllProcesses() {
+    public void shouldGetAllProcesses() throws Exception {
         List<Process> processes = processService.getAll();
         assertEquals("Not all processes were found in database!", 3, processes.size());
     }
@@ -216,8 +219,8 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetBatchesByType() throws Exception {
         Process process = processService.getById(1);
-        boolean condition = processService.getBatchesByType(process, LOGISTIC).size() == 1;
-        assertTrue("Table size is incorrect!", condition);
+        List<Batch> batches = processService.getBatchesByType(process, LOGISTIC);
+        assertEquals("Table size is incorrect!", 1, batches.size());
     }
 
     @Ignore("for second process is attached task which is processed by blocked user")
@@ -387,12 +390,10 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetCurrentTask() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
-
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
-        Task expected = taskService.getById(2);
-        assertEquals("Task doesn't match to given task!", expected, actual);
+        Integer expected = 2;
+        assertEquals("Task doesn't match to given task!", expected, actual.getId());
     }
 
     @Test
@@ -529,12 +530,10 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetFirstOpenStep() throws Exception {
-        TaskService taskService = new ServiceManager().getTaskService();
-
         Process process = processService.getById(1);
-        Task expected = taskService.getById(2);
+        Integer expected = 2;
         Task actual = processService.getFirstOpenStep(process);
-        assertEquals("First open task doesn't match to the given task!", expected, actual);
+        assertEquals("First open task doesn't match to the given task!", expected, actual.getId());
     }
 
     @Test

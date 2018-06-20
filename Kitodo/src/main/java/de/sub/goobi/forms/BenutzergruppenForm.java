@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
 import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -231,7 +230,6 @@ public class BenutzergruppenForm extends BasisForm {
      *            The user group.
      */
     public void setUserGroup(UserGroup userGroup) {
-        HibernateUtil.getSession().clear();
         this.userGroup = userGroup;
     }
 
@@ -245,8 +243,13 @@ public class BenutzergruppenForm extends BasisForm {
      */
     public DualListModel<Authority> getAuthorities() {
         List<Authority> assignedAuthorities = this.userGroup.getGlobalAuthorities();
-        List<Authority> availableAuthorities = serviceManager.getAuthorityService().getAll();
-        availableAuthorities.removeAll(assignedAuthorities);
+        List<Authority> availableAuthorities = new ArrayList<>();
+        try {
+            availableAuthorities = serviceManager.getAuthorityService().getAll();
+            availableAuthorities.removeAll(assignedAuthorities);
+        } catch (DAOException e) {
+            logger.error(e.getMessage(), e);
+        }
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
     }
 
@@ -468,7 +471,12 @@ public class BenutzergruppenForm extends BasisForm {
      * @return The list of clients.
      */
     public List<Client> getClients() {
-        return serviceManager.getClientService().getAll();
+        try {
+            return serviceManager.getClientService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
+            return null;
+        }
     }
 
     /**
@@ -496,7 +504,12 @@ public class BenutzergruppenForm extends BasisForm {
      * @return The list of projects.
      */
     public List<Project> getProjects() {
-        return serviceManager.getProjectService().getAll();
+        try {
+            return serviceManager.getProjectService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            return new ArrayList<>();
+        }
     }
 
     /**

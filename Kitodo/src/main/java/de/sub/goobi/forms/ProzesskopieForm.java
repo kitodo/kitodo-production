@@ -403,7 +403,11 @@ public class ProzesskopieForm implements Serializable {
         List<Process> processes = new ArrayList<>();
         // TODO Change to check the corresponding authority
         if (serviceManager.getSecurityAccessService().isAdmin()) {
-            processes = serviceManager.getProcessService().getAll();
+            try {
+                processes = serviceManager.getProcessService().getAll();
+            } catch (DAOException e) {
+                logger.error(e.getMessage(), e);
+            }
         } else {
             User currentUser = serviceManager.getUserService().getAuthenticatedUser();
             if (Objects.nonNull(currentUser)) {

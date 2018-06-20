@@ -33,7 +33,7 @@ public class FilterDAO extends BaseDAO<Filter> {
     }
 
     @Override
-    public List<Filter> getAll() {
+    public List<Filter> getAll() throws DAOException {
         return retrieveAllObjects(Filter.class);
     }
 

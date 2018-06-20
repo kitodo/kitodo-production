@@ -30,7 +30,7 @@ public class ClientDAO extends BaseDAO<Client> {
     }
 
     @Override
-    public List<Client> getAll() {
+    public List<Client> getAll() throws DAOException {
         return retrieveAllObjects(Client.class);
     }
 

@@ -50,7 +50,7 @@ public class ProjectFileGroupServiceIT {
     }
 
     @Test
-    public void shouldFindAllProjectFileGroups() {
+    public void shouldGetAllProjectFileGroups() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         List<ProjectFileGroup> projectFileGroups = projectFileGroupService.getAll();

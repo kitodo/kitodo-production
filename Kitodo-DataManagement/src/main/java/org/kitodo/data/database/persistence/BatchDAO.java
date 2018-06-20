@@ -13,7 +13,6 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -36,7 +35,7 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     @Override
-    public List<Batch> getAll() {
+    public List<Batch> getAll() throws DAOException {
         return retrieveAllObjects(Batch.class);
     }
 
@@ -70,19 +69,5 @@ public class BatchDAO extends BaseDAO<Batch> {
         for (Integer id : ids) {
             removeObject(Batch.class, id);
         }
-    }
-
-    /**
-     * The function reattach() reattaches a batch to a Hibernate session, i.e. for
-     * accessing properties that are lazy loaded.
-     *
-     * @param batch
-     *            object to reattach
-     * @return the batch
-     */
-    public static Batch reattach(Batch batch) {
-        Session session = HibernateUtil.getSession();
-        session.refresh(batch);
-        return batch;
     }
 }

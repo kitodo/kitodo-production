@@ -108,7 +108,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return list of all objects from database
      */
-    public List<T> getAll() {
+    public List<T> getAll() throws DAOException {
         return dao.getAll();
     }
 

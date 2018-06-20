@@ -35,7 +35,7 @@ public class ProjectDAO extends BaseDAO<Project> {
     }
 
     @Override
-    public List<Project> getAll() {
+    public List<Project> getAll() throws DAOException {
         return retrieveAllObjects(Project.class);
     }
 

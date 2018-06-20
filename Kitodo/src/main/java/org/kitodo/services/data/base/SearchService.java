@@ -340,11 +340,11 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void remove(T baseIndexedBean) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.DELETE);
-            saveToDatabase(baseIndexedBean);
-            removeFromIndex(baseIndexedBean);
-            manageDependenciesForIndex(baseIndexedBean);
+            T savedBean = saveToDatabase(baseIndexedBean);
+            removeFromIndex(savedBean);
+            manageDependenciesForIndex(savedBean);
             waitForIndexUpdate();
-            removeFromDatabase(baseIndexedBean);
+            removeFromDatabase(savedBean);
         } catch (DAOException e) {
             logger.debug(e);
             throw new DataException(e);

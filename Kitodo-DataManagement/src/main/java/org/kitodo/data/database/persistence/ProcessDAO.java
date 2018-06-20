@@ -30,7 +30,7 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     @Override
-    public List<Process> getAll() {
+    public List<Process> getAll() throws DAOException {
         return retrieveAllObjects(Process.class);
     }
 

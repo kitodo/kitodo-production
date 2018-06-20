@@ -40,7 +40,7 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
     }
 
     @Override
-    public List<LdapGroup> getAll() {
+    public List<LdapGroup> getAll() throws DAOException {
         return retrieveAllObjects(LdapGroup.class);
     }
 

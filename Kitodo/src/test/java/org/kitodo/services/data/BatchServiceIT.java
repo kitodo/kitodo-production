@@ -72,14 +72,16 @@ public class BatchServiceIT {
     }
 
     @Test
-    public void shouldFindBatch() throws Exception {
+    public void shouldGetBatch() throws Exception {
         Batch batch = batchService.getById(1);
         boolean condition = batch.getTitle().equals("First batch") && batch.getType().equals(Batch.Type.LOGISTIC);
         assertTrue("Batch was not found in database!", condition);
+
+        assertEquals("Batch was found but processes were not inserted!", 1, batch.getProcesses().size());
     }
 
     @Test
-    public void shouldFindAllBatches() {
+    public void shouldFindAllBatches() throws Exception {
         List<Batch> batches = batchService.getAll();
         assertEquals("Not all batches were found in database!", 4, batches.size());
     }

@@ -24,7 +24,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -154,8 +153,7 @@ public class ProjekteForm extends BasisForm {
      * @return page or null
      */
     public String save() {
-        Session session = HibernateUtil.getSession();
-        session.evict(this.myProjekt);
+        HibernateUtil.getSession().evict(this.myProjekt);
         // call this to make saving and deleting permanent
         this.commitFileGroups();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
@@ -412,6 +410,11 @@ public class ProjekteForm extends BasisForm {
      * @return The list of clients.
      */
     public List<Client> getClients() {
-        return serviceManager.getClientService().getAll();
+        try {
+            return serviceManager.getClientService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
+            return new ArrayList<>();
+        }
     }
 }

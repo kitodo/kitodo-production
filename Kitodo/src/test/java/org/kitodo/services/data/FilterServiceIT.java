@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.helper.Helper;
-
 import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
@@ -83,7 +81,7 @@ public class FilterServiceIT {
     }
 
     @Test
-    public void shouldGetAllFilters() {
+    public void shouldGetAllFilters() throws Exception {
         List<Filter> filters = filterService.getAll();
         assertEquals("Not all filters were found in database!", 2, filters.size());
     }

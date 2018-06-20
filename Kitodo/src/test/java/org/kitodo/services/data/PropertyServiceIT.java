@@ -121,7 +121,7 @@ public class PropertyServiceIT {
     }
 
     @Test
-    public void shouldGetAllProperties() {
+    public void shouldGetAllProperties() throws Exception {
         List<Property> properties = propertyService.getAll();
         assertEquals("Not all properties were found in database!", 8, properties.size());
     }

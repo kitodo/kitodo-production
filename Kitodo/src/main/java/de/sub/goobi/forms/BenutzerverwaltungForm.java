@@ -38,7 +38,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -98,8 +97,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return page or empty String
      */
     public String save() {
-        Session session = HibernateUtil.getSession();
-        session.evict(this.userObject);
+        HibernateUtil.getSession().evict(this.userObject);
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {

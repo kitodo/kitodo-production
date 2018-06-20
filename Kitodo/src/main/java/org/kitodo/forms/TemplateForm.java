@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -41,11 +42,10 @@ public class TemplateForm extends TemplateBaseForm {
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
-    private Template template = new Template();
-    private Task task = new Task();
+    private Template template;
+    private Task task;
     private String title;
     private transient ServiceManager serviceManager = new ServiceManager();
-
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
@@ -117,6 +117,7 @@ public class TemplateForm extends TemplateBaseForm {
     public String newTemplate() {
         this.template = new Template();
         this.template.setTitle("");
+        this.title = "";
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -200,7 +201,6 @@ public class TemplateForm extends TemplateBaseForm {
         } else {
             Helper.setErrorMessage("titleEmpty");
         }
-        reload();
         return null;
     }
 
@@ -211,6 +211,8 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String saveAndRedirect() {
         save();
+        HibernateUtil.getSession().evict(this.template);
+        this.template = null;
         return templateListPath;
     }
 
@@ -247,19 +249,12 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Save task.
-     */
-    public void saveTask() {
-        saveTask(this.task);
-    }
-
-    /**
      * Save task and redirect to processEdit view.
      *
-     * @return url to processEdit view
+     * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask();
+        saveTask(this.task, this.template, "template");
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -272,14 +267,6 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
-    }
-
-    /**
-     * Reload task and template.
-     */
-    private void reload() {
-        reload(this.task, "task");
-        reload(this.template, "template");
     }
 
     /**

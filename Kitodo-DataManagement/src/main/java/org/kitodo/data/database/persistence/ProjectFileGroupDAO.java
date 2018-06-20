@@ -29,7 +29,7 @@ public class ProjectFileGroupDAO extends BaseDAO<ProjectFileGroup> {
     }
 
     @Override
-    public List<ProjectFileGroup> getAll() {
+    public List<ProjectFileGroup> getAll() throws DAOException {
         return retrieveAllObjects(ProjectFileGroup.class);
     }
 
