@@ -34,9 +34,7 @@ public class MetadatenSperrung implements Serializable {
      * Metadaten eines bestimmten Prozesses wieder freigeben.
      */
     public void setFree(int prozessID) {
-        if (sperrungen.containsKey(prozessID)) {
-            sperrungen.remove(prozessID);
-        }
+        sperrungen.remove(prozessID);
     }
 
     /**

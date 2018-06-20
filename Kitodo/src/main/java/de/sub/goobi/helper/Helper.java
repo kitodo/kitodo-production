@@ -372,9 +372,7 @@ public class Helper extends HibernateHelper implements Observer {
         try {
             @SuppressWarnings("rawtypes")
             Map sessionMap = FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
-            if (sessionMap.containsKey(name)) {
-                sessionMap.remove(name);
-            }
+            sessionMap.remove(name);
         } catch (RuntimeException nothingToDo) {
             logger.error(nothingToDo);
         }
