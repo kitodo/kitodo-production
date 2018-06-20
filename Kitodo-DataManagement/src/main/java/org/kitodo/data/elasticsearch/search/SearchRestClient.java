@@ -12,7 +12,6 @@
 package org.kitodo.data.elasticsearch.search;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -99,7 +98,7 @@ public class SearchRestClient extends KitodoRestClient {
         String output = "";
         try {
             Response response = restClient.performRequest("GET", "/" + index + "/" + type + "/" + id.toString(),
-                    Collections.singletonMap("pretty", "true"));
+                    getParameter());
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -125,24 +124,21 @@ public class SearchRestClient extends KitodoRestClient {
     String getDocument(String query, String sort, Integer offset, Integer size) throws DataException {
         String output = "";
         String wrappedQuery;
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("pretty", "true");
+        Map<String, String> parameters;
         if (sort != null && offset != null && size != null) {
             String wrappedSort = "\n \"sort\": [" + sort + "]\n";
             wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
-            parameters.put("from", offset.toString());
-            parameters.put("size", size.toString());
+            parameters = getParameter(offset.toString(), size.toString());
         } else if (sort != null && offset == null && size == null) {
             String wrappedSort = "\n \"sort\": [" + sort + "]\n";
             wrappedQuery = "{\n" + wrappedSort + ",\n \"query\": " + query + "\n}";
-            parameters.put("size", "10000");
+            parameters = getParameter(null, "10000");
         } else if (sort == null && offset != null && size != null) {
             wrappedQuery = "{\n \"query\": " + query + "\n}";
-            parameters.put("from", offset.toString());
-            parameters.put("size", size.toString());
+            parameters = getParameter(offset.toString(), size.toString());
         } else {
             wrappedQuery = "{\n \"query\": " + query + "\n}";
-            parameters.put("size", "10000");
+            parameters = getParameter(null, "10000");
         }
         HttpEntity entity = new NStringEntity(wrappedQuery, ContentType.APPLICATION_JSON);
         try {
@@ -161,7 +157,7 @@ public class SearchRestClient extends KitodoRestClient {
         String output = "";
         try {
             Response response = restClient.performRequest(httpMethod, "/" + index + "/" + type + "/" + urlRequest,
-                    Collections.singletonMap("pretty", "true"), entity);
+                    getParameter(), entity);
             output = EntityUtils.toString(response.getEntity());
         } catch (ResponseException e) {
             handleResponseException(e);
@@ -169,6 +165,26 @@ public class SearchRestClient extends KitodoRestClient {
             throw new DataException(e);
         }
         return output;
+    }
+
+    private Map<String, String> getParameter() {
+        return getParameter(null, null);
+    }
+
+    private Map<String, String> getParameter(String offset, String size) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("pretty", "true");
+
+        if (Objects.isNull(offset) && Objects.isNull(size)) {
+            return parameters;
+        } else if (Objects.isNull(offset)) {
+            parameters.put("size", size);
+            return parameters;
+        } else {
+            parameters.put("from", offset);
+            parameters.put("size", size);
+            return parameters;
+        }
     }
 
     private void handleResponseException(ResponseException e) throws DataException {

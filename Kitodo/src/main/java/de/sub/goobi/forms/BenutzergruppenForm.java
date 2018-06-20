@@ -475,7 +475,7 @@ public class BenutzergruppenForm extends BasisForm {
             return serviceManager.getClientService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
-            return null;
+            return new ArrayList<>();
         }
     }
 
