@@ -51,9 +51,6 @@ public class HibernateUtil {
                     session = sessionFactory.openSession();
                 }
             }
-            if (!session.isOpen()) {
-                session = sessionFactory.openSession();
-            }
             threadSession.set(session);
         } catch (HibernateException ex) {
             throw new InfrastructureException(ex);
