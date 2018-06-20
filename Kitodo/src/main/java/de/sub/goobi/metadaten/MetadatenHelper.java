@@ -390,42 +390,39 @@ public class MetadatenHelper implements Comparator<Object> {
         if (inStrukturelement == null) {
             return "";
         }
-        List<ReferenceInterface> listReferenzen = inStrukturelement.getAllReferences("to");
-        if (Objects.nonNull(listReferenzen) && !listReferenzen.isEmpty()) {
-            Collections.sort(listReferenzen, new Comparator<ReferenceInterface>() {
-                @Override
-                public int compare(final ReferenceInterface firstObject, final ReferenceInterface secondObject) {
-                    Integer firstPage = 0;
-                    Integer secondPage = 0;
-                    final MetadataTypeInterface mdt = MetadatenHelper.this.prefs
-                            .getMetadataTypeByName("physPageNumber");
-                    List<? extends MetadataInterface> listMetadaten = firstObject.getTarget().getAllMetadataByType(mdt);
-                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
-                        final MetadataInterface meineSeite = listMetadaten.get(0);
-                        firstPage = Integer.parseInt(meineSeite.getValue());
-                    }
-                    listMetadaten = secondObject.getTarget().getAllMetadataByType(mdt);
-                    if (Objects.nonNull(listMetadaten) && !listMetadaten.isEmpty()) {
-                        final MetadataInterface meineSeite = listMetadaten.get(0);
-                        secondPage = Integer.parseInt(meineSeite.getValue());
-                    }
-                    return firstPage.compareTo(secondPage);
+        List<ReferenceInterface> references = inStrukturelement.getAllReferences("to");
+        if (Objects.nonNull(references) && !references.isEmpty()) {
+            Collections.sort(references, (firstObject, secondObject) -> {
+                Integer firstPage = 0;
+                Integer secondPage = 0;
+                final MetadataTypeInterface mdt = MetadatenHelper.this.prefs
+                        .getMetadataTypeByName("physPageNumber");
+                List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
+                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+                    final MetadataInterface page = listMetadata.get(0);
+                    firstPage = Integer.parseInt(page.getValue());
                 }
+                listMetadata = secondObject.getTarget().getAllMetadataByType(mdt);
+                if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {
+                    final MetadataInterface page = listMetadata.get(0);
+                    secondPage = Integer.parseInt(page.getValue());
+                }
+                return firstPage.compareTo(secondPage);
             });
 
             MetadataTypeInterface mdt = this.prefs.getMetadataTypeByName("physPageNumber");
-            List<? extends MetadataInterface> listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
+            List<? extends MetadataInterface> listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
+                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
                 MetadataInterface meineSeite = listSeiten.get(0);
                 rueckgabe += meineSeite.getValue();
             }
             mdt = this.prefs.getMetadataTypeByName("logicalPageNumber");
-            listSeiten = listReferenzen.get(0).getTarget().getAllMetadataByType(mdt);
+            listSeiten = references.get(0).getTarget().getAllMetadataByType(mdt);
             if (inPageNumber == PAGENUMBER_LAST) {
-                listSeiten = listReferenzen.get(listReferenzen.size() - 1).getTarget().getAllMetadataByType(mdt);
+                listSeiten = references.get(references.size() - 1).getTarget().getAllMetadataByType(mdt);
             }
             if (Objects.nonNull(listSeiten) && !listSeiten.isEmpty()) {
                 MetadataInterface meineSeite = listSeiten.get(0);
