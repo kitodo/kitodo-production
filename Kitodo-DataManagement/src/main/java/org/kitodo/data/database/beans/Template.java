@@ -199,4 +199,9 @@ public class Template extends BaseTemplateBean {
                 && Objects.equals(getOutputName(), process.getOutputName())
                 && Objects.equals(getCreationDate(), process.getCreationDate());
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(docket, project, ruleset, workflow);
+    }
 }

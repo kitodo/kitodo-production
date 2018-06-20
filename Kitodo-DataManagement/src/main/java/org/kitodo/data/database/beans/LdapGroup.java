@@ -286,4 +286,11 @@ public class LdapGroup extends BaseBean {
                 && Objects.equals(sambaLogonHours, ldapGroup.sambaLogonHours)
                 && Objects.equals(sambaKickoffTime, ldapGroup.sambaKickoffTime);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, homeDirectory, gidNumber, userDN, objectClasses, sambaSID, sn, uid, description,
+            displayName, gecos, loginShell, sambaAcctFlags, sambaLogonScript, sambaPrimaryGroupSID, sambaPwdMustChange,
+            sambaPasswordHistory, sambaLogonHours, sambaKickoffTime, ldapServer);
+    }
 }

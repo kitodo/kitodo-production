@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -330,5 +331,34 @@ public class LdapServer extends BaseBean {
      */
     public void setKeystorePassword(String keystorePassword) {
         this.keystorePassword = keystorePassword;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LdapServer that = (LdapServer) o;
+        return useSsl == that.useSsl
+            && readOnly == that.readOnly
+            && Objects.equals(title, that.title)
+            && Objects.equals(url, that.url)
+            && Objects.equals(managerLogin, that.managerLogin)
+            && Objects.equals(managerPassword, that.managerPassword)
+            && Objects.equals(nextFreeUnixIdPattern, that.nextFreeUnixIdPattern)
+            && Objects.equals(passwordEncryption, that.passwordEncryption)
+            && Objects.equals(rootCertificate, that.rootCertificate)
+            && Objects.equals(pdcCertificate, that.pdcCertificate)
+            && Objects.equals(keystore, that.keystore)
+            && Objects.equals(keystorePassword, that.keystorePassword);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(title, url, managerLogin, managerPassword, nextFreeUnixIdPattern, useSsl, readOnly, passwordEncryption, rootCertificate, pdcCertificate, keystore, keystorePassword);
     }
 }

@@ -94,4 +94,23 @@ public class Docket extends BaseIndexedBean {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Docket docket = (Docket) o;
+        return Objects.equals(title, docket.title)
+            && Objects.equals(file, docket.file)
+            && Objects.equals(active, docket.active);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, file, active);
+    }
 }

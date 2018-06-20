@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -622,5 +623,46 @@ public class Task extends BaseIndexedBean {
 
     public int getProcessingTimeNow() {
         return 1;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Task task = (Task) o;
+        return homeDirectory == task.homeDirectory
+            && typeMetadata == task.typeMetadata
+            && typeAutomatic == task.typeAutomatic
+            && typeImportFileUpload == task.typeImportFileUpload
+            && typeExportRussian == task.typeExportRussian
+            && typeImagesRead == task.typeImagesRead
+            && typeImagesWrite == task.typeImagesWrite
+            && typeExportDMS == task.typeExportDMS
+            && typeAcceptClose == task.typeAcceptClose
+            && typeCloseVerify == task.typeCloseVerify
+            && Objects.equals(title, task.title)
+            && Objects.equals(priority, task.priority)
+            && Objects.equals(ordering, task.ordering)
+            && Objects.equals(processingStatus, task.processingStatus)
+            && Objects.equals(processingTime, task.processingTime)
+            && Objects.equals(processingBegin, task.processingBegin)
+            && Objects.equals(processingEnd, task.processingEnd)
+            && Objects.equals(editType, task.editType)
+            && Objects.equals(scriptName, task.scriptName)
+            && Objects.equals(scriptPath, task.scriptPath)
+            && Objects.equals(batchStep, task.batchStep)
+            && Objects.equals(workflowId, task.workflowId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, priority, ordering, processingStatus, processingTime, processingBegin, processingEnd,
+            editType, homeDirectory, typeMetadata, typeAutomatic, typeImportFileUpload, typeExportRussian,
+            typeImagesRead, typeImagesWrite, typeExportDMS, typeAcceptClose, scriptName, scriptPath, typeCloseVerify,
+            batchStep, workflowId, workflowCondition, processingUser, template, localizedTitle);
     }
 }
