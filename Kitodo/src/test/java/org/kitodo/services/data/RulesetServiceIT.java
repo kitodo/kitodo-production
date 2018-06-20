@@ -24,7 +24,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.data.database.beans.Ruleset;

@@ -52,7 +52,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;

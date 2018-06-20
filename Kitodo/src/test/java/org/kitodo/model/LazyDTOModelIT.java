@@ -19,7 +19,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.dto.DocketDTO;
-import org.kitodo.dto.ProjectDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.DocketService;
 import org.primefaces.model.SortOrder;
