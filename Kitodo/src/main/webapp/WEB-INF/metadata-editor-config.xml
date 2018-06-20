@@ -18,13 +18,6 @@
 
     <!-- ###################  Managed Beans  ######################## -->
 
-    <!-- Bean für Sessions -->
-    <managed-bean>
-        <managed-bean-name>SessionForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.SessionForm</managed-bean-class>
-        <managed-bean-scope>application</managed-bean-scope>
-    </managed-bean>
-
     <!-- Bean für Metadaten -->
     <managed-bean>
         <managed-bean-name>Metadaten</managed-bean-name>

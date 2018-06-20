@@ -55,22 +55,6 @@
                         </ul>
                     </li>
                     <li>
-                        <!-- List: active users -->
-                        <a href="#"><i class="fa fa-user-o fa-lg"/><h:panelGroup
-                            rendered="#{SessionForm.activeSessions.size() gt 0}"
-                            class="batch-count bc-info">#{SessionForm.activeSessions.size()}</h:panelGroup></a>
-                        <ul>
-                            <li><h3>#{msgs.activeUsers}</h3></li>
-                            <ui:repeat
-                                value="#{SessionForm.activeSessions.subList(0, (SessionForm.activeSessions.size() gt 3) ? 3 : SessionForm.activeSessions.size())}"
-                                var="activeSession">
-                                <li><div><span class="nav-item-col">#{activeSession['userName']}</span></div></li>
-                            </ui:repeat>
-                            <li><h:link outcome="activeUsers"
-                                        value="#{msgs.allActiveUsers} (#{SessionForm.activeSessions.size()})"/></li>
-                        </ul>
-                    </li>
-                    <li>
                         <!-- Dashboard menu -->
                         <a href="#" id="dashboard-menu"><i class="fa fa-th fa-lg"/></a>
                         <ul>

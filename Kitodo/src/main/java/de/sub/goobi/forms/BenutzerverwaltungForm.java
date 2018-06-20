@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
@@ -45,9 +46,11 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.SecuritySession;
 import org.kitodo.services.ServiceManager;
 
 @Named("BenutzerverwaltungForm")
@@ -408,5 +411,19 @@ public class BenutzerverwaltungForm extends BasisForm {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /**
+     * Check and return whether given UserDTO 'user' is logged in.
+     * @param user UserDTO to check
+     * @return whether given UserDTO is checked in
+     */
+    public boolean checkUserLoggedIn(UserDTO user) {
+        for (SecuritySession securitySession : serviceManager.getSessionService().getActiveSessions()) {
+            if (securitySession.getUserName().equals(user.getLogin())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
