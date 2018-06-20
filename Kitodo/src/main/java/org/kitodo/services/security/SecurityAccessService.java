@@ -19,7 +19,6 @@ import java.util.Objects;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
