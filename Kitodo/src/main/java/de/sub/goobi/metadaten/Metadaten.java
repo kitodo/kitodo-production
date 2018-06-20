@@ -82,6 +82,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
+import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -517,7 +518,7 @@ public class Metadaten {
 
         // sort the metadata types
         HelperComparator c = new HelperComparator();
-        c.setSortType("MetadatenTypen");
+        c.setSortType(SortType.METADATA_TYPE);
         Collections.sort(types, c);
 
         int counter = types.size();
@@ -554,7 +555,7 @@ public class Metadaten {
 
         // sort the metadata types
         HelperComparator c = new HelperComparator();
-        c.setSortType("MetadatenTypen");
+        c.setSortType(SortType.METADATA_TYPE);
         Collections.sort(types, c);
 
         /*

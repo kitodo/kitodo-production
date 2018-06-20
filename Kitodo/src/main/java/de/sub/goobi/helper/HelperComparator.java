@@ -17,31 +17,37 @@ import java.util.Comparator;
 import org.kitodo.api.ugh.DocStructTypeInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
+import org.kitodo.enums.SortType;
 import org.kitodo.services.ServiceManager;
 
 public class HelperComparator implements Comparator<Object>, Serializable {
 
     private static final long serialVersionUID = -1124724462982810327L;
     private static ServiceManager serviceManager = new ServiceManager();
-    private String sortType;
+    private SortType sortType;
 
     @Override
     public int compare(Object firstObject, Object secondObject) {
-        // TODO: Use a Enum or Integer conts
-        int rueckgabe = 0;
-        if (this.sortType.equals("MetadatenTypen")) {
-            rueckgabe = compareMetadataTypes(firstObject, secondObject);
+        int result = 0;
+
+        switch (sortType) {
+            case DOC_STRUCT_TYPE:
+                result = compareDocStructTypes(firstObject, secondObject);
+                break;
+            case METADATA:
+                result = compareMetadata(firstObject, secondObject);
+                break;
+            case METADATA_TYPE:
+                result = compareMetadataTypes(firstObject, secondObject);
+                break;
+            default:
+                break;
         }
-        if (this.sortType.equals("Metadata")) {
-            rueckgabe = compareMetadata(firstObject, secondObject);
-        }
-        if (this.sortType.equals("DocStructTypen")) {
-            rueckgabe = compareDocStructTypes(firstObject, secondObject);
-        }
-        return rueckgabe;
+
+        return result;
     }
 
-    public void setSortType(String sortType) {
+    public void setSortType(SortType sortType) {
         this.sortType = sortType;
     }
 

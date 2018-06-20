@@ -47,6 +47,7 @@ import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -345,7 +346,7 @@ public class MetadatenHelper implements Comparator<Object> {
          * die Metadatentypen sortieren
          */
         HelperComparator c = new HelperComparator();
-        c.setSortType("DocStructTypen");
+        c.setSortType(SortType.DOC_STRUCT_TYPE);
         // TODO: Uses generics, if possible
         Collections.sort(newTypes, c);
 
@@ -643,11 +644,8 @@ public class MetadatenHelper implements Comparator<Object> {
             }
         }
 
-        /*
-         * die Metadatentypen sortieren
-         */
         HelperComparator c = new HelperComparator();
-        c.setSortType("MetadatenTypen");
+        c.setSortType(SortType.METADATA_TYPE);
         Collections.sort(types, c);
 
         for (MetadataTypeInterface mdt : types) {
