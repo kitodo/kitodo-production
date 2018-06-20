@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
@@ -47,9 +48,9 @@ class ConvertRunner {
     private static final Random RANDOMNESS_GENERATOR = new Random();
 
     /**
-     * Default timeout of two hours.
+     * Default timeout.
      */
-    private static final int TWO_HOURS = 7200;
+    private static final int DEFAULT_TIMEOUT_MINS = (int) TimeUnit.MINUTES.convert(2, TimeUnit.HOURS);
 
     /**
      * {@code convert} command, optionally with full path.
@@ -70,7 +71,7 @@ class ConvertRunner {
         OutputStream outAndErr = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(outAndErr));
 
-        long timeoutMillis = 1000 * Config.getIntParameter("ImageManagementModule.timeoutSec", TWO_HOURS);
+        long timeoutMillis = 1000 * Config.getIntParameter("ImageManagementModule.timeoutSec", DEFAULT_TIMEOUT_MINS);
         executor.setWatchdog(new ExecuteWatchdog(timeoutMillis));
 
         CommandLine command;
