@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -150,7 +152,9 @@ public class ConfigProjects {
     @SuppressWarnings("unchecked")
     public List<String> getParamList(String inParameter) {
         try {
-            return this.config.getList(this.projektTitel + inParameter);
+            List<Object> configs = this.config.getList(this.projektTitel + inParameter);
+            return configs.stream().map(object -> Objects.toString(object, null))
+                    .collect(Collectors.toList());
         } catch (RuntimeException e) {
             logger.error(e.getMessage(), e);
             return new ArrayList<>();

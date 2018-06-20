@@ -42,13 +42,14 @@
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
         <commons-codec.version>1.11</commons-codec.version>
-        <commons-configuration.version>1.6</commons-configuration.version>
+        <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.5</commons-io.version>
+        <commons-io.version>2.6</commons-io.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
         <hibernate.version>5.2.17.Final</hibernate.version>
-        <jaxen.version>1.1.1</jaxen.version>
+        <jaxen.version>1.1.6</jaxen.version>
         <jersey.version>1.19.3</jersey.version>
-        <joda-time.version>2.3</joda-time.version>
+        <joda-time.version>2.10</joda-time.version>
         <myfaces.version>2.2.12</myfaces.version>
         <mysql.version>5.1.38</mysql.version>
         <poi.version>3.6</poi.version>

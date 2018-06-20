@@ -15,7 +15,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -174,8 +176,10 @@ class ConfigOpac {
                 boolean periodical = getConfig().getBoolean("doctypes.type(" + i + ")[@isPeriodical]");
                 boolean multiVolume = getConfig().getBoolean("doctypes.type(" + i + ")[@isMultiVolume]");
                 boolean containedWork = getConfig().getBoolean("doctypes.type(" + i + ")[@isContainedWork]");
-                ArrayList<String> mappings = (ArrayList<String>) getConfig()
-                        .getList("doctypes.type(" + i + ").mapping");
+                List<Object> configs = getConfig().getList("doctypes.type(" + i + ").mapping");
+                List<String> mappings = configs.stream()
+                        .map(object -> Objects.toString(object, null))
+                        .collect(Collectors.toList());
 
                 return new ConfigOpacDoctype(title, periodical, multiVolume, containedWork, mappings);
             }

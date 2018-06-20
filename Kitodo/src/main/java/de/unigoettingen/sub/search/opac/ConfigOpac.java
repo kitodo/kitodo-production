@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -140,8 +142,9 @@ public class ConfigOpac {
                 } catch (NoSuchElementException noParameterIsNewspaper) {
                     newspaper = false;
                 }
-                ArrayList<String> mappings = (ArrayList<String>) getConfig()
-                        .getList(DOCTYPES_TYPE + "(" + i + ").mapping");
+                List<Object> configs = getConfig().getList(DOCTYPES_TYPE + "(" + i + ").mapping");
+                List<String> mappings = configs.stream().map(object -> Objects.toString(object, null))
+                        .collect(Collectors.toList());
 
                 return new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical, multiVolume,
                         containedWork, newspaper, labels, mappings);

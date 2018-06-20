@@ -11,7 +11,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:mets="http://www.loc.gov/METS/"
                 xmlns:mods="http://www.loc.gov/mods/v3"
