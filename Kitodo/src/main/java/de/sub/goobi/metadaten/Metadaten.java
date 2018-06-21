@@ -519,7 +519,7 @@ public class Metadaten {
         // sort the metadata types
         HelperComparator c = new HelperComparator();
         c.setSortType(SortType.METADATA_TYPE);
-        Collections.sort(types, c);
+        types.sort(c);
 
         int counter = types.size();
 
@@ -2853,13 +2853,13 @@ public class Metadaten {
         }
         List<String> newSelectionList = new ArrayList<>();
         for (Integer pageIndex : selectedPages) {
-            DocStructInterface firstpage = allPages.get(pageIndex - 1);
-            DocStructInterface secondpage = allPages.get(pageIndex);
-            switchFileNames(firstpage, secondpage);
+            DocStructInterface firstPage = allPages.get(pageIndex - 1);
+            DocStructInterface secondPage = allPages.get(pageIndex);
+            switchFileNames(firstPage, secondPage);
             newSelectionList.add(String.valueOf(pageIndex - 1));
         }
 
-        allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
+        allPagesSelection = newSelectionList.toArray(new String[0]);
 
         retrieveAllImages();
         identifyImage(1);
@@ -2892,7 +2892,7 @@ public class Metadaten {
             newSelectionList.add(String.valueOf(pageIndex + 1));
         }
 
-        allPagesSelection = newSelectionList.toArray(new String[newSelectionList.size()]);
+        allPagesSelection = newSelectionList.toArray(new String[0]);
         retrieveAllImages();
         identifyImage(1);
     }

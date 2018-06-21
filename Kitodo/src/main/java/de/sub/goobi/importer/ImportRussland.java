@@ -116,15 +116,20 @@ public class ImportRussland {
         String detail = list.get(0);
         String detailNr = detail.substring(0, 3);
 
-        if (detailNr.equals("080") || detailNr.equals("090")) {
-            setArticleDetails(list);
-        } else if (detailNr.equals("010")) {
-            setJournalDetails(list);
-        } else if (detailNr.equals("050")) {
-            setBandDetails(list);
-        } else {
-            throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('" + detail
-                    + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
+        switch (detailNr) {
+            case "080":
+            case "090":
+                setArticleDetails(list);
+                break;
+            case "010":
+                setJournalDetails(list);
+                break;
+            case "050":
+                setBandDetails(list);
+                break;
+            default:
+                throw new WrongImportFileException("Parsingfehler: Neuer Block mit ungültigem ersten Identifier ('" + detail
+                        + "'), möglicherweise sind an einer falschen Stelle Zeilenumbrüche eingefügt worden.");
         }
     }
 

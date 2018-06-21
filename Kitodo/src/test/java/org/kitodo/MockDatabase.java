@@ -11,7 +11,6 @@
 
 package org.kitodo;
 
-import static java.util.Arrays.asList;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 import static org.kitodo.data.database.beans.Batch.Type.NEWSPAPER;
 import static org.kitodo.data.database.beans.Batch.Type.SERIAL;
@@ -24,6 +23,7 @@ import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -126,7 +126,7 @@ public class MockDatabase {
         if (node != null) {
             stopNode();
         }
-        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
         node.start();
     }
 

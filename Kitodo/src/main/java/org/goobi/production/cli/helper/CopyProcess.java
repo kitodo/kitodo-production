@@ -836,7 +836,7 @@ public class CopyProcess extends ProzesskopieForm {
             String string = tokenizer.nextToken();
             // if the string begins and ends with ', then take over the content
             if (string.startsWith("'") && string.endsWith("'") && string.length() > 2) {
-                this.tifHeaderImageDescription.append(string.substring(1, string.length() - 1));
+                this.tifHeaderImageDescription.append(string, 1, string.length() - 1);
             } else if (string.equals("$Doctype")) {
 
                 this.tifHeaderImageDescription.append(this.docType);

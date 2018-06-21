@@ -628,7 +628,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
             }
 
             if (myTitle.length() > 4) {
-                atsTsl.append(myTitle.substring(0, 4));
+                atsTsl.append(myTitle, 0, 4);
             } else {
                 atsTsl.append(myTitle);
             }
@@ -645,21 +645,21 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 String tok = tokenizer.nextToken();
                 if (counter == 1) {
                     if (tok.length() > 4) {
-                        atsTsl.append(tok.substring(0, 4));
+                        atsTsl.append(tok, 0, 4);
                     } else {
                         atsTsl.append(tok);
                     }
                 }
                 if (counter == 2 || counter == 3) {
                     if (tok.length() > 2) {
-                        atsTsl.append(tok.substring(0, 2));
+                        atsTsl.append(tok, 0, 2);
                     } else {
                         atsTsl.append(tok);
                     }
                 }
                 if (counter == 4) {
                     if (tok.length() > 1) {
-                        atsTsl.append(tok.substring(0, 1));
+                        atsTsl.append(tok, 0, 1);
                     } else {
                         atsTsl.append(tok);
                     }

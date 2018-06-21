@@ -94,7 +94,7 @@ public class MetadataPathSelector extends MetadataSelector {
             String indexSymbol = pathSelectorHasElementSelector.group(2);
             try {
                 index = getIndexValue(indexSymbol);
-                if (index instanceof Integer && ((Integer) index).intValue() < 0) {
+                if (index instanceof Integer && (Integer) index < 0) {
                     throw new ConfigurationException("Negative element count is not allowed, in path: " + path);
                 }
             } catch (NumberFormatException e) {
@@ -252,7 +252,7 @@ public class MetadataPathSelector extends MetadataSelector {
      */
     public int getIndex() {
         if (index instanceof Integer) {
-            int a = ((Integer) index).intValue();
+            int a = (Integer) index;
             if (a < Integer.MAX_VALUE) {
                 return a;
             }
@@ -328,8 +328,8 @@ public class MetadataPathSelector extends MetadataSelector {
                     "Could not resolve metadata path: In this regard, index \"" + index + "\" is not allowed.");
         } else if (index.equals(Integer.MAX_VALUE)) {
             return children.get(children.size() - 1);
-        } else if (children.size() >= ((Integer) index).intValue()) {
-            return children.get(((Integer) index).intValue());
+        } else if (children.size() >= (Integer) index) {
+            return children.get((Integer) index);
         }
 
         return null;
