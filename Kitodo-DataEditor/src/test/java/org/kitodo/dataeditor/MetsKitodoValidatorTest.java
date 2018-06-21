@@ -43,6 +43,6 @@ public class MetsKitodoValidatorTest {
             MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 2));
         Assert.assertFalse(
             "Result of checking if mets contains metadata at dmdSec index which does not exist was wrong!",
-            MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 3));
+            MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 6));
     }
 }

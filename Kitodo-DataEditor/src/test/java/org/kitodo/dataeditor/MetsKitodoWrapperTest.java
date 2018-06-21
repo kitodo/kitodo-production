@@ -78,18 +78,27 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException {
-        String from = "from test";
-        String to = "to test";
+    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException, JAXBException {
+        List<DivType> physicalDivTypes = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            DivType physicalDiv = new DivType();
+            physicalDiv.setID("test_ID_PHY" + i);
+            physicalDivTypes.add(physicalDiv);
+        }
+
+        DivType logicalDiv = new DivType();
+        logicalDiv.setID("test_ID_LOG");
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
-        metsKitodoWrapper.addSmLink(from, to);
+        metsKitodoWrapper.getStructLink().addSmLinks(logicalDiv, physicalDivTypes);
 
         StructLinkType.SmLink smLink = (StructLinkType.SmLink) metsKitodoWrapper.getMets().getStructLink()
                 .getSmLinkOrSmLinkGrp().get(0);
+        int objectCount = metsKitodoWrapper.getMets().getStructLink().getSmLinkOrSmLinkGrp().size();
 
-        Assert.assertEquals("'from' attribute of smLink was wrong", from, smLink.getFrom());
-        Assert.assertEquals("'to' attribute of smLink was wrong", to, smLink.getTo());
+        Assert.assertEquals("'from' attribute of smLink was wrong", logicalDiv.getID(), smLink.getFrom());
+        Assert.assertEquals("'to' attribute of smLink was wrong", physicalDivTypes.get(0).getID(), smLink.getTo());
+        Assert.assertEquals("Number of inserted smLinks was wrong", physicalDivTypes.size(), objectCount);
     }
 
     @Test
@@ -111,7 +120,7 @@ public class MetsKitodoWrapperTest {
     public void shouldCreateMetsByFile()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        Assert.assertEquals("Number of dmdSec elements was wrong!", 3, metsKitodoWrapper.getDmdSecs().size());
+        Assert.assertEquals("Number of dmdSec elements was wrong!", 6, metsKitodoWrapper.getDmdSecs().size());
     }
 
     @Test
@@ -119,7 +128,7 @@ public class MetsKitodoWrapperTest {
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         String id = metsKitodoWrapper.getMets().getDmdSec().get(0).getID();
-        Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_0000", id);
+        Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_ROOT", id);
     }
 
     @Test
@@ -237,7 +246,7 @@ public class MetsKitodoWrapperTest {
 
         DivType div = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
         kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(div);
-        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "[Seite 134r-156v]",
+        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "Chapter 1",
             kitodoTypeOfDiv.getMetadata().get(0).getValue());
 
         DivType divWithoutMetadata = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
@@ -270,7 +279,8 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter", PositionOfNewDiv.FIRST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter",
+            PositionOfNewDiv.FIRST_CHILD_OF_ELEMENT);
         Assert.assertEquals("New div was not added", "AddedSubChapter", fifthDiv.getDiv().get(0).getTYPE());
     }
 
@@ -301,14 +311,15 @@ public class MetsKitodoWrapperTest {
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedSubSubChapter", PositionOfNewDiv.BEFOR_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedSubSubChapter",
+            PositionOfNewDiv.BEFOR_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
         Assert.assertEquals("New div was not added", "AddedSubSubChapter", addedDiv.getTYPE());
     }
 
     @Test
-    public void shouldNotAddDivAfterRoot() throws IOException, DatatypeConfigurationException{
+    public void shouldNotAddDivAfterRoot() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
@@ -326,30 +337,42 @@ public class MetsKitodoWrapperTest {
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(rootDiv, "Chapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
 
         DivType firstDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(firstDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
 
         DivType thirdDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(thirdDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(thirdDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(thirdDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(thirdDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
 
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "SubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
 
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter", PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "SubSubChapter",
+            PositionOfNewDiv.LAST_CHILD_OF_ELEMENT);
     }
 
     @Test
-    public void shouldRemoveNestedLogicalDiv()
-            throws IOException, DatatypeConfigurationException {
+    public void shouldRemoveNestedLogicalDiv() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
@@ -359,8 +382,7 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldMovedLogicalDiv()
-            throws IOException, DatatypeConfigurationException {
+    public void shouldMovedLogicalDiv() throws IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
@@ -383,5 +405,51 @@ public class MetsKitodoWrapperTest {
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("Child div element not found");
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
+    }
+
+    @Test
+    public void shouldGetPhysicalDivsByLogicalDiv()
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType firstSubChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getDiv().get(0);
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstSubChapterDiv);
+        Assert.assertEquals("Number of physical divs of first chapter was wrong", 4, physicalDivs.size());
+        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "3",
+            physicalDivs.get(2).getORDERLABEL());
+
+        DivType secondChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2);
+        physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(secondChapterDiv);
+        Assert.assertEquals("Number of physical divs of second chapter was wrong", 3, physicalDivs.size());
+        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "9",
+            physicalDivs.get(2).getORDERLABEL());
+    }
+
+    @Test
+    public void shouldInheritPhysicalDivsByChildLogicalDivs()
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
+        metsKitodoWrapper.linkLogicalDivByInheritFromChildDivs(firstChapterDiv);
+
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
+        Assert.assertEquals("Number of created linked physical divs was wrong", 7, physicalDivs.size());
+    }
+
+    @Test
+    public void shouldRemoveSmLink()
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+
+        DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getDiv().get(2);
+        List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
+
+        for (DivType physicalDiv : physicalDivs) {
+            metsKitodoWrapper.getStructLink().removeSmLink(firstChapterDiv, physicalDiv);
+        }
+
+        Assert.assertEquals("Removing of smLinks was not successful", 0,
+            metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv).size());
     }
 }

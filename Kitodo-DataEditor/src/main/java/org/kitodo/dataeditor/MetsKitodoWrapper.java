@@ -13,6 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -21,8 +22,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
-import org.kitodo.dataeditor.handlers.MetsKitodoFileSecHandler;
+import org.kitodo.dataeditor.entities.PhysicalStructMapType;
+import org.kitodo.dataeditor.entities.StructLink;
 import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -30,7 +33,6 @@ import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
-import org.kitodo.dataformat.metskitodo.StructLinkType;
 import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
@@ -42,6 +44,9 @@ public class MetsKitodoWrapper {
     private Mets mets;
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
     private LogicalStructMapType logicalStructMapType;
+    private PhysicalStructMapType physicalStructMapType;
+    private FileSec fileSec;
+    private StructLink structLink;
 
     /**
      * Gets the mets object.
@@ -67,13 +72,6 @@ public class MetsKitodoWrapper {
         createLogicalRootDiv(this.mets, documentType);
     }
 
-    private void createLogicalRootDiv(Mets mets, String type) {
-        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),
-            "DMDLOG_ROOT");
-        mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
-        getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
-    }
-
     private void createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
             mets.setFileSec(objectFactory.createMetsTypeFileSec());
@@ -95,6 +93,13 @@ public class MetsKitodoWrapper {
         }
     }
 
+    private void createLogicalRootDiv(Mets mets, String type) {
+        MdSecType dmdSecOfLogicalRootDiv = objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),
+            "DMDLOG_ROOT");
+        mets.getDmdSec().add(dmdSecOfLogicalRootDiv);
+        getLogicalStructMap().setDiv(objectFactory.createRootDivTypeForLogicalStructMap(type, dmdSecOfLogicalRootDiv));
+    }
+
     /**
      * Constructor which creates Mets object by unmarshalling given xml file of
      * mets-kitodo format.
@@ -112,21 +117,6 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Adds a smLink to the structLink section of mets file.
-     *
-     * @param from
-     *            The from value.
-     * @param to
-     *            The to value.
-     */
-    public void addSmLink(String from, String to) {
-        StructLinkType.SmLink structLinkTypeSmLink = objectFactory.createStructLinkTypeSmLink();
-        structLinkTypeSmLink.setFrom(from);
-        structLinkTypeSmLink.setTo(to);
-        mets.getStructLink().getSmLinkOrSmLinkGrp().add(structLinkTypeSmLink);
-    }
-
-    /**
      * Gets all dmdSec elements.
      *
      * @return All dmdSec elements as list of MdSecType objects.
@@ -136,29 +126,33 @@ public class MetsKitodoWrapper {
     }
 
     /**
-     * Inserts MediaFile objects into fileSec of mets document and creates
-     * corresponding physical structMap.
+     * Inserts MediaFile objects into fileSec of the wrapped mets document and
+     * creates corresponding physical structMap.
      *
      * @param files
      *            The list of MediaFile objects.
      */
     public void insertMediaFiles(List<MediaFile> files) {
-        MetsKitodoFileSecHandler.insertMediaFilesToLocalFileGroupOfMets(this.mets, files);
+        getFileSec().insertMediaFiles(files);
         // TODO implement logic to check if pagination is set to automatic or not
-        MetsKitodoStructMapHandler.fillPhysicalStructMapByMetsFileSec(mets);
+        getPhysicalStructMap().createDivsByFileSec(getFileSec());
     }
 
     /**
-     * Returns the physical StructMap of mets document.
+     * Returns the physical StructMap of the wrapped mets document.
      *
      * @return The StructMapType object.
      */
-    public StructMapType getPhysicalStructMap() {
-        return MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL");
+    public PhysicalStructMapType getPhysicalStructMap() {
+        if (Objects.isNull(this.physicalStructMapType)) {
+            this.physicalStructMapType = new PhysicalStructMapType(
+                    MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL"));
+        }
+        return this.physicalStructMapType;
     }
 
     /**
-     * Returns the logical StructMap of mets document.
+     * Returns the logical StructMap of the wrapped mets document.
      *
      * @return The LogicalStructMapType object.
      */
@@ -168,6 +162,30 @@ public class MetsKitodoWrapper {
                     MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL"));
         }
         return this.logicalStructMapType;
+    }
+
+    /**
+     * Returns the FileSec of the wrapped mets document.
+     *
+     * @return The FileSec object.
+     */
+    public FileSec getFileSec() {
+        if (Objects.isNull(this.fileSec)) {
+            this.fileSec = new FileSec(getMets().getFileSec());
+        }
+        return this.fileSec;
+    }
+
+    /**
+     * Returns the structLink of the wrapped mets document.
+     * 
+     * @return The StructLink object.
+     */
+    public StructLink getStructLink() {
+        if (Objects.isNull(this.structLink)) {
+            this.structLink = new StructLink(getMets().getStructLink());
+        }
+        return this.structLink;
     }
 
     /**
@@ -187,5 +205,30 @@ public class MetsKitodoWrapper {
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
     }
 
+    /**
+     * Returns a list of divs from physical structMap which are linked by a given
+     * div from logical structMap.
+     * 
+     * @param logicalDiv
+     *            The logical div which links to physical divs.
+     * @return A list of physical divs.
+     */
+    public List<DivType> getPhysicalDivsByLinkingLogicalDiv(DivType logicalDiv) {
+        return getPhysicalStructMap().getDivsByIds(getStructLink().getPhysicalDivIdsByLogicalDiv(logicalDiv));
+    }
 
+    /**
+     * Adds smLinks to structLink section for a given logical div by checking the
+     * linked physical divs of the logical child divs.
+     * 
+     * @param logicalDiv
+     *            The logical div.
+     */
+    public void linkLogicalDivByInheritFromChildDivs(DivType logicalDiv) {
+        List<DivType> physicalDivs = new ArrayList<>();
+        for (DivType div : logicalDiv.getDiv()) {
+            physicalDivs.addAll(getPhysicalDivsByLinkingLogicalDiv(div));
+        }
+        getStructLink().addSmLinks(logicalDiv, physicalDivs);
+    }
 }

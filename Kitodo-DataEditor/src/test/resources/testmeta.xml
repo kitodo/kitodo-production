@@ -16,11 +16,11 @@
             <mets:note>Kitodo</mets:note>
         </mets:agent>
     </mets:metsHdr>
-    <mets:dmdSec ID="DMDLOG_0000">
+    <mets:dmdSec ID="DMDLOG_ROOT">
         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                    <kitodo:metadata name="TitleDocMain">TestTitle</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">TestTitel</kitodo:metadata>
                     <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
                     <kitodo:metadataGroup name="TypeOfResource">
                         <kitodo:metadata name="typDisplayForm">Handschrift</kitodo:metadata>
@@ -45,7 +45,7 @@
         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                    <kitodo:metadata name="TitleDocMain">[Seite 134r-156v]</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">Chapter 1</kitodo:metadata>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
@@ -54,7 +54,34 @@
         <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
             <mets:xmlData>
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
-                    <kitodo:metadata name="TitleDocMain">[Seite 157r-181v]</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">Chapter 1.1</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0003">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Chapter 1.2</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0004">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Chapter 1.3</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDLOG_0005">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
+                    <kitodo:metadata name="TitleDocMain">Chapter 2</kitodo:metadata>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
@@ -67,28 +94,89 @@
             <mets:file ID="FILE_0002" MIMETYPE="image/tiff">
                 <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000002.tif"/>
             </mets:file>
+            <mets:file ID="FILE_0003" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000003.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0004" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000004.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0005" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000005.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0006" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000006.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0007" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000007.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0008" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000008.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0009" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000009.tif"/>
+            </mets:file>
+            <mets:file ID="FILE_0010" MIMETYPE="image/tiff">
+                <mets:FLocat xmlns:xlink="http://www.w3.org/1999/xlink" LOCTYPE="URL" xlink:href="file:/usr/local/kitodo/metadata/231263/images/AbulOtsa_PPN866273492_tif/00000010.tif"/>
+            </mets:file>
+
         </mets:fileGrp>
     </mets:fileSec>
     <mets:structMap TYPE="LOGICAL">
-        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Manuscript">
+        <mets:div DMDID="DMDLOG_ROOT" ID="LOG_0000" TYPE="Volume">
             <mets:div ID="LOG_0001" TYPE="Cover"/>
-            <mets:div DMDID="DMDLOG_0001" ID="LOG_0002" TYPE="Text"/>
-            <mets:div DMDID="DMDLOG_0002" ID="LOG_0003" TYPE="Text"/>
+            <mets:div DMDID="DMDLOG_0001" ID="LOG_0002" TYPE="Chapter">
+                <mets:div DMDID="DMDLOG_0003" ID="LOG_0003" TYPE="Chapter"/>
+                <mets:div DMDID="DMDLOG_0004" ID="LOG_0004" TYPE="Chapter"/>
+                <mets:div DMDID="DMDLOG_0005" ID="LOG_0005" TYPE="Chapter"/>
+            </mets:div>
+            <mets:div DMDID="DMDLOG_0006" ID="LOG_0006" TYPE="Chapter"/>
         </mets:div>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
-        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="BoundBook">
+        <mets:div DMDID="DMDPHYS_ROOT" ID="PHYS_0000" TYPE="physSequence">
             <mets:div ID="PHYS_0001" ORDER="1" ORDERLABEL="uncounted" TYPE="page">
                 <mets:fptr FILEID="FILE_0001"/>
             </mets:div>
-            <mets:div ID="PHYS_0002" ORDER="2" ORDERLABEL="uncounted" TYPE="page">
+            <mets:div ID="PHYS_0002" ORDER="2" ORDERLABEL="1" TYPE="page">
                 <mets:fptr FILEID="FILE_0002"/>
+            </mets:div>
+            <mets:div ID="PHYS_0003" ORDER="3" ORDERLABEL="2" TYPE="page">
+                <mets:fptr FILEID="FILE_0003"/>
+            </mets:div>
+            <mets:div ID="PHYS_0004" ORDER="4" ORDERLABEL="3" TYPE="page">
+                <mets:fptr FILEID="FILE_0004"/>
+            </mets:div>
+            <mets:div ID="PHYS_0005" ORDER="5" ORDERLABEL="4" TYPE="page">
+                <mets:fptr FILEID="FILE_0005"/>
+            </mets:div>
+            <mets:div ID="PHYS_0006" ORDER="6" ORDERLABEL="5" TYPE="page">
+                <mets:fptr FILEID="FILE_0006"/>
+            </mets:div>
+            <mets:div ID="PHYS_0007" ORDER="7" ORDERLABEL="6" TYPE="page">
+                <mets:fptr FILEID="FILE_0007"/>
+            </mets:div>
+            <mets:div ID="PHYS_0008" ORDER="8" ORDERLABEL="7" TYPE="page">
+                <mets:fptr FILEID="FILE_0008"/>
+            </mets:div>
+            <mets:div ID="PHYS_0009" ORDER="9" ORDERLABEL="8" TYPE="page">
+                <mets:fptr FILEID="FILE_0009"/>
+            </mets:div>
+            <mets:div ID="PHYS_0010" ORDER="10" ORDERLABEL="9" TYPE="page">
+                <mets:fptr FILEID="FILE_0010"/>
             </mets:div>
         </mets:div>
     </mets:structMap>
     <mets:structLink>
-        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0000"/>
         <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0001" xlink:from="LOG_0001"/>
         <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0002" xlink:from="LOG_0003"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0003" xlink:from="LOG_0003"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0004" xlink:from="LOG_0003"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0005" xlink:from="LOG_0003"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0005" xlink:from="LOG_0004"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0006" xlink:from="LOG_0005"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0007" xlink:from="LOG_0005"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0008" xlink:from="LOG_0006"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0009" xlink:from="LOG_0006"/>
+        <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="PHYS_0010" xlink:from="LOG_0006"/>
     </mets:structLink>
 </mets:mets>
