@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -257,6 +258,11 @@ public class Batch extends BaseIndexedBean {
         } else {
             return processes.equals(other.processes);
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, type, processes);
     }
 
     // Here will be methods which should be in BatchService but are used by jsp

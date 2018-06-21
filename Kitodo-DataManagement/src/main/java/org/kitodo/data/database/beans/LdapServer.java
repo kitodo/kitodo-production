@@ -358,7 +358,7 @@ public class LdapServer extends BaseBean {
 
     @Override
     public int hashCode() {
-
-        return Objects.hash(title, url, managerLogin, managerPassword, nextFreeUnixIdPattern, useSsl, readOnly, passwordEncryption, rootCertificate, pdcCertificate, keystore, keystorePassword);
+        return Objects.hash(title, url, managerLogin, managerPassword, nextFreeUnixIdPattern, useSsl, readOnly,
+            passwordEncryption, rootCertificate, pdcCertificate, keystore, keystorePassword);
     }
 }
