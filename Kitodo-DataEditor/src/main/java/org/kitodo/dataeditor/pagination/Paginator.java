@@ -48,7 +48,6 @@ public class Paginator implements Iterator<String> {
          * iterate through the code points of the initializer string plus one more
          * iteration to process the last content of the stringBuilder
          */
-
         Boolean page = null;
         int length = initializer.length();
         for (int offset = 0; offset <= length;) {
@@ -63,7 +62,6 @@ public class Paginator implements Iterator<String> {
             }
 
             // Whatever is in back-ticks is not interpreted
-
             if (codePointClass.equals(PaginatorState.TEXT_ESCAPE_TRANSITION)) {
                 if (paginatorState.equals(PaginatorState.EMPTY)) {
                     paginatorState = PaginatorState.TEXT_ESCAPE_TRANSITION;
@@ -75,12 +73,13 @@ public class Paginator implements Iterator<String> {
                 }
             } else if (paginatorState.equals(PaginatorState.TEXT_ESCAPE_TRANSITION)) {
                 stringBuilder.appendCodePoint(codePoint);
-            } else if (codePointClass.equals(PaginatorState.HALF_INTEGER) || codePointClass.equals(PaginatorState.FULL_INTEGER)) {
+            } else if (codePointClass.equals(PaginatorState.HALF_INTEGER)
+                    || codePointClass.equals(PaginatorState.FULL_INTEGER)) {
                 /*
-                 * Recto/verso-only symbols cause a stringBuilder write (or they would be applied to
-                 * the current stringBuilder content (modify their left side), but they shall be
-                 * applied on the next write (modify their right side)). They set the page
-                 * variable and are not written to the stringBuilder by themselves.
+                 * Recto/verso-only symbols cause a stringBuilder write (or they would be
+                 * applied to the current stringBuilder content (modify their left side), but
+                 * they shall be applied on the next write (modify their right side)). They set
+                 * the page variable and are not written to the stringBuilder by themselves.
                  */
                 if (!paginatorState.equals(PaginatorState.EMPTY)) {
                     createFragment(stringBuilder, paginatorState, page);
@@ -91,21 +90,24 @@ public class Paginator implements Iterator<String> {
                     || (paginatorState.equals(PaginatorState.TEXT) && codePointClass.equals(PaginatorState.SYMBOL))
                     || (paginatorState.equals(PaginatorState.SYMBOL) && codePointClass.equals(PaginatorState.TEXT))) {
                 /*
-                 * If the stringBuilder is empty or contains the same sort of content as the current
-                 * input, just write it to the stringBuilder. If the stringBuilder contains text, we can write
-                 * symbols as well, the same is true the other way ‘round.
+                 * If the stringBuilder is empty or contains the same sort of content as the
+                 * current input, just write it to the stringBuilder. If the stringBuilder
+                 * contains text, we can write symbols as well, the same is true the other way
+                 * ‘round.
                  */
                 stringBuilder.appendCodePoint(codePoint);
                 paginatorState = codePointClass;
 
             } else if ((paginatorState.equals(PaginatorState.TEXT)
-                    && (codePointClass.equals(PaginatorState.LOWERCASE_ROMAN) || codePointClass.equals(PaginatorState.UPPERCASE_ROMAN)))
-                    || ((paginatorState.equals(PaginatorState.LOWERCASE_ROMAN) || paginatorState.equals(PaginatorState.UPPERCASE_ROMAN))
+                    && (codePointClass.equals(PaginatorState.LOWERCASE_ROMAN)
+                            || codePointClass.equals(PaginatorState.UPPERCASE_ROMAN)))
+                    || ((paginatorState.equals(PaginatorState.LOWERCASE_ROMAN)
+                            || paginatorState.equals(PaginatorState.UPPERCASE_ROMAN))
                             && codePointClass.equals(PaginatorState.TEXT))) {
                 /*
-                 * If we got text, and the content of the stringBuilder is a Roman numeral, or the
-                 * other way round, we can still write to the stringBuilder, but the result of the
-                 * operation is always text. This is an important catch in order to, for
+                 * If we got text, and the content of the stringBuilder is a Roman numeral, or
+                 * the other way round, we can still write to the stringBuilder, but the result
+                 * of the operation is always text. This is an important catch in order to, for
                  * example, prevent the C in ‘Chapter’ start counting. (Remember, Roman numeral
                  * C is 100.)
                  */
@@ -124,9 +126,10 @@ public class Paginator implements Iterator<String> {
     }
 
     /**
-     * Stores the stringBuilder as fragment and resets the stringBuilder. The type of fragment is
-     * derived from the the stringBuilder’s PaginatorState and the page directive. A page directive
-     * causes what is immediately thereafter to be treated as text in any case.
+     * Stores the stringBuilder as fragment and resets the stringBuilder. The type
+     * of fragment is derived from the the stringBuilder’s PaginatorState and the
+     * page directive. A page directive causes what is immediately thereafter to be
+     * treated as text in any case.
      *
      * @param stringBuilder
      *            characters
@@ -138,9 +141,10 @@ public class Paginator implements Iterator<String> {
     private void createFragment(StringBuilder stringBuilder, PaginatorState fragmentType, Boolean pageType) {
         if (pageType == null && fragmentType.equals(PaginatorState.DECIMAL)) {
             fragments.addLast(new DecimalNumeral(stringBuilder.toString()));
-        } else if (pageType == null
-                && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN) || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
-            fragments.addLast(new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
+        } else if (pageType == null && (fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)
+                || fragmentType.equals(PaginatorState.LOWERCASE_ROMAN))) {
+            fragments.addLast(
+                new RomanNumeral(stringBuilder.toString(), fragmentType.equals(PaginatorState.UPPERCASE_ROMAN)));
         } else if (fragmentType.equals(PaginatorState.INCREMENT)) {
             fragments.peekLast().setIncrement(HalfInteger.valueOf(stringBuilder.toString()));
         } else if (!fragmentType.equals(PaginatorState.EMPTY)) {
@@ -193,9 +197,10 @@ public class Paginator implements Iterator<String> {
             if (firstFragment.getIncrement() == null) {
                 firstFragment.setIncrement(new HalfInteger(1, false));
             }
-        } else if (firstFragment.getInitialValue() <= lastFragment.getInitialValue()) { /*
-                                                           * more than one counting element in left-to-right order
-                                                           */
+        } else if (firstFragment.getInitialValue() <= lastFragment
+                .getInitialValue()) { /*
+                                       * more than one counting element in left-to-right order
+                                       */
             valueFull = firstFragment.getInitialValue();
             Fragment previousFragment = null;
             int howMany = 0;
@@ -205,14 +210,16 @@ public class Paginator implements Iterator<String> {
                 }
 
                 if (previousFragment != null && previousFragment.getIncrement() == null) {
-                    previousFragment.setIncrement(new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
+                    previousFragment.setIncrement(
+                        new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
                 }
 
                 previousFragment = fragment;
                 howMany++;
             }
             if (lastFragment.getIncrement() == null) {
-                lastFragment.setIncrement(new HalfInteger((lastFragment.getInitialValue() - firstFragment.getInitialValue()) / (howMany - 1), false));
+                lastFragment.setIncrement(new HalfInteger(
+                        (lastFragment.getInitialValue() - firstFragment.getInitialValue()) / (howMany - 1), false));
             }
 
         } else { // more than one counting element in right-to-left order
@@ -228,13 +235,15 @@ public class Paginator implements Iterator<String> {
                 }
 
                 if (previousFragment != null && previousFragment.getIncrement() == null) {
-                    previousFragment.setIncrement(new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
+                    previousFragment.setIncrement(
+                        new HalfInteger(fragment.getInitialValue() - previousFragment.getInitialValue(), false));
                 }
                 previousFragment = fragment;
                 howMany++;
             }
             if (firstFragment.getIncrement() == null) {
-                firstFragment.setIncrement(new HalfInteger((firstFragment.getInitialValue() - lastFragment.getInitialValue()) / (howMany - 1), false));
+                firstFragment.setIncrement(new HalfInteger(
+                        (firstFragment.getInitialValue() - lastFragment.getInitialValue()) / (howMany - 1), false));
             }
 
         }
