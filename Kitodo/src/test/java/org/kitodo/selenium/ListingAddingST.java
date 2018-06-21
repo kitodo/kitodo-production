@@ -111,8 +111,7 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getLdapGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLoginAsAdmin();
+
         boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getListOfLdapGroupNames()
                 .contains(ldapGroup.getTitle());
 
@@ -128,8 +127,6 @@ public class ListingAddingST extends BaseTestSelenium {
         client.setName("MockClient");
         Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLoginAsAdmin();
         boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
         Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
@@ -145,8 +142,6 @@ public class ListingAddingST extends BaseTestSelenium {
         Pages.getUserGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
-        Pages.getTopNavigation().logout();
-        Pages.getLoginPage().performLoginAsAdmin();
 
         List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
                 .getListOfUserGroupTitles();
