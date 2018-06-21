@@ -11,28 +11,19 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.transport.Netty4Plugin;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
@@ -44,40 +35,20 @@ public class SearcherIT {
     private static Node node;
     private static IndexRestClient indexRestClient;
     private static String testIndexName;
-    private static String port;
-    private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static String query = "{\n\"match_all\" : {}\n}";
+    private static Searcher searcher = new Searcher("testsearch");
 
     @BeforeClass
-    @SuppressWarnings("unchecked")
     public static void prepareIndex() throws Exception {
-        final String nodeName = "searchernode";
+        MockEntity.setUpAwaitility();
+
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        port = ConfigMain.getParameter("elasticsearch.port", "9205");
         indexRestClient = initializeIndexRestClient();
 
-        Map settingsMap = MockEntity.prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
 
-        removeOldDataDirectories("target/" + nodeName);
-
-        Settings settings = Settings.builder().put(settingsMap).build();
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        node = MockEntity.prepareNode();
         node.start();
-    }
 
-    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
-        File dataDir = new File(dataDirectory);
-        if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
-        }
-    }
-
-    @AfterClass
-    public static void cleanIndex() throws Exception {
-        node.close();
-    }
-
-    @Before
-    public void createIndex() throws Exception {
         indexRestClient.createIndex();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
@@ -86,176 +57,122 @@ public class SearcherIT {
         indexRestClient.enableSortingByTextField("testsearch", "title");
     }
 
-    @After
-    public void deleteIndex() throws Exception {
+    @AfterClass
+    public static void cleanIndex() throws Exception {
         indexRestClient.deleteIndex();
+        node.close();
     }
 
     @Test
-    public void shouldCountDocuments() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
-
-        String query = "{\n\"match_all\" : {}\n}";
-        Long result = searcher.countDocuments(query);
-        Long expected = Long.valueOf("4");
-        assertEquals("Amount of documents doesn't match to given number!", expected, result);
+    public void shouldCountDocuments() {
+        await().untilAsserted(() -> assertEquals("Amount of documents doesn't match to given number!", 4,
+            searcher.countDocuments(query).longValue()));
     }
 
     @Test
-    public void shouldAggregateDocumentsAccordingToQuery() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
-
-        String query = "{\n\"match_all\" : {}\n}";
+    public void shouldAggregateDocumentsAccordingToQueryAmount() {
         String aggregation = "{\"amount\" : {\"sum\" : { \"field\" : \"amount\" }}}";
-        JsonObject result = searcher.aggregateDocuments(query, aggregation);
-        JsonObject jsonObject = result.getJsonObject("amount");
-        Double amount = jsonObject.getJsonNumber("value").doubleValue();
-        assertEquals("Incorrect result - amount doesn't match to given number!", Double.valueOf(8.0), amount);
+        await().untilAsserted(() -> assertTrue("Incorrect result - amount doesn't match to given number!",
+            searcher.aggregateDocuments(query, aggregation).getJsonObject("amount").getJsonNumber("value").doubleValue() == 8.0));
 
-        query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
-        result = searcher.aggregateDocuments(query, aggregation);
-        jsonObject = result.getJsonObject("amount");
-        amount = jsonObject.getJsonNumber("value").doubleValue();
-        assertEquals("Incorrect result - amount doesn't match to given number!", Double.valueOf(6.0), amount);
-
-        query = "{\n\"match_all\" : {}\n}";
-        aggregation = "{\"count\" : {\"value_count\" : { \"field\" : \"amount\" }}}";
-        result = searcher.aggregateDocuments(query, aggregation);
-        jsonObject = result.getJsonObject("count");
-        Long count = jsonObject.getJsonNumber("value").longValue();
-        assertEquals("Incorrect result - count doesn't match to given number!", Long.valueOf(4), count);
-
-        query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
-        result = searcher.aggregateDocuments(query, aggregation);
-        jsonObject = result.getJsonObject("count");
-        count = jsonObject.getJsonNumber("value").longValue();
-        assertEquals("Incorrect result - count doesn't match to given number!", Long.valueOf(3), count);
+        String query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
+        await().untilAsserted(() -> assertTrue("Incorrect result - amount doesn't match to given number!",
+            searcher.aggregateDocuments(query, aggregation).getJsonObject("amount").getJsonNumber("value").doubleValue() == 6.0));
     }
 
     @Test
-    public void shouldFindDocumentById() throws Exception {
-        Searcher searcher = new Searcher("testsearch");
-        JsonObject result = searcher.findDocument(1);
-        JsonObject jsonObject = result.getJsonObject("_source");
-        String actual = jsonObject.getString("title");
+    public void shouldAggregateDocumentsAccordingToQueryCount() {
+        String aggregation = "{\"count\" : {\"value_count\" : { \"field\" : \"amount\" }}}";
+        await().untilAsserted(
+            () -> assertEquals("Incorrect result - count doesn't match to given number!", 4, searcher.aggregateDocuments(SearcherIT.query, aggregation).getJsonObject("count").getJsonNumber("value").longValue()));
 
-        boolean condition = getIdFromJSONObject(result).equals(1);
-        assertTrue("Incorrect result - id doesn't match to given plain text!", condition);
-
-        condition = actual.equals("Batch1");
-        assertTrue("Incorrect result - title doesn't match to given plain text!", condition);
+        String query = "{\n\"match\" : {\n\"type\" : \"null\"}\n}";
+        await().untilAsserted(
+            () -> assertEquals("Incorrect result - count doesn't match to given number!", 3, searcher.aggregateDocuments(query, aggregation).getJsonObject("count").getJsonNumber("value").longValue()));
     }
 
     @Test
-    public void shouldFindDocumentByQuery() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
+    public void shouldFindDocumentById() {
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given plain text!", 1,
+            getIdFromJSONObject(searcher.findDocument(1)).longValue()));
 
-        String query = "{\n\"match_all\" : {}\n}";
-        JsonObject result = searcher.findDocument(query);
-        JsonObject jsonObject = result.getJsonObject("_source");
-        Integer id = getIdFromJSONObject(result);
-        assertEquals("Incorrect result - id doesn't match to given number!", 1, id.intValue());
-        String title = jsonObject.getString("title");
-        assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
-
-        query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
-        result = searcher.findDocument(query);
-        jsonObject = result.getJsonObject("_source");
-        id = getIdFromJSONObject(result);
-        assertEquals("Incorrect result - id doesn't match to given plain text!", 1, id.intValue());
-        title = jsonObject.getString("title");
-        assertEquals("Incorrect result - title doesn't match to given plain text!", "Batch1", title);
-
-        query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
-        result = searcher.findDocument(query);
-        id = getIdFromJSONObject(result);
-        assertEquals("Incorrect result - id has another value than null!", Integer.valueOf(0), id);
+        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
+            "Batch1", searcher.findDocument(1).getJsonObject("_source").getString("title")));
     }
 
     @Test
-    public void shouldFindDocumentByQueryAndSort() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
+    public void shouldFindDocumentByQuery() {
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given number!", 1,
+            getIdFromJSONObject(searcher.findDocument(query)).intValue()));
 
-        String query = "{\n\"match_all\" : {}\n}";
+        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
+            "Batch1", searcher.findDocument(query).getJsonObject("_source").getString("title")));
+
+        String query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given plain text!", 1,
+            getIdFromJSONObject(searcher.findDocument(query)).intValue()));
+
+        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!",
+            "Batch1", searcher.findDocument(query).getJsonObject("_source").getString("title")));
+
+        String queryNonexistent = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
+        await().untilAsserted(() -> assertEquals("Incorrect result - id has another value than null!",
+            Integer.valueOf(0), getIdFromJSONObject(searcher.findDocument(queryNonexistent))));
+    }
+
+    @Test
+    public void shouldFindDocumentByQueryAndSort() {
         String sort = "{\"title\" : {\"order\" : \"desc\"}}";
-        JsonObject result = searcher.findDocument(query, sort);
-        JsonObject jsonObject = result.getJsonObject("_source");
-        Integer id = getIdFromJSONObject(result);
-        assertEquals("Incorrect result - id doesn't match to given number!", 2, id.intValue());
-        String title = jsonObject.getString("title");
-        assertEquals("Incorrect result - title doesn't match to given plain text!", "Sort", title);
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given number!", 2,
+            getIdFromJSONObject(searcher.findDocument(query, sort)).intValue()));
+
+        await().untilAsserted(() -> assertEquals("Incorrect result - title doesn't match to given plain text!", "Sort",
+            searcher.findDocument(query, sort).getJsonObject("_source").getString("title")));
     }
 
     @Test
-    public void shouldFindDocumentsByQuery() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
+    public void shouldFindDocumentsByQuery() {
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 1,
+            getIdFromJSONObject(searcher.findDocuments(query).get(0)).intValue()));
 
-        String query = "{\n\"match_all\" : {}\n}";
-        List<JsonObject> result = searcher.findDocuments(query);
-        Integer id = getIdFromJSONObject(result.get(0));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - size doesn't match to given int value!", 4,
+            searcher.findDocuments(query).size()));
 
-        int size = result.size();
-        assertEquals("Incorrect result - size doesn't match to given int value!", 4, size);
+        String queryMatch = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 1,
+            getIdFromJSONObject(searcher.findDocuments(queryMatch).get(0)).intValue()));
 
-        query = "{\n\"match\" : {\n\"title\" : \"Batch1\"}\n}";
-        result = searcher.findDocuments(query);
-        id = getIdFromJSONObject(result.get(0));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 1, id.intValue());
-        size = result.size();
-        assertEquals("Incorrect result - size doesn't match to given int value!", 1, size);
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - size doesn't match to given int value!", 1,
+            searcher.findDocuments(queryMatch).size()));
 
-        query = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
-        result = searcher.findDocuments(query);
-        size = result.size();
-        assertEquals("Incorrect result - size is bigger than 0!", 0, size);
+        String queryNonexistent = "{\n\"match\" : {\n\"title\" : \"Nonexistent\"}\n}";
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - size is bigger than 0!", 0,
+            searcher.findDocuments(queryNonexistent).size()));
     }
 
     @Test
-    public void shouldFindDocumentsByQueryAndSort() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
-
-        String query = "{\n\"match_all\" : {}\n}";
+    public void shouldFindDocumentsByQueryAndSort() {
         String sort = "{\"title\" : {\"order\" : \"desc\"}}";
-        List<JsonObject> result = searcher.findDocuments(query, sort);
-        Integer id = getIdFromJSONObject(result.get(0));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 2, id.intValue());
+
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 2,
+            getIdFromJSONObject(searcher.findDocuments(query, sort).get(0)).intValue()));
     }
 
     @Test
-    public void shouldFindDocumentsByQueryAndPagination() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
-
-        String query = "{\n\"match_all\" : {}\n}";
-        Integer offset = 1;
-        Integer size = 2;
-        List<JsonObject> result = searcher.findDocuments(query, offset, size);
-        Integer id = getIdFromJSONObject(result.get(0));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 2, id.intValue());
+    public void shouldFindDocumentsByQueryAndPagination() {
+        await().ignoreExceptions().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 2,
+            getIdFromJSONObject(searcher.findDocuments(query, 1, 2).get(0)).intValue()));
     }
 
     @Test
-    public void shouldFindDocumentsByQuerySortAndPagination() throws Exception {
-        Thread.sleep(2000);
-        Searcher searcher = new Searcher("testsearch");
-
-        String query = "{\n\"match_all\" : {}\n}";
+    public void shouldFindDocumentsByQuerySortAndPagination() {
         String sort = "{\"title\" : {\"order\" : \"desc\"}}";
-        Integer offset = 1;
-        Integer size = 2;
-        List<JsonObject> result = searcher.findDocuments(query, sort, offset, size);
-        Integer id = getIdFromJSONObject(result.get(0));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 4, id.intValue());
 
-        id = getIdFromJSONObject(result.get(1));
-        assertEquals("Incorrect result - id doesn't match to given int values!", 3, id.intValue());
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 4,
+            getIdFromJSONObject(searcher.findDocuments(query, sort, 1, 2).get(0)).intValue()));
+
+        await().untilAsserted(() -> assertEquals("Incorrect result - id doesn't match to given int values!", 3,
+            getIdFromJSONObject(searcher.findDocuments(query, sort, 1, 2).get(1)).intValue()));
     }
 
     private static IndexRestClient initializeIndexRestClient() {

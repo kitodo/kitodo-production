@@ -11,22 +11,55 @@
 
 package org.kitodo.data.elasticsearch;
 
+import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.awaitility.Awaitility;
+import org.awaitility.Duration;
+import org.elasticsearch.common.io.FileSystemUtils;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.transport.Netty4Plugin;
+import org.kitodo.config.ConfigMain;
+
 
 /**
  * Mock entities for ElasticSearch classes.
  */
 public class MockEntity {
 
+    private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static final  String NODE_NAME = "indexernode";
+
     @SuppressWarnings("unchecked")
-    public static Map prepareNodeSettings(String httpPort, String httpTransportPort, String nodeName) {
+    public static Node prepareNode() throws Exception {
+        Map settingsMap = MockEntity.prepareNodeSettings();
+
+        removeOldDataDirectories("target/" + NODE_NAME);
+
+        Settings settings = Settings.builder().put(settingsMap).build();
+        return new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+    }
+
+    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
+        File dataDir = new File(dataDirectory);
+        if (dataDir.exists()) {
+            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map prepareNodeSettings() {
+        String port = ConfigMain.getParameter("elasticsearch.port", "9205");
+
         Map settingsMap = new HashMap();
-        settingsMap.put("node.name", nodeName);
+        settingsMap.put("node.name", NODE_NAME);
         // create all data directories under Maven build directory
         settingsMap.put("path.conf", "target");
         settingsMap.put("path.data", "target");
@@ -34,12 +67,18 @@ public class MockEntity {
         settingsMap.put("path.home", "target");
         // set ports used by Elastic Search to something different than default
         settingsMap.put("http.type", "netty4");
-        settingsMap.put("http.port", httpPort);
-        settingsMap.put("transport.tcp.port", httpTransportPort);
+        settingsMap.put("http.port", port);
+        settingsMap.put("transport.tcp.port", HTTP_TRANSPORT_PORT);
         settingsMap.put("transport.type", "netty4");
         // disable automatic index creation
         settingsMap.put("action.auto_create_index", "false");
         return settingsMap;
+    }
+
+    public static void setUpAwaitility() {
+        Awaitility.setDefaultPollInterval(10, TimeUnit.MILLISECONDS);
+        Awaitility.setDefaultPollDelay(Duration.ZERO);
+        Awaitility.setDefaultTimeout(Duration.TWO_SECONDS);
     }
 
     public static HashMap<Integer, HttpEntity> createEntities() {
