@@ -53,7 +53,7 @@ public class StaticText implements Fragment {
     }
 
     @Override
-    public Integer intValue() {
+    public Integer getInitialValue() {
         return null;
     }
 

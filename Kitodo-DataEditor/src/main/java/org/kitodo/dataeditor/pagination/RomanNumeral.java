@@ -163,7 +163,7 @@ public class RomanNumeral implements Fragment {
     }
 
     @Override
-    public Integer intValue() {
+    public Integer getInitialValue() {
         return value;
     }
 

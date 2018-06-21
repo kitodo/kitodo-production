@@ -462,7 +462,7 @@ public class MetsKitodoWrapperTest {
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv();
 
         Paginator paginator = new Paginator("III");
-        paginator.run(physicalDivs);
+        paginator.writeToOrderLabelsOfDiyTypes(physicalDivs);
 
         DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(9);
         Assert.assertEquals("","XII",divType.getORDERLABEL());

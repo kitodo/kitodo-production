@@ -54,7 +54,7 @@ public class PaginatorTest {
     }
 
     @Test
-    public void inteleavePagination() {
+    public void interleavePagination() {
         Paginator p = new Paginator("1²");
         assertEquals("1", p.next());
         assertEquals("3", p.next());
@@ -72,7 +72,7 @@ public class PaginatorTest {
     }
 
     @Test
-    public void inteleavePaginationHalf() {
+    public void interleavePaginationHalf() {
         Paginator p = new Paginator("1½");
         assertEquals("1", p.next());
         assertEquals("1", p.next());

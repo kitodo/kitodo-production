@@ -48,7 +48,7 @@ interface Fragment {
      *
      * @return the pagination start value
      */
-    Integer intValue();
+    Integer getInitialValue();
 
     /**
      * Sets the increment of the fragment.

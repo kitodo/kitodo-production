@@ -13,36 +13,33 @@ package org.kitodo.dataeditor.pagination;
 
 public class HalfInteger extends Number {
     private static final long serialVersionUID = 1L;
-
-    /**
-     * A constant value of one.
-     */
-    static final HalfInteger ONE = new HalfInteger(1, false);
+    private final boolean halfAboveValue;
+    private final int value;
 
     static HalfInteger valueOf(String string) {
-        int x = 0;
-        int y = 0;
-        boolean z = false;
+        int mainIncrement = 0;
+        int halfIncrement = 0;
+        boolean doHalfIncrement = false;
         for (int i = 0; i < string.length();) {
             final int codePoint = string.codePointAt(i);
-            x *= 10;
+            mainIncrement *= 10;
             switch (codePoint) {
                 case '°':
                     break;
                 case '¹':
-                    x += 1;
+                    mainIncrement += 1;
                     break;
                 case '²':
-                    x += 2;
+                    mainIncrement += 2;
                     break;
                 case '³':
-                    x += 3;
+                    mainIncrement += 3;
                     break;
                 case '½':
-                    if (z) {
-                        y++;
+                    if (doHalfIncrement) {
+                        halfIncrement++;
                     }
-                    z = !z;
+                    doHalfIncrement = !doHalfIncrement;
                     break;
                 case '⁰':
                     break;
@@ -51,45 +48,41 @@ public class HalfInteger extends Number {
             }
             i += Character.charCount(codePoint);
         }
-        return new HalfInteger(x + y, z);
+        return new HalfInteger(mainIncrement + halfIncrement, doHalfIncrement);
     }
-
-    private final boolean aHalf;
-
-    private final int value;
 
     /**
      * Creates a new half integer.
      * 
      * @param value
      *            integer value
-     * @param aHalf
+     * @param halfAboveValue
      *            if true, is one half above the value
      */
-    public HalfInteger(int value, boolean aHalf) {
+    public HalfInteger(int value, boolean halfAboveValue) {
         this.value = value;
-        this.aHalf = aHalf;
+        this.halfAboveValue = halfAboveValue;
     }
 
     HalfInteger add(HalfInteger increment) {
         if (increment == null) {
             return this;
         }
-        if (aHalf && increment.aHalf) {
+        if (this.halfAboveValue && increment.halfAboveValue) {
             return new HalfInteger(value + increment.value + 1, false);
         } else {
-            return new HalfInteger(value + increment.value, aHalf || increment.aHalf);
+            return new HalfInteger(value + increment.value, halfAboveValue || increment.halfAboveValue);
         }
     }
 
     @Override
     public double doubleValue() {
-        return aHalf ? value + .5 : value;
+        return halfAboveValue ? value + .5 : value;
     }
 
     @Override
     public float floatValue() {
-        return aHalf ? value + .5f : value;
+        return halfAboveValue ? value + .5f : value;
     }
 
     @Override
@@ -98,7 +91,7 @@ public class HalfInteger extends Number {
     }
 
     boolean isHalf() {
-        return aHalf;
+        return halfAboveValue;
     }
 
     @Override
@@ -113,6 +106,6 @@ public class HalfInteger extends Number {
      */
     @Override
     public String toString() {
-        return aHalf ? Integer.toString(value).concat("½") : Integer.toString(value);
+        return halfAboveValue ? Integer.toString(value).concat("½") : Integer.toString(value);
     }
 }
