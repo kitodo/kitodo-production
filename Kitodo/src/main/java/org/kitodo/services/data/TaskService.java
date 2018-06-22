@@ -97,7 +97,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query to retrieve tasks for which the user eligible.
      */
     private BoolQueryBuilder createUserTaskQuery(User user) {
-
         BoolQueryBuilder subquery = new BoolQueryBuilder();
         subquery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), user.getId(), true));
         subquery.should(createSimpleQuery("users.id", user.getId(), true));
@@ -204,7 +203,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             throws CustomResponseException, DAOException, DataException, IOException {
         List<UserDTO> userDTOS = serviceManager.getUserService().findByProcessingTask(task.getId(), true);
         for (UserDTO userDTO : userDTOS) {
-            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()), false);
+            serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()),
+                false);
         }
     }
 
@@ -480,9 +480,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getName(), serviceManager.getUserService()));
-        taskDTO.setUserGroups(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getName(), serviceManager.getUserGroupService()));
+        taskDTO.setUsers(
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getName(), serviceManager.getUserService()));
+        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getName(),
+            serviceManager.getUserGroupService()));
     }
 
     /**
@@ -924,5 +925,25 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Integer projectId) {
         return dao.getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
             processingStatus, projectId);
+    }
+
+    /**
+     * Set up matching error messages for unreachable tasks. Unreachable task is
+     * this one which has no user / user groups assigned to itself. Other
+     * possibility is that given list is empty. It means that whole workflow is
+     * unreachable.
+     * 
+     * @param tasks
+     *            list of tasks for check
+     */
+    public void setUpErrorMessagesForUnreachableTasks(List<Task> tasks) {
+        if (tasks.isEmpty()) {
+            Helper.setErrorMessage("noStepsInWorkflow");
+        }
+        for (Task task : tasks) {
+            if (getUserGroupsSize(task) == 0 && getUsersSize(task) == 0) {
+                Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
+            }
+        }
     }
 }
