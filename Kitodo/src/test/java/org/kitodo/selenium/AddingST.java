@@ -25,72 +25,18 @@ import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
 
-public class ListingAddingST extends BaseTestSelenium {
+public class AddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
 
     @Test
-    public void securityAccessTest() throws Exception {
-        boolean expectedTrue = Pages.getTopNavigation().isShowingAllLinks();
-        Assert.assertTrue("Top navigation is not showing that current user is admin", expectedTrue);
-    }
-
-    @Test
-    public void listClientsTest() throws Exception {
-        Pages.getClientsPage().goTo();
-        int numberOfClientsInDatabase = serviceManager.getClientService().getAll().size();
-        int numberOfClientsDisplayed = Pages.getClientsPage().countListedClients();
-        Assert.assertEquals("Displayed wrong number of clients", numberOfClientsInDatabase, numberOfClientsDisplayed);
-    }
-
-    @Test
-    public void listProjectsTest() throws Exception {
-        Pages.getProjectsPage().goTo();
-        int numberOfProjectsInDatabase = serviceManager.getProjectService().getAll().size();
-        int numberOfProjectsDisplayed = Pages.getProjectsPage().countListedProjects();
-        Assert.assertEquals("Displayed wrong number of projects", numberOfProjectsInDatabase,
-            numberOfProjectsDisplayed);
-    }
-
-    @Test
-    public void listTemplatesTest() throws Exception {
-        Pages.getProjectsPage().goTo();
-        int numberOfTemplatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
-        int numberOfTemplatesDisplayed = Pages.getProjectsPage().countListedTemplates();
-        Assert.assertEquals("Displayed wrong number of templates", numberOfTemplatesInDatabase,
-            numberOfTemplatesDisplayed);
-    }
-
-    @Test
-    public void listProcessesTest() throws Exception {
-        Pages.getProcessesPage().goTo();
-        int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
-        int numberOfProcessesDisplayed = Pages.getProcessesPage().countListedProcesses();
-        Assert.assertEquals("Displayed wrong number of processes", numberOfProcessesInDatabase,
-            numberOfProcessesDisplayed);
-    }
-
-    @Test
-    public void listUsersTest() throws Exception {
-        int numberOfUsersInDatabase = serviceManager.getUserService().getAll().size();
-        int numberOfUsersDisplayed = Pages.getUsersPage().goTo().countListedUsers();
-        Assert.assertEquals("Displayed wrong number of users", numberOfUsersInDatabase, numberOfUsersDisplayed);
-    }
-
-    @Test
-    public void listUserGroupsTest() throws Exception {
-        int numberOfUserGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
-        int numberOfUserGroupsDisplayed = Pages.getUsersPage().goTo().countListedUserGroups();
-        Assert.assertEquals("Displayed wrong number of user groups", numberOfUserGroupsInDatabase,
-            numberOfUserGroupsDisplayed);
-    }
-
-    @Test
-    public void listLdapGroupsTest() throws Exception {
-        int numberOfLdapGroupsInDatabase = serviceManager.getLdapGroupService().getAll().size();
-        int numberOfLdapGroupsDisplayed = Pages.getUsersPage().goTo().switchToTabByIndex(2).countListedLdapGroups();
-        Assert.assertEquals("Displayed wrong number of ldap groups!", numberOfLdapGroupsInDatabase,
-            numberOfLdapGroupsDisplayed);
+    public void addClientTest() throws Exception {
+        Client client = new Client();
+        client.setName("MockClient");
+        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
+        boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
+        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
     @Test
@@ -122,16 +68,6 @@ public class ListingAddingST extends BaseTestSelenium {
     }
 
     @Test
-    public void addClientTest() throws Exception {
-        Client client = new Client();
-        client.setName("MockClient");
-        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
-        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
-        boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
-        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
-    }
-
-    @Test
     public void addUserGroupTest() throws Exception {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
@@ -151,7 +87,7 @@ public class ListingAddingST extends BaseTestSelenium {
         int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
                 .countAssignedGlobalAuthorities();
         Assert.assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
-            assignedGlobalAuthorities);
+                assignedGlobalAuthorities);
 
         String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
         Assert.assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
@@ -159,11 +95,11 @@ public class ListingAddingST extends BaseTestSelenium {
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
         int assignedClientAuthorities = Pages.getUserGroupEditPage().countAssignedClientAuthorities();
         Assert.assertEquals("Assigned client authorities of the new user group were not saved!",
-            availableClientAuthorities, assignedClientAuthorities);
+                availableClientAuthorities, assignedClientAuthorities);
 
         int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
         int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
         Assert.assertEquals("Assigned project authorities of the new user group were not saved!",
-            availableProjectAuthorities, assignedProjectAuthorities);
+                availableProjectAuthorities, assignedProjectAuthorities);
     }
 }
