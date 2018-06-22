@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -101,4 +103,29 @@ public class ProjectFileGroup extends BaseBean {
         this.previewImage = previewImage;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ProjectFileGroup that = (ProjectFileGroup) o;
+        return previewImage == that.previewImage
+            && Objects.equals(name, that.name)
+            && Objects.equals(path, that.path)
+            && Objects.equals(mimeType, that.mimeType)
+            && Objects.equals(suffix, that.suffix)
+            && Objects.equals(folder, that.folder)
+            && Objects.equals(project, that.project);
+    }
+
+    /**
+     * Returns a hash code value for the object.
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, path, mimeType, suffix, folder, previewImage);
+    }
 }

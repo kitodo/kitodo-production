@@ -14,6 +14,7 @@ package org.kitodo.data.database.beans;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -290,5 +291,27 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
         } else {
             return valueMatch;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Property property = (Property) o;
+        return Objects.equals(title, property.title)
+            && Objects.equals(value, property.value)
+            && Objects.equals(obligatory, property.obligatory)
+            && Objects.equals(dataType, property.dataType)
+            && Objects.equals(choice, property.choice)
+            && Objects.equals(creationDate, property.creationDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, value, obligatory, dataType, choice, creationDate);
     }
 }

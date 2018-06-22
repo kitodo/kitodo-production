@@ -161,4 +161,24 @@ public class Workflow extends BaseIndexedBean {
     public void setTemplates(List<Template> templates) {
         this.templates = templates;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Workflow workflow = (Workflow) o;
+        return Objects.equals(title, workflow.title)
+            && Objects.equals(fileName, workflow.fileName)
+            && Objects.equals(active, workflow.active)
+            && Objects.equals(ready, workflow.ready);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, fileName, active, ready);
+    }
 }

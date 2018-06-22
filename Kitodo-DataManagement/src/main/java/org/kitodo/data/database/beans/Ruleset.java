@@ -118,4 +118,24 @@ public class Ruleset extends BaseIndexedBean {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Ruleset ruleset = (Ruleset) o;
+        return Objects.equals(title, ruleset.title)
+            && Objects.equals(file, ruleset.file)
+            && Objects.equals(orderMetadataByRuleset, ruleset.orderMetadataByRuleset)
+            && Objects.equals(active, ruleset.active);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, file, orderMetadataByRuleset, active);
+    }
 }

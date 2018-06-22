@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -94,5 +95,24 @@ public class Filter extends BaseIndexedBean {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Filter filter = (Filter) o;
+        return Objects.equals(value, filter.value)
+            && Objects.equals(creationDate, filter.creationDate)
+            && Objects.equals(user, filter.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, creationDate, user);
     }
 }

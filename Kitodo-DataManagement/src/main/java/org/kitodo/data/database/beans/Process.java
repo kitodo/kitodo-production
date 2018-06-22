@@ -425,4 +425,11 @@ public class Process extends BaseTemplateBean {
                 && Objects.equals(getOutputName(), process.getOutputName())
                 && Objects.equals(getCreationDate(), process.getCreationDate());
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sortHelperImages, sortHelperArticles, sortHelperMetadata, sortHelperDocstructs,
+            processBaseUri, docket, project, ruleset, template, tasks, properties, templates, workpieces, batches,
+            blockedUser, blockedMinutes, blockedSeconds);
+    }
 }
