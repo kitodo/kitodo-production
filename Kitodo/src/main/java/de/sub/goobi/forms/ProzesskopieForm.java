@@ -314,6 +314,7 @@ public class ProzesskopieForm implements Serializable {
         this.rdf = null;
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
+        this.prozessKopie.setTemplate(this.template);
         this.prozessKopie.setProject(this.template.getProject());
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.prozessKopie.setDocket(this.template.getDocket());
