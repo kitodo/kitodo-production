@@ -31,6 +31,14 @@ public class ProjectsPage extends Page {
     @FindBy(id = "projectsTabView:templateTable_data")
     private WebElement templatesTable;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:docketTable_data")
+    private WebElement docketsTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:rulesetTable_data")
+    private WebElement rulesetsTable;
+
     public ProjectsPage() {
        super("pages/projects.jsf");
     }
@@ -71,6 +79,20 @@ public class ProjectsPage extends Page {
             goTo();
         }
         return getRowsOfTable(templatesTable).size();
+    }
+
+    public int countListedDockets() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getRowsOfTable(docketsTable).size();
+    }
+
+    public int countListedRulesets() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getRowsOfTable(rulesetsTable).size();
     }
 
 }

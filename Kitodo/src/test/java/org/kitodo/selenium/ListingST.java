@@ -54,6 +54,24 @@ public class ListingST extends BaseTestSelenium {
     }
 
     @Test
+    public void listDocketsTest() throws Exception {
+        Pages.getProjectsPage().goTo();
+        int numberOfDocketsTInDatabase = serviceManager.getDocketService().getAll().size();
+        int numberOfDocketsTDisplayed = Pages.getProjectsPage().countListedDockets();
+        Assert.assertEquals("Displayed wrong number of dockets", numberOfDocketsTInDatabase,
+                numberOfDocketsTDisplayed);
+    }
+
+    @Test
+    public void listRulesetsTest() throws Exception {
+        Pages.getProjectsPage().goTo();
+        int numberOfRulesetsInDatabase = serviceManager.getRulesetService().getAll().size();
+        int numberOfRulesetsDisplayed = Pages.getProjectsPage().countListedRulesets();
+        Assert.assertEquals("Displayed wrong number of rulesets", numberOfRulesetsInDatabase,
+                numberOfRulesetsDisplayed);
+    }
+
+    @Test
     public void listProcessesTest() throws Exception {
         Pages.getProcessesPage().goTo();
         int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
