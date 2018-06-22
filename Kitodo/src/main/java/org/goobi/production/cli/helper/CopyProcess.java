@@ -52,7 +52,6 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
@@ -92,7 +91,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     // TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
-        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
+        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             return "";
         }
 
@@ -124,7 +123,7 @@ public class CopyProcess extends ProzesskopieForm {
             logger.error(e.getMessage());
             return null;
         }
-        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
+        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             for (Task s : this.template.getTasks()) {
                 if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
                         && serviceManager.getTaskService().getUsersSize(s) == 0) {

@@ -109,7 +109,7 @@ public class MassImportForm implements Serializable {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
+        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
             serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return null;
         }

@@ -90,9 +90,9 @@ public class TemplateServiceIT {
     }
 
     @Test
-    public void shouldGetContainsUnreachableSteps() throws Exception {
+    public void shouldGetContainsUnreachableTasks() throws Exception {
         Template template = templateService.getById(1);
-        boolean condition = templateService.containsBeanUnreachableSteps(template.getTasks());
+        boolean condition = templateService.containsUnreachableTasks(template.getTasks());
         assertTrue("Process contains unreachable tasks!", !condition);
 
         TemplateDTO templateDTO = templateService.findById(1);
@@ -100,7 +100,7 @@ public class TemplateServiceIT {
         assertTrue("Process DTO contains unreachable tasks!", !condition);
 
         template = templateService.getById(3);
-        condition = templateService.containsBeanUnreachableSteps(template.getTasks());
+        condition = templateService.containsUnreachableTasks(template.getTasks());
         assertTrue("Process doesn't contain unreachable tasks!", condition);
 
         templateDTO = templateService.findById(3);

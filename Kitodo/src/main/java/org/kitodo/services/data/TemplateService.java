@@ -272,7 +272,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            list of tasks for testing
      * @return true or false
      */
-    public boolean containsBeanUnreachableSteps(List<Task> tasks) {
+    public boolean containsUnreachableTasks(List<Task> tasks) {
         TaskService taskService = serviceManager.getTaskService();
         if (tasks.isEmpty()) {
             return true;
