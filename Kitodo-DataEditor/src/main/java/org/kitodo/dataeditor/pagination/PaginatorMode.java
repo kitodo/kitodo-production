@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * Contants for the pagination modes selectable by image buttons.
- *
- * @author Matthias Ronge
  */
 public enum PaginatorMode {
     /**

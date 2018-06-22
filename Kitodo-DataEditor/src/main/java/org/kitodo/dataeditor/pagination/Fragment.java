@@ -15,8 +15,6 @@ package org.kitodo.dataeditor.pagination;
  * A fragment of a pagination sequence. Paginations can be freely combined out
  * of fragments that can be a {@link DecimalNumeral}, a {@link RomanNumeral} or
  * {@link StaticText}.
- *
- * @author Matthias Ronge
  */
 interface Fragment {
     /**

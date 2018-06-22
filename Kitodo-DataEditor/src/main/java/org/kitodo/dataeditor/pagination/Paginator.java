@@ -19,8 +19,6 @@ import org.kitodo.dataformat.metskitodo.DivType;
 
 /**
  * Class to generate different sorts of paginations.
- *
- * @author Matthias Ronge
  */
 public class Paginator implements Iterator<String> {
 

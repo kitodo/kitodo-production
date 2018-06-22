@@ -13,8 +13,6 @@ package org.kitodo.dataeditor.pagination;
 
 /**
  * A roman numeral as part of a pagination sequence.
- *
- * @author Matthias Ronge
  */
 public class RomanNumeral implements Fragment {
     /**

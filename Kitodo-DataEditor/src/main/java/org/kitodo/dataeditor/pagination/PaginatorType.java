@@ -16,8 +16,6 @@ import java.util.Map;
 
 /**
  * Constants for the pagination types selectable from a drop-down menu.
- *
- * @author Matthias Ronge
  */
 public enum PaginatorType {
     /**

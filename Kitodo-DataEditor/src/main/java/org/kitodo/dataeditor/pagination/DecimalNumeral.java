@@ -13,8 +13,6 @@ package org.kitodo.dataeditor.pagination;
 
 /**
  * A decimal numeral as part of a pagination sequence.
- *
- * @author Matthias Ronge
  */
 public class DecimalNumeral implements Fragment {
 

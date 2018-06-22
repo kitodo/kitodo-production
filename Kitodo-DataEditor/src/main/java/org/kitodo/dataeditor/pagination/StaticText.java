@@ -14,8 +14,6 @@ package org.kitodo.dataeditor.pagination;
 /**
  * A static piece of text as part of a pagination sequence. The text may either
  * appear on the front, back, or both sides of a sheet.
- *
- * @author Matthias Ronge
  */
 public class StaticText implements Fragment {
 
