@@ -16,7 +16,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -37,6 +39,30 @@ public class AddingST extends BaseTestSelenium {
         Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
         boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
         Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
+    }
+
+    @Test
+    public void addDocketTest() throws Exception {
+        Docket docket = new Docket();
+        docket.setTitle("MockDocket");
+        docket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
+        Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        List<String> listOfDocketTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(3).getListOfDocketTitles();
+        boolean docketAvailable = listOfDocketTitles.contains(docket.getTitle());
+        Assert.assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
+    }
+
+    @Test
+    public void addRulesetTest() throws Exception {
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle("MockRuleset");
+        ruleset.setFile("ruleset_test.xml");
+        Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        List<String> listOfRulesetTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(4).getListOfRulesetTitles();
+        boolean rulesetAvailable = listOfRulesetTitles.contains(ruleset.getTitle());
+        Assert.assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
     @Test
@@ -87,7 +113,7 @@ public class AddingST extends BaseTestSelenium {
         int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
                 .countAssignedGlobalAuthorities();
         Assert.assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
-                assignedGlobalAuthorities);
+            assignedGlobalAuthorities);
 
         String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
         Assert.assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
@@ -95,11 +121,11 @@ public class AddingST extends BaseTestSelenium {
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
         int assignedClientAuthorities = Pages.getUserGroupEditPage().countAssignedClientAuthorities();
         Assert.assertEquals("Assigned client authorities of the new user group were not saved!",
-                availableClientAuthorities, assignedClientAuthorities);
+            availableClientAuthorities, assignedClientAuthorities);
 
         int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
         int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
         Assert.assertEquals("Assigned project authorities of the new user group were not saved!",
-                availableProjectAuthorities, assignedProjectAuthorities);
+            availableProjectAuthorities, assignedProjectAuthorities);
     }
 }

@@ -13,12 +13,14 @@ package org.kitodo.selenium.testframework;
 
 import org.kitodo.selenium.testframework.pages.ClientEditPage;
 import org.kitodo.selenium.testframework.pages.ClientsPage;
+import org.kitodo.selenium.testframework.pages.DocketEditPage;
 import org.kitodo.selenium.testframework.pages.HelpPage;
 import org.kitodo.selenium.testframework.pages.IndexingPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.RulesetEditPage;
 import org.kitodo.selenium.testframework.pages.StartPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.selenium.testframework.pages.TopNavigationPage;
@@ -61,6 +63,14 @@ public class Pages {
 
     public static ProjectsPage getProjectsPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProjectsPage.class);
+    }
+
+    public static DocketEditPage getDocketEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(DocketEditPage.class);
+    }
+
+    public static RulesetEditPage getRulesetEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(RulesetEditPage.class);
     }
 
     public static StartPage getStartPage() throws InstantiationException, IllegalAccessException {

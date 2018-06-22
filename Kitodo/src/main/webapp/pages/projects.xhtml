@@ -19,23 +19,23 @@
         >
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
-        <h:form
-            rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
-            <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+        <h:form id="projectForm"
+                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
+            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick"
-                            immediate="true"
+                            id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>
                 <p:menuitem value="#{msgs.newProcessTemplate}" action="#{TemplateForm.newTemplate}"
-                            immediate="true" style="width: inherit;"
+                            id="newProcessTemplateButton" immediate="true" style="width: inherit;"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addTemplate')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newDocket}" action="#{DocketForm.newDocket}"
-                            immediate="true"
+                            id="newDocketButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addDocket')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addRuleset')}"
-                            icon="ui-icon-plusthick"/>
+                            id="newRulesetButton" icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
     </ui:define>
