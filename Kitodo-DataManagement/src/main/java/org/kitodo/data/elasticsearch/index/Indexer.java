@@ -58,16 +58,20 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *            bean object which will be added or deleted from index
      * @param baseType
      *            type on which will be called method createDocument()
+     * @param forceRefresh
+     *            force index refresh - if true, time of execution is longer but
+     *            object is right after that available for display
      */
     @SuppressWarnings("unchecked")
-    public void performSingleRequest(T baseIndexedBean, S baseType) throws IOException, CustomResponseException {
+    public void performSingleRequest(T baseIndexedBean, S baseType, boolean forceRefresh)
+            throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
         if (method == HTTPMethods.PUT) {
             HttpEntity document = baseType.createDocument(baseIndexedBean);
-            restClient.addDocument(document, baseIndexedBean.getId());
+            restClient.addDocument(document, baseIndexedBean.getId(), forceRefresh);
         } else if (method == HTTPMethods.DELETE) {
-            restClient.deleteDocument(baseIndexedBean.getId());
+            restClient.deleteDocument(baseIndexedBean.getId(), forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }
@@ -79,12 +83,16 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      *
      * @param beanId
      *            response from the server
+     * @param forceRefresh
+     *            force index refresh - if true, time of execution is longer but
+     *            object is right after that available for display
      */
-    public void performSingleRequest(Integer beanId) throws IOException, CustomResponseException {
+    public void performSingleRequest(Integer beanId, boolean forceRefresh)
+            throws IOException, CustomResponseException {
         IndexRestClient restClient = initiateRestClient();
 
         if (method == HTTPMethods.DELETE) {
-            restClient.deleteDocument(beanId);
+            restClient.deleteDocument(beanId, forceRefresh);
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);
         }
@@ -131,8 +139,8 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
      * Set up type of method which will be used during performing request.
      *
      * @param method
-     *            Determines if we want to add (update) or delete document -
-     *            true add, false delete
+     *            Determines if we want to add (update) or delete document - true
+     *            add, false delete
      */
     public void setMethod(HTTPMethods method) {
         this.method = method;

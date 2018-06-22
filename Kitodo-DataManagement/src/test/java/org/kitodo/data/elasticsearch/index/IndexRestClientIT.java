@@ -11,10 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import static java.util.Arrays.asList;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.json.JsonObject;
@@ -58,7 +58,7 @@ public class IndexRestClientIT {
         removeOldDataDirectories("target/" + nodeName);
 
         Settings settings = Settings.builder().put(settingsMap).build();
-        node = new ExtendedNode(settings, asList(Netty4Plugin.class));
+        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
         node.start();
     }
 
@@ -89,7 +89,7 @@ public class IndexRestClientIT {
         JsonObject response = searcher.findDocument(1);
         assertTrue("Document exists!", !isFound(response.toString()));
 
-        restClient.addDocument(MockEntity.createEntities().get(1), 1);
+        restClient.addDocument(MockEntity.createEntities().get(1), 1, false);
 
         response = searcher.findDocument(1);
         assertTrue("Add of document has failed!", isFound(response.toString()));
@@ -118,12 +118,12 @@ public class IndexRestClientIT {
         JsonObject response = searcher.findDocument(1);
         assertTrue("Document doesn't exist!", isFound(response.toString()));
 
-        restClient.deleteDocument(1);
+        restClient.deleteDocument(1, false);
         response = searcher.findDocument(1);
         assertTrue("Delete of document has failed!", !isFound(response.toString()));
 
         // remove even if document doesn't exist should be possible
-        restClient.deleteDocument(100);
+        restClient.deleteDocument(100, false);
         response = searcher.findDocument(100);
         assertTrue("Delete of document has failed!", !isFound(response.toString()));
     }
