@@ -135,14 +135,14 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     /**
-     * Get tasks for non template processes for given project id and ordered by
+     * Get tasks for processes for given project id and ordered by
      * ordering.
      *
      * @param projectId
      *            as Integer
      * @return list of tasks
      */
-    public List<Task> getTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+    public List<Task> getTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROJECT_ID, projectId);
         return getByQuery(
@@ -151,14 +151,14 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     /**
-     * Get size of tasks for non template processes for given project id and ordered
+     * Get size of tasks for processes for given project id and ordered
      * by ordering.
      * 
      * @param projectId
      *            as Integer
      * @return list of tasks
      */
-    public List<Long> getSizeOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+    public List<Long> getSizeOfTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROJECT_ID, projectId);
         return getCount("SELECT COUNT(t.id) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
@@ -166,14 +166,14 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     /**
-     * Get average ordering of tasks for non template processes for given project id
+     * Get average ordering of tasks for processes for given project id
      * and ordered by ordering.
      *
      * @param projectId
      *            as Integer
      * @return list of tasks
      */
-    public List<Double> getAverageOrderingOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(Integer projectId) {
+    public List<Double> getAverageOrderingOfTasksForProcessesForProjectIdOrderByOrdering(Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROJECT_ID, projectId);
         return getAverage("SELECT AVG(t.ordering) FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.project AS pr "
@@ -188,7 +188,7 @@ public class TaskDAO extends BaseDAO<Task> {
      *            as Integer
      * @return list of tasks
      */
-    public List<Task> getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+    public List<Task> getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROCESSING_STATUS, processingStatus);
@@ -200,14 +200,14 @@ public class TaskDAO extends BaseDAO<Task> {
     }
 
     /**
-     * Get size of tasks for exact processing status for non template processes for
+     * Get size of tasks for exact processing status for processes for
      * given project id and ordered by ordering.
      *
      * @param projectId
      *            as Integer
      * @return list of tasks sizes
      */
-    public List<Long> getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+    public List<Long> getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROJECT_ID, projectId);
@@ -225,7 +225,7 @@ public class TaskDAO extends BaseDAO<Task> {
      *            as Integer
      * @return list of average tasks' ordering
      */
-    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+    public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
             Integer processingStatus, Integer projectId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(KEY_PROJECT_ID, projectId);
