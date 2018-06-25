@@ -165,60 +165,15 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 child = logicalDS.getAllChildren().get(0);
                 multivolue = true;
             }
-            // reading title
-            MetadataTypeInterface titleType = prefs.getMetadataTypeByName("TitleDocMain");
-            List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
-            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                MetadataInterface title = mdList.get(0);
-                currentTitle = title.getValue();
-            }
-            // reading identifier
-            MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
-            List<? extends MetadataInterface> childMdList = null;
-            if (child != null) {
-                childMdList = child.getAllMetadataByType(identifierType);
-            }
-            if (childMdList != null) {
-                mdList = childMdList;
-            } else {
-                mdList = logicalDS.getAllMetadataByType(identifierType);
-            }
-            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                MetadataInterface identifier = mdList.get(0);
-                currentIdentifier = identifier.getValue();
-            } else {
-                currentIdentifier = String.valueOf(System.currentTimeMillis());
-            }
 
-            // reading author
-            MetadataTypeInterface authorType = prefs.getMetadataTypeByName("Author");
-            List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
-            if (Objects.nonNull(personList) && !personList.isEmpty()) {
-                PersonInterface authorMetadata = personList.get(0);
-                author = authorMetadata.getDisplayName();
-
-            }
-
-            // reading volume number
-            if (child != null) {
-                MetadataTypeInterface mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
-                mdList = child.getAllMetadataByType(mdt);
-                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                    MetadataInterface md = mdList.get(0);
-                    volumeNumber = md.getValue();
-                } else {
-                    mdt = prefs.getMetadataTypeByName("DateIssuedSort");
-                    mdList = child.getAllMetadataByType(mdt);
-                    if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
-                        MetadataInterface md = mdList.get(0);
-                        volumeNumber = md.getValue();
-                    }
-                }
-            }
+            readCurrentTitle(logicalDS);
+            readIdentifier(child, logicalDS);
+            readAuthor(logicalDS);
+            readVolumeNumber(child);
 
             // reading ats
             MetadataTypeInterface atsType = prefs.getMetadataTypeByName("TSL_ATS");
-            mdList = logicalDS.getAllMetadataByType(atsType);
+            List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(atsType);
             if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
                 MetadataInterface atstsl = mdList.get(0);
                 ats = atstsl.getValue();
@@ -243,6 +198,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 templateProperties.add(prepareProperty("Identifier", analog));
             }
 
+            MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
             if (child != null) {
                 mdList = child.getAllMetadataByType(identifierType);
                 if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
@@ -299,6 +255,64 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
         }
     }
 
+    private void readCurrentTitle(DocStructInterface logicalDS) {
+        MetadataTypeInterface titleType = prefs.getMetadataTypeByName("TitleDocMain");
+        List<? extends MetadataInterface> mdList = logicalDS.getAllMetadataByType(titleType);
+        if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+            MetadataInterface title = mdList.get(0);
+            currentTitle = title.getValue();
+        }
+    }
+
+    private void readIdentifier(DocStructInterface child, DocStructInterface logicalDS) {
+        MetadataTypeInterface identifierType = prefs.getMetadataTypeByName("CatalogIDDigital");
+        List<? extends MetadataInterface> childMdList = null;
+        List<? extends MetadataInterface> mdList;
+        if (Objects.nonNull(child)) {
+            childMdList = child.getAllMetadataByType(identifierType);
+        }
+        if (Objects.nonNull(childMdList)) {
+            mdList = childMdList;
+        } else {
+            mdList = logicalDS.getAllMetadataByType(identifierType);
+        }
+        if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+            MetadataInterface identifier = mdList.get(0);
+            currentIdentifier = identifier.getValue();
+        } else {
+            currentIdentifier = String.valueOf(System.currentTimeMillis());
+        }
+    }
+
+    private void readAuthor(DocStructInterface logicalDS) {
+        MetadataTypeInterface authorType = prefs.getMetadataTypeByName("Author");
+        List<PersonInterface> personList = logicalDS.getAllPersonsByType(authorType);
+        if (Objects.nonNull(personList) && !personList.isEmpty()) {
+            PersonInterface authorMetadata = personList.get(0);
+            author = authorMetadata.getDisplayName();
+
+        }
+    }
+
+    private void readVolumeNumber(DocStructInterface child) {
+        // reading volume number
+        if (child != null) {
+            MetadataTypeInterface mdt = prefs.getMetadataTypeByName("CurrentNoSorting");
+            List<? extends MetadataInterface> mdList = child.getAllMetadataByType(mdt);
+            if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+                MetadataInterface md = mdList.get(0);
+                volumeNumber = md.getValue();
+            } else {
+                mdt = prefs.getMetadataTypeByName("DateIssuedSort");
+                mdList = child.getAllMetadataByType(mdt);
+                if (Objects.nonNull(mdList) && !mdList.isEmpty()) {
+                    MetadataInterface md = mdList.get(0);
+                    volumeNumber = md.getValue();
+                }
+            }
+        }
+    }
+
     private Property prepareProperty(String title, String value) {
         Property property = new Property();
         property.setTitle(title);
@@ -338,8 +352,6 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
                 resultAsJDOM.getRootElement().addContent(volumeAsJDOM);
                 return new DOMOutputter().output(resultAsJDOM).getFirstChild();
             }
-        } catch (RuntimeException | ImportPluginException e) {
-            throw e;
         } catch (ParserConfigurationException | JDOMException | IOException e) {
             throw new ImportPluginException(e.getMessage(), e);
         }
@@ -585,6 +597,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public void deleteFiles(List<String> selectedFilenames) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -614,64 +627,48 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
     @Override
     public void setDocstruct(DocstructElement dse) {
+        throw new UnsupportedOperationException();
     }
 
-    private String createAtstsl(String myTitle, String author) {
+    private String createAtstsl(String title, String author) {
         StringBuilder atsTsl = new StringBuilder();
         if (author != null && !author.equals("")) {
-            /* author */
-            if (author.length() > 4) {
-                atsTsl.append(author, 0, 4);
-            } else {
-                atsTsl.append(author);
-                /* titel */
-            }
-
-            if (myTitle.length() > 4) {
-                atsTsl.append(myTitle, 0, 4);
-            } else {
-                atsTsl.append(myTitle);
-            }
+            atsTsl.append(trimToken(author, 4));
+            atsTsl.append(trimToken(title, 4));
         }
 
-        /*
-         * bei Zeitschriften Tsl berechnen
-         */
+        //calculate ATS-TSL for magazines
         if (author == null || author.equals("")) {
             atsTsl = new StringBuilder();
-            StringTokenizer tokenizer = new StringTokenizer(myTitle);
+            StringTokenizer tokenizer = new StringTokenizer(title);
             int counter = 1;
             while (tokenizer.hasMoreTokens()) {
-                String tok = tokenizer.nextToken();
+                String token = tokenizer.nextToken();
                 if (counter == 1) {
-                    if (tok.length() > 4) {
-                        atsTsl.append(tok, 0, 4);
-                    } else {
-                        atsTsl.append(tok);
-                    }
+                    atsTsl.append(trimToken(token, 4));
                 }
                 if (counter == 2 || counter == 3) {
-                    if (tok.length() > 2) {
-                        atsTsl.append(tok, 0, 2);
-                    } else {
-                        atsTsl.append(tok);
-                    }
+                    atsTsl.append(trimToken(token, 2));
                 }
                 if (counter == 4) {
-                    if (tok.length() > 1) {
-                        atsTsl.append(tok, 0, 1);
-                    } else {
-                        atsTsl.append(tok);
-                    }
+                    atsTsl.append(trimToken(token, 1));
                 }
                 counter++;
             }
         }
-        /* im ATS-TSL die Umlaute ersetzen */
+        // replace the umlauts in the ATS-TSL
         if (FacesContext.getCurrentInstance() != null) {
             atsTsl = new StringBuilder(UghUtils.convertUmlaut(atsTsl.toString()));
         }
         return atsTsl.toString().replaceAll("[\\W]", "");
+    }
+
+    private String trimToken(String token, int length) {
+        if (token.length() > length) {
+            return token.substring(0, length);
+        } else {
+            return token;
+        }
     }
 
     /**
