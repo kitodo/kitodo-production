@@ -13,23 +13,15 @@ package org.kitodo.data.elasticsearch.index;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
-
 import javax.json.JsonObject;
 
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.transport.Netty4Plugin;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.search.Searcher;
 
@@ -41,32 +33,15 @@ public class IndexRestClientIT {
     private static IndexRestClient restClient;
     private static Node node;
     private static String testIndexName;
-    private static String port;
     private static Searcher searcher = new Searcher("indexer");
-    private static final String HTTP_TRANSPORT_PORT = "9305";
 
     @BeforeClass
-    @SuppressWarnings("unchecked")
     public static void startElasticSearch() throws Exception {
-        final String nodeName = "indexernode";
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        port = ConfigMain.getParameter("elasticsearch.port", "9205");
         restClient = initializeRestClient();
 
-        Map settingsMap = MockEntity.prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
-
-        removeOldDataDirectories("target/" + nodeName);
-
-        Settings settings = Settings.builder().put(settingsMap).build();
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        node = MockEntity.prepareNode();
         node.start();
-    }
-
-    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
-        File dataDir = new File(dataDirectory);
-        if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
-        }
     }
 
     @AfterClass

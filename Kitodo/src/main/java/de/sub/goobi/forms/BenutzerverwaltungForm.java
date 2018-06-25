@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;

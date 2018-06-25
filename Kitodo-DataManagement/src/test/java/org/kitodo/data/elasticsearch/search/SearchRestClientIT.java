@@ -11,23 +11,16 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
-
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.node.Node;
-import org.elasticsearch.transport.Netty4Plugin;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.config.ConfigMain;
-import org.kitodo.data.elasticsearch.ExtendedNode;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 
@@ -39,41 +32,20 @@ public class SearchRestClientIT {
     private static Node node;
     private static SearchRestClient searchRestClient;
     private static String testIndexName;
-    private static String port;
-    private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static String query = "{\n\"match_all\" : {}\n}";
 
     @BeforeClass
-    @SuppressWarnings("unchecked")
     public static void prepareIndex() throws Exception {
-        final String nodeName = "searchernode";
+        MockEntity.setUpAwaitility();
+
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        port = ConfigMain.getParameter("elasticsearch.port", "9205");
         searchRestClient = initializeSearchRestClient();
 
-        Map settingsMap = MockEntity.prepareNodeSettings(port, HTTP_TRANSPORT_PORT, nodeName);
-
-        removeOldDataDirectories("target/" + nodeName);
-
-        Settings settings = Settings.builder().put(settingsMap).build();
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class));
+        node = MockEntity.prepareNode();
         node.start();
-    }
 
-    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
-        File dataDir = new File(dataDirectory);
-        if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
-        }
-    }
-
-    @AfterClass
-    public static void cleanIndex() throws Exception {
-        node.close();
-    }
-
-    @Before
-    public void createIndex() throws Exception {
         searchRestClient.createIndex();
+
         IndexRestClient indexRestClient = initializeIndexRestClient();
         indexRestClient.addDocument(MockEntity.createEntities().get(1), 1, false);
         indexRestClient.addDocument(MockEntity.createEntities().get(2), 2, false);
@@ -81,37 +53,40 @@ public class SearchRestClientIT {
         indexRestClient.addDocument(MockEntity.createEntities().get(4), 4, false);
     }
 
-    @After
-    public void deleteIndex() throws Exception {
+    @AfterClass
+    public static void cleanIndex() throws Exception {
         searchRestClient.deleteIndex();
+        node.close();
     }
 
     @Test
-    public void shouldCountDocuments() throws Exception {
-        Thread.sleep(2000);
-        String query = "{\n\"match_all\" : {}\n}";
-        String result = searchRestClient.countDocuments(query);
-
-        boolean condition = result.contains("\"count\" : 4");
-        assertTrue("Count of documents has failed!", condition);
+    public void shouldCountDocuments() {
+        await().untilAsserted(() -> assertTrue("Count of documents has failed!",
+            searchRestClient.countDocuments(query).contains("\"count\" : 4")));
     }
 
     @Test
-    public void shouldGetDocumentById() throws Exception {
-        String result = searchRestClient.getDocument(1);
-
-        boolean condition = result.contains("\"found\" : true");
-        assertTrue("Get of document has failed!", condition);
+    public void shouldGetDocumentById() {
+        await().untilAsserted(() -> assertTrue("Get of document has failed!",
+            searchRestClient.getDocument(1).contains("\"found\" : true")));
     }
 
     @Test
-    public void shouldGetDocumentByQuery() throws Exception {
-        Thread.sleep(2000);
-        String query = "{\n\"match_all\" : {}\n}";
-        String result = searchRestClient.getDocument(query, null, null, null);
+    public void shouldGetDocumentByQuery() {
+        await().untilAsserted(() -> assertEquals("Get of document has failed!",
+            StringUtils.countMatches(searchRestClient.getDocument(query, null, null, null), "\"_id\""), 4));
+    }
 
-        boolean condition = result.contains("\"total\" : 4");
-        assertTrue("Get of document has failed!", condition);
+    @Test
+    public void shouldGetDocumentByQueryWithSize() {
+        await().untilAsserted(() -> assertEquals("Get of document has failed!",
+            StringUtils.countMatches(searchRestClient.getDocument(query, null, null, 3), "\"_id\""), 3));
+    }
+
+    @Test
+    public void shouldGetDocumentByQueryWithOffsetAndSize() {
+        await().untilAsserted(() -> assertEquals("Get of document has failed!",
+            StringUtils.countMatches(searchRestClient.getDocument(query, null, 2, 3), "\"_id\""), 2));
     }
 
     private static SearchRestClient initializeSearchRestClient() {

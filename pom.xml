@@ -41,6 +41,7 @@
         <maxAllowedViolations>1</maxAllowedViolations>
         <tomcat.baseversion>7</tomcat.baseversion>
         <tomcat.version>7.0.81</tomcat.version>
+        <awaitility.version>3.1.0</awaitility.version>
         <commons-codec.version>1.11</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
