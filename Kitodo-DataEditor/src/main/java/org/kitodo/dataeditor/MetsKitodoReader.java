@@ -35,6 +35,13 @@ class MetsKitodoReader {
     private static final Logger logger = LogManager.getLogger(MetsKitodoReader.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MetsKitodoReader() {
+
+    }
+
+    /**
      * Reads a mets-kitodo formated xml String to a Mets object.
      *
      * @param xmlString

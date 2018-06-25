@@ -24,6 +24,13 @@ import org.kitodo.dataformat.metskitodo.Mets;
 class MetsKitodoValidator {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MetsKitodoValidator() {
+
+    }
+
+    /**
      * Checks if the first metadata element of a Mets object is an instance of KitodoType.
      *
      * @param mets

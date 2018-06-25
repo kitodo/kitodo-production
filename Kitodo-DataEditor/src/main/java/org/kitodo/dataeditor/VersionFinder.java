@@ -26,6 +26,13 @@ public class VersionFinder {
     private static final Logger logger = LogManager.getLogger(VersionFinder.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private VersionFinder() {
+
+    }
+
+    /**
      * Reading version info out of the manifest file of current jar.
      *
      * @param applicationName

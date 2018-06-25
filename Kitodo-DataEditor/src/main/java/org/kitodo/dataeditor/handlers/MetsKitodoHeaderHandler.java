@@ -22,6 +22,13 @@ import org.kitodo.dataformat.metskitodo.MetsType;
 public class MetsKitodoHeaderHandler {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MetsKitodoHeaderHandler() {
+
+    }
+
+    /**
      * Adds a note to the first {@code agent} element in mets header. Does nothing
      * if no {@code agent} element exists.
      *

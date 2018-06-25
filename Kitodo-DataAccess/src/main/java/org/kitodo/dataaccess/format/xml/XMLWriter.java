@@ -65,6 +65,13 @@ public class XMLWriter {
     private static final String TRANSFORMER_INDENT_VALUE = "{http://xml.apache.org/xslt}indent-amount";
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private XMLWriter() {
+
+    }
+
+    /**
      * Returns the type of the node, or {@code rdf:Description} if not set.
      *
      * @param node
