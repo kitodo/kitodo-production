@@ -1447,23 +1447,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Get first open task for the process.
-     *
-     * @param process
-     *            object
-     * @return first open task
-     */
-    public Task getFirstOpenStep(Process process) {
-        for (Task step : process.getTasks()) {
-            if (step.getProcessingStatusEnum().equals(TaskStatus.OPEN)
-                    || step.getProcessingStatusEnum().equals(TaskStatus.INWORK)) {
-                return step;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Get method from name.
      *
      * @param methodName

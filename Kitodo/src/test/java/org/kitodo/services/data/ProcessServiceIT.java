@@ -529,14 +529,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetFirstOpenStep() throws Exception {
-        Process process = processService.getById(1);
-        Integer expected = 2;
-        Task actual = processService.getFirstOpenStep(process);
-        assertEquals("First open task doesn't match to the given task!", expected, actual.getId());
-    }
-
-    @Test
     public void shouldAddToWikiField() throws Exception {
         Process process = processService.getById(1);
         process.setWikiField(process.getWikiField() + "<p>test</p>");
