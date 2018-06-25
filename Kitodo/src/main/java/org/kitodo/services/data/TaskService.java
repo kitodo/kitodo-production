@@ -854,7 +854,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Task> getTasksForProjectHelper(Integer projectId) {
-        return dao.getTasksForNotTemplateProcessesForProjectIdOrderByOrdering(projectId);
+        return dao.getTasksForProcessesForProjectIdOrderByOrdering(projectId);
     }
 
     /**
@@ -866,7 +866,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Long> getSizeOfTasksForProjectHelper(Integer projectId) {
-        return dao.getSizeOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(projectId);
+        return dao.getSizeOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
     }
 
     /**
@@ -878,7 +878,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Double
      */
     public List<Double> getAverageOrderingOfTasksForProjectHelper(Integer projectId) {
-        return dao.getAverageOrderingOfTasksForNotTemplateProcessesForProjectIdOrderByOrdering(projectId);
+        return dao.getAverageOrderingOfTasksForProcessesForProjectIdOrderByOrdering(projectId);
     }
 
     /**
@@ -892,7 +892,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Task> getTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(processingStatus,
+        return dao.getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus,
             projectId);
     }
 
@@ -907,7 +907,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Long> getSizeOfTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getSizeOfTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+        return dao.getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
             processingStatus, projectId);
     }
 
@@ -923,7 +923,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public List<Long> getAmountOfImagesForTasksWithProcessingStatusForProjectHelper(Integer processingStatus,
             Integer projectId) {
-        return dao.getAmountOfImagesForTasksWithProcessingStatusForNotTemplateProcessesForProjectIdOrderByOrdering(
+        return dao.getAmountOfImagesForTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
             processingStatus, projectId);
     }
 
