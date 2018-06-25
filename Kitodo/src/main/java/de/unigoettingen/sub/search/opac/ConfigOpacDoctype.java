@@ -37,8 +37,7 @@ public class ConfigOpacDoctype {
     }
 
     ConfigOpacDoctype(String inTitle, String inRulesetType, String inTifHeaderType, boolean inPeriodical,
-            boolean inMultiVolume, boolean inContainedWork, boolean newspaper, HashMap<String, String> inLabels,
-            List<String> inMappings) {
+            boolean inMultiVolume, boolean newspaper, HashMap<String, String> inLabels, List<String> inMappings) {
         this.title = inTitle;
         this.rulesetType = inRulesetType;
         this.tifHeaderType = inTifHeaderType;

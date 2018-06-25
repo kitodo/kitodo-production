@@ -135,7 +135,6 @@ public class ConfigOpac {
                 String inTifHeaderType = getConfig().getString(DOCTYPES_TYPE + "(" + i + ")[@tifHeaderType]");
                 boolean periodical = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isPeriodical]");
                 boolean multiVolume = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isMultiVolume]");
-                boolean containedWork = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isContainedWork]");
                 boolean newspaper;
                 try {
                     newspaper = getConfig().getBoolean(DOCTYPES_TYPE + "(" + i + ")[@isNewspaper]");
@@ -147,7 +146,7 @@ public class ConfigOpac {
                         .collect(Collectors.toList());
 
                 return new ConfigOpacDoctype(inTitle, inRulesetType, inTifHeaderType, periodical, multiVolume,
-                        containedWork, newspaper, labels, mappings);
+                        newspaper, labels, mappings);
             }
         }
         return null;
