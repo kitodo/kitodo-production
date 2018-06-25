@@ -13,6 +13,8 @@ package de.sub.goobi.metadaten.copier;
 
 import java.lang.reflect.Field;
 
+import org.kitodo.exceptions.MetadataException;
+
 /**
  * A VariableSelector provides methods to retrieve variables used in Goobi.
  * 
@@ -89,7 +91,7 @@ public class VariableSelector extends DataSelector {
         } catch (NoSuchFieldException e) {
             return null;
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new MetadataException(e.getMessage(), e);
         }
     }
 

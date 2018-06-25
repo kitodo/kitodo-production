@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.exceptions.MetadataException;
 
 /**
  * The abstract class DataCopyrule defines method signatures to implement a rule
@@ -73,7 +74,7 @@ public abstract class DataCopyrule {
         try {
             ruleImplementation = ruleClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new MetadataException(e.getMessage(), e);
         }
         ruleImplementation.setSubject(arguments.get(0));
         if (ruleImplementation.getMaxObjects() > 0) {

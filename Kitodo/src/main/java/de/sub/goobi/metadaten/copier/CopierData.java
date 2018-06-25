@@ -18,6 +18,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.exceptions.MetadataException;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -114,7 +115,7 @@ public class CopierData {
         try {
             return fileformat.getDigitalDocument();
         } catch (PreferencesException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new MetadataException(e.getMessage(), e);
         }
     }
 
