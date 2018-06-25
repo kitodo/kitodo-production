@@ -387,13 +387,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldCheckIfIsPasswordCorrect() throws Exception {
-        User user = userService.getById(1);
-        boolean condition = userService.isPasswordCorrect(user, "test");
-        assertTrue("User's password is incorrect!", condition);
-    }
-
-    @Test
     public void shouldGetFullName() throws Exception {
         User user = userService.getById(1);
         boolean condition = userService.getFullName(user).equals("Kowalski, Jan");

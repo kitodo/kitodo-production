@@ -666,29 +666,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return user.getCss();
     }
 
-    /**
-     * Check if password is correct.
-     *
-     * @param user
-     *            as User object
-     * @param inputPassword
-     *            as String
-     * @return true or false
-     */
-    public boolean isPasswordCorrect(User user, String inputPassword) {
-        if (inputPassword == null || inputPassword.length() == 0) {
-            return false;
-        } else {
-            if (ConfigCore.getBooleanParameter("ldap_use")) {
-                return serviceManager.getLdapServerService().isUserPasswordCorrect(user, inputPassword);
-            } else {
-                SecurityPasswordEncoder encrypter = new SecurityPasswordEncoder();
-                String encoded = encrypter.encrypt(inputPassword);
-                return user.getPassword().equals(encoded);
-            }
-        }
-    }
-
     public String getFullName(User user) {
         return user.getSurname() + ", " + user.getName();
     }
