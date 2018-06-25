@@ -55,7 +55,6 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -110,16 +109,8 @@ public class MassImportForm implements Serializable {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
-            if (this.template.getTasks().isEmpty()) {
-                Helper.setErrorMessage("noStepsInWorkflow");
-            }
-            for (Task task : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
-                        && serviceManager.getTaskService().getUsersSize(task) == 0) {
-                    Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle()});
-                }
-            }
+        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return null;
         }
         initializePossibleDigitalCollections();

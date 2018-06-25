@@ -296,16 +296,8 @@ public class ProzesskopieForm implements Serializable {
             return null;
         }
 
-        if (serviceManager.getTemplateService().containsBeanUnreachableSteps(this.template.getTasks())) {
-            if (this.template.getTasks().isEmpty()) {
-                Helper.setErrorMessage("noStepsInWorkflow");
-            }
-            for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    Helper.setErrorMessage("noUserInStep", new Object[] {s.getTitle() });
-                }
-            }
+        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
             return null;
         }
 
