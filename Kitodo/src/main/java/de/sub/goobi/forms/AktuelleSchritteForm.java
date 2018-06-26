@@ -143,8 +143,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page for edit one task, page for edit many or null
      */
-    public String takeOverBatch() {
-        // find all steps with same batch id and step status
+    public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
@@ -217,7 +216,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *
      * @return page for edit one task, page for edit many or null
      */
-    public String batchesEdit() {
+    public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);

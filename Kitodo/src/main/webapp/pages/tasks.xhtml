@@ -73,7 +73,7 @@
                             </h:commandLink>
 
                             <!-- take over batch -->
-                            <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatch}"
+                            <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatchTasks}"
                                            rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
                                            title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                                 <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
@@ -81,7 +81,7 @@
                             </h:commandLink>
 
                             <!-- edit batch step (this user) -->
-                            <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.batchesEdit}"
+                            <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.editBatchTasks}"
                                            rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchAvailable}"
                                            title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                                 <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
@@ -89,7 +89,7 @@
                             </h:commandLink>
 
                             <!-- edit batch step (different user) -->
-                            <h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.batchesEdit}"
+                            <h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.editBatchTasks}"
                                            rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and item.batchStep and item.batchAvailable}"
                                            title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                                 <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
