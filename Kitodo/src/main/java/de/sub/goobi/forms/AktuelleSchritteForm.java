@@ -87,6 +87,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final String WORK_TASK = "task";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
+    private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
     /**
      * Constructor.
@@ -163,7 +164,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 }
 
                 this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
-                return "/pages/batchesEdit";
+                return taskBatchEditPath;
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
@@ -204,9 +205,9 @@ public class AktuelleSchritteForm extends BasisForm {
         }
 
         try {
-            this.serviceManager.getProcessService().save(task.getProcess());
+            this.serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
     }
 
@@ -232,7 +233,7 @@ public class AktuelleSchritteForm extends BasisForm {
                 return taskEditPath + "&id=" + getTaskIdForPath();
             } else {
                 this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
-                return "/pages/batchesEdit";
+                return taskBatchEditPath;
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
