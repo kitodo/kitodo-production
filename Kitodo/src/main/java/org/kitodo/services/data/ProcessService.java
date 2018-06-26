@@ -41,7 +41,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -91,6 +93,7 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
+import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
@@ -124,7 +127,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String LOCKED = "locked";
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
-    private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore.getBooleanParameter("createOrigFolderIfNotExists", false);
+    private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
+            .getBooleanParameter("createOrigFolderIfNotExists", false);
     private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter("useOrigFolder", true);
 
     /**
@@ -617,7 +621,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectActive(boolean active) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByActive(active, true);
-        return createSetQuery(ProcessTypeField.PROJECT_ID.getName(), serviceManager.getFilterService().collectIds(projects), true);
+        return createSetQuery(ProcessTypeField.PROJECT_ID.getName(),
+            serviceManager.getFilterService().collectIds(projects), true);
     }
 
     /**
@@ -666,10 +671,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setOutputName(processJSONObject.getString(ProcessTypeField.OUTPUT_NAME.getName()));
         processDTO.setWikiField(processJSONObject.getString(ProcessTypeField.WIKI_FIELD.getName()));
         processDTO.setCreationDate(processJSONObject.getString(ProcessTypeField.CREATION_DATE.getName()));
-        processDTO.setPropertiesSize(getSizeOfRelatedPropertyForDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName()));
-        processDTO.setProperties(
-                convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName(),
-                        serviceManager.getPropertyService()));
+        processDTO.setPropertiesSize(
+            getSizeOfRelatedPropertyForDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName()));
+        processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName(),
+            serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
         processDTO.setSortHelperArticles(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
         processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
@@ -677,6 +682,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setSortHelperMetadata(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
+        processDTO.setBatches(getBatchesForProcessDTO(processJSONObject));
         if (!related) {
             convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
@@ -694,19 +700,43 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
-        // TODO: it looks it is not needed as batches will be displayed in
-        // workflow tab
-        // processDTO.setBatches(convertRelatedJSONObjectToDTO(jsonObject,
-        // "batches", serviceManager.getBatchService()));
+
         processDTO.setBatchID(getBatchID(processDTO));
         // TODO: leave it for now - right now it displays only status
-        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getName(), serviceManager.getTaskService()));
+        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getName(),
+            serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
         processDTO.setBlockedUser(getBlockedUser(processDTO));
+    }
+
+    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) {
+        JsonArray jsonArray = jsonObject.getJsonArray(ProcessTypeField.BATCHES.getName());
+        List<BatchDTO> batchDTOList = new ArrayList<>();
+        for (JsonValue singleObject : jsonArray) {
+            BatchDTO batchDTO = new BatchDTO();
+            batchDTO.setId(singleObject.asJsonObject().getInt(BatchTypeField.ID.getName()));
+            batchDTO.setTitle(singleObject.asJsonObject().getString(BatchTypeField.TITLE.getName()));
+            batchDTO.setType(singleObject.asJsonObject().getString(BatchTypeField.TYPE.getName()));
+            batchDTOList.add(batchDTO);
+        }
+        return batchDTOList;
+    }
+
+    /**
+     * Check if process is assigned only to one LOGISTIC batch.
+     *
+     * @param batchDTOList
+     *            list of batches for checkout
+     * @return true or false
+     */
+    boolean isProcessAssignedToOnlyOneLogisticBatch(List<BatchDTO> batchDTOList) {
+        List<BatchDTO> result = new ArrayList<>(batchDTOList);
+        result.removeIf(batch -> !(batch.getType().equals("LOGISTIC")));
+        return result.size() == 1;
     }
 
     /**
@@ -855,8 +885,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         if (tifDirectory == null && useFallBack && !SUFFIX.equals("")) {
-            List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle,
-                    processBaseURI, ProcessSubType.IMAGE, "");
+            List<URI> folderList = fileService.getSubUrisForProcess(null, processId, processTitle, processBaseURI,
+                ProcessSubType.IMAGE, "");
             for (URI folder : folderList) {
                 if (folder.toString().endsWith(SUFFIX)) {
                     tifDirectory = folder;
@@ -1733,7 +1763,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             directoryDownload(process, targetDirectory);
         } catch (RuntimeException e) {
-            Helper.setErrorMessage(ERROR_EXPORT, new Object[]{process.getTitle()}, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             return false;
         }
 
@@ -1787,7 +1817,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             newFile.setDigitalDocument(gdzFile.getDigitalDocument());
             gdzFile = newFile;
         } catch (ReadException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle()}, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             return null;
         }
 
@@ -1802,21 +1832,21 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // remove old import folder
         if (!fileService.delete(userHome)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
         // remove old success folder
         File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
         if (!fileService.delete(successFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
         File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
         if (!fileService.delete(errorFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
 
@@ -1901,7 +1931,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             List<URI> files = fileService.getSubUris(sources);
             for (URI file : files) {
                 if (fileService.isFile(file)) {
-                    URI targetDirectory = destination.resolve(File.separator + fileService.getFileNameWithExtension(file));
+                    URI targetDirectory = destination
+                            .resolve(File.separator + fileService.getFileNameWithExtension(file));
                     fileService.copyFile(file, targetDirectory);
                 }
             }
@@ -1975,8 +2006,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 try {
                     fileService.createDirectoryForUser(zielTif, user.getLogin());
                 } catch (RuntimeException e) {
-                    Helper.setErrorMessage(ERROR_EXPORT, "could not create destination directory", logger,
-                        e);
+                    Helper.setErrorMessage(ERROR_EXPORT, "could not create destination directory", logger, e);
                 }
             }
 
@@ -2130,7 +2160,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (sizeOfPagination == sizeOfImages) {
                 dd.overrideContentFiles(imageStrings);
             } else {
-                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
+                Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
                 return false;
             }
         } catch (IndexOutOfBoundsException | InvalidImagesException e) {
@@ -2187,8 +2217,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
                     + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
-            URI destinationDirectory = URI.create(
-                targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
+            URI destinationDirectory = URI
+                    .create(targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
 
             if (fileService.isDirectory(sourceDirectory)) {
                 fileService.copyFile(sourceDirectory, destinationDirectory);
