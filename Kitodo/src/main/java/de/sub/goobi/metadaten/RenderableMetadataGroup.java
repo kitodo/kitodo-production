@@ -28,6 +28,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.exceptions.MetadataException;
 import org.kitodo.legacy.UghImplementation;
 
 /**
@@ -216,7 +217,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
         try {
             createMembers(master.toMetadataGroup(), false);
         } catch (ConfigurationException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new MetadataException(e.getMessage(), e);
         }
     }
 
