@@ -31,6 +31,13 @@ import org.joda.time.DateTime;
 public class JaxbXmlUtils {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private JaxbXmlUtils() {
+
+    }
+
+    /**
      * Transforms a xml file by xslt and returns the result as string.
      *
      * @param xmlFile

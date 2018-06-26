@@ -47,6 +47,13 @@ class UGHUtils {
     private static final Logger logger = LogManager.getLogger(UGHUtils.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private UGHUtils() {
+
+    }
+
+    /**
      * The function addMetadatum() adds the meta data element given in terms of
      * type identifier String and value String to the given document structure
      * element, using the given rule set.

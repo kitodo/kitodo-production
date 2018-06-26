@@ -29,6 +29,13 @@ public class MetsKitodoConverter {
     private static final Logger logger = LogManager.getLogger(MetsKitodoConverter.class);
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MetsKitodoConverter() {
+
+    }
+
+    /**
      * Reads an old mets-mods-goobi formated xml file by transforming it to the
      * current used mets-kitodo format by xslt.
      *

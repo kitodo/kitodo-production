@@ -57,6 +57,13 @@ public class XMLReader {
     };
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private XMLReader() {
+
+    }
+
+    /**
      * Returns an attribute from an element by its URL. If the attribute is of
      * the same namespace as the element, the attribute is allowed to miss the
      * prefix. If the element is local, the external document namespace must be

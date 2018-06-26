@@ -27,6 +27,13 @@ import org.apache.commons.io.FilenameUtils;
 class ConfigOpac {
     private static XMLConfiguration config;
 
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ConfigOpac() {
+
+    }
+
     private static XMLConfiguration getConfig() {
         if (config != null) {
             return config;

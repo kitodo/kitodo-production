@@ -25,6 +25,13 @@ import org.kitodo.dataformat.metskitodo.Mets;
 public class MetsKitodoMdSecHandler {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private MetsKitodoMdSecHandler() {
+
+    }
+
+    /**
      * Returns the KitodoType object of an MdSecType object.
      *
      * @param dmdSecElement
