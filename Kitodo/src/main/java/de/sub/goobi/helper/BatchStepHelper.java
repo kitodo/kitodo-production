@@ -509,7 +509,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerZurueckgeben() {
+    public String setBatchTasksToOpen() {
 
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
@@ -523,9 +523,9 @@ public class BatchStepHelper extends BatchHelper {
             serviceManager.getTaskService().replaceProcessingUser(task, user);
 
             try {
-                this.serviceManager.getProcessService().save(task.getProcess());
+                this.serviceManager.getTaskService().save(task);
             } catch (DataException e) {
-                logger.error(e.getMessage(), e);
+                Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
         return Helper.getCurrentTaskForm().getTaskListPath();
@@ -536,14 +536,19 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String batchDurchBenutzerAbschliessen() throws DataException, IOException {
+    public String closeBatchTasks() {
         for (Task task : this.steps) {
-            boolean valid = isTaskValid(task);
 
-            if (valid) {
-                this.myDav.uploadFromHome(task.getProcess());
-                task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
-                serviceManager.getWorkflowControllerService().close(task);
+            try {
+                boolean valid = isTaskValid(task);
+
+                if (valid) {
+                    this.myDav.uploadFromHome(task.getProcess());
+                    task.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                    serviceManager.getWorkflowControllerService().close(task);
+                }
+            } catch (DataException | IOException e) {
+                Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
 

@@ -146,7 +146,7 @@
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
                             <h:commandLink id="action11"
-                                           action="#{AktuelleSchritteForm.batchHelper.batchDurchBenutzerZurueckgeben}"
+                                           action="#{AktuelleSchritteForm.batchHelper.setBatchTasksToOpen}"
                                            title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
                                            onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
@@ -155,7 +155,7 @@
                             </h:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
                             <h:commandLink id="action15"
-                                           action="#{AktuelleSchritteForm.batchHelper.batchDurchBenutzerAbschliessen}"
+                                           action="#{AktuelleSchritteForm.batchHelper.closeBatchTasks}"
                                            title="#{msgs.diesenSchrittAbschliessen}"
                                            onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
