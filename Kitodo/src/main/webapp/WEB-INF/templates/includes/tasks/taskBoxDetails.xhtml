@@ -15,9 +15,9 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable var="item" value="#{AktuelleSchritteForm.mySchritt}">
+    <p:dataTable var="item" value="#{AktuelleSchritteForm.currentTask}">
         <p:column headerText="#{msgs.title}">
-            <h:outputText value="#{AktuelleSchritteForm.mySchritt.localizedTitle}"/>
+            <h:outputText value="#{AktuelleSchritteForm.currentTask.localizedTitle}"/>
         </p:column>
         <p:column headerText="#{msgs.processTitle}">
             <h:outputText value="#{item.process.title}"/>

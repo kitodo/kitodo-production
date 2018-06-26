@@ -12,14 +12,18 @@
 -->
 
 <ui:composition
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
+    <c:set var="task" value="#{AktuelleSchritteForm.currentTask}" scope="request" />
+    <c:set var="process" value="#{AktuelleSchritteForm.currentTask.process}" scope="request" />
+
     <h:panelGroup
-            rendered="#{AktuelleSchritteForm.mySchritt.processingUser.id == LoginForm.myBenutzer.id}">
+            rendered="#{task.processingUser.id == LoginForm.myBenutzer.id}">
         <!-- Import -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null and AktuelleSchritteForm.mySchritt.typeImportFileUpload}">
+        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == '' and process.blockedUser == null and task.typeImportFileUpload}">
             <table cellpadding="3" cellspacing="0" width="100%"
                    class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -51,7 +55,7 @@
                                                  styleClass="fileUploadInput" required="false"/>
                                     <h:commandButton value="#{msgs.metadataImport}" id="button1" action="#{Import.start}">
                                         <f:setPropertyActionListener target="#{Import.task}"
-                                                                     value="#{AktuelleSchritteForm.mySchritt}"/>
+                                                                     value="#{task}"/>
                                     </h:commandButton>
                                 </h:form>
                             </h:panelGroup>
@@ -79,26 +83,26 @@
                                 <!-- Show Metadata Block -->
                                 <h:panelGroup
                                         style="color: red;margin-top:5px;margin-bottom:15px;display:block"
-                                        rendered="#{AktuelleSchritteForm.mySchritt.process.blockedUser != null}">
+                                        rendered="#{process.blockedUser != null}">
                                     <h:outputText value="#{msgs.blocked}"/>
                                     <br/>
                                     <h:panelGrid columns="2" style="color: red;margin-left:30px"
                                                  cellpadding="3">
                                         <h:outputText value="#{msgs.user}: "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.fullName}"/>
+                                                value="#{process.blockedUser.fullName}"/>
                                         <h:outputText value="#{msgs.location}: "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedUser.location}"/>
+                                                value="#{process.blockedUser.location}"/>
                                         <h:outputText value="#{msgs.lastActionBefore} "/>
                                         <h:outputText
-                                                value="#{AktuelleSchritteForm.mySchritt.process.blockedMinutes} min #{AktuelleSchritteForm.mySchritt.process.blockedSeconds} sec"/>
+                                                value="#{process.blockedMinutes} min #{process.blockedSeconds} sec"/>
                                     </h:panelGrid>
                                     <h:outputText value="#{msgs.later}"/>
 
                                     <!-- If blocked by yourself: you can unblocked -->
                                     <h:commandLink id="action1"
-                                                   rendered="#{(AktuelleSchritteForm.mySchritt.process.blockedUser != null) and (AktuelleSchritteForm.mySchritt.process.blockedUser.id == LoginForm.myBenutzer.id)}"
+                                                   rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.myBenutzer.id)}"
                                                    action="#{AktuelleSchritteForm.sperrungAufheben}"
                                                    title="#{msgs.oderSperrungAufheben}">
                                         <h:graphicImage value="/pages/images/buttons/key2a.gif" alt="release lock"
@@ -110,21 +114,21 @@
 
                                 <!-- Script-button -->
                                 <h:commandLink id="action3"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.scriptPath != null and AktuelleSchritteForm.mySchritt.scriptPath != '' and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               rendered="#{task.scriptPath != null and task.scriptPath != '' and task.process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.executeScript}"
-                                               title="#{AktuelleSchritteForm.mySchritt.scriptName}">
+                                               title="#{task.scriptName}">
                                     <f:setPropertyActionListener
                                             target="#{AktuelleSchritteForm.scriptPath}"
-                                            value="#{AktuelleSchritteForm.mySchritt.scriptPath}"/>
+                                            value="#{task.scriptPath}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute script"
                                                     style="margin-right:3px;vertical-align:middle"/>
                                     <h:outputText
-                                            value="#{msgs.scriptExecute}: #{AktuelleSchritteForm.mySchritt.scriptName}"/>
+                                            value="#{msgs.scriptExecute}: #{task.scriptName}"/>
                                 </h:commandLink>
 
                                 <!-- tiffHeaderDownload-button -->
                                 <h:commandLink id="action8"
-                                               rendered="#{0==1 and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               rendered="#{0==1 and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.downloadTiffHeader}"
                                                title="#{msgs.dateiMitTiffHeaderSpeichern}">
                                     <h:graphicImage value="/pages/images/buttons/tif.gif" alt="download tiff header"
@@ -136,12 +140,12 @@
 
                                 <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
                                 <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                              rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                              rendered="#{task.typeExportDMS and process.blockedUser == null}"
                                               value="#{msgs.timeoutWarningDMS}"/>
 
                                 <!-- Upload-button -->
                                 <h:commandLink id="action9"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeExportDMS and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               rendered="#{task.typeExportDMS and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.exportDMS}"
                                                title="#{msgs.importDms}">
                                     <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
@@ -151,17 +155,17 @@
 
                                 <!-- Metadaten-button -->
                                 <h:commandLink id="action10"
-                                               rendered="#{AktuelleSchritteForm.mySchritt.typeMetadata and AktuelleSchritteForm.mySchritt.process.blockedUser == null}"
+                                               rendered="#{task.typeMetadata and process.blockedUser == null}"
                                                action="#{Metadaten.readXml}"
                                                title="#{msgs.metadataEdit}">
                                     <h:graphicImage value="/pages/images/buttons/view1.gif" alt="read xml"
                                                     style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.metadataEdit}"/>
                                     <f:setPropertyActionListener
-                                            value="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"
-                                            target="#{AktuelleSchritteForm.mySchritt.processingTimeNow}"/>
+                                            value="#{task.processingTimeNow}"
+                                            target="#{task.processingTimeNow}"/>
                                     <f:param name="ProzesseID"
-                                             value="#{AktuelleSchritteForm.mySchritt.process.id}"/>
+                                             value="#{process.id}"/>
                                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                                     <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
                                 </h:commandLink>
@@ -215,7 +219,7 @@
 
                                 <!-- Pass to next station for corrective purpose-->
                                 <h:panelGroup
-                                        rendered="#{AktuelleSchritteForm.mySchritt.priority>9 and AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
+                                        rendered="#{task.priority>9 and AktuelleSchritteForm.sizeOfNextStepsForProblemSolution > 0}">
                                     <span class="toggle" data-for="toggle-2">
                                         <h:graphicImage alt="step forward"
                                                         value="/pages/images/buttons/step_for_20px.gif"

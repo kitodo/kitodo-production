@@ -62,7 +62,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final long serialVersionUID = 5841566727939692509L;
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();
-    private Task mySchritt = new Task();
+    private Task currentTask = new Task();
     private Problem problem = new Problem();
     private Solution solution = new Solution();
     private List<TaskDTO> selectedTasks;
@@ -116,15 +116,15 @@ public class AktuelleSchritteForm extends BasisForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        serviceManager.getTaskService().refresh(this.mySchritt);
+        serviceManager.getTaskService().refresh(this.currentTask);
 
-        if (this.mySchritt.getProcessingStatusEnum() != TaskStatus.OPEN) {
+        if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return null;
         } else {
-            this.setMySchritt(serviceManager.getWorkflowControllerService().assignTaskToUser(this.getMySchritt()));
+            setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
         }
-        return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
+        return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
     }
 
     /**
@@ -133,8 +133,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String editStep() {
-        serviceManager.getTaskService().refresh(mySchritt);
-        return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
+        serviceManager.getTaskService().refresh(this.currentTask);
+        return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
     }
 
     /**
@@ -144,8 +144,8 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String takeOverBatch() {
         // find all steps with same batch id and step status
-        String taskTitle = this.mySchritt.getTitle();
-        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
+        String taskTitle = this.currentTask.getTitle();
+        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setErrorMessage("multipleBatchesAssigned");
@@ -217,8 +217,8 @@ public class AktuelleSchritteForm extends BasisForm {
     public String batchesEdit() {
         // find all steps with same batch id and step status
         List<Task> currentStepsOfBatch;
-        String taskTitle = this.mySchritt.getTitle();
-        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(mySchritt.getProcess(),
+        String taskTitle = this.currentTask.getTitle();
+        List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
         if (batches.size() > 1) {
             Helper.setErrorMessage("multipleBatchesAssigned");
@@ -229,7 +229,7 @@ public class AktuelleSchritteForm extends BasisForm {
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
-            return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
+            return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
         }
         // if only one step is assigned for this batch, use the single
 
@@ -237,7 +237,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return taskEditPath + "&id=" + (Objects.isNull(this.mySchritt.getId()) ? 0 : this.mySchritt.getId());
+            return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
@@ -250,7 +250,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String schrittDurchBenutzerZurueckgeben() {
         try {
-            setMySchritt(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.mySchritt));
+            setCurrentTask(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask));
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
@@ -263,12 +263,12 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return page
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
-        setMySchritt(serviceManager.getWorkflowControllerService().closeTaskByUser(this.mySchritt));
+        setCurrentTask(serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask));
         return taskListPath;
     }
 
     public String sperrungAufheben() {
-        MetadatenSperrung.unlockProcess(this.mySchritt.getProcess().getId());
+        MetadatenSperrung.unlockProcess(this.currentTask.getProcess().getId());
         return null;
     }
 
@@ -276,8 +276,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * Korrekturmeldung an vorherige Schritte.
      */
     public List<Task> getPreviousStepsForProblemReporting() {
-        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(this.mySchritt.getOrdering(),
-            this.mySchritt.getProcess().getId());
+        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(this.currentTask.getOrdering(),
+            this.currentTask.getProcess().getId());
     }
 
     public int getSizeOfPreviousStepsForProblemReporting() {
@@ -292,7 +292,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String reportProblem() {
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
-            setMySchritt(serviceManager.getWorkflowControllerService().reportProblem(this.mySchritt));
+            setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
         }
@@ -304,8 +304,8 @@ public class AktuelleSchritteForm extends BasisForm {
      * Problem-behoben-Meldung an nachfolgende Schritte.
      */
     public List<Task> getNextStepsForProblemSolution() {
-        return serviceManager.getTaskService().getNextTasksForProblemSolution(this.mySchritt.getOrdering(),
-            this.mySchritt.getProcess().getId());
+        return serviceManager.getTaskService().getNextTasksForProblemSolution(this.currentTask.getOrdering(),
+            this.currentTask.getProcess().getId());
     }
 
     public int getSizeOfNextStepsForProblemSolution() {
@@ -320,7 +320,7 @@ public class AktuelleSchritteForm extends BasisForm {
     public String solveProblem() {
         serviceManager.getWorkflowControllerService().setSolution(getSolution());
         try {
-            setMySchritt(serviceManager.getWorkflowControllerService().solveProblem(this.mySchritt));
+            setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
         }
@@ -352,11 +352,11 @@ public class AktuelleSchritteForm extends BasisForm {
                 // only when the task is already in edit mode, complete it
                 if (task.getProcess().getId() == Integer.parseInt(id)
                         && task.getProcessingStatusEnum() == TaskStatus.INWORK) {
-                    this.mySchritt = task;
+                    this.currentTask = task;
                     if (!schrittDurchBenutzerAbschliessen().isEmpty()) {
                         geprueft.add(element);
                     }
-                    this.mySchritt.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
+                    this.currentTask.setEditTypeEnum(TaskEditType.MANUAL_MULTI);
                 }
             }
         }
@@ -430,7 +430,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Execute script.
      */
     public void executeScript() throws DAOException, DataException {
-        Task task = serviceManager.getTaskService().getById(this.mySchritt.getId());
+        Task task = serviceManager.getTaskService().getById(this.currentTask.getId());
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
     }
 
@@ -465,28 +465,27 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Get my task.
+     * Get current task.
      *
      * @return task
      */
-    public Task getMySchritt() {
-        try {
-            loadTaskByParameter();
-        } catch (DAOException | NumberFormatException e) {
-            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
-        }
-        return this.mySchritt;
+    public Task getCurrentTask() {
+        return this.currentTask;
     }
 
     /**
-     * Set my task with edit mode set to empty String.
+     * Set current task with edit mode set to empty String.
      *
      * @param task
      *            Object
      */
-    public void setMySchritt(Task task) {
+    public void setCurrentTask(Task task) {
         this.editMode = ObjectMode.NONE;
-        setStep(task);
+        this.currentTask = task;
+        this.currentTask.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
+        this.myProcess = this.currentTask.getProcess();
+        loadProcessProperties();
+        setAttributesForProcess();
     }
 
     /**
@@ -504,24 +503,6 @@ public class AktuelleSchritteForm extends BasisForm {
                 logger, e);
             return null;
         }
-    }
-
-    /**
-     * Set my task.
-     *
-     * @param task
-     *            Object
-     */
-    public void setStep(Task task) {
-        this.mySchritt = task;
-        this.mySchritt.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
-        this.myProcess = this.mySchritt.getProcess();
-        loadProcessProperties();
-        setAttributesForProcess();
-    }
-
-    public Task getStep() {
-        return this.mySchritt;
     }
 
     /**
@@ -582,26 +563,10 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     private void setAttributesForProcess() {
-        Process process = this.mySchritt.getProcess();
+        Process process = this.currentTask.getProcess();
         process.setBlockedUser(serviceManager.getProcessService().getBlockedUser(process));
         process.setBlockedMinutes(serviceManager.getProcessService().getBlockedMinutes(process));
         process.setBlockedSeconds(serviceManager.getProcessService().getBlockedSeconds(process));
-    }
-
-    /**
-     * If the request contains an ID parameter, load task by this given request ID parameter.
-     *
-     * @throws DAOException
-     *             , NumberFormatException
-     */
-    private void loadTaskByParameter() throws DAOException {
-        String param = Helper.getRequestParameter("myid");
-        if (param != null && !param.equals("")) {
-            Integer inParam = Integer.valueOf(param);
-            if (this.mySchritt == null || this.mySchritt.getId() == null || !this.mySchritt.getId().equals(inParam)) {
-                this.mySchritt = serviceManager.getTaskService().getById(inParam);
-            }
-        }
     }
 
     /**
@@ -636,7 +601,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * Downloads.
      */
     public void downloadTiffHeader() throws IOException {
-        TiffHeader tiff = new TiffHeader(this.mySchritt.getProcess());
+        TiffHeader tiff = new TiffHeader(this.currentTask.getProcess());
         tiff.exportStart();
     }
 
@@ -646,10 +611,10 @@ public class AktuelleSchritteForm extends BasisForm {
     public void exportDMS() {
         ExportDms export = new ExportDms();
         try {
-            export.startExport(this.mySchritt.getProcess());
+            export.startExport(this.currentTask.getProcess());
         } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                 | IOException | ExportFileException | RuntimeException e) {
-            Helper.setErrorMessage("errorExport", new Object[] {this.mySchritt.getProcess().getTitle()}, logger, e);
+            Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle()}, logger, e);
         }
     }
 
@@ -683,7 +648,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return values for wiki field
      */
     public String getWikiField() {
-        return this.mySchritt.getProcess().getWikiField();
+        return this.currentTask.getProcess().getWikiField();
 
     }
 
@@ -694,7 +659,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *            input String
      */
     public void setWikiField(String inString) {
-        this.mySchritt.getProcess().setWikiField(inString);
+        this.currentTask.getProcess().setWikiField(inString);
     }
 
     public String getAddToWikiField() {
@@ -710,11 +675,11 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public void addToWikiField() {
         if (addToWikiField != null && addToWikiField.length() > 0) {
-            this.mySchritt.setProcess(
-                serviceManager.getProcessService().addToWikiField(this.addToWikiField, this.mySchritt.getProcess()));
+            this.currentTask.setProcess(
+                serviceManager.getProcessService().addToWikiField(this.addToWikiField, this.currentTask.getProcess()));
             this.addToWikiField = "";
             try {
-                this.serviceManager.getProcessService().save(this.mySchritt.getProcess());
+                this.serviceManager.getProcessService().save(this.currentTask.getProcess());
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {PROCESS}, logger, e);
             }
@@ -848,12 +813,7 @@ public class AktuelleSchritteForm extends BasisForm {
      *            ID of the step to load
      */
     public void loadMyStep(int id) {
-        try {
-            setMySchritt(this.serviceManager.getTaskService().getById(id));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id },
-                logger, e);
-        }
+        setCurrentTask(getTaskById(id));
     }
 
     /**
