@@ -124,7 +124,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
         }
-        return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
+        return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
@@ -134,7 +134,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String editStep() {
         serviceManager.getTaskService().refresh(this.currentTask);
-        return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
+        return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
@@ -229,7 +229,7 @@ public class AktuelleSchritteForm extends BasisForm {
             // only steps with same title
             currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
         } else {
-            return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
+            return taskEditPath + "&id=" + getTaskIdForPath();
         }
         // if only one step is assigned for this batch, use the single
 
@@ -237,7 +237,7 @@ public class AktuelleSchritteForm extends BasisForm {
         // in batch");
 
         if (currentStepsOfBatch.size() == 1) {
-            return taskEditPath + "&id=" + (Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId());
+            return taskEditPath + "&id=" + getTaskIdForPath();
         }
         this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
         return "/pages/batchesEdit";
@@ -834,5 +834,9 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String getTaskListPath() {
         return taskListPath;
+    }
+
+    private int getTaskIdForPath() {
+        return Objects.isNull(this.currentTask.getId()) ? 0 : this.currentTask.getId();
     }
 }
