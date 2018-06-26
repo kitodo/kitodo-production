@@ -510,12 +510,11 @@ public class Block {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
+
         if (!(obj instanceof Block)) {
             return false;
         }
+
         Block other = (Block) obj;
         if (firstAppearance == null) {
             if (other.firstAppearance != null) {
@@ -539,12 +538,9 @@ public class Block {
             return false;
         }
         if (variant == null) {
-            if (other.variant != null) {
-                return false;
-            }
-        } else if (!variant.equals(other.variant)) {
-            return false;
+            return other.variant == null;
+        } else {
+            return variant.equals(other.variant);
         }
-        return true;
     }
 }
