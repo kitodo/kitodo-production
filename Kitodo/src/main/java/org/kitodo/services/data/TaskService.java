@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -519,16 +518,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return Helper.getDateAsFormattedString(task.getProcessingTime());
     }
 
-    // a parameter is given here (even if not used) because jsf expects setter
-    // convention
-    public void setProcessingTimeNow(Task task) {
-        task.setProcessingTime(new Date());
-    }
-
-    public int getProcessingTimeNow() {
-        return 1;
-    }
-
     /**
      * Get localized (translated) title of task.
      *
@@ -697,16 +686,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
         save(task);
-    }
-
-    /**
-     * Returns whether this is a step of a process that is part of at least one
-     * batch as read-only property "batchSize". //TODO: is it ever used?
-     *
-     * @return whether this step’s process is in a batch
-     */
-    public boolean isBatchSize(Task task) {
-        return !task.getProcess().getBatches().isEmpty();
     }
 
     /**
