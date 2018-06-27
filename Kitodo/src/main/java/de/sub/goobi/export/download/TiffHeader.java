@@ -29,17 +29,7 @@ import org.kitodo.services.ServiceManager;
  * @version 1.00 - 12.04.2005
  */
 public class TiffHeader {
-    // private String Haupttitel="";
-    // private String Autor="";
-    // private String DocType="";
-    // private String PPNdigital="";
-    // private String Band="";
-    // private String TSL="";
-    // private String ATS="";
-    // private String ISSN="";
-    // private String Jahr="";
-    // private String Ort="";
-    // private String Verlag="";
+
     private String artist = "";
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";

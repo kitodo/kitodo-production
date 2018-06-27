@@ -259,7 +259,6 @@ public class MetadatenHelper implements Comparator<Object> {
             }
 
             /* anschliessend die Childliste korrigieren */
-            // parent.addChild(myStrukturelement);
             for (DocStructInterface child : alleDS) {
                 parent.addChild(child);
             }

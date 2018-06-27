@@ -387,11 +387,7 @@ public class FileManipulation {
                         URI destinationFile = tempFolder
                                 .resolve(processTitle + "_" + fileService.getFileName(currentFile));
 
-                        // if (deleteFilesAfterMove) {
-                        // currentFile.renameTo(destinationFile);
-                        // } else {
                         fileService.copyFile(currentFile, destinationFile);
-                        // }
                         break;
                     }
                 }
