@@ -62,13 +62,13 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader ticket) throws DAOException, DataException, IOException, JMSException {
         AktuelleSchritteForm dialog = new AktuelleSchritteForm();
         Integer stepID = ticket.getMandatoryInteger("id");
-        dialog.setMySchritt(serviceManager.getTaskService().getById(stepID));
+        dialog.setCurrentTask(serviceManager.getTaskService().getById(stepID));
         if (ticket.hasField("properties")) {
             updateProperties(dialog, ticket.getMapOfStringToString("properties"));
         }
         if (ticket.hasField("message")) {
             serviceManager.getProcessService().addToWikiField(ticket.getString("message"),
-                    dialog.getMySchritt().getProcess());
+                    dialog.getCurrentTask().getProcess());
         }
         dialog.schrittDurchBenutzerAbschliessen();
     }
