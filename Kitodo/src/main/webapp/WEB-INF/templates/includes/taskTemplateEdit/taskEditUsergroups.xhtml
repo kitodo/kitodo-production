@@ -25,7 +25,7 @@
             <p:commandLink action="#{TemplateForm.deleteUserGroup}"
                            id="deleteUsergroup"
                            immediate="true"
-                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                           oncomplete="toggleSave()"
                            update="editForm:tabs:usergroupTable"
                            title="#{msgs.removeUsergroup}">
                 <i class="fa fa-trash-o fa-lg"/>

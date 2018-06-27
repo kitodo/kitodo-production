@@ -82,14 +82,14 @@
                                 <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
                                 <f:selectItems value="#{RulesetForm.clients}" var="client" itemValue="#{client}"
                                                itemLabel="#{client.name}"/>
-                                <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadataSortByRuleset}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset"
                                                      value="#{RulesetForm.ruleset.orderMetadataByRuleset}"
-                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                                                     onchange="toggleSave()"/>
                         </div>
                     </p:row>
                 </p:panelGrid>

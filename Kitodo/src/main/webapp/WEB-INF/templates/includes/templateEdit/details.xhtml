@@ -33,14 +33,14 @@
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
                     <f:selectItems value="#{TemplateForm.projectsSelectList}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
             <div>
                 <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
                 <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{TemplateForm.template.inChoiceListShown}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
         </p:row>
@@ -51,7 +51,7 @@
                 <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}" converter="#{rulesetConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -60,7 +60,7 @@
                 <p:selectOneMenu id="docket" value="#{TemplateForm.template.docket}" converter="#{docketConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{HelperForm.dockets}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>

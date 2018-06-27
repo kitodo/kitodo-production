@@ -39,7 +39,7 @@
                     <p:commandButton action="#{ProzessverwaltungForm.saveTemplateProperty}"
                                      id="save"
                                      update="editForm"
-                                     oncomplete="PF('editTemplateDialog').hide();jQuery('#editForm\\:saveButtonToggler').click()"
+                                     oncomplete="PF('editTemplateDialog').hide();toggleSave()"
                                      value="#{msgs.apply}"
                                      styleClass="button-filled-blue right"/>
                 </p:row>

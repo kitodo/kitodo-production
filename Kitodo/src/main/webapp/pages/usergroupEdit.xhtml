@@ -102,7 +102,7 @@
                                                 value="#{BenutzergruppenForm.authorities}"
                                                 converter="#{authorityConverter}"
                                                 var="authority" itemLabel="#{authority.title}"
-                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                onTransfer="toggleSave()"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
@@ -126,7 +126,7 @@
                                                            itemLabel="#{client.name}"/>
                                             <p:ajax event="change"
                                                     update="authoritiesClientPick"
-                                                    oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                    oncomplete="toggleSave()"
                                             />
                                         </p:selectOneMenu>
                                     </div>
@@ -138,7 +138,7 @@
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 filterMatchMode="contains"
                                                 responsive="true"
-                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                onTransfer="toggleSave()"
                                                 itemLabel="#{authority.title}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
@@ -163,7 +163,7 @@
                                                            itemLabel="#{project.title}"/>
                                             <p:ajax event="change"
                                                     update="authoritiesProjectPick"
-                                                    oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                                                    oncomplete="toggleSave()"/>
                                         </p:selectOneMenu>
                                     </div>
                                     <p:pickList id="authoritiesProjectPick"
@@ -174,7 +174,7 @@
                                                 filterMatchMode="contains"
                                                 responsive="true"
                                                 var="authority"
-                                                onTransfer="jQuery('#editForm\\:saveButtonToggler').click()"
+                                                onTransfer="toggleSave()"
                                                 itemLabel="#{authority.title}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"

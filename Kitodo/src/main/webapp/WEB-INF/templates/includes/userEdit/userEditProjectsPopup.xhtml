@@ -40,7 +40,7 @@
                                            action="#{BenutzerverwaltungForm.addToProject}"
                                            title="add to project"
                                            update="editForm:userTabView:projectDatatable"
-                                           oncomplete="jQuery('#editForm\\:saveButtonToggler').click()">
+                                           oncomplete="toggleSave()">
                                 <i class="fa fa-user-plus fa-lg"/>
                                 <f:param name="ID" value="#{item.id}"/>
                             </p:commandLink>
