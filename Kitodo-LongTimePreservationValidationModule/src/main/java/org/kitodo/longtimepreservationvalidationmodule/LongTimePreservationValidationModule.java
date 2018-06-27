@@ -11,13 +11,13 @@
 
 package org.kitodo.longtimepreservationvalidationmodule;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
-import java.net.URI;
-import java.util.Collection;
+import edu.harvard.hul.ois.jhove.App;
+import edu.harvard.hul.ois.jhove.JhoveBase;
+import edu.harvard.hul.ois.jhove.Module;
+import edu.harvard.hul.ois.jhove.OutputHandler;
 
-import org.kitodo.api.validation.State;
+import java.net.URI;
+
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
@@ -37,31 +37,45 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
      */
     @Override
     public ValidationResult validate(URI fileUri, FileType fileType) {
-        State result = null;
-        Collection<String> messages = null;
-
-        return makeValidationResultFrom(result, messages);
+        KitodoOutputHandler result = new KitodoOutputHandler();
+        try {
+            JhoveBase jhoveBase = new JhoveBase();
+            jhoveBase.init("src/main/resources/jhove.conf", JhoveBase.getSaxClassFromProperties());
+            App app = App.newAppWithName("Jhove");
+            Module module = jhoveBase.getModule(determineModuleName(fileType));
+            OutputHandler aboutHandler = null;
+            String outputFile = null;
+            String[] dirFileOrUri = new String[] {fileUri.getPath() };
+            jhoveBase.dispatch(app, module, aboutHandler, result, outputFile, dirFileOrUri);
+        } catch (Exception e) {
+            result.catchException(e);
+        }
+        return result.toValidationResult();
     }
 
     /**
-     * Creates a new validation result. The function uses reflection since the
-     * result’s constructor is package private.
+     * Returns the matching module name for the given file type.
      *
-     * @param state
-     *            state to set
-     * @param resultMessages
-     *            result messages to set
-     * @return the created validation result
+     * @param fileType
+     *            file type that a module name shall be returned for
+     * @return the matching module name
      */
-    private ValidationResult makeValidationResultFrom(State state, Collection<String> resultMessages) {
-        try {
-            Constructor<ValidationResult> ctor = ValidationResult.class.getDeclaredConstructor(State.class,
-                Collection.class);
-            ctor.setAccessible(true);
-            return ctor.newInstance(state, resultMessages);
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException
-                | InvocationTargetException e) {
-            throw new UndeclaredThrowableException(e);
+    private String determineModuleName(FileType fileType) {
+        switch (fileType) {
+            case GIF:
+                return "GIF-hul";
+            case JPEG:
+                return "JPEG-hul";
+            case JPEG_2000:
+                return "JPEG2000-hul";
+            case PDF:
+                return "PDF-hul";
+            case PNG:
+                return "PNG-gdm";
+            case TIFF:
+                return "TIFF-hul";
+            default:
+                throw new IllegalStateException("Complete switch");
         }
     }
 
