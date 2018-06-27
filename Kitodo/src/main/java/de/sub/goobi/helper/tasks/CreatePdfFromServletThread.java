@@ -13,7 +13,6 @@ package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
-import de.sub.goobi.metadaten.MetadatenHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
@@ -36,6 +35,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -191,7 +191,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
                 String file = basePath + data.getRawPath();
                 fileNames.add(file);
             }
-            fileNames.sort(new MetadatenHelper(null, null));
+            fileNames.sort(new MetadataImageComparator());
             for (String f : fileNames) {
                 url.append(f);
                 url.append("$");
