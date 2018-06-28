@@ -64,7 +64,7 @@
                                      icon="fa fa-long-arrow-left"
                                      styleClass="ui-button-small">
                         <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.taskReload}"
+                                target="#{ProzessverwaltungForm.task}"
                                 value="#{item}"/>
                     </p:commandButton>
                     <!-- Set workflow state to next step -->
@@ -76,7 +76,7 @@
                                      icon="fa fa-long-arrow-right"
                                      styleClass="ui-button-small">
                         <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.taskReload}"
+                                target="#{ProzessverwaltungForm.task}"
                                 value="#{item}"/>
                     </p:commandButton>
                 </p:panel>

@@ -888,11 +888,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.task.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
     }
 
-    // TODO: why second setter for task
-    public void setTaskReload(Task task) {
-        this.task = task;
-    }
-
     public Property getTemplateProperty() {
         return this.templateProperty;
     }
