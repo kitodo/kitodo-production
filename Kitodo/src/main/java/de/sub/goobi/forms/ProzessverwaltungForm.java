@@ -1291,21 +1291,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void transformXml() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            String outputFileName = "export.xml";
-            /*
-             * Vorbereiten der Header-Informationen
-             */
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-
-            ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-            String contentType = servletContext.getMimeType(outputFileName);
-            response.setContentType(contentType);
-            response.setHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
-
-            response.setContentType("text/xml");
-
-            try {
-                ServletOutputStream out = response.getOutputStream();
+            HttpServletResponse response = prepareHeaderInformation(facesContext, "export.xml");
+            try (ServletOutputStream out = response.getOutputStream()) {
                 ExportXmlLog export = new ExportXmlLog();
                 export.startTransformation(out, this.process, this.selectedXslt);
                 out.flush();
@@ -1364,18 +1351,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void generateResultAsPdf() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-
-            /*
-             * Vorbereiten der Header-Informationen
-             */
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            try {
-                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-                String contentType = servletContext.getMimeType("search.pdf");
-                response.setContentType(contentType);
-                response.setHeader("Content-Disposition", "attachment;filename=\"search.pdf\"");
-                ServletOutputStream out = response.getOutputStream();
-
+            HttpServletResponse response = prepareHeaderInformation(facesContext, "search.pdf");
+            try (ServletOutputStream out = response.getOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
                         this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
@@ -1427,17 +1404,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void generateResult() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-
-            /*
-             * Vorbereiten der Header-Informationen
-             */
-            HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-            try {
-                ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-                String contentType = servletContext.getMimeType("search.xls");
-                response.setContentType(contentType);
-                response.setHeader("Content-Disposition", "attachment;filename=\"search.xls\"");
-                ServletOutputStream out = response.getOutputStream();
+            HttpServletResponse response = prepareHeaderInformation(facesContext, "search.xls");
+            try (ServletOutputStream out = response.getOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
                         this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
@@ -1448,6 +1416,17 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultSet") }, logger, e);
             }
         }
+    }
+
+    private HttpServletResponse prepareHeaderInformation(FacesContext facesContext, String outputFileName) {
+        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+
+        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
+        String contentType = servletContext.getMimeType(outputFileName);
+        response.setContentType(contentType);
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
+
+        return response;
     }
 
     @Override
