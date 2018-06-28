@@ -1381,8 +1381,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     table.setSpacingBefore(20);
                     for (List<HSSFCell> row : rowList) {
                         for (HSSFCell hssfCell : row) {
-                            // TODO aufhübschen und nicht toString() nutzen
-                            String stringCellValue = hssfCell.toString();
+                            String stringCellValue = hssfCell.getStringCellValue();
                             table.addCell(stringCellValue);
                         }
                     }
