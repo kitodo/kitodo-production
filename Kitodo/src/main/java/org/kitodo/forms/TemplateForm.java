@@ -269,31 +269,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Get selected project.
-     *
-     * @return Integer
-     */
-    public Integer getProjectSelect() {
-        return getProjectSelect(this.template.getProject());
-    }
-
-    /**
-     * Set selected project.
-     *
-     * @param projectSelect
-     *            Integer
-     */
-    public void setProjectSelect(Integer projectSelect) {
-        if (projectSelect != 0) {
-            try {
-                this.template.setProject(serviceManager.getProjectService().getById(projectSelect));
-            } catch (DAOException e) {
-                Helper.setErrorMessage("Error assigning project", logger, e);
-            }
-        }
-    }
-
-    /**
      * Method being used as viewAction for template edit form. If the given parameter
      * 'id' is '0', the form for creating a new template will be displayed.
      *
