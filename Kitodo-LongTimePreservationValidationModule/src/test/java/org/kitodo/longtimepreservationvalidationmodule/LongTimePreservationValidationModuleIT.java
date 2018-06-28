@@ -18,9 +18,11 @@ import static org.hamcrest.Matchers.is;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import org.junit.Test;
 import org.kitodo.api.validation.State;
+import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
 
@@ -45,17 +47,33 @@ public class LongTimePreservationValidationModuleIT {
     @Test
     public void testThatACorruptedFileDoesNotValidate() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        assertThat(validator.validate(CORRUPTED_TIF_URI, FileType.TIFF).getState(), is(equalTo(State.ERROR)));
+        ValidationResult validationResult = validator.validate(CORRUPTED_TIF_URI, FileType.TIFF);
+        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
+        assertThat(validationResult.getResultMessages(),
+            is(equalTo(Arrays.asList("IFD offset not word-aligned:  110423"))));
     }
 
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        assertThat(validator.validate(JAVA_URI, FileType.PDF).getState(), is(equalTo(State.ERROR)));
-        assertThat(validator.validate(PDF_URI, FileType.GIF).getState(), is(equalTo(State.ERROR)));
-        assertThat(validator.validate(JP2_URI, FileType.JPEG).getState(), is(equalTo(State.ERROR)));
-        assertThat(validator.validate(PNG_URI, FileType.JPEG_2000).getState(), is(equalTo(State.ERROR)));
 
+        ValidationResult validationResult = validator.validate(JAVA_URI, FileType.PDF);
+        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
+        assertThat(validationResult.getResultMessages(), is(equalTo(Arrays.asList("No PDF header", "Offset: 0"))));
+
+        validationResult = validator.validate(PDF_URI, FileType.GIF);
+        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
+        assertThat(validationResult.getResultMessages(), is(equalTo(Arrays.asList("Invalid GIF header", "Offset: 0"))));
+
+        validationResult = validator.validate(JP2_URI, FileType.JPEG);
+        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
+        assertThat(validationResult.getResultMessages(),
+            is(equalTo(Arrays.asList("Invalid JPEG header", "Offset: 0"))));
+
+        validationResult = validator.validate(PNG_URI, FileType.JPEG_2000);
+        assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
+        assertThat(validationResult.getResultMessages(),
+            is(equalTo(Arrays.asList("No JPEG 2000 header", "Offset: 0"))));
     }
 
     @Test
