@@ -156,8 +156,6 @@ public class ImportZentralblatt {
         DocStructInterface dsBoundBook = dd.createDocStruct(dst);
 
         // now build the structure and write in xml
-
-        // DigitalDocument dd = new DigitalDocument();
         dd.setLogicalDocStruct(dsPeriodical);
         dd.setPhysicalDocStruct(dsBoundBook);
         try {
@@ -242,8 +240,6 @@ public class ImportZentralblatt {
             dst = this.myPrefs.getDocStrctTypeByName("PeriodicalIssue");
             dsPeriodicalIssue = inDigitalDocument.createDocStruct(dst);
             MetadataInterface myMD = UghImplementation.INSTANCE.createMetadata(mdt);
-            // TODO: should this be set?
-            // myMD.setType(mdt);
             myMD.setStringValue(right);
             dsPeriodicalIssue.addMetadata(myMD);
             dsPeriodicalVolume.addChild(dsPeriodicalIssue);
@@ -272,7 +268,6 @@ public class ImportZentralblatt {
             // if no journal name has been assigned yet, then assign now
             if (myList.isEmpty()) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
-                // md.setType(mdt);
                 md.setStringValue(right);
                 inStruct.addMetadata(md);
             } else {
@@ -296,7 +291,6 @@ public class ImportZentralblatt {
             // if no journal name has been assigned yet, then assign now
             if (list.isEmpty()) {
                 md = UghImplementation.INSTANCE.createMetadata(mdt);
-                // md.setType(mdt);
                 md.setStringValue(right);
                 inStruct.addMetadata(md);
             }

@@ -147,7 +147,6 @@ public abstract class UnspecificPlugin {
     static UnspecificPlugin create(PluginType type, Object implementation) throws NoSuchMethodException {
         switch (type) {
             case IMPORT:
-                // return new ImportPlugin(implementation);
                 throw new NotImplementedException();
             case CATALOGUE:
                 return new CataloguePlugin(implementation);
@@ -473,10 +472,6 @@ public abstract class UnspecificPlugin {
      * @return a value from enum PluginType, or null if there is no match
      */
     public static PluginType typeOf(Class<? extends UnspecificPlugin> clazz) {
-        // if (ImportPlugin.class.isAssignableFrom(clazz))
-        // return PluginType.Import;
-        // if (CommandPlugin.class.isAssignableFrom(clazz))
-        // return PluginType.Command;
         if (CataloguePlugin.class.isAssignableFrom(clazz)) {
             return PluginType.CATALOGUE;
         }

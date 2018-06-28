@@ -450,8 +450,6 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     Task task = serviceManager.getTaskService().getById(taskDTO.getId());
                     if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
-                        // gesamtAnzahlImages +=
-                        // myDav.getAnzahlImages(step.getProzess().getImagesOrigDirectory());
                         this.gesamtAnzahlImages += serviceManager.getFileService()
                                 .getSubUris(
                                     serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))

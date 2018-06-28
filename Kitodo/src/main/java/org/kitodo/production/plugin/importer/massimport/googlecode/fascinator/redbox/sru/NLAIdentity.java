@@ -158,13 +158,6 @@ public class NLAIdentity {
             }
         }
 
-        // Debugging
-        // for (Map<String, String> id : returnList) {
-        // String display = id.get("displayName") + " (" + id.get("institution")
-        // + ")";
-        // log.debug("Identity: {}", display);
-        // }
-
         return returnList;
     }
 

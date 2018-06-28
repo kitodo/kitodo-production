@@ -349,23 +349,6 @@ public class ImportRussland {
         MetadataInterface md = UghImplementation.INSTANCE.createMetadata(mdt);
         try {
             md.setStringValue(inDetail.substring(4).trim());
-
-            // check if the metadata already exists, if no, create new
-            // TODO: should be this removed??
-
-            // LinkedList list = inStruct.getAllChildren();
-            // if (list != null) {
-            //
-            // /* jetzt alle Artikel durchlaufen, bis der richtige Artikel
-            // gefunden wurde */
-            // for (Iterator firstIterator = listArtikel.iterator();
-            // firstIterator.hasNext();) {
-            // DocStruct artikel = (DocStruct) firstIterator.next();
-            // Metadata md = (Metadata)
-            // artikel.getAllMetadataByType(mdt).getFirst();
-            // logger.debug(md.getValue());
-            // if (md.getValue().equals(zblID)) {
-            // logger.info("------------ Artikel gefunden -------------");
             inStruct.addMetadata(md);
         } catch (RuntimeException e) {
             logger.error("Import fehlgeschlagen: " + inDetail, e);
