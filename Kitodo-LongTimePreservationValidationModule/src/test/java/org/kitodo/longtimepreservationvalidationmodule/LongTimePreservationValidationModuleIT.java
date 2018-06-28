@@ -25,8 +25,8 @@ import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
 
 public class LongTimePreservationValidationModuleIT {
-    private static URI CORRUPTED_TIF_URI, GIF_URI, JAVA_URI, JP2_URI, JPG_URI, PDF_URI, PNG_URI, TIF_URI;
-    {
+    private static final URI CORRUPTED_TIF_URI, GIF_URI, JAVA_URI, JP2_URI, JPG_URI, PDF_URI, PNG_URI, TIF_URI;
+    static {
         try {
             CORRUPTED_TIF_URI = new URI("src/test/resources/corrupted.tif");
             GIF_URI = new URI("src/test/resources/rose.gif");
@@ -43,35 +43,35 @@ public class LongTimePreservationValidationModuleIT {
     }
 
     @Test
-    public void testThatValidFilesValidateWithDefaultModules() {
-        LongTimePreservationValidationInterface validation = new LongTimePreservationValidationModule();
-        assertThat(validation.validate(GIF_URI, FileType.GIF).getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validation.validate(JP2_URI, FileType.JPEG_2000).getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validation.validate(JPG_URI, FileType.JPEG).getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validation.validate(PDF_URI, FileType.PDF).getState(), is(equalTo(State.SUCCESS)));
-        assertThat(validation.validate(TIF_URI, FileType.TIFF).getState(), is(equalTo(State.SUCCESS)));
-    }
-
-    @Test
-    public void testThatValidFilesValidateWithExtendedModules() {
-        LongTimePreservationValidationInterface validation = new LongTimePreservationValidationModule();
-        assertThat(validation.validate(PNG_URI, FileType.PNG).getState(), is(equalTo(State.SUCCESS)));
-    }
-
-    @Test
     public void testThatACorruptedFileDoesNotValidate() {
-        LongTimePreservationValidationInterface validation = new LongTimePreservationValidationModule();
-        assertThat(validation.validate(CORRUPTED_TIF_URI, FileType.TIFF).getState(), is(equalTo(State.ERROR)));
+        LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
+        assertThat(validator.validate(CORRUPTED_TIF_URI, FileType.TIFF).getState(), is(equalTo(State.ERROR)));
     }
 
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
-        LongTimePreservationValidationInterface validation = new LongTimePreservationValidationModule();
-        assertThat(validation.validate(JAVA_URI, FileType.PDF).getState(), is(equalTo(State.ERROR)));
-        assertThat(validation.validate(PDF_URI, FileType.GIF).getState(), is(equalTo(State.ERROR)));
-        assertThat(validation.validate(JP2_URI, FileType.JPEG).getState(), is(equalTo(State.ERROR)));
-        assertThat(validation.validate(PNG_URI, FileType.JPEG_2000).getState(), is(equalTo(State.ERROR)));
+        LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
+        assertThat(validator.validate(JAVA_URI, FileType.PDF).getState(), is(equalTo(State.ERROR)));
+        assertThat(validator.validate(PDF_URI, FileType.GIF).getState(), is(equalTo(State.ERROR)));
+        assertThat(validator.validate(JP2_URI, FileType.JPEG).getState(), is(equalTo(State.ERROR)));
+        assertThat(validator.validate(PNG_URI, FileType.JPEG_2000).getState(), is(equalTo(State.ERROR)));
 
+    }
+
+    @Test
+    public void testThatValidFilesValidateWithDefaultModules() {
+        LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
+        assertThat(validator.validate(GIF_URI, FileType.GIF).getState(), is(equalTo(State.SUCCESS)));
+        assertThat(validator.validate(JP2_URI, FileType.JPEG_2000).getState(), is(equalTo(State.SUCCESS)));
+        assertThat(validator.validate(JPG_URI, FileType.JPEG).getState(), is(equalTo(State.SUCCESS)));
+        assertThat(validator.validate(PDF_URI, FileType.PDF).getState(), is(equalTo(State.SUCCESS)));
+        assertThat(validator.validate(TIF_URI, FileType.TIFF).getState(), is(equalTo(State.SUCCESS)));
+    }
+
+    @Test
+    public void testThatValidFilesValidateWithExtendedModules() {
+        LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
+        assertThat(validator.validate(PNG_URI, FileType.PNG).getState(), is(equalTo(State.SUCCESS)));
     }
 
 }

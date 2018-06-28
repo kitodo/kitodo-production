@@ -33,22 +33,17 @@
         </dependency>
         <dependency>
             <groupId>org.openpreservation.jhove</groupId>
-            <artifactId>jhove-apps</artifactId>
-            <version>${jhove.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openpreservation.jhove</groupId>
             <artifactId>jhove-core</artifactId>
             <version>${jhove.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openpreservation.jhove</groupId>
-            <artifactId>jhove-ext-modules</artifactId>
+            <artifactId>jhove-modules</artifactId>
             <version>${jhove.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openpreservation.jhove</groupId>
-            <artifactId>jhove-modules</artifactId>
+            <artifactId>jhove-ext-modules</artifactId>
             <version>${jhove.version}</version>
         </dependency>
         <dependency>
