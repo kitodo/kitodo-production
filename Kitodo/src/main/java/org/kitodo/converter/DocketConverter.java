@@ -11,6 +11,8 @@
 
 package org.kitodo.converter;
 
+import java.util.Objects;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -29,7 +31,7 @@ public class DocketConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (value == null || value.length() == 0) {
+        if (Objects.isNull(value) || value.isEmpty()) {
             return null;
         } else {
             try {
@@ -43,7 +45,7 @@ public class DocketConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return null;
         } else if (value instanceof Docket) {
             return String.valueOf(((Docket) value).getId().intValue());

@@ -11,9 +11,12 @@
 
 package org.kitodo.converter;
 
+import java.util.Objects;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,26 +27,34 @@ import org.kitodo.services.ServiceManager;
 
 @Named
 public class ProjectConverter implements Converter {
-
-    private ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ProjectConverter.class);
+    private final ServiceManager serviceManager = new ServiceManager();
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-
-        try {
-            return serviceManager.getProjectService().getById(Integer.parseInt(value));
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-            return "0";
+    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+        if (Objects.isNull(value) || value.isEmpty()) {
+            return null;
+        } else {
+            try {
+                return serviceManager.getProjectService().getById(Integer.valueOf(value));
+            } catch (DAOException | NumberFormatException e) {
+                logger.error(e.getMessage(), e);
+                return "0";
+            }
         }
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
-        if (object instanceof String) {
-            return (String) object;
+    public String getAsString(FacesContext context, UIComponent component, Object value) {
+        if (Objects.isNull(value)) {
+            return null;
+        } else if (value instanceof Project) {
+            return String.valueOf(((Project) value).getId().intValue());
+        } else if (value instanceof String) {
+            return (String) value;
+        } else {
+            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Project' sein!");
         }
-        return ((Project) object).getId().toString();
     }
+
 }

@@ -11,6 +11,7 @@
 
 package org.kitodo.converter;
 
+import java.util.Objects;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -45,7 +46,9 @@ public class ClientConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
-        if (object instanceof String) {
+        if (Objects.isNull(object)) {
+            return null;
+        } else if (object instanceof String) {
             return (String) object;
         }
         return ((Client) object).getId().toString();
