@@ -28,7 +28,7 @@ public class ValidationResult {
 
     /**
      * Gets valid.
-     * 
+     *
      * @return The valid.
      */
     public State getState() {
@@ -37,7 +37,7 @@ public class ValidationResult {
 
     /**
      * Gets the resultMessages.
-     * 
+     *
      * @return The resultMessages.
      */
     public Collection<String> getResultMessages() {
