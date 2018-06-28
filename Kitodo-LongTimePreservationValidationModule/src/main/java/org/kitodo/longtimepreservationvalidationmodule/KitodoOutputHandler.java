@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
@@ -25,7 +27,17 @@ public class KitodoOutputHandler extends HandlerBase {
     List<String> messages = new ArrayList<String>();
 
     protected KitodoOutputHandler() {
-        super("", null, new int[] {1970, 1, 1 }, null, null);
+        super(beforeParentConstructor(), null, new int[] {1970, 1, 1 }, null, null);
+    }
+
+    /**
+     * Method that is executed before the constructor of the parent class.
+     *
+     * @return {@code null}. The value is not used.
+     */
+    private static final String beforeParentConstructor() {
+        Logger.getLogger("edu.harvard.hul.ois.jhove.handler").setLevel(Level.OFF);
+        return null;
     }
 
     @Override
