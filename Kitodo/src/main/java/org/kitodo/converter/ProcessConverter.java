@@ -11,6 +11,9 @@
 
 package org.kitodo.converter;
 
+import de.sub.goobi.helper.Helper;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.faces.component.UIComponent;
@@ -53,7 +56,8 @@ public class ProcessConverter implements Converter {
         } else if (value instanceof String) {
             return (String) value;
         } else {
-            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Prozess' sein!");
+            throw new ConverterException(Helper.getTranslation("errorConvert",
+                    Arrays.asList(value.getClass().getCanonicalName(), "Process")));
         }
     }
 
