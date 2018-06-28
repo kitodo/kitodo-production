@@ -11,7 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 
@@ -22,7 +21,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -48,9 +46,10 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.comparator.MetadataComparator;
 import org.kitodo.services.ServiceManager;
 
-public class MetadatenHelper implements Comparator<Object> {
+public class MetadatenHelper {
     private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
@@ -345,7 +344,6 @@ public class MetadatenHelper implements Comparator<Object> {
          */
         HelperComparator c = new HelperComparator();
         c.setSortType(SortType.DOC_STRUCT_TYPE);
-        // TODO: Uses generics, if possible
         newTypes.sort(c);
 
         // nun ein Array mit der richtigen Größe anlegen
@@ -548,60 +546,6 @@ public class MetadatenHelper implements Comparator<Object> {
     }
 
     /**
-     * Comparator für die Metadaten.
-     */
-    // TODO: Uses generics, if possible
-    public static class MetadataComparator implements Comparator<Object> {
-        private String language;
-
-        public MetadataComparator(String inLanguage) {
-            this.language = inLanguage;
-        }
-
-        public void setLanguage(String language) {
-            this.language = language;
-        }
-
-        @Override
-        public int compare(Object firstObject, Object secondObject) {
-            MetadataInterface firstMetadata = (MetadataInterface) firstObject;
-            MetadataInterface secondMetadata = (MetadataInterface) secondObject;
-            if (firstMetadata == null) {
-                return -1;
-            }
-            if (secondMetadata == null) {
-                return 1;
-            }
-            String firstName;
-            String secondName;
-            try {
-                MetadataTypeInterface firstMetadataType = firstMetadata.getMetadataType();
-                MetadataTypeInterface secondMetadataType = secondMetadata.getMetadataType();
-                firstName = firstMetadataType.getNameByLanguage(this.language);
-                secondName = secondMetadataType.getNameByLanguage(this.language);
-            } catch (java.lang.NullPointerException e) {
-                logger.debug("Language {} for metadata {} or {} is missing in ruleset", this.language,
-                    firstMetadata.getMetadataType(), secondMetadata.getMetadataType());
-                return 0;
-            }
-            if (firstName == null || firstName.length() == 0) {
-                firstName = firstMetadata.getMetadataType().getName();
-                if (firstName == null) {
-                    return -1;
-                }
-            }
-            if (secondName == null || secondName.length() == 0) {
-                secondName = secondMetadata.getMetadataType().getName();
-                if (secondName == null) {
-                    return 1;
-                }
-            }
-
-            return firstName.compareToIgnoreCase(secondName);
-        }
-    }
-
-    /**
      * Alle Rollen ermitteln, die für das übergebene Strukturelement erlaubt
      * sind.
      *
@@ -650,30 +594,6 @@ public class MetadatenHelper implements Comparator<Object> {
             myList.add(new SelectItem(mdt.getName(), getMetadatatypeLanguage(mdt)));
         }
         return myList;
-    }
-
-    @Override
-    public int compare(Object firstObject, Object secondObject) {
-        String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
-        String firstString = (String) firstObject;
-        String secondString = (String) secondObject;
-        // comparing only prefixes of files:
-        firstString = firstString.substring(0, firstString.lastIndexOf('.'));
-        secondString = secondString.substring(0, secondString.lastIndexOf('.'));
-
-        if (imageSorting.equalsIgnoreCase("number")) {
-            try {
-                Integer firstIterator = Integer.valueOf(firstString);
-                Integer secondIterator = Integer.valueOf(secondString);
-                return firstIterator.compareTo(secondIterator);
-            } catch (NumberFormatException e) {
-                return firstString.compareToIgnoreCase(secondString);
-            }
-        } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
-            return firstString.compareToIgnoreCase(secondString);
-        } else {
-            return firstString.compareToIgnoreCase(secondString);
-        }
     }
 
 }

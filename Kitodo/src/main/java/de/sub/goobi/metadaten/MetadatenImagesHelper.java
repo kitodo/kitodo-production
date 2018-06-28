@@ -26,12 +26,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -59,6 +57,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -458,32 +457,6 @@ public class MetadatenImagesHelper {
         return false;
     }
 
-    public static class GoobiImageFileComparator implements Comparator<URI>, Serializable {
-
-        private static final long serialVersionUID = -5972458403679726498L;
-
-        @Override
-        public int compare(URI firstUri, URI secondUri) {
-            String firstString = fileService.getFileName(firstUri);
-            String secondString = fileService.getFileName(secondUri);
-            String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
-
-            if (imageSorting.equalsIgnoreCase("number")) {
-                try {
-                    Integer firstInteger = Integer.valueOf(firstString);
-                    Integer secondInteger = Integer.valueOf(secondString);
-                    return firstInteger.compareTo(secondInteger);
-                } catch (NumberFormatException e) {
-                    return firstString.compareToIgnoreCase(secondString);
-                }
-            } else if (imageSorting.equalsIgnoreCase("alphanumeric")) {
-                return firstString.compareToIgnoreCase(secondString);
-            } else {
-                return firstString.compareToIgnoreCase(secondString);
-            }
-        }
-    }
-
     /**
      * Get image files.
      *
@@ -508,7 +481,7 @@ public class MetadatenImagesHelper {
             if (orderedFileNameList.size() == dataList.size()) {
                 return orderedFileNameList;
             } else {
-                dataList.sort(new GoobiImageFileComparator());
+                dataList.sort(new MetadataImageComparator());
                 return dataList;
             }
         } else {
@@ -574,7 +547,7 @@ public class MetadatenImagesHelper {
         List<URI> files = fileService.getSubUris(Helper.dataFilter, dir);
         if (!files.isEmpty()) {
             dataList.addAll(files);
-            dataList.sort(new GoobiImageFileComparator());
+            dataList.sort(new MetadataImageComparator());
         }
         return dataList;
     }

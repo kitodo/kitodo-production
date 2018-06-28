@@ -14,7 +14,6 @@ package de.sub.goobi.export.download;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
-import de.sub.goobi.metadaten.MetadatenHelper;
 
 import java.io.BufferedWriter;
 import java.io.FilenameFilter;
@@ -40,6 +39,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -148,7 +148,7 @@ public class ExportPdf extends ExportMets {
         List<URI> meta = fileService.getSubUris(filter, imagesDir);
         int capacity = contentServerUrl.length() + (meta.size() - 1) + AND_TARGET_FILE_NAME_IS.length()
                 + process.getTitle().length() + PDF_EXTENSION.length();
-        TreeSet<String> fileNames = new TreeSet<>(new MetadatenHelper(null, null));
+        TreeSet<String> fileNames = new TreeSet<>(new MetadataImageComparator());
         String basePath = ConfigCore.getKitodoDataDirectory();
         for (URI data : meta) {
             String file = basePath + data.getRawPath();
