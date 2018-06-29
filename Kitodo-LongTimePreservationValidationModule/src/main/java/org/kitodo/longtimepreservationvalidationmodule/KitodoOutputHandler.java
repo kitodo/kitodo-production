@@ -129,10 +129,6 @@ public class KitodoOutputHandler extends HandlerBase {
      * Returns the captured results as validation result. The function uses
      * reflection since the result’s constructor is package private.
      *
-     * @param state
-     *            state to set
-     * @param resultMessages
-     *            result messages to set
      * @return the created validation result
      */
     public ValidationResult toValidationResult() {

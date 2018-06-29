@@ -23,6 +23,16 @@ public enum ValidationResultState {
     WELL_FORMED(State.SUCCESS),
     WELL_FORMED_BUT_NOT_VALID(State.WARNING);
 
+    /**
+     * Returns the enum constant for the specified wellformedness and valididity
+     * values.
+     *
+     * @param wellFormed
+     *            whether the file is well formed
+     * @param valid
+     *            whether the file is valid
+     * @return the corresponding enum constant
+     */
     public static ValidationResultState valueOf(int wellFormed, int valid) {
         switch (wellFormed) {
             case RepInfo.UNDETERMINED:
