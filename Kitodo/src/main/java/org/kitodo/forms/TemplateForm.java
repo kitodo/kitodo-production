@@ -207,7 +207,7 @@ public class TemplateForm extends TemplateBaseForm {
                     this.template = reader.convertWorkflowToTemplate(this.template);
                 }
             } catch (IOException e) {
-                logger.error("Problem with diagram");
+                Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
             }
 
             try {
@@ -296,7 +296,6 @@ public class TemplateForm extends TemplateBaseForm {
         File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName);
         try {
             return new FileInputStream(tasksDiagram);
-
         } catch (FileNotFoundException e) {
             logger.error(e.getMessage(), e);
             return new InputStream() {
