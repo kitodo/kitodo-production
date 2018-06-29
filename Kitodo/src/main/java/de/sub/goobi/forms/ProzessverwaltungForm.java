@@ -1078,41 +1078,33 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Starte GoobiScript über alle Treffer.
+     * Execute Kitodo script for hits list.
      */
     @SuppressWarnings("unchecked")
-    public void kitodoScriptHits() {
-        GoobiScript gs = new GoobiScript();
-        try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(lazyDTOModel.getEntities()),
-                    this.kitodoScript);
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+    public void executeKitodoScriptHits() {
+        executeKitodoScriptForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
-     * Starte GoobiScript über alle Treffer der Seite.
+     * Execute Kitodo script for processes displayed on the page.
      */
     @SuppressWarnings("unchecked")
-    public void kitodoScriptPage() {
-        GoobiScript gs = new GoobiScript();
-        try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(lazyDTOModel.getEntities()), this.kitodoScript);
-        } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+    public void executeKitodoScriptPage() {
+        executeKitodoScriptForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
-     * Starte GoobiScript über alle selectierten Treffer.
+     * Execute Kitodo script for selected processes.
      */
     @SuppressWarnings("unchecked")
-    public void kitodoScriptSelection() {
+    public void executeKitodoScriptSelection() {
+        executeKitodoScriptForProcesses(this.selectedProcesses);
+    }
 
+    private void executeKitodoScriptForProcesses(List<ProcessDTO> processes) {
         GoobiScript gs = new GoobiScript();
         try {
-            gs.execute(serviceManager.getProcessService().convertDtosToBeans(this.selectedProcesses), this.kitodoScript);
+            gs.execute(serviceManager.getProcessService().convertDtosToBeans(processes), this.kitodoScript);
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
