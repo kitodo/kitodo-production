@@ -14,6 +14,7 @@ package org.kitodo.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
 @SessionScoped
@@ -193,6 +195,15 @@ public class TemplateForm extends TemplateBaseForm {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
                 return null;
+            }
+
+            try {
+                if (this.template.getTasks().isEmpty()) {
+                    Reader reader = new Reader(this.template.getWorkflow().getFileName());
+                    this.template = reader.convertWorkflowToTemplate(this.template);
+                }
+            } catch (IOException e) {
+                logger.error("Problem with diagram");
             }
 
             try {
