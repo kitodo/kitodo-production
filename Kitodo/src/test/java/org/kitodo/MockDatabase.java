@@ -1244,9 +1244,12 @@ public class MockDatabase {
 
     public static void insertWorkflows() throws DAOException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
+        firstWorkflow.setActive(true);
+        firstWorkflow.setReady(true);
         serviceManager.getWorkflowService().saveToDatabase(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
+        secondWorkflow.setReady(false);
         serviceManager.getWorkflowService().saveToDatabase(secondWorkflow);
     }
 
