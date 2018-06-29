@@ -24,7 +24,7 @@
                 <ui:include src="/WEB-INF/templates/includes/head.xhtml" />
             </ui:insert>
         </h:head>
-        <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}">
+        <h:body styleClass="#{LoginForm.firstVisit ? 'first-visit' : ''}" lang="#{SpracheForm.locale}">
             <h:outputStylesheet name="css/kitodo.css"/>
             <h:outputStylesheet name="css/pattern-library.css"/>
             <h:outputStylesheet name="css/bpmn-js/bpmn-font/css/bpmn.css"/>
@@ -43,13 +43,13 @@
                         <ui:include src="/WEB-INF/templates/includes/header.xhtml" />
                     </ui:insert>
                 </header>
-                <div id="breadcrumb-wrapper">
+                <h:panelGroup id="breadcrumb-wrapper" layout="block" rendered="#{not request.requestURI.endsWith('login.jsf')}">
                     <ul id="breadcrumb">
                         <ui:insert name="breadcrumbs">
                             <ui:include src="/WEB-INF/templates/includes/breadcrumbs.xhtml" />
                         </ui:insert>
                     </ul>
-                </div>
+                </h:panelGroup>
                 <main class="flex-item" role="main">
                     <ui:insert name="content">
                         <ui:include src="/WEB-INF/templates/includes/content.xhtml" />
