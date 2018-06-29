@@ -14,6 +14,7 @@
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="taskTable"
@@ -105,6 +106,8 @@
         </p:rowExpansion>
 
     </p:dataTable>
+
+    <o:graphicImage value="#{TemplateForm.tasksDiagram}" dataURI="true" />
 
     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
         <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
