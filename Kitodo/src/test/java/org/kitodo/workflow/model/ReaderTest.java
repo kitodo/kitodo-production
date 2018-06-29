@@ -69,12 +69,9 @@ public class ReaderTest {
     public void shouldConvertWorkflowToTemplate() throws Exception {
         Reader reader = new Reader("extended-test");
 
-        Template template = reader.convertWorkflowToTemplate();
-        template.getTasks().sort(Comparator.comparing(Task::getOrdering));
-
-        assertEquals("Process definition - workflow was read incorrectly!", "say-hello", template.getTitle());
-        assertEquals("Process definition - workflow was read incorrectly!", "Say Hello", template.getOutputName());
-
+        Template template = new Template();
+        template.setTitle("Title");
+        template = reader.convertWorkflowToTemplate(template);
         template.getTasks().sort(Comparator.comparing(Task::getOrdering));
 
         Task task = template.getTasks().get(0);

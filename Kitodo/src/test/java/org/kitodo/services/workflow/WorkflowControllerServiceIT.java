@@ -23,13 +23,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
-import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
@@ -72,26 +69,6 @@ public class WorkflowControllerServiceIT {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
         }
-    }
-
-    @Test
-    public void shouldWorkflowAsTemplate() throws Exception {
-        fileService.createDirectory(URI.create(""), "diagrams");
-        FileLoader.createExtendedGatewayDiagramTestFile();
-
-        workflowService.saveWorkflowAsTemplate("gateway");
-
-        Template template = serviceManager.getTemplateService().getByQuery("FROM Template WHERE title = 'test-gateway'")
-                .get(0);
-        assertEquals("Tasks of template were not saved correctly!", "Test Gateway", template.getOutputName());
-        assertEquals("Tasks of template were not saved correctly!", 5, template.getTasks().size());
-
-        List<Workflow> workflows = serviceManager.getWorkflowService()
-                .getByQuery("FROM Workflow WHERE title = 'Process_1'");
-        assertEquals("Workflow of template was not saved correctly!", 1, workflows.size());
-
-        FileLoader.deleteExtendedGatewayDiagramTestFile();
-        fileService.delete(URI.create("diagrams"));
     }
 
     @Test

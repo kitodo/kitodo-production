@@ -34,7 +34,6 @@ import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -46,7 +45,6 @@ import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
-import org.kitodo.workflow.model.Reader;
 
 public class WorkflowControllerService {
 
@@ -131,19 +129,6 @@ public class WorkflowControllerService {
         Workflow workflow = serviceManager.getWorkflowService().getById(id);
         workflow.setReady(true);
         serviceManager.getWorkflowService().save(workflow);
-    }
-
-    /**
-     * Save workflow as template.
-     *
-     * @param diagramName
-     *            from which template is assigned
-     */
-    public void saveWorkflowAsTemplate(String diagramName) throws DAOException, DataException, IOException {
-        Reader reader = new Reader(diagramName);
-        Template template = reader.convertWorkflowToTemplate();
-        serviceManager.getWorkflowService().saveToDatabase(template.getWorkflow());
-        serviceManager.getTemplateService().save(template);
     }
 
     /**

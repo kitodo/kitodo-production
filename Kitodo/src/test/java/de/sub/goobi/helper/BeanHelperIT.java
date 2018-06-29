@@ -55,7 +55,9 @@ public class BeanHelperIT {
     public void shouldCopyTasks() throws Exception {
         Reader reader = new Reader("gateway");
 
-        Template template = reader.convertWorkflowToTemplate();
+        Template template = new Template();
+        template.setTitle("Title");
+        template = reader.convertWorkflowToTemplate(template);
         Process process = new Process();
 
         BeanHelper.copyTasks(template, process);
