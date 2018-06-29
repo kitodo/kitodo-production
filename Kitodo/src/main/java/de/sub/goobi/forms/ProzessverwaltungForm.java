@@ -112,7 +112,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private List<ProcessDTO> processDTOS = new ArrayList<>();
     private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
-    private transient WorkflowControllerService workflowControllerService = serviceManager.getWorkflowControllerService();
+    private transient WorkflowControllerService workflowControllerService = serviceManager
+            .getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String ERROR_DELETING = "errorDeleting";
     private static final String ERROR_LOADING_ONE = "errorLoadingOne";
@@ -563,8 +564,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
-        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                | IOException | ExportFileException | RuntimeException e) {
+        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
+                | ExportFileException | RuntimeException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -578,12 +579,12 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
+            Helper.setMessage(EXPORT_FINISHED);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
-        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                | IOException | ExportFileException | RuntimeException e) {
-            Helper.setErrorMessage("An error occurred while trying to export to DMS for: " + this.process.getTitle(),
-                logger, e);
+        } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
+                | ExportFileException | RuntimeException e) {
+            Helper.setErrorMessage("errorExporting", new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         }
     }
 
@@ -592,19 +593,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void exportDMSPage() {
-        ExportDms export = new ExportDms();
-
-        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
-            try {
-                Process process = serviceManager.getProcessService().convertDtoToBean(processDTO);
-                export.startExport(process);
-                Helper.setMessage(EXPORT_FINISHED);
-            } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
-                    | ReadException | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage("errorExporting",
-                    new Object[] {Helper.getTranslation(PROCESS), processDTO.getId() }, logger, e);
-            }
-        }
+        exportDMSForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
@@ -612,16 +601,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void exportDMSSelection() {
-        ExportDms export = new ExportDms();
-        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
-            try {
-                export.startExport(serviceManager.getProcessService().convertDtoToBean(processDTO));
-                Helper.setMessage(EXPORT_FINISHED);
-            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | IOException | ExportFileException | DAOException | RuntimeException e) {
-                Helper.setErrorMessage("errorExport", new Object[] {processDTO.getTitle()}, logger, e);
-            }
-        }
+        exportDMSForProcesses(this.getSelectedProcesses());
     }
 
     /**
@@ -629,17 +609,25 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     @SuppressWarnings("unchecked")
     public void exportDMSHits() {
+        exportDMSForProcesses(lazyDTOModel.getEntities());
+    }
+
+    private void exportDMSForProcesses(List<ProcessDTO> processes) {
         ExportDms export = new ExportDms();
-        for (Process process : (List<Process>) lazyDTOModel.getEntities()) {
+        for (ProcessDTO process : processes) {
             try {
-                export.startExport(process);
+                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                export.startExport(processBean);
+                Helper.setMessage(EXPORT_FINISHED);
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | RuntimeException e) {
-                Helper.setErrorMessage("errorExport", new Object[] {process.getTitle()}, logger, e);
+                Helper.setErrorMessage("errorExporting",
+                    new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
             }
         }
-        logger.info(Helper.getTranslation(EXPORT_FINISHED));
-        Helper.setMessage(EXPORT_FINISHED);
     }
 
     /**
@@ -754,31 +742,34 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Set up processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForPage() throws DAOException, DataException, IOException {
-        List<ProcessDTO> processes = lazyDTOModel.getEntities();
-        for (ProcessDTO process : processes) {
-            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
-        }
+    public void setTaskStatusUpForPage() {
+        setTaskStatusUpForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
      * Set up processing status selection.
      */
-    public void setTaskStatusUpForSelection() throws DAOException, DataException, IOException {
-        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
-        for (ProcessDTO processDTO : processDTOS) {
-            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(processDTO.getId()));
-        }
+    public void setTaskStatusUpForSelection() {
+        setTaskStatusUpForProcesses(this.getSelectedProcesses());
     }
 
     /**
      * Set up processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForHits() throws DAOException, DataException, IOException {
-        List<ProcessDTO> processes = lazyDTOModel.getEntities();
+    public void setTaskStatusUpForHits() {
+        setTaskStatusUpForProcesses(lazyDTOModel.getEntities());
+    }
+
+    private void setTaskStatusUpForProcesses(List<ProcessDTO> processes) {
         for (ProcessDTO process : processes) {
-            workflowControllerService.setTasksStatusUp(serviceManager.getProcessService().getById(process.getId()));
+            try {
+                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                workflowControllerService.setTasksStatusUp(processBean);
+            } catch (DAOException | DataException | IOException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                    new Object[] {Helper.getTranslation("up"), process.getId() }, logger, e);
+            }
         }
     }
 
@@ -786,31 +777,34 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Set down processing status page.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForPage() throws DAOException, DataException {
-        List<ProcessDTO> processes = lazyDTOModel.getEntities();
-        for (ProcessDTO process : processes) {
-            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
-        }
+    public void setTaskStatusDownForPage() {
+        setTaskStatusDownForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
      * Set down processing status selection.
      */
-    public void setTaskStatusDownForSelection() throws DAOException, DataException {
-        List<ProcessDTO> processDTOS = this.getSelectedProcesses();
-        for (ProcessDTO processDTO : processDTOS) {
-            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(processDTO.getId()));
-        }
+    public void setTaskStatusDownForSelection() {
+        setTaskStatusDownForProcesses(this.getSelectedProcesses());
     }
 
     /**
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForHits() throws DAOException, DataException {
-        List<ProcessDTO> processes = lazyDTOModel.getEntities();
+    public void setTaskStatusDownForHits() {
+        setTaskStatusDownForProcesses(lazyDTOModel.getEntities());
+    }
+
+    private void setTaskStatusDownForProcesses(List<ProcessDTO> processes) {
         for (ProcessDTO process : processes) {
-            workflowControllerService.setTasksStatusDown(serviceManager.getProcessService().getById(process.getId()));
+            try {
+                Process processBean = serviceManager.getProcessService().getById(process.getId());
+                workflowControllerService.setTasksStatusDown(processBean);
+            } catch (DAOException | DataException e) {
+                Helper.setErrorMessage("errorChangeTaskStatus",
+                    new Object[] {Helper.getTranslation("down"), process.getId() }, logger, e);
+            }
         }
     }
 
@@ -843,7 +837,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Set process by ID.
-     * @param processID ID of process to set.
+     * 
+     * @param processID
+     *            ID of process to set.
      */
     public void setProcessByID(int processID) {
         try {
