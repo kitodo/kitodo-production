@@ -45,7 +45,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
-import org.kitodo.enums.ObjectMode;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.services.ServiceManager;
@@ -64,7 +63,6 @@ public class BatchForm extends BasisForm {
     private List<Integer> selectedBatches;
     private String batchfilter;
     private String processfilter;
-    private ObjectMode editMode = ObjectMode.NONE;
     private String batchTitle;
     private static final String ERROR_READ = "errorReading";
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
@@ -248,7 +246,6 @@ public class BatchForm extends BasisForm {
     @PostConstruct
     public void initializeBatchList() {
         filterAll();
-        setEditMode(ObjectMode.NONE);
     }
 
     /**
@@ -443,25 +440,6 @@ public class BatchForm extends BasisForm {
 
     public void setBatchHelper(BatchProcessHelper batchHelper) {
         this.batchHelper = batchHelper;
-    }
-
-    /**
-     * Get mode for edition.
-     *
-     * @return mode for edition as ObjectMode objects
-     */
-    public ObjectMode getEditMode() {
-        return this.editMode;
-    }
-
-    /**
-     * Set mode for edition.
-     *
-     * @param editMode
-     *            mode for edition as ObjectMode objects
-     */
-    public void setEditMode(ObjectMode editMode) {
-        this.editMode = editMode;
     }
 
     /**

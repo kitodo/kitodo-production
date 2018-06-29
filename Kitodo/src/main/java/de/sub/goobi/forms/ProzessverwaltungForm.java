@@ -78,7 +78,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
-import org.kitodo.enums.ObjectMode;
 import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -96,8 +95,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private HashMap<String, Integer> counterSummary;
     private Property templateProperty;
     private Property workpieceProperty;
-    private ObjectMode displayMode = ObjectMode.PROCESS;
-    private ObjectMode editMode = ObjectMode.NONE;
     private String kitodoScript;
     private Map<String, Boolean> anzeigeAnpassen;
     private String newProcessTitle;
@@ -251,7 +248,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
         if (!this.newProcessTitle.matches(validateRegEx)) {
-            this.editMode = ObjectMode.PROCESS;
             Helper.setErrorMessage("processTitleInvalid");
             return false;
         } else {
@@ -437,7 +433,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.task = new Task();
         this.task.setProcess(this.process);
         this.process.getTasks().add(this.task);
-        this.editMode = ObjectMode.TASK;
         return taskEditPath + "&id="
                 + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
@@ -901,44 +896,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     public void setWorkpieceProperty(Property workpieceProperty) {
         this.workpieceProperty = workpieceProperty;
-    }
-
-    /**
-     * Get mode for display.
-     *
-     * @return mode for edition as ObjectMode objects
-     */
-    public ObjectMode getDisplayMode() {
-        return this.displayMode;
-    }
-
-    /**
-     * Set mode for display and set up default sort to title ASC.
-     *
-     * @param displayMode
-     *            mode for edition as ObjectMode objects
-     */
-    public void setDisplayMode(ObjectMode displayMode) {
-        this.displayMode = displayMode;
-    }
-
-    /**
-     * Get mode for edition.
-     *
-     * @return mode for edition as ObjectMode objects
-     */
-    public ObjectMode getEditMode() {
-        return editMode;
-    }
-
-    /**
-     * Set mode for edition.
-     *
-     * @param editMode
-     *            mode for edition as ObjectMode objects
-     */
-    public void setEditMode(ObjectMode editMode) {
-        this.editMode = editMode;
     }
 
     /**
