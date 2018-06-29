@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.longtimepreservationvalidationmodule;
 
 import edu.harvard.hul.ois.jhove.RepInfo;
@@ -26,18 +37,21 @@ public enum ValidationResultState {
                         return WELL_FORMED_BUT_NOT_VALID;
                     case RepInfo.TRUE:
                         return VALID;
+                    default:
+                        throw new IllegalStateException("Complete switch");
                 }
+            default:
+                throw new IllegalStateException("Complete switch");
         }
-        throw new IllegalStateException("Complete switch");
     }
 
-    private State s;
+    private State state;
 
-    private ValidationResultState(State s) {
-        this.s = s;
+    ValidationResultState(State state) {
+        this.state = state;
     }
 
     public State toState() {
-        return s;
+        return state;
     }
 }

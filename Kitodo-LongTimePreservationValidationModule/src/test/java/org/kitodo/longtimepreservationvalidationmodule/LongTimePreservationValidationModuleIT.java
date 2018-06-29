@@ -28,6 +28,7 @@ import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValida
 
 public class LongTimePreservationValidationModuleIT {
     private static final URI CORRUPTED_TIF_URI, GIF_URI, JAVA_URI, JP2_URI, JPG_URI, PDF_URI, PNG_URI, TIF_URI;
+
     static {
         try {
             CORRUPTED_TIF_URI = new URI("src/test/resources/corrupted.tif");
