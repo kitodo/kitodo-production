@@ -148,7 +148,7 @@
                                update="editForm"
                                title="#{msgs.fileGroupDelete}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
-                               oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                               oncomplete="toggleSave()"
                                styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>

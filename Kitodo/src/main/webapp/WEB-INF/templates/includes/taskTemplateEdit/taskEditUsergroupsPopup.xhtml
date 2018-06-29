@@ -37,7 +37,7 @@
                     <p:column headerText="#{msgs.actions}">
                         <p:commandLink id="addUsergroup"
                                        action="#{TemplateForm.addUserGroup}"
-                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                       oncomplete="toggleSave()"
                                        update="editForm:tabs:usergroupTable">
                             <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
                             <f:param name="ID" value="#{usergroup.id}"/>

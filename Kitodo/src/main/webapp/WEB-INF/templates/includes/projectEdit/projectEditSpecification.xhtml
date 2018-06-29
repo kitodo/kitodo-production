@@ -31,7 +31,7 @@
                 <p:outputLabel for="internalFormat" value="#{msgs.internFileFormat}" />
                 <p:selectOneMenu id="internalFormat" value="#{ProjekteForm.myProjekt.fileFormatInternal}" disabled="#{ProjekteForm.lockedTechnical}">
                     <f:selectItems value="#{HelperForm.fileFormatsInternalOnly}" />
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
@@ -53,7 +53,7 @@
             <div>
                 <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
                 <p:selectBooleanCheckbox id="automaticExport" value="#{ProjekteForm.myProjekt.useDmsImport}" class="input" disabled="#{ProjekteForm.lockedTechnical}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
             <div>
@@ -68,7 +68,7 @@
                 <p:outputLabel for="DmsFormat" value="#{msgs.dmsExportformat}" />
                 <p:selectOneMenu id="DmsFormat" value="#{ProjekteForm.myProjekt.fileFormatDmsExport}" disabled="#{ProjekteForm.lockedTechnical}">
                     <f:selectItems value="#{HelperForm.fileFormats}" />
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
@@ -90,7 +90,7 @@
             <div>
                 <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />
                 <p:selectBooleanCheckbox id="createDir" class="input" value="#{ProjekteForm.myProjekt.dmsImportCreateProcessFolder}" disabled="#{ProjekteForm.lockedTechnical}">
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
         </p:row>

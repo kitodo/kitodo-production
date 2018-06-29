@@ -39,7 +39,7 @@
                                              empty param['editForm:tabs:createNewProperty']}">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
                     <f:selectItems value="#{ProzessverwaltungForm.projectsSelectList}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>
@@ -53,7 +53,7 @@
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
                     <f:selectItems value="#{HelperForm.regelsaetze}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
@@ -65,7 +65,7 @@
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
                     <f:selectItems value="#{HelperForm.dockets}"/>
-                    <p:ajax event="change" oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
         </p:row>

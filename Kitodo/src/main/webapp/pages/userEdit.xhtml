@@ -99,7 +99,7 @@
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"
                                                      value="#{BenutzerverwaltungForm.userObject.active}"
-                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                                                     onchange="toggleSave()"/>
                         </div>
                     </p:row>
                     <p:row>
@@ -120,7 +120,7 @@
                                         disabled="#{isViewMode}"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
-                                        onblur="jQuery('#editForm\\:saveButtonToggler').click()"
+                                        onblur="toggleSave()"
                                         required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
@@ -131,7 +131,7 @@
                                          disabled="#{isViewMode}"
                                          placeholder="#{msgs.metadataLanguage}"
                                          value="#{BenutzerverwaltungForm.userObject.metadataLanguage}"
-                                         onchange="jQuery('#editForm\\:saveButtonToggler').click()"
+                                         onchange="toggleSave()"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
@@ -140,7 +140,7 @@
                                                      styleClass="input"
                                                      disabled="#{isViewMode}"
                                                      value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
-                                                     onchange="jQuery('#editForm\\:saveButtonToggler').click()"/>
+                                                     onchange="toggleSave()"/>
                         </div>
                     </p:row>
                 </p:panelGrid>
@@ -157,7 +157,7 @@
                                        action="#{BenutzerverwaltungForm.deleteFromGroup}"
                                        title="#{msgs.ausGruppeLoeschen}"
                                        immediate="true"
-                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                       oncomplete="toggleSave()"
                                        update="@form">
                             <i class="fa fa-trash-o fa-lg"/>
                             <f:param name="ID" value="#{item.id}"/>
@@ -184,7 +184,7 @@
                                        action="#{BenutzerverwaltungForm.deleteFromProject}"
                                        title="#{msgs.deleteFromProject}"
                                        immediate="true"
-                                       oncomplete="jQuery('#editForm\\:saveButtonToggler').click()"
+                                       oncomplete="toggleSave()"
                                        update="@form">
                             <i class="fa fa-trash-o fa-lg"/>
                             <f:param name="ID" value="#{item.id}"/>
