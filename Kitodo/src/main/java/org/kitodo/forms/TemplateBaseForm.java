@@ -25,7 +25,9 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -193,6 +195,34 @@ public class TemplateBaseForm extends BasisForm {
             }
         }
         task.setOrdering(ordering);
+    }
+
+    /**
+     * Get rulesets for select list.
+     *
+     * @return list of rulesets as SelectItems
+     */
+    public List<SelectItem> getRulesets() {
+        List<SelectItem> myPrefs = new ArrayList<>();
+        List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
+        for (Ruleset ruleset : temp) {
+            myPrefs.add(new SelectItem(ruleset, ruleset.getTitle(), null));
+        }
+        return myPrefs;
+    }
+
+    /**
+     * Get dockets for select list.
+     *
+     * @return list of dockets as SelectItems
+     */
+    public List<SelectItem> getDockets() {
+        List<SelectItem> answer = new ArrayList<>();
+        List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
+        for (Docket docket : temp) {
+            answer.add(new SelectItem(docket, docket.getTitle(), null));
+        }
+        return answer;
     }
 
     /**

@@ -27,8 +27,6 @@ import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 
@@ -51,34 +49,6 @@ public class HelperForm implements Serializable {
 
     public boolean getAnonymized() {
         return ConfigCore.getBooleanParameter("anonymize");
-    }
-
-    /**
-     * Get rulesets.
-     *
-     * @return list of rulesets as SelectItems
-     */
-    public List<SelectItem> getRegelsaetze() {
-        List<SelectItem> myPrefs = new ArrayList<>();
-        List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
-        for (Ruleset ruleset : temp) {
-            myPrefs.add(new SelectItem(ruleset, ruleset.getTitle(), null));
-        }
-        return myPrefs;
-    }
-
-    /**
-     * Get dockets.
-     *
-     * @return list of dockets as SelectItems
-     */
-    public List<SelectItem> getDockets() {
-        List<SelectItem> answer = new ArrayList<>();
-        List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
-        for (Docket d : temp) {
-            answer.add(new SelectItem(d, d.getTitle(), null));
-        }
-        return answer;
     }
 
     /**

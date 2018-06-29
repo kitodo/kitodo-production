@@ -48,7 +48,7 @@
                     <p:selectOneMenu id="Regelsatz" value="#{ProzesskopieForm.prozessKopie.ruleset}" converter="#{rulesetConverter}"
                                      onchange="document.getElementById('OpacRequest').click()" styleClass="prozessKopieFeldbreite"
                                      required="true">
-                        <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                        <f:selectItems value="#{ProzessverwaltungForm.rulesets}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
             </div>

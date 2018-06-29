@@ -52,7 +52,7 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.rulesets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -64,7 +64,7 @@
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{HelperForm.dockets}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.dockets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
