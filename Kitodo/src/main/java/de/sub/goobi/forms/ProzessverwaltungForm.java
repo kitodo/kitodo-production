@@ -138,7 +138,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.anzeigeAnpassen.put("selectionBoxes", false);
         this.anzeigeAnpassen.put("processId", false);
         this.anzeigeAnpassen.put("batchId", false);
-        this.sortierung = "titelAsc";
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProcessService()));
         /*
          * Vorgangsdatum generell anzeigen?
@@ -920,7 +919,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      *            mode for edition as ObjectMode objects
      */
     public void setDisplayMode(ObjectMode displayMode) {
-        this.sortierung = "titelAsc";
         this.displayMode = displayMode;
     }
 
