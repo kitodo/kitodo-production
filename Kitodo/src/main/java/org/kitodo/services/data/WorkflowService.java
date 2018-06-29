@@ -83,4 +83,13 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     public List<Workflow> getWorkflowsForTitleAndFile(String title, String file) {
         return dao.getByTitleAndFile(title, file);
     }
+
+    /**
+     * Get available workflows - available means that workflow is active and ready.
+     *
+     * @return list of available Workflow objects
+     */
+    public List<Workflow> getAvailableWorkflows() {
+        return dao.getAvailableWorkflows();
+    }
 }

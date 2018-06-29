@@ -59,12 +59,22 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
      *            workflow title
      * @param fileName
      *            workflow file name
-     * @return list of Workflow objects - expected is that list will have length 0 or 1
+     * @return list of Workflow objects - expected is that list will have length 0
+     *         or 1
      */
     public List<Workflow> getByTitleAndFile(String title, String fileName) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
         parameters.put("fileName", fileName);
         return getByQuery("FROM Workflow WHERE title = :title AND fileName = :fileName", parameters);
+    }
+
+    /**
+     * Get available workflows - available means that workflow is active and ready.
+     * 
+     * @return list of available Workflow objects
+     */
+    public List<Workflow> getAvailableWorkflows() {
+        return getByQuery("FROM Workflow WHERE active = 1 AND ready = 1 ORDER BY title");
     }
 }

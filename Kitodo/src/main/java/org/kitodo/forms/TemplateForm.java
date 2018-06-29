@@ -289,7 +289,7 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public List<SelectItem> getWorkflows() {
         List<SelectItem> workflows = new ArrayList<>();
-        List<Workflow> temp = serviceManager.getWorkflowService().getByQuery("from Workflow ORDER BY title");
+        List<Workflow> temp = serviceManager.getWorkflowService().getAvailableWorkflows();
         for (Workflow workflow : temp) {
             workflows.add(new SelectItem(workflow, workflow.getTitle(), null));
         }
