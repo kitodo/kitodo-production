@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
@@ -575,6 +576,18 @@ public class ProcessServiceIT {
         Integer expected = 2;
         Integer actual = processService.getSortedCorrectionSolutionMessages(process).size();
         assertEquals("Size of sorted correction messages is not equal to given size!", expected, actual);
+    }
+
+    @Test
+    public void shouldBeProcessAssignedToOnlyOneLogisticBatch() throws Exception {
+        ProcessDTO processDTO = processService.findById(1);
+        assertTrue(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
+    }
+
+    @Test
+    public void shouldNotBeProcessAssignedToOnlyOneLogisticBatch() throws Exception {
+        ProcessDTO processDTO = processService.findById(2);
+        assertFalse(processService.isProcessAssignedToOnlyOneLogisticBatch(processDTO.getBatches()));
     }
 
     @Test

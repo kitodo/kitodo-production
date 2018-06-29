@@ -331,7 +331,7 @@ public class ProcessTypeTest {
 
         JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
         JsonObject batch = batches.getJsonObject(0);
-        assertEquals("Amount of keys in batches is incorrect!", 2, batch.keySet().size());
+        assertEquals("Amount of keys in batches is incorrect!", 3, batch.keySet().size());
 
         JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
         JsonObject task = tasks.getJsonObject(0);

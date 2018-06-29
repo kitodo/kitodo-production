@@ -88,7 +88,10 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                 jsonObject.add(AuthorityTypeField.ID.getName(), property.getId());
                 if (title) {
                     if (property instanceof Batch) {
-                        jsonObject.add(BatchTypeField.TITLE.getName(), preventNull(((Batch) property).getTitle()));
+                        Batch batch = (Batch) property;
+                        jsonObject.add(BatchTypeField.TITLE.getName(), preventNull(batch.getTitle()));
+                        String type = batch.getType() != null ? batch.getType().toString() : "";
+                        jsonObject.add(BatchTypeField.TYPE.getName(), type);
                     } else if (property instanceof BaseTemplateBean) {
                         jsonObject.add(ProcessTypeField.TITLE.getName(), preventNull(((BaseTemplateBean) property).getTitle()));
                     } else if (property instanceof Project) {

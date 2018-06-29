@@ -47,6 +47,7 @@ public class TaskDTO extends BaseDTO {
     private boolean typeImagesRead;
     private boolean typeImagesWrite;
     private boolean batchStep;
+    private boolean batchAvailable;
     private boolean selected = false;
 
     /**
@@ -156,7 +157,8 @@ public class TaskDTO extends BaseDTO {
     /**
      * Set processing status title as String.
      *
-     * @param processingStatusTitle  as String
+     * @param processingStatusTitle
+     *            as String
      */
     public void setProcessingStatusTitle(String processingStatusTitle) {
         this.processingStatusTitle = processingStatusTitle;
@@ -193,7 +195,8 @@ public class TaskDTO extends BaseDTO {
     /**
      * Set edit type title as String.
      *
-     * @param editTypeTitle as String
+     * @param editTypeTitle
+     *            as String
      */
     public void setEditTypeTitle(String editTypeTitle) {
         this.editTypeTitle = editTypeTitle;
@@ -513,8 +516,29 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Set information if task is batch(step).
+     * Set information if batch is available for task - there is more than one task
+     * with the same title assigned to the batch.).
      * 
+     * @param batchAvailable
+     *            as boolean
+     */
+    public void setBatchAvailable(boolean batchAvailable) {
+        this.batchAvailable = batchAvailable;
+    }
+
+    /**
+     * Get information if batch is available for task - there is more than one task
+     * with the same title assigned to the batch.
+     *
+     * @return true or false
+     */
+    public boolean isBatchAvailable() {
+        return batchAvailable;
+    }
+
+    /**
+     * Set information if task is batch(step).
+     *
      * @param batchStep
      *            as boolean
      */

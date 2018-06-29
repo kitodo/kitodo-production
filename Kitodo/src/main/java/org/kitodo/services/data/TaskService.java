@@ -457,11 +457,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeExportRussian(taskJSONObject.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
         taskDTO.setTypeImagesWrite(taskJSONObject.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
         taskDTO.setTypeImagesRead(taskJSONObject.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
+        taskDTO.setBatchStep(taskJSONObject.getBoolean(TaskTypeField.BATCH_STEP.getName()));
         taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, TaskTypeField.USERS.getName()));
         taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, TaskTypeField.USER_GROUPS.getName()));
         Integer process = taskJSONObject.getInt(TaskTypeField.PROCESS_ID.getName());
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
+            taskDTO.setBatchAvailable(
+                    serviceManager.getProcessService().isProcessAssignedToOnlyOneLogisticBatch(
+                            taskDTO.getProcess().getBatches()));
         }
         Integer template = taskJSONObject.getInt(TaskTypeField.TEMPLATE_ID.getName());
         if (template > 0) {

@@ -1,0 +1,34 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseListView.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="pageTabView">
+        <p:tabView id="tabs">
+            <p:tab title="#{msgs.details}">
+                <ui:include src="/WEB-INF/templates/includes/taskBatchEdit/taskEditDetails.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/taskBatchEdit/taskEditActions.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><a href="">#{msgs.taskDetails}</a></li>
+    </ui:define>
+</ui:composition>
+

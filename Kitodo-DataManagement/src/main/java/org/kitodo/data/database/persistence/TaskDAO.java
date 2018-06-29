@@ -76,7 +76,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
         parameters.put("batchId", batchId);
-        return getByQuery("FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
+        return getByQuery("SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
                 + ":title AND batchStep = 1 AND b.id = :batchId", parameters);
     }
 

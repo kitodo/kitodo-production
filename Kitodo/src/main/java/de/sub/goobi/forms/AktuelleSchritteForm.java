@@ -87,6 +87,7 @@ public class AktuelleSchritteForm extends BasisForm {
     private static final String WORK_TASK = "task";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
+    private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
     /**
      * Constructor.
@@ -138,43 +139,45 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Take over batch.
+     * Take over batch of tasks - all tasks assigned to the same batch with the same
+     * title.
      *
-     * @return page
+     * @return page for edit one task, page for edit many or null
      */
-    public String takeOverBatch() {
-        // find all steps with same batch id and step status
+    public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
-        if (batches.size() > 1) {
+
+        if (batches.isEmpty()) {
+            return schrittDurchBenutzerUebernehmen();
+        } else if (batches.size() == 1) {
+            Integer batchId = batches.get(0).getId();
+            List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
+            if (currentTasksOfBatch.isEmpty()) {
+                return null;
+            } else if (currentTasksOfBatch.size() == 1) {
+                return schrittDurchBenutzerUebernehmen();
+            } else {
+                for (Task task : currentTasksOfBatch) {
+                    processTask(task);
+                }
+
+                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                return taskBatchEditPath;
+            }
+        } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
             return null;
         }
-        List<Task> currentStepsOfBatch;
-        if (!batches.isEmpty()) {
-            Integer batchNumber = batches.iterator().next().getId();
-            // only steps with same title
-            currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
-        } else {
-            return schrittDurchBenutzerUebernehmen();
-        }
-
-        if (currentStepsOfBatch.isEmpty()) {
-            return null;
-        }
-        if (currentStepsOfBatch.size() == 1) {
-            return schrittDurchBenutzerUebernehmen();
-        }
-
-        for (Task task : currentStepsOfBatch) {
-            processTask(task);
-        }
-
-        this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "/pages/batchesEdit";
     }
 
+    /**
+     * Update task which are available to take.
+     *
+     * @param task
+     *            which is part of the batch
+     */
     private void processTask(Task task) {
         if (task.getProcessingStatusEnum().equals(TaskStatus.OPEN)) {
             task.setProcessingStatusEnum(TaskStatus.INWORK);
@@ -188,59 +191,54 @@ public class AktuelleSchritteForm extends BasisForm {
 
             if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
                 try {
-                    URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
-                    if (! serviceManager.getFileService().fileExist(imagesOrigDirectory)) {
-                        Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory});
+                    URI imagesOrigDirectory = serviceManager.getProcessService().getImagesOrigDirectory(false,
+                        task.getProcess());
+                    if (!serviceManager.getFileService().fileExist(imagesOrigDirectory)) {
+                        Helper.setErrorMessage("Directory doesn't exists!", new Object[] {imagesOrigDirectory });
                     }
                 } catch (Exception e) {
                     Helper.setErrorMessage("Error retrieving image directory: ", logger, e);
                 }
                 task.setProcessingTime(new Date());
-
-                serviceManager.getTaskService().replaceProcessingUser(task, user);
                 this.myDav.downloadToHome(task.getProcess(), !task.isTypeImagesWrite());
             }
         }
 
         try {
-            this.serviceManager.getProcessService().save(task.getProcess());
+            this.serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
     }
 
     /**
-     * Edit batch.
+     * Edit batch of tasks - all tasks assigned to the same batch with the same
+     * title.
      *
-     * @return page
+     * @return page for edit one task, page for edit many or null
      */
-    public String batchesEdit() {
-        // find all steps with same batch id and step status
-        List<Task> currentStepsOfBatch;
+    public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
         List<Batch> batches = serviceManager.getProcessService().getBatchesByType(this.currentTask.getProcess(),
             Type.LOGISTIC);
-        if (batches.size() > 1) {
+
+        if (batches.isEmpty()) {
+            return taskEditPath + "&id=" + getTaskIdForPath();
+        } else if (batches.size() == 1) {
+            Integer batchId = batches.get(0).getId();
+            List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
+            if (currentTasksOfBatch.isEmpty()) {
+                return null;
+            } else if (currentTasksOfBatch.size() == 1) {
+                return taskEditPath + "&id=" + getTaskIdForPath();
+            } else {
+                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                return taskBatchEditPath;
+            }
+        } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
             return null;
         }
-        if (!batches.isEmpty()) {
-            Integer batchNumber = batches.iterator().next().getId();
-            // only steps with same title
-            currentStepsOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchNumber);
-        } else {
-            return taskEditPath + "&id=" + getTaskIdForPath();
-        }
-        // if only one step is assigned for this batch, use the single
-
-        // Helper.setMessage("found " + currentStepsOfBatch.size() + " elements
-        // in batch");
-
-        if (currentStepsOfBatch.size() == 1) {
-            return taskEditPath + "&id=" + getTaskIdForPath();
-        }
-        this.setBatchHelper(new BatchStepHelper(currentStepsOfBatch));
-        return "/pages/batchesEdit";
     }
 
     /**
@@ -294,7 +292,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
@@ -322,7 +320,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK)}, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
         }
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
@@ -397,8 +395,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING,
-                    new Object[] {Helper.getTranslation(WORK_TASK), taskDTO.getId() }, logger, e);
+                Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), taskDTO.getId() },
+                    logger, e);
             }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
@@ -497,8 +495,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             return serviceManager.getTaskService().getById(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id }, logger, e);
             return null;
         }
     }
@@ -679,7 +676,7 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.currentTask.getProcess());
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {PROCESS}, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {PROCESS }, logger, e);
             }
         }
     }
