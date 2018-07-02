@@ -11,9 +11,15 @@
 
 package org.kitodo.converter;
 
+import de.sub.goobi.helper.Helper;
+
+import java.util.Arrays;
+import java.util.Objects;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
+import javax.faces.convert.ConverterException;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,11 +50,17 @@ public class ClientConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object object) {
-        if (object instanceof String) {
-            return (String) object;
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
+        if (Objects.isNull(value)) {
+            return null;
+        } else if (value instanceof Client) {
+            return String.valueOf(((Client) value).getId().intValue());
+        } else if (value instanceof String) {
+            return (String) value;
+        } else {
+            throw new ConverterException(Helper.getTranslation("errorConvert",
+                    Arrays.asList(value.getClass().getCanonicalName(), "Client")));
         }
-        return ((Client) object).getId().toString();
     }
 
 }

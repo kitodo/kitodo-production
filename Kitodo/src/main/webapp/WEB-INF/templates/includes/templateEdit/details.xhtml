@@ -29,10 +29,9 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectOneMenu id="project" value="#{TemplateForm.projectSelect}"
+                <p:selectOneMenu id="project" value="#{TemplateForm.template.project}" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
-                    <f:selectItems value="#{TemplateForm.projectsSelectList}"/>
+                    <f:selectItems value="#{TemplateForm.projects}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

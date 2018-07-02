@@ -13,6 +13,7 @@ package org.kitodo.converter;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -28,7 +29,7 @@ public class URIConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (value == null || value.length() == 0) {
+        if (Objects.isNull(value) || value.isEmpty()) {
             return null;
         } else {
             try {
@@ -42,7 +43,7 @@ public class URIConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object object) {
-        if (object != null) {
+        if (Objects.nonNull(object)) {
             return String.valueOf(((URI) object).getPath());
         } else {
             return null;

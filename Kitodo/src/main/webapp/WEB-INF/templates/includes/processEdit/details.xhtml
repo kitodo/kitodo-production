@@ -32,13 +32,12 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.projectSelect}"
+                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.process.project}" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
-                    <f:selectItems value="#{ProzessverwaltungForm.projectsSelectList}"/>
+                    <f:selectItems value="#{ProzessverwaltungForm.projects}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

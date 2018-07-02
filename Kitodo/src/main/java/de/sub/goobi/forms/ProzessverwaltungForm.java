@@ -972,31 +972,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Get selected project.
-     *
-     * @return Integer
-     */
-    public Integer getProjectSelect() {
-        return getProjectSelect(this.process.getProject());
-    }
-
-    /**
-     * Set selected project.
-     *
-     * @param projectSelect
-     *            Integer
-     */
-    public void setProjectSelect(Integer projectSelect) {
-        if (projectSelect != 0) {
-            try {
-                this.process.setProject(serviceManager.getProjectService().getById(projectSelect));
-            } catch (DAOException e) {
-                Helper.setErrorMessage("Error assigning project", logger, e);
-            }
-        }
-    }
-
-    /**
      * Calculate metadata and images pages.
      */
     @SuppressWarnings("unchecked")

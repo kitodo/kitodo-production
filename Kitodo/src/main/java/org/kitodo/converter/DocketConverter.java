@@ -11,6 +11,11 @@
 
 package org.kitodo.converter;
 
+import de.sub.goobi.helper.Helper;
+
+import java.util.Arrays;
+import java.util.Objects;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -29,7 +34,7 @@ public class DocketConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (value == null || value.length() == 0) {
+        if (Objects.isNull(value) || value.isEmpty()) {
             return null;
         } else {
             try {
@@ -43,14 +48,15 @@ public class DocketConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (value == null) {
+        if (Objects.isNull(value)) {
             return null;
         } else if (value instanceof Docket) {
             return String.valueOf(((Docket) value).getId().intValue());
         } else if (value instanceof String) {
             return (String) value;
         } else {
-            throw new ConverterException("Falscher Typ: " + value.getClass() + " muss 'Docket' sein!");
+            throw new ConverterException(Helper.getTranslation("errorConvert",
+                    Arrays.asList(value.getClass().getCanonicalName(), "Docket")));
         }
     }
 

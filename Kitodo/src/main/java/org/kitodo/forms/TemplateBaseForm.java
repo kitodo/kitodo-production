@@ -200,26 +200,13 @@ public class TemplateBaseForm extends BasisForm {
      *
      * @return list of SelectItem objects
      */
-    public List<SelectItem> getProjectsSelectList() {
+    public List<SelectItem> getProjects() {
         List<SelectItem> projects = new ArrayList<>();
         List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
         for (Project project : temp) {
-            projects.add(new SelectItem(project.getId(), project.getTitle(), null));
+            projects.add(new SelectItem(project, project.getTitle(), null));
         }
         return projects;
-    }
-
-    /**
-     * Get selected project.
-     *
-     * @return Integer
-     */
-    protected Integer getProjectSelect(Project project) {
-        if (Objects.nonNull(project)) {
-            return project.getId();
-        } else {
-            return 0;
-        }
     }
 
     protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
