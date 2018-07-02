@@ -26,7 +26,6 @@ public class BasisForm implements Serializable {
     String zurueck = null;
     protected String filter = "";
     protected User user;
-    protected String sortierung = "prozessAsc";
     protected LazyDTOModel lazyDTOModel = null;
     static final String REDIRECT_PARAMETER = "faces-redirect=true";
     private static final String TEMPLATE_ROOT = "/pages/";
@@ -80,14 +79,6 @@ public class BasisForm implements Serializable {
 
     public void setFilter(String filter) {
         this.filter = filter;
-    }
-
-    public String getSortierung() {
-        return this.sortierung;
-    }
-
-    public void setSortierung(String sortierung) {
-        this.sortierung = sortierung;
     }
 
     /**

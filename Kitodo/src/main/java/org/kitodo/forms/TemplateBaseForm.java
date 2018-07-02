@@ -22,8 +22,6 @@ import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
@@ -258,40 +256,5 @@ public class TemplateBaseForm extends BasisForm {
                 Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
             }
         }
-    }
-
-    protected String sortList() {
-        String sort = SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
-        if (this.sortierung.equals("titelAsc")) {
-            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("titelDesc")) {
-            sort += "," + SortBuilders.fieldSort("title").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("batchAsc")) {
-            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("batchDesc")) {
-            sort += ", " + SortBuilders.fieldSort("batches.id").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("projektAsc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("projektDesc")) {
-            sort += ", " + SortBuilders.fieldSort("project").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("vorgangsdatumAsc")) {
-            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("vorgangsdatumDesc")) {
-            sort += "," + SortBuilders.fieldSort("creationDate").order(SortOrder.DESC).toString();
-        }
-        if (this.sortierung.equals("fortschrittAsc")) {
-            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.ASC).toString();
-        }
-        if (this.sortierung.equals("fortschrittDesc")) {
-            sort += "," + SortBuilders.fieldSort("sortHelperStatus").order(SortOrder.DESC).toString();
-        }
-        return sort;
     }
 }
