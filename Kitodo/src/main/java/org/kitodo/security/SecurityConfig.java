@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String EDIT_PROJECT = "editProject_";
     private static final String EDIT_USER = "editUser_";
     private static final String EDIT_USER_GROUP = "editUserGroup_";
+    private static final String EDIT_WORKFLOW = "editWorkflow_";
     private static final String VIEW_ALL_DOCKETS = "viewAllDockets_";
     private static final String VIEW_ALL_PROCESSES = "viewAllProcesses_";
     private static final String VIEW_ALL_PROJECTS = "viewAllProjects_";
@@ -48,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String VIEW_ALL_TEMPLATES = "viewAllTemplates_";
     private static final String VIEW_ALL_USERS = "viewAllUsers_";
     private static final String VIEW_ALL_USER_GROUPS = "viewAllUserGroups_";
+    private static final String VIEW_ALL_WORKFLOWS = "viewAllWorkflows_";
     private static final String VIEW_PROJECT = "viewProject_";
     private static final String VIEW_USER = "viewUser_";
     private static final String VIEW_USER_GROUP = "viewUserGroup_";
@@ -125,7 +127,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_DOCKETS + GLOBAL,
                 VIEW_ALL_DOCKETS + CLIENT_ANY,
                 VIEW_ALL_RULESETS + GLOBAL,
-                VIEW_ALL_RULESETS + CLIENT_ANY)
+                VIEW_ALL_RULESETS + CLIENT_ANY,
+                VIEW_ALL_WORKFLOWS + GLOBAL)
             .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 EDIT_PROJECT + GLOBAL,
@@ -144,6 +147,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 ADMIN_GLOBAL,
                 EDIT_RULESET + GLOBAL,
                 EDIT_RULESET + CLIENT_ANY)
+
+            .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
+                ADMIN_GLOBAL,
+                EDIT_WORKFLOW + GLOBAL)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
                 ADMIN_GLOBAL,
