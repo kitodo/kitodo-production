@@ -16,57 +16,44 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
+    <p:dataTable id="workflowTable"
+                 var="item"
+                 value="#{WorkflowForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 paginatorPosition="bottom">
 
-    <h:outputScript library="js" name="modeler.js" target="body" />
+        <p:column headerText="#{msgs.title}">
+            <h:outputText value="#{item.title}"/>
+        </p:column>
 
-    <div>
-        <h3>#{msgs.workflows}</h3>
+        <p:column headerText="#{msgs.filename}">
+            <h:outputText value="#{item.fileName}"/>
+        </p:column>
 
-        <div>
-            <h:form id="xmlDiagramReadForm" enctype="multipart/form-data">
-                <p:outputLabel for="selectedDiagram" value="Diagrams: " style="top:-8px"/>
-                <p:selectOneMenu id="selectedDiagram" value="#{ModelerForm.xmlDiagramName}" style="width:100px">
-                    <f:selectItems value="#{ModelerForm.xmlDiagramNames}"/>
-                </p:selectOneMenu>
+        <p:column headerText="#{msgs.active}">
+            <h:outputText value="#{item.active}"/>
+        </p:column>
 
-                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram" action="#{ModelerForm.readXMLDiagram}"
-                                 update="xmlDiagram projectsTabView:xmlDiagramSaveForm:xmlDiagramName" style="top:-8px"/>
-                <h:inputHidden value="#{ModelerForm.xmlDiagram}" id="xmlDiagram" />
-            </h:form>
-        </div>
-        <div style="height: 850px;">
-            <div class="content" id="js-drop-zone">
+        <p:column headerText="#{msgs.ready}">
+            <h:outputText value="#{item.ready}"/>
+        </p:column>
 
-                <div class="message intro">
-                    <div class="note">
-                        Drop BPMN diagram from your desktop or <h:link id="js-create-diagram">create a new diagram</h:link> to get started.
-                    </div>
-                </div>
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+            <h:outputText>
+                <h:form>
+                    <h:link id="editWorkflow" outcome="/pages/workflowEdit" title="#{msgs.editWorkflow}">
+                        <i class="fa fa-pencil-square-o fa-lg"/>
+                        <f:param name="id" value="#{item.id}"/>
+                    </h:link>
 
-                <div class="message error">
-                    <div class="note">
-                        <p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+                    <h:link><i class="fa fa-clipboard fa-lg"/></h:link>
+                    <h:link><i class="fa fa-clone fa-lg"/></h:link>
+                </h:form>
+            </h:outputText>
+        </p:column>
 
-                        <div class="details">
-                            <span>cause of the problem</span>
-                            <pre></pre>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="canvas" id="js-canvas"></div>
-                <div class="properties-panel-parent" id="js-properties-panel"></div>
-            </div>
-        </div>
-        <div>
-            <h:form id="xmlDiagramSaveForm" enctype="multipart/form-data">
-                <p:outputLabel for="xmlDiagramName" value="#{msgs.title}" />
-                <p:inputText id="xmlDiagramName" placeholder="#{msgs.title}" class="input" value="#{ModelerForm.xmlDiagramName}"/>
-                <p:remoteCommand name="svgContent" actionListener="#{ModelerForm.save}" />
-                <p:remoteCommand name="xmlContent" actionListener="#{ModelerForm.save}" />
-                <p:commandButton id="btnSaveXmlDiagram" value="Save XML diagram" update="projectsTabView:xmlDiagramReadForm" />
-            </h:form>
-        </div>
-    </div>
-
+    </p:dataTable>
 </ui:composition>

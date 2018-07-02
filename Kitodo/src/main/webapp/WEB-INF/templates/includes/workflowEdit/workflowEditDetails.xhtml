@@ -1,0 +1,88 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <h:outputScript library="js" name="modeler.js" target="body"/>
+
+    <p:panelGrid columns="2" layout="grid">
+        <p:row>
+            <div>
+                <!-- this is needed to load diagram for edit -->
+                <!-- TODO: find better way -->
+                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
+                                 action="#{WorkflowForm.readXMLDiagram}"
+                                 rendered="#{WorkflowForm.workflow.id ne null}"
+                                 immediate="true"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
+                <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input"
+                             value="#{WorkflowForm.workflow.fileName}"
+                             required="true"/>
+                <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
+            </div>
+
+            <div>
+                <p:remoteCommand name="svgContent" actionListener="#{WorkflowForm.saveAndRedirect}" immediate="true"/>
+                <p:remoteCommand name="xmlContent" actionListener="#{WorkflowForm.saveAndRedirect}" immediate="true"/>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="active" value="#{msgs.active}"/>
+                <p:selectBooleanCheckbox id="active" styleClass="input"
+                                         value="#{WorkflowForm.workflow.active}"
+                                         onchange="toggleSave()"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="ready" value="#{msgs.ready}"/>
+                <p:selectBooleanCheckbox id="ready" styleClass="input"
+                                         value="#{WorkflowForm.workflow.ready}"
+                                         onchange="toggleSave()"/>
+            </div>
+        </p:row>
+    </p:panelGrid>
+
+    <div style="height: 800px;">
+        <div class="content" id="js-drop-zone">
+
+            <div class="message intro">
+                <div class="note">
+                    Drop BPMN diagram from your desktop or <h:link
+                        id="js-create-diagram">create a new diagram</h:link> to get started.
+                </div>
+            </div>
+
+            <div class="message error">
+                <div class="note">
+                    <p>Ooops, we could not display the BPMN 2.0 diagram.</p>
+
+                    <div class="details">
+                        <span>cause of the problem</span>
+                        <pre></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="canvas" id="js-canvas"></div>
+            <div class="properties-panel-parent" id="js-properties-panel"></div>
+        </div>
+    </div>
+</ui:composition>

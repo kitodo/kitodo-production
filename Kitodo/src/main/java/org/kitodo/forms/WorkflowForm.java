@@ -51,7 +51,6 @@ public class WorkflowForm extends BasisForm {
     private transient ServiceManager serviceManager = new ServiceManager();
     private String svgDiagram;
     private String xmlDiagram;
-    private String xmlDiagramName;
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -68,7 +67,7 @@ public class WorkflowForm extends BasisForm {
      * Read XML for file chosen out of the select list.
      */
     public void readXMLDiagram() {
-        readXMLDiagram(xmlDiagramName);
+        readXMLDiagram(this.workflow.getFileName());
     }
 
     private void readXMLDiagram(String xmlDiagramName) {
@@ -89,7 +88,7 @@ public class WorkflowForm extends BasisForm {
 
     void saveSVGDiagram() {
         try (OutputStream outputStream = serviceManager.getFileService()
-                .write(new File(diagramsFolder + decodeXMLDiagramName(xmlDiagramName) + ".svg").toURI());
+                .write(new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI());
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(svgDiagram);
         } catch (IOException e) {
@@ -99,7 +98,7 @@ public class WorkflowForm extends BasisForm {
 
     void saveXMLDiagram() {
         try (OutputStream outputStream = serviceManager.getFileService()
-                .write(new File(diagramsFolder + encodeXMLDiagramName(xmlDiagramName)).toURI());
+                .write(new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI());
                 BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(xmlDiagram);
         } catch (IOException e) {
@@ -158,7 +157,7 @@ public class WorkflowForm extends BasisForm {
     }
 
     private void saveWorkflow() {
-        String decodedXMLDiagramName = decodeXMLDiagramName(xmlDiagramName);
+        String decodedXMLDiagramName = decodeXMLDiagramName(this.workflow.getFileName());
         try {
             Reader reader = new Reader(decodedXMLDiagramName);
             Diagram diagram = reader.getWorkflow();
@@ -200,7 +199,6 @@ public class WorkflowForm extends BasisForm {
         try {
             if (id != 0) {
                 setWorkflow(this.serviceManager.getWorkflowService().getById(id));
-                this.xmlDiagramName = this.workflow.getFileName();
                 readXMLDiagram(this.workflow.getFileName());
             } else {
                 newWorkflow();
@@ -247,25 +245,6 @@ public class WorkflowForm extends BasisForm {
      */
     public void setXmlDiagram(String xmlDiagram) {
         this.xmlDiagram = xmlDiagram;
-    }
-
-    /**
-     * Get name of XML diagram file.
-     *
-     * @return name of XML diagram file as String
-     */
-    public String getXmlDiagramName() {
-        return xmlDiagramName;
-    }
-
-    /**
-     * Set name of XML diagram file.
-     *
-     * @param xmlDiagramName
-     *            name of XML diagram file as String
-     */
-    public void setXmlDiagramName(String xmlDiagramName) {
-        this.xmlDiagramName = xmlDiagramName;
     }
 
     /**

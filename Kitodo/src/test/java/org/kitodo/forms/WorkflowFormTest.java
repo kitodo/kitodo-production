@@ -24,6 +24,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -55,7 +56,7 @@ public class WorkflowFormTest {
     public void shouldReadXMLDiagram() {
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(null);
-        modelerForm.setXmlDiagramName("test.bpmn20.xml");
+        modelerForm.setWorkflow(new Workflow("test", "test"));
         modelerForm.readXMLDiagram();
 
         assertNotNull("Diagram XML was not read!", modelerForm.getXmlDiagram());
@@ -91,7 +92,7 @@ public class WorkflowFormTest {
 
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(xmlDiagram);
-        modelerForm.setXmlDiagramName("test2.bpmn20.xml");
+        modelerForm.setWorkflow(new Workflow("test", "test"));
         modelerForm.saveXMLDiagram();
 
         assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
