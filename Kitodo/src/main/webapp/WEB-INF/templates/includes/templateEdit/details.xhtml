@@ -49,7 +49,7 @@
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{TemplateForm.template.ruleset}" converter="#{rulesetConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{HelperForm.regelsaetze}"/>
+                    <f:selectItems value="#{TemplateForm.rulesets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -58,7 +58,7 @@
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
                 <p:selectOneMenu id="docket" value="#{TemplateForm.template.docket}" converter="#{docketConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{HelperForm.dockets}"/>
+                    <f:selectItems value="#{TemplateForm.dockets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
