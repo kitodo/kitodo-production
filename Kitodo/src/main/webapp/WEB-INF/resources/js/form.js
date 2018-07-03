@@ -10,8 +10,10 @@
  */
 
 $(function() {
-    $('#editForm :input').on('change', function() {
-        setConfirmUnload(true);
+    $('#editForm').on('input', ':input', function() {
+        if (!$(this).parent().parent().hasClass('locked-button')) {
+            setConfirmUnload(true);
+        }
     });
 });
 

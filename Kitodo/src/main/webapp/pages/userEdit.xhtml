@@ -57,7 +57,7 @@
                          actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}" outcome="users"
+        <p:button id="cancel" value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
