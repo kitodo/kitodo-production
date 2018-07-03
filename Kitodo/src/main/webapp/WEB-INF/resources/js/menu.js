@@ -116,3 +116,24 @@ menu.mouseleave(mouseleaveMenu)
     .mouseenter(mouseenterMenu)
 
 $(document).mousemove(mousemoveDocument);
+
+// disable menu if a another popup is open
+var node = document.getElementsByTagName('body')[0];
+var config = { attributes: true, childList: true, subtree: true };
+var callback = function () {
+    var elements = $('.ui-menu, .ui-selectonemenu-panel, .ui-datepicker');
+    var disableMenu = false;
+    elements.each(function () {
+        if ($(this).css('display') === 'block') {
+            disableMenu = true;
+        }
+    });
+    if (disableMenu) {
+        menu.find('> li').off('mouseenter');
+    } else {
+        menu.find('> li').mouseenter(mouseenterMenu);
+    }
+};
+// observe for changes in DOM, eg. opening or closing popups
+var observer = new MutationObserver(callback);
+observer.observe(node, config);
