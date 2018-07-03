@@ -186,6 +186,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers("/pages/images/**").permitAll()
             .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
+            .antMatchers("/js/modeler.js").permitAll()
             .antMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated();
 
