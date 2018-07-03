@@ -116,6 +116,22 @@
                                     </h:outputText>
                                 </h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
+                                <li>
+                                    <table>
+                                        <tr>
+                                            <td width="100px">
+                                                <h:outputText value="#{msgs.languages}"/>
+                                            </td>
+                                            <ui:repeat value="#{SpracheForm.supportedLocales}" var="entry">
+                                                <td width="50px">
+                                                    <h:commandButton action="#{SpracheForm.setLanguage(entry['id'])}"
+                                                                     image="#{request.contextPath}/#{entry['flag']}"
+                                                                     style="width:40px;height: 30px;"/>
+                                                </td>
+                                            </ui:repeat>
+                                        </tr>
+                                    </table>
+                                </li>
                                 <li><h:outputLink value="#{request.contextPath}/logout"
                                                   id="logout">#{msgs.logout}</h:outputLink></li>
                             </ul>

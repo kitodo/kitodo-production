@@ -115,6 +115,7 @@ public class SpracheForm implements Serializable {
                 translation.put("displayLanguageTranslated",
                     supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
+                translation.put("flag","javax.faces.resource/images/"+supportedLocale.toString()+".svg.jsf");
                 result.add(translation);
             }
         }
