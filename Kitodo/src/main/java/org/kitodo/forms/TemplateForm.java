@@ -14,12 +14,19 @@ package org.kitodo.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -28,10 +35,12 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
 @SessionScoped
@@ -193,6 +202,15 @@ public class TemplateForm extends TemplateBaseForm {
             }
 
             try {
+                if (this.template.getTasks().isEmpty()) {
+                    Reader reader = new Reader(this.template.getWorkflow().getFileName());
+                    this.template = reader.convertWorkflowToTemplate(this.template);
+                }
+            } catch (IOException e) {
+                Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
+            }
+
+            try {
                 serviceManager.getTemplateService().save(this.template);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
@@ -266,6 +284,41 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        String fileName = this.template.getWorkflow().getFileName() + ".svg";
+        File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName);
+        try {
+            return new FileInputStream(tasksDiagram);
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            return new InputStream() {
+                @Override
+                public int read() {
+                    return -1;
+                }
+            };
+        }
+    }
+
+    /**
+     * Get list of workflows for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    public List<SelectItem> getWorkflows() {
+        List<SelectItem> workflows = new ArrayList<>();
+        List<Workflow> temp = serviceManager.getWorkflowService().getAvailableWorkflows();
+        for (Workflow workflow : temp) {
+            workflows.add(new SelectItem(workflow, workflow.getTitle(), null));
+        }
+        return workflows;
     }
 
     /**

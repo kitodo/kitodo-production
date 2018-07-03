@@ -57,4 +57,10 @@ public class WorkflowServiceIT {
         List<Workflow> workflows = workflowService.getWorkflowsForTitleAndFile("say-hello", "test");
         assertEquals("Workflows were not found in database!", 1, workflows.size());
     }
+
+    @Test
+    public void shouldGetAvailableWorkflows() {
+        List<Workflow> workflows = workflowService.getAvailableWorkflows();
+        assertEquals("Workflows were not found in database!", 1, workflows.size());
+    }
 }

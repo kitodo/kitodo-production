@@ -37,10 +37,12 @@
             </div>
 
             <div>
-                <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
-                <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{TemplateForm.template.inChoiceListShown}">
+                <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
+                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}" converter="#{workflowConverter}"
+                                 required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItems value="#{TemplateForm.workflows}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
+                </p:selectOneMenu>
             </div>
         </p:row>
 
@@ -61,6 +63,13 @@
                     <f:selectItems value="#{TemplateForm.dockets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
+                <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{TemplateForm.template.inChoiceListShown}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>

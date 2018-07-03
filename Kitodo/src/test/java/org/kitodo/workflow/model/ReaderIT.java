@@ -56,7 +56,9 @@ public class ReaderIT {
     public void shouldConvertConditionalWorkflowToTemplate() throws Exception {
         Reader reader = new Reader("gateway");
 
-        Template template = reader.convertWorkflowToTemplate();
+        Template template = new Template();
+        template.setTitle("Title");
+        template = reader.convertWorkflowToTemplate(template);
         assertEquals("Process definition - workflow was read incorrectly!", 5, template.getTasks().size());
 
         List<Task> tasks = template.getTasks();
