@@ -23,7 +23,7 @@
     <h:panelGroup
             rendered="#{task.processingUser.id == LoginForm.myBenutzer.id}">
         <!-- Import -->
-        <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == '' and process.blockedUser == null and task.typeImportFileUpload}">
+        <ui:fragment rendered="#{process.blockedUser == null and task.typeImportFileUpload}">
             <table cellpadding="3" cellspacing="0" width="100%"
                    class="eingabeBoxen" style="margin-top:20px">
                 <tr>
@@ -68,7 +68,7 @@
         <!--  Import -->
         <h:form id="actionform">
             <!-- Action -->
-            <ui:fragment rendered="#{AktuelleSchritteForm.editMode.mode == ''}">
+            <ui:fragment>
                 <table cellpadding="3" cellspacing="0" width="100%"
                        class="eingabeBoxen" style="margin-top:20px">
                     <tr>

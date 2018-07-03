@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.FilterString;
-import org.kitodo.enums.ObjectMode;
 import org.kitodo.services.ServiceManager;
 
 @Named("SearchForm")
@@ -408,7 +407,6 @@ public class SearchForm {
 
         if (form != null) {
             form.filter = search;
-            form.setDisplayMode(ObjectMode.PROCESS);
             return form.processListPath;
         }
         return null;

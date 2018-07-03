@@ -50,7 +50,6 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
-import org.kitodo.enums.ObjectMode;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
@@ -66,7 +65,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private Problem problem = new Problem();
     private Solution solution = new Solution();
     private List<TaskDTO> selectedTasks;
-    private ObjectMode editMode = ObjectMode.NONE;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
     private boolean nurOffeneSchritte = false;
@@ -476,7 +474,6 @@ public class AktuelleSchritteForm extends BasisForm {
      *            Object
      */
     public void setCurrentTask(Task task) {
-        this.editMode = ObjectMode.NONE;
         this.currentTask = task;
         this.currentTask.setLocalizedTitle(serviceManager.getTaskService().getLocalizedTitle(task.getTitle()));
         this.myProcess = this.currentTask.getProcess();
@@ -498,25 +495,6 @@ public class AktuelleSchritteForm extends BasisForm {
             Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id }, logger, e);
             return null;
         }
-    }
-
-    /**
-     * Get mode for edition.
-     *
-     * @return mode for edition as ObjectMode objects
-     */
-    public ObjectMode getEditMode() {
-        return this.editMode;
-    }
-
-    /**
-     * Set mode for edition.
-     *
-     * @param editMode
-     *            mode for edition as ObjectMode objects
-     */
-    public void setEditMode(ObjectMode editMode) {
-        this.editMode = editMode;
     }
 
     /**

@@ -32,7 +32,6 @@
                            update="@(.editDialog)">
                 <i class="fa fa-pencil-square-o fa-lg"/>
                 <f:setPropertyActionListener target="#{ProzessverwaltungForm.property}" value="#{item}"/>
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
             </p:commandLink>
             <p:commandLink id="duplicateProperty" title="#{msgs.duplicate}" action="#{ProzessverwaltungForm.duplicateProperty}">
                 <h:outputText><i class="fa fa-files-o fa-lg"/></h:outputText>
@@ -55,6 +54,5 @@
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      styleClass="button-filled-green">
-        <f:setPropertyActionListener target="#{ProzessverwaltungForm.editMode}" value="#{objectMode.PROCESSPROPERTY}"/>
     </p:commandButton>
 </ui:composition>
