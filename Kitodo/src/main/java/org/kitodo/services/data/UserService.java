@@ -59,7 +59,6 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
-import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
@@ -243,11 +242,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Gets the current authenticated user and loads object from database.
+     * Gets the current authenticated user of current threads security context.
      *
-     * @return The user object or null if no user is authenticated.
+     * @return The SecurityUserDetails object or null if no user is authenticated.
      */
-    public User getAuthenticatedUser() {
+    public SecurityUserDetails getAuthenticatedUser() {
         return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
     }
 
