@@ -31,7 +31,7 @@ public class Config {
     private static final String CONFIG_FILE = "kitodo_config.properties";
     public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
 
-    public static final String DIR_MODULES = "moduleFolder";
+    private static final String DIR_MODULES = "moduleFolder";
 
     /**
      * Absolute path to the directory that process directories will be created
@@ -51,6 +51,15 @@ public class Config {
      * webapps/kitodo/WEB-INF/classes) in order to make sure they are found.
      */
     private static final String DIR_XML_CONFIG = "KonfigurationVerzeichnis";
+
+    /**
+     * Returns the directory that contains the modules.
+     *
+     * @return the directory for the process directories
+     */
+    public static String getKitodoModulesDirectory() {
+        return getParameter(DIR_MODULES);
+    }
 
     /**
      * Returns the directory that contains the process directories.

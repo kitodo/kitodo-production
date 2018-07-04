@@ -68,7 +68,7 @@ public class KitodoServiceLoader<T> {
      *            interface class of module to load
      */
     public KitodoServiceLoader(Class clazz) {
-        String modulePath = Config.getParameter(Config.DIR_MODULES);
+        String modulePath = Config.getKitodoModulesDirectory();
         this.clazz = clazz;
         if (!new File(modulePath).exists()) {
             logger.error("Specified module folder does not exist: " + modulePath);
