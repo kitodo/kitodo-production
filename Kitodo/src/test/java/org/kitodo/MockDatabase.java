@@ -162,6 +162,7 @@ public class MockDatabase {
         insertTasks();
         insertUserGroupClientAuthorityRelations();
         insertUserGroupProjectAuthorityRelations();
+        insertWorkflows();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -1242,15 +1243,15 @@ public class MockDatabase {
         serviceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DAOException {
+    public static void insertWorkflows() throws DataException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
-        serviceManager.getWorkflowService().saveToDatabase(firstWorkflow);
+        serviceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
         secondWorkflow.setReady(false);
-        serviceManager.getWorkflowService().saveToDatabase(secondWorkflow);
+        serviceManager.getWorkflowService().save(secondWorkflow);
     }
 
     /**

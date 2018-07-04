@@ -27,6 +27,7 @@ import org.kitodo.selenium.testframework.pages.TopNavigationPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
+import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 import org.openqa.selenium.support.PageFactory;
 
 public class Pages {
@@ -63,6 +64,10 @@ public class Pages {
 
     public static ProjectEditPage getProjectEditPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProjectEditPage.class);
+    }
+
+    public static WorkflowEditPage getWorkflowEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(WorkflowEditPage.class);
     }
 
     public static DocketEditPage getDocketEditPage() throws InstantiationException, IllegalAccessException {
