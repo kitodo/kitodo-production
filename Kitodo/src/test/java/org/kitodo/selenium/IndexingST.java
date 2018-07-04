@@ -28,7 +28,7 @@ public class IndexingST extends BaseTestSelenium {
     @Test
     public void reindexingTest() throws Exception {
         Assert.assertTrue(true);
-        Pages.getIndexingPage().goTo().startReindexingAll();
+        Pages.getSystemPage().goTo().startReindexingAll();
 
         Predicate<String> isIndexingFinished = (d) -> {
             if (Objects.nonNull(d)) {
@@ -42,6 +42,6 @@ public class IndexingST extends BaseTestSelenium {
                 condition.getElapsedTimeInMS(), condition.getRemainingTimeInMS())).await("Wait for reindexing")
                 .pollDelay(5, TimeUnit.SECONDS).atMost(90, TimeUnit.SECONDS).pollInterval(Duration.ONE_SECOND)
                 .ignoreExceptions()
-                .until(() -> isIndexingFinished.matches(Pages.getIndexingPage().getIndexingProgress()));
+                .until(() -> isIndexingFinished.matches(Pages.getSystemPage().getIndexingProgress()));
     }
 }

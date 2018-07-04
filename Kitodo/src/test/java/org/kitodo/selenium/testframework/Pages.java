@@ -12,10 +12,9 @@
 package org.kitodo.selenium.testframework;
 
 import org.kitodo.selenium.testframework.pages.ClientEditPage;
-import org.kitodo.selenium.testframework.pages.ClientsPage;
 import org.kitodo.selenium.testframework.pages.DocketEditPage;
 import org.kitodo.selenium.testframework.pages.HelpPage;
-import org.kitodo.selenium.testframework.pages.IndexingPage;
+import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
@@ -37,10 +36,6 @@ public class Pages {
         return page;
     }
 
-    public static ClientsPage getClientsPage() throws InstantiationException, IllegalAccessException {
-        return getPage(ClientsPage.class);
-    }
-
     public static ClientEditPage getClientEditPage() throws InstantiationException, IllegalAccessException {
         return getPage(ClientEditPage.class);
     }
@@ -49,8 +44,8 @@ public class Pages {
         return getPage(HelpPage.class);
     }
 
-    public static IndexingPage getIndexingPage() throws InstantiationException, IllegalAccessException {
-        return getPage(IndexingPage.class);
+    public static SystemPage getSystemPage() throws InstantiationException, IllegalAccessException {
+        return getPage(SystemPage.class);
     }
 
     public static LoginPage getLoginPage() throws InstantiationException, IllegalAccessException {

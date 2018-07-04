@@ -1,0 +1,36 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
+    <p:dataTable var="item"
+                 id="clientsTable"
+                 value="#{ClientForm.lazyDTOModel}"
+                 lazy="true"
+                 paginator="true"
+                 rows="#{LoginForm.myBenutzer.tableSize}"
+                 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                 paginatorPosition="bottom">
+        <p:column headerText="#{msgs.name}">
+            <h:outputText value="#{item.name}"/>
+        </p:column>
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+            <h:link outcome="clientEdit" title="#{msgs.clientEdit}"
+                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('viewClient',item.id)}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+        </p:column>
+    </p:dataTable>
+</ui:composition>

@@ -24,35 +24,35 @@ import org.openqa.selenium.support.FindBy;
 
 import static org.awaitility.Awaitility.await;
 
-public class IndexingPage extends Page {
+public class SystemPage extends Page {
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexingTabView:indexing_form:indexingTable")
+    @FindBy(id = "systemTabView:indexing_form:indexingTable")
     private WebElement indexingTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexingTabView:indexing_form:createMappingButton")
+    @FindBy(id = "systemTabView:indexing_form:createMappingButton")
     private WebElement createMappingButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexingTabView:indexing_form:deleteIndexButton")
+    @FindBy(id = "systemTabView:indexing_form:deleteIndexButton")
     private WebElement deleteIndexButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "indexingTabView:indexing_form:startIndexingAllButton")
+    @FindBy(id = "systemTabView:indexing_form:startIndexingAllButton")
     private WebElement startIndexingAllButton;
 
-    public IndexingPage() {
-        super("pages/indexingPage.jsf");
+    public SystemPage() {
+        super("pages/system.jsf");
     }
 
     /**
-     * Goes to indexing page.
+     * Goes to system page.
      *
-     * @return The indexing page.
+     * @return The system page.
      */
-    public IndexingPage goTo() throws Exception {
-        Pages.getTopNavigation().gotoIndexing();
+    public SystemPage goTo() throws Exception {
+        Pages.getTopNavigation().gotoSystem();
         return this;
     }
 

@@ -55,7 +55,7 @@
                          actionListener="#{ClientForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
-        <p:button value="#{msgs.cancel}" outcome="clients"
+        <p:button value="#{msgs.cancel}" outcome="users"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -81,7 +81,7 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
-        <li><h:link value="#{msgs.clients}" outcome="clients"/></li>
+        <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">
                 <ui:fragment rendered="#{isEditMode}">

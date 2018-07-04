@@ -13,13 +13,13 @@
 
 function createMapping(objectTypes) {
     toggleButtons(false, objectTypes);
-    document.getElementById('indexingTabView:indexing_form:create-mapping-loading').style.display='inline';
+    document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='inline';
     return true;
 }
 
 function deleteIndex(objectTypes) {
     toggleButtons(false, objectTypes);
-    document.getElementById('indexingTabView:indexing_form:delete-index-loading').style.display='inline';
+    document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='inline';
     return true;
 }
 
@@ -34,10 +34,10 @@ function toggleProgressPolling(message) {
         if (message.endsWith("started")) {
             PF('progressPoll').start();
         } else if (message.endsWith("finished")) {
-            document.getElementById('indexingTabView:indexing_form:create-mapping-loading').style.display='none';
+            document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='none';
             PF('progressPoll').stop();
         } else if (message.endsWith("failed")) {
-            document.getElementById('indexingTabView:indexing_form:create-mapping-loading').style.display='none';
+            document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='none';
             PF('progressPoll').stop();
         }
     } else if (message.includes("deletion")) {
@@ -46,10 +46,10 @@ function toggleProgressPolling(message) {
             PF('progressPoll').start();
         }
         if (message.endsWith("finished")) {
-            document.getElementById('indexingTabView:indexing_form:delete-index-loading').style.display='none';
+            document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='none';
             PF('progressPoll').stop();
         } else if (message.endsWith("failed")) {
-            document.getElementById('indexingTabView:indexing_form:delete-index-loading').style.display='none';
+            document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='none';
             PF('progressPoll').stop();
         }
     }

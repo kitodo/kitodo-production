@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -41,6 +42,10 @@ public class UsersPage extends Page {
     private WebElement userGroupsTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:clientsTable_data")
+    private WebElement clientsTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:ldapGroupsTable_data")
     private WebElement ldapGroupsTable;
 
@@ -55,6 +60,10 @@ public class UsersPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newUserGroupButton")
     private WebElement newUserGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "newElementForm:newClientButton")
+    private WebElement newClientButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newLdapGroupButton")
@@ -95,11 +104,26 @@ public class UsersPage extends Page {
     public int countListedUserGroups() throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(1);
+            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         }
         List<WebElement> listOfRows = getRowsOfTable(userGroupsTable);
         return listOfRows.size();
     }
+
+    /**
+     * Count rows of clients table.
+     *
+     * @return The number of rows of the clients table.
+     */
+    public int countListedClients() throws Exception {
+        if (isNotAt()) {
+            goTo();
+            switchToTabByIndex(TabIndex.CLIENTS.getIndex());
+        }
+        List<WebElement> listOfRows = getRowsOfTable(clientsTable);
+        return listOfRows.size();
+    }
+
 
     /**
      * Counts rows of ldap groups table.
@@ -109,7 +133,7 @@ public class UsersPage extends Page {
     public int countListedLdapGroups() throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(2);
+            switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
         }
         List<WebElement> listOfRows = getRowsOfTable(ldapGroupsTable);
         return listOfRows.size();
@@ -206,7 +230,7 @@ public class UsersPage extends Page {
     public UserGroupEditPage editUserGroup(UserGroup userGroup) throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(1);
+            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         }
 
         WebElement userGroupEditLink = Browser.getDriver()
@@ -225,7 +249,7 @@ public class UsersPage extends Page {
     public UserGroupEditPage editUserGroup(String userGroupTitle) throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(1);
+            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         }
 
         List<WebElement> tableRows = getRowsOfTable(userGroupsTable);
@@ -249,7 +273,7 @@ public class UsersPage extends Page {
     public LdapGroupEditPage editLdapGroup(String ldapGroupTitle) throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(2);
+            switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
         }
 
         List<WebElement> tableRows = getRowsOfTable(ldapGroupsTable);
@@ -278,8 +302,39 @@ public class UsersPage extends Page {
     public List<String> getUserGroupTitles() throws Exception {
         if (isNotAt()) {
             goTo();
-            switchToTabByIndex(1);
+            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         }
         return getTableDataByColumn(userGroupsTable, 0);
+    }
+
+    /**
+     * Returns a list of all client titles which were displayed on clients tab.
+     *
+     * @return The list of client titles
+     */
+    public List<String> getClientNames() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(clientsTable, 0);
+    }
+
+    /**
+     * Goes to edit page for creating a new client.
+     *
+     * @return The client edit page.
+     */
+    public ClientEditPage createNewClient() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        await("Wait for create new client button")
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> isButtonClicked.matches(newClientButton));
+
+        Thread.sleep(Browser.getDelayAfterNewItemClick());
+
+        return Pages.getClientEditPage();
     }
 }

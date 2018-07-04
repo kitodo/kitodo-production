@@ -29,6 +29,9 @@
                 <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
                             action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
+                            action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
@@ -46,6 +49,10 @@
             <p:tab title="#{msgs.userGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllUserGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
+            </p:tab>
+            <p:tab id="clientsTab" title="#{msgs.clients}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllClients')}">
+                <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
             <p:tab title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">

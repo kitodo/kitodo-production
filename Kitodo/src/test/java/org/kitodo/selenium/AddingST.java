@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
@@ -30,16 +31,6 @@ import org.kitodo.services.ServiceManager;
 public class AddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
-
-    @Test
-    public void addClientTest() throws Exception {
-        Client client = new Client();
-        client.setName("MockClient");
-        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
-        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
-        boolean clientAvailable = Pages.getClientsPage().goTo().getClientNames().contains(client.getName());
-        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
-    }
 
     @Test
     public void addDocketTest() throws Exception {
@@ -84,7 +75,7 @@ public class AddingST extends BaseTestSelenium {
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getLdapGroupNames()
+        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex()).getLdapGroupNames()
                 .contains(ldapGroup.getTitle());
 
         Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
@@ -94,23 +85,33 @@ public class AddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void addClientTest() throws Exception {
+        Client client = new Client();
+        client.setName("MockClient");
+        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).createNewClient().insertClientData(client).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+        boolean clientAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).getClientNames().contains(client.getName());
+        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
+    }
+    
+    @Test
     public void addUserGroupTest() throws Exception {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
 
-        Pages.getUsersPage().goTo().switchToTabByIndex(1).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
+        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex()).createNewUserGroup().setUserGroupTitle(userGroup.getTitle())
                 .assignAllGlobalAuthorities().assignAllClientAuthorities().assignAllProjectAuthorities();
 
         Pages.getUserGroupEditPage().save();
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        List<String> userGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
+        List<String> userGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex())
                 .getUserGroupTitles();
         Assert.assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
-        int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
+        int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex()).editUserGroup(userGroup.getTitle())
                 .countAssignedGlobalAuthorities();
         Assert.assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
             assignedGlobalAuthorities);
