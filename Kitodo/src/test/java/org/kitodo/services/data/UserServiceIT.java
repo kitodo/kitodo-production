@@ -19,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.net.URI;
@@ -38,6 +37,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;

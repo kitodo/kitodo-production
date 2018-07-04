@@ -14,7 +14,6 @@ package org.kitodo.services.file;
 import static org.junit.Assume.assumeTrue;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,6 +29,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 

@@ -12,8 +12,6 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
-import de.sub.goobi.config.Parameters.DefaultValues;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 import java.util.ConcurrentModificationException;
@@ -26,6 +24,8 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.joda.time.Duration;
+import org.kitodo.config.Parameters;
+import org.kitodo.config.Parameters.DefaultValues;
 
 /**
  * The class TaskSitter takes care of the tasks in the task manager. While the

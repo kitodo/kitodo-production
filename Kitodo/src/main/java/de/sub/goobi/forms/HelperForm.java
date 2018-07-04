@@ -12,7 +12,6 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.FilenameFilter;
 import java.io.Serializable;
@@ -28,6 +27,7 @@ import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
 

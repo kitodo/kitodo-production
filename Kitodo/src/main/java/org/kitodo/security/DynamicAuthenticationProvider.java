@@ -12,10 +12,10 @@
 package org.kitodo.security;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.util.Objects;
 
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;

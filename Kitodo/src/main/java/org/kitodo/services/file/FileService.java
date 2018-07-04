@@ -12,7 +12,6 @@
 package org.kitodo.services.file;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -38,6 +37,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;

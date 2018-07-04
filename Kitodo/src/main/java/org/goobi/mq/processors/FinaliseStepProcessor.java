@@ -12,7 +12,6 @@
 package org.goobi.mq.processors;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.forms.AktuelleSchritteForm;
 
 import java.io.IOException;
@@ -23,6 +22,7 @@ import javax.jms.JMSException;
 
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;

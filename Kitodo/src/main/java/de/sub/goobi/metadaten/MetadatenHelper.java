@@ -11,7 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 
@@ -44,6 +43,7 @@ import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;

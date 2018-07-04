@@ -12,7 +12,6 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.util.List;
 
@@ -22,6 +21,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.Parameters;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen

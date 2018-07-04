@@ -12,7 +12,6 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
@@ -46,6 +45,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
+import org.kitodo.config.Parameters;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

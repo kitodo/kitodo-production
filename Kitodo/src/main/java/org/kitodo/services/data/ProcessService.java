@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.forms.ProzessverwaltungForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
@@ -77,6 +76,7 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;

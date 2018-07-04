@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.config;
+package org.kitodo.config;
 
 import java.util.concurrent.TimeUnit;
 

@@ -12,7 +12,6 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -32,6 +31,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;

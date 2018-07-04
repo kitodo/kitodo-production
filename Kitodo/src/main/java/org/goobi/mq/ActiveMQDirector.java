@@ -12,7 +12,6 @@
 package org.goobi.mq;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.util.Optional;
 
@@ -33,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.FinaliseStepProcessor;
+import org.kitodo.config.Parameters;
 
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It

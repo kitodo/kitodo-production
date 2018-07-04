@@ -12,10 +12,11 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.Serializable;
 import java.util.HashMap;
+
+import org.kitodo.config.Parameters;
 
 /**
  * Bean für die Sperrung der Metadaten.

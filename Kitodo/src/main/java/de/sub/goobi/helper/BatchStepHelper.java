@@ -12,7 +12,6 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
@@ -31,6 +30,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;

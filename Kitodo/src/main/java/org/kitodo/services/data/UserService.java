@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -37,6 +36,7 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;

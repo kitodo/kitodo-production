@@ -12,7 +12,6 @@
 package org.goobi.export;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.download.ExportMets;
 
 import java.io.File;
@@ -32,6 +31,7 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.services.ServiceManager;

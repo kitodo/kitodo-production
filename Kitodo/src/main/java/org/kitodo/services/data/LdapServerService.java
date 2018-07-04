@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.LdapUser;
 
@@ -57,6 +56,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.JDKMessageDigest;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;

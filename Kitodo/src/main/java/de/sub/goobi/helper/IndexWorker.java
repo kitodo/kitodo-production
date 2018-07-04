@@ -12,7 +12,6 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;

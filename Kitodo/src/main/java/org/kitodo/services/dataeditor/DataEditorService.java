@@ -11,14 +11,13 @@
 
 package org.kitodo.services.dataeditor;
 
-import de.sub.goobi.config.Parameters;
-
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class DataEditorService {

@@ -12,7 +12,6 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
@@ -53,6 +52,7 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;

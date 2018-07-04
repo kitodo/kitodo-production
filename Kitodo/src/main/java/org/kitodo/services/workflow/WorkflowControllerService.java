@@ -12,7 +12,6 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
@@ -32,6 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;

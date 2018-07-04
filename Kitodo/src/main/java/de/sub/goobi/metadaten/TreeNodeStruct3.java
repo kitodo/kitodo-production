@@ -12,12 +12,12 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.TreeNode;
 
 import java.util.ArrayList;
 
 import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.config.Parameters;
 
 public class TreeNodeStruct3 extends TreeNode {
 

@@ -12,7 +12,6 @@
 package org.kitodo.selenium;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 
@@ -20,6 +19,7 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
+import org.kitodo.config.Parameters;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;

@@ -12,11 +12,12 @@
 package de.sub.goobi.helper.exceptions;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.kitodo.config.Parameters;
 
 /**
  * This class provides the tools it takes to generate a configurable Error

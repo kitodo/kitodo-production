@@ -12,7 +12,6 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;

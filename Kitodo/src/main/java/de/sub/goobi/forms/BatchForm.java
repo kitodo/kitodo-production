@@ -12,7 +12,6 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.helper.BatchProcessHelper;
 import de.sub.goobi.helper.Helper;
@@ -39,6 +38,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;

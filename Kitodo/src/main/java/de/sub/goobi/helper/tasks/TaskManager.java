@@ -12,7 +12,6 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 import java.util.ArrayList;
@@ -24,6 +23,8 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import org.kitodo.config.Parameters;
 
 /**
  * The class TaskManager serves to handle the execution of threads. It can be

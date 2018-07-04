@@ -12,7 +12,6 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
@@ -79,6 +78,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;

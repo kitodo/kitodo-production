@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends Config {

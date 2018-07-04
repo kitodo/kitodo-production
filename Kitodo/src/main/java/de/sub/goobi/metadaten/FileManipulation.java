@@ -12,7 +12,6 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -43,6 +42,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;

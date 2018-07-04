@@ -12,7 +12,6 @@
 package org.goobi.production.plugin;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
+import org.kitodo.config.Parameters;
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
 /**

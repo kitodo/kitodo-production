@@ -12,7 +12,6 @@
 package de.sub.goobi.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.Parameters;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
@@ -35,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.Parameters;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
