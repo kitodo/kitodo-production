@@ -17,6 +17,7 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -91,7 +92,7 @@ public class GUIExceptionWrapper extends Exception {
             if (ConfigCore.getBooleanParameter(Parameters.ERR_USER_HANDLING)) {
                 this.errLinkText = Helper.getTranslation("errorLinkText");
                 this.errLinkText = this.errLinkText.replace("{0}",
-                    ConfigCore.getParameter(Parameters.ERR_LINK_TO_PAGE, Parameters.DefaultValues.ERR_LINK_TO_PAGE));
+                    ConfigCore.getParameter(Parameters.ERR_LINK_TO_PAGE, DefaultValues.ERR_LINK_TO_PAGE));
 
                 if (ConfigCore.getBooleanParameter(Parameters.ERR_EMAIL_ENABLED)) {
                     this.errEmailMessage = Helper.getTranslation("errorEmailMessage");

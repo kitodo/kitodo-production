@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.helper.HibernateHelper;
 
@@ -389,7 +390,7 @@ public class Helper extends HibernateHelper implements Observer {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
                 File file = new File(
-                        ConfigCore.getParameter(Parameters.LOCAL_MESSAGES, Parameters.DefaultValues.LOCAL_MESSAGES));
+                        ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
                     // Load local message bundle from file system only if file exists;
                     // if value not exists in bundle, use default bundle from classpath
@@ -537,7 +538,7 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     private static List<String> getDataRegexList() {
-            String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, Parameters.DefaultValues.IMAGE_PREFIX);
+            String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");

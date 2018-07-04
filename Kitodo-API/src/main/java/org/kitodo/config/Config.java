@@ -171,9 +171,9 @@ public class Config {
      * such parameter exists, or the value cannot be parsed to {@code int},
      * returns the provided default value.
      *
-     * @param parameter
+     * @param key
      *            key whose value is to be returned
-     * @param defaultIfNull
+     * @param defaultValue
      *            default value in case parameter taken from config file does
      *            not exist or exception occurred
      * @return int value for the requested key, or {@code defaultIfNull} if not

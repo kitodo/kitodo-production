@@ -42,6 +42,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
@@ -420,7 +421,7 @@ public class FileManipulation {
      */
     public List<URI> getAllImportFolder() {
         URI tempDirectory = new File(
-                ConfigCore.getParameter(Parameters.DIR_TEMP, Parameters.DefaultValues.TEMPFOLDER)).toURI();
+                ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER)).toURI();
         URI fileuploadFolder = tempDirectory.resolve(FILE_UPLOAD);
 
         allImportFolder = new ArrayList<>();
@@ -445,14 +446,14 @@ public class FileManipulation {
             Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
-        String tempDirectory = ConfigCore.getParameter(Parameters.DIR_TEMP, Parameters.DefaultValues.TEMPFOLDER);
+        String tempDirectory = ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER);
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
         if (ConfigCore.getBooleanParameter(Parameters.USE_ORIG_FOLDER, true)) {
             useMasterFolder = true;
             masterPrefix = ConfigCore.getParameter(Parameters.DIRECTORY_PREFIX,
-                Parameters.DefaultValues.DIRECTORY_PREFIX);
+                DefaultValues.DIRECTORY_PREFIX);
         }
         Process currentProcess = metadataBean.getProcess();
         List<URI> importedFileNames = new ArrayList<>();
@@ -543,7 +544,7 @@ public class FileManipulation {
 
         String afterLastSlash = fileName.substring(fileName.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
-        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, Parameters.DefaultValues.IMAGE_PREFIX);
+        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         return afterLastBackslash.matches(prefix + "\\..+");
     }

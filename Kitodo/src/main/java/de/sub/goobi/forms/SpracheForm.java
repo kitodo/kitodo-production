@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -53,7 +54,7 @@ public class SpracheForm implements Serializable {
      */
     public SpracheForm() {
         String key = ConfigCore.getParameter(Parameters.LANGUAGE_FORCE_DEFAULT,
-            Parameters.DefaultValues.LANGUAGE_FORCE_DEFAULT);
+            DefaultValues.LANGUAGE_FORCE_DEFAULT);
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
         if (!LocaleUtils.isAvailableLocale(locale)) {
             FacesContext context = FacesContext.getCurrentInstance();
@@ -171,7 +172,7 @@ public class SpracheForm implements Serializable {
              * is present) return default language
              */
             String key = ConfigCore.getParameter(Parameters.LANGUAGE_DEFAULT,
-                Parameters.DefaultValues.LANGUAGE_DEFAULT);
+                DefaultValues.LANGUAGE_DEFAULT);
             Locale locale = new Locale.Builder().setLanguageTag(key).build();
             if (LocaleUtils.isAvailableLocale(locale)) {
                 return locale;

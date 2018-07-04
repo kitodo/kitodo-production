@@ -52,6 +52,7 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -304,7 +305,7 @@ public class MassImportForm implements Serializable {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
         URI temporalFile = serviceManager.getFileService().createResource(FilenameUtils
-                .concat(ConfigCore.getParameter(Parameters.DIR_TEMP, Parameters.DefaultValues.TEMPFOLDER), basename));
+                .concat(ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }

@@ -38,6 +38,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
@@ -84,7 +85,7 @@ public class ExportPdf extends ExportMets {
                 // define path for mets and pdfs
                 Integer contentServerTimeOut = ConfigCore.getIntParameter(
                     Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
-                    Parameters.DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                    DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
                 URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 
                 // get pdf from servlet and forward response to file

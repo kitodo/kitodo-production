@@ -43,6 +43,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
@@ -236,7 +237,7 @@ public class MetadataValidationService {
             String metadataLanguage) {
 
         if (!metadata.getValue().replaceAll(ConfigCore.getParameter(Parameters.VALIDATE_IDENTIFIER_REGEX,
-            Parameters.DefaultValues.VALIDATE_IDENTIFIER_REGEX), "").equals("")) {
+            DefaultValues.VALIDATE_IDENTIFIER_REGEX), "").equals("")) {
             Object[] parameters = new Object[] {metadata.getMetadataType().getNameByLanguage(metadataLanguage),
                                                 docStruct.getDocStructType().getNameByLanguage(metadataLanguage) };
             Helper.setErrorMessage("invalidIdentifierCharacter", parameters);

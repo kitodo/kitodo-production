@@ -69,6 +69,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
@@ -221,7 +222,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(Parameters.DIRECTORY_SUFFIX,
-        Parameters.DefaultValues.DIRECTORY_SUFFIX);
+        DefaultValues.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
     private String atstsl = "";
@@ -731,7 +732,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
-            Parameters.DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
+            DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
             Helper.setErrorMessage("processTitleInvalid");
@@ -1936,7 +1937,7 @@ public class ProzesskopieForm implements Serializable {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, Parameters.DefaultValues.HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
     }
 
     /**

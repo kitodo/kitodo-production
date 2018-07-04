@@ -22,6 +22,7 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -275,7 +276,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the timeout for catalogue access
      */
     public static long getTimeout() {
-        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, Parameters.DefaultValues.CATALOGUE_TIMEOUT);
+        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, DefaultValues.CATALOGUE_TIMEOUT);
     }
 
     /**

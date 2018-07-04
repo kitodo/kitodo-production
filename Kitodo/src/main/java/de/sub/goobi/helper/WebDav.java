@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.Config;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
@@ -52,7 +53,7 @@ public class WebDav implements Serializable {
 
     public WebDav() {
         doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
-            Parameters.DefaultValues.DONE_DIRECTORY_NAME);
+            DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**

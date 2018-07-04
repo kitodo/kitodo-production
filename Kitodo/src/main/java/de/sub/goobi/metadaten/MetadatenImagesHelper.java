@@ -56,6 +56,7 @@ import org.kitodo.api.ugh.exceptions.ContentFileNotLinkedException;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.legacy.UghImplementation;
@@ -119,7 +120,7 @@ public class MetadatenImagesHelper {
         }
 
         String defaultPagination = ConfigCore.getParameter(Parameters.METS_EDITOR_DEFAULT_PAGINATION,
-            Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_UNCOUNTED);
+            Parameters.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED);
         Map<String, DocStructInterface> assignedImages = new HashMap<>();
         List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
 
@@ -333,14 +334,14 @@ public class MetadatenImagesHelper {
      * @return pagination value as String
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
-        if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_ARABIC)) {
+        if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC)) {
             return String.valueOf(currentPhysicalOrder);
-        } else if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_ROMAN)) {
+        } else if (defaultPagination.equalsIgnoreCase(Parameters.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN)) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
-            return Parameters.METS_EDITOR_DEFAULT_SUFFIX_VALUE_UNCOUNTED;
+            return Parameters.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED;
         }
     }
 
@@ -384,7 +385,7 @@ public class MetadatenImagesHelper {
             GetMethod method = new GetMethod(csUrl.toString());
             logger.trace("get");
             Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
-                Parameters.DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
             method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
             int statusCode = httpclient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK) {
@@ -433,7 +434,7 @@ public class MetadatenImagesHelper {
             }
 
             this.myLastImage = files.size();
-            if (ConfigCore.getParameter(Parameters.IMAGE_PREFIX, Parameters.DefaultValues.IMAGE_PREFIX)
+            if (ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX)
                     .equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;

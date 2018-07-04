@@ -32,6 +32,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.FinaliseStepProcessor;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -164,7 +165,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             result = session.createProducer(channel);
             result.setDeliveryMode(DeliveryMode.PERSISTENT);
             result.setTimeToLive(ConfigCore.getLongParameter(Parameters.ACTIVE_MQ_RESULTS_TTL,
-                Parameters.DefaultValues.ACTIVE_MQ_RESULTS_TTL));
+                DefaultValues.ACTIVE_MQ_RESULTS_TTL));
             return result;
         } catch (JMSException | RuntimeException e) {
             logger.fatal("Error setting up report channel \"" + topic + "\": Giving up.", e);

@@ -34,6 +34,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
@@ -95,7 +96,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
             URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
             Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
-                Parameters.DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();
 
             // get pdf from servlet and forward response to file

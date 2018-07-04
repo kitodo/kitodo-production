@@ -39,6 +39,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -110,7 +111,7 @@ public class AktuelleSchritteForm extends BasisForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
-            Parameters.DefaultValues.DONE_DIRECTORY_NAME);
+            DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**

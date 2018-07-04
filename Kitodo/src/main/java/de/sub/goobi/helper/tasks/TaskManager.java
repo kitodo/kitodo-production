@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -64,7 +65,7 @@ public class TaskManager {
     private TaskManager() {
         taskSitter = Executors.newSingleThreadScheduledExecutor();
         long delay = ConfigCore.getLongParameter(Parameters.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS,
-            Parameters.DefaultValues.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS);
+            DefaultValues.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS);
         taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
     }
 

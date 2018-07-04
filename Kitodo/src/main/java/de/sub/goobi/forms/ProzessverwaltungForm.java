@@ -66,6 +66,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
@@ -148,7 +149,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.anzeigeAnpassen.put("processDate", false);
         }
         doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
-            Parameters.DefaultValues.DONE_DIRECTORY_NAME);
+            DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -250,7 +251,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
-            Parameters.DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
+            DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");
             return false;

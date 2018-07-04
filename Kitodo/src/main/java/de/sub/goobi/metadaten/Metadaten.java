@@ -78,6 +78,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -1943,7 +1944,7 @@ public class Metadaten {
     private int pageNumber = 0;
 
     private SelectOne<Separator> paginationSeparators = new SelectOne<>(Separator
-            .factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, Parameters.DefaultValues.PAGE_SEPARATORS)));
+            .factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, DefaultValues.PAGE_SEPARATORS)));
 
     public int getPageNumber() {
         return this.pageNumber;

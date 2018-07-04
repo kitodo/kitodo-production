@@ -16,6 +16,7 @@ import de.sub.goobi.config.ConfigCore;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 
 /**
@@ -31,7 +32,7 @@ public class MetadatenSperrung implements Serializable {
      * behalten (30 min)
      */
     private static final long sperrzeit = ConfigCore.getLongParameter(Parameters.METS_EDITOR_LOCKING_TIME,
-        Parameters.DefaultValues.METS_EDITOR_LOCKING_TIME);
+        DefaultValues.METS_EDITOR_LOCKING_TIME);
 
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.
