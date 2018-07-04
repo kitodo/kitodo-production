@@ -14,6 +14,7 @@ package org.goobi.production.flow.statistics;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.util.Locale;
 
 import org.goobi.production.flow.statistics.enums.StatisticsMode;
@@ -23,7 +24,6 @@ import org.junit.Test;
 import org.junit.Ignore;
 
 import de.intranda.commons.chart.results.DataTable;
-import de.schlichtherle.io.File;
 import de.sub.goobi.config.ConfigMain;
 
 @Ignore("Crashes")
