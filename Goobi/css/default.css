@@ -804,3 +804,12 @@ span.jscalendar-DB-title-control-normal-style:hover{
 .sundayNoBlock {
     background-color: #B68A8A;
 }
+
+/*
+   ------------------------------------------------------------
+   standard tables hover for rows
+   ------------------------------------------------------------
+*/
+table.standardtable tr:hover {
+    background-color: lightcyan;
+}
