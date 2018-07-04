@@ -558,10 +558,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder createTaskFilters(String filter, FilterString filterString, TaskStatus taskStatus,
             boolean negate, ObjectType objectType) {
-        // extracting the substring into parameter (filter parameters e.g. 5,
-        // -5,
-        // 5-10, 5- or "Qualitätssicherung")
-
+        /*
+         * extracting the substring into parameter (filter parameters e.g. 5,
+         * -5, 5-10, 5- or "Qualitätssicherung")
+         */
         String parameters = getFilterValueFromFilterString(filter, filterString);
 
         /*
