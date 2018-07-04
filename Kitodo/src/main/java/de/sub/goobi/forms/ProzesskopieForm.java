@@ -1620,15 +1620,18 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Conditions: isDocType.equals("") && isNotDocType.equals("") - nothing was
-     * specified isNotDocType.equals("") &&
-     * StringUtils.containsIgnoreCase(isDocType, docType) - only duty was
-     * specified isDocType.equals("") &&
-     * !StringUtils.containsIgnoreCase(isNotDocType, docType) - only may not was
-     * specified !isDocType.equals("") && !isNotDocType.equals("") &&
-     * StringUtils.containsIgnoreCase(isDocType, docType) &&
-     * !StringUtils.containsIgnoreCase(isNotDocType, docType) - both were
-     * specified
+     * Conditions:
+     * <dl>
+     * <dt>{@code isDocType.equals("") && isNotDocType.equals("")}</dt>
+     * <dd>nothing was specified</dd>
+     * <dt>{@code isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)}</dt>
+     * <dd>only duty was specified</dd>
+     * <dt>{@code isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>only may not was specified</dd>
+     * <dt>{@code !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
+     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>both were specified</dd>
+     * </dl>
      */
     private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
         if ((isDocType.equals("")
