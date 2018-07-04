@@ -186,14 +186,14 @@ public class Parameters {
     public static final String IMAGE_SORTING = "ImageSorting";
 
     /**
-     * Sorting of images: 1 is lesser then 002, compares the number of image
-     * names, characters other than digits are not supported
+     * Numeric sorting of images. 1 is lesser then 002, compares the number of
+     * image names, characters other than digits are not supported
      */
     public static final String IMAGE_SORTING_VALUE_NUMBER = "number";
 
     /**
-     * Sorting of images: 1 is greater then 002, compares character by character
-     * of image names, all characters are supported.
+     * Alphanumeric sorting of images. 1 is greater then 002, compares character
+     * by character of image names, all characters are supported.
      */
     public static final String IMAGE_SORTING_VALUE_ALPHANUMERIC = "alphanumeric";
 

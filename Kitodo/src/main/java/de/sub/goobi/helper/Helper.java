@@ -112,7 +112,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set error message for user with usage of exception.
-     * 
+     *
      * @param e
      *            thrown exception
      */
@@ -233,7 +233,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set message for user.
-     * 
+     *
      * @param message
      *            for user
      */
@@ -255,7 +255,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set message and description for user.
-     * 
+     *
      * @param control
      *            what is it - no documentation for clientId in FacesContext
      * @param message
@@ -392,13 +392,15 @@ public class Helper extends HibernateHelper implements Observer {
                 File file = new File(
                         ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
-                    // Load local message bundle from file system only if file exists;
-                    // if value not exists in bundle, use default bundle from classpath
+                    // Load local message bundle from file system only if file
+                    // exists;
+                    // if value not exists in bundle, use default bundle from
+                    // classpath
 
                     try {
                         final URL resourceURL = file.toURI().toURL();
-                        URLClassLoader urlLoader = AccessController
-                                .doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
+                        URLClassLoader urlLoader = AccessController.doPrivileged(
+                            (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
                         ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
                         if (localBundle != null) {
                             localMessages.put(language, localBundle);
@@ -538,7 +540,7 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     private static List<String> getDataRegexList() {
-            String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
+        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
