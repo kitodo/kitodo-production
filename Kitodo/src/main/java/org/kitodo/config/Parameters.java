@@ -20,12 +20,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class Parameters {
 
-    // =============================================================================
-    // FILE AND DIRECTORY MANAGEMENT
-    // =============================================================================
-    // -----------------------------------
-    // Directories
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== FILE AND DIRECTORY MANAGEMENT
+     * =========================================================================
+     * ==== ----------------------------------- Directories
+     * -----------------------------------
+     */
 
     // DIR_XML_CONFIG = "KonfigurationVerzeichnis" → org.kitodo.config.Config
 
@@ -87,9 +88,10 @@ public class Parameters {
      */
     public static final String DIR_PLUGINS_TEMP = "debugFolder";
 
-    // -----------------------------------
-    // Directory management
-    // -----------------------------------
+    /*
+     * ----------------------------------- Directory management
+     * -----------------------------------
+     */
 
     /**
      * Boolean, defaults to {@code false}.
@@ -132,9 +134,10 @@ public class Parameters {
      */
     public static final String USE_ORIG_FOLDER = "useOrigFolder";
 
-    // -----------------------------------
-    // Directory and symbolic link management
-    // -----------------------------------
+    /*
+     * ----------------------------------- Directory and symbolic link
+     * management -----------------------------------
+     */
 
     /**
      * Script to create the user's home directory when adding a new user.
@@ -157,9 +160,10 @@ public class Parameters {
      */
     public static final String SCRIPT_DELETE_SYMLINK = "script_deleteSymLink";
 
-    // -----------------------------------
-    // Runnotes
-    // -----------------------------------
+    /*
+     * ----------------------------------- Runnotes
+     * -----------------------------------
+     */
 
     /**
      * Filename of the XSLT file for transforming old metadata files which need
@@ -167,9 +171,10 @@ public class Parameters {
      */
     public static final String XSLT_FILENAME_METADATA_TRANSFORMATION = "xsltFilenameMetadataTransformation";
 
-    // -----------------------------------
-    // Images
-    // -----------------------------------
+    /*
+     * ----------------------------------- Images
+     * -----------------------------------
+     */
 
     /**
      * Prefix for image names as regex. Default is 8 digits \\d{8} and gets
@@ -199,12 +204,13 @@ public class Parameters {
      */
     public static final String DONE_DIRECTORY_NAME = "doneDirectoryName";
 
-    // =============================================================================
-    // VISUAL APPEARANCE
-    // =============================================================================
-    // -----------------------------------
-    // Internationalization
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== VISUAL APPEARANCE
+     * =========================================================================
+     * ==== ----------------------------------- Internationalization
+     * -----------------------------------
+     */
 
     /**
      * Absolute path to the directory that the resource bundle files are stored
@@ -230,9 +236,10 @@ public class Parameters {
      */
     public static final String LANGUAGE_DEFAULT = "language.default";
 
-    // -----------------------------------
-    // Data protection
-    // -----------------------------------
+    /*
+     * ----------------------------------- Data protection
+     * -----------------------------------
+     */
 
     /**
      * The General Data Protection Regulation or local law might require to set
@@ -247,21 +254,23 @@ public class Parameters {
      */
     public static final String WITH_USER_STEP_DONE_SEARCH = "withUserStepDoneSearch";
 
-    // -----------------------------------
-    // Error page
-    // -----------------------------------
+    /*
+     * ----------------------------------- Error page
+     * -----------------------------------
+     */
 
     /**
      * Page the user will be directed to continue.
      */
     public static final String ERR_LINK_TO_PAGE = "err_linkToPage";
 
-    // =============================================================================
-    // METADATA PROCESSING
-    // =============================================================================
-    // -----------------------------------
-    // Catalogue search
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== METADATA PROCESSING
+     * =========================================================================
+     * ==== ----------------------------------- Catalogue search
+     * -----------------------------------
+     */
 
     /**
      * Number of hits to show per page on the hitlist when multiple hits were
@@ -275,9 +284,11 @@ public class Parameters {
      */
     public static final String CATALOGUE_TIMEOUT = "catalogue.timeout";
 
-    // -----------------------------------
-    // Metadata editor behavior
-    // -----------------------------------
+    /*
+     * ----------------------------------- Metadata editor behavior
+     * -----------------------------------
+     */
+
     /**
      * Long, value in milliseconds. Defaults to 180000 (30 minutes).
      */
@@ -326,18 +337,20 @@ public class Parameters {
      */
     public static final String PAGE_SEPARATORS = "pageSeparators";
 
-    // -----------------------------------
-    // backup of metadata configuration
-    // -----------------------------------
+    /*
+     * ----------------------------------- backup of metadata configuration
+     * -----------------------------------
+     */
 
     /**
      * Backup of metadata configuration. Integer.
      */
     public static final String NUMBER_OF_META_BACKUPS = "numberOfMetaBackups";
 
-    // -----------------------------------
-    // Metadata enrichment
-    // -----------------------------------
+    /*
+     * ----------------------------------- Metadata enrichment
+     * -----------------------------------
+     */
 
     /**
      * Set to true to enable the feature of automatic meta data inheritance and
@@ -348,9 +361,10 @@ public class Parameters {
      */
     public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
 
-    // -----------------------------------
-    // Data copy rules
-    // -----------------------------------
+    /*
+     * ----------------------------------- Data copy rules
+     * -----------------------------------
+     */
 
     /**
      * Data copy rules may be used to copy Kitodo internal data and metadata on
@@ -364,9 +378,10 @@ public class Parameters {
      */
     public static final String COPY_DATA_ON_EXPORT = "copyData.onExport";
 
-    // -----------------------------------
-    // Metadata validation
-    // -----------------------------------
+    /*
+     * ----------------------------------- Metadata validation
+     * -----------------------------------
+     */
 
     /**
      * Perform basic metadata validation or not. Boolean, defaults to
@@ -384,12 +399,13 @@ public class Parameters {
      */
     public static final String VALIDATE_IDENTIFIER_REGEX = "validateIdentifierRegex";
 
-    // =============================================================================
-    // AUTOMATION
-    // =============================================================================
-    // -----------------------------------
-    // Mass process generation
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== AUTOMATION
+     * =========================================================================
+     * ==== ----------------------------------- Mass process generation
+     * -----------------------------------
+     */
 
     /**
      * Boolean, defaults to {@code false}.
@@ -412,9 +428,10 @@ public class Parameters {
      */
     public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
 
-    // -----------------------------------
-    // Batch processing
-    // -----------------------------------
+    /*
+     * ----------------------------------- Batch processing
+     * -----------------------------------
+     */
 
     /**
      * Limits the number of batches showing on the page “Batches”. Defaults to
@@ -432,9 +449,10 @@ public class Parameters {
      */
     public static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
 
-    // -----------------------------------
-    // content server for PDF generation
-    // -----------------------------------
+    /*
+     * ----------------------------------- content server for PDF generation
+     * -----------------------------------
+     */
 
     /**
      * Boolean, defaults to {@code false}.
@@ -453,9 +471,10 @@ public class Parameters {
 
     public static final String KITODO_CONTENT_SERVER_TIMEOUT = "kitodoContentServerTimeOut";
 
-    // -----------------------------------
-    // Task manager
-    // -----------------------------------
+    /*
+     * ----------------------------------- Task manager
+     * -----------------------------------
+     */
 
     /**
      * Overrides the limit of tasks run in parallel. Integer, defaults to the
@@ -508,9 +527,10 @@ public class Parameters {
      */
     public static final String TASK_MANAGER_SHOW_SAMPLE_TASK = "taskManager.showSampleTask";
 
-    // -----------------------------------
-    // Export to presentation module
-    // -----------------------------------
+    /*
+     * ----------------------------------- Export to presentation module
+     * -----------------------------------
+     */
 
     /**
      * If you set this to true the exports will be done asynchronously (in the
@@ -540,12 +560,13 @@ public class Parameters {
      */
     public static final String EXPORT_WITHOUT_TIME_LIMIT = "exportWithoutTimeLimit";
 
-    // =============================================================================
-    // REMOTE SERVICES
-    // =============================================================================
-    // -----------------------------------
-    // LDAP Configuration
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== REMOTE SERVICES
+     * =========================================================================
+     * ==== ----------------------------------- LDAP Configuration
+     * -----------------------------------
+     */
 
     /**
      * Boolean, defaults to {@code true}.
@@ -566,9 +587,10 @@ public class Parameters {
      */
     public static final String LDAP_USE_TLS = "ldap_useTLS";
 
-    // -----------------------------------
-    // Authority control configuration
-    // -----------------------------------
+    /*
+     * ----------------------------------- Authority control configuration
+     * -----------------------------------
+     */
 
     /**
      * Which authority identifier to use for a given URI prefix.
@@ -590,9 +612,12 @@ public class Parameters {
      */
     public static final String AUTHORITY_DEFAULT = "authority.default";
 
-    // =============================================================================
-    // INTERACTIVE ERROR MANAGEMENT
-    // =============================================================================
+    /*
+     * =========================================================================
+     * ==== INTERACTIVE ERROR MANAGEMENT
+     * =========================================================================
+     * ====
+     */
 
     /**
      * Boolean, defaults to {@code false}.
@@ -613,12 +638,13 @@ public class Parameters {
      */
     public static final String ERR_EMAIL_ADDRESS = "err_emailAddress";
 
-    // =============================================================================
-    // FUNCTIONAL EXTENSIONS
-    // =============================================================================
-    // -----------------------------------
-    // OCR service access
-    // -----------------------------------
+    /*
+     * =========================================================================
+     * ==== FUNCTIONAL EXTENSIONS
+     * =========================================================================
+     * ==== ----------------------------------- OCR service access
+     * -----------------------------------
+     */
 
     /**
      * Boolean, defaults to {@code false}.
@@ -630,9 +656,10 @@ public class Parameters {
      */
     public static final String OCR_URL = "ocrUrl";
 
-    // -----------------------------------
-    // ActiveMQ web services
-    // -----------------------------------
+    /*
+     * ----------------------------------- ActiveMQ web services
+     * -----------------------------------
+     */
 
     public static final String ACTIVE_MQ_HOST_URL = "activeMQ.hostURL";
 
@@ -647,9 +674,10 @@ public class Parameters {
      */
     public static final String ACTIVE_MQ_RESULTS_TTL = "activeMQ.results.timeToLive";
 
-    // -----------------------------------
-    // Elasticsearch properties
-    // -----------------------------------
+    /*
+     * ----------------------------------- Elasticsearch properties
+     * -----------------------------------
+     */
 
     public static final String ELASTICSEARCH_BATCH = "elasticsearch.batch";
 
