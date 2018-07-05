@@ -442,7 +442,6 @@ public class MetsKitodoWrapperTest {
     public void shouldRemoveSmLink()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-
         DivType firstChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getDiv().get(2);
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
 
@@ -456,7 +455,7 @@ public class MetsKitodoWrapperTest {
 
     @Test
     public void shouldPaginateDivs()
-        throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
+            throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
 
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv();
@@ -465,6 +464,24 @@ public class MetsKitodoWrapperTest {
         paginator.writeToOrderLabelsOfDiyTypes(physicalDivs);
 
         DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(9);
-        Assert.assertEquals("","XII",divType.getORDERLABEL());
+        Assert.assertEquals("", "XII", divType.getORDERLABEL());
+    }
+
+    @Test
+    public void shouldGetDivOfLogicalStructMap() throws DatatypeConfigurationException, IOException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
+        DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
+        DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(0).getDiv();
+        Assert.assertEquals("Div elements from getter and directly from mets objects were not the same", rootDiv,
+            rootDivFromMets);
+    }
+
+    @Test
+    public void shouldGetDivOfLogicalStructMapFromExistingFile() throws DatatypeConfigurationException, IOException, JAXBException, TransformerException {
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
+        DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
+        DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(0).getDiv();
+        Assert.assertEquals("Div elements from getter and directly from mets objects were not the same", rootDiv,
+            rootDivFromMets);
     }
 }

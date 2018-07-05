@@ -15,6 +15,8 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataeditor.entities.LogicalStructMapType;
+import org.kitodo.dataeditor.entities.PhysicalStructMapType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
@@ -70,8 +72,8 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      *
      * @return The StructMap object.
      */
-    public StructMapType createPhysicalStructMapType() {
-        return createStructMapTypeOfType("PHYSICAL");
+    public PhysicalStructMapType createPhysicalStructMapType() {
+        return new PhysicalStructMapType(createStructMapTypeOfType("PHYSICAL"));
     }
 
     /**
@@ -79,8 +81,8 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      *
      * @return The StructMap object.
      */
-    public StructMapType createLogicalStructMapType() {
-        return createStructMapTypeOfType("LOGICAL");
+    public LogicalStructMapType createLogicalStructMapType() {
+        return new LogicalStructMapType(createStructMapTypeOfType("LOGICAL"));
     }
 
     private StructMapType createStructMapTypeOfType(String type) {
