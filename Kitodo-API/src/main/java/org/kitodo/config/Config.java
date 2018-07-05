@@ -11,6 +11,8 @@
 
 package org.kitodo.config;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
@@ -27,6 +29,17 @@ import org.apache.logging.log4j.Logger;
 
 public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
+
+    private static final Field FIELD_DETAIL_MESSAGE;
+    static {
+        try {
+            FIELD_DETAIL_MESSAGE = Throwable.class.getDeclaredField("detailMessage");
+            FIELD_DETAIL_MESSAGE.setAccessible(true);
+        } catch (NoSuchFieldException | SecurityException e) {
+            throw new UndeclaredThrowableException(e);
+        }
+    }
+
     private static volatile PropertiesConfiguration config;
     private static final String CONFIG_FILE = "kitodo_config.properties";
     public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
@@ -94,8 +107,12 @@ public class Config {
         try {
             return getConfig().getString(key);
         } catch (NoSuchElementException e) {
-            logger.catching(e);
-            throw new NoSuchElementException("No configuration found in kitodo_config.properties for key " + key + "!");
+            try {
+                FIELD_DETAIL_MESSAGE.set(e, "No configuration found in kitodo_config.properties for key " + key + "!");
+            } catch (IllegalAccessException e1) {
+                throw new UndeclaredThrowableException(e1);
+            }
+            throw e;
         }
     }
 
