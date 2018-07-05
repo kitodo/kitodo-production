@@ -480,7 +480,9 @@ public class MetsKitodoWrapperTest {
     public void shouldGetDivOfLogicalStructMapFromExistingFile() throws DatatypeConfigurationException, IOException, JAXBException, TransformerException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
-        DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(0).getDiv();
+        DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(1).getDiv();
+        MetsKitodoWriter writer = new MetsKitodoWriter();
+        System.out.println(writer.writeSerializedToString(metsKitodoWrapper.getMets()));
         Assert.assertEquals("Div elements from getter and directly from mets objects were not the same", rootDiv,
             rootDivFromMets);
     }

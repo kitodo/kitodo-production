@@ -33,6 +33,7 @@ import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
+import org.kitodo.dataformat.metskitodo.StructMapType;
 
 /**
  * This is a wrapper class for holding and manipulating the content of a
@@ -44,8 +45,6 @@ public class MetsKitodoWrapper {
     private MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
     private LogicalStructMapType logicalStructMapType;
     private PhysicalStructMapType physicalStructMapType;
-    private FileSec fileSec;
-    private StructLink structLink;
 
     /**
      * Gets the mets object.
@@ -73,12 +72,12 @@ public class MetsKitodoWrapper {
 
     private void createBasicMetsElements(Mets mets) throws DatatypeConfigurationException, IOException {
         if (Objects.isNull(mets.getFileSec())) {
-            mets.setFileSec(objectFactory.createMetsTypeFileSec());
+            mets.setFileSec(objectFactory.createFileSec());
             MetsType.FileSec.FileGrp fileGroup = objectFactory.createMetsTypeFileSecFileGrpLocal();
             mets.getFileSec().getFileGrp().add(fileGroup);
         }
         if (Objects.isNull(mets.getStructLink())) {
-            mets.setStructLink(objectFactory.createMetsTypeStructLink());
+            mets.setStructLink(objectFactory.createStructLink());
         }
         if (Objects.isNull(mets.getMetsHdr())) {
             mets.setMetsHdr(objectFactory.createKitodoMetsHeader());
@@ -114,7 +113,28 @@ public class MetsKitodoWrapper {
     public MetsKitodoWrapper(URI xmlFile, URI xsltFile)
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         this.mets = MetsKitodoReader.readAndValidateUriToMets(xmlFile, xsltFile);
+        replaceStandardMetsElementsByCustomEntities(this.mets);
         createBasicMetsElements(this.mets);
+    }
+
+    private void replaceStandardMetsElementsByCustomEntities(Mets mets) {
+        if (Objects.nonNull(mets.getStructLink())) {
+            mets.setStructLink(new StructLink(mets.getStructLink()));
+        }
+        if (Objects.nonNull(mets.getFileSec())) {
+            mets.setFileSec(new FileSec(mets.getFileSec()));
+        }
+        if (!mets.getStructMap().isEmpty()) {
+            StructMapType physicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL");
+            this.mets.getStructMap().remove(physicalStructMap);
+            this.physicalStructMapType = new PhysicalStructMapType(physicalStructMap);
+            this.mets.getStructMap().add(this.physicalStructMapType);
+
+            StructMapType logicalStructMap = MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL");
+            this.mets.getStructMap().remove(logicalStructMap);
+            this.logicalStructMapType = new LogicalStructMapType(logicalStructMap);
+            this.mets.getStructMap().add(this.logicalStructMapType);
+        }
     }
 
     /**
@@ -145,11 +165,6 @@ public class MetsKitodoWrapper {
      * @return The StructMapType object.
      */
     public PhysicalStructMapType getPhysicalStructMap() {
-        if (Objects.isNull(this.physicalStructMapType)) {
-            this.physicalStructMapType = new PhysicalStructMapType(
-                    MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "PHYSICAL"));
-            this.mets.getStructMap().add(this.physicalStructMapType);
-        }
         return this.physicalStructMapType;
     }
 
@@ -159,11 +174,6 @@ public class MetsKitodoWrapper {
      * @return The LogicalStructMapType object.
      */
     public LogicalStructMapType getLogicalStructMap() {
-        if (Objects.isNull(this.logicalStructMapType)) {
-            this.logicalStructMapType = new LogicalStructMapType(
-                    MetsKitodoStructMapHandler.getMetsStructMapByType(mets, "LOGICAL"));
-            this.mets.getStructMap().add(this.logicalStructMapType);
-        }
         return this.logicalStructMapType;
     }
 
@@ -173,11 +183,7 @@ public class MetsKitodoWrapper {
      * @return The FileSec object.
      */
     public FileSec getFileSec() {
-        if (Objects.isNull(this.fileSec)) {
-            this.fileSec = new FileSec(getMets().getFileSec());
-            this.mets.setFileSec(this.fileSec);
-        }
-        return this.fileSec;
+        return (FileSec) this.mets.getFileSec();
     }
 
     /**
@@ -186,11 +192,7 @@ public class MetsKitodoWrapper {
      * @return The StructLink object.
      */
     public StructLink getStructLink() {
-        if (Objects.isNull(this.structLink)) {
-            this.structLink = new StructLink(getMets().getStructLink());
-            this.mets.setStructLink(structLink);
-        }
-        return this.structLink;
+        return (StructLink) this.mets.getStructLink();
     }
 
     /**
