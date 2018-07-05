@@ -20,7 +20,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class RulesetEditPage extends Page {
+public class RulesetEditPage extends Page<RulesetEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -40,6 +40,11 @@ public class RulesetEditPage extends Page {
 
     public RulesetEditPage() {
         super("pages/rulesetEdit.jsf");
+    }
+
+    @Override
+    public RulesetEditPage goTo() {
+        return null;
     }
 
     public RulesetEditPage insertRulesetData(Ruleset ruleset) {

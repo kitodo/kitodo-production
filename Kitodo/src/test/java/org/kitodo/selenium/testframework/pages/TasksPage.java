@@ -17,7 +17,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class TasksPage extends Page {
+public class TasksPage extends Page<TasksPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "tasksTabView:taskTable_data")
@@ -32,6 +32,7 @@ public class TasksPage extends Page {
      *
      * @return The tasks page.
      */
+    @Override
     public TasksPage goTo() throws Exception {
         Pages.getTopNavigation().gotoTasks();
         return this;

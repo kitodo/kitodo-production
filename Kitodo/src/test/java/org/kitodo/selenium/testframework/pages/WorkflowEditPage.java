@@ -19,7 +19,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class WorkflowEditPage extends Page {
+public class WorkflowEditPage extends Page<WorkflowEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -32,6 +32,11 @@ public class WorkflowEditPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:workflowTabView:js-create-diagram")
     private WebElement createDiagram;
+
+    @Override
+    public WorkflowEditPage goTo() {
+        return null;
+    }
 
     public WorkflowEditPage() {
         super("pages/workflowEdit.jsf");

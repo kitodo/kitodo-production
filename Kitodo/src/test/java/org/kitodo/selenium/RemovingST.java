@@ -11,15 +11,8 @@
 
 package org.kitodo.selenium;
 
-import de.sub.goobi.config.ConfigCore;
-
-import java.io.File;
-
-import org.apache.commons.lang.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
-import org.kitodo.config.Parameters;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
@@ -28,27 +21,12 @@ public class RemovingST extends BaseTestSelenium {
 
     @Test
     public void removeProcessTest() throws Exception {
-        if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
-        }
-
         ProcessesPage processesPage = Pages.getProcessesPage();
         int numberOfProcessesDisplayed = processesPage.countListedProcesses();
-        Assert.assertTrue("Process list is empty",
-            processesPage.isResultSetNotEmpty(processesPage.getListOfProcessTitles()));
+        Assert.assertTrue("Process list is empty", processesPage.isResultSetNotEmpty(processesPage.getProcessTitles()));
         Pages.getProcessesPage().deleteFirstProcess();
         Assert.assertTrue("Removal of first process was not successful!",
-            processesPage.countListedProcesses() < numberOfProcessesDisplayed);
-
-        if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
-        }
+                processesPage.countListedProcesses() < numberOfProcessesDisplayed);
     }
 
 }

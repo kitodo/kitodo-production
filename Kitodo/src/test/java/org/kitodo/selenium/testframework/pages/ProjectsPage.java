@@ -26,7 +26,7 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
-public class ProjectsPage extends Page {
+public class ProjectsPage extends Page<ProjectsPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView")
@@ -72,6 +72,10 @@ public class ProjectsPage extends Page {
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    private WebElement createProcess;
+
     public ProjectsPage() {
         super("pages/projects.jsf");
     }
@@ -93,11 +97,7 @@ public class ProjectsPage extends Page {
      * @return The users page.
      */
     public ProjectsPage switchToTabByIndex(int index) throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        clickTab(index, projectsTabView);
-        return this;
+        return switchToTabByIndex(index, projectsTabView);
     }
 
     public int countListedProjects() throws Exception {
@@ -171,6 +171,10 @@ public class ProjectsPage extends Page {
             goTo();
         }
         return getTableDataByColumn(rulesetsTable, 0);
+    }
+
+    public void createNewProcess() {
+        createProcess.click();
     }
 
     /**

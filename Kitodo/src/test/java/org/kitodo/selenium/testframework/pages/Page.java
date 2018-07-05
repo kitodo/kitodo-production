@@ -21,7 +21,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public abstract class Page {
+public abstract class Page<T> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -49,6 +49,8 @@ public abstract class Page {
     public String getUrl() {
         return URL;
     }
+
+    abstract public T goTo() throws Exception;
 
     /**
      * Check if the browser is currently at given page.
@@ -89,7 +91,16 @@ public abstract class Page {
         return !isAt();
     }
 
-    void clickTab(int index, WebElement tabView) {
+    @SuppressWarnings("unchecked")
+    T switchToTabByIndex(int index, WebElement tabView) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        clickTab(index, tabView);
+        return (T) this;
+    }
+
+    private void clickTab(int index, WebElement tabView) {
         List<WebElement> listTabs = tabView.findElements(By.tagName("li"));
         WebElement tab = listTabs.get(index);
         tab.click();
@@ -98,5 +109,9 @@ public abstract class Page {
     Predicate<WebElement> isButtonClicked = (webElement) -> {
         webElement.click();
         return true;
+    };
+
+    Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
+        return !webElement.getAttribute("value").equals("");
     };
 }

@@ -27,7 +27,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UsersPage extends Page {
+public class UsersPage extends Page<UsersPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView")
@@ -185,11 +185,7 @@ public class UsersPage extends Page {
      * @return The users page.
      */
     public UsersPage switchToTabByIndex(int index) throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        clickTab(index, usersTabView);
-        return this;
+        return switchToTabByIndex(index, usersTabView);
     }
 
     /**

@@ -18,6 +18,7 @@ import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProcessFromTemplatePage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.RulesetEditPage;
@@ -56,6 +57,10 @@ public class Pages {
 
     public static ProcessesPage getProcessesPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProcessesPage.class);
+    }
+
+    public static ProcessFromTemplatePage getProcessFromTemplatePage() throws InstantiationException, IllegalAccessException {
+        return getPage(ProcessFromTemplatePage.class);
     }
 
     public static ProjectsPage getProjectsPage() throws InstantiationException, IllegalAccessException {
