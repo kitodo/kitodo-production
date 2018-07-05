@@ -64,9 +64,9 @@ public class SecurityAccessService {
     }
 
     /**
-     * Gets the current authenticated user and loads object from database.
+     * Gets the current authenticated user of current threads security context.
      *
-     * @return The user object or null if no user is authenticated.
+     * @return The SecurityUserDetails object or null if no user is authenticated.
      */
     public SecurityUserDetails getAuthenticatedSecurityUserDetails() {
         if (isAuthenticated()) {
