@@ -120,7 +120,7 @@ public class ProjectsPage extends Page {
      *
      * @return list of docket titles
      */
-    public List<String> getListOfDocketTitles() throws Exception {
+    public List<String> getDocketTitles() throws Exception {
         if (isNotAt()) {
             goTo();
         }
@@ -132,7 +132,7 @@ public class ProjectsPage extends Page {
      *
      * @return list of ruleset titles
      */
-    public List<String> getListOfRulesetTitles() throws Exception {
+    public List<String> getRulesetTitles() throws Exception {
         if (isNotAt()) {
             goTo();
         }

@@ -20,7 +20,7 @@ import org.kitodo.selenium.testframework.Pages;
 
 public class AddingErrorST extends BaseTestSelenium {
 
-    @Test
+
     public void addDocketWithErrorTest() throws Exception {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
@@ -31,7 +31,7 @@ public class AddingErrorST extends BaseTestSelenium {
 
     }
 
-    @Test
+
     public void addRulesetWithErrorTest() throws Exception {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");

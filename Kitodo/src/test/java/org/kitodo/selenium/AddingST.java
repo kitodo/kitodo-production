@@ -37,7 +37,7 @@ public class AddingST extends BaseTestSelenium {
         client.setName("MockClient");
         Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
-        boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
+        boolean clientAvailable = Pages.getClientsPage().goTo().getClientNames().contains(client.getName());
         Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
@@ -48,8 +48,8 @@ public class AddingST extends BaseTestSelenium {
         docket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
         Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
-        List<String> listOfDocketTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(3).getListOfDocketTitles();
-        boolean docketAvailable = listOfDocketTitles.contains(docket.getTitle());
+        List<String> docketTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(3).getDocketTitles();
+        boolean docketAvailable = docketTitles.contains(docket.getTitle());
         Assert.assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
     }
 
@@ -60,8 +60,8 @@ public class AddingST extends BaseTestSelenium {
         ruleset.setFile("ruleset_test.xml");
         Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
-        List<String> listOfRulesetTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(4).getListOfRulesetTitles();
-        boolean rulesetAvailable = listOfRulesetTitles.contains(ruleset.getTitle());
+        List<String> rulesetTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(4).getRulesetTitles();
+        boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
         Assert.assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
@@ -84,7 +84,7 @@ public class AddingST extends BaseTestSelenium {
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getListOfLdapGroupNames()
+        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getLdapGroupNames()
                 .contains(ldapGroup.getTitle());
 
         Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
@@ -105,9 +105,9 @@ public class AddingST extends BaseTestSelenium {
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
-                .getListOfUserGroupTitles();
-        Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
+        List<String> userGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
+                .getUserGroupTitles();
+        Assert.assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
         int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())
