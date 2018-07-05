@@ -19,11 +19,18 @@ package org.kitodo.config;
 public class Parameters {
 
     /*
-     * =========================================================================
-     * ==== FILE AND DIRECTORY MANAGEMENT
-     * =========================================================================
-     * ==== ----------------------------------- Directories
-     * -----------------------------------
+     * FILE AND DIRECTORY MANAGEMENT
+     *
+     * Directories
+     */
+
+    /*
+     * Parameters.java has been sorted to corresponding to
+     * kitodo_config.properties, including the section headers as you see.
+     * However there is an entry KonfigurationVerzeichnis in
+     * kitodo_config.properties, but there is no constant for it here. This
+     * comment is to explain where the constant is if someone compares the two
+     * files in the future:
      */
 
     // DIR_XML_CONFIG = "KonfigurationVerzeichnis" → org.kitodo.config.Config
@@ -42,6 +49,15 @@ public class Parameters {
      * directory separator ("/").
      */
     public static final String DIR_XSLT = "xsltFolder";
+
+    /*
+     * Parameters.java has been sorted to corresponding to
+     * kitodo_config.properties, including the section headers as you see.
+     * However there is an entry MetadatenVerzeichnis in
+     * kitodo_config.properties, but there is no constant for it here. This
+     * comment is to explain where the constant is if someone compares the two
+     * files in the future:
+     */
 
     // DIR_PROCESSES = "MetadatenVerzeichnis" → org.kitodo.config.Config
 
@@ -67,6 +83,14 @@ public class Parameters {
      */
     public static final String DIR_DIAGRAMS = "diagramsFolder";
 
+    /*
+     * Parameters.java has been sorted to corresponding to
+     * kitodo_config.properties, including the section headers as you see.
+     * However there is an entry moduleFolder in kitodo_config.properties, but
+     * there is no constant for it here. This comment is to explain where the
+     * constant is if someone compares the two files in the future:
+     */
+
     // DIR_MODULES = "moduleFolder" → org.kitodo.config.Config
 
     /**
@@ -87,14 +111,21 @@ public class Parameters {
     public static final String DIR_PLUGINS_TEMP = "debugFolder";
 
     /*
-     * ----------------------------------- Directory management
-     * -----------------------------------
+     * Directory management
      */
 
     /**
      * Boolean, defaults to {@code false}.
      */
     public static final String CREATE_ORIG_FOLDER_IF_NOT_EXISTS = "createOrigFolderIfNotExists";
+
+    /*
+     * Parameters.java has been sorted to corresponding to
+     * kitodo_config.properties, including the section headers as you see.
+     * However there is an entry createSourceFolder in kitodo_config.properties,
+     * but there is no constant for it here. This comment is to explain where
+     * the constant is if someone compares the two files in the future:
+     */
 
     // "createSourceFolder" → org.kitodo.filemanagement.FileManagement
 
@@ -133,8 +164,7 @@ public class Parameters {
     public static final String USE_ORIG_FOLDER = "useOrigFolder";
 
     /*
-     * ----------------------------------- Directory and symbolic link
-     * management -----------------------------------
+     * Directory and symbolic link management
      */
 
     /**
@@ -159,8 +189,7 @@ public class Parameters {
     public static final String SCRIPT_DELETE_SYMLINK = "script_deleteSymLink";
 
     /*
-     * ----------------------------------- Runnotes
-     * -----------------------------------
+     * Runnotes
      */
 
     /**
@@ -170,8 +199,7 @@ public class Parameters {
     public static final String XSLT_FILENAME_METADATA_TRANSFORMATION = "xsltFilenameMetadataTransformation";
 
     /*
-     * ----------------------------------- Images
-     * -----------------------------------
+     * Images
      */
 
     /**
@@ -203,11 +231,9 @@ public class Parameters {
     public static final String DONE_DIRECTORY_NAME = "doneDirectoryName";
 
     /*
-     * =========================================================================
-     * ==== VISUAL APPEARANCE
-     * =========================================================================
-     * ==== ----------------------------------- Internationalization
-     * -----------------------------------
+     * VISUAL APPEARANCE
+     *
+     * Internationalization
      */
 
     /**
@@ -235,8 +261,7 @@ public class Parameters {
     public static final String LANGUAGE_DEFAULT = "language.default";
 
     /*
-     * ----------------------------------- Data protection
-     * -----------------------------------
+     * Data protection
      */
 
     /**
@@ -253,8 +278,7 @@ public class Parameters {
     public static final String WITH_USER_STEP_DONE_SEARCH = "withUserStepDoneSearch";
 
     /*
-     * ----------------------------------- Error page
-     * -----------------------------------
+     * Error page
      */
 
     /**
@@ -263,11 +287,9 @@ public class Parameters {
     public static final String ERR_LINK_TO_PAGE = "err_linkToPage";
 
     /*
-     * =========================================================================
-     * ==== METADATA PROCESSING
-     * =========================================================================
-     * ==== ----------------------------------- Catalogue search
-     * -----------------------------------
+     * METADATA PROCESSING
+     *
+     * Catalogue search
      */
 
     /**
@@ -283,8 +305,7 @@ public class Parameters {
     public static final String CATALOGUE_TIMEOUT = "catalogue.timeout";
 
     /*
-     * ----------------------------------- Metadata editor behavior
-     * -----------------------------------
+     * Metadata editor behavior
      */
 
     /**
@@ -336,8 +357,7 @@ public class Parameters {
     public static final String PAGE_SEPARATORS = "pageSeparators";
 
     /*
-     * ----------------------------------- backup of metadata configuration
-     * -----------------------------------
+     * backup of metadata configuration
      */
 
     /**
@@ -346,8 +366,7 @@ public class Parameters {
     public static final String NUMBER_OF_META_BACKUPS = "numberOfMetaBackups";
 
     /*
-     * ----------------------------------- Metadata enrichment
-     * -----------------------------------
+     * Metadata enrichment
      */
 
     /**
@@ -360,8 +379,7 @@ public class Parameters {
     public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
 
     /*
-     * ----------------------------------- Data copy rules
-     * -----------------------------------
+     * Data copy rules
      */
 
     /**
@@ -377,8 +395,7 @@ public class Parameters {
     public static final String COPY_DATA_ON_EXPORT = "copyData.onExport";
 
     /*
-     * ----------------------------------- Metadata validation
-     * -----------------------------------
+     * Metadata validation
      */
 
     /**
@@ -398,11 +415,9 @@ public class Parameters {
     public static final String VALIDATE_IDENTIFIER_REGEX = "validateIdentifierRegex";
 
     /*
-     * =========================================================================
-     * ==== AUTOMATION
-     * =========================================================================
-     * ==== ----------------------------------- Mass process generation
-     * -----------------------------------
+     * AUTOMATION
+     *
+     * Mass process generation
      */
 
     /**
@@ -427,8 +442,7 @@ public class Parameters {
     public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
 
     /*
-     * ----------------------------------- Batch processing
-     * -----------------------------------
+     * Batch processing
      */
 
     /**
@@ -448,8 +462,7 @@ public class Parameters {
     public static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
 
     /*
-     * ----------------------------------- content server for PDF generation
-     * -----------------------------------
+     * content server for PDF generation
      */
 
     /**
@@ -470,8 +483,7 @@ public class Parameters {
     public static final String KITODO_CONTENT_SERVER_TIMEOUT = "kitodoContentServerTimeOut";
 
     /*
-     * ----------------------------------- Task manager
-     * -----------------------------------
+     * Task manager
      */
 
     /**
@@ -520,14 +532,13 @@ public class Parameters {
 
     /**
      * Sets whether or not to show an option to "add a sample task" in the task
-     * manager. This is---if for anything at all—useful for debugging or
+     * manager. This isif for anything at all—useful for debugging or
      * demonstration purposes only. Boolean, defaults to {@code false}.
      */
     public static final String TASK_MANAGER_SHOW_SAMPLE_TASK = "taskManager.showSampleTask";
 
     /*
-     * ----------------------------------- Export to presentation module
-     * -----------------------------------
+     * Export to presentation module
      */
 
     /**
@@ -559,11 +570,9 @@ public class Parameters {
     public static final String EXPORT_WITHOUT_TIME_LIMIT = "exportWithoutTimeLimit";
 
     /*
-     * =========================================================================
-     * ==== REMOTE SERVICES
-     * =========================================================================
-     * ==== ----------------------------------- LDAP Configuration
-     * -----------------------------------
+     * REMOTE SERVICES
+     *
+     * LDAP Configuration
      */
 
     /**
@@ -586,8 +595,7 @@ public class Parameters {
     public static final String LDAP_USE_TLS = "ldap_useTLS";
 
     /*
-     * ----------------------------------- Authority control configuration
-     * -----------------------------------
+     * Authority control configuration
      */
 
     /**
@@ -611,10 +619,7 @@ public class Parameters {
     public static final String AUTHORITY_DEFAULT = "authority.default";
 
     /*
-     * =========================================================================
-     * ==== INTERACTIVE ERROR MANAGEMENT
-     * =========================================================================
-     * ====
+     * INTERACTIVE ERROR MANAGEMENT
      */
 
     /**
@@ -637,11 +642,9 @@ public class Parameters {
     public static final String ERR_EMAIL_ADDRESS = "err_emailAddress";
 
     /*
-     * =========================================================================
-     * ==== FUNCTIONAL EXTENSIONS
-     * =========================================================================
-     * ==== ----------------------------------- OCR service access
-     * -----------------------------------
+     * FUNCTIONAL EXTENSIONS
+     *
+     * OCR service access
      */
 
     /**
@@ -655,8 +658,7 @@ public class Parameters {
     public static final String OCR_URL = "ocrUrl";
 
     /*
-     * ----------------------------------- ActiveMQ web services
-     * -----------------------------------
+     * ActiveMQ web services
      */
 
     public static final String ACTIVE_MQ_HOST_URL = "activeMQ.hostURL";
@@ -673,8 +675,7 @@ public class Parameters {
     public static final String ACTIVE_MQ_RESULTS_TTL = "activeMQ.results.timeToLive";
 
     /*
-     * ----------------------------------- Elasticsearch properties
-     * -----------------------------------
+     * Elasticsearch properties
      */
 
     public static final String ELASTICSEARCH_BATCH = "elasticsearch.batch";
