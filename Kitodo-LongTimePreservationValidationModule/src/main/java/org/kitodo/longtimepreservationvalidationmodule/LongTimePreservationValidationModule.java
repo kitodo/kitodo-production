@@ -13,7 +13,6 @@ package org.kitodo.longtimepreservationvalidationmodule;
 
 import edu.harvard.hul.ois.jhove.App;
 import edu.harvard.hul.ois.jhove.JhoveBase;
-import edu.harvard.hul.ois.jhove.Module;
 
 import java.net.URI;
 
@@ -76,15 +75,11 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
             JhoveBase jhoveBase = new JhoveBase();
             jhoveBase.init(Config.getParameter(PARAMETER_JHOVE_CONF, "src/main/resources/jhove.conf"),
                 JhoveBase.getSaxClassFromProperties());
-            App app = App.newAppWithName("Jhove");
-            Module module = jhoveBase.getModule(determineModuleName(fileType));
-            String[] dirFileOrUri = new String[] {fileUri.getPath() };
-            jhoveBase.dispatch(app, module, /* OutputHandler aboutHandler */ null, result,
-                /* String outputFile */ null, dirFileOrUri);
+            jhoveBase.dispatch(App.newAppWithName("Jhove"), jhoveBase.getModule(determineModuleName(fileType)), null,
+                result, null, new String[] {fileUri.getPath() });
         } catch (Exception e) {
             result.treatException(e);
         }
         return result.toValidationResult();
     }
-
 }
