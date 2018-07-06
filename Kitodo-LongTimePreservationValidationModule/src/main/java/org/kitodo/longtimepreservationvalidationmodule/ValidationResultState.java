@@ -48,10 +48,10 @@ public enum ValidationResultState {
                     case RepInfo.TRUE:
                         return VALID;
                     default:
-                        throw new IllegalStateException("Complete switch");
+                        throw new IllegalArgumentException("No enum constant");
                 }
             default:
-                throw new IllegalStateException("Complete switch");
+                throw new IllegalArgumentException("No enum constant");
         }
     }
 
@@ -61,6 +61,11 @@ public enum ValidationResultState {
         this.state = state;
     }
 
+    /**
+     * Returns the state of the validation result state.
+     *
+     * @return the state
+     */
     public State toState() {
         return state;
     }

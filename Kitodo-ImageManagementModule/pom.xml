@@ -21,7 +21,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>Kitodo − Image Management Module</name>
+    <name>Kitodo - Image Management Module</name>
     <artifactId>kitodo-ImageManagementModule</artifactId>
 
     <dependencies>

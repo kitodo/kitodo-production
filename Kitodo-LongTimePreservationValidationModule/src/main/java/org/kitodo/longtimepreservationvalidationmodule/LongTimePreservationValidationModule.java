@@ -15,6 +15,8 @@ import edu.harvard.hul.ois.jhove.App;
 import edu.harvard.hul.ois.jhove.JhoveBase;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
@@ -26,6 +28,21 @@ import org.kitodo.config.Config;
  */
 public class LongTimePreservationValidationModule implements LongTimePreservationValidationInterface {
     /**
+     * Returns the matching module name for the given file type.
+     */
+    @SuppressWarnings("serial")
+    private static final Map<FileType, String> MODULE_NAMES = new HashMap<FileType, String>(8) {
+        {
+            put(FileType.GIF, "GIF-hul");
+            put(FileType.JPEG, "JPEG-hul");
+            put(FileType.JPEG_2000, "JPEG2000-hul");
+            put(FileType.PDF, "PDF-hul");
+            put(FileType.PNG, "PNG-gdm");
+            put(FileType.TIFF, "TIFF-hul");
+        }
+    };
+
+    /**
      * Path to the {@code jhove.conf} file
      *
      * <p>
@@ -35,30 +52,10 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
     private static final String PARAMETER_JHOVE_CONF = "LongTimePreservationValidationModule.jhoveConf";
 
     /**
-     * Returns the matching module name for the given file type.
-     *
-     * @param fileType
-     *            file type that a module name shall be returned for
-     * @return the matching module name
+     * Set to true by JUnit to indicate that the jhove.conf file is in the
+     * test/resources folder.
      */
-    private String determineModuleName(FileType fileType) {
-        switch (fileType) {
-            case GIF:
-                return "GIF-hul";
-            case JPEG:
-                return "JPEG-hul";
-            case JPEG_2000:
-                return "JPEG2000-hul";
-            case PDF:
-                return "PDF-hul";
-            case PNG:
-                return "PNG-gdm";
-            case TIFF:
-                return "TIFF-hul";
-            default:
-                throw new IllegalStateException("Complete switch");
-        }
-    }
+    boolean isUnitTesting = false;
 
     /**
      * {@inheritDoc}<!-- . -->
@@ -73,9 +70,9 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
         KitodoOutputHandler result = new KitodoOutputHandler();
         try {
             JhoveBase jhoveBase = new JhoveBase();
-            jhoveBase.init(Config.getParameter(PARAMETER_JHOVE_CONF, "src/main/resources/jhove.conf"),
+            jhoveBase.init(isUnitTesting ? "src/test/resources/jhove.conf" : Config.getParameter(PARAMETER_JHOVE_CONF),
                 JhoveBase.getSaxClassFromProperties());
-            jhoveBase.dispatch(App.newAppWithName("Jhove"), jhoveBase.getModule(determineModuleName(fileType)), null,
+            jhoveBase.dispatch(App.newAppWithName("Jhove"), jhoveBase.getModule(MODULE_NAMES.get(fileType)), null,
                 result, null, new String[] {fileUri.getPath() });
         } catch (Exception e) {
             result.treatException(e);

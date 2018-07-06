@@ -18,6 +18,7 @@ import edu.harvard.hul.ois.jhove.Module;
 import edu.harvard.hul.ois.jhove.OutputHandler;
 import edu.harvard.hul.ois.jhove.RepInfo;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
@@ -35,6 +36,16 @@ import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 
 public class KitodoOutputHandler extends HandlerBase {
+
+    /**
+     * The numbers are used to initialize a calendar object which is never used
+     * later, Hoverer, the array must be in place or a
+     * {@link NullPointerException} will be thrown when JHove tries to access
+     * the array members to initialize the unused object. The Java epoch is
+     * defined in milliseconds since 1970-01-01, so these numbers practically
+     * mean <i>zero</i>.
+     */
+    private static final int[] EPOCH_ZERO = new int[] {1970, 1, 1 };
 
     private static final Pattern LINE_SPLITTER = Pattern.compile(System.lineSeparator());
 
@@ -65,7 +76,7 @@ public class KitodoOutputHandler extends HandlerBase {
     private ValidationResultState state;
 
     protected KitodoOutputHandler() {
-        super(beforeParentConstructor(), null, new int[] {1970, 1, 1 }, null, null);
+        super(beforeParentConstructor(), null, EPOCH_ZERO, null, null);
     }
 
     private void addMessage(Message message) {
@@ -103,7 +114,7 @@ public class KitodoOutputHandler extends HandlerBase {
     public void show(RepInfo info) {
         state = ValidationResultState.valueOf(info.getWellFormed(),
             super._je.getSignatureFlag() ? RepInfo.UNDETERMINED : info.getValid());
-        info.getMessage().forEach(x -> addMessage(x));
+        info.getMessage().forEach(this::addMessage);
     }
 
     @Override
@@ -152,9 +163,16 @@ public class KitodoOutputHandler extends HandlerBase {
             messages.add(e.getMessage());
         }
         messages.add(e.getClass().getSimpleName());
-        StringWriter buffer = new StringWriter();
-        e.printStackTrace(new PrintWriter(buffer));
-        LINE_SPLITTER.splitAsStream(buffer.toString()).collect(Collectors.toCollection(() -> messages));
+        try {
+            try (StringWriter buffer = new StringWriter()) {
+                try (PrintWriter s = new PrintWriter(buffer)) {
+                    e.printStackTrace(s);
+                }
+                LINE_SPLITTER.splitAsStream(buffer.toString()).collect(Collectors.toCollection(() -> messages));
+            }
+        } catch (IOException e1) {
+            throw new IllegalStateException("this will never happen", e1);
+        }
     }
 
 }

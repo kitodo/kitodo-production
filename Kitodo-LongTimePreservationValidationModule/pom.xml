@@ -21,7 +21,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <name>Kitodo − Long Time Preservation Validation Module</name>
+    <name>Kitodo - Long Time Preservation Validation Module</name>
     <artifactId>kitodo-LongTimePreservationValidationModule</artifactId>
 
     <dependencies>
