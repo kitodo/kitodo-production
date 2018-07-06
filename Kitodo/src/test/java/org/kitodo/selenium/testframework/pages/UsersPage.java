@@ -156,7 +156,7 @@ public class UsersPage extends Page {
      *
      * @return The list of ldap group titles
      */
-    public List<String> getListOfLdapGroupNames() throws Exception {
+    public List<String> getLdapGroupNames() throws Exception {
         if (isNotAt()) {
             goTo();
         }
@@ -275,7 +275,7 @@ public class UsersPage extends Page {
      * 
      * @return The list of user group titles
      */
-    public List<String> getListOfUserGroupTitles() throws Exception {
+    public List<String> getUserGroupTitles() throws Exception {
         if (isNotAt()) {
             goTo();
             switchToTabByIndex(1);

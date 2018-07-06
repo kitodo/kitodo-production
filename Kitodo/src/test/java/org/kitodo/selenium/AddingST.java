@@ -16,7 +16,9 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -25,72 +27,42 @@ import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
 
-public class ListingAddingST extends BaseTestSelenium {
+public class AddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
 
     @Test
-    public void securityAccessTest() throws Exception {
-        boolean expectedTrue = Pages.getTopNavigation().isShowingAllLinks();
-        Assert.assertTrue("Top navigation is not showing that current user is admin", expectedTrue);
+    public void addClientTest() throws Exception {
+        Client client = new Client();
+        client.setName("MockClient");
+        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
+        boolean clientAvailable = Pages.getClientsPage().goTo().getClientNames().contains(client.getName());
+        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
     @Test
-    public void listClientsTest() throws Exception {
-        Pages.getClientsPage().goTo();
-        int numberOfClientsInDatabase = serviceManager.getClientService().getAll().size();
-        int numberOfClientsDisplayed = Pages.getClientsPage().countListedClients();
-        Assert.assertEquals("Displayed wrong number of clients", numberOfClientsInDatabase, numberOfClientsDisplayed);
+    public void addDocketTest() throws Exception {
+        Docket docket = new Docket();
+        docket.setTitle("MockDocket");
+        docket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
+        Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        List<String> docketTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(3).getDocketTitles();
+        boolean docketAvailable = docketTitles.contains(docket.getTitle());
+        Assert.assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
     }
 
     @Test
-    public void listProjectsTest() throws Exception {
-        Pages.getProjectsPage().goTo();
-        int numberOfProjectsInDatabase = serviceManager.getProjectService().getAll().size();
-        int numberOfProjectsDisplayed = Pages.getProjectsPage().countListedProjects();
-        Assert.assertEquals("Displayed wrong number of projects", numberOfProjectsInDatabase,
-            numberOfProjectsDisplayed);
-    }
-
-    @Test
-    public void listTemplatesTest() throws Exception {
-        Pages.getProjectsPage().goTo();
-        int numberOfTemplatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
-        int numberOfTemplatesDisplayed = Pages.getProjectsPage().countListedTemplates();
-        Assert.assertEquals("Displayed wrong number of templates", numberOfTemplatesInDatabase,
-            numberOfTemplatesDisplayed);
-    }
-
-    @Test
-    public void listProcessesTest() throws Exception {
-        Pages.getProcessesPage().goTo();
-        int numberOfProcessesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
-        int numberOfProcessesDisplayed = Pages.getProcessesPage().countListedProcesses();
-        Assert.assertEquals("Displayed wrong number of processes", numberOfProcessesInDatabase,
-            numberOfProcessesDisplayed);
-    }
-
-    @Test
-    public void listUsersTest() throws Exception {
-        int numberOfUsersInDatabase = serviceManager.getUserService().getAll().size();
-        int numberOfUsersDisplayed = Pages.getUsersPage().goTo().countListedUsers();
-        Assert.assertEquals("Displayed wrong number of users", numberOfUsersInDatabase, numberOfUsersDisplayed);
-    }
-
-    @Test
-    public void listUserGroupsTest() throws Exception {
-        int numberOfUserGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
-        int numberOfUserGroupsDisplayed = Pages.getUsersPage().goTo().countListedUserGroups();
-        Assert.assertEquals("Displayed wrong number of user groups", numberOfUserGroupsInDatabase,
-            numberOfUserGroupsDisplayed);
-    }
-
-    @Test
-    public void listLdapGroupsTest() throws Exception {
-        int numberOfLdapGroupsInDatabase = serviceManager.getLdapGroupService().getAll().size();
-        int numberOfLdapGroupsDisplayed = Pages.getUsersPage().goTo().switchToTabByIndex(2).countListedLdapGroups();
-        Assert.assertEquals("Displayed wrong number of ldap groups!", numberOfLdapGroupsInDatabase,
-            numberOfLdapGroupsDisplayed);
+    public void addRulesetTest() throws Exception {
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle("MockRuleset");
+        ruleset.setFile("ruleset_test.xml");
+        Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        List<String> rulesetTitles = Pages.getProjectsPage().goTo().switchToTabByIndex(4).getRulesetTitles();
+        boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
+        Assert.assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
     @Test
@@ -112,23 +84,13 @@ public class ListingAddingST extends BaseTestSelenium {
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getListOfLdapGroupNames()
+        boolean ldapGroupAvailable = Pages.getUsersPage().goTo().switchToTabByIndex(2).getLdapGroupNames()
                 .contains(ldapGroup.getTitle());
 
         Assert.assertTrue("Created ldap group was not listed at ldap group table!", ldapGroupAvailable);
 
         LdapGroup actualLdapGroup = Pages.getUsersPage().editLdapGroup(ldapGroup.getTitle()).readLdapGroup();
         Assert.assertEquals("Saved ldap group is giving wrong data at edit page!", ldapGroup, actualLdapGroup);
-    }
-
-    @Test
-    public void addClientTest() throws Exception {
-        Client client = new Client();
-        client.setName("MockClient");
-        Pages.getClientsPage().goTo().createNewClient().insertClientData(client).save();
-        Assert.assertTrue("Redirection after save was not successful", Pages.getClientsPage().isAt());
-        boolean clientAvailable = Pages.getClientsPage().goTo().getListOfClientNames().contains(client.getName());
-        Assert.assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
     @Test
@@ -143,9 +105,9 @@ public class ListingAddingST extends BaseTestSelenium {
 
         Assert.assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
-        List<String> listOfUserGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
-                .getListOfUserGroupTitles();
-        Assert.assertTrue("New user group was not saved", listOfUserGroupTitles.contains(userGroup.getTitle()));
+        List<String> userGroupTitles = Pages.getUsersPage().goTo().switchToTabByIndex(1)
+                .getUserGroupTitles();
+        Assert.assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAll().size();
         int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(1).editUserGroup(userGroup.getTitle())

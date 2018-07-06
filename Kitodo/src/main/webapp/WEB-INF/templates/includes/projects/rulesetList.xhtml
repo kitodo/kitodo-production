@@ -16,7 +16,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable var="item"
+    <p:dataTable id="rulesetTable"
+                 var="item"
                  value="#{RulesetForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"

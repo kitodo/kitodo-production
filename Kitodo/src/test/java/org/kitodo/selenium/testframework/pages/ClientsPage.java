@@ -83,7 +83,7 @@ public class ClientsPage extends Page {
      *
      * @return The list of client titles
      */
-    public List<String> getListOfClientNames() throws Exception {
+    public List<String> getClientNames() throws Exception {
         if (isNotAt()) {
             goTo();
         }

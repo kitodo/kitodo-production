@@ -75,7 +75,7 @@ public class TopNavigationPage {
      * Hovers user menu and logs out.
      */
     public void logout() throws InterruptedException {
-        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS)
+        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
                 .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
 
         hoverWebElement(userMenuButton);
