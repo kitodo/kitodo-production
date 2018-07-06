@@ -20,6 +20,9 @@ import edu.harvard.hul.ois.jhove.OutputHandler;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Collections;
 
+/**
+ * A programmatically initializable {@code JHoveBase} class.
+ */
 class KitodoJhoveBase extends JhoveBase {
     /**
      * Initializes a JhoveBase. This needs access to the {@code protected}
