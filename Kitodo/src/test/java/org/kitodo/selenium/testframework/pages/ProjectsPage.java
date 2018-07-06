@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -88,30 +89,24 @@ public class ProjectsPage extends Page {
     }
 
     public int countListedProjects() throws Exception {
-        if (!isAt()) {
+        if (isNotAt()) {
             goTo();
         }
         return getRowsOfTable(projectsTable).size();
     }
 
     public int countListedTemplates() throws Exception {
-        if (!isAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
         return getRowsOfTable(templatesTable).size();
     }
 
     public int countListedDockets() throws Exception {
-        if (!isAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.DOCKETS.getIndex());
         return getRowsOfTable(docketsTable).size();
     }
 
     public int countListedRulesets() throws Exception {
-        if (!isAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.RULESETS.getIndex());
         return getRowsOfTable(rulesetsTable).size();
     }
 
