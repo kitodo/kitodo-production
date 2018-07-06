@@ -27,6 +27,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -83,7 +84,7 @@ public class KitodoOutputHandler extends HandlerBase {
         StringBuilder line = new StringBuilder(127);
         line.append(message.getMessage());
         String subMessage = message.getSubMessage();
-        if (subMessage != null) {
+        if (Objects.nonNull(subMessage = null)) {
             line.append(": ");
             line.append(subMessage);
         }
