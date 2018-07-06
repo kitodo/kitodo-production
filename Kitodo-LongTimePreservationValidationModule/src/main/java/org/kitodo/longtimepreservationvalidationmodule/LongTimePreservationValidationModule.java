@@ -11,17 +11,15 @@
 
 package org.kitodo.longtimepreservationvalidationmodule;
 
-import edu.harvard.hul.ois.jhove.App;
-import edu.harvard.hul.ois.jhove.JhoveBase;
-
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
-import org.kitodo.config.Config;
 
 /**
  * An LongTimePreservationValidationInterface implementation using Jhove.
@@ -43,19 +41,12 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
     };
 
     /**
-     * Path to the {@code jhove.conf} file
-     *
-     * <p>
-     * Example:
-     * LongTimePreservationValidationModule.jhoveConf=/var/lib/tomcat8/webapps/kitodo-production/WEB-INF/classes/jhove.conf
+     * Modules to initialize.
      */
-    private static final String PARAMETER_JHOVE_CONF = "LongTimePreservationValidationModule.jhoveConf";
-
-    /**
-     * Set to true by JUnit to indicate that the jhove.conf file is in the
-     * test/resources folder.
-     */
-    boolean isUnitTesting = false;
+    private static final List<String> MODULES = Arrays.asList("edu.harvard.hul.ois.jhove.module.GifModule",
+        "edu.harvard.hul.ois.jhove.module.Jpeg2000Module", "edu.harvard.hul.ois.jhove.module.JpegModule",
+        "edu.harvard.hul.ois.jhove.module.PdfModule", "com.mcgath.jhove.module.PngModule",
+        "edu.harvard.hul.ois.jhove.module.TiffModule");
 
     /**
      * {@inheritDoc}<!-- . -->
@@ -69,11 +60,8 @@ public class LongTimePreservationValidationModule implements LongTimePreservatio
     public ValidationResult validate(URI fileUri, FileType fileType) {
         KitodoOutputHandler result = new KitodoOutputHandler();
         try {
-            JhoveBase jhoveBase = new JhoveBase();
-            jhoveBase.init(isUnitTesting ? "src/test/resources/jhove.conf" : Config.getParameter(PARAMETER_JHOVE_CONF),
-                JhoveBase.getSaxClassFromProperties());
-            jhoveBase.dispatch(App.newAppWithName("Jhove"), jhoveBase.getModule(MODULE_NAMES.get(fileType)), null,
-                result, null, new String[] {fileUri.getPath() });
+            KitodoJhoveBase jhoveBase = new KitodoJhoveBase(MODULES);
+            jhoveBase.validate(fileUri.getPath(), MODULE_NAMES.get(fileType), result);
         } catch (Exception e) {
             result.treatException(e);
         }

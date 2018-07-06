@@ -48,7 +48,6 @@ public class LongTimePreservationValidationModuleIT {
     @Test
     public void testThatACorruptedFileDoesNotValidate() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        ((LongTimePreservationValidationModule) validator).isUnitTesting = true;
         ValidationResult validationResult = validator.validate(CORRUPTED_TIF_URI, FileType.TIFF);
         assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
         assertThat(validationResult.getResultMessages(),
@@ -58,7 +57,6 @@ public class LongTimePreservationValidationModuleIT {
     @Test
     public void testThatFilesOfTheWrongTypeDoNotValidate() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        ((LongTimePreservationValidationModule) validator).isUnitTesting = true;
 
         ValidationResult validationResult = validator.validate(JAVA_URI, FileType.PDF);
         assertThat(validationResult.getState(), is(equalTo(State.ERROR)));
@@ -82,7 +80,6 @@ public class LongTimePreservationValidationModuleIT {
     @Test
     public void testThatValidFilesValidateWithDefaultModules() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        ((LongTimePreservationValidationModule) validator).isUnitTesting = true;
         assertThat(validator.validate(GIF_URI, FileType.GIF).getState(), is(equalTo(State.SUCCESS)));
         assertThat(validator.validate(JP2_URI, FileType.JPEG_2000).getState(), is(equalTo(State.SUCCESS)));
         assertThat(validator.validate(JPG_URI, FileType.JPEG).getState(), is(equalTo(State.SUCCESS)));
@@ -93,7 +90,6 @@ public class LongTimePreservationValidationModuleIT {
     @Test
     public void testThatValidFilesValidateWithExtendedModules() {
         LongTimePreservationValidationInterface validator = new LongTimePreservationValidationModule();
-        ((LongTimePreservationValidationModule) validator).isUnitTesting = true;
         assertThat(validator.validate(PNG_URI, FileType.PNG).getState(), is(equalTo(State.SUCCESS)));
     }
 
