@@ -162,7 +162,7 @@ public class MetsKitodoWrapper {
     /**
      * Returns the physical StructMap of the wrapped mets document.
      *
-     * @return The StructMapType object.
+     * @return The PhysicalStructMapType object.
      */
     public PhysicalStructMapType getPhysicalStructMap() {
         return this.physicalStructMapType;

@@ -70,18 +70,18 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     }
 
     /**
-     * Creates a StructMap object of type "PHYSICAL".
+     * Creates a PhysicalStructMapType object.
      *
-     * @return The StructMap object.
+     * @return The PhysicalStructMapType object.
      */
     public PhysicalStructMapType createPhysicalStructMapType() {
         return new PhysicalStructMapType(createStructMapTypeOfType("PHYSICAL"));
     }
 
     /**
-     * Creates a StructMap object of type "LOGICAL".
+     * Creates a LogicalStructMapType object.
      *
-     * @return The StructMap object.
+     * @return The LogicalStructMapType object.
      */
     public LogicalStructMapType createLogicalStructMapType() {
         return new LogicalStructMapType(createStructMapTypeOfType("LOGICAL"));
