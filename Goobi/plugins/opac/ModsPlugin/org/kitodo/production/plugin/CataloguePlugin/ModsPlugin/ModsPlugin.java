@@ -435,8 +435,6 @@ public class ModsPlugin implements Plugin {
         rootElement.addContent(metadataSection);
 
         metsDocument.setRootElement(rootElement);
-        // reviewing the constructed XML mets document can be done via
-        //
 
         // save updated file
         xmlOutputter.output(metsDocument, new FileWriter(metaFile.getAbsoluteFile()));
@@ -445,12 +443,18 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
+     * Adds a mets div with the given type 'docStructType' for the given metadata section 'dmdSec' to the given logical
+     * structure map 'structureMap' and returns the updated structure map.
      *
      * @param structureMap
-     * @param metsDoc
+     *          The structure map to which a mets div will be added for the given metadata section 'dmdSec'
+     * @param docStructType
+     *          The type of the mets div to be added to the structure map
      * @param dmdSec
-     * @param childDocuments
-     * @return
+     *          The metadata section for which a mets div is added to the given structure map
+     * @return The updated logical structure map
+     * @throws JDOMException
+     * @throws IOException
      */
     private Element addMetadataSectionToStructureMap(Element structureMap, String docStructType, Element dmdSec) throws JDOMException, IOException {
 
@@ -474,9 +478,12 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     *
+     * Reads the METS object contained in the given file, adds divs for all its descriptive metadata sections to a
+     * clone of the given structure map, adds it to the METS object and saves the updated METS object back to the file.
      * @param structureMap
+     *          The structure map to which divs are added for all metadata sections of the METS object in the given file
      * @param file
+     *          The file containing the metadata sections for which mets divs are added to the given structure map
      */
     private void addStructureMapToFile(Element structureMap, File file) throws JDOMException, IOException {
         Document metsDocument = sb.build(file);
@@ -507,13 +514,21 @@ public class ModsPlugin implements Plugin {
         }
     }
 
+
     /**
-     *
-     * @param rootElement
+     * Create DMD sections for all elements in the given list 'children' (imported via the SRU interface) and save them
+     * to the given file.
+     * If the given File already contains a METS structure, it is augmented with the created metadata sections.
+     * Otherwise, a new basic METS structure is created to which the metadata sections are added.
+     * @param file
+     *          The file to which the METS structure with the created metadata sections is saved
      * @param children
-     * @return
+     *          The imported elements for which DMD sections are created
+     * @return A hash map containing the created DMD sections as keys and their doc struct types as values.
+     * @throws JDOMException
+     * @throws IOException
      */
-    private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children, Element structureMap) throws JDOMException, IOException {
+    private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children) throws JDOMException, IOException {
 
         Document metsDocument = null;
         Element rootElement = null;
@@ -557,18 +572,12 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     * Creates descriptive metadata sections for all elements in the given list 'childDocuments',
-     * adds them to the given Element 'rootEle', adds corresponding structure map divs to the
-     * given Element 'structureMapDiv' and returns the augmented structure map div.
+     * Creates descriptive metadata sections for all elements in the given list 'childDMDSections'
+     * and returns the resulting list.
      *
-     * @param structureMapDiv
-     *          Element to which new structure map divs for the child elements will be added
-     * @param childDocuments
-     *          List of documents that for which structure map divs are added to the given
-     *          structure map div
-     * @param rootEle
-     *          Element to which the created metadata sections are added.
-     * @return the augmented structureMapDiv Element
+     * @param childDMDSections
+     *          List of DMD sections for which structure map divs are created and returned
+     * @return list of structure map divs
      * @throws JDOMException
      */
     private List<Element> addChildDocumentsToStructureDiv(HashMap<Element, String> childDMDSections) throws JDOMException {
@@ -588,7 +597,7 @@ public class ModsPlugin implements Plugin {
 
     private Element addChildDocumentsToStructMap(List<Element> childDocuments, File file, Element structureMap) throws JDOMException, IOException {
         if (childDocuments.size() > 0) {
-            HashMap<Element, String> childMetadataSections = saveChildMetadataSectionsToFile(file, childDocuments, structureMap);
+            HashMap<Element, String> childMetadataSections = saveChildMetadataSectionsToFile(file, childDocuments);
             for (Element childStructureMapDiv : addChildDocumentsToStructureDiv(childMetadataSections)) {
                 structureMap.addContent(childStructureMapDiv);
             }
@@ -612,11 +621,16 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     *
+     * Add the ID of the given metadata section 'anchorMetadataSection' to all topmost metadata sections referenced in
+     * the given 'structureMap', saves the result to the given file 'metadataFile' and returns the updated structure
+     * map.
      * @param metadataFile
+     *          The file to which the updated metadata sections containing the extracted anchor ID are saved
      * @param structureMap
+     *          The structure map whose topmost divs reference the metadata sections to which the anchor ID will be added
      * @param anchorMetadataSection
-     * @return
+     *          The metadata section that acts as an anchor
+     * @return The updated structure map
      * @throws JDOMException
      * @throws IOException
      */
@@ -663,14 +677,25 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
+     * Create and add a descriptive metadata section and a corresponding mets div element for the given Document
+     * 'document' in the given logical structure map, update the given metadataFile accordingly and return the updated
+     * structure map.
+     * If the given parameter 'addChildren' is true, the child elements of the given document will be retrieved and
+     * processed as well.
      *
      * @param document
+     *          The Document for which a DMD section and corresponding structure map div is created
      * @param metadataFile
+     *          The metadata file to which the DMD section and updated structure map will be saved
      * @param structureMap
+     *          The structure map to which a mets div will be added for the given Document 'document'
      * @param documentID
+     *          The original ID of the given document which can be used to retrieve its children from the queried SRU interface
      * @param addChildren
+     *          Flag indicating whether the child documents of the given documents are to be added as well or not
      * @param timeout
-     * @return
+     *          Timeout in milliseconds after which the operation shall return
+     * @return The updated logical structure map
      * @throws RuntimeException
      * @throws JDOMException
      * @throws IOException
@@ -888,7 +913,6 @@ public class ModsPlugin implements Plugin {
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
                 logger.error("Error while retrieving document: " + e.getMessage());
-                e.printStackTrace();
             }
         }
         return result;
@@ -1035,11 +1059,11 @@ public class ModsPlugin implements Plugin {
 
     /**
      * Transforms the given JDOM document 'inputXML' using the given XSLT file
-     * 'stylesheetfile' and return the transformed Document.
+     * 'stylesheetFile' and return the transformed Document.
      *
      * @param inputXML
      *            The Document that will be transformed
-     * @param stylesheetfile
+     * @param stylesheetFile
      *            The XSLT file containing the transformation rules
      * @return the transformed JDOM document
      */
