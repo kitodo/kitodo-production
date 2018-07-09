@@ -69,9 +69,11 @@
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
-                            <p:inputText id="file" value="#{DocketForm.myDocket.file}"
-                                         class="input"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
+                            <p:selectOneMenu id="file" value="#{DocketForm.myDocket.file}">
+                                <f:selectItems value="#{DocketForm.docketFiles}" var="docketFile" itemValue="#{docketFile}"
+                                               itemLabel="#{docketFile}"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
                         </div>
                     </p:row>
                     <p:row>

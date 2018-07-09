@@ -15,10 +15,15 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -160,6 +165,24 @@ public class DocketForm extends BasisForm {
             return serviceManager.getClientService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Get list of docket filenames.
+     *
+     * @return list of docket filenames
+     */
+    public List getDocketFiles() {
+        try {
+            return Files.walk(Paths.get(ConfigCore.getParameter("xsltFolder")))
+                    .filter(s -> s.toString().endsWith(".xsl"))
+                    .map(Path::getFileName)
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("dockets")}, logger, e);
             return new ArrayList<>();
         }
     }
