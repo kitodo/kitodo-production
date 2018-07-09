@@ -84,7 +84,7 @@ public class KitodoOutputHandler extends HandlerBase {
         StringBuilder line = new StringBuilder(127);
         line.append(message.getMessage());
         String subMessage = message.getSubMessage();
-        if (Objects.nonNull(subMessage = null)) {
+        if (Objects.nonNull(subMessage)) {
             line.append(": ");
             line.append(subMessage);
         }
@@ -155,25 +155,20 @@ public class KitodoOutputHandler extends HandlerBase {
      * Sets the state to ERROR and the exception as message, including the stack
      * trace.
      *
-     * @param e
+     * @param exception
      *            exception to set
      */
-    public void treatException(Exception e) {
+    public void treatException(Exception exception) {
         state = ValidationResultState.ERROR;
-        if (e.getMessage() != null) {
-            messages.add(e.getMessage());
+        if (exception.getMessage() != null) {
+            messages.add(exception.getMessage());
         }
-        messages.add(e.getClass().getSimpleName());
-        try {
-            try (StringWriter buffer = new StringWriter()) {
-                try (PrintWriter s = new PrintWriter(buffer)) {
-                    e.printStackTrace(s);
-                }
-                LINE_SPLITTER.splitAsStream(buffer.toString()).collect(Collectors.toCollection(() -> messages));
-            }
-        } catch (IOException e1) {
-            throw new IllegalStateException("this will never happen", e1);
+        messages.add(exception.getClass().getSimpleName());
+        try (StringWriter buffer = new StringWriter(); PrintWriter bufferPrinter = new PrintWriter(buffer)) {
+            exception.printStackTrace(bufferPrinter);
+            LINE_SPLITTER.splitAsStream(buffer.toString()).collect(Collectors.toCollection(() -> messages));
+        } catch (IOException e) {
+            throw new IllegalStateException("this will never happen", e);
         }
     }
-
 }
