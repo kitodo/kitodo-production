@@ -37,6 +37,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -249,6 +250,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public SecurityUserDetails getAuthenticatedUser() {
         return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
+    }
+
+    public Client getCurrentSessionClient() {
+        return getAuthenticatedUser().getSessionClient();
     }
 
     /**

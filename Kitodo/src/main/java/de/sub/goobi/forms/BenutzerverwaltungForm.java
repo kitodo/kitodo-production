@@ -425,4 +425,12 @@ public class BenutzerverwaltungForm extends BasisForm {
         }
         return false;
     }
+
+    public String getCurrentSessionClientName() {
+        if (Objects.nonNull(serviceManager.getUserService().getCurrentSessionClient())) {
+            return serviceManager.getUserService().getCurrentSessionClient().getName();
+        } else {
+            return "kein Mandant";
+        }
+    }
 }
