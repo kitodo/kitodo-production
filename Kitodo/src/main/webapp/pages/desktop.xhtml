@@ -1,0 +1,61 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:panelGrid columns="2" layout="grid" id="desktopGrid">
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.tasks}</h3>
+                        <p:button id="allTasks" value="#{msgs.allTasks}"
+                                  outcome="tasks"
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/tasks/taskList.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                            <h3>#{msgs.processes}</h3>
+                            <p:button id="allProcesses" value="#{msgs.allProcesses}"
+                                      outcome="processes"
+                                      icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.projects}</h3>
+                        <p:button id="allProjects" value="#{msgs.allProjects}"
+                                  outcome="projects"
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <h3>Statistik</h3>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
+            </p:panel>
+        </p:panelGrid>
+    </ui:define>
+</ui:composition>

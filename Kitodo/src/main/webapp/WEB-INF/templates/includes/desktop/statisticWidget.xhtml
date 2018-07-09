@@ -1,0 +1,26 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html">
+    <p:importEnum type="org.kitodo.enums.ObjectType" var="objectTypeEnum"/>
+    <p:dataTable value="#{DesktopForm.objectTypes}" var="objectType">
+            <p:column headerText="Art">
+                <h:outputText value="#{objectType.translation}"/>
+            </p:column>
+            <p:column headerText="Anzahl">
+                <h:outputText value="#{DesktopForm.getNumberOfElements(objectType)}"/>
+            </p:column>
+    </p:dataTable>
+</ui:composition>
