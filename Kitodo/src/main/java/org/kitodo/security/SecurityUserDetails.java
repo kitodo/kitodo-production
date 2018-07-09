@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
@@ -27,6 +28,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityUserDetails extends User implements UserDetails {
+
+    /**
+     * The client which was selected by user after login.
+     */
+    private Client sessionClient;
 
     public SecurityUserDetails(final User user) {
         super(user);
@@ -94,6 +100,24 @@ public class SecurityUserDetails extends User implements UserDetails {
                 simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
             }
         }
+    }
+
+    /**
+     * Gets sessionClient.
+     *
+     * @return The sessionClient.
+     */
+    public Client getSessionClient() {
+        return sessionClient;
+    }
+
+    /**
+     * Sets sessionClient.
+     *
+     * @param sessionClient The sessionClient.
+     */
+    public void setSessionClient(Client sessionClient) {
+        this.sessionClient = sessionClient;
     }
 
     @Override
