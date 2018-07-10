@@ -114,6 +114,7 @@ var activationDelay = function() {
 menu.mouseleave(mouseleaveMenu)
     .find("> li")
     .mouseenter(mouseenterMenu)
+    .click(mouseenterMenu);
 
 $(document).mousemove(mousemoveDocument);
 
@@ -129,9 +130,13 @@ var callback = function () {
         }
     });
     if (disableMenu) {
-        menu.find('> li').off('mouseenter');
+        var list = menu.find('> li');
+        list.off('mouseenter');
+        list.addClass('disabled');
     } else {
-        menu.find('> li').mouseenter(mouseenterMenu);
+        var list = menu.find('> li');
+        list.mouseenter(mouseenterMenu);
+        list.removeClass('disabled');
     }
 };
 // observe for changes in DOM, eg. opening or closing popups
