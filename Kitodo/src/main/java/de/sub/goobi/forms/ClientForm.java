@@ -52,7 +52,7 @@ public class ClientForm extends BasisForm {
     public String save() {
         try {
             this.serviceManager.getClientService().save(this.client);
-            return "/pages/clients?" + REDIRECT_PARAMETER;
+            return "/pages/users?" + REDIRECT_PARAMETER;
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("client") }, logger, e);
             return null;

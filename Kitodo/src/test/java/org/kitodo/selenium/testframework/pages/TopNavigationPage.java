@@ -68,8 +68,8 @@ public class TopNavigationPage {
     private WebElement linkHelp;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "linkIndexing")
-    private WebElement linkIndexing;
+    @FindBy(id = "linkSystem")
+    private WebElement linkSystem;
 
     /**
      * Hovers user menu and logs out.
@@ -155,12 +155,12 @@ public class TopNavigationPage {
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to indexing page
+     * Hovers dashboard menu and clicks on link to system page
      */
-    void gotoIndexing() throws InterruptedException {
+    void gotoSystem() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkIndexing);
-        linkIndexing.click();
+        hoverWebElement(linkSystem);
+        linkSystem.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
@@ -174,13 +174,7 @@ public class TopNavigationPage {
         if (!linkHelp.isDisplayed()) {
             return false;
         }
-        if (!linkClients.isDisplayed()) {
-            return false;
-        }
-        if (!linkIndexing.isDisplayed()) {
-            return false;
-        }
-        if (!linkModules.isDisplayed()) {
+        if (!linkSystem.isDisplayed()) {
             return false;
         }
         if (!linkProjects.isDisplayed()) {

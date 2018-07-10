@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.services.ServiceManager;
 
 public class ListingST extends BaseTestSelenium {
@@ -29,9 +30,9 @@ public class ListingST extends BaseTestSelenium {
 
     @Test
     public void listClientsTest() throws Exception {
-        Pages.getClientsPage().goTo();
+        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.CLIENTS.getIndex());
         int clientsInDatabase = serviceManager.getClientService().getAll().size();
-        int clientsDisplayed = Pages.getClientsPage().countListedClients();
+        int clientsDisplayed = Pages.getUsersPage().countListedClients();
         Assert.assertEquals("Displayed wrong number of clients", clientsInDatabase, clientsDisplayed);
     }
 
