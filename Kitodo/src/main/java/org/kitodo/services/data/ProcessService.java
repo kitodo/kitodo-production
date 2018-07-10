@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.faces.context.FacesContext;
@@ -75,6 +76,7 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
@@ -128,8 +130,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
-            .getBooleanParameter("createOrigFolderIfNotExists", false);
-    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter("useOrigFolder", true);
+            .getBooleanParameter(Parameters.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter(Parameters.USE_ORIG_FOLDER, true);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -1580,7 +1582,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
@@ -1732,7 +1734,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")
+        if (ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
             return false;
         }
@@ -1867,10 +1869,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return false if no exception appeared
      */
     public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
-        String rules = ConfigCore.getParameter("copyData.onExport");
-        if (Objects.nonNull(rules)) {
+        Optional<String> rules = ConfigCore.getOptionalString(Parameters.COPY_DATA_ON_EXPORT);
+        if (rules.isPresent()) {
             try {
-                new DataCopier(rules).process(new CopierData(newFile, process));
+                new DataCopier(rules.get()).process(new CopierData(newFile, process));
             } catch (ConfigurationException e) {
                 Helper.setErrorMessage("dataCopier.syntaxError", logger, e);
                 return true;
@@ -2212,7 +2214,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the destination directory
      */
     private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"

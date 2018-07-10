@@ -28,6 +28,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -103,7 +104,7 @@ public class JobCreation {
                 Helper.setErrorMessage("Cannot read file " + processTitle, logger, e);
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving",
-                        new Object[] {Helper.getTranslation("process") + " " + processTitle}, logger, e);
+                    new Object[] {Helper.getTranslation("process") + " " + processTitle }, logger, e);
             } catch (WriteException e) {
                 Helper.setErrorMessage("Cannot write file " + processTitle, logger, e);
             }
@@ -169,7 +170,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p) throws IOException {
-        if (ConfigCore.getBooleanParameter("importUseOldConfiguration", false)) {
+        if (ConfigCore.getBooleanParameter(Parameters.IMPORT_USE_OLD_CONFIGURATION)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {
                 imagesFolder = fileService.createResource(basepath, "_images");
@@ -220,13 +221,12 @@ public class JobCreation {
                     for (URI imageDir : imageList) {
                         if (fileService.isDirectory(imageDir)) {
                             for (URI file : fileService.getSubUris(imageDir)) {
-                                fileService.moveFile(file,
-                                        fileService.createResource(fileService.getImagesDirectory(p),
-                                                fileService.getFileName(imageDir) + fileService.getFileName(file)));
+                                fileService.moveFile(file, fileService.createResource(fileService.getImagesDirectory(p),
+                                    fileService.getFileName(imageDir) + fileService.getFileName(file)));
                             }
                         } else {
-                            fileService.moveFile(imageDir, fileService.createResource(
-                                    fileService.getImagesDirectory(p), fileService.getFileName(imageDir)));
+                            fileService.moveFile(imageDir, fileService.createResource(fileService.getImagesDirectory(p),
+                                fileService.getFileName(imageDir)));
                         }
                     }
                 } else if (fileService.getFileName(directory).contains("ocr")) {

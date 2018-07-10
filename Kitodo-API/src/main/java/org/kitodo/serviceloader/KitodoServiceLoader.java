@@ -68,7 +68,7 @@ public class KitodoServiceLoader<T> {
      *            interface class of module to load
      */
     public KitodoServiceLoader(Class clazz) {
-        String modulePath = Config.getParameter("moduleFolder");
+        String modulePath = Config.getKitodoModulesDirectory();
         this.clazz = clazz;
         if (!new File(modulePath).exists()) {
             logger.error("Specified module folder does not exist: " + modulePath);
@@ -96,8 +96,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Loads bean classes and registers them to the FacesContext. Afterwards they can be used in all
-     * frontend files
+     * Loads bean classes and registers them to the FacesContext. Afterwards
+     * they can be used in all frontend files
      */
     private void loadBeans() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);
@@ -116,14 +116,18 @@ public class KitodoServiceLoader<T> {
                                 JarEntry je = e.nextElement();
 
                                 /*
-                                 * IMPORTANT: Naming convention: the name of the java class has to be in upper
-                                 * camel case or "pascal case" and must be equal to the file name of the
-                                 * corresponding facelet file concatenated with the word "Form".
+                                 * IMPORTANT: Naming convention: the name of the
+                                 * java class has to be in upper camel case or
+                                 * "pascal case" and must be equal to the file
+                                 * name of the corresponding facelet file
+                                 * concatenated with the word "Form".
                                  *
-                                 * Example: template filename "sample.xhtml" => "SampleForm.java"
+                                 * Example: template filename "sample.xhtml" =>
+                                 * "SampleForm.java"
                                  *
-                                 * That is the reason for the following check (e.g. whether the JarEntry name
-                                 * ends with "Form.class")
+                                 * That is the reason for the following check
+                                 * (e.g. whether the JarEntry name ends with
+                                 * "Form.class")
                                  */
                                 if (je.isDirectory() || !je.getName().endsWith("Form.class")) {
                                     continue;
@@ -150,9 +154,10 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * If the found jar files have frontend files, they will be extracted and copied into the frontend folder
-     * of the core module. Before copying, existing frontend files of the same module will be deleted from the
-     * core module. Afterwards the created temporary folder will be deleted as well.
+     * If the found jar files have frontend files, they will be extracted and
+     * copied into the frontend folder of the core module. Before copying,
+     * existing frontend files of the same module will be deleted from the core
+     * module. Afterwards the created temporary folder will be deleted as well.
      */
     private void loadFrontendFilesIntoCore() {
 
@@ -182,7 +187,7 @@ public class KitodoServiceLoader<T> {
                             FileUtils.deleteDirectory(new File(filePath));
 
                             String resourceFolder = String.join(File.separator,
-                                    Arrays.asList(tempDir.getAbsolutePath(), META_INF_FOLDER, RESOURCES_FOLDER));
+                                Arrays.asList(tempDir.getAbsolutePath(), META_INF_FOLDER, RESOURCES_FOLDER));
                             copyFrontEndFiles(resourceFolder, filePath);
                         } else {
                             logger.info("No module found in JarFile '" + jarFile.getName() + "'.");
@@ -197,8 +202,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Extracts the module name of the current module by finding the pom.properties
-     * in the given temporary folder
+     * Extracts the module name of the current module by finding the
+     * pom.properties in the given temporary folder
      *
      * @param temporaryFolder
      *            folder in which the pom.properties file will be searched for
@@ -238,7 +243,8 @@ public class KitodoServiceLoader<T> {
      * @param jarPath
      *            jarFile that will be checked for frontend files
      * @param destinationFolder
-     *            destination path, where the frontend files will be extracted to
+     *            destination path, where the frontend files will be extracted
+     *            to
      *
      */
     private void extractFrontEndFiles(String jarPath, File destinationFolder) throws IOException {
@@ -274,8 +280,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Checks, whether a passed jarFile has frontend files or not. Returns true, when the jar contains
-     * a folder with the name "resources"
+     * Checks, whether a passed jarFile has frontend files or not. Returns true,
+     * when the jar contains a folder with the name "resources"
      *
      * @param jarFile
      *            jarFile that will be checked for frontend files
@@ -285,7 +291,7 @@ public class KitodoServiceLoader<T> {
     private boolean hasFrontendFiles(JarFile jarFile) {
         Enumeration enums = jarFile.entries();
         while (enums.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry)enums.nextElement();
+            JarEntry jarEntry = (JarEntry) enums.nextElement();
             if (jarEntry.getName().contains(RESOURCES_FOLDER) && jarEntry.isDirectory()) {
                 return true;
             }
@@ -319,8 +325,8 @@ public class KitodoServiceLoader<T> {
     }
 
     /**
-     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader can
-     * find them.
+     * Loads jars from the pluginsFolder to the classpath, so the ServiceLoader
+     * can find them.
      */
     private void loadModulesIntoClasspath() {
         Path moduleFolder = FileSystems.getDefault().getPath(modulePath);

@@ -19,6 +19,8 @@ import de.sub.goobi.helper.tasks.TaskSitter;
 
 import java.util.List;
 
+import org.kitodo.config.Parameters;
+
 public class LongRunningTasksForm {
     /**
      * When adding demo tasks, the task number is incremented and passed in as
@@ -98,7 +100,7 @@ public class LongRunningTasksForm {
      *         the configuration
      */
     public boolean isDemoTasksLinkShowing() {
-        return ConfigCore.getBooleanParameter("taskManager.showSampleTask", false);
+        return ConfigCore.getBooleanParameter(Parameters.TASK_MANAGER_SHOW_SAMPLE_TASK);
     }
 
     /**

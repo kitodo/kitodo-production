@@ -31,9 +31,9 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.Parameters;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
+import org.kitodo.config.Parameters;
 import org.w3c.dom.Document;
 
 /**

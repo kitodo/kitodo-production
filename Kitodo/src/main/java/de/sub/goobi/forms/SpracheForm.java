@@ -34,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -51,7 +53,8 @@ public class SpracheForm implements Serializable {
      * The constructor of this class loads the required MessageBundle.
      */
     public SpracheForm() {
-        String key = ConfigCore.getParameter("language.force-default", "de");
+        String key = ConfigCore.getParameter(Parameters.LANGUAGE_FORCE_DEFAULT,
+            DefaultValues.LANGUAGE_FORCE_DEFAULT);
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
         if (!LocaleUtils.isAvailableLocale(locale)) {
             FacesContext context = FacesContext.getCurrentInstance();
@@ -110,7 +113,7 @@ public class SpracheForm implements Serializable {
                 translation.put("id", supportedLocale.toString());
                 translation.put("displayLanguageSelf", supportedLocale.getDisplayLanguage(supportedLocale));
                 translation.put("displayLanguageTranslated",
-                        supportedLocale.getDisplayLanguage(currentDisplayLanguage));
+                    supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
                 result.add(translation);
             }
@@ -150,9 +153,9 @@ public class SpracheForm implements Serializable {
      */
     public Locale getLocale() {
         FacesContext fac = FacesContext.getCurrentInstance();
-        @SuppressWarnings("rawtypes")
         UIViewRoot frame = fac.getViewRoot();
         if (!Objects.equals(frame, null)) {
+            @SuppressWarnings("rawtypes")
             Map session = fac.getExternalContext().getSessionMap();
             if (session.containsKey(SESSION_LOCALE_FIELD_ID)) {
                 Locale locale = (Locale) session.get(SESSION_LOCALE_FIELD_ID);
@@ -168,7 +171,8 @@ public class SpracheForm implements Serializable {
              * When no locale is given (no Accept-Language Http Request header
              * is present) return default language
              */
-            String key = ConfigCore.getParameter("language.default", "de");
+            String key = ConfigCore.getParameter(Parameters.LANGUAGE_DEFAULT,
+                DefaultValues.LANGUAGE_DEFAULT);
             Locale locale = new Locale.Builder().setLanguageTag(key).build();
             if (LocaleUtils.isAvailableLocale(locale)) {
                 return locale;

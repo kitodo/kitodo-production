@@ -17,14 +17,15 @@ import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class DataEditorService {
 
     /**
-     * Reads the data of a given file in xml format. The format of that file needs
-     * to be the corresponding to the one which is referenced by the data editor
-     * module as data format module.
+     * Reads the data of a given file in xml format. The format of that file
+     * needs to be the corresponding to the one which is referenced by the data
+     * editor module as data format module.
      *
      * @param xmlFileUri
      *            The path to the metadata file as URI.
@@ -42,11 +43,11 @@ public class DataEditorService {
 
     private URI getXsltFileFromConfig() {
         String path = getXsltFolder();
-        String file = Config.getParameter("xsltFilenameMetadataTransformation");
+        String file = Config.getParameter(Parameters.XSLT_FILENAME_METADATA_TRANSFORMATION);
         return Paths.get(path + file).toUri();
     }
 
     private String getXsltFolder() {
-        return Config.getParameter("xsltFolder");
+        return Config.getParameter(Parameters.DIR_XSLT);
     }
 }

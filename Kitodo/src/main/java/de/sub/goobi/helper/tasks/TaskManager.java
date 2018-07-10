@@ -24,6 +24,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
+
 /**
  * The class TaskManager serves to handle the execution of threads. It can be
  * user controlled by the “Long running task manager”, backed by
@@ -61,7 +64,8 @@ public class TaskManager {
      */
     private TaskManager() {
         taskSitter = Executors.newSingleThreadScheduledExecutor();
-        long delay = ConfigCore.getLongParameter("taskManager.inspectionIntervalMillis", 2000);
+        long delay = ConfigCore.getLongParameter(Parameters.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS,
+            DefaultValues.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS);
         taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
     }
 

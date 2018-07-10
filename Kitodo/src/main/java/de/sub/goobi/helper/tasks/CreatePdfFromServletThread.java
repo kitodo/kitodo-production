@@ -34,6 +34,8 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
@@ -93,7 +95,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             new File("");
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
             URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter("kitodoContentServerTimeOut", 60000);
+            Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();
 
             // get pdf from servlet and forward response to file
@@ -167,11 +170,12 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     }
 
     private URL getKitodoContentServerURL() throws IOException {
-        String contentServerUrl = ConfigCore.getParameter("kitodoContentServerUrl");
+        String contentServerUrl = ConfigCore.getParameter(Parameters.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
         if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {
-            // if no contentserverurl defined use internal goobiContentServerServlet
+            // if no contentserverurl defined use internal
+            // goobiContentServerServlet
             if ((contentServerUrl == null) || (contentServerUrl.length() == 0)) {
                 contentServerUrl = this.internalServletPath + "/gcs/gcs?action=pdf&metsFile=";
             }

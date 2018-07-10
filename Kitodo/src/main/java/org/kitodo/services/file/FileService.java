@@ -36,6 +36,8 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
@@ -73,7 +75,7 @@ public class FileService {
                 path = path.replace("/", "\\");
             }
             List<String> commandParameter = Collections.singletonList(path);
-            File script = new File(ConfigCore.getParameter("script_createDirMeta"));
+            File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             return commandResult.isSuccessful();
         } else {
@@ -116,7 +118,8 @@ public class FileService {
 
             CommandService commandService = serviceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getPath());
-            commandService.runCommand(new File(ConfigCore.getParameter("script_createDirUserHome")), commandParameter);
+            commandService.runCommand(new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME)),
+                commandParameter);
         }
     }
 
@@ -497,9 +500,9 @@ public class FileService {
     void createBackupFile(Process process) throws IOException {
         int numberOfBackups;
 
-        numberOfBackups = ConfigCore.getIntParameter("numberOfMetaBackups");
+        numberOfBackups = ConfigCore.getIntParameter(Parameters.NUMBER_OF_META_BACKUPS);
 
-        if (numberOfBackups != 0) {
+        if (numberOfBackups != ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS) {
             BackupFileRotation bfr = new BackupFileRotation();
             bfr.setNumberOfBackups(numberOfBackups);
             bfr.setFormat("meta.*\\.xml");
@@ -711,9 +714,9 @@ public class FileService {
      * @return unmapped URI
      */
     public List<URI> getSubUrisForProcess(FilenameFilter filter, Integer processId, String processTitle,
-                                               URI processDataDirectory, ProcessSubType processSubType,
-                                               String resourceName) throws DAOException {
-        URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType, resourceName);
+            URI processDataDirectory, ProcessSubType processSubType, String resourceName) throws DAOException {
+        URI processSubTypeURI = getProcessSubTypeURI(processId, processTitle, processDataDirectory, processSubType,
+            resourceName);
         return getSubUris(filter, processSubTypeURI);
     }
 
@@ -770,8 +773,8 @@ public class FileService {
      *
      * @return the URI to the temporal directory.
      */
-    public URI getTemporalDirectory() {
-        return Paths.get(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/")).toUri();
+    public URI getTemporaryDirectory() {
+        return Config.getUri(Parameters.DIR_TEMP);
     }
 
     /**
@@ -780,7 +783,7 @@ public class FileService {
      * @return the URI to the users directory.
      */
     public URI getUsersDirectory() {
-        return Paths.get(ConfigCore.getParameter("dir_Users", "/usr/local/kitodo/users/")).toUri();
+        return Config.getUri(Parameters.DIR_USERS);
     }
 
     public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
@@ -826,7 +829,7 @@ public class FileService {
 
     /**
      * Deletes the slash as first character from an uri object.
-     * 
+     *
      * @param uri
      *            The uri object.
      * @return The new uri object without first slash.

@@ -66,6 +66,8 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -146,7 +148,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter("doneDirectoryName", "fertig/");
+        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
+            DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -238,8 +241,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 fileService.delete(images);
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorDirectoryDeleting",
-                    new Object[] {Helper.getTranslation("metadata")}, logger, e);
+            Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
+                e);
         }
 
         Helper.setMessage("Content deleted");
@@ -247,7 +250,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+            DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");
             return false;
@@ -299,15 +303,15 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             List<URI> subDirs = fileService.getSubUris(directory);
             for (URI imageDir : subDirs) {
                 if (fileService.isDirectory(imageDir)) {
-                    fileService.renameFile(imageDir, fileService.getFileName(imageDir)
-                            .replace(process.getTitle(), newProcessTitle));
+                    fileService.renameFile(imageDir,
+                        fileService.getFileName(imageDir).replace(process.getTitle(), newProcessTitle));
                 }
             }
         }
     }
 
     private void renameDefinedDirectories() {
-        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
         for (String processDir : processDirs) {
             // TODO: check it out
             URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
@@ -332,8 +336,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 fileService.delete(ocrDirectory);
             }
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("errorDirectoryDeleting",
-                    new Object[] {Helper.getTranslation("metadata")}, logger, e);
+            Helper.setErrorMessage("errorDirectoryDeleting", new Object[] {Helper.getTranslation("metadata") }, logger,
+                e);
         }
     }
 
@@ -434,8 +438,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         this.task = new Task();
         this.task.setProcess(this.process);
         this.process.getTasks().add(this.task);
-        return taskEditPath + "&id="
-                + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
+        return taskEditPath + "&id=" + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
 
     /**
@@ -656,14 +659,15 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void downloadToHome() {
         /*
          * zunächst prüfen, ob dieser Band gerade von einem anderen Nutzer in
-         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde, ansonsten
-         * Download
+         * Bearbeitung ist und in dessen Homeverzeichnis abgelegt wurde,
+         * ansonsten Download
          */
         if (!serviceManager.getProcessService().isImageFolderInUse(this.process)) {
             WebDav myDav = new WebDav();
             myDav.downloadToHome(this.process, false);
         } else {
-            Helper.setMessage(Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
+            Helper.setMessage(
+                Helper.getTranslation("directory ") + " " + this.process.getTitle() + " "
                         + Helper.getTranslation("isInUse"),
                 serviceManager.getUserService()
                         .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(this.process)));
@@ -702,7 +706,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(processDTO)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMessage(Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                Helper.setMessage(
+                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
@@ -723,7 +728,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             if (!serviceManager.getProcessService().isImageFolderInUse(process)) {
                 webDav.downloadToHome(process, false);
             } else {
-                Helper.setMessage(Helper.getTranslation("directory ") + " " + process.getTitle() + " "
+                Helper.setMessage(
+                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
                             + Helper.getTranslation("isInUse"),
                     serviceManager.getUserService()
                             .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
@@ -1188,8 +1194,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             ExportXmlLog xmlExport = new ExportXmlLog();
 
-            String directory = new File(serviceManager.getUserService().getHomeDirectory(getUser()))
-                    .getPath();
+            String directory = new File(serviceManager.getUserService().getHomeDirectory(getUser())).getPath();
             String destination = directory + this.process.getTitle() + "_log.xml";
             xmlExport.startExport(this.process, destination);
         } catch (IOException e) {
@@ -1366,8 +1371,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Return whether inactive projects should be displayed or not.
      *
-     * @return parameter controlling whether inactive projects should be displayed
-     *         or not
+     * @return parameter controlling whether inactive projects should be
+     *         displayed or not
      */
     @Override
     public boolean isShowInactiveProjects() {
@@ -1599,8 +1604,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Method being used as viewAction for process edit form. If the given parameter
-     * 'id' is '0', the form for creating a new process will be displayed.
+     * Method being used as viewAction for process edit form. If the given
+     * parameter 'id' is '0', the form for creating a new process will be
+     * displayed.
      *
      * @param id
      *            ID of the process to load
@@ -1626,8 +1632,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("task"), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("task"), id }, logger, e);
         }
     }
 
@@ -1654,8 +1659,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroups") }, logger,
-                e);
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroups") }, logger, e);
             return new LinkedList<>();
         }
     }

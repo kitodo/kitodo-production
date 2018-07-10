@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -74,7 +75,7 @@ public class RulesetForm extends BasisForm {
      */
     public String saveRuleset() {
         try {
-            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter("RegelsaetzeVerzeichnis"))) {
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {

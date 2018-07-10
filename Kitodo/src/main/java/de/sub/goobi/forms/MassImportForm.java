@@ -52,6 +52,8 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -218,7 +220,7 @@ public class MassImportForm implements Serializable {
 
             // found list with ids
             PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            String tempFolder = ConfigCore.getParameter("tempfolder");
+            String tempFolder = ConfigCore.getParameter(Parameters.DIR_TEMP);
             this.plugin.setImportFolder(tempFolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
@@ -302,8 +304,8 @@ public class MassImportForm implements Serializable {
         if (basename.contains("\\")) {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
-        URI temporalFile = serviceManager.getFileService()
-                .createResource(ConfigCore.getParameter("tempfolder", "/usr/local/kitodo/temp/") + basename);
+        URI temporalFile = serviceManager.getFileService().createResource(FilenameUtils
+                .concat(ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }
@@ -362,12 +364,12 @@ public class MassImportForm implements Serializable {
         URI importFileName = io.getImportFileName();
         Process process = JobCreation.generateProcess(io, this.template);
         if (process == null) {
-            if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
+            if (Objects.nonNull(importFileName)
+                    && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
                     && selectedFilenames != null && !selectedFilenames.isEmpty()) {
                 selectedFilenames.remove(importFileName.getRawPath());
             }
-            Helper.setErrorMessage(
-                    "import failed for " + io.getProcessTitle() + ", process generation failed");
+            Helper.setErrorMessage("import failed for " + io.getProcessTitle() + ", process generation failed");
 
         } else {
             Helper.setMessage(ImportReturnValue.EXPORT_FINISHED.getValue() + " for " + io.getProcessTitle());

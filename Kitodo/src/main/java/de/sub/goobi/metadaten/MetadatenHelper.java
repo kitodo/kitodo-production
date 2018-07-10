@@ -43,6 +43,7 @@ import org.kitodo.api.ugh.ReferenceInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
@@ -163,9 +164,9 @@ public class MetadatenHelper {
 
                     if (!newDocstruct.getDocStructType().getAllAllowedDocStructTypes()
                             .contains(old.getDocStructType().getName())) {
-                        Helper.setErrorMessage(
-                                Helper.getTranslation(METADATA_NOT_ALLOWED, Arrays.asList(Helper.getTranslation("childElement"),
-                                        old.getDocStructType().getName(), newDocstruct.getDocStructType().getName())));
+                        Helper.setErrorMessage(Helper.getTranslation(METADATA_NOT_ALLOWED,
+                            Arrays.asList(Helper.getTranslation("childElement"), old.getDocStructType().getName(),
+                                newDocstruct.getDocStructType().getName())));
                         return inOldDocstruct;
                     } else {
                         newDocstruct.addChild(old);

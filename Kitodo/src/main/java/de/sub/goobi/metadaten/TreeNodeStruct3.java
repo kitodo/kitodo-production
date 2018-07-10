@@ -17,6 +17,7 @@ import de.sub.goobi.helper.TreeNode;
 import java.util.ArrayList;
 
 import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.config.Parameters;
 
 public class TreeNodeStruct3 extends TreeNode {
 
@@ -32,7 +33,7 @@ public class TreeNodeStruct3 extends TreeNode {
 
     /**
      * Constructor.
-     * 
+     *
      * @param expanded
      *            true or false
      * @param label
@@ -50,7 +51,7 @@ public class TreeNodeStruct3 extends TreeNode {
 
     /**
      * Constructor.
-     * 
+     *
      * @param label
      *            as String
      * @param struct
@@ -71,8 +72,9 @@ public class TreeNodeStruct3 extends TreeNode {
 
     public String getMainTitle() {
 
-        int maxSize = ConfigCore.getIntParameter("MetsEditorMaxTitleLength", 0);
-        if (maxSize > 0 && this.mainTitle != null && this.mainTitle.length() > maxSize) {
+        int maxSize = ConfigCore.getIntParameter(Parameters.METS_EDITOR_MAX_TITLE_LENGTH);
+        if (maxSize > ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS && this.mainTitle != null
+                && this.mainTitle.length() > maxSize) {
             return this.mainTitle.substring(0, maxSize - 1);
         }
 

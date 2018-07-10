@@ -30,6 +30,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -507,7 +508,7 @@ public class BatchStepHelper extends BatchHelper {
     }
 
     private boolean invalidMetadataExists(Task task) {
-        if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+        if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)) {
             serviceManager.getMetadataValidationService().setAutoSave(true);
             return !serviceManager.getMetadataValidationService().validate(task.getProcess());
         }

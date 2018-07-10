@@ -31,6 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -212,7 +213,7 @@ public class WorkflowControllerService {
         // cancel the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
-            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter("useMetadatenvalidierung")) {
+            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)) {
                 serviceManager.getMetadataValidationService().setAutoSave(true);
                 if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
                     return null;
@@ -407,7 +408,8 @@ public class WorkflowControllerService {
      * Unified method for solve problem with task.
      *
      * @param currentTask
-     *            task which was send to correction and now was fixed as Task object
+     *            task which was send to correction and now was fixed as Task
+     *            object
      * @return Task
      */
     public Task solveProblem(Task currentTask) throws DAOException, DataException {
@@ -475,8 +477,8 @@ public class WorkflowControllerService {
     }
 
     private void closeTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask, Date date) throws DataException {
-        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(
-            currentTask.getOrdering(), correctionTask.getOrdering(), currentTask.getProcess().getId());
+        List<Task> allTasksInBetween = serviceManager.getTaskService().getAllTasksInBetween(currentTask.getOrdering(),
+            correctionTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
             taskInBetween.setProcessingStatusEnum(TaskStatus.DONE);
             taskInBetween.setProcessingEnd(date);
@@ -505,9 +507,9 @@ public class WorkflowControllerService {
     private Property prepareSolveMessageProperty(Task correctionTask) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionPerformed"));
-        processProperty.setValue(
-            "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
-                    + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
+        processProperty.setValue("[" + this.formatter.format(new Date()) + ", "
+                + serviceManager.getUserService().getFullName(getCurrentUser()) + "] "
+                + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
                     + this.solution.getMessage());
         processProperty.setType(PropertyType.MESSAGE_IMPORTANT);
         return processProperty;
@@ -515,13 +517,15 @@ public class WorkflowControllerService {
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
         String message = Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
-                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser()) + ")";
+                + this.problem.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser())
+                + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "error", message);
     }
 
     private String prepareSolutionWikiField(Process process, Task correctionTask) {
         String message = Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle() + ": "
-                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser()) + ")";
+                + this.solution.getMessage() + " (" + serviceManager.getUserService().getFullName(getCurrentUser())
+                + ")";
         return WikiFieldHelper.getWikiMessage(process, process.getWikiField(), "info", message);
     }
 

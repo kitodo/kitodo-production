@@ -25,6 +25,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -146,7 +147,8 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
         rulesetDTO.setTitle(rulesetJSONObject.getString(RulesetTypeField.TITLE.getName()));
         rulesetDTO.setFile(rulesetJSONObject.getString(RulesetTypeField.FILE.getName()));
-        rulesetDTO.setOrderMetadataByRuleset(rulesetJSONObject.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
+        rulesetDTO.setOrderMetadataByRuleset(
+            rulesetJSONObject.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
         return rulesetDTO;
     }
 
@@ -160,7 +162,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     public PrefsInterface getPreferences(Ruleset ruleset) {
         PrefsInterface myPreferences = UghImplementation.INSTANCE.createPrefs();
         try {
-            myPreferences.loadPrefs(ConfigCore.getParameter("RegelsaetzeVerzeichnis") + ruleset.getFile());
+            myPreferences.loadPrefs(ConfigCore.getParameter(Parameters.DIR_RULESETS) + ruleset.getFile());
         } catch (PreferencesException e) {
             logger.error(e.getMessage(), e);
         }

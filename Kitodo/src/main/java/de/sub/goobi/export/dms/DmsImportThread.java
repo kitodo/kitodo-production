@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -47,8 +48,8 @@ public class DmsImportThread extends Thread {
     public DmsImportThread(Process process, String ats) {
         setDaemon(true);
         /*
-         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter Stelle,
-         * ansonsten lieber in neuem FehlerOrdner
+         * aus Kompatibilitätsgründen auch noch die Fehlermeldungen an alter
+         * Stelle, ansonsten lieber in neuem FehlerOrdner
          */
         if (process.getProject().getDmsImportErrorPath() == null
                 || process.getProject().getDmsImportErrorPath().length() == 0) {
@@ -137,7 +138,7 @@ public class DmsImportThread extends Thread {
     }
 
     private void removeImages() {
-        if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
+        if (!ConfigCore.getBooleanParameter(Parameters.EXPORT_WITHOUT_TIME_LIMIT)) {
             try {
                 serviceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {

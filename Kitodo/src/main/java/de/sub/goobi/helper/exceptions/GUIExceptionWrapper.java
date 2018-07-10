@@ -17,6 +17,9 @@ import de.sub.goobi.helper.Helper;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
+
 /**
  * This class provides the tools it takes to generate a configurable Error
  * message for Errors which are unexpected An example for the area in
@@ -83,14 +86,15 @@ public class GUIExceptionWrapper extends Exception {
     }
 
     private void init() {
+        final String END = "end";
 
         try {
-            if (ConfigCore.getBooleanParameter("err_userHandling")) {
+            if (ConfigCore.getBooleanParameter(Parameters.ERR_USER_HANDLING)) {
                 this.errLinkText = Helper.getTranslation("errorLinkText");
                 this.errLinkText = this.errLinkText.replace("{0}",
-                    ConfigCore.getParameter("err_linkToPage", "./start.jsf"));
+                    ConfigCore.getParameter(Parameters.ERR_LINK_TO_PAGE, DefaultValues.ERR_LINK_TO_PAGE));
 
-                if (ConfigCore.getBooleanParameter("err_emailEnabled")) {
+                if (ConfigCore.getBooleanParameter(Parameters.ERR_EMAIL_ENABLED)) {
                     this.errEmailMessage = Helper.getTranslation("errorEmailMessage");
                     this.errSubjectLine = Helper.getTranslation("errorSubjectLine");
                     this.errEmailBody = Helper.getTranslation("errorEmailBody");
@@ -99,10 +103,10 @@ public class GUIExceptionWrapper extends Exception {
                     String email = "";
 
                     // indefinite emails can be added
-                    while (!email.equals("end")) {
+                    while (!email.equals(END)) {
                         emailCounter++;
-                        email = ConfigCore.getParameter("err_emailAddress" + emailCounter.toString(), "end");
-                        if (!email.equals("end")) {
+                        email = ConfigCore.getParameter(Parameters.ERR_EMAIL_ADDRESS + emailCounter.toString(), END);
+                        if (!email.equals(END)) {
                             this.emailAddresses.add(email);
                         }
                     }

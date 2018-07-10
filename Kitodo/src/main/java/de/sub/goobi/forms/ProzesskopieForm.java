@@ -49,7 +49,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
-import org.goobi.production.constants.Parameters;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
@@ -70,6 +69,8 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -220,14 +221,8 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    /**
-     * The constant DEFAULT_HITLIST_PAGE_SIZE holds the fallback number of hits
-     * to show per page on the hit list if the user conducted a catalogue search
-     * that yielded more than one result, if none is configured in the
-     * Production configuration file.
-     */
-    private static final int DEFAULT_HITLIST_PAGE_SIZE = 10;
-    private static final String DIRECTORY_SUFFIX = "_tif";
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(Parameters.DIRECTORY_SUFFIX,
+        DefaultValues.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
     private String atstsl = "";
@@ -472,8 +467,10 @@ public class ProzesskopieForm implements Serializable {
      * plugin, otherwise an error message will be set to be shown.
      *
      * @param catalogue
-     *            identifier string for the catalogue that the plugin shall support
-     * @return whether a plugin is available in the global variable importCatalogue
+     *            identifier string for the catalogue that the plugin shall
+     *            support
+     * @return whether a plugin is available in the global variable
+     *         importCatalogue
      */
     private boolean pluginAvailableFor(String catalogue) {
         if (importCatalogue == null || !importCatalogue.supportsCatalogue(catalogue)) {
@@ -530,7 +527,7 @@ public class ProzesskopieForm implements Serializable {
      *            data to process
      */
     private void applyCopyingRules(CopierData data) {
-        String rules = ConfigCore.getParameter("copyData.onCatalogueQuery");
+        String rules = ConfigCore.getParameter(Parameters.COPY_DATA_ON_CATALOGUE_QUERY);
         if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(data);
@@ -734,7 +731,8 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorTitleEmpty");
         }
 
-        String validateRegEx = ConfigCore.getParameter("validateProzessTitelRegex", "[\\w-]*");
+        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+            DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
             Helper.setErrorMessage("processTitleInvalid");
@@ -874,7 +872,8 @@ public class ProzesskopieForm implements Serializable {
                 if (Objects.nonNull(metadata)) {
                     metadata.setStringValue(field.getValue());
                 }
-                // if the topstruct and the first child should be given the value
+                // if the topstruct and the first child should be given the
+                // value
                 if (Objects.nonNull(tempChild)) {
                     metadata = UghHelper.getMetadata(tempChild, mdt);
                     if (Objects.nonNull(metadata)) {
@@ -888,8 +887,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * There must be at least one non-anchor level doc struct,
-     * if missing, insert logical doc structures until you reach it.
+     * There must be at least one non-anchor level doc struct, if missing,
+     * insert logical doc structures until you reach it.
      */
     private void insertLogicalDocStruct() {
         DocStructInterface populizer = null;
@@ -920,7 +919,8 @@ public class ProzesskopieForm implements Serializable {
                 && !colStruct.getAllChildren().isEmpty()) {
             try {
                 addCollections(colStruct);
-                // falls ein erstes Kind vorhanden ist, sind die Collectionen dafür
+                // falls ein erstes Kind vorhanden ist, sind die Collectionen
+                // dafür
                 colStruct = colStruct.getAllChildren().get(0);
                 addCollections(colStruct);
             } catch (RuntimeException e) {
@@ -989,7 +989,7 @@ public class ProzesskopieForm implements Serializable {
      * Metadata inheritance and enrichment.
      */
     private void updateMetadata() throws PreferencesException {
-        if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT, false)) {
+        if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT)) {
             DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
@@ -1446,7 +1446,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Changed, so that on first request list gets set if there is only one choice.
+     * Changed, so that on first request list gets set if there is only one
+     * choice.
      *
      * @return list of digital collections
      */
@@ -1621,22 +1622,24 @@ public class ProzesskopieForm implements Serializable {
 
     /**
      * Conditions:
-     * isDocType.equals("") && isNotDocType.equals("")
-     *     - nothing was specified
-     * isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
-     *     - only duty was specified
-     * isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)
-     *    - only may not was specified
-     * !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
-     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)
-     *    - both were specified
+     * <dl>
+     * <dt>{@code isDocType.equals("") && isNotDocType.equals("")}</dt>
+     * <dd>nothing was specified</dd>
+     * <dt>{@code isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)}</dt>
+     * <dd>only duty was specified</dd>
+     * <dt>{@code isDocType.equals("") && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>only may not was specified</dd>
+     * <dt>{@code !isDocType.equals("") && !isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType)
+     *                 && !StringUtils.containsIgnoreCase(isNotDocType, docType)}</dt>
+     * <dd>both were specified</dd>
+     * </dl>
      */
     private String findTitleDefinition(String title, String docType, String isDocType, String isNotDocType) {
         if ((isDocType.equals("")
                 && (isNotDocType.equals("") || !StringUtils.containsIgnoreCase(isNotDocType, docType)))
                 || (!isDocType.equals("") && !isNotDocType.equals("")
-                && StringUtils.containsIgnoreCase(isDocType, docType)
-                && !StringUtils.containsIgnoreCase(isNotDocType, docType))
+                        && StringUtils.containsIgnoreCase(isDocType, docType)
+                        && !StringUtils.containsIgnoreCase(isNotDocType, docType))
                 || (isNotDocType.equals("") && StringUtils.containsIgnoreCase(isDocType, docType))) {
             return title;
         }
@@ -1652,8 +1655,8 @@ public class ProzesskopieForm implements Serializable {
 
         for (AdditionalField additionalField : this.additionalFields) {
             /*
-             * if it is the ATS or TSL field, then use the calculated
-             * atstsl if it does not already exist
+             * if it is the ATS or TSL field, then use the calculated atstsl if
+             * it does not already exist
              */
             if ((additionalField.getTitle().equals("ATS") || additionalField.getTitle().equals("TSL"))
                     && additionalField.getShowDependingOnDoctype()
@@ -1892,8 +1895,8 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * The function getHitlist returns the hits for the currently showing page of
-     * the hitlist as read-only property "hitlist".
+     * The function getHitlist returns the hits for the currently showing page
+     * of the hitlist as read-only property "hitlist".
      *
      * @return a list of hits to render in the hitlist
      */
@@ -1934,7 +1937,7 @@ public class ProzesskopieForm implements Serializable {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DEFAULT_HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
     }
 
     /**

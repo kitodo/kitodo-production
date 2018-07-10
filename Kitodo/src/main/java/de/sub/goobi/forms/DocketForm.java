@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -75,7 +76,7 @@ public class DocketForm extends BasisForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter("xsltFolder"))) {
+            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(Parameters.DIR_XSLT))) {
                 this.serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {

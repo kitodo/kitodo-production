@@ -11,6 +11,10 @@
 
 package org.kitodo.services.workflow;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import de.sub.goobi.config.ConfigCore;
 
 import java.io.File;
@@ -25,6 +29,7 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -34,14 +39,11 @@ import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 public class WorkflowControllerServiceIT {
 
-    private static final File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
-    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter("script_createSymLink"));
+    private static final File scriptCreateDirUserHome = new File(
+            ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
+    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
     private static final TaskService taskService = serviceManager.getTaskService();
@@ -104,8 +106,9 @@ public class WorkflowControllerServiceIT {
 
         workflowService.setTasksStatusDown(process);
         List<Task> tasks = process.getTasks();
-        //TODO: shouldn't be changed this status from done to in work?
-        //assertEquals("Task status was not set down for first task!", TaskStatus.INWORK, tasks.get(0).getProcessingStatusEnum());
+        // TODO: shouldn't be changed this status from done to in work?
+        // assertEquals("Task status was not set down for first task!",
+        // TaskStatus.INWORK, tasks.get(0).getProcessingStatusEnum());
         assertEquals("Task status was not set down!", TaskStatus.OPEN, tasks.get(1).getProcessingStatusEnum());
 
         // set up task to previous state

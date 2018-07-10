@@ -36,6 +36,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -699,8 +700,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameter("automaticExportWithImages", true);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter("automaticExportWithOcr", true);
+        boolean automaticExportWithImages = ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true);
+        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter(Parameters.AUTOMATIC_EXPORT_WITH_OCR, true);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,

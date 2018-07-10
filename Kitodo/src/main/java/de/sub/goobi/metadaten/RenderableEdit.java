@@ -16,11 +16,11 @@ import de.sub.goobi.config.ConfigCore;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.constants.Parameters;
 import org.kitodo.api.ugh.MetadataGroupInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
+import org.kitodo.config.Parameters;
 import org.kitodo.exceptions.UnreachableCodeException;
 
 /**

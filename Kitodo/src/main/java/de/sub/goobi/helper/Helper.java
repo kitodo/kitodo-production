@@ -46,6 +46,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
+import org.kitodo.config.DefaultValues;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
@@ -110,7 +112,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set error message for user with usage of exception.
-     * 
+     *
      * @param e
      *            thrown exception
      */
@@ -153,8 +155,8 @@ public class Helper extends HibernateHelper implements Observer {
      * Set error message to message tag with given name 'title'.
      *
      * <p>
-     * This method also accepts logger and exception instances to automatically log
-     * the exceptions message or stackTrace values to the given logger.
+     * This method also accepts logger and exception instances to automatically
+     * log the exceptions message or stackTrace values to the given logger.
      * </p>
      *
      * @param title
@@ -178,8 +180,8 @@ public class Helper extends HibernateHelper implements Observer {
      * placeholders in message tag with elements of given array 'parameters'.
      *
      * <p>
-     * This method also accepts logger and exception instances to automatically log
-     * the exceptions message or stackTrace values to the given logger.
+     * This method also accepts logger and exception instances to automatically
+     * log the exceptions message or stackTrace values to the given logger.
      * </p>
      *
      * @param title
@@ -201,8 +203,8 @@ public class Helper extends HibernateHelper implements Observer {
      *
      * <p>
      * This method also accepts a description text and logger and exception
-     * instances to automatically log the exceptions message or stackTrace values to
-     * the given logger.
+     * instances to automatically log the exceptions message or stackTrace
+     * values to the given logger.
      * </p>
      *
      * @param title
@@ -231,7 +233,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set message for user.
-     * 
+     *
      * @param message
      *            for user
      */
@@ -253,7 +255,7 @@ public class Helper extends HibernateHelper implements Observer {
 
     /**
      * Set message and description for user.
-     * 
+     *
      * @param control
      *            what is it - no documentation for clientId in FacesContext
      * @param message
@@ -296,8 +298,8 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     /**
-     * Returns a Map holding all translations that are configured in the front end
-     * of a given resource key.
+     * Returns a Map holding all translations that are configured in the front
+     * end of a given resource key.
      *
      * @param key
      *            resource key to get translations for
@@ -387,15 +389,18 @@ public class Helper extends HibernateHelper implements Observer {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                File file = new File(ConfigCore.getParameter("localMessages", "/usr/local/kitodo/messages/"));
+                File file = new File(
+                        ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
-                    // Load local message bundle from file system only if file exists;
-                    // if value not exists in bundle, use default bundle from classpath
+                    // Load local message bundle from file system only if file
+                    // exists;
+                    // if value not exists in bundle, use default bundle from
+                    // classpath
 
                     try {
                         final URL resourceURL = file.toURI().toURL();
-                        URLClassLoader urlLoader = AccessController
-                                .doPrivileged((PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
+                        URLClassLoader urlLoader = AccessController.doPrivileged(
+                            (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
                         ResourceBundle localBundle = ResourceBundle.getBundle("messages", language, urlLoader);
                         if (localBundle != null) {
                             localMessages.put(language, localBundle);
@@ -535,7 +540,7 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     private static List<String> getDataRegexList() {
-        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
@@ -561,9 +566,9 @@ public class Helper extends HibernateHelper implements Observer {
     }
 
     /**
-     * The function getLastMessage() returns the last message processed to be shown
-     * to the user. This is a last resort only to show the user why perhaps
-     * something didn’t work if no error message is available otherwise.
+     * The function getLastMessage() returns the last message processed to be
+     * shown to the user. This is a last resort only to show the user why
+     * perhaps something didn’t work if no error message is available otherwise.
      *
      * @return the most recent message created to be shown to the user
      */

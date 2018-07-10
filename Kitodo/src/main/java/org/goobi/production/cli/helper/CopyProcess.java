@@ -47,6 +47,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -217,8 +218,7 @@ public class CopyProcess extends ProzesskopieForm {
                 fa.setSelectList(new ArrayList<>());
             }
             for (int j = 0; j < selectItemCount; j++) {
-                String svalue = cp
-                        .getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
+                String svalue = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")[@label]");
                 String sid = cp.getParamString(ITEM_LIST_ITEM + "(" + i + ").select(" + j + ")");
                 fa.getSelectList().add(new SelectItem(sid, svalue, null));
             }
@@ -246,7 +246,7 @@ public class CopyProcess extends ProzesskopieForm {
             fillFieldsFromConfig();
 
         } catch (PreferencesException | ReadException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"Opac-Ergebnisses"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {"Opac-Ergebnisses" }, logger, e);
         }
     }
 
@@ -351,7 +351,7 @@ public class CopyProcess extends ProzesskopieForm {
         try {
             this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_READ, new Object[]{"Template-Metadaten"}, logger, e);
+            Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
 
         /* falls ein erstes Kind vorhanden ist, sind die Collectionen dafür */
@@ -399,8 +399,8 @@ public class CopyProcess extends ProzesskopieForm {
             if (field.getSelectList() == null && field.isRequired() && field.getShowDependingOnDoctype()
                     && (StringUtils.isBlank(field.getValue()))) {
                 valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA, field.getTitle() + " "
-                        + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
+                Helper.setErrorMessage(INCOMPLETE_DATA,
+                    field.getTitle() + " " + Helper.getTranslation("processCreationErrorFieldIsEmpty"));
             }
         }
         return valid;
@@ -414,7 +414,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valid = true;
 
-        if (ConfigCore.getBooleanParameter("MassImportUniqueTitle", true)) {
+        if (ConfigCore.getBooleanParameter(Parameters.MASS_IMPORT_UNIQUE_TITLE, true)) {
             valid = isProcessTitleCorrect(this.prozessKopie);
         }
         return valid;

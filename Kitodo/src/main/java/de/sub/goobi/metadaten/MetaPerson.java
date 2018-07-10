@@ -17,11 +17,11 @@ import java.util.List;
 
 import javax.faces.model.SelectItem;
 
-import org.goobi.production.constants.Parameters;
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.Parameters;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen

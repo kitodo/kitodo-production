@@ -26,13 +26,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.Config;
+import org.kitodo.config.Parameters;
 import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends Config {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);
     private static URI imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
-    private static final String DIAGRAM_DIR = "diagramsFolder";
     public static final String IMAGES_TEMP = "/pages/imagesTemp/";
 
     /**
@@ -104,6 +104,6 @@ public class ConfigCore extends Config {
      * @return String
      */
     public static String getKitodoDiagramDirectory() {
-        return getParameter(DIAGRAM_DIR);
+        return getParameter(Parameters.DIR_DIAGRAMS);
     }
 }

@@ -38,6 +38,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -86,7 +87,7 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI inZielVerzeichnis) {
         if (process.getProject().isUseDmsImport()
-                && ConfigCore.getBooleanParameter("asynchronousAutomaticExport", false)) {
+                && ConfigCore.getBooleanParameter(Parameters.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
@@ -156,7 +157,7 @@ public class ExportDms extends ExportMets {
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter("useMetadatenvalidierung")
+        if (ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
             return false;
         }
@@ -186,7 +187,8 @@ public class ExportDms extends ExportMets {
             // if the home exists, first delete and then create again
             userHome = zielVerzeichnis;
             if (!fileService.delete(userHome)) {
-                Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
+                Helper.setErrorMessage(
+                    Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                         Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
                 return false;
             }
@@ -214,7 +216,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
-        String rules = ConfigCore.getParameter("copyData.onExport");
+        String rules = ConfigCore.getParameter(Parameters.COPY_DATA_ON_EXPORT);
         if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, process));
@@ -336,7 +338,7 @@ public class ExportDms extends ExportMets {
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
-        if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit")) {
+        if (!ConfigCore.getBooleanParameter(Parameters.EXPORT_WITHOUT_TIME_LIMIT)) {
             exportWithTimeLimit(process);
         }
         if (exportDmsTask != null) {
@@ -594,7 +596,7 @@ public class ExportDms extends ExportMets {
      *
      */
     private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter("processDirs");
+        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             URI srcDir = serviceManager.getProcessService().getProcessDataDirectory(process)

@@ -24,6 +24,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.joda.time.Duration;
+import org.kitodo.config.Parameters;
 
 /**
  * The class TaskSitter takes care of the tasks in the task manager. While the
@@ -40,16 +41,11 @@ import org.joda.time.Duration;
  * constructor is private) a caring class is needed which will be available for
  * instantiation to the servlet container.
  * </p>
- * 
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
 @WebListener
 public class TaskSitter implements Runnable, ServletContextListener {
-    private static final int KEEP_FAILED = 10;
-    private static final long KEEP_FAILED_MINS = 250;
-    private static final int KEEP_SUCCESSFUL = 3;
-    private static final long KEEP_SUCCESSFUL_MINS = 20;
-
     /**
      * The field autoRunLimit holds the number of threads which at most are
      * allowed to be started automatically. It is by default initialised by the
@@ -165,13 +161,14 @@ public class TaskSitter implements Runnable, ServletContextListener {
         LinkedList<EmptyTask> failedThreads = new LinkedList<>();
         int availableClearance = autoRunLimit;
 
-        int successfulMaxCount = ConfigCore.getIntParameter("taskManager.keepThreads.successful.count",
-                KEEP_SUCCESSFUL);
-        int failedMaxCount = ConfigCore.getIntParameter("taskManager.keepThreads.failed.count", KEEP_FAILED);
-        Duration successfulMaxAge = ConfigCore.getDurationParameter("taskManager.keepThreads.successful.minutes",
-                TimeUnit.MINUTES, KEEP_SUCCESSFUL_MINS);
-        Duration failedMaxAge = ConfigCore.getDurationParameter("taskManager.keepThreads.failed.minutes",
-                TimeUnit.MINUTES, KEEP_FAILED_MINS);
+        int successfulMaxCount = ConfigCore.getIntParameter(Parameters.TASK_MANAGER_KEEP_SUCCESSFUL,
+            org.kitodo.config.DefaultValues.TASK_MANAGER_KEEP_SUCCESSFUL);
+        int failedMaxCount = ConfigCore.getIntParameter(Parameters.TASK_MANAGER_KEEP_FAILED,
+            org.kitodo.config.DefaultValues.TASK_MANAGER_KEEP_FAILED);
+        Duration successfulMaxAge = ConfigCore.getDurationParameter(Parameters.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
+            TimeUnit.MINUTES, org.kitodo.config.DefaultValues.TASK_MANAGER_KEEP_SUCCESSFUL_MINS);
+        Duration failedMaxAge = ConfigCore.getDurationParameter(Parameters.TASK_MANAGER_KEEP_FAILED_MINS,
+            TimeUnit.MINUTES, org.kitodo.config.DefaultValues.TASK_MANAGER_KEEP_FAILED_MINS);
 
         ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
         EmptyTask task;
@@ -254,7 +251,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     public static void setAutoRunningThreads(boolean on) {
         if (on) {
             int cores = Runtime.getRuntime().availableProcessors();
-            autoRunLimit = ConfigCore.getIntParameter("taskManager.autoRunLimit", cores);
+            autoRunLimit = ConfigCore.getIntParameter(Parameters.TASK_MANAGER_AUTORUN_LIMIT, cores);
         } else {
             autoRunLimit = 0;
         }

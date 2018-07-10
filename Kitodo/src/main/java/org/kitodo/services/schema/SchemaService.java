@@ -42,6 +42,7 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
+import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -180,7 +181,7 @@ public class SchemaService {
         String metsPointer = vp.replace(metsPointerToReplace);
         metsMods.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigCore.getBooleanParameter("ExportValidateImages", true)) {
+        if (ConfigCore.getBooleanParameter(Parameters.EXPORT_VALIDATE_IMAGES, true)) {
             if (containsInvalidImages(prefs, digitalDocument, process)) {
                 return null;
             }
@@ -241,7 +242,7 @@ public class SchemaService {
                 if (sizeOfPagination == sizeOfImages) {
                     digitalDocument.overrideContentFiles(imageStrings);
                 } else {
-                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages});
+                    Helper.setErrorMessage("imagePaginationError", new Object[] {sizeOfPagination, sizeOfImages });
                     return true;
                 }
             }
