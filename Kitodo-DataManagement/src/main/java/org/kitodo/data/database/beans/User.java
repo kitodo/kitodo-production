@@ -63,6 +63,9 @@ public class User extends BaseIndexedBean {
     @Column(name = "metadataLanguage")
     private String metadataLanguage;
 
+    @Column(name = "language")
+    private String language;
+
     @Column(name = "withMassDownload")
     private boolean withMassDownload = false;
 
@@ -287,6 +290,25 @@ public class User extends BaseIndexedBean {
 
     public void setMetadataLanguage(String metadataLanguage) {
         this.metadataLanguage = metadataLanguage;
+    }
+
+    /**
+     * Get user language.
+     *
+     * @return user language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Set user language.
+     *
+     * @param language
+     *            String
+     */
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public String getLdapLogin() {

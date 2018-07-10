@@ -1002,7 +1002,8 @@ min 700px
         padding: 30px;
         }
 
-    #header-nav li ul li a, #header-nav li ul li div, #header-nav li ul li table {
+    #header-nav li ul li a, #header-nav li ul li div,
+    #header-nav li ul li table {
        padding: 12px 30px;
         }
 
