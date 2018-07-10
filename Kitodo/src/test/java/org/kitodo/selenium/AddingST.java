@@ -47,8 +47,7 @@ public class AddingST extends BaseTestSelenium {
     public void addDocketTest() throws Exception {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
-        docket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
-        Pages.getProjectsPage().createNewDocket().insertDocketData(docket).save();
+        Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         List<String> docketTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.DOCKETS.getIndex()).getDocketTitles();
         boolean docketAvailable = docketTitles.contains(docket.getTitle());
@@ -59,8 +58,7 @@ public class AddingST extends BaseTestSelenium {
     public void addRulesetTest() throws Exception {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");
-        ruleset.setFile("ruleset_test.xml");
-        Pages.getProjectsPage().createNewRuleset().insertRulesetData(ruleset).save();
+        Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         List<String> rulesetTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.RULESETS.getIndex()).getRulesetTitles();
         boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
