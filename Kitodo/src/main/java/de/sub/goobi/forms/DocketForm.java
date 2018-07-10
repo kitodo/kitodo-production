@@ -176,7 +176,7 @@ public class DocketForm extends BasisForm {
      */
     public List getDocketFiles() {
         try {
-            return Files.walk(Paths.get(ConfigCore.getParameter("xsltFolder")))
+            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))
                     .filter(s -> s.toString().endsWith(".xsl"))
                     .map(Path::getFileName)
                     .sorted()

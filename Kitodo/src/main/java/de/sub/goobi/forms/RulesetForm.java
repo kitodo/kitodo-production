@@ -184,7 +184,7 @@ public class RulesetForm extends BasisForm {
      */
     public List getRulesetFilenames() {
         try {
-            return Files.walk(Paths.get(ConfigCore.getParameter("RegelsaetzeVerzeichnis")))
+            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))
                     .filter(f -> f.toString().endsWith(".xml"))
                     .map(Path::getFileName)
                     .sorted()
