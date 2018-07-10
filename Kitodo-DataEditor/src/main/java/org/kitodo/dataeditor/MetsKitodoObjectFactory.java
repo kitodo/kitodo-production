@@ -15,6 +15,10 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataeditor.entities.FileSec;
+import org.kitodo.dataeditor.entities.LogicalStructMapType;
+import org.kitodo.dataeditor.entities.PhysicalStructMapType;
+import org.kitodo.dataeditor.entities.StructLink;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
@@ -66,21 +70,21 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     }
 
     /**
-     * Creates a StructMap object of type "PHYSICAL".
+     * Creates a PhysicalStructMapType object.
      *
-     * @return The StructMap object.
+     * @return The PhysicalStructMapType object.
      */
-    public StructMapType createPhysicalStructMapType() {
-        return createStructMapTypeOfType("PHYSICAL");
+    public PhysicalStructMapType createPhysicalStructMapType() {
+        return new PhysicalStructMapType(createStructMapTypeOfType("PHYSICAL"));
     }
 
     /**
-     * Creates a StructMap object of type "LOGICAL".
+     * Creates a LogicalStructMapType object.
      *
-     * @return The StructMap object.
+     * @return The LogicalStructMapType object.
      */
-    public StructMapType createLogicalStructMapType() {
-        return createStructMapTypeOfType("LOGICAL");
+    public LogicalStructMapType createLogicalStructMapType() {
+        return new LogicalStructMapType(createStructMapTypeOfType("LOGICAL"));
     }
 
     private StructMapType createStructMapTypeOfType(String type) {
@@ -123,6 +127,24 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         divType.setTYPE(type);
         divType.getDMDID().add(dmdSecOfLogicalRootDiv);
         return divType;
+    }
+
+    /**
+     * Creates a StructLink object.
+     * 
+     * @return The StructLink object.
+     */
+    public StructLink createStructLink() {
+        return new StructLink(super.createMetsTypeStructLink());
+    }
+
+    /**
+     * Creates a FileSec object.
+     * 
+     * @return The FileSec object.
+     */
+    public FileSec createFileSec() {
+        return new FileSec(super.createMetsTypeFileSec());
     }
 
     /**
