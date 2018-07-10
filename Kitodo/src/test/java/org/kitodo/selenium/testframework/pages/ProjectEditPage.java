@@ -43,14 +43,6 @@ public class ProjectEditPage extends Page {
     @FindBy(className = "ui-selectonemenu-trigger")
     private WebElement selectTrigger;
 
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:startdate_input")
-    private WebElement startDateInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:enddate_input")
-    private WebElement endDateInput;
-
     public ProjectEditPage() {
         super("pages/projectEdit.jsf");
     }
@@ -64,15 +56,6 @@ public class ProjectEditPage extends Page {
         selectTrigger.click();
         WebElement option = Browser.getDriver().findElement(By.id("editForm:projectTabView:client_1"));
         option.click();
-        startDateInput.clear();
-        endDateInput.clear();
-        if (SystemUtils.USER_LANGUAGE.equals("en")) {
-            startDateInput.sendKeys("08/05/18");
-            endDateInput.sendKeys("08/05/19");
-        } else {
-            startDateInput.sendKeys("05.08.18");
-            endDateInput.sendKeys("05.08.19");
-        }
         return this;
     }
 

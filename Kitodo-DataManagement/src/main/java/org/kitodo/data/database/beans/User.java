@@ -101,6 +101,7 @@ public class User extends BaseIndexedBean {
         this.projects = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.filters = new ArrayList<>();
+        this.setLanguage("de");
     }
 
     /**
@@ -113,6 +114,7 @@ public class User extends BaseIndexedBean {
 
         this.setId(user.getId());
         this.setIndexAction(user.getIndexAction());
+        this.setLanguage(user.getLanguage());
         this.active = user.active;
         this.configProductionDateShow = user.configProductionDateShow;
         this.css = user.css;

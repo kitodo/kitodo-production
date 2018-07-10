@@ -75,7 +75,7 @@ public class SpracheForm implements Serializable {
                 User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
                 key = user.getLanguage();
             } catch (DAOException e) {
-                logger.error("Error in retrieving user : " + e.getMessage());
+                Helper.setErrorMessage("Error in retrieving user ", logger, e);
             }
         }
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
@@ -167,9 +167,9 @@ public class SpracheForm implements Serializable {
             user.setLanguage(locale.toString());
             serviceManager.getUserService().save(user);
         } catch (DataException e) {
-            logger.error("Error in saving user : " + e.getMessage());
+            Helper.setErrorMessage("Error in saving user", logger, e);
         } catch (DAOException e) {
-            logger.error("Error in retrieving user" + e.getMessage());
+            Helper.setErrorMessage("Error in retrieving user", logger, e);
         }
         FacesContext context = FacesContext.getCurrentInstance();
         context.getViewRoot().setLocale(locale);
