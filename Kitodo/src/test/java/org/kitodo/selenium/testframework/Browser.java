@@ -190,8 +190,9 @@ public class Browser {
                 new WebDriverWait(webDriver, 5).ignoring(StaleElementReferenceException.class)
                         .until(ExpectedConditions.elementToBeClickable(webElement));
                 webElement.click();
+                Thread.sleep(5000);
                 return;
-            } catch (StaleElementReferenceException e) {
+            } catch (StaleElementReferenceException | InterruptedException e) {
                 logger.warn("Save button is not accessible, retry now (" + attempt + ". attempt)");
             }
         }
