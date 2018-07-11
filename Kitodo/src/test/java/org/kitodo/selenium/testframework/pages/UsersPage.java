@@ -102,10 +102,7 @@ public class UsersPage extends Page {
      * @return The number of rows of user groups table.
      */
     public int countListedUserGroups() throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         List<WebElement> listOfRows = getRowsOfTable(userGroupsTable);
         return listOfRows.size();
     }
@@ -116,10 +113,7 @@ public class UsersPage extends Page {
      * @return The number of rows of the clients table.
      */
     public int countListedClients() throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.CLIENTS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.CLIENTS.getIndex());
         List<WebElement> listOfRows = getRowsOfTable(clientsTable);
         return listOfRows.size();
     }
@@ -131,10 +125,7 @@ public class UsersPage extends Page {
      * @return The number of rows of ldab groups table.
      */
     public int countListedLdapGroups() throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
         List<WebElement> listOfRows = getRowsOfTable(ldapGroupsTable);
         return listOfRows.size();
     }
@@ -228,10 +219,7 @@ public class UsersPage extends Page {
      * @return The user group edit page.
      */
     public UserGroupEditPage editUserGroup(UserGroup userGroup) throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
 
         WebElement userGroupEditLink = Browser.getDriver()
                 .findElementByXPath("//a[@href='/kitodo/pages/usergroupEdit.jsf?id=" + userGroup.getId() + "']");
@@ -247,10 +235,7 @@ public class UsersPage extends Page {
      * @return The user group edit page.
      */
     public UserGroupEditPage editUserGroup(String userGroupTitle) throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
 
         List<WebElement> tableRows = getRowsOfTable(userGroupsTable);
 
@@ -271,10 +256,7 @@ public class UsersPage extends Page {
      * @return The ldap group edit page.
      */
     public LdapGroupEditPage editLdapGroup(String ldapGroupTitle) throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
 
         List<WebElement> tableRows = getRowsOfTable(ldapGroupsTable);
 
@@ -300,10 +282,7 @@ public class UsersPage extends Page {
      * @return The list of user group titles
      */
     public List<String> getUserGroupTitles() throws Exception {
-        if (isNotAt()) {
-            goTo();
-            switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        }
+        switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
         return getTableDataByColumn(userGroupsTable, 0);
     }
 

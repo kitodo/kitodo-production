@@ -11,9 +11,17 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class TasksPage extends Page {
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "tasksTabView:taskTable_data")
+    private WebElement tasksTable;
 
     public TasksPage() {
         super("pages/tasks.jsf");
@@ -27,5 +35,12 @@ public class TasksPage extends Page {
     public TasksPage goTo() throws Exception {
         Pages.getTopNavigation().gotoTasks();
         return this;
+    }
+
+    public int countListedTasks() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getRowsOfTable(tasksTable).size();
     }
 }
