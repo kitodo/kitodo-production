@@ -52,6 +52,7 @@
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.1.6</jaxen.version>
         <jersey.version>1.19.3</jersey.version>
+        <jhove.version>1.20.1</jhove.version>
         <joda-time.version>2.10</joda-time.version>
         <myfaces.version>2.2.12</myfaces.version>
         <mysql.version>5.1.38</mysql.version>
@@ -117,6 +118,7 @@
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
         <module>Kitodo-ImageManagementModule</module>
+        <module>Kitodo-LongTimePreservationValidationModule</module>
         <module>Kitodo-PersistentIdentifier</module>
         <module>Kitodo-Docket</module>
         <module>Kitodo-Command</module>
