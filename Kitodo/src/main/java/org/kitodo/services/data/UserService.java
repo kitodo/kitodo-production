@@ -252,8 +252,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
     }
 
-    public Client getCurrentSessionClient() {
-        return getAuthenticatedUser().getSessionClient();
+    /**
+     * Gets the session client of the current authenticated user.
+     * 
+     * @return The client object or null if no session client is set or no user is
+     *         authenticated.
+     */
+    public Client getSessionClientOfAuthenticatedUser() {
+        if (Objects.nonNull(getAuthenticatedUser())) {
+            return getAuthenticatedUser().getSessionClient();
+        } else {
+            return null;
+        }
     }
 
     /**
