@@ -15,12 +15,12 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html">
     <p:importEnum type="org.kitodo.enums.ObjectType" var="objectTypeEnum"/>
-    <p:dataTable value="#{DesktopForm.objectTypes}" var="objectType">
-            <p:column headerText="Art">
-                <h:outputText value="#{objectType.translation}"/>
-            </p:column>
-            <p:column headerText="Anzahl">
-                <h:outputText value="#{DesktopForm.getNumberOfElements(objectType)}"/>
-            </p:column>
+    <p:dataTable id="statisticsTable" value="#{DesktopForm.objectTypes}" var="objectType">
+        <p:column headerText="Art">
+            <h:outputText value="#{objectType.translation}"/>
+        </p:column>
+        <p:column headerText="Anzahl">
+            <h:outputText value="#{DesktopForm.getNumberOfElements(objectType)}"/>
+        </p:column>
     </p:dataTable>
 </ui:composition>
