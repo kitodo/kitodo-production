@@ -11,24 +11,26 @@
 
 package de.sub.goobi.forms;
 
-import javax.enterprise.context.RequestScoped;
-import javax.inject.Named;
-
 import de.sub.goobi.helper.Helper;
-import org.apache.logging.log4j.LogManager;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.enums.ObjectType;
-import org.kitodo.services.ServiceManager;
-
-import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
+import org.kitodo.services.ServiceManager;
+
+
 @Named("DesktopForm")
 @RequestScoped
 public class DesktopForm extends BasisForm {
-    private final static Logger logger = LogManager.getLogger(DesktopForm.class);
+    private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private transient ServiceManager serviceManager = new ServiceManager();
 
     public DesktopForm() {
@@ -39,6 +41,11 @@ public class DesktopForm extends BasisForm {
         return ObjectType.values();
     }
 
+    /**
+     * Get tasks.
+     *
+     * @return task list
+     */
     public List getTasks() {
         try {
             return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10);
@@ -48,6 +55,11 @@ public class DesktopForm extends BasisForm {
         }
     }
 
+    /**
+     * Get processes.
+     *
+     * @return process list
+     */
     public List getProcesses() {
         try {
             return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
@@ -57,6 +69,11 @@ public class DesktopForm extends BasisForm {
         }
     }
 
+    /**
+     * Get projects.
+     *
+     * @return project list
+     */
     public List getProjects() {
         try {
             return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
@@ -66,6 +83,13 @@ public class DesktopForm extends BasisForm {
         }
     }
 
+    /**
+     * Get number of elements of given type 'objectType' in index.
+     *
+     * @param objectType
+     *          type of elements
+     * @return number of elements
+     */
     public int getNumberOfElements(ObjectType objectType) {
         try {
             switch (objectType) {
@@ -97,6 +121,8 @@ public class DesktopForm extends BasisForm {
                     return serviceManager.getTemplateService().findAll().size();
                 case USERGROUP:
                     return serviceManager.getUserGroupService().findAll().size();
+                default:
+                    return 0;
             }
 
         } catch (DataException e) {

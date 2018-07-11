@@ -62,7 +62,7 @@
                 <p:commandLink id="deleteProcess"
                                action="#{ProzessverwaltungForm.delete}"
                                title="#{msgs.delete}"
-                               update=":processesForm:processesTable">
+                               update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{ProzessverwaltungForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
