@@ -30,7 +30,7 @@
                                   icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
                     </div>
                 </div>
-                <ui:include src="/WEB-INF/templates/includes/tasks/taskList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
             </p:panel>
             <p:panel styleClass="desktop-widget">
                 <div class="content-header">
@@ -38,7 +38,7 @@
                         <h3>#{msgs.processes}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
                                   styleClass="secondary-button reload-button">
-                                <p:ajax update="processesForm:processesTable"/>
+                                <p:ajax update="processTable"/>
                         </p:commandButton>
                         <p:button id="allProcesses" value="#{msgs.allProcesses}"
                                   outcome="processes"
@@ -46,7 +46,7 @@
 
                     </div>
                 </div>
-                <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
             </p:panel>
             <p:panel styleClass="desktop-widget">
                 <div class="content-header">
@@ -54,14 +54,14 @@
                         <h3>#{msgs.projects}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
                                   styleClass="secondary-button reload-button">
-                            <p:ajax update="projectsTable"/>
+                            <p:ajax update="projectTable"/>
                         </p:commandButton>
                         <p:button id="allProjects" value="#{msgs.allProjects}"
                                   outcome="projects"
                                   icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
                     </div>
                 </div>
-                <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
             </p:panel>
             <p:panel styleClass="desktop-widget">
                 <div class="content-header">

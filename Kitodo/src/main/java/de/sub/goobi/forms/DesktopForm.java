@@ -22,6 +22,9 @@ import org.kitodo.services.ServiceManager;
 
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Named("DesktopForm")
 @RequestScoped
 public class DesktopForm extends BasisForm {
@@ -34,6 +37,33 @@ public class DesktopForm extends BasisForm {
 
     public ObjectType[] getObjectTypes() {
         return ObjectType.values();
+    }
+
+    public List getTasks() {
+        try {
+            return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("tasks") }, logger, e);
+            return new ArrayList();
+        }
+    }
+
+    public List getProcesses() {
+        try {
+            return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("processes") }, logger, e);
+            return new ArrayList();
+        }
+    }
+
+    public List getProjects() {
+        try {
+            return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            return new ArrayList();
+        }
     }
 
     public int getNumberOfElements(ObjectType objectType) {

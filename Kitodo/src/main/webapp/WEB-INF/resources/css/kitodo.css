@@ -451,6 +451,11 @@ section#content-section {
     background: none;
 }
 
+#desktop-grid .ui-grid-row {
+    height: 30%;
+    overflow-y: scroll;
+}
+
 #desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell {
     background-color: white !important;
     padding: 0;

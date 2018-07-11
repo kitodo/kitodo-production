@@ -1,0 +1,38 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable id="processTable"
+                 value="#{DesktopForm.processes}"
+                 var="process">
+        <p:column headerText="#{msgs.title}">
+            <h:outputText value="#{process.title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.status}">
+            <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
+            <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
+                            style="width:#{process.progressClosed * 0.8}px;height:10px"/>
+            <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
+                            style="width:#{process.progressInProcessing * 0.8}px;height:10px"/>
+            <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
+                            style="width:#{process.progressOpen * 0.8}px;height:10px"/>
+            <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
+                            style="width:#{process.progressLocked * 0.8}px;height:10px"/>
+            <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+        </p:column>
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn"/>
+    </p:dataTable>
+</ui:composition>
