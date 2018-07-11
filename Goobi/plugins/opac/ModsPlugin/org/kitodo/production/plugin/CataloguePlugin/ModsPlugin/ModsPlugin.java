@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,9 +44,11 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.filter.ElementFilter;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
 import org.jdom.input.SAXBuilder;
@@ -164,6 +167,23 @@ public class ModsPlugin implements Plugin {
     private GetOpac client;
 
     /**
+     * The SAXBuilder is used to transform XML documents using XSLT files.
+     */
+    private static SAXBuilder sb = new SAXBuilder();
+
+    private static String xsltFilepath = "";
+
+    private static File transformationScript = null;
+
+    private static File tempFile = null;
+
+    private static List<File> tempFiles = null;
+
+    private static XMLOutputter xmlOutputter = null;
+
+    private HashMap<String, Element> structureMaps = null;
+
+    /**
      * Namespace and tag name constants used to create METS documents
      * encapsulating MODS documents
      */
@@ -200,6 +220,11 @@ public class ModsPlugin implements Plugin {
     private static final String CONF_CATALOGUE = "catalogue";
 
     /**
+     * Human-readable description of the plug-in’s functionality in English.
+     */
+    private static final String PLUGIN_DESCRIPTION = "The MODS plugin can be used to access MODS library catalogue systems.";
+
+    /**
      * Hashmaps with structureTypes (String) as keys and lists of XPath
      * instances values. The lists of XPaths instances describe the elements a
      * MODS document must or must not contain in order to be classified as a
@@ -227,6 +252,10 @@ public class ModsPlugin implements Plugin {
     private static XPath modsXPath = null;
     private static XPath parentIDXPath = null;
     private static XPath identifierXPath = null;
+    private static XPath metsDivXPath = null;
+    private static XPath catalogIDDigitalXPath = null;
+    private static XPath goobiXpath = null;
+
 
     /**
      * Static counter variables for constructing METS DmdSections for multiple
@@ -298,6 +327,9 @@ public class ModsPlugin implements Plugin {
             modsXPath = XPath.newInstance("//mods:mods");
             parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
             identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
+            metsDivXPath = XPath.newInstance(".//mets:div");
+            catalogIDDigitalXPath = XPath.newInstance(".//goobi:metadata[@name='CatalogIDDigital']");
+            goobiXpath = XPath.newInstance(".//goobi:goobi");
         } catch (JDOMException e) {
             logger.error("Error while initializing XPath variables: " + e.getMessage());
         }
@@ -325,8 +357,410 @@ public class ModsPlugin implements Plugin {
      * @see org.goobi.production.plugin.UnspecificPlugin#getDescription(Locale)
      */
     public static String getDescription(Locale language) {
-        return "The MODS plugin can be used to access MODS library catalogue systems.";
+        return PLUGIN_DESCRIPTION;
     }
+
+    /**
+     * Extracts the structureMap Element from the given Element 'rootElement' and returns it.
+     * @param rootElement
+     *          the Element from which the structureMap is extracted
+     * @return the structureMap Element if found
+     * @throws JDOMException
+     */
+    private Element getStructureMap(Element rootElement) throws JDOMException {
+        Element structureMap = null;
+        ElementFilter structMapFilter = new ElementFilter("structMap", METS_NAMESPACE);
+        for (Iterator<Element> structMapElementIter = rootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
+            Element structMapElement = structMapElementIter.next();
+            if (Objects.equals(structMapElement.getAttributeValue(METS_TYPE), METS_LOGICAL)) {
+                structureMap = structMapElement;
+                break;
+            }
+        }
+        if (Objects.equals(structureMap, null)) {
+            throw new JDOMException("ERROR: no logical structmap found in existing mets document!");
+        }
+        return structureMap;
+    }
+
+    /**
+     * Transforms the given XML Document 'importDoc' via the static XSL transformation
+     * script 'transformationScript' into the ModsGoobi format, wraps the resulting
+     * ModsGoobi document inside a Mets Descriptive Metadata Section and saves it to
+     * the given File 'metaFile'. If the file already exists and contains a Mets document,
+     * the new Metadata section will be added to it. Otherwise, the file and the corresponding
+     * Mets structures will be created.
+     * The method returns the name of the DocStructType of 'importDoc'.
+     *
+     * @param importDoc
+     *          the document that is being added to the given metadata file.
+     * @param metaFile
+     *          the metadata file to which the given document will be added
+     * @param timeout
+     *          a timeout in milliseconds after which the operation shall return
+     * @return the name of the DocStructType of the given Docment 'importDoc'
+     * @throws IOException
+     * @throws JDOMException
+     */
+    private Element addDocumentToFile(Document importDoc, File metaFile, long timeout) throws IOException, JDOMException {
+
+        Document metsDocument = null;
+        Element rootElement = null;
+
+        // create new file and mets structures, if it doesn't exist
+        if (!metaFile.exists() || metaFile.length() == 0) {
+
+            metaFile.createNewFile();
+            tempFiles.add(metaFile);
+
+            // Build the metsDocument directly
+            metsDocument = createMetsDocument();
+            rootElement = metsDocument.getRootElement();
+        }
+        // read file and existing mets structures, if file already exists
+        else {
+            // read mets document from existing file
+            metsDocument = sb.build(metaFile);
+            rootElement = metsDocument.getRootElement();
+        }
+
+        Document transformedDoc = transformXML(importDoc, transformationScript);
+
+        String documentID = ((Element) identifierXPath.selectSingleNode(transformedDoc)).getText();
+
+        // XML MODS data of document itself
+        Element modsElement = (Element) modsXPath.selectSingleNode(transformedDoc);
+
+        Element metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
+        rootElement.addContent(metadataSection);
+
+        metsDocument.setRootElement(rootElement);
+
+        // save updated file
+        xmlOutputter.output(metsDocument, new FileWriter(metaFile.getAbsoluteFile()));
+
+        return metadataSection;
+    }
+
+    /**
+     * Adds a mets div with the given type 'docStructType' for the given metadata section 'dmdSec' to the given logical
+     * structure map 'structureMap' and returns the updated structure map.
+     *
+     * @param structureMap
+     *          The structure map to which a mets div will be added for the given metadata section 'dmdSec'
+     * @param docStructType
+     *          The type of the mets div to be added to the structure map
+     * @param dmdSec
+     *          The metadata section for which a mets div is added to the given structure map
+     * @return The updated logical structure map
+     * @throws JDOMException
+     * @throws IOException
+     */
+    private Element addMetadataSectionToStructureMap(Element structureMap, String docStructType, Element dmdSec) throws JDOMException, IOException {
+
+        // 1: create mets:div for given metadata section
+        Element structureMapDiv = createMETSStructureMapDiv(dmdSec.getAttributeValue(METS_ID), docStructType);
+
+        // 2: add new mets:div to existing mets:divs
+        for (Object childObject : structureMap.getChildren("div", METS_NAMESPACE)) {
+            Element childElement = (Element) childObject;
+            structureMapDiv.addContent((Element) childElement.clone());
+        }
+
+        // 3: remove children that have been moved to new mets:div
+        structureMap.removeChildren("div", METS_NAMESPACE);
+
+        // 4: add new topmost mets:div to structure map
+        structureMap.addContent(structureMapDiv);
+
+        // 5: return updated structure map
+        return structureMap;
+    }
+
+    /**
+     * Reads the METS object contained in the given file, adds divs for all its descriptive metadata sections to a
+     * clone of the given structure map, adds it to the METS object and saves the updated METS object back to the file.
+     * @param structureMap
+     *          The structure map to which divs are added for all metadata sections of the METS object in the given file
+     * @param file
+     *          The file containing the metadata sections for which mets divs are added to the given structure map
+     */
+    private void addStructureMapToFile(Element structureMap, File file) throws JDOMException, IOException {
+        Document metsDocument = sb.build(file);
+        Element rootElement = metsDocument.getRootElement();
+        Element customStructureMap = (Element) structureMap.clone();
+
+        // collect all DMDIDs for which dmd sections exist in given file
+        ArrayList<String> dmdids = new ArrayList<>();
+        ElementFilter dmdSecFilter = new ElementFilter("dmdSec", METS_NAMESPACE);
+        for (Iterator<Element> dmdSecIter = rootElement.getDescendants(dmdSecFilter); dmdSecIter.hasNext();) {
+            Element dmdSecElement = dmdSecIter.next();
+            dmdids.add(dmdSecElement.getAttributeValue(METS_ID));
+        }
+
+        // remove DMDID attribute from mets:div elements in custom structure map for which no corresponding
+        // dmd section exists in the given file
+        ArrayList<Element> metsDivNodes = (ArrayList<Element>) metsDivXPath.selectNodes(customStructureMap);
+        for (Element metsDiv : metsDivNodes) {
+            if (!dmdids.contains(metsDiv.getAttributeValue(METS_DMD_ID))) {
+                metsDiv.removeAttribute(METS_DMD_ID);
+            }
+        }
+
+        Element structureMapElement = (Element) rootElement.getChild("structMap", METS_NAMESPACE);
+        if (Objects.equals(structureMapElement, null) || !structureMapElement.getAttributeValue(METS_TYPE).equals(METS_LOGICAL)){
+            rootElement.addContent(customStructureMap);
+            xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
+        }
+    }
+
+
+    /**
+     * Create DMD sections for all elements in the given list 'children' (imported via the SRU interface) and save them
+     * to the given file.
+     * If the given File already contains a METS structure, it is augmented with the created metadata sections.
+     * Otherwise, a new basic METS structure is created to which the metadata sections are added.
+     * @param file
+     *          The file to which the METS structure with the created metadata sections is saved
+     * @param children
+     *          The imported elements for which DMD sections are created
+     * @return A hash map containing the created DMD sections as keys and their doc struct types as values.
+     * @throws JDOMException
+     * @throws IOException
+     */
+    private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children) throws JDOMException, IOException {
+
+        Document metsDocument = null;
+        Element rootElement = null;
+
+        // ensure the file contains correct base mets structure!
+        if(file.length() > 0) {
+            metsDocument = sb.build(file);
+        }
+        else {
+            metsDocument = createMetsDocument();
+        }
+
+        rootElement = metsDocument.getRootElement();
+
+        Element childElement;
+        Document transformedChild;
+
+        HashMap<Element, String> childMetadataSections = new HashMap<>();
+
+        for (int i = 0; i < children.size(); i++) {
+            childElement = children.get(i);
+
+            // determine structType from original child doc
+            String childStructureType = getStructureType(childElement);
+
+            // transform child document with XSL
+            transformedChild = transformXML(removeAllChildrenButOne(childElement.getDocument(), i), transformationScript);
+            Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
+
+            // create metadata section from transformed child doc
+            Element childMetadataSection = createMETSDescriptiveMetadata((Element) childMods.clone());
+
+            rootElement.addContent(childMetadataSection);
+
+            childMetadataSections.put(childMetadataSection, childStructureType);
+        }
+
+        xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
+
+        return childMetadataSections;
+    }
+
+    /**
+     * Creates descriptive metadata sections for all elements in the given list 'childDMDSections'
+     * and returns the resulting list.
+     *
+     * @param childDMDSections
+     *          List of DMD sections for which structure map divs are created and returned
+     * @return list of structure map divs
+     * @throws JDOMException
+     */
+    private List<Element> addChildDocumentsToStructureDiv(HashMap<Element, String> childDMDSections) throws JDOMException {
+
+        Element dmdSec;
+
+        List<Element> childStructureMapDivs = new LinkedList<>();
+
+        for (Map.Entry<Element, String> entry : childDMDSections.entrySet()) {
+            dmdSec = entry.getKey();
+            childStructureMapDivs.add(createMETSStructureMapDiv(dmdSec.getAttributeValue(METS_ID), entry.getValue()));
+        }
+
+        return childStructureMapDivs;
+    }
+
+
+    private Element addChildDocumentsToStructMap(List<Element> childDocuments, File file, Element structureMap) throws JDOMException, IOException {
+        if (childDocuments.size() > 0) {
+            HashMap<Element, String> childMetadataSections = saveChildMetadataSectionsToFile(file, childDocuments);
+            for (Element childStructureMapDiv : addChildDocumentsToStructureDiv(childMetadataSections)) {
+                structureMap.addContent(childStructureMapDiv);
+            }
+        }
+        return structureMap;
+    }
+
+    /**
+     * Retrieve and return a given documents ID. Before extracting the ID, the document needs to be transformed
+     * into the internal MetsModsGoobi format to ensure the ID is found at a known location.
+     *
+     * @param originalDocument
+     *          document whose ID is extracted and returned
+     * @param xsltFile
+     *          mapping file used to transform the given document
+     * @return String ID of the given document
+     */
+    private String extractDocumentIdentifier(Document originalDocument, File xsltFile) throws JDOMException {
+        Document transformedDocument = transformXML(originalDocument, xsltFile);
+        return ((Element) identifierXPath.selectSingleNode(transformedDocument)).getText();
+    }
+
+    /**
+     * Add the ID of the given metadata section 'anchorMetadataSection' to all topmost metadata sections referenced in
+     * the given 'structureMap', saves the result to the given file 'metadataFile' and returns the updated structure
+     * map.
+     * @param metadataFile
+     *          The file to which the updated metadata sections containing the extracted anchor ID are saved
+     * @param structureMap
+     *          The structure map whose topmost divs reference the metadata sections to which the anchor ID will be added
+     * @param anchorMetadataSection
+     *          The metadata section that acts as an anchor
+     * @return The updated structure map
+     * @throws JDOMException
+     * @throws IOException
+     */
+    private Element addAnchorIDToMetadatasections(File metadataFile, Element structureMap, Element anchorMetadataSection, String ancherClassName) throws JDOMException, IOException {
+        // anchor element that will be added to all corresponding dmd sections!
+        Element anchorCatalogIDElement = (Element) catalogIDDigitalXPath.selectSingleNode(anchorMetadataSection);
+        String anchorCatalogID = anchorCatalogIDElement.getText();
+
+        Element anchorIDElement = new Element("metadata", GOOBI_NAMESPACE);
+
+        anchorIDElement.setAttribute("anchorId", ancherClassName);
+        anchorIDElement.setAttribute("name", "CatalogIDDigital");
+        anchorIDElement.setText(anchorCatalogID);
+
+        // retrieve all dmd sections from given metadata file
+        Document childDoc = sb.build(metadataFile);
+        Element childRoot = childDoc.getRootElement();
+
+        // get all topmost mets:div elements in given structureMap
+        // (hold DMDID references to metadata sections in file to which the anchor ID should be added!)
+        XPath topMostDivXpath = XPath.newInstance("mets:div");
+
+        for (Object topmostDiv : topMostDivXpath.selectNodes(structureMap)) {
+            Element currentTopMostElement = (Element) topmostDiv;
+
+            String metadatasectionID = currentTopMostElement.getAttributeValue(METS_DMD_ID);
+
+            XPath dmdSecXPath = XPath.newInstance("mets:dmdSec[@ID='" + metadatasectionID + "']");
+
+            Element childMetadataSection = (Element) dmdSecXPath.selectSingleNode(childRoot);
+
+            if(!Objects.equals(childMetadataSection, null)) {
+
+                Element goobiElement = (Element) goobiXpath.selectSingleNode(childMetadataSection);
+
+                goobiElement.addContent((Element) anchorIDElement.clone());
+            }
+        }
+
+        // save updated file
+        xmlOutputter.output(childDoc, new FileWriter(metadataFile.getAbsoluteFile()));
+
+        return structureMap;
+    }
+
+    /**
+     * Create and add a descriptive metadata section and a corresponding mets div element for the given Document
+     * 'document' in the given logical structure map, update the given metadataFile accordingly and return the updated
+     * structure map.
+     * If the given parameter 'addChildren' is true, the child elements of the given document will be retrieved and
+     * processed as well.
+     *
+     * @param document
+     *          The Document for which a DMD section and corresponding structure map div is created
+     * @param metadataFile
+     *          The metadata file to which the DMD section and updated structure map will be saved
+     * @param structureMap
+     *          The structure map to which a mets div will be added for the given Document 'document'
+     * @param documentID
+     *          The original ID of the given document which can be used to retrieve its children from the queried SRU interface
+     * @param addChildren
+     *          Flag indicating whether the child documents of the given documents are to be added as well or not
+     * @param timeout
+     *          Timeout in milliseconds after which the operation shall return
+     * @return The updated logical structure map
+     * @throws RuntimeException
+     * @throws JDOMException
+     * @throws IOException
+     */
+    private Element addDocumentToFileAndStructureMap(Document document, File metadataFile, Element structureMap, String documentID, boolean addChildren, long timeout) throws RuntimeException, JDOMException, IOException {
+
+        Element modsElement = (Element) modsXPath.selectSingleNode(document);
+        // modsElement is 'null' if last structural element pointed
+        // to a "virtueller Bestand" as parent element;
+        // this is not allowed in Kitodo, therefore throw an
+        // exception here!
+        if (Objects.equals(modsElement, null)) {
+            throw new RuntimeException("Requested document with ID '" + documentID
+                    + "' is not associated with a valid inventory.");
+        }
+
+        Element metadatasection = null;
+
+        String lastStructureType = getStructureType(modsElement);
+
+        // Check whether the current DocStructType has to be saved to separate anchor file or not
+        DocStructType docStructType = preferences.getDocStrctTypeByName(lastStructureType);
+        String anchorClass = docStructType.getAnchorClass();
+
+        // use anchor file if current docstruct has anchor class
+        if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
+            String anchorFilenameSuffix = anchorClass.equals("true") ? "anchor" : anchorClass;
+            String anchorFilename = FilenameUtils.removeExtension(metadataFile.getName()) + "_" + anchorFilenameSuffix;
+            String anchorFileFullPath = metadataFile.getParent() + File.separator + anchorFilename + ".xml";
+
+            File anchorFile = new File(anchorFileFullPath);
+
+            metadatasection = addDocumentToFile(document, anchorFile, timeout);
+        }
+        // use metadata file if current docstruct has NO anchor class
+        else {
+            metadatasection = addDocumentToFile(document, metadataFile, timeout);
+        }
+
+        if (addChildren) {
+            structureMap = addChildDocumentsToStructMap(retrieveChildDocuments(documentID, timeout), metadataFile, structureMap);
+        }
+
+        if (!Objects.equals(anchorClass, null) && !anchorClass.isEmpty()) {
+            // add CatalogueIDDigital of anchor metadatasection to last metadatasection _before_ anchor!
+            // TODO: find better (e.g. more robust!) way to select metadata sections to which the anchor ID should be added!
+            if (tempFiles.size() > 0) {
+                // add anchor references to _last_ anchor file
+                if (tempFiles.size() > 1) {
+                    addAnchorIDToMetadatasections(tempFiles.get(tempFiles.size() - 2), structureMap, metadatasection,
+                            anchorClass);
+                }
+                // add anchor references to _base_ file (if the requested document itself has a docstruct type with "anchor=true" in the used ruleset!)
+                else {
+                    addAnchorIDToMetadatasections(metadataFile, structureMap, metadatasection, anchorClass);
+                }
+            }
+        }
+
+        structureMap = addMetadataSectionToStructureMap(structureMap, lastStructureType, metadatasection);
+
+        // return the updated map
+        return structureMap;
+    }
+
 
     /**
      * The function getHit() returns the hit with the given index from the given
@@ -354,7 +788,12 @@ public class ModsPlugin implements Plugin {
 
         loadMappingFile(configuration.getTitle());
 
-        String xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
+        xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
+        transformationScript = new File(xsltFilepath);
+
+        tempFiles = new LinkedList<File>();
+
+        structureMaps = new HashMap<>();
 
         Map<String, Object> result = new HashMap<String, Object>();
 
@@ -362,7 +801,7 @@ public class ModsPlugin implements Plugin {
 
         String resultXML = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
 
-        XMLOutputter xmlOutputter = new XMLOutputter();
+        xmlOutputter = new XMLOutputter();
         xmlOutputter.setFormat(Format.getPrettyFormat());
 
         initializeXPath();
@@ -390,10 +829,25 @@ public class ModsPlugin implements Plugin {
         }
 
         else {
-            SAXBuilder sb = new SAXBuilder();
+            sb = new SAXBuilder();
             try {
+                tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
+
                 Document doc = sb.build(new StringReader(resultXML));
                 initializeStructureToDocTypeMapping();
+
+                String docID = extractDocumentIdentifier(doc, transformationScript);
+
+                // read "additionalDetails" from document via XPaths elements
+                // specified in plugin configuration file
+                Document transformedDocument = transformXML(doc, transformationScript);
+                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
+                    XPath detailPath = XPath.newInstance(detailField.getValue());
+                    Element detailElement = (Element) detailPath.selectSingleNode(transformedDocument);
+                    if (!Objects.equals(detailElement, null)) {
+                        result.put(detailField.getKey(), detailElement.getText());
+                    }
+                }
 
                 @SuppressWarnings("unchecked")
                 ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
@@ -405,132 +859,39 @@ public class ModsPlugin implements Plugin {
                     }
                 }
 
-                // Build the metsDocument directly
-                Document metsDocument = createMetsDocument();
-                Element rootElement = metsDocument.getRootElement();
+                // Global structmap holding the whole structure map (will be added to all metadata files at the end of the loop)
+                Element structMap = createMETSStructureMap(METS_LOGICAL);
 
-                // initialize Mets structMap
-                Element structureMap = createMETSStructureMap(METS_LOGICAL);
-                String lastStructureType = getStructureType((Element) modsXPath.selectSingleNode(doc));
+                structMap = addDocumentToFileAndStructureMap(doc, tempFile, structMap, docID,  true, timeout);
 
-                // retrieve parent record before transforming requested document
-                // (since "localParentID" is lost during XSL transformation)
+                // retrieve parent record from original untransformed document
+                // (since "localParentID" is omitted during XSL transformation)
                 String parentXML = retrieveParentRecord(doc, timeout);
 
-                File transformationScript = new File(xsltFilepath);
-
-                doc = transformXML(doc, transformationScript, sb);
-
-                String documentID = ((Element) identifierXPath.selectSingleNode(doc)).getText();
-
-                // read "additionalDetails" from document via XPaths elements
-                // specified in plugin configuration file
-                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
-                    XPath detailPath = XPath.newInstance(detailField.getValue());
-                    Element detailElement = (Element) detailPath.selectSingleNode(doc);
-                    if (!Objects.equals(detailElement, null)) {
-                        result.put(detailField.getKey(), detailElement.getText());
-                    }
-                }
-
-                // XML MODS data of document itself
-                Element modsElement = (Element) modsXPath.selectSingleNode(doc);
-
-                Element metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
-                rootElement.addContent(metadataSection);
-
-                Element structureMapDiv = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                Element structureMapDivTemp = null;
-
-                List<Element> childDocuments = retrieveChildDocuments(documentID, timeout);
-                Element childElement;
-                Document transformedChild;
-
-                // *** child elements
-                for (int i = 0; i < childDocuments.size(); i++) {
-                    childElement = childDocuments.get(i);
-
-                    // determine structType from original child doc
-                    String childStructureType = getStructureType(childElement);
-
-                    // transform child document with XSL
-                    transformedChild = transformXML(removeAllChildrenButOne(childElement.getDocument(), i), transformationScript, sb);
-                    Element childMods = (Element) modsXPath.selectSingleNode(transformedChild);
-
-                    // create metadata section from transformed child doc
-                    metadataSection = createMETSDescriptiveMetadata((Element) childMods.clone());
-                    rootElement.addContent(metadataSection);
-
-                    // create structure map div for current child
-                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), childStructureType);
-                    structureMapDiv.addContent(structureMapDivTemp);
-                }
-
-                // reset variable to use it for ancestor elements as well
-                structureMapDivTemp = null;
-
-                // *** ancestor elements
+                // traverse document hierarchy up to root document and add all documents to mets document
                 while (!Objects.equals(parentXML, null)) {
                     resultXML = parentXML;
                     doc = sb.build(new StringReader(resultXML));
                     parentXML = retrieveParentRecord(doc, timeout);
-                    modsElement = (Element) modsXPath.selectSingleNode(doc);
-                    // modsElement is 'null' if last structural element pointed
-                    // to a "virtueller Bestand" as parent element;
-                    // this is not allowed in Kitodo, therefore throw an
-                    // exception here!
-                    if (Objects.equals(modsElement, null)) {
-                        throw new RuntimeException("Requested document with ID '" + documentID
-                                + "' is not associated with a valid inventory.");
-                    }
 
-                    // determine structType from untransformed xml document
-                    lastStructureType = getStructureType(modsElement);
-
-                    doc = transformXML(doc, transformationScript, sb);
-                    // 'doc' can become "null", when the last doc had a
-                    // 'parentID', but trying to retrieve the element with this
-                    // parentID yields an empty SRW container (e.g. not
-                    // containing any MODS documents)
-                    // if 'doc' is null after the XSL transformation (e.g. just
-                    // an empty XML header), 'selectSingleNode' can't be called
-                    // on it anymore! Therefore the loop has to be terminated
-                    // before reaching this point!
-                    modsElement = (Element) modsXPath.selectSingleNode(doc);
-                    metadataSection = createMETSDescriptiveMetadata((Element) modsElement.clone());
-                    rootElement.addContent(metadataSection);
-
-                    // create structure map div for current ancestor
-                    structureMapDivTemp = createMETSStructureMapDiv(metadataSection.getAttributeValue(METS_ID), lastStructureType);
-                    structureMapDivTemp.addContent(structureMapDiv);
-                    structureMapDiv = structureMapDivTemp;
+                    structMap = addDocumentToFileAndStructureMap(doc, tempFile, structMap, docID, false, timeout);
                 }
 
-                // only add ancestors topmost structureMapDiv to structMap if
-                // the div is not null (otherwise add documents own div as
-                // topmost div to structmap)
-                if (!Objects.equals(structureMapDivTemp, null)) {
-                    structureMap.addContent(structureMapDivTemp);
-                } else {
-                    structureMap.addContent(structureMapDiv);
+                // add structure map to all tempFiles!
+                for (File f : tempFiles) {
+                    addStructureMapToFile(structMap, f);
                 }
-
-                rootElement.addContent(structureMap);
-                metsDocument.setRootElement(rootElement);
-                // reviewing the constructed XML mets document can be done via
-                // "xmlOutputter.output(rootElement, System.out);"
+                // FIXME: this shouldn't be necessary (the structmap in "tempFile" should be correct to begin with!)
+                addStructureMapToFile(structMap, tempFile);
 
                 MetsMods mm = new MetsMods(preferences);
-
-                File tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
-
-                xmlOutputter.output(metsDocument, new FileWriter(tempFile.getAbsoluteFile()));
 
                 mm.read(tempFile.getAbsolutePath());
                 // reviewing the constructed DigitalDocument can be done via
                 // "System.out.println(mm.getDigitalDocument());"
 
-                deleteFile(tempFile.getAbsolutePath());
+                deleteTemporaryFiles();
+
                 DigitalDocument dd = mm.getDigitalDocument();
                 ff = new XStream(preferences);
                 ff.setDigitalDocument(dd);
@@ -540,11 +901,14 @@ public class ModsPlugin implements Plugin {
                 dd.setPhysicalDocStruct(dsBoundBook);
 
                 if (!Objects.equals(result.get("shelfmarksource"), null)) {
-                    UGHUtils.replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
+                    org.kitodo.production.plugin.CataloguePlugin.ModsPlugin.UGHUtils
+                            .replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
                 }
 
+                String topStructType = getStructureType((Element) modsXPath.selectSingleNode(doc));
+
                 result.put("fileformat", ff);
-                result.put("type", structureTypeToDocTypeMapping.get(lastStructureType));
+                result.put("type", structureTypeToDocTypeMapping.get(topStructType));
 
             } catch (JDOMException | TypeNotAllowedForParentException | PreferencesException | ReadException
                     | IOException e) {
@@ -695,18 +1059,15 @@ public class ModsPlugin implements Plugin {
 
     /**
      * Transforms the given JDOM document 'inputXML' using the given XSLT file
-     * 'stylesheetfile' and return the transformed Document.
+     * 'stylesheetFile' and return the transformed Document.
      *
      * @param inputXML
      *            The Document that will be transformed
-     * @param stylesheetfile
+     * @param stylesheetFile
      *            The XSLT file containing the transformation rules
-     * @param builder
-     *            The SAXBuilder used to create the Document element from the
-     *            transformed input document
      * @return the transformed JDOM document
      */
-    private Document transformXML(Document inputXML, File stylesheetfile, SAXBuilder builder) {
+    private Document transformXML(Document inputXML, File stylesheetFile) {
 
         XMLOutputter xmlOutputter = new XMLOutputter();
 
@@ -715,12 +1076,12 @@ public class ModsPlugin implements Plugin {
         String outputXMLFilename = dmdSecCounter + "_xslTransformedSRU";
         dmdSecCounter++;
 
-        StreamSource transformSource = new StreamSource(stylesheetfile);
+        StreamSource transformSource = new StreamSource(stylesheetFile);
 
         TransformerFactoryImpl impl = new TransformerFactoryImpl();
 
         try {
-            File outputFile = File.createTempFile(outputXMLFilename, "xml");
+            File outputFile = File.createTempFile(outputXMLFilename, ".xml");
 
             FileOutputStream outputStream = new FileOutputStream(outputFile);
 
@@ -736,7 +1097,7 @@ public class ModsPlugin implements Plugin {
 
             xslfoTransformer.transform(saxSource, saxResult);
 
-            Document resultDoc = builder.build(outputFile);
+            Document resultDoc = sb.build(outputFile);
             deleteFile(outputFile.getAbsolutePath());
 
             return resultDoc;
@@ -786,7 +1147,7 @@ public class ModsPlugin implements Plugin {
         Query childrenQuery = new Query("context.ead.id:" + documentId);
         String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
 
-        SAXBuilder sb = new SAXBuilder();
+        sb = new SAXBuilder();
         try {
             Document childrenDoc = sb.build(new StringReader(allChildren));
             for (Object child : modsXPath.selectNodes(childrenDoc)) {
@@ -913,6 +1274,16 @@ public class ModsPlugin implements Plugin {
         } catch (IOException x) {
             logger.error("Error while deleting file '" + path + "': " + x.getMessage());
         }
+    }
+
+    /**
+     * Removes all temporary files potentially saved during an import
+     */
+    private void deleteTemporaryFiles() {
+        for(File f : tempFiles) {
+            deleteFile(f.getAbsolutePath());
+        }
+        tempFiles = new LinkedList<File>();
     }
 
     /**
