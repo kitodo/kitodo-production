@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -48,7 +49,7 @@ public class DesktopForm extends BasisForm {
      */
     public List getTasks() {
         try {
-            return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10);
+            return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
         } catch (DataException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("tasks") }, logger, e);
             return new ArrayList();
