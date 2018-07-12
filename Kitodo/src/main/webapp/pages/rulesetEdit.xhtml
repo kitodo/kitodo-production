@@ -66,11 +66,11 @@
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
-                            <p:inputText id="file"
-                                         class="input"
-                                         placeholder="#{msgs.file}"
-                                         value="#{RulesetForm.ruleset.file}"
-                                         required="#{empty param['editForm:saveButtonToggler']}"/>
+                            <p:selectOneMenu id="file" value="#{RulesetForm.ruleset.file}">
+                                <f:selectItems value="#{RulesetForm.rulesetFilenames}" var="rulesetFile" itemValue="#{rulesetFile}"
+                                               itemLabel="#{rulesetFile}"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
                         </div>
                     </p:row>
                     <p:row>

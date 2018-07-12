@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -30,8 +31,8 @@ public class DocketEditPage extends Page {
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:docketTabView:file")
-    private WebElement fileInput;
+    @FindBy(className = "ui-selectonemenu-trigger")
+    private WebElement selectTrigger;
 
     @SuppressWarnings("unused")
     @FindBy(className = "ui-messages-error-summary")
@@ -43,7 +44,8 @@ public class DocketEditPage extends Page {
 
     public DocketEditPage insertDocketData(Docket docket) {
         titleInput.sendKeys(docket.getTitle());
-        fileInput.sendKeys(docket.getFile());
+        selectTrigger.click();
+        Browser.getDriver().findElement(By.id("editForm:docketTabView:file_0")).click();
         return this;
     }
 

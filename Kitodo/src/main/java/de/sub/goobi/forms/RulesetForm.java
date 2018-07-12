@@ -15,10 +15,15 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -169,6 +174,24 @@ public class RulesetForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
             return new ArrayList<>();
+        }
+    }
+
+    /**
+     * Get list of ruleset filenames.
+     *
+     * @return list of ruleset filenames
+     */
+    public List getRulesetFilenames() {
+        try {
+            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))
+                    .filter(f -> f.toString().endsWith(".xml"))
+                    .map(Path::getFileName)
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("rulesets")}, logger, e);
+            return new ArrayList();
         }
     }
 }
