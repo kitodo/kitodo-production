@@ -32,7 +32,6 @@ public enum ProjectTypeField {
     PFG_NAME("name"),
     PFG_PATH("path"),
     PFG_MIME_TYPE("mimeType"),
-    PFG_SUFFIX("suffix"),
     PFG_FOLDER("folder");
 
     private String name;

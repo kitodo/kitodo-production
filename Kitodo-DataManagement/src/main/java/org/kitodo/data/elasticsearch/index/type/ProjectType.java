@@ -38,9 +38,7 @@ public class ProjectType extends BaseType<Project> {
                     .add(ProjectTypeField.PFG_NAME.getName(), preventNull(projectFileGroup.getName()))
                     .add(ProjectTypeField.PFG_PATH.getName(), preventNull(projectFileGroup.getPath()))
                     .add(ProjectTypeField.PFG_MIME_TYPE.getName(), preventNull(projectFileGroup.getMimeType()))
-                    .add(ProjectTypeField.PFG_SUFFIX.getName(), preventNull(projectFileGroup.getSuffix()))
-                    .add(ProjectTypeField.PFG_FOLDER.getName(), preventNull(projectFileGroup.getFolder()))
-                    .build();
+                    .add(ProjectTypeField.PFG_FOLDER.getName(), preventNull(projectFileGroup.getFolder())).build();
             projectFileGroups.add(projectFileGroupObject);
         }
 

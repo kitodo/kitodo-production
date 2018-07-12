@@ -30,6 +30,7 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.ProjectFileGroup;
@@ -57,40 +58,57 @@ public class ProjectTypeTest {
         firstProjectFileGroup.setName("MAX");
         firstProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstProjectFileGroup.setMimeType("image/jpeg");
-        firstProjectFileGroup.setSuffix("jpg");
-        firstProjectFileGroup.setPreviewImage(false);
+        firstProjectFileGroup.setFolder("jpgs/max");
+        firstProjectFileGroup.setCopyFolder(true);
+        firstProjectFileGroup.setCreateFolder(true);
+        firstProjectFileGroup.setDerivative(1.0);
+        firstProjectFileGroup.setLinkingMode(LinkingMode.ALL);
         projectFileGroups.add(firstProjectFileGroup);
 
         ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
         secondProjectFileGroup.setName("DEFAULT");
         secondProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondProjectFileGroup.setMimeType("image/jpeg");
-        secondProjectFileGroup.setSuffix("jpg");
-        secondProjectFileGroup.setPreviewImage(false);
+        secondProjectFileGroup.setFolder("jpgs/default");
+        secondProjectFileGroup.setCopyFolder(true);
+        secondProjectFileGroup.setCreateFolder(true);
+        secondProjectFileGroup.setDerivative(0.8);
+        secondProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+
         projectFileGroups.add(secondProjectFileGroup);
 
         ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
         thirdProjectFileGroup.setName("THUMBS");
         thirdProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdProjectFileGroup.setMimeType("image/jpeg");
-        thirdProjectFileGroup.setSuffix("jpg");
-        thirdProjectFileGroup.setPreviewImage(false);
+        thirdProjectFileGroup.setFolder("jpgs/thumbs");
+        thirdProjectFileGroup.setCopyFolder(true);
+        thirdProjectFileGroup.setCreateFolder(true);
+        thirdProjectFileGroup.setImageSize(150);
+        thirdProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+
         projectFileGroups.add(thirdProjectFileGroup);
 
         ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
         fourthProjectFileGroup.setName("FULLTEXT");
         fourthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthProjectFileGroup.setMimeType("text/xml");
-        fourthProjectFileGroup.setSuffix("xml");
-        fourthProjectFileGroup.setPreviewImage(false);
+        fourthProjectFileGroup.setFolder("ocr/alto");
+        fourthProjectFileGroup.setCopyFolder(true);
+        fourthProjectFileGroup.setCreateFolder(true);
+        fourthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+
         projectFileGroups.add(fourthProjectFileGroup);
 
         ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
         fifthProjectFileGroup.setName("DOWNLOAD");
         fifthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthProjectFileGroup.setMimeType("application/pdf");
-        fifthProjectFileGroup.setSuffix("pdf");
-        fifthProjectFileGroup.setPreviewImage(false);
+        fifthProjectFileGroup.setFolder("pdf");
+        fifthProjectFileGroup.setCopyFolder(true);
+        fifthProjectFileGroup.setCreateFolder(true);
+        fifthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+
         projectFileGroups.add(fifthProjectFileGroup);
 
         Template firstTemplate = new Template();
@@ -197,18 +215,18 @@ public class ProjectTypeTest {
 
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Key processes.id doesn't match to given value!", 2,
-                process.getInt(ProcessTypeField.ID.getName()));
+            process.getInt(ProcessTypeField.ID.getName()));
         assertEquals("Key processes.title doesn't match to given value!", "Second",
-                process.getString(ProcessTypeField.TITLE.getName()));
+            process.getString(ProcessTypeField.TITLE.getName()));
 
         JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Key templates.id doesn't match to given value!", 1,
-                template.getInt(TemplateTypeField.ID.getName()));
+            template.getInt(TemplateTypeField.ID.getName()));
         assertEquals("Key templates.title doesn't match to given value!", "First",
-                template.getString(TemplateTypeField.TITLE.getName()));
+            template.getString(TemplateTypeField.TITLE.getName()));
 
         JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
 
@@ -224,8 +242,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(1);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
@@ -237,8 +253,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(2);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
@@ -250,8 +264,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(3);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
@@ -263,8 +275,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(4);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
@@ -276,8 +286,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
@@ -338,18 +346,18 @@ public class ProjectTypeTest {
 
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Key processes.id doesn't match to given value!", 2,
-                process.getInt(ProcessTypeField.ID.getName()));
+            process.getInt(ProcessTypeField.ID.getName()));
         assertEquals("Key processes.title doesn't match to given value!", "Second",
-                process.getString(ProcessTypeField.TITLE.getName()));
+            process.getString(ProcessTypeField.TITLE.getName()));
 
         JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Key templates.id doesn't match to given value!", 1,
-                template.getInt(TemplateTypeField.ID.getName()));
+            template.getInt(TemplateTypeField.ID.getName()));
         assertEquals("Key templates.title doesn't match to given value!", "First",
-                template.getString(TemplateTypeField.TITLE.getName()));
+            template.getString(TemplateTypeField.TITLE.getName()));
 
         JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
 
@@ -365,8 +373,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(1);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
@@ -378,8 +384,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(2);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
@@ -391,8 +395,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "jpg",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(3);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
@@ -404,8 +406,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "xml",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         projectFileGroup = projectFileGroups.getJsonObject(4);
         assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
@@ -417,8 +417,6 @@ public class ProjectTypeTest {
             projectFileGroup.getString(ProjectTypeField.PFG_FOLDER.getName()));
         assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
             projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
-        assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf",
-            projectFileGroup.getString(ProjectTypeField.PFG_SUFFIX.getName()));
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
