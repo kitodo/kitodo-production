@@ -234,6 +234,10 @@ body.first-visit #portal-header {
     color: #1b2b36;
     }
 
+#header-nav li.disabled:hover > a {
+    color: #fff;
+}
+
 #header-nav li ul {
     position: fixed;
     list-style: none;

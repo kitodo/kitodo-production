@@ -114,5 +114,31 @@ var activationDelay = function() {
 menu.mouseleave(mouseleaveMenu)
     .find("> li")
     .mouseenter(mouseenterMenu)
+    .click(mouseenterMenu);
 
 $(document).mousemove(mousemoveDocument);
+
+// disable menu if a another popup is open
+var node = document.getElementsByTagName('body')[0];
+var config = { attributes: true, childList: true, subtree: true };
+var callback = function () {
+    var elements = $('.ui-menu, .ui-selectonemenu-panel, .ui-datepicker');
+    var disableMenu = false;
+    elements.each(function () {
+        if ($(this).css('display') === 'block') {
+            disableMenu = true;
+        }
+    });
+    if (disableMenu) {
+        var list = menu.find('> li');
+        list.off('mouseenter');
+        list.addClass('disabled');
+    } else {
+        var list = menu.find('> li');
+        list.mouseenter(mouseenterMenu);
+        list.removeClass('disabled');
+    }
+};
+// observe for changes in DOM, eg. opening or closing popups
+var observer = new MutationObserver(callback);
+observer.observe(node, config);
