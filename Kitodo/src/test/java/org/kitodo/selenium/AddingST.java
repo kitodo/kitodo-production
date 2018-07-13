@@ -129,6 +129,7 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
+        Pages.getLoginPage().selectClientAfterLogin();
         assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
     }
 

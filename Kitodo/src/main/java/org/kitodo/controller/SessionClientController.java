@@ -40,9 +40,22 @@ public class SessionClientController {
         if (Objects.nonNull(getCurrentSessionClient())) {
             return getCurrentSessionClient().getName();
         } else {
-            showClientSelectDialog();
+            if (shouldDisplayClientSelectDialog()) {
+                showClientSelectDialog();
+            }
             return "";
         }
+    }
+
+    /**
+     * The conditions when user need to select a session client is configured in
+     * this method.
+     * 
+     * @return True if the session client select dialog should by displayed to the
+     *         current user
+     */
+    private boolean shouldDisplayClientSelectDialog() {
+        return !serviceManager.getSecurityAccessService().isAdmin();
     }
 
     private void showClientSelectDialog() {
