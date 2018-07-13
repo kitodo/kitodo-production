@@ -24,6 +24,7 @@ import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -132,9 +133,7 @@ public class Config {
         try {
             return getConfig().getString(key, defaultValue);
         } catch (ConversionException e) {
-            logger.catching(e);
-            logger.warn("Configuration found in kitodo_config.properties for key {} is defined, but not a String!",
-                key);
+            logConversionException(key, String.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -170,10 +169,7 @@ public class Config {
         try {
             return getConfig().getBoolean(key, defaultValue);
         } catch (ConversionException e) {
-            logger.catching(e);
-            logger.warn(
-                "Configuration found in kitodo_config.properties for key {} is defined, but cannot be converted to boolean!",
-                key);
+            logConversionException(key, boolean.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -209,10 +205,7 @@ public class Config {
         try {
             return getConfig().getInt(key, defaultValue);
         } catch (ConversionException e) {
-            logger.catching(e);
-            logger.warn(
-                "Configuration found in kitodo_config.properties for key {} is defined, but cannot be converted to int!",
-                key);
+            logConversionException(key, int.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -256,7 +249,7 @@ public class Config {
         try {
             return Optional.of(getConfig().getString(key));
         } catch (NoSuchElementException e) {
-            logger.catching(e);
+            logger.catching(Level.TRACE, e);
             return Optional.empty();
         }
     }
@@ -291,5 +284,25 @@ public class Config {
      */
     public static URI getUri(String key, String fullFilenameToAdd) {
         return Paths.get(FilenameUtils.concat(getParameter(key), fullFilenameToAdd)).toUri();
+    }
+
+    /**
+     * Logs a conversion exception with a helpful error message.
+     *
+     * @param key
+     *            key whose value could not be converted
+     * @param failedClass
+     *            class to convert the value to
+     * @param occurred
+     *            conversion exception occurred
+     * @param usedValue
+     *            default value being used
+     */
+    private static <T> void logConversionException(String key, Class<T> failedClass, ConversionException occurred,
+            T usedValue) {
+        logger.catching(Level.DEBUG, occurred);
+        final String message = "Configuration found in kitodo_config.properties for key {} is defined as \"{}\", but "
+                .concat("cannot be converted to {}! Using the default value of \"{}\".");
+        logger.warn(message, key, getParameter(key), failedClass.getSimpleName(), usedValue);
     }
 }
