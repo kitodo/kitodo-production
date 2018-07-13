@@ -308,14 +308,14 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
-    public List<Folder> getProjectFileGroups() {
+    public List<Folder> getFolders() {
         if (this.folders == null) {
             this.folders = new ArrayList<>();
         }
         return this.folders;
     }
 
-    public void setProjectFileGroups(List<Folder> folders) {
+    public void setFolders(List<Folder> folders) {
         this.folders = folders;
     }
 

@@ -82,9 +82,10 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -2106,32 +2107,34 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
-        VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
-        List<Folder> fileGroups = project.getProjectFileGroups();
-        for (Folder pfg : fileGroups) {
+        VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
+        List<Folder> folders = project.getFolders();
+        for (Folder folder : folders) {
             // check if source files exists
-            if (pfg.getPath() != null && pfg.getPath().length() > 0) {
-                URI folder = new File(pfg.getPath()).toURI();
-                if (fileService.fileExist(folder) && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
-                    mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
+            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
+                URI folderUri = new File(folder.getPath()).toURI();
+                if (fileService.fileExist(folderUri)
+                        && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
+                    mm.getDigitalDocument().getFileSet()
+                            .addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
                 }
-            } else {
-                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
+            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
+                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
             }
         }
 
         // Replace rights and digiprov entries.
-        mm.setRightsOwner(vp.replace(project.getMetsRightsOwner()));
-        mm.setRightsOwnerLogo(vp.replace(project.getMetsRightsOwnerLogo()));
-        mm.setRightsOwnerSiteURL(vp.replace(project.getMetsRightsOwnerSite()));
-        mm.setRightsOwnerContact(vp.replace(project.getMetsRightsOwnerMail()));
-        mm.setDigiprovPresentation(vp.replace(project.getMetsDigiprovPresentation()));
-        mm.setDigiprovReference(vp.replace(project.getMetsDigiprovReference()));
-        mm.setDigiprovPresentationAnchor(vp.replace(project.getMetsDigiprovPresentationAnchor()));
-        mm.setDigiprovReferenceAnchor(vp.replace(project.getMetsDigiprovReferenceAnchor()));
+        mm.setRightsOwner(variables.replace(project.getMetsRightsOwner()));
+        mm.setRightsOwnerLogo(variables.replace(project.getMetsRightsOwnerLogo()));
+        mm.setRightsOwnerSiteURL(variables.replace(project.getMetsRightsOwnerSite()));
+        mm.setRightsOwnerContact(variables.replace(project.getMetsRightsOwnerMail()));
+        mm.setDigiprovPresentation(variables.replace(project.getMetsDigiprovPresentation()));
+        mm.setDigiprovReference(variables.replace(project.getMetsDigiprovReference()));
+        mm.setDigiprovPresentationAnchor(variables.replace(project.getMetsDigiprovPresentationAnchor()));
+        mm.setDigiprovReferenceAnchor(variables.replace(project.getMetsDigiprovReferenceAnchor()));
 
-        mm.setPurlUrl(vp.replace(project.getMetsPurl()));
-        mm.setContentIDs(vp.replace(project.getMetsContentIDs()));
+        mm.setPurlUrl(variables.replace(project.getMetsPurl()));
+        mm.setContentIDs(variables.replace(project.getMetsContentIDs()));
 
         // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
         // pointer used to point to the superordinate (anchor) file, that is
@@ -2142,7 +2145,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         String anchorPointersToReplace = project.getMetsPointerPath();
         mm.setMptrUrl(null);
         for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
-            String anchorPointer = vp.replace(anchorPointerToReplace);
+            String anchorPointer = variables.replace(anchorPointerToReplace);
             mm.setMptrUrl(anchorPointer);
         }
 
@@ -2150,7 +2153,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // from the (lowest) superordinate (anchor) file to the lowest level
         // file (the non-anchor file).
         String anchor = project.getMetsPointerPathAnchor();
-        String pointer = vp.replace(anchor);
+        String pointer = variables.replace(anchor);
         mm.setMptrAnchorUrl(pointer);
 
         try {
@@ -2176,13 +2179,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder pfg, VariableReplacer variableReplacer)
+    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
             throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(pfg.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(pfg.getUrlStructure()));
-        virtualFileGroup.setMimetype(pfg.getMimeType());
-        virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(pfg.getMimeType()).get().getExtension(false));
+        virtualFileGroup.setName(folder.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
+        virtualFileGroup.setMimetype(folder.getMimeType());
+        virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
         return virtualFileGroup;
     }
 

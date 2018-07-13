@@ -28,11 +28,11 @@ public enum ProjectTypeField {
     USERS("users"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
-    PROJECT_FILE_GROUPS("projectFileGroups"),
-    PFG_FILE_GROUP("fileGroup"),
-    PFG_URL_STRUCTURE("urlStructure"),
-    PFG_MIME_TYPE("mimeType"),
-    PFG_PATH("path");
+    FOLDERS("folders"),
+    FOLDER_FILE_GROUP("fileGroup"),
+    FOLDER_URL_STRUCTURE("urlStructure"),
+    FOLDER_MIME_TYPE("mimeType"),
+    FOLDER_PATH("path");
 
     private String name;
 

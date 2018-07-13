@@ -43,7 +43,7 @@ public class Folder extends BaseBean {
     private String path;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
+    @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_folder_project_id"))
     private Project project;
 
     /**

@@ -46,10 +46,10 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.config.Parameters;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -201,33 +201,32 @@ public class SchemaService {
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer)
             throws PreferencesException, IOException, JAXBException {
-        List<Folder> fileGroups = process.getProject().getProjectFileGroups();
-        for (Folder pfg : fileGroups) {
+        List<Folder> folders = process.getProject().getFolders();
+        for (Folder folder : folders) {
             // check if source files exists
-            if (pfg.getPath() != null && pfg.getPath().length() > 0) {
-                URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getPath(), process);
-                if (serviceManager.getFileService().fileExist(folder)
-                        && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
+            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
+                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getPath(), process);
+                if (serviceManager.getFileService().fileExist(folderUri)
+                        && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
-                            .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
+                            .addVirtualFileGroup(setVirtualFileGroup(folder, variableReplacer));
                 }
-            } else {
+            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
                 metsMods.getDigitalDocument().getFileSet()
-                        .addVirtualFileGroup(setVirtualFileGroup(pfg, variableReplacer));
+                        .addVirtualFileGroup(setVirtualFileGroup(folder, variableReplacer));
             }
         }
         return metsMods;
     }
 
-    private VirtualFileGroupInterface setVirtualFileGroup(Folder folder,
-            VariableReplacer variableReplacer) throws IOException, JAXBException {
+    private VirtualFileGroupInterface setVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
+            throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
         virtualFileGroup.setName(folder.getFileGroup());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
         virtualFileGroup.setMimetype(folder.getMimeType());
-        virtualFileGroup.setFileSuffix(
-            FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+        virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
         virtualFileGroup.setOrdinary(!folder.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
 
         return virtualFileGroup;

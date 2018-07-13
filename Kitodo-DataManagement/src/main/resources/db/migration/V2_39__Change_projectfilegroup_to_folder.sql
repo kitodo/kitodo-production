@@ -13,53 +13,63 @@
 --     (double) derivative, (int) dpi, (double) imageScale, (int) imageSize,
 --     (enum {ALL, EXISTING, NO, PREVIEW_IMAGE}) linkingMode
 
-ALTER TABLE projectfilegroup
+ALTER TABLE projectFileGroup
   ADD copyFolder   tinyint(1) NOT NULL DEFAULT 1
         COMMENT 'whether the folder is copied during export',
-      createFolder tinyint(1) NOT NULL DEFAULT 1
+  ADD createFolder tinyint(1) NOT NULL DEFAULT 1
         COMMENT 'whether the folder is created with a new process',
-      derivative   double              DEFAULT NULL
+  ADD derivative   double              DEFAULT NULL
         COMMENT 'the percentage of scaling for createDerivative()',
-      dpi          int(11)             DEFAULT NULL
+  ADD dpi          int(11)             DEFAULT NULL
         COMMENT 'the new DPI for changeDpi()',
-      imageScale   double              DEFAULT NULL
+  ADD imageScale   double              DEFAULT NULL
         COMMENT 'the percentage of scaling for getScaledWebImage()',
-      imageSize    int(11)             DEFAULT NULL
+  ADD imageSize    int(11)             DEFAULT NULL
         COMMENT 'the new width in pixels for getSizedWebImage()',
-      linkingMode  varchar(13) NOT NULL COLLATE utf8mb4_unicode_ci DEFAULT 'ALL'
-        COMMENT 'how to link the contents in a METS fileGrp';
-        
-ALTER TABLE projectfilegroup ADD CONSTRAINT CK_folder_linkingMode
-  CHECK (linkingMode IN ('ALL', 'EXISTING', 'NO', 'PREVIEW_IMAGE'));
+  ADD linkingMode  varchar(13) NOT NULL COLLATE utf8mb4_unicode_ci DEFAULT 'ALL'
+        COMMENT 'how to link the contents in a METS fileGrp',
+  ADD CONSTRAINT CK_folder_linkingMode
+        CHECK (linkingMode IN ('ALL', 'EXISTING', 'NO', 'PREVIEW_IMAGE'));
 
 -- Set 'linkingMode' column to 'EXISTING' where 'folder' is not empty
 
-UPDATE projectfilegroup SET linkingMode = 'EXISTING' WHERE folder <> '';
+UPDATE projectFileGroup SET linkingMode = 'EXISTING'
+  WHERE id > 0 AND folder <> '';
 
 
 -- Set 'linkingMode' to 'PREVIEW_IMAGE' where 'previewImage' = 1
 
-UPDATE projectfilegroup SET linkingMode = 'PREVIEW_IMAGE' WHERE previewImage = 1;
+UPDATE projectFileGroup SET linkingMode = 'PREVIEW_IMAGE'
+  WHERE id > 0 AND previewImage = 1;
 
 
 -- Rename columns 'name' => 'fileGroup', 'path' => 'urlStructure',
 --     'folder' => 'path' (no column with same name as table)
 
-ALTER TABLE projectfilegroup
+ALTER TABLE projectFileGroup
   CHANGE name   fileGroup    varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-         path   urlStructure varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-         folder path         varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL;
+  CHANGE path   urlStructure varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  CHANGE folder path         varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL;
 
 
 -- Delete columns 'suffix' and 'previewImage'. 'previewImage' is now part of
 --     'linkingMode'; 'suffix' depends on 'mimeType' and needs no extra storage.
 
-ALTER TABLE projectfilegroup DROP previewImage, suffix;
+ALTER TABLE projectFileGroup
+  DROP previewImage,
+  DROP suffix;
 
 
 -- Rename table 'projectfilegroup' into 'folder'
 
-ALTER TABLE projectfilegroup RENAME TO folder;
+ALTER TABLE projectFileGroup RENAME TO folder;
+
+
+-- Rename foreign key constraints
+
+ALTER TABLE folder
+  DROP FOREIGN KEY `FK_projectFileGroup_project_id`,
+  ADD CONSTRAINT `FK_folder_project_id` FOREIGN KEY (project_id) REFERENCES project (id);
 
 
 -- Fill in path column
@@ -69,14 +79,14 @@ ALTER TABLE projectfilegroup RENAME TO folder;
 -- your system.
 
 UPDATE folder SET path = 'images/(processtitle)_tif'
-  WHERE fileGroup = 'LOCAL' AND path = '';
+  WHERE id > 0 AND fileGroup = 'LOCAL' AND path = '';
 
 UPDATE folder SET path = 'pdf'
-  WHERE fileGroup = 'DOWNLOAD' AND path = '';
+  WHERE id > 0 AND fileGroup = 'DOWNLOAD' AND path = '';
 
 UPDATE folder SET path = 'ocr/alto'
-  WHERE fileGroup = 'FULLTEXT' AND path = '';
+  WHERE id > 0 AND fileGroup = 'FULLTEXT' AND path = '';
 
 -- all remaining cases
 UPDATE folder SET path = CONCAT('jpgs/', LOWER(fileGroup))
-  WHERE path = '';
+  WHERE id > 0 AND path = '';

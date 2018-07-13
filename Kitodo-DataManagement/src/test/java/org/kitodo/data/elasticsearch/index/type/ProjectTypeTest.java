@@ -30,10 +30,10 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
@@ -54,62 +54,62 @@ public class ProjectTypeTest {
         List<Template> templates = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
-        Folder firstProjectFileGroup = new Folder();
-        firstProjectFileGroup.setFileGroup("MAX");
-        firstProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
-        firstProjectFileGroup.setMimeType("image/jpeg");
-        firstProjectFileGroup.setPath("jpgs/max");
-        firstProjectFileGroup.setCopyFolder(true);
-        firstProjectFileGroup.setCreateFolder(true);
-        firstProjectFileGroup.setDerivative(1.0);
-        firstProjectFileGroup.setLinkingMode(LinkingMode.ALL);
-        folders.add(firstProjectFileGroup);
+        Folder firstFolder = new Folder();
+        firstFolder.setFileGroup("MAX");
+        firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstFolder.setMimeType("image/jpeg");
+        firstFolder.setPath("jpgs/max");
+        firstFolder.setCopyFolder(true);
+        firstFolder.setCreateFolder(true);
+        firstFolder.setDerivative(1.0);
+        firstFolder.setLinkingMode(LinkingMode.ALL);
+        folders.add(firstFolder);
 
-        Folder secondProjectFileGroup = new Folder();
-        secondProjectFileGroup.setFileGroup("DEFAULT");
-        secondProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
-        secondProjectFileGroup.setMimeType("image/jpeg");
-        secondProjectFileGroup.setPath("jpgs/default");
-        secondProjectFileGroup.setCopyFolder(true);
-        secondProjectFileGroup.setCreateFolder(true);
-        secondProjectFileGroup.setDerivative(0.8);
-        secondProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+        Folder secondFolder = new Folder();
+        secondFolder.setFileGroup("DEFAULT");
+        secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondFolder.setMimeType("image/jpeg");
+        secondFolder.setPath("jpgs/default");
+        secondFolder.setCopyFolder(true);
+        secondFolder.setCreateFolder(true);
+        secondFolder.setDerivative(0.8);
+        secondFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(secondProjectFileGroup);
+        folders.add(secondFolder);
 
-        Folder thirdProjectFileGroup = new Folder();
-        thirdProjectFileGroup.setFileGroup("THUMBS");
-        thirdProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
-        thirdProjectFileGroup.setMimeType("image/jpeg");
-        thirdProjectFileGroup.setPath("jpgs/thumbs");
-        thirdProjectFileGroup.setCopyFolder(true);
-        thirdProjectFileGroup.setCreateFolder(true);
-        thirdProjectFileGroup.setImageSize(150);
-        thirdProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+        Folder thirdFolder = new Folder();
+        thirdFolder.setFileGroup("THUMBS");
+        thirdFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
+        thirdFolder.setMimeType("image/jpeg");
+        thirdFolder.setPath("jpgs/thumbs");
+        thirdFolder.setCopyFolder(true);
+        thirdFolder.setCreateFolder(true);
+        thirdFolder.setImageSize(150);
+        thirdFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(thirdProjectFileGroup);
+        folders.add(thirdFolder);
 
-        Folder fourthProjectFileGroup = new Folder();
-        fourthProjectFileGroup.setFileGroup("FULLTEXT");
-        fourthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
-        fourthProjectFileGroup.setMimeType("text/xml");
-        fourthProjectFileGroup.setPath("ocr/alto");
-        fourthProjectFileGroup.setCopyFolder(true);
-        fourthProjectFileGroup.setCreateFolder(true);
-        fourthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+        Folder fourthFolder = new Folder();
+        fourthFolder.setFileGroup("FULLTEXT");
+        fourthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
+        fourthFolder.setMimeType("text/xml");
+        fourthFolder.setPath("ocr/alto");
+        fourthFolder.setCopyFolder(true);
+        fourthFolder.setCreateFolder(true);
+        fourthFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(fourthProjectFileGroup);
+        folders.add(fourthFolder);
 
-        Folder fifthProjectFileGroup = new Folder();
-        fifthProjectFileGroup.setFileGroup("DOWNLOAD");
-        fifthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
-        fifthProjectFileGroup.setMimeType("application/pdf");
-        fifthProjectFileGroup.setPath("pdf");
-        fifthProjectFileGroup.setCopyFolder(true);
-        fifthProjectFileGroup.setCreateFolder(true);
-        fifthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
+        Folder fifthFolder = new Folder();
+        fifthFolder.setFileGroup("DOWNLOAD");
+        fifthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
+        fifthFolder.setMimeType("application/pdf");
+        fifthFolder.setPath("pdf");
+        fifthFolder.setCopyFolder(true);
+        fifthFolder.setCreateFolder(true);
+        fifthFolder.setLinkingMode(LinkingMode.ALL);
 
-        folders.add(fifthProjectFileGroup);
+        folders.add(fifthFolder);
 
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
@@ -150,7 +150,7 @@ public class ProjectTypeTest {
         firstProject.setNumberOfVolumes(10);
         firstProject.setTemplates(templates);
         firstProject.setProcesses(processes);
-        firstProject.setProjectFileGroups(folders);
+        firstProject.setFolders(folders);
         firstProject.setUsers(users);
         firstProject.setClient(client);
         projects.add(firstProject);
@@ -166,7 +166,7 @@ public class ProjectTypeTest {
         secondProject.setNumberOfVolumes(20);
         secondProject.setTemplates(templates);
         secondProject.setProcesses(processes);
-        secondProject.setProjectFileGroups(folders);
+        secondProject.setFolders(folders);
         secondProject.setUsers(users);
         projects.add(secondProject);
 
@@ -228,64 +228,64 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
 
-        assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
+        assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
-        JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        JsonObject folder = folders.getJsonObject(0);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/max",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(1);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(1);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/default",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(2);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(2);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/thumbs",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(3);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(3);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "ocr/alto",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(4);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(4);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "pdf",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
@@ -359,64 +359,64 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
 
-        assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
+        assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
-        JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "MAX",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        JsonObject folder = folders.getJsonObject(0);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/max",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(1);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DEFAULT",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(1);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/default",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(2);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "THUMBS",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(2);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "image/jpeg",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "jpgs/thumbs",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(3);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "FULLTEXT",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(3);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "text/xml",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "ocr/alto",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
-        projectFileGroup = projectFileGroups.getJsonObject(4);
-        assertEquals("Key projectFileGroups.name doesn't match to given value!", "DOWNLOAD",
-            projectFileGroup.getString(ProjectTypeField.PFG_FILE_GROUP.getName()));
+        folder = folders.getJsonObject(4);
+        assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
+            folder.getString(ProjectTypeField.FOLDER_FILE_GROUP.getName()));
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key projectFileGroups.path doesn't match to given value!", path,
-            projectFileGroup.getString(ProjectTypeField.PFG_URL_STRUCTURE.getName()));
-        assertEquals("Key projectFileGroups.folder doesn't match to given value!", "",
-            projectFileGroup.getString(ProjectTypeField.PFG_PATH.getName()));
-        assertEquals("Key projectFileGroups.mimeType doesn't match to given value!", "application/pdf",
-            projectFileGroup.getString(ProjectTypeField.PFG_MIME_TYPE.getName()));
+        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
+            folder.getString(ProjectTypeField.FOLDER_URL_STRUCTURE.getName()));
+        assertEquals("Key folders.path doesn't match to given value!", "pdf",
+            folder.getString(ProjectTypeField.FOLDER_PATH.getName()));
+        assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
+            folder.getString(ProjectTypeField.FOLDER_MIME_TYPE.getName()));
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         assertEquals("Size users doesn't match to given value!", 2, users.size());
@@ -476,7 +476,7 @@ public class ProjectTypeTest {
         JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
         assertEquals("Size projectFileGroups doesn't match to given value!", 0, projectFileGroups.size());
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
@@ -501,9 +501,9 @@ public class ProjectTypeTest {
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
-        JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
-        assertEquals("Amount of keys in projectFileGroups is incorrect!", 5, projectFileGroup.keySet().size());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
+        JsonObject folder = folders.getJsonObject(0);
+        assertEquals("Amount of keys in folders is incorrect!", 4, folder.keySet().size());
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
         JsonObject user = users.getJsonObject(0);

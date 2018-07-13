@@ -119,15 +119,15 @@ public class ExportMets {
      *            the meta file which should be written
      * @param gdzfile
      *            the FileFormat-Object to use for Mets-Writing
-     * @param writeLocalFileGroup
+     * @param writeLocalFilegroup
      *            true or false
      * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFileGroup) throws PreferencesException, WriteException, IOException, JAXBException {
+            boolean writeLocalFilegroup) throws PreferencesException, WriteException, IOException, JAXBException {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
-        mm.setWriteLocal(writeLocalFileGroup);
+        mm.setWriteLocal(writeLocalFilegroup);
         mm = serviceManager.getSchemaService().tempConvert(gdzfile, this, mm, this.myPrefs, process);
         if (mm != null) {
             mm.write(metaFile.getRawPath());

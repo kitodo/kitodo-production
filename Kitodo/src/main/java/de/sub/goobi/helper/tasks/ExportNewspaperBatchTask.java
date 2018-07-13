@@ -379,8 +379,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 for (DocStructInterface dayNode : skipIfNull(monthNode.getAllChildren())) {
                     LocalDate appeared = new LocalDate(year, monthOfYear, getMetadataIntValueByName(dayNode,
                         MetsModsImportExportInterface.CREATE_ORDERLABEL_ATTRIBUTE_TYPE));
-                    for (@SuppressWarnings("unused")
-                    DocStructInterface entry : skipIfNull(dayNode.getAllChildren())) {
+                    for (@SuppressWarnings("unused") DocStructInterface entry : skipIfNull(dayNode.getAllChildren())) {
                         result.add(appeared);
                     }
                 }
