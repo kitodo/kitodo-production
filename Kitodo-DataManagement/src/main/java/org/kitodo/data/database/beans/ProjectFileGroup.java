@@ -31,16 +31,16 @@ public class ProjectFileGroup extends BaseBean {
     private static final long serialVersionUID = -5506252462891480484L;
 
     @Column(name = "fileGroup")
-    private String name;
+    private String fileGroup;
 
     @Column(name = "urlStructure")
-    private String path;
+    private String urlStructure;
 
     @Column(name = "mimeType")
     private String mimeType;
 
     @Column(name = "path")
-    private String folder;
+    private String path;
 
     @ManyToOne
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_projectFileGroup_project_id"))
@@ -95,11 +95,11 @@ public class ProjectFileGroup extends BaseBean {
     private LinkingMode linkingMode;
 
     public String getName() {
-        return this.name;
+        return this.fileGroup;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.fileGroup = name;
     }
 
     public Project getProject() {
@@ -111,11 +111,11 @@ public class ProjectFileGroup extends BaseBean {
     }
 
     public String getPath() {
-        return this.path;
+        return this.urlStructure;
     }
 
     public void setPath(String path) {
-        this.path = path;
+        this.urlStructure = path;
     }
 
     public String getMimeType() {
@@ -127,11 +127,11 @@ public class ProjectFileGroup extends BaseBean {
     }
 
     public String getFolder() {
-        return this.folder;
+        return this.path;
     }
 
     public void setFolder(String folder) {
-        this.folder = folder;
+        this.path = folder;
     }
 
     public boolean isCopyFolder() {
@@ -199,8 +199,8 @@ public class ProjectFileGroup extends BaseBean {
             return false;
         }
         ProjectFileGroup that = (ProjectFileGroup) o;
-        return Objects.equals(name, that.name) && Objects.equals(path, that.path)
-                && Objects.equals(mimeType, that.mimeType) && Objects.equals(folder, that.folder)
+        return Objects.equals(fileGroup, that.fileGroup) && Objects.equals(urlStructure, that.urlStructure)
+                && Objects.equals(mimeType, that.mimeType) && Objects.equals(path, that.path)
                 && Objects.equals(project, that.project) && copyFolder == that.copyFolder
                 && createFolder == that.createFolder && Objects.equals(derivative, that.derivative)
                 && Objects.equals(dpi, that.dpi) && Objects.equals(imageScale, that.imageScale)
@@ -212,7 +212,7 @@ public class ProjectFileGroup extends BaseBean {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(name, path, mimeType, folder, copyFolder, createFolder, derivative, dpi, imageScale,
+        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi, imageScale,
             imageSize, linkingMode);
     }
 }
