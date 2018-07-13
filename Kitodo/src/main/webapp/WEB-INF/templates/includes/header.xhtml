@@ -18,6 +18,7 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
     <div class="wrapper">
+        <h:outputScript library="js" name="collapse.js" target="body"/>
 
         <section id="portal-logo">
             <h:outputLink value="desktop.jsf">
@@ -116,11 +117,22 @@
                                         <i>(Admin)</i>
                                     </h:outputText>
                                 </h3></li>
+
                                 <li>
                                     <div>
                                         #{msgs.client}: <b>#{SessionClientController.currentSessionClientName}</b>
+                                        <span style="float:right;">
+                                            <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList');"/>
+                                        </span>
                                     </div>
                                 </li>
+                                <div id="clientList" style="display: none">
+                                    <p:repeat value="#{ProjekteForm.clients}" var="client">
+                                        <li class="toggle-list">
+                                            <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
+                                        </li>
+                                    </p:repeat>
+                                </div>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
                                 <li>
                                     <table>
@@ -138,7 +150,7 @@
                                         </tr>
                                     </table>
                                 </li>
-                                <li><h:outputLink value="#{request.contextPath}/logout"
+                                <li class="color-orange"><h:outputLink value="#{request.contextPath}/logout"
                                                   id="logout">#{msgs.logout}</h:outputLink></li>
                             </ul>
                         </h:form>

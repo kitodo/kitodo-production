@@ -318,11 +318,19 @@ body.first-visit #portal-header {
     background-color: #d8d8d8;
     }
 
-#header-nav #nav-user li:last-child a {
+#header-nav #nav-user li.color-orange a {
     background-color: #f94a15;
     border-color: #f94a15;
     color: #fff;
     }
+
+#header-nav #nav-user li.toggle-list {
+    background-color: #d8d8d8;
+}
+
+#header-nav #nav-user li.toggle-list a.ui-commandlink {
+    border-top: 1px solid #d3d3d3
+}
 
 #header-nav .nav-item-col {
     width: calc(50% - 45px);
@@ -831,7 +839,7 @@ main i.fa {
 }
 
 .client-select-dialog {
-    background: #f5f5f5;
+    background: #f3f3f3;
 }
 
 .client-select-dialog > .ui-dialog-titlebar > .ui-dialog-title {

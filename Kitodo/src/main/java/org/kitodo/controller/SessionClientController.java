@@ -28,22 +28,34 @@ public class SessionClientController {
 
     private Client selectedClient;
 
+    /**
+     * Gets the name of the current session client. In case that no session client
+     * has been set, an empty string is returned and a dialog to select a client is
+     * shown.
+     * 
+     * @return The current session clients name or emtpy string case that no session
+     *         client has been set.
+     */
     public String getCurrentSessionClientName() {
         if (Objects.nonNull(getCurrentSessionClient())) {
             return getCurrentSessionClient().getName();
         } else {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('selectClientDialog').show();");
+            showClientSelectDialog();
             return "";
         }
     }
 
-    public Client getCurrentSessionClient() {
+    private void showClientSelectDialog() {
+        RequestContext context = RequestContext.getCurrentInstance();
+        context.execute("PF('selectClientDialog').show();");
+    }
+
+    private Client getCurrentSessionClient() {
         return serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
     }
 
     public void setSelectedClientAsSessionClient() {
-        serviceManager.getUserService().getAuthenticatedUser().setSessionClient(selectedClient);
+        setSessionClient(selectedClient);
     }
 
     /**
@@ -58,9 +70,20 @@ public class SessionClientController {
     /**
      * Sets selectedClient.
      *
-     * @param selectedClient The selectedClient.
+     * @param selectedClient
+     *            The selectedClient.
      */
     public void setSelectedClient(Client selectedClient) {
         this.selectedClient = selectedClient;
+    }
+
+    /**
+     * Sets the given client object as new session client.
+     * 
+     * @param sessionClient
+     *            The client object that is to be the new session client.
+     */
+    public void setSessionClient(Client sessionClient) {
+        serviceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
     }
 }
