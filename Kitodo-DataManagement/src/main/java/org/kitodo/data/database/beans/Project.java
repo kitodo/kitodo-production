@@ -153,7 +153,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<Template> templates;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectFileGroup> projectFileGroups;
+    private List<Folder> folders;
 
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
@@ -308,15 +308,15 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
-    public List<ProjectFileGroup> getProjectFileGroups() {
-        if (this.projectFileGroups == null) {
-            this.projectFileGroups = new ArrayList<>();
+    public List<Folder> getProjectFileGroups() {
+        if (this.folders == null) {
+            this.folders = new ArrayList<>();
         }
-        return this.projectFileGroups;
+        return this.folders;
     }
 
-    public void setProjectFileGroups(List<ProjectFileGroup> projectFileGroups) {
-        this.projectFileGroups = projectFileGroups;
+    public void setProjectFileGroups(List<Folder> folders) {
+        this.folders = folders;
     }
 
     public String getMetsRightsOwner() {

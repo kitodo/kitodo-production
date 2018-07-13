@@ -31,7 +31,7 @@ import org.goobi.production.constants.FileNames;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -344,22 +344,22 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
-        ArrayList<ProjectFileGroup> duplicatedFileGroups = new ArrayList<>();
-        for (ProjectFileGroup projectFileGroup : baseProject.getProjectFileGroups()) {
-            ProjectFileGroup duplicatedGroup = new ProjectFileGroup();
-            duplicatedGroup.setMimeType(projectFileGroup.getMimeType());
-            duplicatedGroup.setFileGroup(projectFileGroup.getFileGroup());
-            duplicatedGroup.setUrlStructure(projectFileGroup.getUrlStructure());
-            duplicatedGroup.setPath(projectFileGroup.getPath());
+        ArrayList<Folder> duplicatedFileGroups = new ArrayList<>();
+        for (Folder folder : baseProject.getProjectFileGroups()) {
+            Folder duplicatedGroup = new Folder();
+            duplicatedGroup.setMimeType(folder.getMimeType());
+            duplicatedGroup.setFileGroup(folder.getFileGroup());
+            duplicatedGroup.setUrlStructure(folder.getUrlStructure());
+            duplicatedGroup.setPath(folder.getPath());
 
             duplicatedGroup.setProject(duplicatedProject);
-            duplicatedGroup.setCopyFolder(projectFileGroup.isCopyFolder());
-            duplicatedGroup.setCreateFolder(projectFileGroup.isCreateFolder());
-            duplicatedGroup.setDerivative(projectFileGroup.getDerivative().orElse(null));
-            duplicatedGroup.setDpi(projectFileGroup.getDpi().orElse(null));
-            duplicatedGroup.setImageScale(projectFileGroup.getImageScale().orElse(null));
-            duplicatedGroup.setImageSize(projectFileGroup.getImageSize().orElse(null));
-            duplicatedGroup.setLinkingMode(projectFileGroup.getLinkingMode());
+            duplicatedGroup.setCopyFolder(folder.isCopyFolder());
+            duplicatedGroup.setCreateFolder(folder.isCreateFolder());
+            duplicatedGroup.setDerivative(folder.getDerivative().orElse(null));
+            duplicatedGroup.setDpi(folder.getDpi().orElse(null));
+            duplicatedGroup.setImageScale(folder.getImageScale().orElse(null));
+            duplicatedGroup.setImageSize(folder.getImageSize().orElse(null));
+            duplicatedGroup.setLinkingMode(folder.getLinkingMode());
             duplicatedFileGroups.add(duplicatedGroup);
         }
         duplicatedProject.setProjectFileGroups(duplicatedFileGroups);

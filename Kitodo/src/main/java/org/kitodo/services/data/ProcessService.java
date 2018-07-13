@@ -84,7 +84,7 @@ import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -2107,8 +2107,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
-        List<ProjectFileGroup> fileGroups = project.getProjectFileGroups();
-        for (ProjectFileGroup pfg : fileGroups) {
+        List<Folder> fileGroups = project.getProjectFileGroups();
+        for (Folder pfg : fileGroups) {
             // check if source files exists
             if (pfg.getPath() != null && pfg.getPath().length() > 0) {
                 URI folder = new File(pfg.getPath()).toURI();
@@ -2176,7 +2176,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(ProjectFileGroup pfg, VariableReplacer variableReplacer)
+    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder pfg, VariableReplacer variableReplacer)
             throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
         virtualFileGroup.setName(pfg.getFileGroup());

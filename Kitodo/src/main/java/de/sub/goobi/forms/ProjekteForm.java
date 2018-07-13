@@ -26,7 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
@@ -39,7 +39,7 @@ public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
     private Project myProjekt;
-    private ProjectFileGroup myFilegroup;
+    private Folder myFilegroup;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting filegroups
@@ -73,7 +73,7 @@ public class ProjekteForm extends BasisForm {
     private void deleteFileGroups(List<Integer> fileGroups) {
         if (Objects.nonNull(this.myProjekt)) {
             for (Integer id : fileGroups) {
-                for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
+                for (Folder f : this.myProjekt.getProjectFileGroups()) {
                     if (f.getId() == null ? id == null : f.getId().equals(id)) {
                         this.myProjekt.getProjectFileGroups().remove(f);
                         break;
@@ -218,7 +218,7 @@ public class ProjekteForm extends BasisForm {
      * @return String
      */
     public String addFileGroup() {
-        this.myFilegroup = new ProjectFileGroup();
+        this.myFilegroup = new Folder();
         this.myFilegroup.setProject(this.myProjekt);
         this.newFileGroups.add(this.myFilegroup.getId());
         return this.zurueck;
@@ -332,11 +332,11 @@ public class ProjekteForm extends BasisForm {
      *
      * @return modified ArrayList
      */
-    public List<ProjectFileGroup> getFileGroupList() {
-        List<ProjectFileGroup> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
+    public List<Folder> getFileGroupList() {
+        List<Folder> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
 
         for (Integer id : this.deletedFileGroups) {
-            for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
+            for (Folder f : this.myProjekt.getProjectFileGroups()) {
                 if (f.getId() == null ? id == null : f.getId().equals(id)) {
                     filteredFileGroupList.remove(f);
                     break;
@@ -346,11 +346,11 @@ public class ProjekteForm extends BasisForm {
         return filteredFileGroupList;
     }
 
-    public ProjectFileGroup getMyFilegroup() {
+    public Folder getMyFilegroup() {
         return this.myFilegroup;
     }
 
-    public void setMyFilegroup(ProjectFileGroup myFilegroup) {
+    public void setMyFilegroup(Folder myFilegroup) {
         this.myFilegroup = myFilegroup;
     }
 

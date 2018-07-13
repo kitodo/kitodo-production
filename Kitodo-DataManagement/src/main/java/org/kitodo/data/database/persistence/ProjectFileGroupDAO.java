@@ -13,15 +13,15 @@ package org.kitodo.data.database.persistence;
 
 import java.util.List;
 
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class ProjectFileGroupDAO extends BaseDAO<ProjectFileGroup> {
+public class ProjectFileGroupDAO extends BaseDAO<Folder> {
     private static final long serialVersionUID = -5506252462891480484L;
 
     @Override
-    public ProjectFileGroup getById(Integer id) throws DAOException {
-        ProjectFileGroup result = retrieveObject(ProjectFileGroup.class, id);
+    public Folder getById(Integer id) throws DAOException {
+        Folder result = retrieveObject(Folder.class, id);
         if (result == null) {
             throw new DAOException("Object can not be found in database");
         }
@@ -29,23 +29,23 @@ public class ProjectFileGroupDAO extends BaseDAO<ProjectFileGroup> {
     }
 
     @Override
-    public List<ProjectFileGroup> getAll() throws DAOException {
-        return retrieveAllObjects(ProjectFileGroup.class);
+    public List<Folder> getAll() throws DAOException {
+        return retrieveAllObjects(Folder.class);
     }
 
     @Override
-    public List<ProjectFileGroup> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM ProjectFileGroup ORDER BY id ASC", offset, size);
+    public List<Folder> getAll(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Folder ORDER BY id ASC", offset, size);
     }
 
     @Override
-    public ProjectFileGroup save(ProjectFileGroup projectFileGroup) throws DAOException {
-        storeObject(projectFileGroup);
-        return retrieveObject(ProjectFileGroup.class, projectFileGroup.getId());
+    public Folder save(Folder folder) throws DAOException {
+        storeObject(folder);
+        return retrieveObject(Folder.class, folder.getId());
     }
 
     @Override
     public void remove(Integer id) throws DAOException {
-        removeObject(ProjectFileGroup.class, id);
+        removeObject(Folder.class, id);
     }
 }

@@ -26,8 +26,8 @@ import javax.persistence.Table;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 
 @Entity
-@Table(name = "projectFileGroup")
-public class ProjectFileGroup extends BaseBean {
+@Table(name = "folder")
+public class Folder extends BaseBean {
     private static final long serialVersionUID = -5506252462891480484L;
 
     @Column(name = "fileGroup")
@@ -198,7 +198,7 @@ public class ProjectFileGroup extends BaseBean {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ProjectFileGroup that = (ProjectFileGroup) o;
+        Folder that = (Folder) o;
         return Objects.equals(fileGroup, that.fileGroup) && Objects.equals(urlStructure, that.urlStructure)
                 && Objects.equals(mimeType, that.mimeType) && Objects.equals(path, that.path)
                 && Objects.equals(project, that.project) && copyFolder == that.copyFolder

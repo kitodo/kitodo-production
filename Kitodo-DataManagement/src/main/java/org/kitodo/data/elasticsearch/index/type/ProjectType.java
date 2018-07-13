@@ -20,7 +20,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 
 /**
@@ -32,13 +32,13 @@ public class ProjectType extends BaseType<Project> {
     JsonObject getJsonObject(Project project) {
 
         JsonArrayBuilder projectFileGroups = Json.createArrayBuilder();
-        List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
-        for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
+        List<Folder> projectProjectFileGroups = project.getProjectFileGroups();
+        for (Folder folder : projectProjectFileGroups) {
             JsonObject projectFileGroupObject = Json.createObjectBuilder()
-                    .add(ProjectTypeField.PFG_FILE_GROUP.getName(), preventNull(projectFileGroup.getFileGroup()))
-                    .add(ProjectTypeField.PFG_URL_STRUCTURE.getName(), preventNull(projectFileGroup.getUrlStructure()))
-                    .add(ProjectTypeField.PFG_MIME_TYPE.getName(), preventNull(projectFileGroup.getMimeType()))
-                    .add(ProjectTypeField.PFG_PATH.getName(), preventNull(projectFileGroup.getPath())).build();
+                    .add(ProjectTypeField.PFG_FILE_GROUP.getName(), preventNull(folder.getFileGroup()))
+                    .add(ProjectTypeField.PFG_URL_STRUCTURE.getName(), preventNull(folder.getUrlStructure()))
+                    .add(ProjectTypeField.PFG_MIME_TYPE.getName(), preventNull(folder.getMimeType()))
+                    .add(ProjectTypeField.PFG_PATH.getName(), preventNull(folder.getPath())).build();
             projectFileGroups.add(projectFileGroupObject);
         }
 

@@ -33,7 +33,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
@@ -49,12 +49,12 @@ public class ProjectTypeTest {
     private static List<Project> prepareData() {
 
         List<Project> projects = new ArrayList<>();
-        List<ProjectFileGroup> projectFileGroups = new ArrayList<>();
+        List<Folder> folders = new ArrayList<>();
         List<Process> processes = new ArrayList<>();
         List<Template> templates = new ArrayList<>();
         List<User> users = new ArrayList<>();
 
-        ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
+        Folder firstProjectFileGroup = new Folder();
         firstProjectFileGroup.setFileGroup("MAX");
         firstProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstProjectFileGroup.setMimeType("image/jpeg");
@@ -63,9 +63,9 @@ public class ProjectTypeTest {
         firstProjectFileGroup.setCreateFolder(true);
         firstProjectFileGroup.setDerivative(1.0);
         firstProjectFileGroup.setLinkingMode(LinkingMode.ALL);
-        projectFileGroups.add(firstProjectFileGroup);
+        folders.add(firstProjectFileGroup);
 
-        ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
+        Folder secondProjectFileGroup = new Folder();
         secondProjectFileGroup.setFileGroup("DEFAULT");
         secondProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondProjectFileGroup.setMimeType("image/jpeg");
@@ -75,9 +75,9 @@ public class ProjectTypeTest {
         secondProjectFileGroup.setDerivative(0.8);
         secondProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        projectFileGroups.add(secondProjectFileGroup);
+        folders.add(secondProjectFileGroup);
 
-        ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
+        Folder thirdProjectFileGroup = new Folder();
         thirdProjectFileGroup.setFileGroup("THUMBS");
         thirdProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdProjectFileGroup.setMimeType("image/jpeg");
@@ -87,9 +87,9 @@ public class ProjectTypeTest {
         thirdProjectFileGroup.setImageSize(150);
         thirdProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        projectFileGroups.add(thirdProjectFileGroup);
+        folders.add(thirdProjectFileGroup);
 
-        ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
+        Folder fourthProjectFileGroup = new Folder();
         fourthProjectFileGroup.setFileGroup("FULLTEXT");
         fourthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthProjectFileGroup.setMimeType("text/xml");
@@ -98,9 +98,9 @@ public class ProjectTypeTest {
         fourthProjectFileGroup.setCreateFolder(true);
         fourthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        projectFileGroups.add(fourthProjectFileGroup);
+        folders.add(fourthProjectFileGroup);
 
-        ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
+        Folder fifthProjectFileGroup = new Folder();
         fifthProjectFileGroup.setFileGroup("DOWNLOAD");
         fifthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthProjectFileGroup.setMimeType("application/pdf");
@@ -109,7 +109,7 @@ public class ProjectTypeTest {
         fifthProjectFileGroup.setCreateFolder(true);
         fifthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        projectFileGroups.add(fifthProjectFileGroup);
+        folders.add(fifthProjectFileGroup);
 
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
@@ -150,7 +150,7 @@ public class ProjectTypeTest {
         firstProject.setNumberOfVolumes(10);
         firstProject.setTemplates(templates);
         firstProject.setProcesses(processes);
-        firstProject.setProjectFileGroups(projectFileGroups);
+        firstProject.setProjectFileGroups(folders);
         firstProject.setUsers(users);
         firstProject.setClient(client);
         projects.add(firstProject);
@@ -166,7 +166,7 @@ public class ProjectTypeTest {
         secondProject.setNumberOfVolumes(20);
         secondProject.setTemplates(templates);
         secondProject.setProcesses(processes);
-        secondProject.setProjectFileGroups(projectFileGroups);
+        secondProject.setProjectFileGroups(folders);
         secondProject.setUsers(users);
         projects.add(secondProject);
 

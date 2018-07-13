@@ -11,12 +11,12 @@
 
 package org.kitodo.services.data;
 
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectFileGroupDAO;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class ProjectFileGroupService extends SearchDatabaseService<ProjectFileGroup, ProjectFileGroupDAO> {
+public class ProjectFileGroupService extends SearchDatabaseService<Folder, ProjectFileGroupDAO> {
 
     public ProjectFileGroupService() {
         super(new ProjectFileGroupDAO());

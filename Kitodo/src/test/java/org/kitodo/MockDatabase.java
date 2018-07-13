@@ -61,7 +61,7 @@ import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -772,7 +772,7 @@ public class MockDatabase {
     private static void insertProjectFileGroups() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
 
-        ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
+        Folder firstProjectFileGroup = new Folder();
         firstProjectFileGroup.setFileGroup("MAX");
         firstProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstProjectFileGroup.setMimeType("image/jpeg");
@@ -782,7 +782,7 @@ public class MockDatabase {
         firstProjectFileGroup.setDerivative(1.0);
         firstProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
+        Folder secondProjectFileGroup = new Folder();
         secondProjectFileGroup.setFileGroup("DEFAULT");
         secondProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondProjectFileGroup.setMimeType("image/jpeg");
@@ -792,7 +792,7 @@ public class MockDatabase {
         secondProjectFileGroup.setDerivative(0.8);
         secondProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
+        Folder thirdProjectFileGroup = new Folder();
         thirdProjectFileGroup.setFileGroup("THUMBS");
         thirdProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdProjectFileGroup.setMimeType("image/jpeg");
@@ -802,7 +802,7 @@ public class MockDatabase {
         thirdProjectFileGroup.setImageSize(150);
         thirdProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
+        Folder fourthProjectFileGroup = new Folder();
         fourthProjectFileGroup.setFileGroup("FULLTEXT");
         fourthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthProjectFileGroup.setMimeType("text/xml");
@@ -811,7 +811,7 @@ public class MockDatabase {
         fourthProjectFileGroup.setCreateFolder(true);
         fourthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
+        Folder fifthProjectFileGroup = new Folder();
         fifthProjectFileGroup.setFileGroup("DOWNLOAD");
         fifthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthProjectFileGroup.setMimeType("application/pdf");

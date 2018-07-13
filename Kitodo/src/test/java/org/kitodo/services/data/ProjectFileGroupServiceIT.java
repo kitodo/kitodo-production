@@ -20,7 +20,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 
 /**
  * Tests for TaskService class.
@@ -43,9 +43,9 @@ public class ProjectFileGroupServiceIT {
     public void shouldFindProjectFileGroup() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
-        ProjectFileGroup projectFileGroup = projectFileGroupService.getById(1);
-        boolean condition = projectFileGroup.getFileGroup().equals("MAX")
-                && projectFileGroup.getMimeType().equals("image/jpeg");
+        Folder folder = projectFileGroupService.getById(1);
+        boolean condition = folder.getFileGroup().equals("MAX")
+                && folder.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
     }
 
@@ -53,7 +53,7 @@ public class ProjectFileGroupServiceIT {
     public void shouldGetAllProjectFileGroups() throws Exception {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
-        List<ProjectFileGroup> projectFileGroups = projectFileGroupService.getAll();
-        assertEquals("Project file group was not found in database!", 5, projectFileGroups.size());
+        List<Folder> folders = projectFileGroupService.getAll();
+        assertEquals("Project file group was not found in database!", 5, folders.size());
     }
 }

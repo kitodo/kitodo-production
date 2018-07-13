@@ -49,7 +49,7 @@ import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -201,8 +201,8 @@ public class SchemaService {
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer)
             throws PreferencesException, IOException, JAXBException {
-        List<ProjectFileGroup> fileGroups = process.getProject().getProjectFileGroups();
-        for (ProjectFileGroup pfg : fileGroups) {
+        List<Folder> fileGroups = process.getProject().getProjectFileGroups();
+        for (Folder pfg : fileGroups) {
             // check if source files exists
             if (pfg.getPath() != null && pfg.getPath().length() > 0) {
                 URI folder = serviceManager.getProcessService().getMethodFromName(pfg.getPath(), process);
@@ -219,16 +219,16 @@ public class SchemaService {
         return metsMods;
     }
 
-    private VirtualFileGroupInterface setVirtualFileGroup(ProjectFileGroup projectFileGroup,
+    private VirtualFileGroupInterface setVirtualFileGroup(Folder folder,
             VariableReplacer variableReplacer) throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
-        virtualFileGroup.setName(projectFileGroup.getFileGroup());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(projectFileGroup.getUrlStructure()));
-        virtualFileGroup.setMimetype(projectFileGroup.getMimeType());
+        virtualFileGroup.setName(folder.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
+        virtualFileGroup.setMimetype(folder.getMimeType());
         virtualFileGroup.setFileSuffix(
-            FileFormatsConfig.getFileFormat(projectFileGroup.getMimeType()).get().getExtension(false));
-        virtualFileGroup.setOrdinary(!projectFileGroup.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
+            FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+        virtualFileGroup.setOrdinary(!folder.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
 
         return virtualFileGroup;
     }
