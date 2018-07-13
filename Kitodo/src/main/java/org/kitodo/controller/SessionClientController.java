@@ -77,7 +77,7 @@ public class SessionClientController {
     /**
      * The conditions when user need to select a session client is configured in
      * this method.
-     * 
+     *
      * @return True if the session client select dialog should by displayed to the
      *         current user
      */

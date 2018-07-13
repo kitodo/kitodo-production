@@ -32,6 +32,11 @@ public class LoginPage extends Page<LoginPage> {
     @FindBy(id = "password")
     private WebElement passwordInput;
 
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "select-session-client-form:setSessionClientButton")
+    private WebElement setSessionClientButton;
+
     public LoginPage() {
         super("pages/login.jsf");
     }
@@ -62,5 +67,9 @@ public class LoginPage extends Page<LoginPage> {
         User user = new ServiceManager().getUserService().getById(1);
         user.setPassword("test");
         performLogin(user);
+    }
+
+    public void selectClientAfterLogin() {
+        setSessionClientButton.click();
     }
 }
