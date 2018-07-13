@@ -36,7 +36,7 @@
                          action="#{TemplateForm.saveTaskAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{TemplateForm.saveDisabled}"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
@@ -44,7 +44,7 @@
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="templateEdit?id=#{TemplateForm.template.id}"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  onclick="setConfirmUnload(false);" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">

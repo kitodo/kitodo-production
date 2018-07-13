@@ -40,7 +40,7 @@
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{RulesetForm.saveDisabled}"
                          styleClass="button-filled-blue"/>
         <p:commandButton id="saveButtonToggler"
@@ -48,7 +48,7 @@
                          update="save"
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  onclick="setConfirmUnload(false);" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">

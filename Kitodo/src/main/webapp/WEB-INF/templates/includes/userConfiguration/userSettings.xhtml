@@ -66,7 +66,7 @@
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
                              validateClient="true"
-                             onclick="PF('notifications').renderMessage({'summary':'#{msgs.configurationSaving}','severity':'info'});"
+                             onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.configurationSaving}','severity':'info'});"
                              styleClass="button-filled-blue">
                 <f:ajax execute="@form" render="@all"/>
             </p:commandButton>
