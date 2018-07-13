@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.json.JsonObject;
 import javax.json.JsonValue;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -464,9 +465,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         Integer process = taskJSONObject.getInt(TaskTypeField.PROCESS_ID.getName());
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
-            taskDTO.setBatchAvailable(
-                    serviceManager.getProcessService().isProcessAssignedToOnlyOneLogisticBatch(
-                            taskDTO.getProcess().getBatches()));
+            taskDTO.setBatchAvailable(serviceManager.getProcessService()
+                    .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
         }
         Integer template = taskJSONObject.getInt(TaskTypeField.TEMPLATE_ID.getName());
         if (template > 0) {
@@ -711,7 +711,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             } else {
                 abortTask(task);
             }
-        } catch (PreferencesException | WriteException | IOException e) {
+        } catch (PreferencesException | WriteException | IOException | JAXBException e) {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }
@@ -876,8 +876,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Task> getTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus,
-            projectId);
+        return dao.getTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus, projectId);
     }
 
     /**
@@ -891,8 +890,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of Long
      */
     public List<Long> getSizeOfTasksWithProcessingStatusForProjectHelper(Integer processingStatus, Integer projectId) {
-        return dao.getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(
-            processingStatus, projectId);
+        return dao.getSizeOfTasksWithProcessingStatusForProcessesForProjectIdOrderByOrdering(processingStatus,
+            projectId);
     }
 
     /**
@@ -916,7 +915,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * this one which has no user / user groups assigned to itself. Other
      * possibility is that given list is empty. It means that whole workflow is
      * unreachable.
-     * 
+     *
      * @param tasks
      *            list of tasks for check
      */

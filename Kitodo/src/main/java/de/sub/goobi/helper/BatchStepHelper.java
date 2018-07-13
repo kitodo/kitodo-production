@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.faces.model.SelectItem;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -370,7 +371,7 @@ public class BatchStepHelper extends BatchHelper {
             User user = serviceManager.getUserService().getAuthenticatedUser();
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             this.currentStep.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(this.currentStep.getProcess(),
-                    this.currentStep.getProcess().getWikiField(), "user", message));
+                this.currentStep.getProcess().getWikiField(), "user", message));
             this.addToWikiField = "";
             try {
                 this.serviceManager.getProcessService().save(this.currentStep.getProcess());
@@ -389,7 +390,7 @@ public class BatchStepHelper extends BatchHelper {
             String message = this.addToWikiField + " (" + serviceManager.getUserService().getFullName(user) + ")";
             for (Task task : this.steps) {
                 task.getProcess().setWikiField(WikiFieldHelper.getWikiMessage(task.getProcess(),
-                        task.getProcess().getWikiField(), "user", message));
+                    task.getProcess().getWikiField(), "user", message));
                 try {
                     this.serviceManager.getProcessService().save(task.getProcess());
                 } catch (DataException e) {
@@ -429,9 +430,9 @@ public class BatchStepHelper extends BatchHelper {
             try {
                 export.startExport(step.getProcess());
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | IOException | ExportFileException | RuntimeException e) {
+                    | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage("errorExporting",
-                        new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("arbeitschritt"), step.getId() }, logger, e);
             }
         }
     }
@@ -519,7 +520,7 @@ public class BatchStepHelper extends BatchHelper {
         if (task.isTypeImagesWrite()) {
             MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
             if (!mih.checkIfImagesValid(task.getProcess().getTitle(),
-                    serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
+                serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess()))) {
                 Helper.setErrorMessage("Error on image validation!");
                 return true;
             }
@@ -539,7 +540,7 @@ public class BatchStepHelper extends BatchHelper {
     private boolean isPropertyInvalid(Property property, Task task) {
         if (property.getValue() == null || property.getValue().equals("")) {
             Helper.setErrorMessage("BatchPropertyEmpty",
-                    new Object[] {property.getTitle(), task.getProcess().getTitle()});
+                new Object[] {property.getTitle(), task.getProcess().getTitle() });
             return true;
         }
         return false;

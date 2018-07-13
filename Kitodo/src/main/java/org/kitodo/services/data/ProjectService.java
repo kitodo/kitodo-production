@@ -160,8 +160,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            if true - find active projects, if false - find not active
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object, if
-     *            false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object,
+     *            if false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
@@ -249,7 +249,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setTitle(projectJSONObject.getString(ProjectTypeField.TITLE.getName()));
         projectDTO.setStartDate(projectJSONObject.getString(ProjectTypeField.START_DATE.getName()));
         projectDTO.setEndDate(projectJSONObject.getString(ProjectTypeField.END_DATE.getName()));
-        projectDTO.setFileFormatDmsExport(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
+        projectDTO
+                .setFileFormatDmsExport(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
         projectDTO.setFileFormatInternal(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
         projectDTO.setMetsRightsOwner(projectJSONObject.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
         projectDTO.setNumberOfPages(projectJSONObject.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
@@ -290,8 +291,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project is
-     *         incomplete
+     * @return true, if project is complete and can be used, false, if project
+     *         is incomplete
      */
     public boolean isProjectComplete(Project project) {
         boolean projectsXmlExists = (new File(
@@ -347,13 +348,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         for (ProjectFileGroup projectFileGroup : baseProject.getProjectFileGroups()) {
             ProjectFileGroup duplicatedGroup = new ProjectFileGroup();
             duplicatedGroup.setMimeType(projectFileGroup.getMimeType());
-            duplicatedGroup.setName(projectFileGroup.getName());
+            duplicatedGroup.setFileGroup(projectFileGroup.getFileGroup());
+            duplicatedGroup.setUrlStructure(projectFileGroup.getUrlStructure());
             duplicatedGroup.setPath(projectFileGroup.getPath());
-            duplicatedGroup.setPreviewImage(projectFileGroup.isPreviewImage());
-            duplicatedGroup.setSuffix(projectFileGroup.getSuffix());
-            duplicatedGroup.setFolder(projectFileGroup.getFolder());
 
             duplicatedGroup.setProject(duplicatedProject);
+            duplicatedGroup.setCopyFolder(projectFileGroup.isCopyFolder());
+            duplicatedGroup.setCreateFolder(projectFileGroup.isCreateFolder());
+            duplicatedGroup.setDerivative(projectFileGroup.getDerivative().orElse(null));
+            duplicatedGroup.setDpi(projectFileGroup.getDpi().orElse(null));
+            duplicatedGroup.setImageScale(projectFileGroup.getImageScale().orElse(null));
+            duplicatedGroup.setImageSize(projectFileGroup.getImageSize().orElse(null));
+            duplicatedGroup.setLinkingMode(projectFileGroup.getLinkingMode());
             duplicatedFileGroups.add(duplicatedGroup);
         }
         duplicatedProject.setProjectFileGroups(duplicatedFileGroups);
@@ -369,7 +375,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      */
     public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
         Project project = serviceManager.getProjectService().getById(id);
-        return String.join(", ", project.getTemplates().stream().map(Template::getTitle)
-                .collect(Collectors.toList()));
+        return String.join(", ", project.getTemplates().stream().map(Template::getTitle).collect(Collectors.toList()));
     }
 }

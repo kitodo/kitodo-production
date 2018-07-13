@@ -94,12 +94,12 @@ public class ProjectFileGroup extends BaseBean {
     @Enumerated(EnumType.STRING)
     private LinkingMode linkingMode;
 
-    public String getName() {
+    public String getFileGroup() {
         return this.fileGroup;
     }
 
-    public void setName(String name) {
-        this.fileGroup = name;
+    public void setFileGroup(String fileGroup) {
+        this.fileGroup = fileGroup;
     }
 
     public Project getProject() {
@@ -110,11 +110,11 @@ public class ProjectFileGroup extends BaseBean {
         this.project = project;
     }
 
-    public String getPath() {
+    public String getUrlStructure() {
         return this.urlStructure;
     }
 
-    public void setPath(String path) {
+    public void setUrlStructure(String path) {
         this.urlStructure = path;
     }
 
@@ -126,12 +126,12 @@ public class ProjectFileGroup extends BaseBean {
         this.mimeType = mimeType;
     }
 
-    public String getFolder() {
+    public String getPath() {
         return this.path;
     }
 
-    public void setFolder(String folder) {
-        this.path = folder;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public boolean isCopyFolder() {
@@ -212,7 +212,7 @@ public class ProjectFileGroup extends BaseBean {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi, imageScale,
-            imageSize, linkingMode);
+        return Objects.hash(fileGroup, urlStructure, mimeType, path, copyFolder, createFolder, derivative, dpi,
+            imageScale, imageSize, linkingMode);
     }
 }

@@ -55,10 +55,10 @@ public class ProjectTypeTest {
         List<User> users = new ArrayList<>();
 
         ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
-        firstProjectFileGroup.setName("MAX");
-        firstProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstProjectFileGroup.setFileGroup("MAX");
+        firstProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
         firstProjectFileGroup.setMimeType("image/jpeg");
-        firstProjectFileGroup.setFolder("jpgs/max");
+        firstProjectFileGroup.setPath("jpgs/max");
         firstProjectFileGroup.setCopyFolder(true);
         firstProjectFileGroup.setCreateFolder(true);
         firstProjectFileGroup.setDerivative(1.0);
@@ -66,10 +66,10 @@ public class ProjectTypeTest {
         projectFileGroups.add(firstProjectFileGroup);
 
         ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
-        secondProjectFileGroup.setName("DEFAULT");
-        secondProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondProjectFileGroup.setFileGroup("DEFAULT");
+        secondProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
         secondProjectFileGroup.setMimeType("image/jpeg");
-        secondProjectFileGroup.setFolder("jpgs/default");
+        secondProjectFileGroup.setPath("jpgs/default");
         secondProjectFileGroup.setCopyFolder(true);
         secondProjectFileGroup.setCreateFolder(true);
         secondProjectFileGroup.setDerivative(0.8);
@@ -78,10 +78,10 @@ public class ProjectTypeTest {
         projectFileGroups.add(secondProjectFileGroup);
 
         ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
-        thirdProjectFileGroup.setName("THUMBS");
-        thirdProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
+        thirdProjectFileGroup.setFileGroup("THUMBS");
+        thirdProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
         thirdProjectFileGroup.setMimeType("image/jpeg");
-        thirdProjectFileGroup.setFolder("jpgs/thumbs");
+        thirdProjectFileGroup.setPath("jpgs/thumbs");
         thirdProjectFileGroup.setCopyFolder(true);
         thirdProjectFileGroup.setCreateFolder(true);
         thirdProjectFileGroup.setImageSize(150);
@@ -90,10 +90,10 @@ public class ProjectTypeTest {
         projectFileGroups.add(thirdProjectFileGroup);
 
         ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
-        fourthProjectFileGroup.setName("FULLTEXT");
-        fourthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
+        fourthProjectFileGroup.setFileGroup("FULLTEXT");
+        fourthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
         fourthProjectFileGroup.setMimeType("text/xml");
-        fourthProjectFileGroup.setFolder("ocr/alto");
+        fourthProjectFileGroup.setPath("ocr/alto");
         fourthProjectFileGroup.setCopyFolder(true);
         fourthProjectFileGroup.setCreateFolder(true);
         fourthProjectFileGroup.setLinkingMode(LinkingMode.ALL);
@@ -101,10 +101,10 @@ public class ProjectTypeTest {
         projectFileGroups.add(fourthProjectFileGroup);
 
         ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
-        fifthProjectFileGroup.setName("DOWNLOAD");
-        fifthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
+        fifthProjectFileGroup.setFileGroup("DOWNLOAD");
+        fifthProjectFileGroup.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
         fifthProjectFileGroup.setMimeType("application/pdf");
-        fifthProjectFileGroup.setFolder("pdf");
+        fifthProjectFileGroup.setPath("pdf");
         fifthProjectFileGroup.setCopyFolder(true);
         fifthProjectFileGroup.setCreateFolder(true);
         fifthProjectFileGroup.setLinkingMode(LinkingMode.ALL);

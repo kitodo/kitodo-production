@@ -44,7 +44,7 @@ public class ProjectFileGroupServiceIT {
         ProjectFileGroupService projectFileGroupService = new ProjectFileGroupService();
 
         ProjectFileGroup projectFileGroup = projectFileGroupService.getById(1);
-        boolean condition = projectFileGroup.getName().equals("MAX")
+        boolean condition = projectFileGroup.getFileGroup().equals("MAX")
                 && projectFileGroup.getMimeType().equals("image/jpeg");
         assertTrue("Project file group was not found in database!", condition);
     }

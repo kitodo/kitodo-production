@@ -35,10 +35,10 @@ public class ProjectType extends BaseType<Project> {
         List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
         for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
             JsonObject projectFileGroupObject = Json.createObjectBuilder()
-                    .add(ProjectTypeField.PFG_FILE_GROUP.getName(), preventNull(projectFileGroup.getName()))
-                    .add(ProjectTypeField.PFG_URL_STRUCTURE.getName(), preventNull(projectFileGroup.getPath()))
+                    .add(ProjectTypeField.PFG_FILE_GROUP.getName(), preventNull(projectFileGroup.getFileGroup()))
+                    .add(ProjectTypeField.PFG_URL_STRUCTURE.getName(), preventNull(projectFileGroup.getUrlStructure()))
                     .add(ProjectTypeField.PFG_MIME_TYPE.getName(), preventNull(projectFileGroup.getMimeType()))
-                    .add(ProjectTypeField.PFG_PATH.getName(), preventNull(projectFileGroup.getFolder())).build();
+                    .add(ProjectTypeField.PFG_PATH.getName(), preventNull(projectFileGroup.getPath())).build();
             projectFileGroups.add(projectFileGroupObject);
         }
 

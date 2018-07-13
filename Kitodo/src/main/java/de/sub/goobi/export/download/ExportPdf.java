@@ -29,6 +29,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +55,7 @@ public class ExportPdf extends ExportMets {
 
     @Override
     public boolean startExport(Process process, URI userHome)
-            throws ReadException, IOException, PreferencesException, WriteException {
+            throws ReadException, IOException, PreferencesException, WriteException, JAXBException {
 
         // Read Document
         FileformatInterface gdzfile = serviceManager.getProcessService().readMetadataFile(process);
@@ -83,8 +84,7 @@ public class ExportPdf extends ExportMets {
             GetMethod method = null;
             try {
                 // define path for mets and pdfs
-                Integer contentServerTimeOut = ConfigCore.getIntParameter(
-                    Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
                     DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
                 URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 

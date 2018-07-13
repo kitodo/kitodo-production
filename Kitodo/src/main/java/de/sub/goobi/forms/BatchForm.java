@@ -28,6 +28,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -477,7 +478,7 @@ public class BatchForm extends BasisForm {
                         throw new UnreachableCodeException("Complete switch statement");
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
-                    | ReadException | IOException | ExportFileException | RuntimeException e) {
+                    | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage(ERROR_READ, logger, e);
                 return null;
             }

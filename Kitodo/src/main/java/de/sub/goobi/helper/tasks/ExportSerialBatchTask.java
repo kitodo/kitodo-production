@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -156,14 +158,16 @@ public class ExportSerialBatchTask extends EmptyTask {
                     ExportDms exporter = new ExportDms(
                             ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
-                    exporter.startExport(process, serviceManager.getUserService().getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()), out);
+                    exporter.startExport(process, serviceManager.getUserService()
+                            .getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),
+                        out);
                     stepcounter++;
                     setProgress(100 * stepcounter / maxsize);
                 }
             }
         } catch (PreferencesException | ReadException | IOException | MetadataTypeNotAllowedException
-                | TypeNotAllowedForParentException | TypeNotAllowedAsChildException | WriteException
-                | RuntimeException e) {
+                | TypeNotAllowedForParentException | TypeNotAllowedAsChildException | WriteException | RuntimeException
+                | JAXBException e) {
             String message = e.getClass().getSimpleName() + " while " + (stepcounter == 0 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
@@ -203,7 +207,8 @@ public class ExportSerialBatchTask extends EmptyTask {
     private static DigitalDocumentInterface buildExportDocument(Process process, Iterable<String> allPointers)
             throws PreferencesException, ReadException, IOException, MetadataTypeNotAllowedException,
             TypeNotAllowedForParentException, TypeNotAllowedAsChildException {
-        DigitalDocumentInterface result = serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument();
+        DigitalDocumentInterface result = serviceManager.getProcessService().readMetadataFile(process)
+                .getDigitalDocument();
         DocStructInterface root = result.getLogicalDocStruct();
         String type = "Volume";
         try {
@@ -215,8 +220,8 @@ public class ExportSerialBatchTask extends EmptyTask {
         PrefsInterface ruleset = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         for (String pointer : allPointers) {
             if (!pointer.equals(ownPointer)) {
-                root.createChild(type, result, ruleset).addMetadata(MetsModsImportExportInterface.CREATE_MPTR_ELEMENT_TYPE,
-                        pointer);
+                root.createChild(type, result, ruleset)
+                        .addMetadata(MetsModsImportExportInterface.CREATE_MPTR_ELEMENT_TYPE, pointer);
             }
         }
         return result;

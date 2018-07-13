@@ -49,6 +49,7 @@ import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,8 +149,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
-            DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -469,7 +469,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("arbeitschritt")}, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("arbeitschritt") }, logger, e);
         }
     }
 
@@ -546,7 +546,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
-                | PreferencesException | IOException | RuntimeException e) {
+                | PreferencesException | IOException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -563,7 +563,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
-                | ExportFileException | RuntimeException e) {
+                | ExportFileException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
                 logger, e);
         }
@@ -581,7 +581,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
-                | ExportFileException | RuntimeException e) {
+                | ExportFileException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("errorExporting", new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
         }
     }
@@ -621,7 +621,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
-                    | IOException | ExportFileException | RuntimeException e) {
+                    | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage("errorExporting",
                     new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
             }
@@ -838,7 +838,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Set process by ID.
-     * 
+     *
      * @param processID
      *            ID of process to set.
      */
@@ -1588,7 +1588,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {"property"}, logger, e);
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {"property" }, logger, e);
                 }
             }
         }

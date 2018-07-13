@@ -48,6 +48,7 @@ import javax.json.JsonValue;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
@@ -77,6 +78,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.Parameters;
+import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
@@ -404,6 +406,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return countDatabaseRows("SELECT COUNT(*) FROM Process");
     }
 
+    @Override
     public void refresh(Process process) {
         dao.refresh(process);
     }
@@ -1721,7 +1724,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
-            throws IOException, PreferencesException, WriteException {
+            throws IOException, PreferencesException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = process.getTitle();
 
@@ -2034,7 +2037,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the FileFormat-Object to use for Mets-Writing
      */
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
+            boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
@@ -2107,8 +2110,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         List<ProjectFileGroup> fileGroups = project.getProjectFileGroups();
         for (ProjectFileGroup pfg : fileGroups) {
             // check if source files exists
-            if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                URI folder = new File(pfg.getFolder()).toURI();
+            if (pfg.getPath() != null && pfg.getPath().length() > 0) {
+                URI folder = new File(pfg.getPath()).toURI();
                 if (fileService.fileExist(folder) && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
                     mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
                 }
@@ -2173,12 +2176,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(ProjectFileGroup pfg, VariableReplacer variableReplacer) {
+    private VirtualFileGroupInterface prepareVirtualFileGroup(ProjectFileGroup pfg, VariableReplacer variableReplacer)
+            throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(pfg.getName());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(pfg.getPath()));
+        virtualFileGroup.setName(pfg.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(pfg.getUrlStructure()));
         virtualFileGroup.setMimetype(pfg.getMimeType());
-        virtualFileGroup.setFileSuffix(pfg.getSuffix());
+        virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(pfg.getMimeType()).get().getExtension(false));
         return virtualFileGroup;
     }
 

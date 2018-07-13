@@ -19,6 +19,8 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.FileformatInterface;
@@ -50,7 +52,7 @@ public class ExportMets {
      *            Process object
      */
     public boolean startExport(Process process) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException {
+            MetadataTypeNotAllowedException, ExportFileException, ReadException, JAXBException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         URI userHome = serviceManager.getUserService().getHomeDirectory(user);
         return startExport(process, userHome);
@@ -65,7 +67,7 @@ public class ExportMets {
      *            String
      */
     public boolean startExport(Process process, URI userHome) throws IOException, PreferencesException, WriteException,
-            MetadataTypeNotAllowedException, ExportFileException, ReadException {
+            MetadataTypeNotAllowedException, ExportFileException, ReadException, JAXBException {
 
         /*
          * Read Document
@@ -103,8 +105,8 @@ public class ExportMets {
         try {
             fileService.createDirectoryForUser(targetFolder, user.getLogin());
         } catch (IOException | RuntimeException e) {
-            Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder,
-                    logger, e);
+            Helper.setErrorMessage("Export canceled, could not create destination directory: " + targetFolder, logger,
+                e);
         }
     }
 
@@ -122,7 +124,7 @@ public class ExportMets {
      * @return true or false
      */
     protected boolean writeMetsFile(Process process, URI metaFile, FileformatInterface gdzfile,
-            boolean writeLocalFileGroup) throws PreferencesException, WriteException, IOException {
+            boolean writeLocalFileGroup) throws PreferencesException, WriteException, IOException, JAXBException {
 
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(this.myPrefs);
         mm.setWriteLocal(writeLocalFileGroup);

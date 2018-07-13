@@ -32,6 +32,7 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -110,8 +111,7 @@ public class AktuelleSchritteForm extends BasisForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME,
-            DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -140,8 +140,8 @@ public class AktuelleSchritteForm extends BasisForm {
     }
 
     /**
-     * Take over batch of tasks - all tasks assigned to the same batch with the same
-     * title.
+     * Take over batch of tasks - all tasks assigned to the same batch with the
+     * same title.
      *
      * @return page for edit one task, page for edit many or null
      */
@@ -590,8 +590,8 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             export.startExport(this.currentTask.getProcess());
         } catch (ReadException | PreferencesException | WriteException | MetadataTypeNotAllowedException | IOException
-                | ExportFileException | RuntimeException e) {
-            Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle()}, logger, e);
+                | ExportFileException | RuntimeException | JAXBException e) {
+            Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
         }
     }
 
