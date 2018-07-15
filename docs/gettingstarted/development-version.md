@@ -52,7 +52,7 @@ wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kito
 mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 ```
 
-### Create zip archive with directories and config files
+### Create zip archive "kitodo-3-config.zip" with directories and config files
 
 ```
 mkdir zip zip/config zip/debug zip/import zip/logs zip/messages zip/metadata zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/swap zip/temp zip/users zip/xslt zip/diagrams
@@ -65,11 +65,19 @@ chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/
 (cd zip && zip -r ../kitodo-3-config.zip *)
 ```
 
+### Create zip archive "kitodo-3-modules.zip" with jar files
+
+```
+chmod 444 kitodo-production-master/Kitodo/modules/*
+(cd kitodo-production-master/Kitodo/modules && zip ../../../kitodo-3-modules.zip *)
+```
+
 ### Results
 
 * war file: `kitodo-3.war`
 * sql dump: `kitodo-3.sql`
-* zip file: `kitodo-3-config.zip`
+* config zip: `kitodo-3-config.zip`
+* modules zip: `kitodo-3-modules.zip`
 
 ### Cleanup MySQL
 
@@ -137,6 +145,14 @@ sudo unzip kitodo-3-config.zip -d /usr/local/kitodo
 sudo chown -R tomcat8:tomcat8 /usr/local/kitodo
 ```
 
+### Install modules
+
+```
+sudo mkdir /usr/local/kitodo/modules
+sudo unzip kitodo-3-modules.zip -d /usr/local/kitodo/modules
+sudo chown -R tomcat8:tomcat8 /usr/local/kitodo/modules
+```
+
 ### Deploy war file into Tomcat
 
 ```
@@ -157,6 +173,10 @@ http://localhost:8080/kitodo/
 
 * user: testAdmin
 * pass: test
+
+### Index example data
+
+After logging in you can access the indexing page (via menu or directly at <http://localhost:8080/kitodo/pages/system.jsf>). Start indexing the provided example data by clicking on the button "Start indexing" (at whole index).
 
 ## 4. Configuration
 
