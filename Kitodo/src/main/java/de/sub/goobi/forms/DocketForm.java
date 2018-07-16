@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -175,8 +176,8 @@ public class DocketForm extends BasisForm {
      * @return list of docket filenames
      */
     public List getDocketFiles() {
-        try {
-            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))
+        try (Stream<Path> docketPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))) {
+            return docketPaths
                     .filter(s -> s.toString().endsWith(".xsl"))
                     .map(Path::getFileName)
                     .sorted()
