@@ -12,18 +12,32 @@
 -->
 
 <ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable id="taskTable"
                  value="#{DesktopForm.tasks}"
+                 scrollable="true"
                  var="task">
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.title}" id="taskTitle">
             <h:outputText value="#{task.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.process}">
+        <p:column headerText="#{msgs.process}" id="taskProcess">
             <h:outputText value="#{task.process.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn"/>
+        <p:column headerText="#{msgs.project}" id="taskProject">
+            <h:outputText value="#{DesktopForm.getProject(task.process).title}"/>
+        </p:column>
+        <p:column headerText="#{msgs.actions}" id="taskActions" styleClass="actionsColumn">
+            <h:form id="actionForm">
+                <h:link outcome="taskEdit" id="editTask"
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',task.process.project.client.id, task.process.project.id)}"
+                        title="#{msgs.detailsDesSchritts}">
+                    <f:param name="id" value="#{task.id}"/>
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+            </h:form>
+        </p:column>
     </p:dataTable>
 </ui:composition>

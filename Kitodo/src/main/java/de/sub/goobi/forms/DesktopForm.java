@@ -17,19 +17,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
+import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.dto.ProcessDTO;
+import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 
 
 @Named("DesktopForm")
-@RequestScoped
+@ViewScoped
 public class DesktopForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private transient ServiceManager serviceManager = new ServiceManager();
@@ -81,6 +83,22 @@ public class DesktopForm extends BasisForm {
         } catch (DataException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
             return new ArrayList();
+        }
+    }
+
+    /**
+     * Get project of process.
+     *
+     * @param processDTO
+     *          process whose project is returned
+     * @return project of the given process
+     */
+    public ProjectDTO getProject(ProcessDTO processDTO) {
+        try {
+            return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("project") }, logger, e);
+            return null;
         }
     }
 

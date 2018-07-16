@@ -16,7 +16,10 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:importEnum type="org.kitodo.enums.ObjectType" var="objectTypeEnum"/>
-    <p:dataTable id="statisticsTable" value="#{DesktopForm.objectTypes}" var="objectType">
+    <p:dataTable id="statisticsTable"
+                 value="#{DesktopForm.objectTypes}"
+                 scrollable="true"
+                 var="objectType">
         <p:column headerText="Art">
             <h:outputText value="#{objectType.translation}"/>
         </p:column>
