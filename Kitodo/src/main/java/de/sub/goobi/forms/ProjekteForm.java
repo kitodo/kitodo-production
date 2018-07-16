@@ -237,22 +237,17 @@ public class ProjekteForm extends BasisForm {
 
     /**
      * Remove.
-     *
-     * @return String
      */
-    public String delete() {
+    public void delete() {
         if (!this.myProjekt.getUsers().isEmpty()) {
             Helper.setErrorMessage("userAssignedError");
-            return null;
         } else {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
-                return null;
             }
         }
-        return projectListPath;
     }
 
     /**
@@ -310,6 +305,20 @@ public class ProjekteForm extends BasisForm {
         // has to be called if a page back move was done
         this.cancel();
         this.myProjekt = inProjekt;
+    }
+
+    /**
+     * Set project by ID.
+     *
+     * @param projectID
+     *          ID of project to set.
+     */
+    public void setProjectById(int projectID) {
+        try {
+            setMyProjekt(serviceManager.getProjectService().getById(projectID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find project with ID " + projectID, logger, e);
+        }
     }
 
     /**

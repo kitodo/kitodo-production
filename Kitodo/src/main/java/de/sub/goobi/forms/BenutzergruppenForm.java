@@ -157,6 +157,19 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
+     * Set usergroup by ID.
+     * @param userGroupID
+     *          ID of usergroup to set.
+     */
+    public void setUserGroupById(int userGroupID) {
+        try {
+            setUserGroup(serviceManager.getUserGroupService().getById(userGroupID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find usergroup with ID " + userGroupID, logger, e);
+        }
+    }
+
+    /**
      * Return the list of available authorization levels and the list of authority
      * levels currently assigned to 'userGroup' as a combined 'DualListModel' that
      * is used by the frontend for authority management of user groups utilizing a

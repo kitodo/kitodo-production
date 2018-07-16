@@ -34,7 +34,8 @@
                 </div>
                 <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
             </p:panel>
-            <p:panel styleClass="desktop-widget">
+            <p:panel styleClass="desktop-widget"
+                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllProcesses')}">
                 <div class="content-header">
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.processes}</h3>
@@ -50,7 +51,8 @@
                 </div>
                 <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
             </p:panel>
-            <p:panel styleClass="desktop-widget">
+            <p:panel styleClass="desktop-widget"
+                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllProjects')}">
                 <div class="content-header">
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.projects}</h3>

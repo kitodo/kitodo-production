@@ -170,6 +170,20 @@ public class RulesetForm extends BasisForm {
     }
 
     /**
+     * Set ruleset by ID.
+     *
+     * @param rulesetID
+     *          ID of the ruleset to set.
+     */
+    public void setRulesetById(int rulesetID) {
+        try {
+            setRuleset(serviceManager.getRulesetService().getById(rulesetID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find ruleset with ID " + rulesetID, logger, e);
+        }
+    }
+
+    /**
      * Get all available clients.
      *
      * @return list of Client objects
@@ -193,6 +207,21 @@ public class RulesetForm extends BasisForm {
         } catch (IOException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("rulesets")}, logger, e);
             return new ArrayList();
+        }
+    }
+
+    /**
+     * Delete ruleset.
+     */
+    public void deleteRuleset() {
+        try {
+            if (hasAssignedProcesses(ruleset)) {
+                Helper.setErrorMessage("rulesetInUse");
+            } else {
+                this.serviceManager.getRulesetService().remove(this.ruleset);
+            }
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
         }
     }
 }

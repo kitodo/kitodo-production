@@ -123,4 +123,29 @@ public class ClientForm extends BasisForm {
     public void setClient(Client client) {
         this.client = client;
     }
+
+    /**
+     * Set client by ID.
+     *
+     * @param clientID
+     *          ID of client to set.
+     */
+    public void setClientById(int clientID) {
+        try {
+            setClient(this.serviceManager.getClientService().getById(clientID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find client with ID " + clientID, logger, e);
+        }
+    }
+
+    /**
+     * Delete client.
+     */
+    public void deleteClient() {
+        try {
+            this.serviceManager.getClientService().remove(this.client);
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("client") }, logger, e);
+        }
+    }
 }
