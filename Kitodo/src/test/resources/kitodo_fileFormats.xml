@@ -48,6 +48,7 @@
     </fileFormat>
     <fileFormat extension="gif" fileType="GIF" formatName="gif" imageFileFormat="GIF" mimeType="image/gif">
         <label>Graphics Interchange Format (image/gif, *.gif)</label>
+        <label lang="ar">تنسيق تبادل الرسومات (image/gif, *.gif)</label>
     </fileFormat>
     <fileFormat extension="jp2" fileType="JPEG_2000" imageFileFormat="JPEG2000" mimeType="image/jp2">
         <label>JPEG 2000 (image/jp2, *.jp2)</label>
