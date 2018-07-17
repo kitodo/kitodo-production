@@ -20,10 +20,10 @@
                  value="#{DesktopForm.objectTypes}"
                  scrollable="true"
                  var="objectType">
-        <p:column headerText="Art" styleClass="statistic-table-column">
+        <p:column headerText="#{msgs.type}" styleClass="statistic-table-column">
             <h:outputText value="#{objectType.translation}"/>
         </p:column>
-        <p:column headerText="Anzahl" styleClass="statistic-table-column">
+        <p:column headerText="#{msgs.count}" styleClass="statistic-table-column">
             <h:outputText value="#{DesktopForm.getNumberOfElements(objectType)}"/>
         </p:column>
     </p:dataTable>
