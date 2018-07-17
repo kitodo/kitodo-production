@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -183,8 +184,8 @@ public class RulesetForm extends BasisForm {
      * @return list of ruleset filenames
      */
     public List getRulesetFilenames() {
-        try {
-            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))
+        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
+            return rulesetPaths
                     .filter(f -> f.toString().endsWith(".xml"))
                     .map(Path::getFileName)
                     .sorted()
