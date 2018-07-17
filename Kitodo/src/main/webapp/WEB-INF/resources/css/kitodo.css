@@ -17,7 +17,7 @@ body {
     margin: 0;
     border: 0 none;
     padding: 0;
-    font-family: 'Raleway', sans-serif !important;
+    font-family: 'Raleway', sans-serif;
     font-weight: 400;
     font-size: 16px;
     line-height: 18px;
@@ -448,7 +448,8 @@ section#content-section {
     height: 500px;
 }
 
-#desktopGrid, #desktopGrid_content {
+#desktopGrid,
+#desktopGrid_content {
     background: none;
     height: inherit;
 }
@@ -464,7 +465,8 @@ section#content-section {
     overflow-y: hidden;
 }
 
-#desktopGrid th.actionsColumn span, #desktopGrid td.actionsColumn form {
+#desktopGrid th.actionsColumn span,
+#desktopGrid td.actionsColumn form {
     float: right;
 }
 
@@ -487,8 +489,17 @@ section#content-section {
     padding: 0;
 }
 
+#desktopGrid_content .desktop-widget,
+#desktopGrid_content .desktop-widget > div{
+    height: 100%;
+}
+
 #desktopGrid_content .content-header {
     height: unset !important;
+}
+
+#desktopGrid .ui-datatable-scrollable-body {
+    overflow-y: scroll;
 }
 
 #desktopGrid_content .ui-widget-header thead {
