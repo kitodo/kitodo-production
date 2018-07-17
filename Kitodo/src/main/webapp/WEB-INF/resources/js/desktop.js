@@ -20,14 +20,17 @@ $(window).on("load resize", function() {
 
     const tableHeaders = $("#desktopGrid .ui-datatable-scrollable-header");
     const tableBodies = $("#desktopGrid .ui-datatable-scrollable-body");
-    const actionCells = tableHeaders.find("th:last");
-
-    // add right padding to header for scrollbars
-    const scrollBarWidth = tableBodies.width() - tableBodies.find("table[role='grid']").width();
-    actionCells.css("padding-right", parseInt(actionCells.css("padding-right")) + scrollBarWidth + "px");
 
     // update table heights
     const tableHeight = tableBodies.parent().outerHeight();
     const tableHeaderHeight = tableBodies.prev(".ui-widget-header").outerHeight();
     tableBodies.height(tableHeight - tableHeaderHeight);
+
+    // add right padding to header for scrollbars
+    const headerBoxes = $("#desktopGrid .ui-datatable-scrollable-header-box");
+    const scrollBarWidth = tableBodies.outerWidth(true) - tableBodies.find("table[role='grid']").outerWidth(true);
+    headerBoxes.css("padding-right", scrollBarWidth + "px");
+
+    const desktopWidgets = $(".desktop-widget");
+    desktopWidgets.width = desktopWidgets.width() - scrollBarWidth;
 });

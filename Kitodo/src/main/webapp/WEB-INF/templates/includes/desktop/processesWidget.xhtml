@@ -20,10 +20,10 @@
                  value="#{DesktopForm.processes}"
                  scrollable="true"
                  var="process">
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.title}" styleClass="process-table-column">
             <h:outputText value="#{process.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.status}">
+        <p:column headerText="#{msgs.status}" styleClass="process-table-column">
             <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
             <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
                             style="width:#{process.progressClosed * 0.8}px;height:10px"/>
@@ -35,10 +35,10 @@
                             style="width:#{process.progressLocked * 0.8}px;height:10px"/>
             <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
         </p:column>
-        <p:column headerText="#{msgs.project}">
+        <p:column headerText="#{msgs.project}" styleClass="process-table-column">
             <h:outputText value="#{DesktopForm.getProject(process).title}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn process-table-column">
             <h:form id="actionForm">
                 <h:link id="editProcess"
                         outcome="/pages/processEdit"

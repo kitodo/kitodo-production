@@ -494,6 +494,18 @@ section#content-section {
     height: 100%;
 }
 
+.task-table-column, .process-table-column {
+    width: 25% !important;
+}
+
+.project-table-column {
+    width: 33% !important;
+}
+
+.statistic-table-column {
+    width: 50% !important;
+}
+
 #desktopGrid_content .content-header {
     height: unset !important;
 }
@@ -502,8 +514,9 @@ section#content-section {
     overflow-y: scroll;
 }
 
-#desktopGrid_content .ui-widget-header thead {
+#desktopGrid .ui-datatable-scrollable-header-box {
     border-top: 3px solid #999;
+    background: #d8d8d8;
 }
 
 .desktop-widget .ui-widget-content {

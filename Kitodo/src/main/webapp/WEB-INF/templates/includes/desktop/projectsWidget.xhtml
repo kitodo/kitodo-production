@@ -20,13 +20,13 @@
                  value="#{DesktopForm.projects}"
                  scrollable="true"
                  var="project">
-        <p:column headerText="#{msgs.title}">
+        <p:column headerText="#{msgs.title}" styleClass="project-table-column">
             <h:outputText value="#{project.title}"/>
         </p:column>
-        <p:column headerText="#{msgs.metsRightsOwner}">
+        <p:column headerText="#{msgs.metsRightsOwner}" styleClass="project-table-column">
             <h:outputText value="#{project.metsRightsOwner}"/>
         </p:column>
-        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+        <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',project.client.id, project.id)}"
                         onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
