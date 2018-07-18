@@ -63,11 +63,11 @@
         <mapping class="org.kitodo.data.database.beans.Client"/>
         <mapping class="org.kitodo.data.database.beans.Docket"/>
         <mapping class="org.kitodo.data.database.beans.Filter"/>
+        <mapping class="org.kitodo.data.database.beans.Folder"/>
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
         <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>
         <mapping class="org.kitodo.data.database.beans.Project"/>
-        <mapping class="org.kitodo.data.database.beans.ProjectFileGroup"/>
         <mapping class="org.kitodo.data.database.beans.Property"/>
         <mapping class="org.kitodo.data.database.beans.Ruleset"/>
         <mapping class="org.kitodo.data.database.beans.Task"/>
