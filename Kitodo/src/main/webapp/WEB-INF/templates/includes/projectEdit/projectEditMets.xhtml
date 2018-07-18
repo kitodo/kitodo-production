@@ -18,10 +18,14 @@
         xmlns:p="http://primefaces.org/ui">
     <p:panel>
         <p:selectBooleanButton
-                onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
-                id="metsLockedButton" value="#{ProjekteForm.lockedMets}">
-            <p:ajax event="change" update="metsParamaterForm mets-file-groups preview mediaView generatorSource" />
+                onLabel="#{msgs.locked}"
+                offLabel="#{msgs.unlocked}"
+                onIcon="fa fa-lock fa-lg"
+                offIcon="fa fa-unlock fa-lg"
+                styleClass="callto"
+                id="metsLockedButton"
+                value="#{ProjekteForm.lockedMets}">
+            <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
         </p:selectBooleanButton>
     </p:panel>
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
@@ -134,8 +138,8 @@
             </p:column>
             <p:column>
                 <!-- edit button -->
-                <p:commandLink oncomplete="PF('editFolderDialog').show()"
-                               styleClass="buttonset button-blue"
+                <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
+                               styleClass="buttonset plain"
                                update="@(.editDialog)"
                                disabled="#{ProjekteForm.lockedMets}"
                                immediate="true">
@@ -149,7 +153,8 @@
                                title="#{msgs.fileGroupDelete}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
                                oncomplete="toggleSave()"
-                               styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}"
+                               styleClass="buttonset plain"
+                               disabled="#{ProjekteForm.lockedMets}"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{ProjekteForm.myFolder}"
@@ -162,7 +167,7 @@
                          update="@(.editDialog)"
                          oncomplete="PF('editFolderDialog').show()"
                          value="#{msgs.fileGroupAdd}"
-                         styleClass="button-filled-green"
+                         styleClass="callto"
                          icon="fa fa-plus-circle fa-lg"
                          iconPos="right"
                          disabled="#{ProjekteForm.lockedMets}"
