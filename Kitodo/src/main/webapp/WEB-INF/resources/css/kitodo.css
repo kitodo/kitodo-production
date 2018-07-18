@@ -433,7 +433,7 @@ main {
     display: block;
     position: relative;
     z-index: 2;
-    margin-bottom: 80px;
+    margin-bottom: 100px;
     padding: 0;
     }
 
@@ -753,9 +753,10 @@ footer {
 #footer-content {
     width: 100%;
     /*background: #f94a15;*/
-    padding: 60px 0px 30px 0px;
+    padding: 64px 0px 16px 0px;
     display: block;
     text-align: center;
+    font-size: 0.8rem;
     }
 
 #footer-content p {
@@ -763,7 +764,29 @@ footer {
     }
 
 #footer-content p span {
-    color: #1b2b36;
+    color: #999;
+    }
+
+#footer-meta-menu {
+    list-style-type: none;
+    }
+
+#footer-meta-menu li {
+    display: inline;
+    }
+
+#footer-meta-menu li a {
+    background: #999;
+    color: #fff;
+    text-decoration: none;
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+    }
+
+#footer-meta-menu li a:hover {
+    background: #005182;
     }
 
 /* Primefaces theme */
@@ -934,7 +957,7 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 30px;
+        margin-top: 20px;
         }
 
     #portal-header .wrapper {
