@@ -228,7 +228,7 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
 
         assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
@@ -359,7 +359,7 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             template.getString(TemplateTypeField.TITLE.getName()));
 
-        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
 
         assertEquals("Size folders doesn't match to given value!", 5, folders.size());
 
@@ -476,7 +476,7 @@ public class ProjectTypeTest {
         JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
+        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
         assertEquals("Size projectFileGroups doesn't match to given value!", 0, projectFileGroups.size());
 
         JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
@@ -501,7 +501,7 @@ public class ProjectTypeTest {
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
-        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDERS.getName());
+        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
         JsonObject folder = folders.getJsonObject(0);
         assertEquals("Amount of keys in folders is incorrect!", 4, folder.keySet().size());
 

@@ -60,7 +60,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObjectBuilder.add(ProjectTypeField.USERS.getName(), addObjectRelation(project.getUsers(), true));
         jsonObjectBuilder.add(ProjectTypeField.CLIENT_ID.getName(), clientId);
         jsonObjectBuilder.add(ProjectTypeField.CLIENT_NAME.getName(), clientName);
-        jsonObjectBuilder.add(ProjectTypeField.FOLDERS.getName(), folders.build());
+        jsonObjectBuilder.add(ProjectTypeField.FOLDER.getName(), folders.build());
         return jsonObjectBuilder.build();
     }
 }

@@ -28,7 +28,7 @@ public enum ProjectTypeField {
     USERS("users"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
-    FOLDERS("folders"),
+    FOLDER("folder"),
     FOLDER_FILE_GROUP("fileGroup"),
     FOLDER_URL_STRUCTURE("urlStructure"),
     FOLDER_MIME_TYPE("mimeType"),
