@@ -9,8 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
+import de.sub.goobi.forms.BasisForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
