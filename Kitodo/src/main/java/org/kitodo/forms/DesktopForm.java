@@ -37,10 +37,18 @@ public class DesktopForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private transient ServiceManager serviceManager = new ServiceManager();
 
+    /**
+     * Default constructor.
+     */
     public DesktopForm() {
         super();
     }
 
+    /**
+     * Get values of ObjectType enum.
+     *
+     * @return array containing values of ObjectType enum
+     */
     public ObjectType[] getObjectTypes() {
         return ObjectType.values();
     }
