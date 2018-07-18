@@ -43,7 +43,7 @@ public class BenutzergruppenForm extends BasisForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
-    private static  final String USER_GROUP = "userGroup";
+    private static final String USER_GROUP = "userGroup";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     @Named("BenutzerverwaltungForm")
@@ -97,8 +97,11 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject user form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param userForm
+     *            BenutzerverwaltungForm managed bean
      */
     @Inject
     public BenutzergruppenForm(BenutzerverwaltungForm userForm) {

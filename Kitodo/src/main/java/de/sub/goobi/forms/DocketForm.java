@@ -50,8 +50,11 @@ public class DocketForm extends BasisForm {
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
     @Inject
     public DocketForm(ProjekteForm projectForm) {
@@ -149,7 +152,6 @@ public class DocketForm extends BasisForm {
     public void setMyDocket(Docket docket) {
         this.myDocket = docket;
     }
-
 
     /**
      * Get all available clients.

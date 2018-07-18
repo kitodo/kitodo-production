@@ -49,8 +49,11 @@ public class RulesetForm extends BasisForm {
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
     @Inject
     public RulesetForm(ProjekteForm projectForm) {

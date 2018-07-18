@@ -81,6 +81,24 @@ public class SearchForm {
     private ProzessverwaltungForm processForm;
 
     /**
+     * Constructor with inject process form.
+     *
+     * @param processForm
+     *            managed bean
+     */
+    @Inject
+    public SearchForm(ProzessverwaltungForm processForm) {
+        initStepStatus();
+        initProjects();
+        initMasterpiecePropertyTitles();
+        initTemplatePropertyTitles();
+        initProcessPropertyTitles();
+        initStepTitles();
+        initUserList();
+        this.processForm = processForm;
+    }
+
+    /**
      * Initialise drop down list of master piece property titles.
      */
     protected void initMasterpiecePropertyTitles() {
@@ -167,21 +185,6 @@ public class SearchForm {
             logger.warn("RuntimeException caught. List of users could be empty!");
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
         }
-    }
-
-    /**
-     * Constructor.
-     */
-    @Inject
-    public SearchForm(ProzessverwaltungForm processForm) {
-        initStepStatus();
-        initProjects();
-        initMasterpiecePropertyTitles();
-        initTemplatePropertyTitles();
-        initProcessPropertyTitles();
-        initStepTitles();
-        initUserList();
-        this.processForm = processForm;
     }
 
     public List<String> getProjects() {
