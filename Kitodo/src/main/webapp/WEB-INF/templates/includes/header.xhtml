@@ -122,12 +122,14 @@
                                     <div>
                                         #{msgs.client}: <b>#{SessionClientController.currentSessionClientName}</b>
                                         <span style="float:right;">
-                                            <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList');"/>
+                                            <p:outputPanel rendered="#{SessionClientController.shouldUserChangeSessionClient()}">
+                                                <i class="fa fa-chevron-down toggle-trigger" onclick="toggleCollapsible('clientList');"/>
+                                            </p:outputPanel>
                                         </span>
                                     </div>
                                 </li>
                                 <div id="clientList" style="display: none">
-                                    <p:repeat value="#{ProjekteForm.clients}" var="client">
+                                    <p:repeat value="#{SessionClientController.clientsOfUserAssignedProjects}" var="client">
                                         <li class="toggle-list">
                                             <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
                                         </li>
@@ -175,7 +177,7 @@
                                      converter="#{clientConverter}"
                                      value="#{SessionClientController.selectedClient}"
                                      autoWidth="false">
-                            <f:selectItems value="#{ProjekteForm.clients}" var="client" itemValue="#{client}"
+                            <f:selectItems value="#{SessionClientController.clientsOfUserAssignedProjects}" var="client" itemValue="#{client}"
                                            itemLabel="#{client.name}"/>
                         </p:selectOneMenu>
                     </p>

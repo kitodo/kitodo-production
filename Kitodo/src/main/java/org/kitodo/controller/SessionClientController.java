@@ -11,12 +11,15 @@
 
 package org.kitodo.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.context.RequestContext;
 
@@ -33,18 +36,31 @@ public class SessionClientController {
      * has been set, an empty string is returned and a dialog to select a client is
      * shown.
      * 
-     * @return The current session clients name or emtpy string case that no session
+     * @return The current session clients name or empty string case that no session
      *         client has been set.
      */
     public String getCurrentSessionClientName() {
         if (Objects.nonNull(getCurrentSessionClient())) {
             return getCurrentSessionClient().getName();
         } else {
-            if (shouldDisplayClientSelectDialog()) {
+            if (shouldUserChangeSessionClient()) {
                 showClientSelectDialog();
+            }
+
+            if (setSessionClientIfUserHasOnlyOne()) {
+                return getCurrentSessionClient().getName();
             }
             return "";
         }
+    }
+
+    private boolean setSessionClientIfUserHasOnlyOne() {
+        List<Client> clients = getClientsOfUserAssignedProjects();
+        if (clients.size() == 1) {
+            setSessionClient(clients.get(0));
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -54,13 +70,23 @@ public class SessionClientController {
      * @return True if the session client select dialog should by displayed to the
      *         current user
      */
-    private boolean shouldDisplayClientSelectDialog() {
-        return !serviceManager.getSecurityAccessService().isAdmin();
+    public boolean shouldUserChangeSessionClient() {
+
+        //No change if user is admin.
+        if (serviceManager.getSecurityAccessService().isAdmin()) {
+            return false;
+        }
+
+        //No change if we have only one client for selection.
+        List<Client> clients = getClientsOfUserAssignedProjects();
+        if (clients.size() == 1) {
+            return false;
+        }
+        return true;
     }
 
     private void showClientSelectDialog() {
-        RequestContext context = RequestContext.getCurrentInstance();
-        context.execute("PF('selectClientDialog').show();");
+        RequestContext.getCurrentInstance().execute("PF('selectClientDialog').show();");
     }
 
     private Client getCurrentSessionClient() {
@@ -98,5 +124,23 @@ public class SessionClientController {
      */
     public void setSessionClient(Client sessionClient) {
         serviceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
+    }
+
+    /**
+     * Gets all clients of user assigned projects.
+     *
+     * @return The list of clients.
+     */
+    public List<Client> getClientsOfUserAssignedProjects() {
+        List<Project> projects = serviceManager.getUserService().getAuthenticatedUser().getProjects();
+        List<Client> clients = new ArrayList<>();
+
+        for (Project project : projects) {
+            Client client = project.getClient();
+            if (!clients.contains(client)) {
+                clients.add(client);
+            }
+        }
+        return clients;
     }
 }

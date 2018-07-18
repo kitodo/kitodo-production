@@ -332,6 +332,11 @@ body.first-visit #portal-header {
     border-top: 1px solid #d3d3d3
 }
 
+#header-nav #nav-user > li > div > span > div {
+    padding: 0;
+    border-width: 0;
+}
+
 #header-nav .nav-item-col {
     width: calc(50% - 45px);
     display: inline-block;
