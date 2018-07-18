@@ -41,7 +41,10 @@
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.workflowSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
+                            'summary':'#{msgs.workflowSaving}',
+                            'detail':'#{msgs.youWillBeRedirected}',
+                            'severity':'info'});"
                          disabled="#{WorkflowForm.saveDisabled}"
                          styleClass="button-filled-blue"
                          immediate="true"/>
@@ -49,7 +52,8 @@
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button value="#{msgs.cancel}" outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
+        <p:button value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
+                  outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
