@@ -108,6 +108,7 @@ public class GranularityForm {
      *         in faces_config.xml
      */
     public String createProcessesClick() {
+        //TODO: find more elegant way to validate content from processCopyForm - avoid injection
         /*if (!processCopyForm.isContentValid(false)) {
             return null;
         }
