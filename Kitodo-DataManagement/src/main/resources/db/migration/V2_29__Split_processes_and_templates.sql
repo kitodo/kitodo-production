@@ -55,21 +55,28 @@ SET SQL_SAFE_UPDATES = 0;
 UPDATE process AS p
   INNER JOIN process_x_property AS pxp ON p.id = pxp.process_id
   INNER JOIN property AS pp ON pxp.property_id = pp.id
-SET p.template_id = pp.value WHERE pp.title = 'TemplateID';
+  INNER JOIN template AS t ON t.old_id = pp.value
+SET p.template_id = t.id WHERE pp.title = 'TemplateID';
 
--- 6. Replace templates ids in process table
+-- 6. Remove foreign key process - property
 --
 
-UPDATE process AS p
-  INNER JOIN template AS t ON p.template_id = t.old_id
-SET p.template_id = t.id WHERE p.template_id = t.old_id;
+ALTER TABLE process_x_property DROP FOREIGN KEY `FK_process_x_property_process_id`;
+ALTER TABLE process_x_property DROP FOREIGN KEY `FK_process_x_property_property_id`;
 
--- 7. Remove foreign key task - process
+-- 7. Remove entries from process_x_property table
+--
+
+DELETE pxp FROM process_x_property AS pxp
+  INNER JOIN template AS t ON pxp.process_id = t.old_id
+WHERE pxp.process_id = t.old_id;
+
+-- 8. Remove foreign key task - process
 --
 
 ALTER TABLE task DROP FOREIGN KEY FK_task_process_id;
 
--- 8. Replace templates ids in task table
+-- 9. Replace templates ids in task table
 --
 
 UPDATE task AS t
@@ -78,39 +85,45 @@ SET t.template_id = temp.id,
   t.process_id = NULL
 WHERE t.process_id = temp.old_id;
 
--- 9. Remove templates from process table
+-- 10. Remove templates from process table
 --
 
 DELETE FROM process
 WHERE template = 1;
 
--- 10. Switch on safe updates
+-- 11. Switch on safe updates
 --
 
 SET SQL_SAFE_UPDATES = 1;
 
--- 11. Drop column with old ids
+-- 12. Drop column with old ids
 --
 
 ALTER TABLE template DROP old_id;
 
--- 12. Add foreign keys
+-- 13. Add foreign keys
 --
 
-ALTER TABLE task add constraint `FK_task_process_id`
-foreign key (process_id) REFERENCES process(id);
+ALTER TABLE task ADD CONSTRAINT `FK_task_process_id`
+FOREIGN KEY (process_id) REFERENCES process(id);
 
-ALTER TABLE task add constraint `FK_task_template_id`
-foreign key (template_id) REFERENCES template(id);
+ALTER TABLE task ADD CONSTRAINT `FK_task_template_id`
+FOREIGN KEY (template_id) REFERENCES template(id);
 
-ALTER TABLE template add constraint `FK_template_project_id`
-foreign key (project_id) REFERENCES project(id);
+ALTER TABLE template ADD CONSTRAINT `FK_template_project_id`
+FOREIGN KEY (project_id) REFERENCES project(id);
 
-ALTER TABLE template add constraint `FK_template_ruleset_id`
-foreign key (ruleset_id) REFERENCES ruleset(id);
+ALTER TABLE template ADD CONSTRAINT `FK_template_ruleset_id`
+FOREIGN KEY (ruleset_id) REFERENCES ruleset(id);
 
-ALTER TABLE template add constraint `FK_template_docket_id`
-foreign key (docket_id) REFERENCES docket(id);
+ALTER TABLE template ADD CONSTRAINT `FK_template_docket_id`
+FOREIGN KEY (docket_id) REFERENCES docket(id);
 
-ALTER TABLE process add constraint `FK_process_template_id`
-foreign key (template_id) REFERENCES template(id);
+ALTER TABLE process ADD CONSTRAINT `FK_process_template_id`
+FOREIGN KEY (template_id) REFERENCES template(id);
+
+ALTER TABLE process_x_property ADD CONSTRAINT `FK_process_x_property_process_id`
+FOREIGN KEY (process_id) REFERENCES process (id);
+
+ALTER TABLE process_x_property ADD CONSTRAINT `FK_process_x_property_property_id`
+FOREIGN KEY (property_id) REFERENCES property (id);
