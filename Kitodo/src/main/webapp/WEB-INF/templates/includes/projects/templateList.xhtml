@@ -15,6 +15,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable id="templateTable"
                  var="item"
@@ -25,7 +26,13 @@
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
 
-        <p:column headerText="#{msgs.prozessvorlagen}">
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+
+        <p:column style="width: 16px;">
+            <p:rowToggler/>
+        </p:column>
+
+        <p:column headerText="#{msgs.title}">
             <h:outputText value="#{item.title}"/>
         </p:column>
 
@@ -38,16 +45,37 @@
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
+                    <h:link><i class="fa fa-clone fa-lg"/></h:link>
+
                     <h:commandLink action="#{ProzesskopieForm.prepare(item.id)}" id="action22"
                                    title="#{item.containsUnreachableSteps?msgs.prozessvorlageMitUnvollstaendigenSchrittdetails:msgs.eineKopieDieserProzessvorlageAnlegen}">
                         <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                     </h:commandLink>
 
                     <h:link><i class="fa fa-clipboard fa-lg"/></h:link>
-                    <h:link><i class="fa fa-clone fa-lg"/></h:link>
                 </h:form>
             </h:outputText>
         </p:column>
+
+        <p:rowExpansion styleClass="expansion-class">
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="4" columnClasses="label, value" id="templateDetailTable">
+                    <h:outputText value="#{msgs.workflow}:"/>
+                    <h:outputText value="#{item.workflow.title}"/>
+
+                    <h:outputText value="#{msgs.project}:"/>
+                    <h:outputText value="#{item.project.title}"/>
+
+                    <h:outputText value="#{msgs.docket}:"/>
+                    <h:outputText value="#{item.docket.title}"/>
+
+                    <h:outputText value="#{msgs.ruleset}:"/>
+                    <h:outputText value="#{item.ruleset.title}"/>
+                </p:panelGrid>
+
+                <o:graphicImage value="#{item.diagramImage}" dataURI="true" />
+            </div>
+        </p:rowExpansion>
 
     </p:dataTable>
 </ui:composition>
