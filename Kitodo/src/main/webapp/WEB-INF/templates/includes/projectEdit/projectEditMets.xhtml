@@ -128,23 +128,23 @@
     </p:panelGrid>
     <!-- mets file groups -->
     <p:panel id="mets-file-groups" styleClass="mets-file-groups">
-        <p:dataTable id="filegroupTable" var="filegroup" value="#{ProjekteForm.fileGroupList}">
+        <p:dataTable id="folderTable" var="folder" value="#{ProjekteForm.folderList}">
             <p:column headerText="#{msgs.metsfilegroups}">
-                <h:outputText value="#{filegroup.name}" />
+                <h:outputText value="#{folder.path}, #{folder.fileGroup}" />
             </p:column>
             <p:column>
                 <!-- edit button -->
-                <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
+                <p:commandLink oncomplete="PF('editFolderDialog').show()"
                                styleClass="buttonset button-blue"
                                update="@(.editDialog)"
                                disabled="#{ProjekteForm.lockedMets}"
                                immediate="true">
                     <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
-                                                 value="#{filegroup}"/>
+                    <f:setPropertyActionListener target="#{ProjekteForm.myFolder}"
+                                                 value="#{folder}"/>
                 </p:commandLink>
                 <!-- delete button -->
-                <p:commandLink action="#{ProjekteForm.deleteFileGroup()}"
+                <p:commandLink action="#{ProjekteForm.deleteFolder()}"
                                update="editForm"
                                title="#{msgs.fileGroupDelete}"
                                onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
@@ -152,15 +152,15 @@
                                styleClass="buttonset button-blue" disabled="#{ProjekteForm.lockedMets}"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
-                    <f:setPropertyActionListener target="#{ProjekteForm.myFilegroup}"
-                                                 value="#{filegroup}"/>
+                    <f:setPropertyActionListener target="#{ProjekteForm.myFolder}"
+                                                 value="#{folder}"/>
                 </p:commandLink>
             </p:column>
         </p:dataTable>
         <!-- add button -->
-        <p:commandButton actionListener="#{ProjekteForm.addFileGroup()}"
+        <p:commandButton actionListener="#{ProjekteForm.addFolder()}"
                          update="@(.editDialog)"
-                         oncomplete="PF('editFileGroupDialog').show()"
+                         oncomplete="PF('editFolderDialog').show()"
                          value="#{msgs.fileGroupAdd}"
                          styleClass="button-filled-green"
                          icon="fa fa-plus-circle fa-lg"

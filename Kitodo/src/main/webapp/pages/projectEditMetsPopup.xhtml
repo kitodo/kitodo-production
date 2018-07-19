@@ -20,8 +20,8 @@
     <f:view locale="#{SpracheForm.locale}">
         <h:body>
             <!-- edit dialog -->
-            <p:dialog widgetVar="editFileGroupDialog"
-                      header="#{empty ProjekteForm.myFilegroup.name ? msgs.fileGroupAdd : msgs.fileGroupEdit}"
+            <p:dialog widgetVar="editFolderDialog"
+                      header="#{empty ProjekteForm.myFolder.name ? msgs.fileGroupAdd : msgs.fileGroupEdit}"
                       width="700px"
                       modal="true"
                       dynamic="true"
@@ -31,37 +31,37 @@
                         <p:row>
                         <div>
                             <p:outputLabel for="metsName" value="#{msgs.name}"/>
-                            <p:inputText id="metsName" value="#{ProjekteForm.myFilegroup.name}" styleClass="input editDialog"/>
+                            <p:inputText id="metsName" value="#{ProjekteForm.myFolder.path}" styleClass="input editDialog"/>
                         </div>
                         <div>
                             <p:outputLabel for="metsPath" value="#{msgs.path}"/>
-                            <p:inputText id="metsPath" value="#{ProjekteForm.myFilegroup.path}" styleClass="input editDialog"/>
+                            <p:inputText id="metsPath" value="#{ProjekteForm.myFolder.fileGroup}" styleClass="input editDialog"/>
                         </div>
                         <div>
                             <p:outputLabel for="metsMimetype" value="#{msgs.mimetype}"/>
-                            <p:inputText id="metsMimetype" value="#{ProjekteForm.myFilegroup.mimeType}" styleClass="input editDialog"/>
+                            <p:inputText id="metsMimetype" value="#{ProjekteForm.myFolder.mimeType}" styleClass="input editDialog"/>
                         </div>
-                        <div>
+                        <!-- div>
                             <p:outputLabel for="metsSuffix" value="#{msgs.suffix}"/>
-                            <p:inputText id="metsSuffix" value="#{ProjekteForm.myFilegroup.suffix}" styleClass="input editDialog"/>
-                        </div>
+                            <p:inputText id="metsSuffix" value="#{ProjekteForm.myFolder.suffix}" styleClass="input editDialog"/>
+                        </div -->
                         <div>
                             <p:outputLabel for="metsFolder" value="#{msgs.folder}"/>
-                            <p:inputText id="metsFolder" value="#{ProjekteForm.myFilegroup.folder}" styleClass="input editDialog"/>
+                            <p:inputText id="metsFolder" value="#{ProjekteForm.myFolder.path}" styleClass="input editDialog"/>
                         </div>
-                        <div>
+                        <!-- div>
                             <p:outputLabel for="metsPreviewImage" value="#{msgs.useForPreviewImage}"/>
-                            <p:selectBooleanCheckbox id="metsPreviewImage" value="#{ProjekteForm.myFilegroup.previewImage}" styleClass="input editDialog"/>
-                        </div>
+                            <p:selectBooleanCheckbox id="metsPreviewImage" value="#{ProjekteForm.myFolder.previewImage}" styleClass="input editDialog"/>
+                        </div -->
                         </p:row>
                     </p:panelGrid>
-                    <p:commandButton action="#{ProjekteForm.saveFileGroup()}"
+                    <p:commandButton action="#{ProjekteForm.saveFolder()}"
                                      update="editForm"
-                                     oncomplete="PF('editFileGroupDialog').hide();toggleSave()"
+                                     oncomplete="PF('editFolderDialog').hide();toggleSave()"
                                      value="#{msgs.apply}"
                                      styleClass="button-filled-blue right"/>
                     <p:commandButton value="#{msgs.cancel}"
-                                     onclick="PF('editFileGroupDialog').hide()"/>
+                                     onclick="PF('editFolderDialog').hide()"/>
                 </h:form>
             </p:dialog>
         </h:body>
