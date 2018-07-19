@@ -195,11 +195,16 @@
                                 <p:commandButton id="setSessionClientButton"
                                                  action="#{SessionClientController.setSelectedClientAsSessionClient}"
                                                  oncomplete="PF('selectClientDialog').hide();"
+                                                 disabled="#{not SessionClientController.areClientsAvailableForUser()}"
                                                  update="@all"
                                                  value="#{msgs.select}"
                                                  icon="fa fa-check"
                                                  iconPos="right"/>
                             </p:column>
+                        </p:row>
+
+                        <p:row rendered="#{not SessionClientController.areClientsAvailableForUser()}">
+                            <p>#{msgs.authoritiesNoneNote }</p>
                         </p:row>
                     </p:panelGrid>
                 </div>

@@ -104,6 +104,10 @@ public class SessionClientController {
         setSessionClient(selectedClient);
     }
 
+    public boolean areClientsAvailableForUser() {
+        return !getClientsOfCurrentUser().isEmpty();
+    }
+
     /**
      * Gets selectedClient.
      *
