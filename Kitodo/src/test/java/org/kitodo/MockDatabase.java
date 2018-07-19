@@ -1145,6 +1145,7 @@ public class MockDatabase {
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
+        firstUser.setLanguage("de");
         firstUser.setCss("old/userStyles/classic.css");
         firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(firstUser);
@@ -1155,6 +1156,7 @@ public class MockDatabase {
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
+        secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
         secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(secondUser);
@@ -1165,6 +1167,7 @@ public class MockDatabase {
         thirdUser.setLogin("dora");
         thirdUser.setLdapLogin("doraLDP");
         thirdUser.setLocation("Leipzig");
+        thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
     }
