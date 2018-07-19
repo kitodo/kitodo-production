@@ -144,7 +144,7 @@ public class SessionClientController {
 
         for (Project project : projects) {
             Client client = project.getClient();
-            if (!clients.contains(client)) {
+            if (Objects.nonNull(client) && !clients.contains(client)) {
                 clients.add(client);
             }
         }
