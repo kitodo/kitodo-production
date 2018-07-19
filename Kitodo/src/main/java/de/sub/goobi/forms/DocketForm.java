@@ -52,17 +52,21 @@ public class DocketForm extends BasisForm {
     private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
 
-    @Inject
     @Named("ProjekteForm")
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
-    public DocketForm() {
+    @Inject
+    public DocketForm(ProjekteForm projectForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
+        this.projectForm = projectForm;
     }
 
     /**
@@ -154,7 +158,6 @@ public class DocketForm extends BasisForm {
     public void setMyDocket(Docket docket) {
         this.myDocket = docket;
     }
-
 
     /**
      * Get all available clients.

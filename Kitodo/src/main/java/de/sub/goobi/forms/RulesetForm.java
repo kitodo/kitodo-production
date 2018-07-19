@@ -51,17 +51,21 @@ public class RulesetForm extends BasisForm {
     private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
-    @Inject
     @Named("ProjekteForm")
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
-    public RulesetForm() {
+    @Inject
+    public RulesetForm(ProjekteForm projectForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
+        this.projectForm = projectForm;
     }
 
     /**

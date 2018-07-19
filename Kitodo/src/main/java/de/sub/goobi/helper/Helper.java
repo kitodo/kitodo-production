@@ -12,12 +12,12 @@
 package de.sub.goobi.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,12 +48,11 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
-import org.kitodo.data.database.helper.HibernateHelper;
 
 /**
  * Extends Helper from Kitodo Data Management module.
  */
-public class Helper extends HibernateHelper implements Observer {
+public class Helper implements Observer, Serializable {
 
     private static Map<String, String> activeMQReporting = null;
     private static final Logger logger = LogManager.getLogger(Helper.class);
@@ -487,20 +486,6 @@ public class Helper extends HibernateHelper implements Observer {
         } else {
             Helper.setErrorMessage((String) arg);
         }
-    }
-
-    /**
-     * Get current task form.
-     *
-     * @return AktuelleSchritteForm
-     */
-    public static AktuelleSchritteForm getCurrentTaskForm() {
-        AktuelleSchritteForm currentTaskForm = (AktuelleSchritteForm) Helper
-                .getManagedBeanValue("AktuelleSchritteForm");
-        if (Objects.isNull(currentTaskForm)) {
-            currentTaskForm = new AktuelleSchritteForm();
-        }
-        return currentTaskForm;
     }
 
     public static final FilenameFilter imageNameFilter = (dir, name) -> {

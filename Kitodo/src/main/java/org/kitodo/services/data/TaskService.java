@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
@@ -64,6 +63,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TaskService instance = null;
+    private boolean showAutomaticTasks = false;
+    private boolean hideCorrectionTasks = false;
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -110,15 +111,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.DONE.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getName(), 0, true));
 
-        // TODO: find other way than retrieving the form bean to access
-        // "hideCorrectionTasks" and "showAutomaticTasks"
-        // e.g. which tasks should be returned!
-        AktuelleSchritteForm form = Helper.getCurrentTaskForm();
-
-        if (form.getHideCorrectionTasks()) {
+        if (hideCorrectionTasks) {
             query.must(createSimpleQuery(TaskTypeField.PRIORITY.getName(), 10, true));
         }
-        if (!form.getShowAutomaticTasks()) {
+        if (!showAutomaticTasks) {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), "false", true));
         }
 
@@ -715,6 +711,24 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }
+    }
+
+    /**
+     * Set hide correction tasks.
+     *
+     * @param hideCorrectionTasks as boolean
+     */
+    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+        this.hideCorrectionTasks = hideCorrectionTasks;
+    }
+
+    /**
+     * Set show automatic tasks.
+     *
+     * @param showAutomaticTasks as boolean
+     */
+    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
+        this.showAutomaticTasks = showAutomaticTasks;
     }
 
     /**
