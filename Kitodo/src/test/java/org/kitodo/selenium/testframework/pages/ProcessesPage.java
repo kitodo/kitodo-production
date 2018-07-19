@@ -36,11 +36,11 @@ public class ProcessesPage extends Page {
     private WebElement removeFirstProcessButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "processesTabView:processesForm:yesButton")
+    @FindBy(id = "yesButton")
     private WebElement confirmRemoveButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "processesTabView:processesForm:noButton")
+    @FindBy(id = "noButton")
     private WebElement cancelRemoveButton;
 
     public ProcessesPage() {
