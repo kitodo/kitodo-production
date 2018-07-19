@@ -46,7 +46,11 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             try {
                 idInt = Integer.parseInt(id);
             } catch (NumberFormatException e) {
-                denyAccess(httpServletRequest, httpServletResponse);
+                if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")) {
+                    chain.doFilter(request, response);
+                } else {
+                    denyAccess(httpServletRequest, httpServletResponse);
+                }
                 return;
             }
 

@@ -22,6 +22,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -41,6 +42,17 @@ public class AddingST extends BaseTestSelenium {
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
         Assert.assertTrue("Created Project was not listed at projects table!", projectAvailable);
+    }
+
+    @Test
+    public void addWorkflowTest() throws Exception {
+        Workflow workflow = new Workflow();
+        workflow.setFileName("testWorkflow");
+        Pages.getProjectsPage().goTo().createNewWorkflow().insertWorkflowData(workflow).save();
+        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        List<String> workflowTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.WORKFLOWS.getIndex()).getWorkflowTitles();
+        boolean workflowAvailable = workflowTitles.contains("Process_1");
+        Assert.assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
     }
 
     @Test

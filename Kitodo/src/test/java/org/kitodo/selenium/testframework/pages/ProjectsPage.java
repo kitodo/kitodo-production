@@ -41,6 +41,10 @@ public class ProjectsPage extends Page {
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:workflowTable_data")
+    private WebElement workflowsTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView:docketTable_data")
     private WebElement docketsTable;
 
@@ -55,6 +59,10 @@ public class ProjectsPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newProjectButton")
     private WebElement newProjectButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectForm:newWorkflowButton")
+    private WebElement newWorkflowButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newDocketButton")
@@ -104,6 +112,11 @@ public class ProjectsPage extends Page {
         return getRowsOfTable(templatesTable).size();
     }
 
+    public int countListedWorkflows() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+        return getRowsOfTable(workflowsTable).size();
+    }
+
     public int countListedDockets() throws Exception {
         switchToTabByIndex(TabIndex.DOCKETS.getIndex());
         return getRowsOfTable(docketsTable).size();
@@ -124,6 +137,16 @@ public class ProjectsPage extends Page {
             goTo();
         }
         return getTableDataByColumn(projectsTable, 1);
+    }
+
+    /**
+     * Returns a list of all workflow titles which were displayed on workflows page.
+     *
+     * @return list of workflow titles
+     */
+    public List<String> getWorkflowTitles() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+        return getTableDataByColumn(workflowsTable, 0);
     }
 
     /**
@@ -160,12 +183,33 @@ public class ProjectsPage extends Page {
             goTo();
         }
         newElementButton.click();
+
         await("Wait for create new project button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
                 .ignoreExceptions().until(() -> isButtonClicked.matches(newProjectButton));
 
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
         wait.until(ExpectedConditions.urlContains(Pages.getProjectEditPage().getUrl()));
         return Pages.getProjectEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new workflow.
+     *
+     * @return workflow edit page
+     */
+    public WorkflowEditPage createNewWorkflow() throws Exception {
+
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+
+        await("Wait for create new workflow button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
+                .ignoreExceptions().until(() -> isButtonClicked.matches(newWorkflowButton));
+
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
+        wait.until(ExpectedConditions.urlContains(Pages.getWorkflowEditPage().getUrl()));
+        return Pages.getWorkflowEditPage();
     }
 
     /**
