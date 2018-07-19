@@ -11,9 +11,49 @@
 
 package org.kitodo.dto;
 
+import java.io.InputStream;
+
 public class TemplateDTO extends BaseTemplateDTO {
 
+    private InputStream diagramImage;
+    private WorkflowDTO workflow;
     private boolean containsUnreachableSteps;
+
+    /**
+     * Get diagram image.
+     *
+     * @return value of diagramImage
+     */
+    public InputStream getDiagramImage() {
+        return diagramImage;
+    }
+
+    /**
+     * Set diagram image.
+     *
+     * @param diagramImage as java.io.InputStream
+     */
+    public void setDiagramImage(InputStream diagramImage) {
+        this.diagramImage = diagramImage;
+    }
+
+    /**
+     * Set workflow.
+     *
+     * @param workflow as org.kitodo.dto.WorkflowDTO
+     */
+    public void setWorkflow(WorkflowDTO workflow) {
+        this.workflow = workflow;
+    }
+
+    /**
+     * Get workflow.
+     *
+     * @return value of workflow
+     */
+    public WorkflowDTO getWorkflow() {
+        return workflow;
+    }
 
     /**
      * Get information if process contains unreachable tasks.
