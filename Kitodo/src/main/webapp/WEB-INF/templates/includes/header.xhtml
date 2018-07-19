@@ -129,7 +129,7 @@
                                     </div>
                                 </li>
                                 <div id="clientList" style="display: none">
-                                    <p:repeat value="#{SessionClientController.clientsOfUserAssignedProjects}" var="client">
+                                    <p:repeat value="#{SessionClientController.clientsOfCurrentUser}" var="client">
                                         <li class="toggle-list">
                                             <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
                                         </li>
@@ -169,15 +169,15 @@
                   resizable="false"
                   closable="false">
             <h:form id="select-session-client-form">
-                <div class="select-client-note">#{msgs.selectClientNote}</div>
+                <div class="select-client-note">#{msgs.clientSelectNote }</div>
                 <div class="select-client-selector">
-                    <p>#{msgs.selectClient}</p>
+                    <p>#{msgs.clientSelect }</p>
                     <p>
                         <p:selectOneMenu id="client"
                                      converter="#{clientConverter}"
                                      value="#{SessionClientController.selectedClient}"
                                      autoWidth="false">
-                            <f:selectItems value="#{SessionClientController.clientsOfUserAssignedProjects}" var="client" itemValue="#{client}"
+                            <f:selectItems value="#{SessionClientController.clientsOfCurrentUser}" var="client" itemValue="#{client}"
                                            itemLabel="#{client.name}"/>
                         </p:selectOneMenu>
                     </p>

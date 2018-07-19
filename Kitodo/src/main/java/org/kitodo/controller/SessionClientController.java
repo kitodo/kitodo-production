@@ -11,6 +11,8 @@
 
 package org.kitodo.controller;
 
+import de.sub.goobi.helper.Helper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +32,7 @@ public class SessionClientController {
     private transient ServiceManager serviceManager = new ServiceManager();
 
     private Client selectedClient;
+    protected static final String NO_CLIENT_SELECTED = "clientSelectNone";
 
     /**
      * Gets the name of the current session client. In case that no session client
@@ -43,24 +46,29 @@ public class SessionClientController {
         if (Objects.nonNull(getCurrentSessionClient())) {
             return getCurrentSessionClient().getName();
         } else {
-            if (shouldUserChangeSessionClient()) {
-                showClientSelectDialog();
+            if (userIsAdmin()) {
+                return Helper.getTranslation(NO_CLIENT_SELECTED);
             }
-
-            if (setSessionClientIfUserHasOnlyOne()) {
-                return getCurrentSessionClient().getName();
+            if (userHasOnlyOneClient()) {
+                Client client = getFirstClientOfCurrentUser();
+                setSessionClient(client);
+                return client.getName();
             }
+            showClientSelectDialog();
             return "";
         }
     }
 
-    private boolean setSessionClientIfUserHasOnlyOne() {
-        List<Client> clients = getClientsOfUserAssignedProjects();
-        if (clients.size() == 1) {
-            setSessionClient(clients.get(0));
-            return true;
-        }
-        return false;
+    private Client getFirstClientOfCurrentUser() {
+        return getClientsOfCurrentUser().get(0);
+    }
+
+    private boolean userIsAdmin() {
+        return serviceManager.getSecurityAccessService().isAdmin();
+    }
+
+    private boolean userHasOnlyOneClient() {
+        return getClientsOfCurrentUser().size() == 1;
     }
 
     /**
@@ -73,13 +81,12 @@ public class SessionClientController {
     public boolean shouldUserChangeSessionClient() {
 
         //No change if user is admin.
-        if (serviceManager.getSecurityAccessService().isAdmin()) {
+        if (userIsAdmin()) {
             return false;
         }
 
         //No change if we have only one client for selection.
-        List<Client> clients = getClientsOfUserAssignedProjects();
-        if (clients.size() == 1) {
+        if (userHasOnlyOneClient()) {
             return false;
         }
         return true;
@@ -131,7 +138,7 @@ public class SessionClientController {
      *
      * @return The list of clients.
      */
-    public List<Client> getClientsOfUserAssignedProjects() {
+    public List<Client> getClientsOfCurrentUser() {
         List<Project> projects = serviceManager.getUserService().getAuthenticatedUser().getProjects();
         List<Client> clients = new ArrayList<>();
 
