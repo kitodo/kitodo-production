@@ -29,7 +29,7 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{not empty TemplateForm.template.title}"/>
-            <h:outputText value="#{msgs.newProcessTemplate}" rendered="#{empty TemplateForm.template.title}"/>
+            <h:outputText value="#{msgs.newTemplate}" rendered="#{empty TemplateForm.template.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
