@@ -145,10 +145,10 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         RulesetDTO rulesetDTO = new RulesetDTO();
         rulesetDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject rulesetJSONObject = jsonObject.getJsonObject("_source");
-        rulesetDTO.setTitle(rulesetJSONObject.getString(RulesetTypeField.TITLE.getName()));
-        rulesetDTO.setFile(rulesetJSONObject.getString(RulesetTypeField.FILE.getName()));
+        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(rulesetJSONObject));
+        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(rulesetJSONObject));
         rulesetDTO.setOrderMetadataByRuleset(
-            rulesetJSONObject.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
+            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(rulesetJSONObject));
         return rulesetDTO;
     }
 

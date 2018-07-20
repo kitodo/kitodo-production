@@ -432,14 +432,14 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         TaskDTO taskDTO = new TaskDTO();
         taskDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject taskJSONObject = jsonObject.getJsonObject("_source");
-        taskDTO.setTitle(taskJSONObject.getString(TaskTypeField.TITLE.getName()));
+        taskDTO.setTitle(TaskTypeField.TITLE.getStringValue(taskJSONObject));
         taskDTO.setLocalizedTitle(getLocalizedTitle(taskDTO.getTitle()));
-        taskDTO.setPriority(taskJSONObject.getInt(TaskTypeField.PRIORITY.getName()));
-        taskDTO.setOrdering(taskJSONObject.getInt(TaskTypeField.ORDERING.getName()));
-        Integer taskStatus = taskJSONObject.getInt(TaskTypeField.PROCESSING_STATUS.getName());
+        taskDTO.setPriority(TaskTypeField.PRIORITY.getIntValue(taskJSONObject));
+        taskDTO.setOrdering(TaskTypeField.ORDERING.getIntValue(taskJSONObject));
+        Integer taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(taskJSONObject);
         taskDTO.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
         taskDTO.setProcessingStatusTitle(Helper.getTranslation(taskDTO.getProcessingStatus().getTitle()));
-        Integer editType = taskJSONObject.getInt(TaskTypeField.EDIT_TYPE.getName());
+        Integer editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getName());
@@ -448,23 +448,23 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setProcessingBegin(processingBegin != JsonValue.NULL ? processingBegin.toString() : null);
         JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getName());
         taskDTO.setProcessingEnd(processingEnd != JsonValue.NULL ? processingEnd.toString() : null);
-        taskDTO.setTypeAutomatic(taskJSONObject.getBoolean(TaskTypeField.TYPE_AUTOMATIC.getName()));
-        taskDTO.setTypeMetadata(taskJSONObject.getBoolean(TaskTypeField.TYPE_METADATA.getName()));
-        taskDTO.setTypeImportFileUpload(taskJSONObject.getBoolean(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getName()));
-        taskDTO.setTypeExportRussian(taskJSONObject.getBoolean(TaskTypeField.TYPE_EXPORT_RUSSIAN.getName()));
-        taskDTO.setTypeImagesWrite(taskJSONObject.getBoolean(TaskTypeField.TYPE_IMAGES_WRITE.getName()));
-        taskDTO.setTypeImagesRead(taskJSONObject.getBoolean(TaskTypeField.TYPE_IMAGES_READ.getName()));
-        taskDTO.setBatchStep(taskJSONObject.getBoolean(TaskTypeField.BATCH_STEP.getName()));
+        taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
+        taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
+        taskDTO.setTypeImportFileUpload(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(taskJSONObject));
+        taskDTO.setTypeExportRussian(TaskTypeField.TYPE_EXPORT_RUSSIAN.getBooleanValue(taskJSONObject));
+        taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
+        taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
+        taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
         taskDTO.setUsersSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, TaskTypeField.USERS.getName()));
         taskDTO.setUserGroupsSize(getSizeOfRelatedPropertyForDTO(taskJSONObject, TaskTypeField.USER_GROUPS.getName()));
-        Integer process = taskJSONObject.getInt(TaskTypeField.PROCESS_ID.getName());
+        Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(
                     serviceManager.getProcessService().isProcessAssignedToOnlyOneLogisticBatch(
                             taskDTO.getProcess().getBatches()));
         }
-        Integer template = taskJSONObject.getInt(TaskTypeField.TEMPLATE_ID.getName());
+        Integer template = TaskTypeField.TEMPLATE_ID.getIntValue(taskJSONObject);
         if (template > 0) {
             taskDTO.setTemplate(serviceManager.getTemplateService().findById(template, true));
         }
@@ -476,7 +476,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
-        Integer processingUser = jsonObject.getInt(TaskTypeField.PROCESSING_USER.getName());
+        Integer processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }

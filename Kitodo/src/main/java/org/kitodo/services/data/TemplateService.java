@@ -28,6 +28,7 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
@@ -226,18 +227,18 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         TemplateDTO templateDTO = new TemplateDTO();
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject templateJSONObject = jsonObject.getJsonObject("_source");
-        templateDTO.setTitle(templateJSONObject.getString("title"));
-        templateDTO.setOutputName(templateJSONObject.getString("outputName"));
-        templateDTO.setWikiField(templateJSONObject.getString("wikiField"));
-        templateDTO.setCreationDate(templateJSONObject.getString("creationDate"));
+        templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJSONObject));
+        templateDTO.setOutputName(TemplateTypeField.OUTPUT_NAME.getStringValue(templateJSONObject));
+        templateDTO.setWikiField(TemplateTypeField.WIKI_FIELD.getStringValue(templateJSONObject));
+        templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(templateJSONObject.getInt("project.id"));
-            projectDTO.setTitle(templateJSONObject.getString("project.title"));
-            projectDTO.setActive(templateJSONObject.getBoolean("project.active"));
+            projectDTO.setId(TemplateTypeField.PROJECT_ID.getIntValue(templateJSONObject));
+            projectDTO.setTitle(TemplateTypeField.PROJECT_TITLE.getStringValue(templateJSONObject));
+            projectDTO.setActive(TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(templateJSONObject));
             templateDTO.setProject(projectDTO);
         }
 
@@ -245,7 +246,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
-        Integer project = jsonObject.getInt("project.id");
+        Integer project = TemplateTypeField.PROJECT_ID.getIntValue(jsonObject);
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));

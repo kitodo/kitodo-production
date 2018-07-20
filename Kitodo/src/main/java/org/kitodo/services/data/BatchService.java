@@ -182,8 +182,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         BatchDTO batchDTO = new BatchDTO();
         batchDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject batchJSONObject = jsonObject.getJsonObject("_source");
-        batchDTO.setTitle(batchJSONObject.getString(BatchTypeField.TITLE.getName()));
-        batchDTO.setType(batchJSONObject.getString(BatchTypeField.TYPE.getName()));
+        batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(batchJSONObject));
+        batchDTO.setType(BatchTypeField.TYPE.getStringValue(batchJSONObject));
         if (!related) {
             convertRelatedJSONObjects(batchJSONObject, batchDTO);
         }

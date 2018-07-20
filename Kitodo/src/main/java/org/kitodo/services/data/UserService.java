@@ -548,12 +548,12 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         UserDTO userDTO = new UserDTO();
         userDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userJSONObject = jsonObject.getJsonObject("_source");
-        userDTO.setLogin(userJSONObject.getString(UserTypeField.LOGIN.getName()));
-        userDTO.setName(userJSONObject.getString(UserTypeField.NAME.getName()));
-        userDTO.setSurname(userJSONObject.getString(UserTypeField.SURNAME.getName()));
-        userDTO.setActive(userJSONObject.getBoolean(UserTypeField.ACTIVE.getName()));
-        userDTO.setLdapLogin(userJSONObject.getString(UserTypeField.LDAP_LOGIN.getName()));
-        userDTO.setLocation(userJSONObject.getString(UserTypeField.LOCATION.getName()));
+        userDTO.setLogin(UserTypeField.LOGIN.getStringValue(userJSONObject));
+        userDTO.setName(UserTypeField.NAME.getStringValue(userJSONObject));
+        userDTO.setSurname(UserTypeField.SURNAME.getStringValue(userJSONObject));
+        userDTO.setActive(UserTypeField.ACTIVE.getBooleanValue(userJSONObject));
+        userDTO.setLdapLogin(UserTypeField.LDAP_LOGIN.getStringValue(userJSONObject));
+        userDTO.setLocation(UserTypeField.LOCATION.getStringValue(userJSONObject));
         userDTO.setFullName(getFullName(userDTO));
         userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.FILTERS.getName()));
         userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROJECTS.getName()));

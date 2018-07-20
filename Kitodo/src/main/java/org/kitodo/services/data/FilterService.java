@@ -111,7 +111,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         FilterDTO filterDTO = new FilterDTO();
         filterDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject filterJSONObject = jsonObject.getJsonObject("_source");
-        filterDTO.setValue(filterJSONObject.getString(FilterTypeField.VALUE.getName()));
+        filterDTO.setValue(FilterTypeField.VALUE.getStringValue(filterJSONObject));
         return filterDTO;
     }
 

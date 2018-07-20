@@ -71,7 +71,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject clientJSONObject = jsonObject.getJsonObject("_source");
-        clientDTO.setName(clientJSONObject.getString(ClientTypeField.NAME.getName()));
+        clientDTO.setName(ClientTypeField.NAME.getStringValue(clientJSONObject));
         clientDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(clientJSONObject, ClientTypeField.PROJECTS.getName()));
         if (!related) {
             convertRelatedJSONObjects(clientJSONObject, clientDTO);

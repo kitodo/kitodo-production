@@ -63,10 +63,10 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");
-        workflowDTO.setTitle(workflowJSONObject.getString(WorkflowTypeField.TITLE.getName()));
-        workflowDTO.setFileName(workflowJSONObject.getString(WorkflowTypeField.FILE_NAME.getName()));
-        workflowDTO.setReady(workflowJSONObject.getBoolean(WorkflowTypeField.READY.getName()));
-        workflowDTO.setActive(workflowJSONObject.getBoolean(WorkflowTypeField.ACTIVE.getName()));
+        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(workflowJSONObject));
+        workflowDTO.setFileName(WorkflowTypeField.FILE_NAME.getStringValue(workflowJSONObject));
+        workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
+        workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
         return workflowDTO;
     }
 

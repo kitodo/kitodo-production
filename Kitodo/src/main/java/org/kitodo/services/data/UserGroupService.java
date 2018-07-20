@@ -268,7 +268,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         UserGroupDTO userGroupDTO = new UserGroupDTO();
         userGroupDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userGroupJSONObject = jsonObject.getJsonObject("_source");
-        userGroupDTO.setTitle(userGroupJSONObject.getString(UserGroupTypeField.TITLE.getName()));
+        userGroupDTO.setTitle(UserGroupTypeField.TITLE.getStringValue(userGroupJSONObject));
         userGroupDTO
                 .setUsersSize(getSizeOfRelatedPropertyForDTO(userGroupJSONObject, UserGroupTypeField.USERS.getName()));
         userGroupDTO.setAuthorizationsSize(
