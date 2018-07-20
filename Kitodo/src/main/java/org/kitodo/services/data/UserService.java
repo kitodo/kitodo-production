@@ -555,12 +555,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setLdapLogin(UserTypeField.LDAP_LOGIN.getStringValue(userJSONObject));
         userDTO.setLocation(UserTypeField.LOCATION.getStringValue(userJSONObject));
         userDTO.setFullName(getFullName(userDTO));
-        userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.FILTERS.getName()));
-        userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROJECTS.getName()));
-        userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.TASKS.getName()));
-        userDTO.setProcessingTasksSize(
-            getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROCESSING_TASKS.getName()));
-        userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.USER_GROUPS.getName()));
+        userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
+        userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
+        userDTO.setTasksSize(UserTypeField.TASKS.getSizeOfProperty(userJSONObject));
+        userDTO.setProcessingTasksSize(UserTypeField.PROCESSING_TASKS.getSizeOfProperty(userJSONObject));
+        userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
 
         if (!related) {
             convertRelatedJSONObjects(userJSONObject, userDTO);

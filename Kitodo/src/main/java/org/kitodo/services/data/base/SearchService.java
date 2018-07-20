@@ -919,21 +919,4 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         }
         return new ArrayList<>();
     }
-
-    /**
-     * Get size of related objects returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @param key
-     *            of property which need to be counted
-     * @return size of array with related objects
-     */
-    protected int getSizeOfRelatedPropertyForDTO(JsonObject object, String key) {
-        if (object != null) {
-            JsonArray jsonArray = (JsonArray) object.get(key);
-            return jsonArray.size();
-        }
-        return 0;
-    }
 }
