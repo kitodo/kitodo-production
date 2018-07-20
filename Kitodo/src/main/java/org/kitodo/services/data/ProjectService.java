@@ -266,7 +266,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return projectDTO;
     }
 
-    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
+    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) throws DataException {
         List<TemplateDTO> templateDTOS = new ArrayList<>();
         JsonArray jsonArray = jsonObject.getJsonArray(ProjectTypeField.TEMPLATES.getName());
 

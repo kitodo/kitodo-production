@@ -23,6 +23,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkflowType;
 import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.services.data.base.SearchService;
 
@@ -59,7 +60,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException  {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");

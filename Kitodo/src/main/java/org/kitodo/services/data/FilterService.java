@@ -107,7 +107,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public FilterDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+    public FilterDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         FilterDTO filterDTO = new FilterDTO();
         filterDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject filterJSONObject = jsonObject.getJsonObject("_source");

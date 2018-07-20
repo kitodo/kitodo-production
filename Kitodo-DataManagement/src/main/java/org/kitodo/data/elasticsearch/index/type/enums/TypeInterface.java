@@ -14,6 +14,8 @@ package org.kitodo.data.elasticsearch.index.type.enums;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
+import org.kitodo.data.exceptions.DataException;
+
 interface TypeInterface {
 
     /**
@@ -23,8 +25,13 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return boolean value for given json
      */
-    default boolean getBooleanValue(JsonObject jsonObject) {
-        return jsonObject.getBoolean(this.toString());
+    default boolean getBooleanValue(JsonObject jsonObject) throws DataException {
+        try {
+            return jsonObject.getBoolean(this.toString());
+        } catch (RuntimeException e) {
+            throw new DataException("Not possible to retrieve boolean value for key " + this.toString()
+                    + ". Exception: " + e.getMessage());
+        }
     }
 
     /**
@@ -34,8 +41,13 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return int value for given json
      */
-    default int getIntValue(JsonObject jsonObject) {
-        return jsonObject.getInt(this.toString());
+    default int getIntValue(JsonObject jsonObject) throws DataException {
+        try {
+            return jsonObject.getInt(this.toString());
+        } catch (RuntimeException e) {
+            throw new DataException("Not possible to retrieve int value for key " + this.toString()
+                    + ". Exception: " + e.getMessage());
+        }
     }
 
     /**
@@ -45,8 +57,13 @@ interface TypeInterface {
      *            returned from ElasticSearch index
      * @return String value for given json
      */
-    default String getStringValue(JsonObject jsonObject) {
-        return jsonObject.getString(this.toString());
+    default String getStringValue(JsonObject jsonObject) throws DataException {
+        try {
+            return jsonObject.getString(this.toString());
+        } catch (RuntimeException e) {
+            throw new DataException("Not possible to retrieve String value for key " + this.toString()
+                    + ". Exception: " + e.getMessage());
+        }
     }
 
     /**
@@ -56,10 +73,15 @@ interface TypeInterface {
      *            JSONObject
      * @return size of array with related objects
      */
-    default int getSizeOfProperty(JsonObject object) {
+    default int getSizeOfProperty(JsonObject object) throws DataException {
         if (object != null) {
-            JsonArray jsonArray = (JsonArray) object.get(this.toString());
-            return jsonArray.size();
+            try {
+                JsonArray jsonArray = (JsonArray) object.get(this.toString());
+                return jsonArray.size();
+            } catch (RuntimeException e) {
+                throw new DataException("Not possible to retrieve size of array for key " + this.toString()
+                        + ". Exception: " + e.getMessage());
+            }
         }
         return 0;
     }

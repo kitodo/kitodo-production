@@ -711,7 +711,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setBlockedUser(getBlockedUser(processDTO));
     }
 
-    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) {
+    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
         JsonArray jsonArray = jsonObject.getJsonArray(ProcessTypeField.BATCHES.getName());
         List<BatchDTO> batchDTOList = new ArrayList<>();
         for (JsonValue singleObject : jsonArray) {
