@@ -247,7 +247,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getName()));
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getName()));
         templateDTO.setWorkflow(workflowDTO);
-        templateDTO.setDiagramImage(getTasksDiagram(workflowDTO.getFileName()));
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
@@ -282,19 +281,26 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *
      * @return diagram image file
      */
-    private InputStream getTasksDiagram(String fileName) {
-        File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
-        try {
-            return new FileInputStream(tasksDiagram);
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            return new InputStream() {
-                @Override
-                public int read() {
-                    return -1;
-                }
-            };
+    public InputStream getTasksDiagram(String fileName) {
+        if (Objects.nonNull(fileName) && !fileName.equals("")) {
+            File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
+            try {
+                return new FileInputStream(tasksDiagram);
+            } catch (FileNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                return getEmptyInputStream();
+            }
         }
+        return getEmptyInputStream();
+    }
+
+    private InputStream getEmptyInputStream() {
+        return new InputStream() {
+            @Override
+            public int read() {
+                return -1;
+            }
+        };
     }
 
     /**

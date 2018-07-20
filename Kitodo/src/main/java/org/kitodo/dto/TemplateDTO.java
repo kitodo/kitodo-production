@@ -12,10 +12,12 @@
 package org.kitodo.dto;
 
 import java.io.InputStream;
+import java.util.Objects;
+
+import org.kitodo.services.ServiceManager;
 
 public class TemplateDTO extends BaseTemplateDTO {
 
-    private InputStream diagramImage;
     private WorkflowDTO workflow;
     private boolean containsUnreachableSteps;
 
@@ -25,16 +27,10 @@ public class TemplateDTO extends BaseTemplateDTO {
      * @return value of diagramImage
      */
     public InputStream getDiagramImage() {
-        return diagramImage;
-    }
-
-    /**
-     * Set diagram image.
-     *
-     * @param diagramImage as java.io.InputStream
-     */
-    public void setDiagramImage(InputStream diagramImage) {
-        this.diagramImage = diagramImage;
+        if (Objects.nonNull(this.workflow)) {
+            return new ServiceManager().getTemplateService().getTasksDiagram(this.workflow.getFileName());
+        }
+        return new ServiceManager().getTemplateService().getTasksDiagram("");
     }
 
     /**
