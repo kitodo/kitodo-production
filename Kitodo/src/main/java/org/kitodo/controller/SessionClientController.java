@@ -13,15 +13,17 @@ package org.kitodo.controller;
 
 import de.sub.goobi.helper.Helper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.context.RequestContext;
 
@@ -30,6 +32,7 @@ import org.primefaces.context.RequestContext;
 public class SessionClientController {
 
     private transient ServiceManager serviceManager = new ServiceManager();
+    private static final Logger logger = LogManager.getLogger(SessionClientController.class);
 
     private Client selectedClient;
     protected static final String NO_CLIENT_SELECTED = "clientSelectNone";
@@ -143,13 +146,23 @@ public class SessionClientController {
      * @return The list of clients.
      */
     public List<Client> getClientsOfCurrentUser() {
-        List<Project> projects = serviceManager.getUserService().getAuthenticatedUser().getProjects();
-        List<Client> clients = new ArrayList<>();
 
+        if (serviceManager.getSecurityAccessService().hasAnyAuthorityGlobal()) {
+            try {
+                return serviceManager.getClientService().getAll();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+            }
+        }
+        return getClientsByUsersAuthorities();
+    }
+
+    private List<Client> getClientsByUsersAuthorities() {
+        List<Client> clients = serviceManager.getClientService().getByIds(serviceManager.getSecurityAccessService().getClientIdListForAnyAuthority());
+        List<Project> projects = serviceManager.getProjectService().getByIds(serviceManager.getSecurityAccessService().getProjectIdListForAnyAuthority());
         for (Project project : projects) {
-            Client client = project.getClient();
-            if (Objects.nonNull(client) && !clients.contains(client)) {
-                clients.add(client);
+            if (!clients.contains(project.getClient())) {
+                clients.add(project.getClient());
             }
         }
         return clients;

@@ -376,4 +376,18 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         Project project = serviceManager.getProjectService().getById(id);
         return String.join(", ", project.getTemplates().stream().map(Template::getTitle).collect(Collectors.toList()));
     }
+
+    /**
+     * Get projects by a list of ids.
+     *
+     * @param projectIds
+     *            the list of ids
+     * @return the list of projects
+     */
+    public List<Project> getByIds(List<Integer> projectIds) {
+        if (!projectIds.isEmpty()) {
+            return dao.getByIds(projectIds);
+        }
+        return new ArrayList<>();
+    }
 }

@@ -154,4 +154,18 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         QueryBuilder query = createSimpleQuery("projects.id", id, true);
         return searcher.findDocument(query.toString());
     }
+
+    /**
+     * Get clients by a list of ids.
+     * 
+     * @param clientIds
+     *            the list of ids
+     * @return the list of clients
+     */
+    public List<Client> getByIds(List<Integer> clientIds) {
+        if (!clientIds.isEmpty()) {
+            return dao.getByIds(clientIds);
+        }
+        return new ArrayList<>();
+    }
 }

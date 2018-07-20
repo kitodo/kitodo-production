@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -68,5 +69,14 @@ public class ClientServiceIT {
         String expected = "Second client";
         await().untilAsserted(
             () -> assertEquals("User group was not found in index!", expected, clientService.findById(2).getName()));
+    }
+
+    @Test
+    public void shouldGetByIds() {
+        List<Integer> clientIds = new ArrayList<>();
+        clientIds.add(1);
+        clientIds.add(2);
+        List<Client> clients = clientService.getByIds(clientIds);
+        assertEquals("Clients were not found database!", 2, clients.size());
     }
 }

@@ -289,6 +289,12 @@ public class MockDatabase {
         serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
 
         userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
+        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
+        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
+        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
+        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
+
+        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
         userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
         userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
         userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
@@ -1190,6 +1196,19 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
+
+        User forthUser = new User();
+        forthUser.setName("Max");
+        forthUser.setSurname("Mustermann");
+        forthUser.setLogin("mmustermann");
+        forthUser.setPassword(passwordEncoder.encrypt("test"));
+        forthUser.setLdapLogin("mmustermann");
+        forthUser.setLocation("Dresden");
+        forthUser.setTableSize(20);
+        forthUser.setLanguage("de");
+        forthUser.setCss("old/userStyles/classic.css");
+        forthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        serviceManager.getUserService().save(forthUser);
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
