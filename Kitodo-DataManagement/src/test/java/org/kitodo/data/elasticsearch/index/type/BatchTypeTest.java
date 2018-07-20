@@ -83,7 +83,7 @@ public class BatchTypeTest {
         assertEquals("Key title doesn't match to given value!", "Batch1", BatchTypeField.TITLE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "LOGISTIC", BatchTypeField.TYPE.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
+        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
@@ -109,7 +109,7 @@ public class BatchTypeTest {
         assertEquals("Key title doesn't match to given value!", "Batch2", BatchTypeField.TITLE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "", BatchTypeField.TYPE.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
+        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
     }
 
@@ -123,7 +123,7 @@ public class BatchTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
 
-        JsonArray processes = actual.getJsonArray(BatchTypeField.PROCESSES.getName());
+        JsonArray processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
     }

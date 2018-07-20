@@ -89,7 +89,7 @@ public class AuthorityTypeTest {
         assertEquals("Key title doesn't match to given value!", "Second",
             AuthorityTypeField.TITLE.getStringValue(actual));
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
     }
 
@@ -103,7 +103,7 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in userGroups is incorrect!", 2, userGroup.keySet().size());
     }

@@ -223,7 +223,7 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
+        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
@@ -232,7 +232,7 @@ public class TaskTypeTest {
         user = users.getJsonObject(1);
         assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
 
-        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
@@ -286,10 +286,10 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
+        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, userGroups.size());
     }
 
@@ -303,11 +303,11 @@ public class TaskTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
 
-        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
+        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 1, user.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in userGroups is incorrect!", 1, userGroup.keySet().size());
     }

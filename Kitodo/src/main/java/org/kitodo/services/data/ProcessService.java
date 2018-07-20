@@ -712,7 +712,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
-        JsonArray jsonArray = jsonObject.getJsonArray(ProcessTypeField.BATCHES.getName());
+        JsonArray jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
         List<BatchDTO> batchDTOList = new ArrayList<>();
         for (JsonValue singleObject : jsonArray) {
             BatchDTO batchDTO = new BatchDTO();

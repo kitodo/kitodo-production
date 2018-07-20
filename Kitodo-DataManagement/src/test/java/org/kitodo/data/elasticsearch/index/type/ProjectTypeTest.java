@@ -191,7 +191,7 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
+        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
@@ -199,7 +199,7 @@ public class ProjectTypeTest {
         assertEquals("Key processes.title doesn't match to given value!", "Second",
             ProcessTypeField.TITLE.getStringValue(process));
 
-        JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
+        JsonArray templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
@@ -207,7 +207,7 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             TemplateTypeField.TITLE.getStringValue(template));
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+        JsonArray projectFileGroups = ProjectTypeField.PROJECT_FILE_GROUPS.getJsonArray(actual);
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
 
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);
@@ -275,7 +275,7 @@ public class ProjectTypeTest {
         assertEquals("Key projectFileGroups.suffix doesn't match to given value!", "pdf",
             ProjectTypeField.PFG_SUFFIX.getStringValue(projectFileGroup));
 
-        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
+        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
@@ -326,7 +326,7 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
+        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 1, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
@@ -334,7 +334,7 @@ public class ProjectTypeTest {
         assertEquals("Key processes.title doesn't match to given value!", "Second",
             ProcessTypeField.TITLE.getStringValue(process));
 
-        JsonArray templates = actual.getJsonArray(ProjectTypeField.TEMPLATES.getName());
+        JsonArray templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
@@ -342,7 +342,7 @@ public class ProjectTypeTest {
         assertEquals("Key templates.title doesn't match to given value!", "First",
             TemplateTypeField.TITLE.getStringValue(template));
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.PROJECT_FILE_GROUPS.getName());
+        JsonArray projectFileGroups = ProjectTypeField.PROJECT_FILE_GROUPS.getJsonArray(actual);
         assertEquals("Size projectFileGroups doesn't match to given value!", 5, projectFileGroups.size());
 
         JsonObject projectFileGroup = projectFileGroups.getJsonObject(0);

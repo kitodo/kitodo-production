@@ -122,7 +122,7 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 2, tasks.size());
 
         JsonObject task = tasks.getJsonObject(0);
@@ -165,7 +165,7 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 1, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -198,7 +198,7 @@ public class TemplateTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -212,7 +212,7 @@ public class TemplateTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         JsonObject task = tasks.getJsonObject(0);
         assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }

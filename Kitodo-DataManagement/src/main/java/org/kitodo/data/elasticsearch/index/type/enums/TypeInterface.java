@@ -67,6 +67,22 @@ interface TypeInterface {
     }
 
     /**
+     * Get json array value from given json object.
+     *
+     * @param jsonObject
+     *            returned from ElasticSearch index
+     * @return json array for given json
+     */
+    default JsonArray getJsonArray(JsonObject jsonObject) throws DataException {
+        try {
+            return jsonObject.getJsonArray(this.toString());
+        } catch (RuntimeException e) {
+            throw new DataException("Not possible to retrieve JsonArray value for key " + this.toString()
+                    + ". Exception: " + e.getMessage());
+        }
+    }
+
+    /**
      * Get size of related objects returned from ElasticSearch index.
      *
      * @param object

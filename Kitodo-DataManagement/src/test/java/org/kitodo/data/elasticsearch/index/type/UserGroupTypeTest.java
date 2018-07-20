@@ -156,10 +156,10 @@ public class UserGroupTypeTest {
         assertEquals("Key title doesn't match to given value!", "Random",
             UserGroupTypeField.TITLE.getStringValue(actual));
 
-        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
+        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
 
-        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
+        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
@@ -191,11 +191,11 @@ public class UserGroupTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
 
-        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
+        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         JsonObject authority = authorities.getJsonObject(0);
         assertEquals("Amount of keys in authorities is incorrect!", 2, authority.keySet().size());
 
-        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
+        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }

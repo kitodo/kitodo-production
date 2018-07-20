@@ -114,21 +114,21 @@ public class UserTypeTest {
             UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", UserTypeField.ACTIVE.getBooleanValue(actual));
 
-        JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
+        JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         assertEquals("Size filters doesn't match to given value!", 0, filters.size());
 
-        JsonArray userGroups = actual.getJsonArray(UserTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
 
-        JsonArray projects = actual.getJsonArray(UserTypeField.PROJECTS.getName());
+        JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
 
-        JsonArray tasks = actual.getJsonArray(UserTypeField.TASKS.getName());
+        JsonArray tasks = UserTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
 
-        JsonArray processingTasks = actual.getJsonArray(UserTypeField.PROCESSING_TASKS.getName());
+        JsonArray processingTasks = UserTypeField.PROCESSING_TASKS.getJsonArray(actual);
         assertEquals("Size processingTasks doesn't match to given value!", 0, processingTasks.size());
     }
 
@@ -151,9 +151,9 @@ public class UserTypeTest {
             UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", UserTypeField.ACTIVE.getBooleanValue(actual));
 
-        JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
+        JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         assertEquals("Size filters doesn't match to given value!", 2, filters.size());
 
         JsonObject filter = filters.getJsonObject(0);
@@ -164,7 +164,7 @@ public class UserTypeTest {
         assertEquals("Key filters.id doesn't match to given value!", 2, filter.getInt("id"));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:2\"", filter.getString("value"));
 
-        JsonArray userGroups = actual.getJsonArray(UserTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size userGroups doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
@@ -176,13 +176,13 @@ public class UserTypeTest {
         assertEquals("Key userGroups.id doesn't match to given value!", 2, userGroup.getInt("id"));
         assertEquals("Key userGroups.title doesn't match to given value!", "Basic", userGroup.getString("title"));
 
-        JsonArray projects = actual.getJsonArray(UserTypeField.PROJECTS.getName());
+        JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
 
-        JsonArray tasks = actual.getJsonArray(UserTypeField.TASKS.getName());
+        JsonArray tasks = UserTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
 
-        JsonArray processingTasks = actual.getJsonArray(UserTypeField.PROCESSING_TASKS.getName());
+        JsonArray processingTasks = UserTypeField.PROCESSING_TASKS.getJsonArray(actual);
         assertEquals("Size processingTasks doesn't match to given value!", 0, processingTasks.size());
     }
 
@@ -204,31 +204,31 @@ public class UserTypeTest {
         assertEquals("Key location doesn't match to given value!", "", UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
             UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
+        assertTrue("Key active doesn't match to given value!", UserTypeField.ACTIVE.getBooleanValue(actual));
 
-        JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
+        JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         assertEquals("Size filters doesn't match to given value!", 2, filters.size());
 
         JsonObject filter = filters.getJsonObject(0);
         assertEquals("Key filters.id doesn't match to given value!", 1, FilterTypeField.ID.getIntValue(filter));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:1\"",
-            filter.getString(FilterTypeField.VALUE.getName()));
+            FilterTypeField.VALUE.getStringValue(filter));
 
         filter = filters.getJsonObject(1);
         assertEquals("Key filters.id doesn't match to given value!", 2, FilterTypeField.ID.getIntValue(filter));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:2\"",
             FilterTypeField.VALUE.getStringValue(filter));
 
-        JsonArray userGroups = actual.getJsonArray(UserTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
 
-        JsonArray projects = actual.getJsonArray(UserTypeField.PROJECTS.getName());
+        JsonArray projects = UserTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());
 
-        JsonArray tasks = actual.getJsonArray(UserTypeField.TASKS.getName());
+        JsonArray tasks = UserTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
 
-        JsonArray processingTasks = actual.getJsonArray(UserTypeField.PROCESSING_TASKS.getName());
+        JsonArray processingTasks = UserTypeField.PROCESSING_TASKS.getJsonArray(actual);
         assertEquals("Size processingTasks doesn't match to given value!", 0, processingTasks.size());
     }
 
@@ -242,11 +242,11 @@ public class UserTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 12, actual.keySet().size());
 
-        JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
+        JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         JsonObject filter = filters.getJsonObject(0);
         assertEquals("Amount of keys in filters is incorrect!", 2, filter.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray(UserTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = UserTypeField.USER_GROUPS.getJsonArray(actual);
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in filters is incorrect!", 2, userGroup.keySet().size());
     }
