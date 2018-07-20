@@ -11,8 +11,11 @@
 
 package org.kitodo.selenium;
 
+import static org.junit.Assume.assumeTrue;
+
 import java.util.List;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
@@ -42,6 +45,16 @@ public class AddingST extends BaseTestSelenium {
         Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
         Assert.assertTrue("Created Project was not listed at projects table!", projectAvailable);
+    }
+
+    @Test
+    public void addProcessTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
+        Pages.getProjectsPage().switchToTabByIndex(TabIndex.TEMPLATES.getIndex()).createNewProcess();
+        String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
+        boolean processAvailable = Pages.getProcessesPage().getProcessTitles().contains(generatedTitle);
+        Assert.assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
 
     @Test

@@ -47,6 +47,11 @@ public class ProjectEditPage extends Page {
         super("pages/projectEdit.jsf");
     }
 
+    @Override
+    public RulesetEditPage goTo() {
+        return null;
+    }
+
     public ProjectEditPage insertProjectData(Project project) {
         titleInput.sendKeys(project.getTitle());
         pagesAmountInput.clear();

@@ -24,7 +24,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.awaitility.Awaitility.await;
 
-public class UserGroupEditPage extends Page {
+public class UserGroupEditPage extends Page<UserGroupEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -56,6 +56,11 @@ public class UserGroupEditPage extends Page {
 
     public UserGroupEditPage() {
         super("pages/usergroupEdit.jsf");
+    }
+
+    @Override
+    public UserGroupEditPage goTo() {
+        return null;
     }
 
     private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {

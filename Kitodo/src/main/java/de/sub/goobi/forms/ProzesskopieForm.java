@@ -23,10 +23,12 @@ import de.sub.goobi.metadaten.copier.DataCopier;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.FileSystems;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -795,7 +797,7 @@ public class ProzesskopieForm implements Serializable {
                 .toString();
         boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
         if (!successful) {
-            String message = "Metadata directory: " + baseProcessDirectory + "in path:"
+            String message = "Metadata directory: " + baseProcessDirectory + " in path: "
                     + ConfigCore.getKitodoDataDirectory() + " was not created!";
             logger.error(message);
             Helper.setErrorMessage(message);
