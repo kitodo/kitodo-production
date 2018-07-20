@@ -596,6 +596,15 @@ section#content-section {
     display: none;
 }
 
+.ui-tabs-panels {
+    overflow-y: scroll;
+    background: white;
+}
+
+.ui-tabs-panels.autoscroll {
+    overflow: hidden;
+}
+
 .ui-tabs .ui-tabs-panel > div.mets-file-groups,
 .ui-tabs .ui-tabs-panel > div.mets-file-groups > div {
     padding: 0;
