@@ -195,7 +195,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
-                .defaultSuccessUrl("/pages/start.jsf")
+                .defaultSuccessUrl("/pages/desktop.jsf")
                 .permitAll()
                 .and()
             .logout()

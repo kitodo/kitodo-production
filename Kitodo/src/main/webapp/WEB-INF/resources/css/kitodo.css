@@ -435,6 +435,7 @@ main {
     z-index: 2;
     margin-bottom: 100px;
     padding: 0;
+    overflow-y: hidden;
     }
 
 body.first-visit main {
@@ -445,6 +446,81 @@ body.first-visit main {
 section#content-section {
     background: #fff;
     height: 500px;
+}
+
+#desktopGrid,
+#desktopGrid_content {
+    background: none;
+    height: inherit;
+}
+
+#desktopGrid_content {
+    display: flex;
+    flex-direction: column;
+}
+
+#desktopGrid .ui-grid-row {
+    flex-basis: 50%;
+    display: flex;
+    overflow-y: hidden;
+}
+
+#desktopGrid th.actionsColumn span,
+#desktopGrid td.actionsColumn form {
+    float: right;
+}
+
+#desktopGrid td.actionsColumn form a:last-of-type {
+    margin-right: 0;
+}
+
+#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell {
+    background-color: white !important;
+    padding: 0;
+    margin: 8px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    min-height: 90%;
+}
+
+#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell .ui-widget-content {
+    padding: 0;
+}
+
+#desktopGrid_content .desktop-widget,
+#desktopGrid_content .desktop-widget > div{
+    height: 100%;
+}
+
+.task-table-column, .process-table-column {
+    width: 25% !important;
+}
+
+.project-table-column {
+    width: 33% !important;
+}
+
+.statistic-table-column {
+    width: 50% !important;
+}
+
+#desktopGrid_content .content-header {
+    height: unset !important;
+}
+
+#desktopGrid .ui-datatable-scrollable-body {
+    overflow-y: scroll;
+}
+
+#desktopGrid .ui-datatable-scrollable-header-box {
+    border-top: 3px solid #999;
+    background: #d8d8d8;
+}
+
+.desktop-widget .ui-widget-content {
+    border-radius: 3px;
 }
 
 #listWrapper, section#content-section {

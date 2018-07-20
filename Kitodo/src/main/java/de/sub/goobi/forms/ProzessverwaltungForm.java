@@ -200,10 +200,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Delete process.
-     *
-     * @return page or empty String
      */
-    public String delete() {
+    public void delete() {
         deleteMetadataDirectory();
         try {
             this.process.getProject().getProcesses().remove(this.process);
@@ -219,9 +217,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
-            return null;
         }
-        return processListPath;
     }
 
     /**

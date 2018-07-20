@@ -55,6 +55,11 @@ button.secondary-button.ui-state-hover {
     background: #f3f3f3 !important;
 }
 
+button.reload-button {
+    border: 0 !important;
+    margin-left: 10px !important;
+}
+
 .ui-state-default,
 .ui-widget-content .ui-state-default,
 .ui-widget-header .ui-state-default {
