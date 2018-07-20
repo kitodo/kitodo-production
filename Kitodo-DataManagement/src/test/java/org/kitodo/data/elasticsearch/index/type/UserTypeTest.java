@@ -104,16 +104,16 @@ public class UserTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key login doesn't match to given value!", "jkowalski",
-            actual.getString(UserTypeField.LOGIN.getName()));
+            UserTypeField.LOGIN.getStringValue(actual));
         assertEquals("Key ldapLogin doesn't match to given value!", "",
-            actual.getString(UserTypeField.LDAP_LOGIN.getName()));
-        assertEquals("Key name doesn't match to given value!", "Jan", actual.getString(UserTypeField.NAME.getName()));
+            UserTypeField.LDAP_LOGIN.getStringValue(actual));
+        assertEquals("Key name doesn't match to given value!", "Jan", UserTypeField.NAME.getStringValue(actual));
         assertEquals("Key surname doesn't match to given value!", "Kowalski",
-            actual.getString(UserTypeField.SURNAME.getName()));
+            UserTypeField.SURNAME.getStringValue(actual));
         assertEquals("Key location doesn't match to given value!", "Dresden",
-            actual.getString(UserTypeField.LOCATION.getName()));
+            UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
-            actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
+            UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
@@ -141,17 +141,16 @@ public class UserTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key login doesn't match to given value!", "anowak",
-            actual.getString(UserTypeField.LOGIN.getName()));
+        assertEquals("Key login doesn't match to given value!", "anowak", UserTypeField.LOGIN.getStringValue(actual));
         assertEquals("Key ldapLogin doesn't match to given value!", "",
-            actual.getString(UserTypeField.LDAP_LOGIN.getName()));
-        assertEquals("Key name doesn't match to given value!", "Anna", actual.getString(UserTypeField.NAME.getName()));
+            UserTypeField.LDAP_LOGIN.getStringValue(actual));
+        assertEquals("Key name doesn't match to given value!", "Anna", UserTypeField.NAME.getStringValue(actual));
         assertEquals("Key surname doesn't match to given value!", "Nowak",
-            actual.getString(UserTypeField.SURNAME.getName()));
+            UserTypeField.SURNAME.getStringValue(actual));
         assertEquals("Key location doesn't match to given value!", "Berlin",
-            actual.getString(UserTypeField.LOCATION.getName()));
+            UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
-            actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
+            UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
@@ -196,31 +195,29 @@ public class UserTypeTest {
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
-        assertEquals("Key login doesn't match to given value!", "pmueller",
-            actual.getString(UserTypeField.LOGIN.getName()));
+        assertEquals("Key login doesn't match to given value!", "pmueller", UserTypeField.LOGIN.getStringValue(actual));
         assertEquals("Key ldapLogin doesn't match to given value!", "",
-            actual.getString(UserTypeField.LDAP_LOGIN.getName()));
-        assertEquals("Key name doesn't match to given value!", "Peter", actual.getString(UserTypeField.NAME.getName()));
+            UserTypeField.LDAP_LOGIN.getStringValue(actual));
+        assertEquals("Key name doesn't match to given value!", "Peter", UserTypeField.NAME.getStringValue(actual));
         assertEquals("Key surname doesn't match to given value!", "Müller",
-            actual.getString(UserTypeField.SURNAME.getName()));
-        assertEquals("Key location doesn't match to given value!", "",
-            actual.getString(UserTypeField.LOCATION.getName()));
+            UserTypeField.SURNAME.getStringValue(actual));
+        assertEquals("Key location doesn't match to given value!", "", UserTypeField.LOCATION.getStringValue(actual));
         assertEquals("Key metadataLanguage doesn't match to given value!", "",
-            actual.getString(UserTypeField.METADATA_LANGUAGE.getName()));
+            UserTypeField.METADATA_LANGUAGE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", actual.getBoolean(UserTypeField.ACTIVE.getName()));
 
         JsonArray filters = actual.getJsonArray(UserTypeField.FILTERS.getName());
         assertEquals("Size filters doesn't match to given value!", 2, filters.size());
 
         JsonObject filter = filters.getJsonObject(0);
-        assertEquals("Key filters.id doesn't match to given value!", 1, filter.getInt(FilterTypeField.ID.getName()));
+        assertEquals("Key filters.id doesn't match to given value!", 1, FilterTypeField.ID.getIntValue(filter));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:1\"",
             filter.getString(FilterTypeField.VALUE.getName()));
 
         filter = filters.getJsonObject(1);
-        assertEquals("Key filters.id doesn't match to given value!", 2, filter.getInt(FilterTypeField.ID.getName()));
+        assertEquals("Key filters.id doesn't match to given value!", 2, FilterTypeField.ID.getIntValue(filter));
         assertEquals("Key filters.value doesn't match to given value!", "\"id:2\"",
-            filter.getString(FilterTypeField.VALUE.getName()));
+            FilterTypeField.VALUE.getStringValue(filter));
 
         JsonArray userGroups = actual.getJsonArray(UserTypeField.USER_GROUPS.getName());
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());

@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum ClientTypeField {
+public enum ClientTypeField implements TypeInterface {
 
     ID("id"),
     NAME("clientName"),
@@ -29,6 +29,11 @@ public enum ClientTypeField {
      * @return value of name
      */
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

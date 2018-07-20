@@ -11,30 +11,19 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum BatchTypeField implements TypeInterface {
+import javax.json.JsonObject;
 
-    ID("id"),
-    TITLE("title"),
-    TYPE("type"),
-    PROCESSES("processes");
+interface TypeInterface {
 
-    private String name;
-
-    BatchTypeField(String name) {
-        this.name = name;
+    public default boolean getBooleanValue(JsonObject jsonObject) {
+        return jsonObject.getBoolean(this.toString());
     }
 
-    /**
-     * Get name.
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
+    public default int getIntValue(JsonObject jsonObject) {
+        return jsonObject.getInt(this.toString());
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public default String getStringValue(JsonObject jsonObject) {
+        return jsonObject.getString(this.toString());
     }
 }

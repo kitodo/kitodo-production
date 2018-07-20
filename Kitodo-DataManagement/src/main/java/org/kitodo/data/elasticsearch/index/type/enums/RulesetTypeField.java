@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum RulesetTypeField {
+public enum RulesetTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -34,6 +34,11 @@ public enum RulesetTypeField {
      * @return value of name
      */
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

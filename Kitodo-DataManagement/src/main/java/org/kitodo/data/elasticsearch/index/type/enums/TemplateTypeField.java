@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum TemplateTypeField {
+public enum TemplateTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -38,6 +38,11 @@ public enum TemplateTypeField {
      * @return value of name
      */
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

@@ -65,8 +65,8 @@ public class FilterTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key value doesn't match to given value!", "\"id:1\"",
-            actual.getString(FilterTypeField.VALUE.getName()));
-        assertEquals("Key user doesn't match to given value!", 1, actual.getInt(FilterTypeField.USER.getName()));
+            FilterTypeField.VALUE.getStringValue(actual));
+        assertEquals("Key user doesn't match to given value!", 1, FilterTypeField.USER.getIntValue(actual));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class FilterTypeTest {
 
         assertEquals("Key value doesn't match to given value!", "\"id:2\"",
             actual.getString(FilterTypeField.VALUE.getName()));
-        assertEquals("Key user doesn't match to given value!", 1, actual.getInt(FilterTypeField.USER.getName()));
+        assertEquals("Key user doesn't match to given value!", 1, FilterTypeField.USER.getIntValue(actual));
     }
 
     @Test
