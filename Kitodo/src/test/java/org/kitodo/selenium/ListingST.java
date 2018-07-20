@@ -49,6 +49,10 @@ public class ListingST extends BaseTestSelenium {
         int templatesDisplayed = Pages.getProjectsPage().countListedTemplates();
         Assert.assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
+        int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
+        int workflowsDisplayed = Pages.getProjectsPage().countListedWorkflows();
+        Assert.assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
+
         int docketsInDatabase = serviceManager.getDocketService().getAll().size();
         int docketsDisplayed = Pages.getProjectsPage().countListedDockets();
         Assert.assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);

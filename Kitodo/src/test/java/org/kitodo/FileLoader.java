@@ -56,6 +56,14 @@ public class FileLoader {
         content.add("</item>");
         content.add("<item from=\"vorlage\" isdoctype=\"multivolume\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"TitleDocMainShort\">Titel (Sortierung)");
         content.add("</item>");
+        content.add("<item from=\"vorlage\" isdoctype=\"monograph|multivolume|periodical\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"ListOfCreators\">Autoren");
+        content.add("</item>");
+        content.add("<item from=\"werk\" isnotdoctype=\"periodical\" ughbinding=\"true\" metadata=\"TSL_ATS\" docstruct=\"topstruct\"> ATS");
+        content.add("</item>");
+        content.add("<item from=\"vorlage\" isdoctype=\"monograph\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"CatalogIDSource\">PPN analog a-Satz");
+        content.add("</item>");
+        content.add("<item from=\"werk\" isdoctype=\"monograph\" required=\"true\" ughbinding=\"true\" docstruct=\"topstruct\" metadata=\"CatalogIDDigital\">PPN digital a-Satz");
+        content.add("</item>");
         content.add("<processtitle isdoctype=\"multivolume\">ATS+TSL+'_'+PPN digital f-Satz+'_'+Nummer (Benennung)</processtitle>");
         content.add("<processtitle isdoctype=\"monograph\">ATS+TSL+'_'+PPN digital a-Satz</processtitle>");
         content.add("<processtitle isdoctype=\"periodical\">TSL+'_'+PPN digital b-Satz+'_'+Nummer (Benennung)</processtitle>");

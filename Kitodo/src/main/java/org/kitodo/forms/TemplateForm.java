@@ -50,10 +50,10 @@ public class TemplateForm extends TemplateBaseForm {
 
     private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
-    private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private Template template;
     private Task task;
+    private boolean showInactiveTemplates = false;
     private String title;
     private transient ServiceManager serviceManager = new ServiceManager();
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -68,24 +68,23 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Check if closed processes should be shown.
+     * Check if inactive templates should be shown.
      *
      * @return true or false
      */
-    @Override
-    public boolean isShowClosedProcesses() {
-        return this.showClosedProcesses;
+    public boolean isShowInactiveTemplates() {
+        return this.showInactiveTemplates;
     }
 
     /**
-     * Set if closed processes should be shown.
+     * Set if inactive templates should be shown.
      *
-     * @param showClosedProcesses
+     * @param showInactiveTemplates
      *            true or false
      */
-    @Override
-    public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
+    public void setShowInactiveTemplates(boolean showInactiveTemplates) {
+        this.showInactiveTemplates = showInactiveTemplates;
+        serviceManager.getTemplateService().setShowInactiveTemplates(showInactiveTemplates);
     }
 
     /**
@@ -107,6 +106,7 @@ public class TemplateForm extends TemplateBaseForm {
     @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
+        serviceManager.getTemplateService().setShowInactiveProjects(showInactiveProjects);
     }
 
     /**

@@ -773,6 +773,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
         this.showAutomaticTasks = showAutomaticTasks;
+        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
     }
 
     public boolean getHideCorrectionTasks() {
@@ -781,6 +782,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
         this.hideCorrectionTasks = hideCorrectionTasks;
+        serviceManager.getTaskService().setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**

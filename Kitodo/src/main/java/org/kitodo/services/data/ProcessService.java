@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.ProzessverwaltungForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
@@ -122,6 +121,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private final FileService fileService = serviceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static ProcessService instance = null;
+    private boolean showClosedProcesses = false;
+    private boolean showInactiveProjects = false;
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
@@ -201,18 +202,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("ProzessverwaltungForm");
-        if (Objects.isNull(form)) {
-            form = new ProzessverwaltungForm();
-        }
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
             query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false);
-            if (!form.isShowClosedProcesses()) {
+            if (!this.showClosedProcesses) {
                 query.must(getQuerySortHelperStatus(false));
             }
-            if (!form.isShowInactiveProjects()) {
+            if (!this.showInactiveProjects) {
                 query.must(getQueryProjectActive(true));
             }
         }
@@ -2187,6 +2184,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setMimetype(folder.getMimeType());
         virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
         return virtualFileGroup;
+    }
+
+    /**
+     * Set showClosedProcesses.
+     *
+     * @param showClosedProcesses as boolean
+     */
+    public void setShowClosedProcesses(boolean showClosedProcesses) {
+        this.showClosedProcesses = showClosedProcesses;
+    }
+
+    /**
+     * Set showInactiveProjects.
+     *
+     * @param showInactiveProjects as boolean
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
     }
 
     /**

@@ -51,14 +51,14 @@
                          iconPos="right"
                          styleClass="button-filled-blue"
                          disabled="#{LdapGruppenForm.saveDisabled}"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.ldapGroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapGroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{LdapGruppenForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
+                  outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -247,7 +247,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

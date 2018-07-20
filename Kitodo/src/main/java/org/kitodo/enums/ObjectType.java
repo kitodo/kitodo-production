@@ -14,7 +14,7 @@ package org.kitodo.enums;
 import de.sub.goobi.helper.Helper;
 
 public enum ObjectType {
-    AUTHORIY("authorities"),
+    AUTHORITY("authorities"),
     CLIENT("clients"),
     BATCH("batches"),
     DOCKET("dockets"),
@@ -26,6 +26,7 @@ public enum ObjectType {
     TEMPLATE("template"),
     USER("users"),
     USERGROUP("userGroups"),
+    WORKFLOW("workflow"),
     FILTER("filter"),
     NONE("");
 

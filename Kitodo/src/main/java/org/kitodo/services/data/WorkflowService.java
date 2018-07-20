@@ -67,7 +67,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         workflowDTO.setFileName(workflowJSONObject.getString(WorkflowTypeField.FILE_NAME.getName()));
         workflowDTO.setReady(workflowJSONObject.getBoolean(WorkflowTypeField.READY.getName()));
         workflowDTO.setActive(workflowJSONObject.getBoolean(WorkflowTypeField.ACTIVE.getName()));
-        return new WorkflowDTO();
+        return workflowDTO;
     }
 
     /**

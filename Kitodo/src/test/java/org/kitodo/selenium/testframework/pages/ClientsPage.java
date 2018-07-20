@@ -25,7 +25,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClientsPage extends Page {
+public class ClientsPage extends Page<ClientsPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "clientForm:newElementButton_button")
@@ -48,6 +48,7 @@ public class ClientsPage extends Page {
      *
      * @return The clients page.
      */
+    @Override
     public ClientsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoClients();
         return this;

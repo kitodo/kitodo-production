@@ -51,13 +51,13 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{BenutzerverwaltungForm.saveDisabled}"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          styleClass="button-filled-blue"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}" outcome="users"
+        <p:button id="cancel" value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
@@ -204,7 +204,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

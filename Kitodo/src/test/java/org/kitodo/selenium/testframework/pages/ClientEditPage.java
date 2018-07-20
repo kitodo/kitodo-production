@@ -19,7 +19,8 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClientEditPage extends Page {
+public class ClientEditPage extends Page<ClientEditPage> {
+
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
     private WebElement saveClientButton;
@@ -30,6 +31,11 @@ public class ClientEditPage extends Page {
 
     public ClientEditPage() {
         super("pages/clientEdit.jsf");
+    }
+
+    @Override
+    public ClientEditPage goTo() {
+        return null;
     }
 
     public ClientEditPage insertClientData(Client client) {

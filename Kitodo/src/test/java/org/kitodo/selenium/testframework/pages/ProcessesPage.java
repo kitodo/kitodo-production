@@ -25,7 +25,7 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
-public class ProcessesPage extends Page {
+public class ProcessesPage extends Page<ProcessesPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "processesTabView:processesForm:processesTable_data")
@@ -36,11 +36,11 @@ public class ProcessesPage extends Page {
     private WebElement removeFirstProcessButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "processesTabView:processesForm:yesButton")
+    @FindBy(id = "yesButton")
     private WebElement confirmRemoveButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "processesTabView:processesForm:noButton")
+    @FindBy(id = "noButton")
     private WebElement cancelRemoveButton;
 
     public ProcessesPage() {
@@ -52,6 +52,7 @@ public class ProcessesPage extends Page {
      *
      * @return The processes page.
      */
+    @Override
     public ProcessesPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProcesses();
         return this;
@@ -70,7 +71,7 @@ public class ProcessesPage extends Page {
      *
      * @return list of processes titles
      */
-    public List<String> getListOfProcessTitles() throws Exception {
+    public List<String> getProcessTitles() throws Exception {
         if (isNotAt()) {
             goTo();
         }

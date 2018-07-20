@@ -13,17 +13,13 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.selenium.testframework.Browser;
 
-public class StartPage extends Page {
+public class StartPage extends Page<StartPage> {
 
     public StartPage() {
-        super("pages/start.jsf");
+        super("pages/desktop.jsf");
     }
 
-    /**
-     * Goes to help page.
-     *
-     * @return The help page.
-     */
+    @Override
     public StartPage goTo() {
         Browser.goTo(URL);
         return this;

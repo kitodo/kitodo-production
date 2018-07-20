@@ -20,7 +20,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class DocketEditPage extends Page {
+public class DocketEditPage extends Page<DocketEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -40,6 +40,11 @@ public class DocketEditPage extends Page {
 
     public DocketEditPage() {
         super("pages/docketEdit.jsf");
+    }
+
+    @Override
+    public DocketEditPage goTo() {
+        return null;
     }
 
     public DocketEditPage insertDocketData(Docket docket) {

@@ -152,12 +152,13 @@ public class BatchStepHelper extends BatchHelper {
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     /**
      * Error management for all.
      */
+    // TODO: when method will be used should only execute, return value must be given in Form class
     public String reportProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
@@ -173,7 +174,7 @@ public class BatchStepHelper extends BatchHelper {
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         this.problemTask = "";
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     /**
@@ -224,7 +225,7 @@ public class BatchStepHelper extends BatchHelper {
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     /**
@@ -247,7 +248,7 @@ public class BatchStepHelper extends BatchHelper {
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         this.solutionTask = "";
 
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     /**
@@ -461,7 +462,7 @@ public class BatchStepHelper extends BatchHelper {
                 Helper.setErrorMessage(e.getMessage(), logger, e);
             }
         }
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     /**
@@ -485,7 +486,7 @@ public class BatchStepHelper extends BatchHelper {
             }
         }
 
-        return Helper.getCurrentTaskForm().getTaskListPath();
+        return "";
     }
 
     private boolean isTaskValid(Task task) throws IOException {

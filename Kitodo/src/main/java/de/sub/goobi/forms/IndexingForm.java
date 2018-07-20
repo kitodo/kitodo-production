@@ -524,7 +524,7 @@ public class IndexingForm {
     private SearchService getService(ObjectType objectType) {
         if (!searchServices.containsKey(objectType) || searchServices.get(objectType) == null) {
             switch (objectType) {
-                case AUTHORIY:
+                case AUTHORITY:
                     searchServices.put(objectType, serviceManager.getAuthorityService());
                     break;
                 case BATCH:
@@ -559,6 +559,9 @@ public class IndexingForm {
                     break;
                 case USERGROUP:
                     searchServices.put(objectType, serviceManager.getUserGroupService());
+                    break;
+                case WORKFLOW:
+                    searchServices.put(objectType, serviceManager.getWorkflowService());
                     break;
                 case FILTER:
                     searchServices.put(objectType, serviceManager.getFilterService());

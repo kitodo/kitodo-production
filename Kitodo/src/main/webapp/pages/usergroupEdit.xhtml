@@ -54,7 +54,7 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
-                         onclick="PF('notifications').renderMessage({
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
                                         'summary':'#{msgs.userGroupSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
@@ -64,7 +64,7 @@
                          actionListener="#{BenutzergruppenForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
+        <p:button id="cancel" value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
                   outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
@@ -194,7 +194,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.users}" outcome="users"/></li>
         <li>
             <a href="">

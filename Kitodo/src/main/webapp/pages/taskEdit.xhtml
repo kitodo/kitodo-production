@@ -36,7 +36,7 @@
                          action="#{ProzessverwaltungForm.saveTaskAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         onclick="PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{ProzessverwaltungForm.saveDisabled}"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
@@ -44,7 +44,7 @@
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  onclick="setConfirmUnload(false);" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -67,7 +67,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
         <li><h:link value="#{msgs.processEdit}" outcome="processEdit?id=#{ProzessverwaltungForm.process.id}"/></li>
         <li><a href="">#{msgs.taskDetails}</a></li>

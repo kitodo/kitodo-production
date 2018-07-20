@@ -41,7 +41,7 @@
                          iconPos="right"
                          styleClass="button-filled-blue"
                          disabled="#{DocketForm.saveDisabled}"
-                         onclick="PF('notifications').renderMessage({
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
                             'summary':'#{msgs.docketSaving}',
                             'detail':'#{msgs.youWillBeRedirected}',
                             'severity':'info'});"/>
@@ -49,7 +49,7 @@
                          actionListener="#{DocketForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
+        <p:button id="cancel" value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
                   outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
@@ -95,7 +95,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">

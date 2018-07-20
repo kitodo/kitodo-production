@@ -23,7 +23,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static org.awaitility.Awaitility.await;
 
-public class LdapGroupEditPage extends Page {
+public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
@@ -107,6 +107,11 @@ public class LdapGroupEditPage extends Page {
 
     public LdapGroupEditPage() {
         super("pages/ldapgroupEdit.jsf");
+    }
+
+    @Override
+    public LdapGroupEditPage goTo() {
+        return null;
     }
 
     public LdapGroupEditPage insertLdapGroupData(LdapGroup ldapGroup) {

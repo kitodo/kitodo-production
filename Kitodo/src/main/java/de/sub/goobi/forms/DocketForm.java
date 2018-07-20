@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -51,17 +52,21 @@ public class DocketForm extends BasisForm {
     private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String docketEditPath = MessageFormat.format(REDIRECT_PATH, "docketEdit");
 
-    @Inject
     @Named("ProjekteForm")
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
-    public DocketForm() {
+    @Inject
+    public DocketForm(ProjekteForm projectForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getDocketService()));
+        this.projectForm = projectForm;
     }
 
     /**
@@ -154,7 +159,6 @@ public class DocketForm extends BasisForm {
         this.myDocket = docket;
     }
 
-
     /**
      * Get all available clients.
      *
@@ -175,8 +179,8 @@ public class DocketForm extends BasisForm {
      * @return list of docket filenames
      */
     public List getDocketFiles() {
-        try {
-            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))
+        try (Stream<Path> docketPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))) {
+            return docketPaths
                     .filter(s -> s.toString().endsWith(".xsl"))
                     .map(Path::getFileName)
                     .sorted()

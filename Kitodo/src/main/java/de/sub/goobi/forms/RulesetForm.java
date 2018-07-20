@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
@@ -50,17 +51,21 @@ public class RulesetForm extends BasisForm {
     private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
-    @Inject
     @Named("ProjekteForm")
     private ProjekteForm projectForm;
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Default constructor with inject project form that also sets the LazyDTOModel
+     * instance of this bean.
+     * 
+     * @param projectForm
+     *            managed bean
      */
-    public RulesetForm() {
+    @Inject
+    public RulesetForm(ProjekteForm projectForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
+        this.projectForm = projectForm;
     }
 
     /**
@@ -183,8 +188,8 @@ public class RulesetForm extends BasisForm {
      * @return list of ruleset filenames
      */
     public List getRulesetFilenames() {
-        try {
-            return Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))
+        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
+            return rulesetPaths
                     .filter(f -> f.toString().endsWith(".xml"))
                     .map(Path::getFileName)
                     .sorted()

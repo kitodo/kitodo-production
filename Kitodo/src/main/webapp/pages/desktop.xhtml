@@ -1,0 +1,82 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <h:outputScript name="desktop.js" target="body" library="js"/>
+        <p:panelGrid columns="2" layout="grid" id="desktopGrid">
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.tasks}</h3>
+                        <p:commandButton icon="fa fa-repeat fa-lg"
+                                  styleClass="secondary-button reload-button">
+                                <p:ajax update="taskTable"/>
+                        </p:commandButton>
+                        <p:button id="allTasks" value="#{msgs.allTasks}"
+                                  outcome="tasks"
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.processes}</h3>
+                        <p:commandButton icon="fa fa-repeat fa-lg"
+                                  styleClass="secondary-button reload-button">
+                                <p:ajax update="processTable"/>
+                        </p:commandButton>
+                        <p:button id="allProcesses" value="#{msgs.allProcesses}"
+                                  outcome="processes"
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.projects}</h3>
+                        <p:commandButton icon="fa fa-repeat fa-lg"
+                                  styleClass="secondary-button reload-button">
+                            <p:ajax update="projectTable"/>
+                        </p:commandButton>
+                        <p:button id="allProjects" value="#{msgs.allProjects}"
+                                  outcome="projects"
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
+            </p:panel>
+            <p:panel styleClass="desktop-widget">
+                <div class="content-header">
+                    <div class="ui-panel-content ui-widget-content">
+                        <h3>#{msgs.databaseStatistic}</h3>
+                        <p:commandButton icon="fa fa-repeat fa-lg"
+                                  styleClass="secondary-button reload-button">
+                            <p:ajax update="statisticsTable"/>
+                        </p:commandButton>
+                    </div>
+                </div>
+                <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
+            </p:panel>
+        </p:panelGrid>
+    </ui:define>
+</ui:composition>

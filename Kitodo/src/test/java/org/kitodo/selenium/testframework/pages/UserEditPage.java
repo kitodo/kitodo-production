@@ -19,7 +19,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class UserEditPage extends Page {
+public class UserEditPage extends Page<UserEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
     private WebElement saveUserButton;
@@ -50,6 +50,11 @@ public class UserEditPage extends Page {
 
     public UserEditPage() {
         super("pages/userEdit.jsf");
+    }
+
+    @Override
+    public UserEditPage goTo() {
+        return null;
     }
 
     public UserEditPage insertUserData(User user) {

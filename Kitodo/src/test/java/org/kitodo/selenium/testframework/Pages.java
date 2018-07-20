@@ -18,6 +18,7 @@ import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProcessFromTemplatePage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.ProjectEditPage;
 import org.kitodo.selenium.testframework.pages.RulesetEditPage;
@@ -27,6 +28,7 @@ import org.kitodo.selenium.testframework.pages.TopNavigationPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
+import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 import org.openqa.selenium.support.PageFactory;
 
 public class Pages {
@@ -57,12 +59,20 @@ public class Pages {
         return getPage(ProcessesPage.class);
     }
 
+    public static ProcessFromTemplatePage getProcessFromTemplatePage() throws InstantiationException, IllegalAccessException {
+        return getPage(ProcessFromTemplatePage.class);
+    }
+
     public static ProjectsPage getProjectsPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProjectsPage.class);
     }
 
     public static ProjectEditPage getProjectEditPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProjectEditPage.class);
+    }
+
+    public static WorkflowEditPage getWorkflowEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(WorkflowEditPage.class);
     }
 
     public static DocketEditPage getDocketEditPage() throws InstantiationException, IllegalAccessException {

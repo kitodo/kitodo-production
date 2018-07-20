@@ -18,7 +18,7 @@ import org.kitodo.services.ServiceManager;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LoginPage extends Page {
+public class LoginPage extends Page<LoginPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "login")
@@ -41,6 +41,7 @@ public class LoginPage extends Page {
      *
      * @return The login page.
      */
+    @Override
     public LoginPage goTo() {
         Browser.goTo(URL);
         return this;

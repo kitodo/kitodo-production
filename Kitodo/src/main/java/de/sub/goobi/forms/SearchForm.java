@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -80,8 +78,25 @@ public class SearchForm {
 
     private ServiceManager serviceManager = new ServiceManager();
 
+    private ProzessverwaltungForm processForm;
+
+    /**
+     * Constructor with inject process form.
+     *
+     * @param processForm
+     *            managed bean
+     */
     @Inject
-    BeanManager beanManager;
+    public SearchForm(ProzessverwaltungForm processForm) {
+        initStepStatus();
+        initProjects();
+        initMasterpiecePropertyTitles();
+        initTemplatePropertyTitles();
+        initProcessPropertyTitles();
+        initStepTitles();
+        initUserList();
+        this.processForm = processForm;
+    }
 
     /**
      * Initialise drop down list of master piece property titles.
@@ -170,19 +185,6 @@ public class SearchForm {
             logger.warn("RuntimeException caught. List of users could be empty!");
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
         }
-    }
-
-    /**
-     * Constructor.
-     */
-    public SearchForm() {
-        initStepStatus();
-        initProjects();
-        initMasterpiecePropertyTitles();
-        initTemplatePropertyTitles();
-        initProcessPropertyTitles();
-        initStepTitles();
-        initUserList();
     }
 
     public List<String> getProjects() {
@@ -400,16 +402,8 @@ public class SearchForm {
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }
 
-        Bean<ProzessverwaltungForm> bean = (Bean<ProzessverwaltungForm>) beanManager
-                .resolve(beanManager.getBeans(ProzessverwaltungForm.class));
-        ProzessverwaltungForm form = beanManager.getContext(bean.getScope()).get(bean,
-            beanManager.createCreationalContext(bean));
-
-        if (form != null) {
-            form.filter = search;
-            return form.processListPath;
-        }
-        return null;
+        processForm.filter = search;
+        return processForm.processListPath;
     }
 
     /**
