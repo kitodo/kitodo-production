@@ -121,7 +121,7 @@ public class DesktopForm extends BasisForm {
         try {
             switch (objectType) {
                 case NONE:
-                    return 0;
+                    return 0L;
                 case TASK:
                     return serviceManager.getTaskService().count();
                 case USER:
@@ -149,12 +149,12 @@ public class DesktopForm extends BasisForm {
                 case USERGROUP:
                     return serviceManager.getUserGroupService().count();
                 default:
-                    return 0;
+                    return 0L;
             }
 
         } catch (DataException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
-        return 0;
+        return 0L;
     }
 }
