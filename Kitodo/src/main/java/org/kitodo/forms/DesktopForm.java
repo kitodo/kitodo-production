@@ -23,7 +23,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
@@ -118,37 +117,37 @@ public class DesktopForm extends BasisForm {
      *          type of elements
      * @return number of elements
      */
-    public int getNumberOfElements(ObjectType objectType) {
+    public long getNumberOfElements(ObjectType objectType) {
         try {
             switch (objectType) {
                 case NONE:
                     return 0;
                 case TASK:
-                    return serviceManager.getTaskService().findAll().size();
+                    return serviceManager.getTaskService().count();
                 case USER:
-                    return serviceManager.getUserService().findAll().size();
+                    return serviceManager.getUserService().count();
                 case BATCH:
-                    return serviceManager.getBatchService().findAll().size();
+                    return serviceManager.getBatchService().count();
                 case CLIENT:
-                    return serviceManager.getClientService().findAll().size();
+                    return serviceManager.getClientService().count();
                 case DOCKET:
-                    return serviceManager.getDocketService().findAll().size();
+                    return serviceManager.getDocketService().count();
                 case FILTER:
-                    return serviceManager.getFilterService().findAll().size();
+                    return serviceManager.getFilterService().count();
                 case PROCESS:
-                    return serviceManager.getProcessService().findAll().size();
+                    return serviceManager.getProcessService().count();
                 case PROJECT:
-                    return serviceManager.getProjectService().findAll().size();
+                    return serviceManager.getProjectService().count();
                 case RULESET:
-                    return serviceManager.getRulesetService().findAll().size();
+                    return serviceManager.getRulesetService().count();
                 case AUTHORITY:
-                    return serviceManager.getAuthorityService().findAll().size();
+                    return serviceManager.getAuthorityService().count();
                 case PROPERTY:
-                    return serviceManager.getPropertyService().findAll().size();
+                    return serviceManager.getPropertyService().count();
                 case TEMPLATE:
-                    return serviceManager.getTemplateService().findAll().size();
+                    return serviceManager.getTemplateService().count();
                 case USERGROUP:
-                    return serviceManager.getUserGroupService().findAll().size();
+                    return serviceManager.getUserGroupService().count();
                 default:
                     return 0;
             }
