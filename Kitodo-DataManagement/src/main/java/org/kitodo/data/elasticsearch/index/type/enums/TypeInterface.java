@@ -11,6 +11,8 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
+import java.util.Objects;
+
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 
@@ -28,7 +30,7 @@ interface TypeInterface {
     default boolean getBooleanValue(JsonObject jsonObject) throws DataException {
         try {
             return jsonObject.getBoolean(this.toString());
-        } catch (RuntimeException e) {
+        } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve boolean value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
         }
@@ -44,7 +46,7 @@ interface TypeInterface {
     default int getIntValue(JsonObject jsonObject) throws DataException {
         try {
             return jsonObject.getInt(this.toString());
-        } catch (RuntimeException e) {
+        } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve int value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
         }
@@ -60,7 +62,7 @@ interface TypeInterface {
     default String getStringValue(JsonObject jsonObject) throws DataException {
         try {
             return jsonObject.getString(this.toString());
-        } catch (RuntimeException e) {
+        } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve String value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
         }
@@ -76,7 +78,7 @@ interface TypeInterface {
     default JsonArray getJsonArray(JsonObject jsonObject) throws DataException {
         try {
             return jsonObject.getJsonArray(this.toString());
-        } catch (RuntimeException e) {
+        } catch (ClassCastException | NullPointerException e) {
             throw new DataException("Not possible to retrieve JsonArray value for key " + this.toString()
                     + ". Exception: " + e.getMessage());
         }
@@ -90,11 +92,10 @@ interface TypeInterface {
      * @return size of array with related objects
      */
     default int getSizeOfProperty(JsonObject object) throws DataException {
-        if (object != null) {
+        if (Objects.nonNull(object)) {
             try {
-                JsonArray jsonArray = (JsonArray) object.get(this.toString());
-                return jsonArray.size();
-            } catch (RuntimeException e) {
+                return object.getJsonArray(this.toString()).size();
+            } catch (ClassCastException | NullPointerException e) {
                 throw new DataException("Not possible to retrieve size of array for key " + this.toString()
                         + ". Exception: " + e.getMessage());
             }
