@@ -221,7 +221,7 @@ public class UsersPage extends Page<UsersPage> {
                 return Pages.getUserGroupEditPage();
             }
         }
-        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+        throw new NoSuchElementException("No user group with given title was not found: " + userGroupTitle);
     }
 
     /**
