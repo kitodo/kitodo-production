@@ -586,6 +586,9 @@
                 "ruleset": {
                     "type": "long"
                 },
+                "active": {
+                    "type": "boolean"
+                },
                 "sortHelperStatus": {
                     "type": "text",
                     "fields": {

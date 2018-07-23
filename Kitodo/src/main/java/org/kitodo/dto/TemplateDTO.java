@@ -18,6 +18,7 @@ import org.kitodo.services.ServiceManager;
 
 public class TemplateDTO extends BaseTemplateDTO {
 
+    private boolean active;
     private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;
 
@@ -31,6 +32,25 @@ public class TemplateDTO extends BaseTemplateDTO {
             return new ServiceManager().getTemplateService().getTasksDiagram(this.workflow.getFileName());
         }
         return new ServiceManager().getTemplateService().getTasksDiagram("");
+    }
+
+    /**
+     * Get active.
+     *
+     * @return value of active
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * Set active.
+     *
+     * @param active
+     *            as boolean
+     */
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     /**

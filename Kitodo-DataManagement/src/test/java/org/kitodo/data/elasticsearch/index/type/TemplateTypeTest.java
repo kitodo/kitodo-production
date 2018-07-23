@@ -71,6 +71,7 @@ public class TemplateTypeTest {
         firstTemplate.setOutputName("Test");
         LocalDate localDate = new LocalDate(2017, 1, 1);
         firstTemplate.setCreationDate(localDate.toDate());
+        firstTemplate.setActive(false);
         firstTemplate.setTasks(tasks);
         firstTemplate.setWikiField("Wiki");
         firstTemplate.setProject(project);
@@ -82,6 +83,7 @@ public class TemplateTypeTest {
         secondTemplate.setTitle("Rendering");
         secondTemplate.setOutputName("Render");
         secondTemplate.setWikiField("Field");
+        secondTemplate.setActive(true);
         secondTemplate.setProject(project);
         secondTemplate.setDocket(docket);
         templates.add(secondTemplate);
@@ -113,6 +115,7 @@ public class TemplateTypeTest {
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
+        assertFalse("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 1,
             TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "Project",
@@ -156,6 +159,7 @@ public class TemplateTypeTest {
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
+        assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 1,
             TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "Project",
@@ -189,6 +193,7 @@ public class TemplateTypeTest {
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
+        assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 0,
             TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "",
@@ -210,7 +215,7 @@ public class TemplateTypeTest {
         HttpEntity document = templateType.createDocument(template);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 14, actual.keySet().size());
 
         JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         JsonObject task = tasks.getJsonObject(0);

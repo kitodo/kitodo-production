@@ -238,6 +238,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJSONObject));
         templateDTO.setOutputName(TemplateTypeField.OUTPUT_NAME.getStringValue(templateJSONObject));
         templateDTO.setWikiField(TemplateTypeField.WIKI_FIELD.getStringValue(templateJSONObject));
+        templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(templateJSONObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
         templateDTO.setDocket(
             serviceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));

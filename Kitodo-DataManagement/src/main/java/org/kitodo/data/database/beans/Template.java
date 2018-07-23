@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -29,6 +30,9 @@ import javax.persistence.Table;
 public class Template extends BaseTemplateBean {
 
     private static final long serialVersionUID = -6503346767655786275L;
+
+    @Column(name = "active")
+    private Boolean active = true;
 
     @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_template_docket_id"))
@@ -60,6 +64,27 @@ public class Template extends BaseTemplateBean {
         this.inChoiceListShown = true;
         this.tasks = new ArrayList<>();
         this.creationDate = new Date();
+    }
+
+    /**
+     * Check if workflow is active.
+     *
+     * @return true or false
+     */
+    public boolean isActive() {
+        if (Objects.isNull(this.active)) {
+            this.active = true;
+        }
+        return this.active;
+    }
+
+    /**
+     * Set workflow as active.
+     *
+     * @param active as Boolean
+     */
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     /**
