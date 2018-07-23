@@ -105,11 +105,6 @@ public class SecurityAccessService {
         return strings.split(",");
     }
 
-//    private GrantedAuthority[] getAuthorities() {
-//        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-//        return Arrays.copyOf(authorities.toArray(), authorities.size(), GrantedAuthority[].class);
-//    }
-
     /**
      * Checks if the current user has a specified authority globally or for a
      * project.

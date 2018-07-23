@@ -119,7 +119,7 @@
                                 </h3></li>
 
                                 <li>
-                                    <div>
+                                    <div id="sessionClient">
                                         #{msgs.client}: <b>#{SessionClientController.currentSessionClientName}</b>
                                         <span style="float:right;">
                                             <p:outputPanel rendered="#{SessionClientController.shouldUserChangeSessionClient()}">
@@ -162,6 +162,7 @@
         </section>
         <p:dialog header="#{msgs.welcome}, #{LoginForm.myBenutzer.name} #{LoginForm.myBenutzer.surname}"
                   class="client-select-dialog"
+                  id="clientSelectDialog"
                   widgetVar="selectClientDialog"
                   modal="true"
                   width="500px"
@@ -185,7 +186,7 @@
                         <p:row>
                             <p:column>
                                 <p:button href="/logout"
-                                          id="dialogLogoutButton"
+                                          id="cancelSessionClientSelectionButton"
                                           type="button"
                                           value="#{msgs.cancel}"
                                           icon="fa fa-close"

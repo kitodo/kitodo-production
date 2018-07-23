@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
@@ -129,8 +130,21 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
-        Pages.getLoginPage().selectClientAfterLogin();
-        assertTrue("Login with new generated user was not possible", Pages.getStartPage().isAt());
+        assertFalse("New generated user should not be able to select any client", Pages.getTopNavigation().isClientSelectionPossible());
+        Pages.getTopNavigation().cancelClientSelection();
+        Pages.getLoginPage().performLoginAsAdmin();
+    }
+
+    @Test
+    public void addUserAndAssignUserGroupTest() throws Exception {
+        User user = UserGenerator.generateUser();
+        Pages.getUsersPage().createNewUser().insertUserData(user).switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
+        Pages.getUserEditPage().addUserToUserGroup(serviceManager.getUserGroupService().getById(2).getTitle()).save();
+        assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+        Pages.getTopNavigation().logout();
+        Pages.getLoginPage().performLogin(user);
+        Pages.getTopNavigation().acceptClientSelection();
+        assertEquals(serviceManager.getClientService().getById(1).getName(), Pages.getTopNavigation().getSessionClient());
     }
 
     @Test

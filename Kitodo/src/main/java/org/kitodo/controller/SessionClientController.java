@@ -83,12 +83,12 @@ public class SessionClientController {
      */
     public boolean shouldUserChangeSessionClient() {
 
-        //No change if user is admin.
+        // No change if user is admin.
         if (userIsAdmin()) {
             return false;
         }
 
-        //No change if we have only one client for selection.
+        // No change if we have only one client for selection.
         if (userHasOnlyOneClient()) {
             return false;
         }
@@ -151,15 +151,17 @@ public class SessionClientController {
             try {
                 return serviceManager.getClientService().getAll();
             } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
         return getClientsByUsersAuthorities();
     }
 
     private List<Client> getClientsByUsersAuthorities() {
-        List<Client> clients = serviceManager.getClientService().getByIds(serviceManager.getSecurityAccessService().getClientIdListForAnyAuthority());
-        List<Project> projects = serviceManager.getProjectService().getByIds(serviceManager.getSecurityAccessService().getProjectIdListForAnyAuthority());
+        List<Client> clients = serviceManager.getClientService()
+                .getByIds(serviceManager.getSecurityAccessService().getClientIdListForAnyAuthority());
+        List<Project> projects = serviceManager.getProjectService()
+                .getByIds(serviceManager.getSecurityAccessService().getProjectIdListForAnyAuthority());
         for (Project project : projects) {
             if (!clients.contains(project.getClient())) {
                 clients.add(project.getClient());
