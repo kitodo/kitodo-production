@@ -54,6 +54,7 @@ public class TemplateDTO extends BaseTemplateDTO {
     }
 
     /**
+<<<<<<< HEAD
      * Set workflow.
      *
      * @param workflow as org.kitodo.dto.WorkflowDTO
