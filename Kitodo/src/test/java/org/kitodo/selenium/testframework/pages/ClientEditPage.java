@@ -44,7 +44,7 @@ public class ClientEditPage extends Page<ClientEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButton(saveClientButton);
+        Browser.clickAjaxSaveButtonAndRedirect(saveClientButton, Pages.getUsersPage().getUrl());
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
         wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
         return Pages.getUsersPage();

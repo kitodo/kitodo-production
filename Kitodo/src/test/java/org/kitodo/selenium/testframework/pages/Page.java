@@ -18,8 +18,6 @@ import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class Page<T> {
 
@@ -35,7 +33,7 @@ public abstract class Page<T> {
     @FindBy(className = "ui-messages-error-summary")
     private WebElement errorMessage;
 
-    String URL;
+    private String URL;
 
     Page(String URL) {
         this.URL = URL;
@@ -71,15 +69,6 @@ public abstract class Page<T> {
                 return true;
             }
         }
-    }
-
-    String saveWithError(WebElement saveButton ) {
-        Browser.clickAjaxSaveButton(saveButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.visibilityOf(errorMessage));
-        String errorMessageText = errorMessage.getText();
-        wait.until(ExpectedConditions.invisibilityOf(errorPopup));
-        return errorMessageText ;
     }
 
     /**
