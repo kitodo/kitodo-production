@@ -46,7 +46,7 @@ public class UserGroupClientAuthorityRelationServiceIT {
         assertEquals("Authority title is not matching", "viewAllClients", relation.getAuthority().getTitle());
         assertEquals("UserGroup title is not matching", "Admin", relation.getUserGroup().getTitle());
 
-        relation = userGroupClientAuthorityRelationService.getById(6);
+        relation = userGroupClientAuthorityRelationService.getById(7);
         assertEquals("Client title is not matching", "Second client", relation.getClient().getName());
         assertEquals("UserGroup title is not matching", "Without authorities", relation.getUserGroup().getTitle());
         assertEquals("Authority title is not matching", "viewAllClients", relation.getAuthority().getTitle());
@@ -55,11 +55,11 @@ public class UserGroupClientAuthorityRelationServiceIT {
     @Test
     public void shouldCountDataBaseRows() throws Exception {
         long rows = userGroupClientAuthorityRelationService.countDatabaseRows();
-        assertEquals("Client name is not matching", 6L, rows);
+        assertEquals("Client name is not matching", 7L, rows);
     }
 
     @Test
-    public void shouldGetAuthorities() throws Exception {
+    public void shouldGetAuthorities() {
         List<Authority> authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 1);
         assertEquals("Number of returned authorities is not matching", 3, authorities.size());
 
@@ -67,7 +67,7 @@ public class UserGroupClientAuthorityRelationServiceIT {
         assertEquals("Number of returned authorities is not matching", 2, authorities.size());
 
         authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(1, 2);
-        assertEquals("Number of returned authorities is not matching", 0, authorities.size());
+        assertEquals("Number of returned authorities is not matching", 1, authorities.size());
 
         authorities = userGroupClientAuthorityRelationService.getAuthoritiesByUserGroupAndClient(3, 2);
         assertEquals("Number of returned authorities is not matching", 1, authorities.size());

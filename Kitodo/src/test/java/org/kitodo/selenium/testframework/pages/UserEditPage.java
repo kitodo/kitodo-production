@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import java.util.List;
 
 import org.kitodo.data.database.beans.User;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;

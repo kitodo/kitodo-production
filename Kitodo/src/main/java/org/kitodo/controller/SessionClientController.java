@@ -146,7 +146,6 @@ public class SessionClientController {
      * @return The list of clients.
      */
     public List<Client> getClientsOfCurrentUser() {
-
         if (serviceManager.getSecurityAccessService().hasAnyAuthorityGlobal()) {
             try {
                 return serviceManager.getClientService().getAll();

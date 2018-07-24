@@ -1197,18 +1197,18 @@ public class MockDatabase {
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
 
-        User forthUser = new User();
-        forthUser.setName("Max");
-        forthUser.setSurname("Mustermann");
-        forthUser.setLogin("mmustermann");
-        forthUser.setPassword(passwordEncoder.encrypt("test"));
-        forthUser.setLdapLogin("mmustermann");
-        forthUser.setLocation("Dresden");
-        forthUser.setTableSize(20);
-        forthUser.setLanguage("de");
-        forthUser.setCss("old/userStyles/classic.css");
-        forthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
-        serviceManager.getUserService().save(forthUser);
+        User fourthUser = new User();
+        fourthUser.setName("Max");
+        fourthUser.setSurname("Mustermann");
+        fourthUser.setLogin("mmustermann");
+        fourthUser.setPassword(passwordEncoder.encrypt("test"));
+        fourthUser.setLdapLogin("mmustermann");
+        fourthUser.setLocation("Dresden");
+        fourthUser.setTableSize(20);
+        fourthUser.setLanguage("de");
+        fourthUser.setCss("old/userStyles/classic.css");
+        fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        serviceManager.getUserService().save(fourthUser);
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
