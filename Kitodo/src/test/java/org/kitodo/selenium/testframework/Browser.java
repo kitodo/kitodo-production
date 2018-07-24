@@ -194,7 +194,7 @@ public class Browser {
             try {
                 await("Wait for save button clicked").pollDelay(1, TimeUnit.SECONDS).atMost(40, TimeUnit.SECONDS)
                     .ignoreExceptions().until(() -> isButtonClicked.matches(button));
-                new WebDriverWait(webDriver, 10).ignoring(StaleElementReferenceException.class)
+                new WebDriverWait(webDriver, 60).ignoring(StaleElementReferenceException.class)
                     .until(ExpectedConditions.urlContains(url));
                 return;
             } catch (StaleElementReferenceException e) {
