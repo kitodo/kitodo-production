@@ -22,6 +22,10 @@
     --alert: #f94a15;
     --error-border: #b94a48;
     --error-background: #f2dede;
+
+    --input-height: 36px;
+    --input-padding: 10px;
+    --input-padding-none: 0;
 }
 
 body {
@@ -89,7 +93,7 @@ input.ui-state-error {
     background: var(--primary);
     box-sizing: border-box;
     color: var(--default-bright);
-    height: 36px;
+    height: var(--input-height);
 }
 
 .ui-button .ui-icon,
@@ -98,7 +102,7 @@ input.ui-state-error {
 }
 
 .ui-button-text-icon-right .ui-button-text {
-    padding: 0 calc(1em + 20px) 0 10px;
+    padding: 0 calc(1em + 20px) 0 var(--input-padding);
 }
 
 .ui-button.ui-state-hover,
@@ -239,14 +243,14 @@ button .ui-icon,
 .ui-button-icon-only .ui-button-text,
 .ui-button-text-only .ui-button-text,
 .ui-datepicker-trigger.ui-button-icon-only .ui-button-text {
-    padding: 0 10px;
+    padding: var(--input-padding-none) var(--input-padding);
 }
 
 button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-sizing: border-box;
     height: 100%;
     line-height: 100%;
-    padding: 10px;
+    padding: var(--input-padding);
     top: 0;
     width: 100%;
 }
@@ -270,8 +274,8 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     box-shadow: 0 0 0 transparent;
     box-sizing: border-box;
     color: var(--primary);
-    height: 36px;
-    padding: 0 10px;
+    height: var(--input-height);
+    padding: var(--input-padding-none) var(--input-padding);
 }
 
 .ui-inputfield.ui-state-hover,
@@ -311,7 +315,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 .ui-selectonemenu .ui-selectonemenu-trigger {
     background: var(--default-bright);
     border: 1px solid var(--primary);
-    padding: .5em 10px;
+    padding: .5em var(--input-padding);
 }
 
 .ui-selectcheckboxmenu.ui-state-hover .ui-selectcheckboxmenu-label,
@@ -658,7 +662,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-dialog-titlebar .ui-dialog-titlebar-close {
     text-decoration: none;
-    padding: 0;
+    padding: var(--input-padding-none);
 }
 
 .ui-dialog-titlebar .ui-dialog-titlebar-close span {
@@ -669,7 +673,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
     content: '\f00d';
     font-family: 'FontAwesome';
     color: white;
-    padding: 5px 10px;
+    padding: 5px var(--input-padding);
     background: var(--primary);
     display: block;
     border-radius: 3px;
