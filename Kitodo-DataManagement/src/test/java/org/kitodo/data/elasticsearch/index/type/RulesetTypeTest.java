@@ -63,14 +63,14 @@ public class RulesetTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "SLUBDD",
-            actual.getString(RulesetTypeField.TITLE.getName()));
+            RulesetTypeField.TITLE.getStringValue(actual));
         assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml",
-            actual.getString(RulesetTypeField.FILE.getName()));
+            RulesetTypeField.FILE.getStringValue(actual));
         assertFalse("Key orderMetadataByRuleset doesn't match to given value!",
-            actual.getBoolean(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName()));
+            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(actual));
         assertEquals("Key fileContent doesn't match to given value!", "",
-            actual.getString(RulesetTypeField.FILE_CONTENT.getName()));
-        assertTrue("Key active doesn't match to given value!", actual.getBoolean(RulesetTypeField.ACTIVE.getName()));
+            RulesetTypeField.FILE_CONTENT.getStringValue(actual));
+        assertTrue("Key active doesn't match to given value!", RulesetTypeField.ACTIVE.getBooleanValue(actual));
     }
 
     @Test

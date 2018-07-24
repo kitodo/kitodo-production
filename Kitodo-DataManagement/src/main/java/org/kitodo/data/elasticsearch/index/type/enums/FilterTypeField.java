@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum FilterTypeField {
+public enum FilterTypeField implements TypeInterface {
 
     ID("id"),
     VALUE("value"),
@@ -29,6 +29,11 @@ public enum FilterTypeField {
      * @return value of name
      */
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }

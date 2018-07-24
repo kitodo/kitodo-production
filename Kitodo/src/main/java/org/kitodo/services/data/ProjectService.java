@@ -246,19 +246,19 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setId(getIdFromJSONObject(jsonObject));
 
         JsonObject projectJSONObject = jsonObject.getJsonObject("_source");
-        projectDTO.setTitle(projectJSONObject.getString(ProjectTypeField.TITLE.getName()));
-        projectDTO.setStartDate(projectJSONObject.getString(ProjectTypeField.START_DATE.getName()));
-        projectDTO.setEndDate(projectJSONObject.getString(ProjectTypeField.END_DATE.getName()));
-        projectDTO.setFileFormatDmsExport(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName()));
-        projectDTO.setFileFormatInternal(projectJSONObject.getString(ProjectTypeField.FILE_FORMAT_INTERNAL.getName()));
-        projectDTO.setMetsRightsOwner(projectJSONObject.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
-        projectDTO.setNumberOfPages(projectJSONObject.getInt(ProjectTypeField.NUMBER_OF_PAGES.getName()));
-        projectDTO.setNumberOfVolumes(projectJSONObject.getInt(ProjectTypeField.NUMBER_OF_VOLUMES.getName()));
-        projectDTO.setActive(projectJSONObject.getBoolean(ProjectTypeField.ACTIVE.getName()));
+        projectDTO.setTitle(ProjectTypeField.TITLE.getStringValue(projectJSONObject));
+        projectDTO.setStartDate(ProjectTypeField.START_DATE.getStringValue(projectJSONObject));
+        projectDTO.setEndDate(ProjectTypeField.END_DATE.getStringValue(projectJSONObject));
+        projectDTO.setFileFormatDmsExport(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getStringValue(projectJSONObject));
+        projectDTO.setFileFormatInternal(ProjectTypeField.FILE_FORMAT_INTERNAL.getStringValue(projectJSONObject));
+        projectDTO.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(projectJSONObject));
+        projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(projectJSONObject));
+        projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(projectJSONObject));
+        projectDTO.setActive(ProjectTypeField.ACTIVE.getBooleanValue(projectJSONObject));
         projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
         ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(projectJSONObject.getInt(ProjectTypeField.CLIENT_ID.getName()));
-        clientDTO.setName(projectJSONObject.getString(ProjectTypeField.CLIENT_NAME.getName()));
+        clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(projectJSONObject));
+        clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(projectJSONObject));
         projectDTO.setClient(clientDTO);
         if (!related) {
             convertRelatedJSONObjects(projectJSONObject, projectDTO);
@@ -266,15 +266,15 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return projectDTO;
     }
 
-    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) {
+    private List<TemplateDTO> getTemplatesForProjectDTO(JsonObject jsonObject) throws DataException {
         List<TemplateDTO> templateDTOS = new ArrayList<>();
-        JsonArray jsonArray = jsonObject.getJsonArray(ProjectTypeField.TEMPLATES.getName());
+        JsonArray jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
 
         for (JsonValue singleObject : jsonArray) {
-            JsonObject processJson = singleObject.asJsonObject();
+            JsonObject templateJson = singleObject.asJsonObject();
             TemplateDTO templateDTO = new TemplateDTO();
-            templateDTO.setId(processJson.getInt(TemplateTypeField.ID.getName()));
-            templateDTO.setTitle(processJson.getString(TemplateTypeField.TITLE.getName()));
+            templateDTO.setId(TemplateTypeField.ID.getIntValue(templateJson));
+            templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJson));
             templateDTOS.add(templateDTO);
         }
         return templateDTOS;

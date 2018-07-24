@@ -548,19 +548,18 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         UserDTO userDTO = new UserDTO();
         userDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject userJSONObject = jsonObject.getJsonObject("_source");
-        userDTO.setLogin(userJSONObject.getString(UserTypeField.LOGIN.getName()));
-        userDTO.setName(userJSONObject.getString(UserTypeField.NAME.getName()));
-        userDTO.setSurname(userJSONObject.getString(UserTypeField.SURNAME.getName()));
-        userDTO.setActive(userJSONObject.getBoolean(UserTypeField.ACTIVE.getName()));
-        userDTO.setLdapLogin(userJSONObject.getString(UserTypeField.LDAP_LOGIN.getName()));
-        userDTO.setLocation(userJSONObject.getString(UserTypeField.LOCATION.getName()));
+        userDTO.setLogin(UserTypeField.LOGIN.getStringValue(userJSONObject));
+        userDTO.setName(UserTypeField.NAME.getStringValue(userJSONObject));
+        userDTO.setSurname(UserTypeField.SURNAME.getStringValue(userJSONObject));
+        userDTO.setActive(UserTypeField.ACTIVE.getBooleanValue(userJSONObject));
+        userDTO.setLdapLogin(UserTypeField.LDAP_LOGIN.getStringValue(userJSONObject));
+        userDTO.setLocation(UserTypeField.LOCATION.getStringValue(userJSONObject));
         userDTO.setFullName(getFullName(userDTO));
-        userDTO.setFiltersSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.FILTERS.getName()));
-        userDTO.setProjectsSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROJECTS.getName()));
-        userDTO.setTasksSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.TASKS.getName()));
-        userDTO.setProcessingTasksSize(
-            getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.PROCESSING_TASKS.getName()));
-        userDTO.setUserGroupSize(getSizeOfRelatedPropertyForDTO(userJSONObject, UserTypeField.USER_GROUPS.getName()));
+        userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
+        userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
+        userDTO.setTasksSize(UserTypeField.TASKS.getSizeOfProperty(userJSONObject));
+        userDTO.setProcessingTasksSize(UserTypeField.PROCESSING_TASKS.getSizeOfProperty(userJSONObject));
+        userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
 
         if (!related) {
             convertRelatedJSONObjects(userJSONObject, userDTO);

@@ -23,6 +23,7 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.WorkflowType;
 import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.services.data.base.SearchService;
 
@@ -59,14 +60,14 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException  {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");
-        workflowDTO.setTitle(workflowJSONObject.getString(WorkflowTypeField.TITLE.getName()));
-        workflowDTO.setFileName(workflowJSONObject.getString(WorkflowTypeField.FILE_NAME.getName()));
-        workflowDTO.setReady(workflowJSONObject.getBoolean(WorkflowTypeField.READY.getName()));
-        workflowDTO.setActive(workflowJSONObject.getBoolean(WorkflowTypeField.ACTIVE.getName()));
+        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(workflowJSONObject));
+        workflowDTO.setFileName(WorkflowTypeField.FILE_NAME.getStringValue(workflowJSONObject));
+        workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
+        workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
         return workflowDTO;
     }
 

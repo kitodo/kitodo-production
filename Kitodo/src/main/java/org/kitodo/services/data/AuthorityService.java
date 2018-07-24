@@ -175,9 +175,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         AuthorityDTO authorityDTO = new AuthorityDTO();
         authorityDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject authorizationJSONObject = jsonObject.getJsonObject("_source");
-        authorityDTO.setTitle(authorizationJSONObject.getString(AuthorityTypeField.TITLE.getName()));
+        authorityDTO.setTitle(AuthorityTypeField.TITLE.getStringValue(authorizationJSONObject));
         authorityDTO.setUserGroupsSize(
-            getSizeOfRelatedPropertyForDTO(authorizationJSONObject, AuthorityTypeField.USER_GROUPS.getName()));
+            AuthorityTypeField.USER_GROUPS.getSizeOfProperty(authorizationJSONObject));
         if (!related) {
             convertRelatedJSONObjects(authorizationJSONObject, authorityDTO);
         } else {
