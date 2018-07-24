@@ -12,6 +12,7 @@
 package org.kitodo.dto;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
 
 import org.kitodo.services.ServiceManager;
@@ -21,6 +22,7 @@ public class TemplateDTO extends BaseTemplateDTO {
     private boolean active;
     private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;
+    private List<ProjectDTO> projects;
 
     /**
      * Get diagram image.
@@ -54,7 +56,6 @@ public class TemplateDTO extends BaseTemplateDTO {
     }
 
     /**
-<<<<<<< HEAD
      * Set workflow.
      *
      * @param workflow as org.kitodo.dto.WorkflowDTO
@@ -89,5 +90,24 @@ public class TemplateDTO extends BaseTemplateDTO {
      */
     public void setCanBeUsedForProcess(boolean canBeUsedForProcess) {
         this.canBeUsedForProcess = canBeUsedForProcess;
+    }
+
+    /**
+     * Get projects.
+     *
+     * @return value of projects
+     */
+    public List<ProjectDTO> getProjects() {
+        return projects;
+    }
+
+    /**
+     * Set projects.
+     *
+     * @param projects
+     *            as List of ProjectDTO
+     */
+    public void setProjects(List<ProjectDTO> projects) {
+        this.projects = projects;
     }
 }

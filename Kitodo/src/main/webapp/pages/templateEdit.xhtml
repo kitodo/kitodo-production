@@ -39,7 +39,8 @@
                          iconPos="right"
                          disabled="#{TemplateForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         update="notifications"/>
+                         update="notifications"
+                         immediate="true"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{TemplateForm.setSaveDisabled(false)}"
                          update="save"

@@ -210,7 +210,7 @@ public class TemplateForm extends TemplateBaseForm {
 
             try {
                 serviceManager.getTemplateService().save(this.template);
-            } catch (DataException e) {
+            } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
             }
         } else {
@@ -225,9 +225,11 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        save();
-        serviceManager.getTemplateService().evict(this.template);
-        this.template = null;
+        try {
+            save();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
         return templateListPath;
     }
 
@@ -327,7 +329,7 @@ public class TemplateForm extends TemplateBaseForm {
             } else {
                 newTemplate();
             }
-            setSaveDisabled(true);
+            setSaveDisabled(false);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("template"), id }, logger, e);
         }

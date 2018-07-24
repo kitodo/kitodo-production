@@ -28,6 +28,8 @@ import javax.json.JsonObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -36,10 +38,10 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.dto.WorkflowDTO;
@@ -103,8 +105,13 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            object
      */
     private void manageProjectDependenciesForIndex(Template template) throws CustomResponseException, IOException {
-        if (Objects.nonNull(template.getProject())) {
-            serviceManager.getProjectService().saveToIndex(template.getProject(), false);
+        for (Project project : template.getProjects()) {
+            if (template.getIndexAction().equals(IndexAction.DELETE)) {
+                project.getTemplates().remove(template);
+                serviceManager.getProjectService().saveToIndex(project, false);
+            } else {
+                serviceManager.getProjectService().saveToIndex(project, false);
+            }
         }
     }
 
@@ -204,7 +211,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         if (Objects.equals(filters, null) || filters.isEmpty()) {
             query = new BoolQueryBuilder();
             query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
-            query.must(serviceManager.getProcessService().getQueryProjectActive(true));
+            query.must(getQueryProjectActive(true));
         } else {
             query = readFilters(filterMap);
         }
@@ -224,7 +231,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
             if (!showInactiveProjects) {
-                query.must(serviceManager.getProcessService().getQueryProjectActive(true));
+                query.must(getQueryProjectActive(true));
             }
         }
         return query;
@@ -254,27 +261,21 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
-        } else {
-            ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(TemplateTypeField.PROJECT_ID.getIntValue(templateJSONObject));
-            projectDTO.setTitle(TemplateTypeField.PROJECT_TITLE.getStringValue(templateJSONObject));
-            projectDTO.setActive(TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(templateJSONObject));
-            templateDTO.setProject(projectDTO);
         }
 
         return templateDTO;
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
-        Integer project = TemplateTypeField.PROJECT_ID.getIntValue(jsonObject);
-        templateDTO.setProject(serviceManager.getProjectService().findById(project));
+        templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
+            serviceManager.getProjectService()));
     }
 
     private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
-        query.must(serviceManager.getProcessService().getQueryProjectActive(active));
+        query.must(getQueryProjectActive(active));
         return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
@@ -378,8 +379,18 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(serviceManager.getProcessService().getQueryProjectActive(active).toString(),
-            sort);
+        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
+    }
+
+    /**
+     * Get query for active projects.
+     *
+     * @param active
+     *            true or false
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryProjectActive(boolean active) {
+        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.ACTIVE, active, true);
     }
 
     /**

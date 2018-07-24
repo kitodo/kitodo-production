@@ -538,7 +538,7 @@ public class MockDatabase {
         firstTemplate.setCreationDate(localDate.toDate());
         firstTemplate.setInChoiceListShown(true);
         firstTemplate.setDocket(serviceManager.getDocketService().getById(2));
-        firstTemplate.setProject(project);
+        firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
         serviceManager.getTemplateService().save(firstTemplate);
 
@@ -550,7 +550,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 2, 10);
         secondTemplate.setCreationDate(localDate.toDate());
         secondTemplate.setDocket(serviceManager.getDocketService().getById(1));
-        secondTemplate.setProject(thirdProject);
+        secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
         secondTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         secondTemplate.setInChoiceListShown(true);
@@ -564,7 +564,7 @@ public class MockDatabase {
         localDate = new LocalDate(2018, 2, 10);
         thirdTemplate.setCreationDate(localDate.toDate());
         thirdTemplate.setDocket(serviceManager.getDocketService().getById(1));
-        thirdTemplate.setProject(thirdProject);
+        thirdTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(thirdTemplate);
         thirdTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         thirdTemplate.setInChoiceListShown(true);
@@ -611,7 +611,7 @@ public class MockDatabase {
         template.setCreationDate(localDate.toDate());
         template.setInChoiceListShown(true);
         template.setDocket(serviceManager.getDocketService().getById(1));
-        template.setProject(project);
+        template.getProjects().add(project);
         template.setRuleset(serviceManager.getRulesetService().getById(1));
         serviceManager.getTemplateService().save(template);
     }

@@ -183,7 +183,7 @@ public class MassImportForm extends BasisForm {
         List<Element> projectNames = project.getChildren("name");
         for (Element projectName : projectNames) {
             // all all collections to list
-            if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
+            if (projectName.getText().equalsIgnoreCase(this.project.getTitle())) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
                     if (digitalCollection.getAttribute(defaultString) != null

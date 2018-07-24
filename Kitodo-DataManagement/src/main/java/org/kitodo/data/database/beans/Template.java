@@ -21,6 +21,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -39,10 +41,6 @@ public class Template extends BaseTemplateBean {
     private Docket docket;
 
     @ManyToOne
-    @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_template_project_id"))
-    private Project project;
-
-    @ManyToOne
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_template_ruleset_id"))
     private Ruleset ruleset;
 
@@ -55,6 +53,12 @@ public class Template extends BaseTemplateBean {
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "project_x_template", joinColumns = {
+            @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_project_x_template_template_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
+    private List<Project> projects;
 
     /**
      * Constructor.
@@ -106,21 +110,24 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get project.
+     * Get projects list.
      *
-     * @return value of project
+     * @return list of projects
      */
-    public Project getProject() {
-        return this.project;
+    public List<Project> getProjects() {
+        if (Objects.isNull(this.projects)) {
+            this.projects = new ArrayList<>();
+        }
+        return this.projects;
     }
 
     /**
-     * Set project.
+     * Set list of projects.
      *
-     * @param project as Project
+     * @param projects as Project list
      */
-    public void setProject(Project project) {
-        this.project = project;
+    public void setProjects(List<Project> projects) {
+        this.projects = projects;
     }
 
     /**
@@ -227,6 +234,6 @@ public class Template extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(docket, project, ruleset, workflow);
+        return Objects.hash(docket, ruleset, workflow);
     }
 }

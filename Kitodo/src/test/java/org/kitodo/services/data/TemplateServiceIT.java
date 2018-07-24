@@ -57,7 +57,7 @@ public class TemplateServiceIT {
     @Test
     public void shouldFindTemplatesOfActiveProjects() throws Exception {
         List<TemplateDTO> activeTemplates = templateService.findTemplatesOfActiveProjects(null);
-        assertEquals("Found " + activeTemplates.size() + " processes, instead of 1",1, activeTemplates.size());
+        assertEquals("Template for active project was not found!",1, activeTemplates.size());
     }
 
     @Test

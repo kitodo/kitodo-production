@@ -20,6 +20,7 @@ import java.util.Objects;
  */
 public class ProcessDTO extends BaseTemplateDTO {
 
+    private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
     private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
@@ -36,6 +37,25 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperMetadata;
     private boolean imageFolderInUse = false;
     private boolean tifDirectoryExists = false;
+
+    /**
+     * Get project.
+     *
+     * @return project as ProjectDTO
+     */
+    public ProjectDTO getProject() {
+        return project;
+    }
+
+    /**
+     * Set project.
+     *
+     * @param project
+     *            as ProjectDTO
+     */
+    public void setProject(ProjectDTO project) {
+        this.project = project;
+    }
 
     /**
      * Get list of batches.

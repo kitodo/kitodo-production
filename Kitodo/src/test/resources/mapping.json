@@ -22,6 +22,9 @@
                         "id": {
                             "type": "long"
                         },
+                        "active": {
+                            "type": "boolean"
+                        },
                         "title": {
                             "type": "text",
                             "fields": {
@@ -564,7 +567,7 @@
                 "processBaseUri": {
                     "type": "long"
                 },
-                "project": {
+                "projects": {
                     "properties": {
                         "id": {
                             "type": "long"
@@ -1016,6 +1019,9 @@
                     "properties": {
                         "id": {
                             "type": "long"
+                        },
+                        "active": {
+                            "type": "boolean"
                         },
                         "title": {
                             "type": "text",

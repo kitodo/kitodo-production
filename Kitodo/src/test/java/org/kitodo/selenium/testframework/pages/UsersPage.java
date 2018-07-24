@@ -273,9 +273,7 @@ public class UsersPage extends Page<UsersPage> {
      * @return The list of client titles
      */
     public List<String> getClientNames() throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.CLIENTS.getIndex());
         return getTableDataByColumn(clientsTable, 0);
     }
 
