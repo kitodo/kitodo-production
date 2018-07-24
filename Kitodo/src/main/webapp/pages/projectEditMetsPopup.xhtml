@@ -21,38 +21,93 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="editFolderDialog"
-                      header="#{empty ProjekteForm.myFolder.name ? msgs.fileGroupAdd : msgs.fileGroupEdit}"
+                      header="#{empty ProjekteForm.myFolder.path ? msgs['editFolderDialog.caption.add'] : msgs['editFolderDialog.caption.edit']}"
                       width="700px"
                       modal="true"
                       dynamic="true"
                       styleClass="editDialog">
                 <h:form>
-                    <p:panelGrid columns="1" layout="grid">
+                    <p:panelGrid style="width:100%">
                         <p:row>
-                        <div>
-                            <p:outputLabel for="metsName" value="#{msgs.name}"/>
-                            <p:inputText id="metsName" value="#{ProjekteForm.myFolder.path}" styleClass="input editDialog"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="metsPath" value="#{msgs.path}"/>
-                            <p:inputText id="metsPath" value="#{ProjekteForm.myFolder.fileGroup}" styleClass="input editDialog"/>
-                        </div>
-                        <div>
-                            <p:outputLabel for="metsMimetype" value="#{msgs.mimetype}"/>
-                            <p:inputText id="metsMimetype" value="#{ProjekteForm.myFolder.mimeType}" styleClass="input editDialog"/>
-                        </div>
-                        <!-- div>
-                            <p:outputLabel for="metsSuffix" value="#{msgs.suffix}"/>
-                            <p:inputText id="metsSuffix" value="#{ProjekteForm.myFolder.suffix}" styleClass="input editDialog"/>
-                        </div -->
-                        <div>
-                            <p:outputLabel for="metsFolder" value="#{msgs.folder}"/>
-                            <p:inputText id="metsFolder" value="#{ProjekteForm.myFolder.path}" styleClass="input editDialog"/>
-                        </div>
-                        <!-- div>
-                            <p:outputLabel for="metsPreviewImage" value="#{msgs.useForPreviewImage}"/>
-                            <p:selectBooleanCheckbox id="metsPreviewImage" value="#{ProjekteForm.myFolder.previewImage}" styleClass="input editDialog"/>
-                        </div -->
+	                        <p:column colspan="2">
+	                            <p:outputLabel for="path" value="#{msgs['editFolderDialog.path']}"/>
+	                            <p:inputText id="path" value="#{ProjekteForm.myFolder.path}" styleClass="input editDialog"/>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+	                        <p:column colspan="2">
+	                            <p:outputLabel for="mimeType" value="#{msgs['editFolderDialog.mimeType']}"/>
+	                            <p:inputText id="mimeType" value="#{ProjekteForm.myFolder.mimeType}" styleClass="input editDialog"/>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+	                        <p:column colspan="2">
+				               <p:outputLabel for="createFolder" value="#{msgs['editFolderDialog.createFolder']}" />
+				               <p:selectBooleanCheckbox id="createFolder" class="input" value="#{ProjekteForm.myFolder.createFolder}">
+				                   <p:ajax event="change" oncomplete="toggleSave()" />
+				               </p:selectBooleanCheckbox>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+                        	<p:column>
+	                            <p:outputLabel for="generator" value="#{msgs['editFolderDialog.generator']}"/>
+						        <p:selectOneMenu id="generator" value="#{ProjekteForm.myFolder.generator.method}">
+						            <f:selectItem itemLabel="" itemValue="NONE" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.dpi']}" itemValue="changeDpi" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.derivative']}" itemValue="createDerivative" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.imageScale']}" itemValue="getScaledWebImage" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.imageSize']}" itemValue="getSizedWebImage" />
+						            <p:ajax process="@form" update="@form" />
+						        </p:selectOneMenu>
+                        	</p:column>
+	                        <p:column>
+	                            <p:outputLabel for="dpi" value="#{msgs['editFolderDialog.dpi']}"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'changeDpi'}"/>
+	                            <p:outputLabel for="factor" value="#{msgs['editFolderDialog.derivative']}"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'createDerivative'}"/>
+	                            <p:outputLabel for="factor" value="#{msgs['editFolderDialog.imageScale']}"
+	                                rendered="#{ProjekteForm.myFolder.generator.method =='getScaledWebImage'}"/>
+	                            <p:outputLabel for="width" value="#{msgs['editFolderDialog.imageSize']}"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'getSizedWebImage'}"/>
+	                            <p:inputNumber id="dpi" value="#{ProjekteForm.myFolder.generator.dpi}" decimalPlaces="0" symbol=" DPI" symbolPosition="s"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'changeDpi'}" styleClass="input editDialog"/>
+	                            <p:inputNumber id="factor" value="#{ProjekteForm.myFolder.generator.factor}" decimalPlaces="1" symbol="%" symbolPosition="s"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'createDerivative' or ProjekteForm.myFolder.generator.method == 'getScaledWebImage'}"
+	                                styleClass="input editDialog"/>
+	                            <p:inputNumber id="width" value="#{ProjekteForm.myFolder.generator.width}" decimalPlaces="0" symbol=" px" symbolPosition="s"
+	                                rendered="#{ProjekteForm.myFolder.generator.method == 'getSizedWebImage'}" styleClass="input editDialog"/>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+                        	<p:column style="width:50%">
+	                            <p:outputLabel for="linkingMode" value="#{msgs['editFolderDialog.linkingMode']}"/>
+						        <p:selectOneMenu id="linkingMode" value="#{ProjekteForm.myFolder.linkingMode}">
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.ALL']}" itemValue="ALL" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.EXISTING']}" itemValue="EXISTING" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.NO']}" itemValue="NO" />
+						            <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.PREVIEW_IMAGE']}" itemValue="PREVIEW_IMAGE" />
+						        </p:selectOneMenu>
+                        	</p:column>
+	                        <p:column style="width:50%">
+	                            <p:outputLabel for="fileGroup" value="#{msgs['editFolderDialog.fileGroup']}"/>
+	                            <p:selectOneMenu id="fileGroup" value="#{ProjekteForm.myFolder.fileGroup}" effect="fold" editable="true">
+						            <f:selectItems value="#{ProjekteForm.myFolder.fileGroups}" />
+						        </p:selectOneMenu>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+	                        <p:column colspan="2">
+	                            <p:outputLabel for="urlStructure" value="#{msgs['editFolderDialog.urlStructure']}"/>
+	                            <p:inputText id="urlStructure" value="#{ProjekteForm.myFolder.urlStructure}" styleClass="input editDialog"/>
+	                        </p:column>
+                        </p:row>
+                        <p:row>
+	                        <p:column>
+				               <p:outputLabel for="copyFolder" value="#{msgs['editFolderDialog.copyFolder']}" />
+				               <p:selectBooleanCheckbox id="copyFolder" class="input" value="#{ProjekteForm.myFolder.copyFolder}">
+				                   <p:ajax event="change" oncomplete="toggleSave()" />
+				               </p:selectBooleanCheckbox>
+	                        </p:column>
                         </p:row>
                     </p:panelGrid>
                     <p:commandButton action="#{ProjekteForm.saveFolder()}"

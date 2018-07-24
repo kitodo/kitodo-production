@@ -11,8 +11,12 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeSet;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +26,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 
@@ -29,6 +34,13 @@ import org.kitodo.api.imagemanagement.ImageManagementInterface;
 @Table(name = "folder")
 public class Folder extends BaseBean {
     private static final long serialVersionUID = -5506252462891480484L;
+
+    /**
+     * Default {@code fileGrp}s supported by DFG viewer.
+     *
+     * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf#page=12"
+     */
+    private static final List<String> DV_FILEGRPS = Arrays.asList("DEFAULT", "MIN", "MAX", "THUMBS", "DOWNLOAD");
 
     @Column(name = "fileGroup")
     private String fileGroup;
@@ -94,6 +106,21 @@ public class Folder extends BaseBean {
     @Enumerated(EnumType.STRING)
     private LinkingMode linkingMode;
 
+    @Transient
+    private FolderGenerator generator = new FolderGenerator(this);
+
+    /**
+     * Returns the pre-defined entries for the combo box {@code fileGroup} in
+     * {@code projectEditMetsPopup.xhtml}.
+     *
+     * @return the pre-defined entries {@code fileGroup}
+     */
+    public Collection<String> getFileGroups() {
+        Collection<String> result = new TreeSet<String>(DV_FILEGRPS);
+        result.add(this.fileGroup);
+        return result;
+    }
+
     public String getFileGroup() {
         return this.fileGroup;
     }
@@ -148,6 +175,11 @@ public class Folder extends BaseBean {
 
     public void setCreateFolder(boolean createFolder) {
         this.createFolder = createFolder;
+    }
+
+    // @Transient
+    public FolderGenerator getGenerator() {
+        return generator;
     }
 
     public Optional<Double> getDerivative() {

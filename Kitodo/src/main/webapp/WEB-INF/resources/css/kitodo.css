@@ -561,7 +561,7 @@ section#content-section {
     padding: .7em;
 }
 
-.input {
+.input, .input.ui-inputnumber>input {
     width:100%;
 }
 
