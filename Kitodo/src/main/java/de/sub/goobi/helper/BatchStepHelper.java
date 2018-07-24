@@ -141,7 +141,7 @@ public class BatchStepHelper extends BatchHelper {
     /**
      * Error management for single.
      */
-    public String reportProblemForSingle() {
+    public void reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
@@ -151,14 +151,13 @@ public class BatchStepHelper extends BatchHelper {
             Helper.setErrorMessage("correctionReportProblem", logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
-        return Helper.getCurrentTaskForm().getTaskListPath();
     }
 
     /**
      * Error management for all.
      */
     // TODO: when method will be used should only execute, return value must be given in Form class
-    public String reportProblemForAll() {
+    public void reportProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
@@ -171,7 +170,6 @@ public class BatchStepHelper extends BatchHelper {
             }
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
-        return Helper.getCurrentTaskForm().getTaskListPath();
     }
 
     /**
@@ -210,7 +208,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String solveProblemForSingle(Task currentStep) {
+    public void solveProblemForSingle(Task currentStep) {
         this.currentStep = currentStep;
         try {
             setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
@@ -218,8 +216,6 @@ public class BatchStepHelper extends BatchHelper {
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
-
-        return "";
     }
 
     /**
