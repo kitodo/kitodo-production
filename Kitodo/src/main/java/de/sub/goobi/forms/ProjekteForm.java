@@ -13,17 +13,29 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.xml.fileformats.FileFormat;
+import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
@@ -54,6 +66,12 @@ public class ProjekteForm extends BasisForm {
     private static final String PROJECT = "project";
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
+
+    /**
+     * Cash for the list of possible MIME types. So that the list does not have
+     * to be read from file several times for one page load.
+     */
+    private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of
@@ -353,6 +371,26 @@ public class ProjekteForm extends BasisForm {
 
     public void setMyFolder(Folder myFolder) {
         this.myFolder = myFolder;
+    }
+
+    /**
+     * Returns the list of possible MIME types to display them in the drop-down
+     * select.
+     *
+     * @return possible MIME types
+     */
+    public Map<String, String> getMimeTypes() {
+        if (mimeTypes.isEmpty()) {
+            try {
+                Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+                List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
+                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
+                    λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
+            } catch (IOException | JAXBException | RuntimeException e) {
+                Helper.setErrorMessage("errorReading", new Object[] {e.getMessage() }, logger, e);
+            }
+        }
+        return mimeTypes;
     }
 
     /**

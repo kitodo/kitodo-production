@@ -37,7 +37,9 @@
                         <p:row>
 	                        <p:column colspan="2">
 	                            <p:outputLabel for="mimeType" value="#{msgs['editFolderDialog.mimeType']}"/>
-	                            <p:inputText id="mimeType" value="#{ProjekteForm.myFolder.mimeType}" styleClass="input editDialog"/>
+	                            <p:selectOneMenu id="mimeType" value="#{ProjekteForm.myFolder.mimeType}" styleClass="input editDialog">
+	                            	<f:selectItems value="#{ProjekteForm.mimeTypes}" />
+	                            </p:selectOneMenu>
 	                        </p:column>
                         </p:row>
                         <p:row>
@@ -52,7 +54,7 @@
                         	<p:column>
 	                            <p:outputLabel for="generator" value="#{msgs['editFolderDialog.generator']}"/>
 						        <p:selectOneMenu id="generator" value="#{ProjekteForm.myFolder.generator.method}">
-						            <f:selectItem itemLabel="" itemValue="NONE" />
+						            <f:selectItem itemLabel="" itemValue="" />
 						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.dpi']}" itemValue="changeDpi" />
 						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.derivative']}" itemValue="createDerivative" />
 						            <f:selectItem itemLabel="#{msgs['editFolderDialog.generator.imageScale']}" itemValue="getScaledWebImage" />
