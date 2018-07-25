@@ -102,7 +102,7 @@ public abstract class Page<T> {
 
     /**
      * Clicks a button which could be be stale, e.g. because of disabling and
-     * enabling via Ajax. After click was perfomred, the browser waits for
+     * enabling via Ajax. After click was performed, the browser waits for
      * redirecting to given url.
      *
      * @param button
@@ -111,7 +111,7 @@ public abstract class Page<T> {
      *            the url to which is redirected after click
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
-        await("Wait for save button clicked").pollDelay(100, TimeUnit.MILLISECONDS).atMost(40, TimeUnit.SECONDS)
+        await("Wait for save button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(40, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isButtonClicked.matches(button));
         new WebDriverWait(Browser.getDriver(), 60).until(ExpectedConditions.urlContains(url));
     }
