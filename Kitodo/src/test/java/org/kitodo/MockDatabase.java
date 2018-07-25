@@ -436,7 +436,7 @@ public class MockDatabase {
 
         Docket secondDocket = new Docket();
         secondDocket.setTitle("second");
-        secondDocket.setFile("docket.xsl");
+        secondDocket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
         secondDocket.setClient(client);
         serviceManager.getDocketService().save(secondDocket);
 
@@ -445,6 +445,12 @@ public class MockDatabase {
         thirdDocket.setFile("third_docket.xsl");
         thirdDocket.setClient(serviceManager.getClientService().getById(2));
         serviceManager.getDocketService().save(thirdDocket);
+
+        Docket fourthDocket = new Docket();
+        fourthDocket.setTitle("tester");
+        fourthDocket.setFile("docket.xsl");
+        fourthDocket.setClient(client);
+        serviceManager.getDocketService().save(fourthDocket);
     }
 
     private static void insertLdapServers() throws DAOException {

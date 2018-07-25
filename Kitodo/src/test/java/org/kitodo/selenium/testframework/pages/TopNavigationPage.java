@@ -99,7 +99,7 @@ public class TopNavigationPage {
      */
      void gotoTasks() throws InterruptedException {
         hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkHelp);
+        hoverWebElement(linkTasks);
         linkTasks.click();
         Thread.sleep(Browser.getDelayAfterLinkClick());
     }

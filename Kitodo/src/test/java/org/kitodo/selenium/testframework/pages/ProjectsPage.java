@@ -56,6 +56,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement newProjectButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectForm:newTemplateButton")
+    private WebElement newTemplateButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newWorkflowButton")
     private WebElement newWorkflowButton;
 
@@ -135,6 +139,16 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
+     * Returns a list of all template titles which were displayed on workflows page.
+     *
+     * @return list of template titles
+     */
+    public List<String> getTemplateTitles() throws Exception {
+        switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
+        return getTableDataByColumn(templatesTable, 1);
+    }
+
+    /**
      * Returns a list of all workflow titles which were displayed on workflows page.
      *
      * @return list of workflow titles
@@ -150,9 +164,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
      * @return list of docket titles
      */
     public List<String> getDocketTitles() throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.DOCKETS.getIndex());
         return getTableDataByColumn(docketsTable, 0);
     }
 
@@ -162,9 +174,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
      * @return list of ruleset titles
      */
     public List<String> getRulesetTitles() throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.RULESETS.getIndex());
         return getTableDataByColumn(rulesetsTable, 0);
     }
 
@@ -187,12 +197,26 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
+     * Go to edit page for creating a new template.
+     *
+     * @return template edit page
+     */
+    public TemplateEditPage createNewTemplate() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+
+        clickButtonAndWaitForRedirect(newTemplateButton, Pages.getTemplateEditPage().getUrl());
+        return Pages.getTemplateEditPage();
+    }
+
+    /**
      * Go to edit page for creating a new workflow.
      *
      * @return workflow edit page
      */
     public WorkflowEditPage createNewWorkflow() throws Exception {
-
         if (isNotAt()) {
             goTo();
         }

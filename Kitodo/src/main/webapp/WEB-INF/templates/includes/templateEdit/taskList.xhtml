@@ -27,7 +27,7 @@
             <h:outputText value="#{item.ordering}"/>
             <p:commandButton action="#{TemplateForm.setOrderingUp}"
                              id="orderUp"
-                             update="editForm:tabs:taskTable"
+                             update="editForm:templateTabView:taskTable"
                              rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="toggleSave()"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
@@ -35,7 +35,7 @@
             </p:commandButton>
             <p:commandButton action="#{TemplateForm.setOrderingDown}"
                              id="orderDown"
-                             update="editForm:tabs:taskTable"
+                             update="editForm:templateTabView:taskTable"
                              rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="toggleSave()"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">

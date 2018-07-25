@@ -26,7 +26,7 @@
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>
                 <p:menuitem value="#{msgs.newProcessTemplate}" action="#{TemplateForm.newTemplate}"
-                            id="newProcessTemplateButton" immediate="true" style="width: inherit;"
+                            id="newTemplateButton" immediate="true" style="width: inherit;"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addTemplate')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem id="newWorkflowButton" value="#{msgs.newWorkflow}" action="#{WorkflowForm.newWorkflow}"
