@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
@@ -48,6 +49,9 @@ public class AddingST extends BaseTestSelenium {
     @After
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
+        if (Browser.isAlertPresent()) {
+            Browser.getDriver().switchTo().alert().accept();
+        }
     }
 
     @Test

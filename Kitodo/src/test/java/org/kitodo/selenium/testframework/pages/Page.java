@@ -116,7 +116,7 @@ public abstract class Page<T> {
      *            the url to which is redirected after click
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
-        for (int attempt = 1; attempt < 3; attempt++){
+        for (int attempt = 1; attempt < 4; attempt++){
             try {
                 await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
                     .ignoreExceptions().until(() -> isButtonClicked.matches(button));
@@ -124,7 +124,6 @@ public abstract class Page<T> {
                 return;
             } catch (TimeoutException e) {
                 logger.error("Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
-                attempt++;
             }
         }
         throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));

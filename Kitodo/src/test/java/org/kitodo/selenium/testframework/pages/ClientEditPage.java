@@ -12,12 +12,9 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ClientEditPage extends Page<ClientEditPage> {
 
@@ -45,8 +42,6 @@ public class ClientEditPage extends Page<ClientEditPage> {
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveClientButton, Pages.getUsersPage().getUrl());
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
         return Pages.getUsersPage();
     }
 }

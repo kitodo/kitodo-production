@@ -25,6 +25,7 @@ import org.kitodo.selenium.testframework.enums.BrowserType;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -103,6 +104,15 @@ public class Browser {
                 userDir + "/target/extracts/");
         }
         webDriver = new FirefoxDriver();
+    }
+
+    public static boolean isAlertPresent() {
+        try {
+            webDriver.switchTo().alert();
+            return true;
+        } catch (NoAlertPresentException e) {
+            return false;
+        }
     }
 
     /**
