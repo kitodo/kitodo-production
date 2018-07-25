@@ -119,12 +119,12 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     }
 
     @Override
-    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+    public DocketDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         DocketDTO docketDTO = new DocketDTO();
         docketDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject docketJSONObject = jsonObject.getJsonObject("_source");
-        docketDTO.setTitle(docketJSONObject.getString(DocketTypeField.TITLE.getName()));
-        docketDTO.setFile(docketJSONObject.getString(DocketTypeField.FILE.getName()));
+        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(docketJSONObject));
+        docketDTO.setFile(DocketTypeField.FILE.getStringValue(docketJSONObject));
         return docketDTO;
     }
 }

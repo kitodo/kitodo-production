@@ -65,16 +65,16 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "First",
-            actual.getString(AuthorityTypeField.TITLE.getName()));
+            AuthorityTypeField.TITLE.getStringValue(actual));
 
         JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
         assertEquals("Size userGroups doesn't match to given value!", 1, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Key userGroups.id doesn't match to given value!", 1,
-            userGroup.getInt(UserGroupTypeField.ID.getName()));
+            UserGroupTypeField.ID.getIntValue(userGroup));
         assertEquals("Key userGroups.title doesn't match to given value!", "First",
-            userGroup.getString(UserGroupTypeField.TITLE.getName()));
+            UserGroupTypeField.TITLE.getStringValue(userGroup));
     }
 
     @Test
@@ -87,9 +87,9 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Second",
-            actual.getString(AuthorityTypeField.TITLE.getName()));
+            AuthorityTypeField.TITLE.getStringValue(actual));
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size userGroups doesn't match to given value!", 0, userGroups.size());
     }
 
@@ -103,7 +103,7 @@ public class AuthorityTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = AuthorityTypeField.USER_GROUPS.getJsonArray(actual);
         JsonObject userGroup = userGroups.getJsonObject(0);
         assertEquals("Amount of keys in userGroups is incorrect!", 2, userGroup.keySet().size());
     }

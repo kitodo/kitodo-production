@@ -188,12 +188,12 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     @Override
-    public PropertyDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) {
+    public PropertyDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         PropertyDTO propertyDTO = new PropertyDTO();
         propertyDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject propertyJSONObject = jsonObject.getJsonObject("_source");
-        propertyDTO.setTitle(propertyJSONObject.getString(PropertyTypeField.TITLE.getName()));
-        propertyDTO.setValue(propertyJSONObject.getString(PropertyTypeField.VALUE.getName()));
+        propertyDTO.setTitle(PropertyTypeField.TITLE.getStringValue(propertyJSONObject));
+        propertyDTO.setValue(PropertyTypeField.VALUE.getStringValue(propertyJSONObject));
         JsonValue creationDate = propertyJSONObject.get(PropertyTypeField.CREATION_DATE.getName());
         propertyDTO.setCreationDate(creationDate != JsonValue.NULL ? creationDate.toString() : null);
         return propertyDTO;

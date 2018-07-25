@@ -670,19 +670,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject processJSONObject = jsonObject.getJsonObject("_source");
-        processDTO.setTitle(processJSONObject.getString(ProcessTypeField.TITLE.getName()));
-        processDTO.setOutputName(processJSONObject.getString(ProcessTypeField.OUTPUT_NAME.getName()));
-        processDTO.setWikiField(processJSONObject.getString(ProcessTypeField.WIKI_FIELD.getName()));
-        processDTO.setCreationDate(processJSONObject.getString(ProcessTypeField.CREATION_DATE.getName()));
-        processDTO.setPropertiesSize(
-            getSizeOfRelatedPropertyForDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName()));
+        processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(processJSONObject));
+        processDTO.setOutputName(ProcessTypeField.OUTPUT_NAME.getStringValue(processJSONObject));
+        processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
+        processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
+        processDTO.setPropertiesSize(ProcessTypeField.PROPERTIES.getSizeOfProperty(processJSONObject));
         processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName(),
             serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
+        processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(processJSONObject));
         processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
-        processDTO.setSortHelperImages(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
-        processDTO.setSortHelperMetadata(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
+        processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(processJSONObject));
+        processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(processJSONObject));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         processDTO.setBatches(getBatchesForProcessDTO(processJSONObject));
@@ -690,16 +689,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(processJSONObject.getInt(ProcessTypeField.PROJECT_ID.getName()));
-            projectDTO.setTitle(processJSONObject.getString(ProcessTypeField.PROJECT_TITLE.getName()));
-            projectDTO.setActive(processJSONObject.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
+            projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(processJSONObject));
+            projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(processJSONObject));
+            projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(processJSONObject));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = jsonObject.getInt(ProcessTypeField.PROJECT_ID.getName());
+        Integer project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
@@ -716,14 +715,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setBlockedUser(getBlockedUser(processDTO));
     }
 
-    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) {
-        JsonArray jsonArray = jsonObject.getJsonArray(ProcessTypeField.BATCHES.getName());
+    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
+        JsonArray jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
         List<BatchDTO> batchDTOList = new ArrayList<>();
         for (JsonValue singleObject : jsonArray) {
             BatchDTO batchDTO = new BatchDTO();
-            batchDTO.setId(singleObject.asJsonObject().getInt(BatchTypeField.ID.getName()));
-            batchDTO.setTitle(singleObject.asJsonObject().getString(BatchTypeField.TITLE.getName()));
-            batchDTO.setType(singleObject.asJsonObject().getString(BatchTypeField.TYPE.getName()));
+            batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject.asJsonObject()));
+            batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject.asJsonObject()));
+            batchDTO.setType(BatchTypeField.TYPE.getStringValue(singleObject.asJsonObject()));
             batchDTOList.add(batchDTO);
         }
         return batchDTOList;

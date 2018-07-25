@@ -104,37 +104,36 @@ public class TemplateTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Testing",
-            actual.getString(TemplateTypeField.TITLE.getName()));
+            TemplateTypeField.TITLE.getStringValue(actual));
         assertEquals("Key outputName doesn't match to given value!", "Test",
-            actual.getString(TemplateTypeField.OUTPUT_NAME.getName()));
+            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki",
-            actual.getString(TemplateTypeField.WIKI_FIELD.getName()));
+            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
-            actual.getString(TemplateTypeField.CREATION_DATE.getName()));
+            TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.SORT_HELPER_STATUS.getName()));
+            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 1,
-            actual.getInt(TemplateTypeField.PROJECT_ID.getName()));
+            TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "Project",
-            actual.getString(TemplateTypeField.PROJECT_TITLE.getName()));
+            TemplateTypeField.PROJECT_TITLE.getStringValue(actual));
         assertTrue("Key project.active doesn't match to given value!",
-            actual.getBoolean(TemplateTypeField.PROJECT_ACTIVE.getName()));
-        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt(TemplateTypeField.DOCKET.getName()));
-        assertEquals("Key ruleset doesn't match to given value!", 1,
-            actual.getInt(TemplateTypeField.RULESET.getName()));
+            TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(actual));
+        assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 2, tasks.size());
 
         JsonObject task = tasks.getJsonObject(0);
-        assertEquals("Key tasks.id doesn't match to given value!", 1, task.getInt(TaskTypeField.ID.getName()));
+        assertEquals("Key tasks.id doesn't match to given value!", 1, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task one",
-            task.getString(TaskTypeField.TITLE.getName()));
+            TaskTypeField.TITLE.getStringValue(task));
 
         task = tasks.getJsonObject(1);
-        assertEquals("Key tasks.id doesn't match to given value!", 2, task.getInt(TaskTypeField.ID.getName()));
+        assertEquals("Key tasks.id doesn't match to given value!", 2, TaskTypeField.ID.getIntValue(task));
         assertEquals("Key tasks.title doesn't match to given value!", "Task two",
-            task.getString(TaskTypeField.TITLE.getName()));
+            TaskTypeField.TITLE.getStringValue(task));
     }
 
     @Test
@@ -148,26 +147,25 @@ public class TemplateTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
-            actual.getString(TemplateTypeField.TITLE.getName()));
+            TemplateTypeField.TITLE.getStringValue(actual));
         assertEquals("Key outputName doesn't match to given value!", "Render",
-            actual.getString(TemplateTypeField.OUTPUT_NAME.getName()));
+            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Field",
-            actual.getString(TemplateTypeField.WIKI_FIELD.getName()));
+            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
-            actual.getString(TemplateTypeField.CREATION_DATE.getName()));
+            TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.SORT_HELPER_STATUS.getName()));
+            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 1,
-            actual.getInt(TemplateTypeField.PROJECT_ID.getName()));
+            TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "Project",
-            actual.getString(TemplateTypeField.PROJECT_TITLE.getName()));
+            TemplateTypeField.PROJECT_TITLE.getStringValue(actual));
         assertTrue("Key project.active doesn't match to given value!",
-            actual.getBoolean(TemplateTypeField.PROJECT_ACTIVE.getName()));
-        assertEquals("Key docket doesn't match to given value!", 1, actual.getInt(TemplateTypeField.DOCKET.getName()));
-        assertEquals("Key ruleset doesn't match to given value!", 0,
-            actual.getInt(TemplateTypeField.RULESET.getName()));
+            TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(actual));
+        assertEquals("Key docket doesn't match to given value!", 1, TemplateTypeField.DOCKET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -182,26 +180,25 @@ public class TemplateTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
-            actual.getString(TemplateTypeField.TITLE.getName()));
+            TemplateTypeField.TITLE.getStringValue(actual));
         assertEquals("Key outputName doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.OUTPUT_NAME.getName()));
+            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.WIKI_FIELD.getName()));
+            TemplateTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
-            actual.getString(TemplateTypeField.CREATION_DATE.getName()));
+            TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.SORT_HELPER_STATUS.getName()));
+            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertEquals("Key project.id doesn't match to given value!", 0,
-            actual.getInt(TemplateTypeField.PROJECT_ID.getName()));
+            TemplateTypeField.PROJECT_ID.getIntValue(actual));
         assertEquals("Key project.title doesn't match to given value!", "",
-            actual.getString(TemplateTypeField.PROJECT_TITLE.getName()));
+            TemplateTypeField.PROJECT_TITLE.getStringValue(actual));
         assertFalse("Key project.active doesn't match to given value!",
-            actual.getBoolean(TemplateTypeField.PROJECT_ACTIVE.getName()));
-        assertEquals("Key docket doesn't match to given value!", 0, actual.getInt(TemplateTypeField.DOCKET.getName()));
-        assertEquals("Key ruleset doesn't match to given value!", 0,
-            actual.getInt(TemplateTypeField.RULESET.getName()));
+            TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(actual));
+        assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
     }
 
@@ -215,7 +212,7 @@ public class TemplateTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
 
-        JsonArray tasks = actual.getJsonArray(TemplateTypeField.TASKS.getName());
+        JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         JsonObject task = tasks.getJsonObject(0);
         assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
     }

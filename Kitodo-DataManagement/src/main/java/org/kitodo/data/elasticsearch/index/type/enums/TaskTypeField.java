@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum TaskTypeField {
+public enum TaskTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -50,6 +50,11 @@ public enum TaskTypeField {
      * @return value of name
      */
     public String getName() {
+        return name;
+    }
+
+    @Override
+    public String toString() {
         return name;
     }
 }
