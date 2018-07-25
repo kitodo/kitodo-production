@@ -12,6 +12,7 @@
 package org.kitodo.selenium;
 
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
@@ -20,6 +21,11 @@ import org.kitodo.services.ServiceManager;
 public class ListingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
+
+    @BeforeClass
+    public static void login() throws Exception {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+    }
 
     @Test
     public void securityAccessTest() throws Exception {

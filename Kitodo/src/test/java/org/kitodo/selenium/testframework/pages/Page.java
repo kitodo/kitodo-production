@@ -16,15 +16,20 @@ import static org.awaitility.Awaitility.await;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class Page<T> {
+
+    private static final Logger logger = LogManager.getLogger(Page.class);
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -111,9 +116,18 @@ public abstract class Page<T> {
      *            the url to which is redirected after click
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
-        await("Wait for save button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(40, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(button));
-        new WebDriverWait(Browser.getDriver(), 60).until(ExpectedConditions.urlContains(url));
+        for (int attempt = 1; attempt < 3; attempt++){
+            try {
+                await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> isButtonClicked.matches(button));
+                new WebDriverWait(Browser.getDriver(), 60).until(ExpectedConditions.urlContains(url));
+                return;
+            } catch (TimeoutException e) {
+                logger.error("Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
+                attempt++;
+            }
+        }
+        throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));
     }
 
     Predicate<WebElement> isButtonClicked = (webElement) -> {
