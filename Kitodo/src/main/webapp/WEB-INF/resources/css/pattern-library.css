@@ -226,18 +226,18 @@ button .ui-icon {
 }
 
 .ui-chkbox .ui-chkbox-icon {
-  width: 80%;
-  height: 40%;
-  position: relative;
-  left: 10%;
-  top: 30%;
-  background: #fff;
-  background-image: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
+    width: 80%;
+    height: 40%;
+    position: relative;
+    left: 10%;
+    top: 30%;
+    background: #fff;
+    background-image: none;
+    border-radius: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .ui-chkbox .ui-chkbox-icon:after {
   position: relative;
