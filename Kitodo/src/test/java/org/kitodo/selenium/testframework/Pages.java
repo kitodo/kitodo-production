@@ -25,6 +25,7 @@ import org.kitodo.selenium.testframework.pages.RulesetEditPage;
 import org.kitodo.selenium.testframework.pages.StartPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
 import org.kitodo.selenium.testframework.pages.TopNavigationPage;
+import org.kitodo.selenium.testframework.pages.UserConfigurationPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
@@ -93,6 +94,10 @@ public class Pages {
 
     public static TopNavigationPage getTopNavigation() throws InstantiationException, IllegalAccessException {
         return getPage(TopNavigationPage.class);
+    }
+
+    public static UserConfigurationPage getUserConfigurationPage() throws InstantiationException, IllegalAccessException {
+        return getPage(UserConfigurationPage.class);
     }
 
     public static UserEditPage getUserEditPage() throws InstantiationException, IllegalAccessException {
