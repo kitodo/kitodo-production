@@ -132,8 +132,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public List<JsonObject> findByTitleAndType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(BatchTypeField.TITLE.getName(), title, true, Operator.AND));
-        query.must(createSimpleQuery(BatchTypeField.TYPE.getName(), type.toString(), true));
+        query.must(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
+        query.must(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
         return searcher.findDocuments(query.toString());
     }
 
@@ -148,8 +148,8 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      */
     public List<JsonObject> findByTitleOrType(String title, Batch.Type type) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(BatchTypeField.TITLE.getName(), title, true, Operator.AND));
-        query.should(createSimpleQuery(BatchTypeField.TYPE.getName(), type.toString(), true));
+        query.should(createSimpleQuery(BatchTypeField.TITLE.getKey(), title, true, Operator.AND));
+        query.should(createSimpleQuery(BatchTypeField.TYPE.getKey(), type.toString(), true));
         return searcher.findDocuments(query.toString());
     }
 
@@ -191,7 +191,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, BatchDTO batchDTO) throws DataException {
-        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getName(),
+        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
             serviceManager.getProcessService()));
     }
 

@@ -23,10 +23,10 @@ public class WorkflowType extends BaseType<Workflow> {
     @Override
     JsonObject getJsonObject(Workflow workflow) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(WorkflowTypeField.TITLE.getName(), preventNull(workflow.getTitle()));
-        jsonObjectBuilder.add(WorkflowTypeField.FILE_NAME.getName(), preventNull(workflow.getFileName()));
-        jsonObjectBuilder.add(WorkflowTypeField.READY.getName(), workflow.isReady());
-        jsonObjectBuilder.add(WorkflowTypeField.ACTIVE.getName(), workflow.isActive());
+        jsonObjectBuilder.add(WorkflowTypeField.TITLE.getKey(), preventNull(workflow.getTitle()));
+        jsonObjectBuilder.add(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
+        jsonObjectBuilder.add(WorkflowTypeField.READY.getKey(), workflow.isReady());
+        jsonObjectBuilder.add(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
         return jsonObjectBuilder.build();
     }
 }

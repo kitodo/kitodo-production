@@ -28,8 +28,8 @@ public class FilterType extends BaseType<Filter> {
         Integer user = filter.getUser() != null ? filter.getUser().getId() : 0;
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(FilterTypeField.VALUE.getName(), preventNull(filter.getValue()));
-        jsonObjectBuilder.add(FilterTypeField.USER.getName(), user);
+        jsonObjectBuilder.add(FilterTypeField.VALUE.getKey(), preventNull(filter.getValue()));
+        jsonObjectBuilder.add(FilterTypeField.USER.getKey(), user);
         return jsonObjectBuilder.build();
     }
 }

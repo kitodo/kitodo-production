@@ -103,7 +103,7 @@ public class UserGroupTypeTest {
         assertEquals("Key title doesn't match to given value!", "Administrator",
             UserGroupTypeField.TITLE.getStringValue(actual));
 
-        JsonArray authorities = actual.getJsonArray(UserGroupTypeField.AUTHORITIES.getName());
+        JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         assertEquals("Size authorities doesn't match to given value!", 3, authorities.size());
 
         JsonObject authority = authorities.getJsonObject(0);
@@ -124,7 +124,7 @@ public class UserGroupTypeTest {
         assertEquals("Key authorities.title doesn't match to given value!", "user",
             AuthorityTypeField.TITLE.getStringValue(authority));
 
-        JsonArray users = actual.getJsonArray(UserGroupTypeField.USERS.getName());
+        JsonArray users = UserGroupTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);

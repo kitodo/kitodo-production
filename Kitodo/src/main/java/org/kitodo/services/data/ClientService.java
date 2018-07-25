@@ -82,7 +82,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ClientDTO clientDTO) throws DataException {
-        clientDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, ClientTypeField.PROJECTS.getName(),
+        clientDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, ClientTypeField.PROJECTS.getKey(),
             serviceManager.getProjectService()));
     }
 
@@ -90,9 +90,9 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         if (clientDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(ClientTypeField.NAME.getName());
+            subKeys.add(ClientTypeField.NAME.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                ClientTypeField.PROJECTS.getName(), subKeys);
+                ClientTypeField.PROJECTS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 ProjectDTO project = new ProjectDTO();
                 project.setId(relatedProperty.getId());

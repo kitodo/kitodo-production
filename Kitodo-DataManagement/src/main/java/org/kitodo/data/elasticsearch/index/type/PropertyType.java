@@ -35,13 +35,13 @@ public class PropertyType extends BaseType<Property> {
         }
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(PropertyTypeField.TITLE.getName(), preventNull(property.getTitle()));
-        jsonObjectBuilder.add(PropertyTypeField.VALUE.getName(), preventNull(property.getValue()));
-        jsonObjectBuilder.add(PropertyTypeField.CREATION_DATE.getName(), getFormattedDate(property.getCreationDate()));
-        jsonObjectBuilder.add(PropertyTypeField.PROCESSES.getName(), addObjectRelation(property.getProcesses()));
-        jsonObjectBuilder.add(PropertyTypeField.TEMPLATES.getName(), addObjectRelation(property.getTemplates()));
-        jsonObjectBuilder.add(PropertyTypeField.WORKPIECES.getName(), addObjectRelation(property.getWorkpieces()));
-        jsonObjectBuilder.add(PropertyTypeField.TYPE.getName(), type);
+        jsonObjectBuilder.add(PropertyTypeField.TITLE.getKey(), preventNull(property.getTitle()));
+        jsonObjectBuilder.add(PropertyTypeField.VALUE.getKey(), preventNull(property.getValue()));
+        jsonObjectBuilder.add(PropertyTypeField.CREATION_DATE.getKey(), getFormattedDate(property.getCreationDate()));
+        jsonObjectBuilder.add(PropertyTypeField.PROCESSES.getKey(), addObjectRelation(property.getProcesses()));
+        jsonObjectBuilder.add(PropertyTypeField.TEMPLATES.getKey(), addObjectRelation(property.getTemplates()));
+        jsonObjectBuilder.add(PropertyTypeField.WORKPIECES.getKey(), addObjectRelation(property.getWorkpieces()));
+        jsonObjectBuilder.add(PropertyTypeField.TYPE.getKey(), type);
         return jsonObjectBuilder.build();
     }
 }

@@ -26,9 +26,9 @@ public class UserGroupType extends BaseType<UserGroup> {
     @Override
     JsonObject getJsonObject(UserGroup userGroup) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(UserGroupTypeField.TITLE.getName(), preventNull(userGroup.getTitle()));
-        jsonObjectBuilder.add(UserGroupTypeField.AUTHORITIES.getName(), addObjectRelation(userGroup.getGlobalAuthorities(), true));
-        jsonObjectBuilder.add(UserGroupTypeField.USERS.getName(), addObjectRelation(userGroup.getUsers(), true));
+        jsonObjectBuilder.add(UserGroupTypeField.TITLE.getKey(), preventNull(userGroup.getTitle()));
+        jsonObjectBuilder.add(UserGroupTypeField.AUTHORITIES.getKey(), addObjectRelation(userGroup.getGlobalAuthorities(), true));
+        jsonObjectBuilder.add(UserGroupTypeField.USERS.getKey(), addObjectRelation(userGroup.getUsers(), true));
         return jsonObjectBuilder.build();
     }
 }

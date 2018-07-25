@@ -162,16 +162,16 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 0, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 1, ProcessTypeField.RULESET.getIntValue(actual));
 
-        JsonArray templates = actual.getJsonArray(ProcessTypeField.TEMPLATES.getName());
+        JsonArray templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray properties = actual.getJsonArray(ProcessTypeField.PROPERTIES.getName());
+        JsonArray properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 0, properties.size());
 
-        JsonArray workpieces = actual.getJsonArray(ProcessTypeField.WORKPIECES.getName());
+        JsonArray workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
+        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 1, batches.size());
 
         JsonObject batch = batches.getJsonObject(0);
@@ -179,7 +179,7 @@ public class ProcessTypeTest {
         assertEquals("Key batches.title doesn't match to given value!", "First",
             BatchTypeField.TITLE.getStringValue(batch));
 
-        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
+        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 2, tasks.size());
 
         JsonObject task = tasks.getJsonObject(0);
@@ -236,19 +236,19 @@ public class ProcessTypeTest {
         assertEquals("Key docket doesn't match to given value!", 1, ProcessTypeField.DOCKET.getIntValue(actual));
         assertEquals("Key ruleset doesn't match to given value!", 0, ProcessTypeField.RULESET.getIntValue(actual));
 
-        JsonArray templates = actual.getJsonArray(ProcessTypeField.TEMPLATES.getName());
+        JsonArray templates = ProcessTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
 
-        JsonArray tasks = actual.getJsonArray(ProcessTypeField.TASKS.getName());
+        JsonArray tasks = ProcessTypeField.TASKS.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, tasks.size());
 
-        JsonArray workpieces = actual.getJsonArray(ProcessTypeField.WORKPIECES.getName());
+        JsonArray workpieces = ProcessTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray batches = actual.getJsonArray(ProcessTypeField.BATCHES.getName());
+        JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         assertEquals("Size batches doesn't match to given value!", 0, batches.size());
 
-        JsonArray properties = actual.getJsonArray(ProcessTypeField.PROPERTIES.getName());
+        JsonArray properties = ProcessTypeField.PROPERTIES.getJsonArray(actual);
         assertEquals("Size properties doesn't match to given value!", 2, properties.size());
 
         JsonObject property = properties.getJsonObject(0);
