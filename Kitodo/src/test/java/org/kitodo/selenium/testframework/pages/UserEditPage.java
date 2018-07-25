@@ -12,7 +12,6 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -66,7 +65,7 @@ public class UserEditPage extends Page<UserEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveUserButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveUserButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

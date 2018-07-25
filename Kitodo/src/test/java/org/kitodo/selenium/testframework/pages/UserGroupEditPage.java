@@ -121,7 +121,7 @@ public class UserGroupEditPage extends Page<UserGroupEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveUserGroupButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveUserGroupButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

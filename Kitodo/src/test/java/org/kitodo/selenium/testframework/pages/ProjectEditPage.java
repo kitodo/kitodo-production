@@ -62,7 +62,7 @@ public class ProjectEditPage extends Page {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveProjectButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveProjectButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

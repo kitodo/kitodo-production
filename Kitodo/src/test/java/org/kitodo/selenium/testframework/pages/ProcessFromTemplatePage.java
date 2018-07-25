@@ -91,7 +91,7 @@ public class ProcessFromTemplatePage extends Page<ProcessFromTemplatePage> {
     }
 
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveProcessButton, Pages.getProcessesPage().getUrl());
+        clickButtonAndWaitForRedirect(saveProcessButton, Pages.getProcessesPage().getUrl());
         return Pages.getProcessesPage();
     }
 }

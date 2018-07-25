@@ -49,7 +49,7 @@ public class WorkflowEditPage extends Page<WorkflowEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveWorkflowButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveWorkflowButton, Pages.getProjectsPage().getUrl());
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
         wait.until(ExpectedConditions.urlContains(Pages.getProjectsPage().getUrl()));
         return Pages.getProjectsPage();

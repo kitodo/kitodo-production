@@ -12,7 +12,6 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.LdapGroup;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -157,7 +156,7 @@ public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveLdapGroupButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveLdapGroupButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

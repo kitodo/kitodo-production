@@ -53,7 +53,7 @@ public class DocketEditPage extends Page<DocketEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveDocketButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveDocketButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

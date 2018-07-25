@@ -53,7 +53,7 @@ public class RulesetEditPage extends Page<RulesetEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButtonAndRedirect(saveRulesetButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveRulesetButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

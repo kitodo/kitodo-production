@@ -11,8 +11,6 @@
 
 package org.kitodo.selenium.testframework;
 
-import static org.awaitility.Awaitility.await;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,20 +21,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.enums.BrowserType;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Browser {
     private static final Logger logger = LogManager.getLogger(Browser.class);
@@ -177,37 +171,6 @@ public class Browser {
         }
         return screenshotFile;
     }
-
-    /**
-     * Click a save button that is disabled and enabled via Ajax, resulting in a
-     * small delay before its 'disabled' state is updated on the page. For that
-     * reason this function incorporates a short delay to allow the button to become
-     * enabled properly.
-     *
-     * @param button
-     *            the save button to be clicked
-     * @param url
-     *            the url to which is redirected after saving
-     */
-    public static void clickAjaxSaveButtonAndRedirect(WebElement button, String url) {
-        for (int attempt = 1; attempt < 50; attempt++) {
-            try {
-                await("Wait for save button clicked").pollDelay(1, TimeUnit.SECONDS).atMost(40, TimeUnit.SECONDS)
-                    .ignoreExceptions().until(() -> isButtonClicked.matches(button));
-                new WebDriverWait(webDriver, 60).ignoring(StaleElementReferenceException.class)
-                    .until(ExpectedConditions.urlContains(url));
-                return;
-            } catch (StaleElementReferenceException e) {
-                logger.warn("Save button is not accessible, retry now (" + attempt + ". attempt)");
-            }
-        }
-        throw new StaleElementReferenceException("Could not access save button!");
-    }
-
-    private static Predicate<WebElement> isButtonClicked = (webElement) -> {
-        webElement.click();
-        return true;
-    };
 
     public static List<WebElement> getRowsOfTable(WebElement table) {
         return table.findElements(By.tagName("tr"));

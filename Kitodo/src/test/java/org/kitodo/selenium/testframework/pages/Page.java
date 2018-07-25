@@ -11,13 +11,18 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public abstract class Page<T> {
 
@@ -93,6 +98,22 @@ public abstract class Page<T> {
         List<WebElement> listTabs = tabView.findElements(By.tagName("li"));
         WebElement tab = listTabs.get(index);
         tab.click();
+    }
+
+    /**
+     * Clicks a button which could be be stale, e.g. because of disabling and
+     * enabling via Ajax. After click was perfomred, the browser waits for
+     * redirecting to given url.
+     *
+     * @param button
+     *            the button to be clicked
+     * @param url
+     *            the url to which is redirected after click
+     */
+    protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
+        await("Wait for save button clicked").pollDelay(100, TimeUnit.MILLISECONDS).atMost(40, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> isButtonClicked.matches(button));
+        new WebDriverWait(Browser.getDriver(), 60).until(ExpectedConditions.urlContains(url));
     }
 
     Predicate<WebElement> isButtonClicked = (webElement) -> {
