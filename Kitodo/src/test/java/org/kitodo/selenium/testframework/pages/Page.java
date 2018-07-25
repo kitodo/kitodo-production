@@ -116,11 +116,12 @@ public abstract class Page<T> {
      *            the url to which is redirected after click
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
+        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
         for (int attempt = 1; attempt < 4; attempt++){
             try {
                 await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
                     .ignoreExceptions().until(() -> isButtonClicked.matches(button));
-                new WebDriverWait(Browser.getDriver(), 60).until(ExpectedConditions.urlContains(url));
+                webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
             } catch (TimeoutException e) {
                 logger.error("Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
