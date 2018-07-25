@@ -46,6 +46,8 @@ $(document).ready(function() {
     setSizes();
 });
 
+$(window).resize(setSizes);
+
 $(document).mouseup(function(e) {
     if (dragging) {
         $(document).unbind('mousemove');
