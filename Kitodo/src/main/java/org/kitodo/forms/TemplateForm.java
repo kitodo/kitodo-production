@@ -15,6 +15,7 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -282,6 +283,19 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        if (Objects.nonNull(this.template.getWorkflow())) {
+            return serviceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getFileName());
+        }
+        return serviceManager.getTemplateService().getTasksDiagram("");
+
     }
 
     /**
