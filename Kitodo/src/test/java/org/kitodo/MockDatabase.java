@@ -162,6 +162,7 @@ public class MockDatabase {
         insertTasks();
         insertUserGroupClientAuthorityRelations();
         insertUserGroupProjectAuthorityRelations();
+        insertWorkflows();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -1145,6 +1146,7 @@ public class MockDatabase {
         firstUser.setLdapLogin("kowalLDP");
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
+        firstUser.setLanguage("de");
         firstUser.setCss("old/userStyles/classic.css");
         firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(firstUser);
@@ -1155,6 +1157,7 @@ public class MockDatabase {
         secondUser.setLogin("nowak");
         secondUser.setLdapLogin("nowakLDP");
         secondUser.setLocation("Dresden");
+        secondUser.setLanguage("de");
         secondUser.setLdapGroup(serviceManager.getLdapGroupService().getById(1));
         secondUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(secondUser);
@@ -1165,6 +1168,7 @@ public class MockDatabase {
         thirdUser.setLogin("dora");
         thirdUser.setLdapLogin("doraLDP");
         thirdUser.setLocation("Leipzig");
+        thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
     }
@@ -1242,15 +1246,15 @@ public class MockDatabase {
         serviceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DAOException {
+    public static void insertWorkflows() throws DataException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
-        serviceManager.getWorkflowService().saveToDatabase(firstWorkflow);
+        serviceManager.getWorkflowService().save(firstWorkflow);
 
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
         secondWorkflow.setReady(false);
-        serviceManager.getWorkflowService().saveToDatabase(secondWorkflow);
+        serviceManager.getWorkflowService().save(secondWorkflow);
     }
 
     /**

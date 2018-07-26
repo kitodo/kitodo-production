@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum DocketTypeField {
+public enum DocketTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -26,12 +26,8 @@ public enum DocketTypeField {
         this.name = name;
     }
 
-    /**
-     * Get name.
-     *
-     * @return value of name
-     */
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

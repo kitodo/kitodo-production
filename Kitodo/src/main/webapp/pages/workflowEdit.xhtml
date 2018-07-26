@@ -1,0 +1,78 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{WorkflowForm.loadWorkflow(id)}" />
+    </f:metadata>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+        <h3>
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
+                          rendered="#{not empty WorkflowForm.workflow.title}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}"
+                          rendered="#{empty WorkflowForm.workflow.title}"/>
+        </h3>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         value="#{msgs.save}"
+                         action="#{WorkflowForm.saveAndRedirect}"
+                         update="notifications"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
+                            'summary':'#{msgs.workflowSaving}',
+                            'detail':'#{msgs.youWillBeRedirected}',
+                            'severity':'info'});"
+                         disabled="#{WorkflowForm.saveDisabled}"
+                         styleClass="button-filled-blue"
+                         immediate="true"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{WorkflowForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:button value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
+                  outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="workflowTabView">
+            <p:tab title="#{msgs.details}">
+                <ui:include src="/WEB-INF/templates/includes/workflowEdit/workflowEditDetails.xhtml"/>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
+        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
+        <li>
+            <a href="">
+                <h:outputText value="#{msgs.editWorkflow}" rendered="#{WorkflowForm.workflow.id ne null}"/>
+                <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{WorkflowForm.workflow.id eq null}"/>
+            </a>
+        </li>
+    </ui:define>
+</ui:composition>

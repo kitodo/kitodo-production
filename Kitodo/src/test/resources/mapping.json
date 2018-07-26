@@ -623,6 +623,28 @@
                             "ignore_above": 256
                         }
                     }
+                },
+                "workflow": {
+                    "properties": {
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "fileName": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },

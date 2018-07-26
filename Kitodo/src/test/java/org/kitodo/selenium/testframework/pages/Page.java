@@ -11,17 +11,25 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.List;
+import static org.awaitility.Awaitility.await;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public abstract class Page {
+public abstract class Page<T> {
+
+    private static final Logger logger = LogManager.getLogger(Page.class);
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -35,7 +43,7 @@ public abstract class Page {
     @FindBy(className = "ui-messages-error-summary")
     private WebElement errorMessage;
 
-    String URL;
+    private String URL;
 
     Page(String URL) {
         this.URL = URL;
@@ -49,6 +57,8 @@ public abstract class Page {
     public String getUrl() {
         return URL;
     }
+
+    abstract public T goTo() throws Exception;
 
     /**
      * Check if the browser is currently at given page.
@@ -71,15 +81,6 @@ public abstract class Page {
         }
     }
 
-    String saveWithError(WebElement saveButton ) {
-        Browser.clickAjaxSaveButton(saveButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.visibilityOf(errorMessage));
-        String errorMessageText = errorMessage.getText();
-        wait.until(ExpectedConditions.invisibilityOf(errorPopup));
-        return errorMessageText ;
-    }
-
     /**
      * Check if the browser is currently not at given page.
      *
@@ -89,14 +90,52 @@ public abstract class Page {
         return !isAt();
     }
 
-    void clickTab(int index, WebElement tabView) {
+    @SuppressWarnings("unchecked")
+    T switchToTabByIndex(int index, WebElement tabView) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        clickTab(index, tabView);
+        return (T) this;
+    }
+
+    private void clickTab(int index, WebElement tabView) {
         List<WebElement> listTabs = tabView.findElements(By.tagName("li"));
         WebElement tab = listTabs.get(index);
         tab.click();
     }
 
+    /**
+     * Clicks a button which could be be stale, e.g. because of disabling and
+     * enabling via Ajax. After click was performed, the browser waits for
+     * redirecting to given url.
+     *
+     * @param button
+     *            the button to be clicked
+     * @param url
+     *            the url to which is redirected after click
+     */
+    protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
+        WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
+        for (int attempt = 1; attempt < 4; attempt++){
+            try {
+                await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
+                    .ignoreExceptions().until(() -> isButtonClicked.matches(button));
+                webDriverWait.until(ExpectedConditions.urlContains(url));
+                return;
+            } catch (TimeoutException e) {
+                logger.error("Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
+            }
+        }
+        throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));
+    }
+
     Predicate<WebElement> isButtonClicked = (webElement) -> {
         webElement.click();
         return true;
+    };
+
+    Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
+        return !webElement.getAttribute("value").equals("");
     };
 }

@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 
 public class TemplateType extends BaseType<Template> {
 
@@ -24,22 +25,26 @@ public class TemplateType extends BaseType<Template> {
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
 
-        jsonObjectBuilder.add("title", template.getTitle());
-        jsonObjectBuilder.add("outputName", preventNull(template.getOutputName()));
-        jsonObjectBuilder.add("creationDate", getFormattedDate(template.getCreationDate()));
-        jsonObjectBuilder.add("wikiField", preventNull(template.getWikiField()));
-        jsonObjectBuilder.add("sortHelperStatus", preventNull(template.getSortHelperStatus()));
+        jsonObjectBuilder.add(TemplateTypeField.TITLE.getKey(), template.getTitle());
+        jsonObjectBuilder.add(TemplateTypeField.OUTPUT_NAME.getKey(), preventNull(template.getOutputName()));
+        jsonObjectBuilder.add(TemplateTypeField.CREATION_DATE.getKey(), getFormattedDate(template.getCreationDate()));
+        jsonObjectBuilder.add(TemplateTypeField.WIKI_FIELD.getKey(), preventNull(template.getWikiField()));
+        jsonObjectBuilder.add(TemplateTypeField.SORT_HELPER_STATUS.getKey(), preventNull(template.getSortHelperStatus()));
+        String workflowTitle = template.getWorkflow() != null ? template.getWorkflow().getTitle() : "";
+        jsonObjectBuilder.add(TemplateTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
+        String diagramFileName = template.getWorkflow() != null ? template.getWorkflow().getFileName() : "";
+        jsonObjectBuilder.add(TemplateTypeField.WORKFLOW_FILE_NAME.getKey(), diagramFileName);
         Integer projectId = template.getProject() != null ? template.getProject().getId() : 0;
-        jsonObjectBuilder.add("project.id", projectId);
+        jsonObjectBuilder.add(TemplateTypeField.PROJECT_ID.getKey(), projectId);
         String projectTitle = template.getProject() != null ? template.getProject().getTitle() : "";
-        jsonObjectBuilder.add("project.title", projectTitle);
+        jsonObjectBuilder.add(TemplateTypeField.PROJECT_TITLE.getKey(), projectTitle);
         boolean projectActive = template.getProject() != null && template.getProject().isActive();
-        jsonObjectBuilder.add("project.active", projectActive);
+        jsonObjectBuilder.add(TemplateTypeField.PROJECT_ACTIVE.getKey(), projectActive);
         Integer ruleset = template.getRuleset() != null ? template.getRuleset().getId() : 0;
-        jsonObjectBuilder.add("ruleset", ruleset);
+        jsonObjectBuilder.add(TemplateTypeField.RULESET.getKey(), ruleset);
         Integer docket = template.getDocket() != null ? template.getDocket().getId() : 0;
-        jsonObjectBuilder.add("docket", docket);
-        jsonObjectBuilder.add("tasks", addObjectRelation(template.getTasks(), true));
+        jsonObjectBuilder.add(TemplateTypeField.DOCKET.getKey(), docket);
+        jsonObjectBuilder.add(TemplateTypeField.TASKS.getKey(), addObjectRelation(template.getTasks(), true));
 
         return jsonObjectBuilder.build();
     }

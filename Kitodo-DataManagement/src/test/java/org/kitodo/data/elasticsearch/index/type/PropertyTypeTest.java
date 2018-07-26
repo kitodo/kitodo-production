@@ -83,29 +83,27 @@ public class PropertyTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Property1",
-            actual.getString(PropertyTypeField.TITLE.getName()));
+            PropertyTypeField.TITLE.getStringValue(actual));
         assertEquals("Key value doesn't match to given value!", "processes",
-            actual.getString(PropertyTypeField.VALUE.getName()));
+            PropertyTypeField.VALUE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "process",
-            actual.getString(PropertyTypeField.TYPE.getName()));
+            PropertyTypeField.TYPE.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()),
-            actual.getString(PropertyTypeField.CREATION_DATE.getName()));
+            PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(PropertyTypeField.PROCESSES.getName());
+        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 2, processes.size());
 
         JsonObject process = processes.getJsonObject(0);
-        assertEquals("Key processes.id doesn't match to given value!", 2,
-            process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
 
         process = processes.getJsonObject(1);
-        assertEquals("Key processes.id doesn't match to given value!", 3,
-            process.getInt(ProcessTypeField.ID.getName()));
+        assertEquals("Key processes.id doesn't match to given value!", 3, ProcessTypeField.ID.getIntValue(process));
 
-        JsonArray workpieces = actual.getJsonArray(PropertyTypeField.WORKPIECES.getName());
+        JsonArray workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray templates = actual.getJsonArray(PropertyTypeField.TEMPLATES.getName());
+        JsonArray templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 0, templates.size());
     }
 
@@ -120,26 +118,26 @@ public class PropertyTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "Property2",
-            actual.getString(PropertyTypeField.TITLE.getName()));
+            PropertyTypeField.TITLE.getStringValue(actual));
         assertEquals("Key value doesn't match to given value!", "templates",
-            actual.getString(PropertyTypeField.VALUE.getName()));
+            PropertyTypeField.VALUE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "template",
-            actual.getString(PropertyTypeField.TYPE.getName()));
+            PropertyTypeField.TYPE.getStringValue(actual));
         assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()),
-            actual.getString(PropertyTypeField.CREATION_DATE.getName()));
+            PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(PropertyTypeField.PROCESSES.getName());
+        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray workpieces = actual.getJsonArray(PropertyTypeField.WORKPIECES.getName());
+        JsonArray workpieces = PropertyTypeField.WORKPIECES.getJsonArray(actual);
         assertEquals("Size workpieces doesn't match to given value!", 0, workpieces.size());
 
-        JsonArray templates = actual.getJsonArray(PropertyTypeField.TEMPLATES.getName());
+        JsonArray templates = PropertyTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
 
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Key templates.id doesn't match to given value!", 1,
-            template.getInt(PropertyTypeField.ID.getName()));
+            PropertyTypeField.ID.getIntValue(template));
     }
 
     @Test
@@ -152,7 +150,7 @@ public class PropertyTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
 
-        JsonArray processes = actual.getJsonArray(PropertyTypeField.PROCESSES.getName());
+        JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Amount of keys in processes is incorrect!", 1, process.keySet().size());
     }

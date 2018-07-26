@@ -109,7 +109,7 @@ public class DocketServiceIT {
     public void shouldFindByFile() {
         String expected = "docket.xsl";
         await().untilAsserted(() -> assertEquals("Docket was not found in index!", expected,
-            docketService.findByFile("docket.xsl").getJsonObject("_source").getString(DocketTypeField.FILE.getName())));
+            docketService.findByFile("docket.xsl").getJsonObject("_source").getString(DocketTypeField.FILE.getKey())));
     }
 
     @Test

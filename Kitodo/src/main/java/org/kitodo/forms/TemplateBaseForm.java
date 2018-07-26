@@ -38,29 +38,9 @@ public class TemplateBaseForm extends BasisForm {
 
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
-    private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
     private transient ServiceManager serviceManager = new ServiceManager();
-
-    /**
-     * Check if closed processes should be shown.
-     *
-     * @return true or false
-     */
-    public boolean isShowClosedProcesses() {
-        return this.showClosedProcesses;
-    }
-
-    /**
-     * Set if closed processes should be shown.
-     *
-     * @param showClosedProcesses
-     *            true or false
-     */
-    public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
-    }
 
     /**
      * Check if inactive projects should be shown.

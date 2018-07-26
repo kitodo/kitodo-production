@@ -11,12 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
@@ -27,7 +25,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UsersPage extends Page {
+public class UsersPage extends Page<UsersPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView")
@@ -140,10 +138,7 @@ public class UsersPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new user button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newUserButton));
-
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        clickButtonAndWaitForRedirect(newUserButton, Pages.getUserEditPage().getUrl());
         return Pages.getUserEditPage();
     }
 
@@ -157,11 +152,7 @@ public class UsersPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new LDAP group button")
-                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(newLdapGroupButton));
-
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
+        clickButtonAndWaitForRedirect(newLdapGroupButton, Pages.getLdapGroupEditPage().getUrl());
         return Pages.getLdapGroupEditPage();
     }
 
@@ -185,11 +176,7 @@ public class UsersPage extends Page {
      * @return The users page.
      */
     public UsersPage switchToTabByIndex(int index) throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        clickTab(index, usersTabView);
-        return this;
+        return switchToTabByIndex(index, usersTabView);
     }
 
     /**
@@ -202,12 +189,7 @@ public class UsersPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new user group button")
-                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(newUserGroupButton));
-
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
-
+        clickButtonAndWaitForRedirect(newUserGroupButton, Pages.getUserGroupEditPage().getUrl());
         return Pages.getUserGroupEditPage();
     }
 
@@ -308,12 +290,7 @@ public class UsersPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new client button")
-                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(newClientButton));
-
-        Thread.sleep(Browser.getDelayAfterNewItemClick());
-
+        clickButtonAndWaitForRedirect(newClientButton, Pages.getClientEditPage().getUrl());
         return Pages.getClientEditPage();
     }
 }

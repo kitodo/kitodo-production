@@ -12,19 +12,14 @@
 package org.kitodo.selenium.testframework.pages;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.awaitility.Awaitility.await;
-
-public class UserGroupEditPage extends Page {
+public class UserGroupEditPage extends Page<UserGroupEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -56,6 +51,11 @@ public class UserGroupEditPage extends Page {
 
     public UserGroupEditPage() {
         super("pages/usergroupEdit.jsf");
+    }
+
+    @Override
+    public UserGroupEditPage goTo() {
+        return null;
     }
 
     private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {
@@ -121,11 +121,7 @@ public class UserGroupEditPage extends Page {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        await("Wait for save user group button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> isButtonClicked.matches(saveUserGroupButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
+        clickButtonAndWaitForRedirect(saveUserGroupButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

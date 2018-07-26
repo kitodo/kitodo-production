@@ -13,7 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.selenium.testframework.Pages;
 
-public class HelpPage extends Page {
+public class HelpPage extends Page<HelpPage> {
 
     public HelpPage() {
         super("help");
@@ -24,6 +24,7 @@ public class HelpPage extends Page {
      *
      * @return The help page.
      */
+    @Override
     public HelpPage goTo() throws Exception {
         Pages.getTopNavigation().gotoHelp();
         return this;

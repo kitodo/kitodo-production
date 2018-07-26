@@ -18,8 +18,8 @@
     <p:panel>
         <p:selectBooleanButton
                 onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
-                value="#{ProjekteForm.lockedDetail}">
+                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
+                id="detailLockedButton" value="#{ProjekteForm.lockedDetail}">
             <p:ajax event="change" update="editDetailForm"/>
         </p:selectBooleanButton>
     </p:panel>

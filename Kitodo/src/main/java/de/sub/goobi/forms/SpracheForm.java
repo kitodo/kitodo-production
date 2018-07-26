@@ -36,6 +36,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.services.ServiceManager;
 
 /**
  * The SpracheForm class serves to switch the displayed language for the current
@@ -48,17 +52,36 @@ public class SpracheForm implements Serializable {
     private static final String SESSION_LOCALE_FIELD_ID = "lang";
     private static final long serialVersionUID = -8766724454080390450L;
     private static final Logger logger = LogManager.getLogger(SpracheForm.class);
+    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * The constructor of this class loads the required MessageBundle.
      */
     public SpracheForm() {
-        String key = ConfigCore.getParameter(Parameters.LANGUAGE_FORCE_DEFAULT,
-            DefaultValues.LANGUAGE_FORCE_DEFAULT);
+        setSessionLocaleFieldId();
+    }
+
+    /**
+     * Set session locale field id.
+     *
+     *
+     */
+    private void setSessionLocaleFieldId() {
+        String key = "";
+        if (Objects.isNull(serviceManager.getUserService().getAuthenticatedUser())) {
+            key = ConfigCore.getParameter(Parameters.LANGUAGE_DEFAULT, DefaultValues.LANGUAGE_DEFAULT);
+        } else {
+            try {
+                User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
+                key = user.getLanguage();
+            } catch (DAOException e) {
+                Helper.setErrorMessage("Error in retrieving user ", logger, e);
+            }
+        }
         Locale locale = new Locale.Builder().setLanguageTag(key).build();
-        if (!LocaleUtils.isAvailableLocale(locale)) {
+        if (LocaleUtils.isAvailableLocale(locale)) {
             FacesContext context = FacesContext.getCurrentInstance();
-            if (!Objects.equals(context.getViewRoot(), null)) {
+            if (Objects.nonNull(context.getViewRoot())) {
                 context.getViewRoot().setLocale(locale);
                 context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
             }
@@ -115,6 +138,7 @@ public class SpracheForm implements Serializable {
                 translation.put("displayLanguageTranslated",
                     supportedLocale.getDisplayLanguage(currentDisplayLanguage));
                 translation.put("selected", supportedLocale.equals(currentDisplayLanguage));
+                translation.put("flag", "javax.faces.resource/images/" + supportedLocale.toString() + ".svg.jsf");
                 result.add(translation);
             }
         }
@@ -138,6 +162,15 @@ public class SpracheForm implements Serializable {
         } else {
             locale = new Locale(languageCode[0]);
         }
+        try {
+            User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
+            user.setLanguage(locale.toString());
+            serviceManager.getUserService().save(user);
+        } catch (DataException e) {
+            Helper.setErrorMessage("Error in saving user", logger, e);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error in retrieving user", logger, e);
+        }
         FacesContext context = FacesContext.getCurrentInstance();
         context.getViewRoot().setLocale(locale);
         context.getExternalContext().getSessionMap().put(SESSION_LOCALE_FIELD_ID, locale);
@@ -152,6 +185,7 @@ public class SpracheForm implements Serializable {
      * @return Locale object
      */
     public Locale getLocale() {
+        setSessionLocaleFieldId();
         FacesContext fac = FacesContext.getCurrentInstance();
         UIViewRoot frame = fac.getViewRoot();
         if (!Objects.equals(frame, null)) {

@@ -11,19 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.concurrent.TimeUnit;
-
 import org.kitodo.data.database.beans.LdapGroup;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.awaitility.Awaitility.await;
-
-public class LdapGroupEditPage extends Page {
+public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
@@ -109,6 +102,11 @@ public class LdapGroupEditPage extends Page {
         super("pages/ldapgroupEdit.jsf");
     }
 
+    @Override
+    public LdapGroupEditPage goTo() {
+        return null;
+    }
+
     public LdapGroupEditPage insertLdapGroupData(LdapGroup ldapGroup) {
         titleInput.sendKeys(ldapGroup.getTitle());
         descriptionInput.sendKeys(ldapGroup.getDescription());
@@ -158,12 +156,7 @@ public class LdapGroupEditPage extends Page {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        await("Wait for save LDAP group button").pollDelay(8, TimeUnit.SECONDS).atMost(40, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(saveLdapGroupButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
-
+        clickButtonAndWaitForRedirect(saveLdapGroupButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

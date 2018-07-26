@@ -12,14 +12,12 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ClientEditPage extends Page {
+public class ClientEditPage extends Page<ClientEditPage> {
+
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:saveButton")
     private WebElement saveClientButton;
@@ -32,15 +30,18 @@ public class ClientEditPage extends Page {
         super("pages/clientEdit.jsf");
     }
 
+    @Override
+    public ClientEditPage goTo() {
+        return null;
+    }
+
     public ClientEditPage insertClientData(Client client) {
         nameInput.sendKeys(client.getName());
         return this;
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButton(saveClientButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
+        clickButtonAndWaitForRedirect(saveClientButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

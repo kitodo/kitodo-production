@@ -50,10 +50,10 @@ public class ConfigOpac {
         if (config != null) {
             return config;
         }
-        String configPath = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
+        File configPath = new File(ConfigCore.getKitodoConfigDirectory(),
             FileNames.OPAC_CONFIGURATION_FILE);
 
-        if (!new File(configPath).exists()) {
+        if (!configPath.exists()) {
             throw new FileNotFoundException("File not found: " + configPath);
         }
         try {

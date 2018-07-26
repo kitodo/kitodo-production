@@ -122,7 +122,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
-
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
@@ -201,10 +200,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Delete process.
-     *
-     * @return page or empty String
      */
-    public String delete() {
+    public void delete() {
         deleteMetadataDirectory();
         try {
             this.process.getProject().getProcesses().remove(this.process);
@@ -220,9 +217,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
-            return null;
         }
-        return processListPath;
     }
 
     /**
@@ -1346,14 +1341,27 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         return response;
     }
 
-    @Override
+
+    /**
+     * Return whether closed processes should be displayed or not.
+     *
+     * @return parameter controlling whether closed processes should be displayed
+     *         or not
+     */
     public boolean isShowClosedProcesses() {
         return this.showClosedProcesses;
     }
 
-    @Override
+    /**
+     * Set whether closed processes should be displayed or not.
+     *
+     * @param showClosedProcesses
+     *            boolean flag signaling whether closed processes should be
+     *            displayed or not
+     */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
+        serviceManager.getProcessService().setShowClosedProcesses(showClosedProcesses);
     }
 
     /**
@@ -1366,6 +1374,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
+        serviceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
     }
 
     /**

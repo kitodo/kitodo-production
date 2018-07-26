@@ -11,9 +11,13 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.helper.Helper;
+import de.sub.goobi.config.ConfigCore;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +25,8 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -30,20 +36,24 @@ import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.TemplateType;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
+import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.forms.TemplateForm;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
+    private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
+    private boolean showInactiveTemplates = false;
+    private boolean showInactiveProjects = false;
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -172,8 +182,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query;
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(
-                    findBySort(false, true, sort, offset, size), false);
+            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
@@ -207,19 +216,14 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        TemplateForm form = (TemplateForm) Helper.getManagedBeanValue("TemplateForm");
-        if (Objects.isNull(form)) {
-            form = new TemplateForm();
-        }
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
-                false);
-            if (!form.isShowClosedProcesses()) {
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false);
+            if (!showInactiveTemplates) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
-            if (!form.isShowInactiveProjects()) {
+            if (!showInactiveProjects) {
                 query.must(serviceManager.getProcessService().getQueryProjectActive(true));
             }
         }
@@ -231,18 +235,26 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         TemplateDTO templateDTO = new TemplateDTO();
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject templateJSONObject = jsonObject.getJsonObject("_source");
-        templateDTO.setTitle(templateJSONObject.getString("title"));
-        templateDTO.setOutputName(templateJSONObject.getString("outputName"));
-        templateDTO.setWikiField(templateJSONObject.getString("wikiField"));
-        templateDTO.setCreationDate(templateJSONObject.getString("creationDate"));
+        templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJSONObject));
+        templateDTO.setOutputName(TemplateTypeField.OUTPUT_NAME.getStringValue(templateJSONObject));
+        templateDTO.setWikiField(TemplateTypeField.WIKI_FIELD.getStringValue(templateJSONObject));
+        templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
+        templateDTO.setDocket(
+            serviceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));
+        templateDTO.setRuleset(
+            serviceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(templateJSONObject)));
+        WorkflowDTO workflowDTO = new WorkflowDTO();
+        workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
+        workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
+        templateDTO.setWorkflow(workflowDTO);
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(templateJSONObject.getInt("project.id"));
-            projectDTO.setTitle(templateJSONObject.getString("project.title"));
-            projectDTO.setActive(templateJSONObject.getBoolean("project.active"));
+            projectDTO.setId(TemplateTypeField.PROJECT_ID.getIntValue(templateJSONObject));
+            projectDTO.setTitle(TemplateTypeField.PROJECT_TITLE.getStringValue(templateJSONObject));
+            projectDTO.setActive(TemplateTypeField.PROJECT_ACTIVE.getBooleanValue(templateJSONObject));
             templateDTO.setProject(projectDTO);
         }
 
@@ -250,7 +262,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
-        Integer project = jsonObject.getInt("project.id");
+        Integer project = TemplateTypeField.PROJECT_ID.getIntValue(jsonObject);
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
         templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
         templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));
@@ -262,6 +274,33 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
         query.must(serviceManager.getProcessService().getQueryProjectActive(active));
         return searcher.findDocuments(query.toString(), sort, offset, size);
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram(String fileName) {
+        if (Objects.nonNull(fileName) && !fileName.equals("")) {
+            File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
+            try {
+                return new FileInputStream(tasksDiagram);
+            } catch (FileNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                return getEmptyInputStream();
+            }
+        }
+        return getEmptyInputStream();
+    }
+
+    private InputStream getEmptyInputStream() {
+        return new InputStream() {
+            @Override
+            public int read() {
+                return -1;
+            }
+        };
     }
 
     /**
@@ -303,6 +342,26 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             }
         }
         return false;
+    }
+
+    /**
+     * Set show inactive projects.
+     *
+     * @param showInactiveProjects
+     *            as boolean
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
+    }
+
+    /**
+     * Set show inactive templates.
+     *
+     * @param showInactiveTemplates
+     *            as boolean
+     */
+    public void setShowInactiveTemplates(boolean showInactiveTemplates) {
+        this.showInactiveTemplates = showInactiveTemplates;
     }
 
     /**

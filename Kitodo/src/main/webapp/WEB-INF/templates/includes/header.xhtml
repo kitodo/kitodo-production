@@ -19,16 +19,16 @@
     <div class="wrapper">
 
         <section id="portal-logo">
-            <h:outputLink value="start.jsf">
+            <h:outputLink value="desktop.jsf">
                 <h:graphicImage name="images/kitodo-logo.svg" alt="Kitodo.Production" width="160" id="kitodo-logo"/>
             </h:outputLink>
-            <h:outputLink value="start.jsf">
+            <h:outputLink value="desktop.jsf">
                 <h:graphicImage name="images/kitodo-icon.svg" alt="Kitodo.Production" width="40" id="kitodo-icon"/>
             </h:outputLink>
         </section>
 
         <section id="portal-search">
-            <h:form id="search-form" action="">
+            <h:form id="search-form" action="" style="display:none">
                 <p:inputText id="search-field" a:placeholder="#{msgs.searchPlaceholder}"/><p:inputText id="search-field-short" a:placeholder="#{msgs.search}"/><button type="submit"><i class="fa fa-search"/></button>
             </h:form>
         </section>
@@ -116,6 +116,22 @@
                                     </h:outputText>
                                 </h3></li>
                                 <li><h:link value="#{msgs.userData}" outcome="userConfiguration"/></li>
+                                <li>
+                                    <table>
+                                        <tr>
+                                            <td width="100px">
+                                                <h:outputText value="#{msgs.languages}"/>
+                                            </td>
+                                            <ui:repeat value="#{SpracheForm.supportedLocales}" var="entry">
+                                                <td width="50px">
+                                                    <h:commandButton action="#{SpracheForm.setLanguage(entry['id'])}"
+                                                                     image="#{request.contextPath}/#{entry['flag']}"
+                                                                     style="width:40px;height: 30px;"/>
+                                                </td>
+                                            </ui:repeat>
+                                        </tr>
+                                    </table>
+                                </li>
                                 <li><h:outputLink value="#{request.contextPath}/logout"
                                                   id="logout">#{msgs.logout}</h:outputLink></li>
                             </ul>

@@ -21,7 +21,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView>
+        <p:tabView id="userConfigurationTabView">
             <p:tab title="#{msgs.settings}">
                 <ui:include src="/WEB-INF/templates/includes/userConfiguration/userSettings.xhtml"/>
             </p:tab>
@@ -32,7 +32,7 @@
     </ui:define>
 
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><a href="">#{msgs.userConfiguration}</a></li>
     </ui:define>
 </ui:composition>

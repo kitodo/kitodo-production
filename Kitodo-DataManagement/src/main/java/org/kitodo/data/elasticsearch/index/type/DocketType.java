@@ -31,11 +31,11 @@ public class DocketType extends BaseType<Docket> {
         String clientName = Objects.nonNull(docket.getClient()) ? docket.getClient().getName() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(DocketTypeField.TITLE.getName(), preventNull(docket.getTitle()));
-        jsonObjectBuilder.add(DocketTypeField.FILE.getName(), preventNull(docket.getFile()));
-        jsonObjectBuilder.add(DocketTypeField.ACTIVE.getName(), docket.isActive());
-        jsonObjectBuilder.add(DocketTypeField.CLIENT_ID.getName(), clientId);
-        jsonObjectBuilder.add(DocketTypeField.CLIENT_NAME.getName(), clientName);
+        jsonObjectBuilder.add(DocketTypeField.TITLE.getKey(), preventNull(docket.getTitle()));
+        jsonObjectBuilder.add(DocketTypeField.FILE.getKey(), preventNull(docket.getFile()));
+        jsonObjectBuilder.add(DocketTypeField.ACTIVE.getKey(), docket.isActive());
+        jsonObjectBuilder.add(DocketTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObjectBuilder.add(DocketTypeField.CLIENT_NAME.getKey(), clientName);
         return jsonObjectBuilder.build();
     }
 }

@@ -433,8 +433,9 @@ main {
     display: block;
     position: relative;
     z-index: 2;
-    margin-bottom: 80px;
+    margin-bottom: 100px;
     padding: 0;
+    overflow-y: hidden;
     }
 
 body.first-visit main {
@@ -445,6 +446,81 @@ body.first-visit main {
 section#content-section {
     background: #fff;
     height: 500px;
+}
+
+#desktopGrid,
+#desktopGrid_content {
+    background: none;
+    height: inherit;
+}
+
+#desktopGrid_content {
+    display: flex;
+    flex-direction: column;
+}
+
+#desktopGrid .ui-grid-row {
+    flex-basis: 50%;
+    display: flex;
+    overflow-y: hidden;
+}
+
+#desktopGrid th.actionsColumn span,
+#desktopGrid td.actionsColumn form {
+    float: right;
+}
+
+#desktopGrid td.actionsColumn form a:last-of-type {
+    margin-right: 0;
+}
+
+#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell {
+    background-color: white !important;
+    padding: 0;
+    margin: 8px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
+    min-height: 90%;
+}
+
+#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell .ui-widget-content {
+    padding: 0;
+}
+
+#desktopGrid_content .desktop-widget,
+#desktopGrid_content .desktop-widget > div{
+    height: 100%;
+}
+
+.task-table-column, .process-table-column {
+    width: 25% !important;
+}
+
+.project-table-column {
+    width: 33% !important;
+}
+
+.statistic-table-column {
+    width: 50% !important;
+}
+
+#desktopGrid_content .content-header {
+    height: unset !important;
+}
+
+#desktopGrid .ui-datatable-scrollable-body {
+    overflow-y: scroll;
+}
+
+#desktopGrid .ui-datatable-scrollable-header-box {
+    border-top: 3px solid #999;
+    background: #d8d8d8;
+}
+
+.desktop-widget .ui-widget-content {
+    border-radius: 3px;
 }
 
 #listWrapper, section#content-section {
@@ -594,6 +670,15 @@ section#content-section {
 
 .ui-datatable th .ui-column-filter {
     display: none;
+}
+
+.ui-tabs-panels {
+    overflow-y: scroll;
+    background: white;
+}
+
+.ui-tabs-panels.autoscroll {
+    overflow: hidden;
 }
 
 .ui-tabs .ui-tabs-panel > div.mets-file-groups,
@@ -753,9 +838,10 @@ footer {
 #footer-content {
     width: 100%;
     /*background: #f94a15;*/
-    padding: 60px 0px 30px 0px;
+    padding: 64px 0px 16px 0px;
     display: block;
     text-align: center;
+    font-size: 0.8rem;
     }
 
 #footer-content p {
@@ -763,7 +849,29 @@ footer {
     }
 
 #footer-content p span {
-    color: #1b2b36;
+    color: #999;
+    }
+
+#footer-meta-menu {
+    list-style-type: none;
+    }
+
+#footer-meta-menu li {
+    display: inline;
+    }
+
+#footer-meta-menu li a {
+    background: #999;
+    color: #fff;
+    text-decoration: none;
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+    }
+
+#footer-meta-menu li a:hover {
+    background: #005182;
     }
 
 /* Primefaces theme */
@@ -934,7 +1042,7 @@ min 700px
 @media only screen and (min-width: 700px) {
 
     #portal-header {
-        margin-top: 30px;
+        margin-top: 20px;
         }
 
     #portal-header .wrapper {
@@ -1002,7 +1110,8 @@ min 700px
         padding: 30px;
         }
 
-    #header-nav li ul li a, #header-nav li ul li div {
+    #header-nav li ul li a, #header-nav li ul li div,
+    #header-nav li ul li table {
        padding: 12px 30px;
         }
 

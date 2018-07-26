@@ -19,8 +19,8 @@
     <p:panel>
         <p:selectBooleanButton
                 onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg"
-                value="#{ProjekteForm.lockedMets}">
+                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
+                id="metsLockedButton" value="#{ProjekteForm.lockedMets}">
             <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
         </p:selectBooleanButton>
     </p:panel>

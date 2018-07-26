@@ -11,13 +11,17 @@
 
 package org.kitodo.selenium.testframework;
 
+import de.sub.goobi.config.ConfigCore;
+
+import java.io.File;
 import java.net.URI;
 
+import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
+import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
@@ -36,6 +40,15 @@ public class BaseTestSelenium {
 
         fileService.createDirectory(URI.create(""), "diagrams");
         FileLoader.createDiagramBaseFile();
+        FileLoader.createConfigProjectsFile();
+        FileLoader.createDigitalCollectionsFile();
+
+        if (SystemUtils.IS_OS_LINUX) {
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
+            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
+        }
 
         Browser.Initialize();
     }
@@ -44,17 +57,21 @@ public class BaseTestSelenium {
     public static void tearDown() throws Exception {
         Browser.close();
 
+        if (SystemUtils.IS_OS_LINUX) {
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
+            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
+        }
+
+        FileLoader.deleteDigitalCollectionsFile();
+        FileLoader.deleteConfigProjectsFile();
         FileLoader.deleteDiagramBaseFile();
         fileService.delete(URI.create("diagrams"));
 
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
-    }
-
-    @Before
-    public void login() throws Exception {
-        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     /**

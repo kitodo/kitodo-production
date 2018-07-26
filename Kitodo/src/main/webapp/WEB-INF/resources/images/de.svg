@@ -1,0 +1,17 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<svg xmlns="http://www.w3.org/2000/svg" id="flag-icon-css-de" width="512" height="512">
+  <path fill="#ffce00" d="M0 341.3h512V512H0z"/>
+  <path d="M0 0h512v170.7H0z"/>
+  <path fill="#d00" d="M0 170.7h512v170.6H0z"/>
+</svg>

@@ -62,10 +62,10 @@ public class DocketTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
 
         assertEquals("Key title doesn't match to given value!", "default",
-            actual.getString(DocketTypeField.TITLE.getName()));
+            DocketTypeField.TITLE.getStringValue(actual));
         assertEquals("Key file doesn't match to given value!", "docket.xsl",
-            actual.getString(DocketTypeField.FILE.getName()));
-        assertTrue("Key file doesn't match to given value!", actual.getBoolean(DocketTypeField.ACTIVE.getName()));
+            DocketTypeField.FILE.getStringValue(actual));
+        assertTrue("Key file doesn't match to given value!", DocketTypeField.ACTIVE.getBooleanValue(actual));
     }
 
     @Test

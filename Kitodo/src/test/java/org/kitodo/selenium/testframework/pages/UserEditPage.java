@@ -12,14 +12,11 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class UserEditPage extends Page {
+public class UserEditPage extends Page<UserEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
     private WebElement saveUserButton;
@@ -52,6 +49,11 @@ public class UserEditPage extends Page {
         super("pages/userEdit.jsf");
     }
 
+    @Override
+    public UserEditPage goTo() {
+        return null;
+    }
+
     public UserEditPage insertUserData(User user) {
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
@@ -63,9 +65,7 @@ public class UserEditPage extends Page {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButton(saveUserButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
+        clickButtonAndWaitForRedirect(saveUserButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

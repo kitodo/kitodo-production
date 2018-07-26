@@ -24,7 +24,7 @@ import org.openqa.selenium.support.FindBy;
 
 import static org.awaitility.Awaitility.await;
 
-public class SystemPage extends Page {
+public class SystemPage extends Page<SystemPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "systemTabView:indexing_form:indexingTable")
@@ -51,6 +51,7 @@ public class SystemPage extends Page {
      *
      * @return The system page.
      */
+    @Override
     public SystemPage goTo() throws Exception {
         Pages.getTopNavigation().gotoSystem();
         return this;

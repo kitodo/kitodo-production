@@ -11,19 +11,31 @@
 
 package org.kitodo.selenium;
 
+import static org.awaitility.Awaitility.with;
+
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.awaitility.Duration;
 import org.awaitility.core.Predicate;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 
-import static org.awaitility.Awaitility.with;
-
 public class IndexingST extends BaseTestSelenium {
+
+    @Before
+    public void login() throws Exception {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+    }
+
+    @After
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+    }
 
     @Test
     public void reindexingTest() throws Exception {

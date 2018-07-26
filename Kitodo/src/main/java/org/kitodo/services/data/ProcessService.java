@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.ProzessverwaltungForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
@@ -119,6 +118,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private final FileService fileService = serviceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static ProcessService instance = null;
+    private boolean showClosedProcesses = false;
+    private boolean showInactiveProjects = false;
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
     private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
@@ -198,18 +199,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        ProzessverwaltungForm form = (ProzessverwaltungForm) Helper.getManagedBeanValue("ProzessverwaltungForm");
-        if (Objects.isNull(form)) {
-            form = new ProzessverwaltungForm();
-        }
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
             query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false);
-            if (!form.isShowClosedProcesses()) {
+            if (!this.showClosedProcesses) {
                 query.must(getQuerySortHelperStatus(false));
             }
-            if (!form.isShowInactiveProjects()) {
+            if (!this.showInactiveProjects) {
                 query.must(getQueryProjectActive(true));
             }
         }
@@ -421,7 +418,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private QueryBuilder getQueryProjectId(Integer id) {
-        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getName(), id, true);
+        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), id, true);
     }
 
     /**
@@ -432,7 +429,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return QueryBuilder object
      */
     public QueryBuilder getQueryProjectTitle(String title) {
-        return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getName(), title, true, Operator.AND);
+        return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title, true, Operator.AND);
     }
 
     /**
@@ -443,7 +440,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific docket
      */
     public List<JsonObject> findByDocket(Docket docket) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getName(), docket.getId(), true);
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docket.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -455,7 +452,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return list of JSON objects with processes for specific ruleset
      */
     public List<JsonObject> findByRuleset(Ruleset ruleset) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getName(), ruleset.getId(), true);
+        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), ruleset.getId(), true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -609,8 +606,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQuerySortHelperStatus(boolean closed) {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getName(), "100000000", closed));
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getName(), "100000000000", closed));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000", closed));
+        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000000", closed));
         return query;
     }
 
@@ -623,7 +620,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public QueryBuilder getQueryProjectActive(boolean active) throws DataException {
         List<ProjectDTO> projects = serviceManager.getProjectService().findByActive(active, true);
-        return createSetQuery(ProcessTypeField.PROJECT_ID.getName(),
+        return createSetQuery(ProcessTypeField.PROJECT_ID.getKey(),
             serviceManager.getFilterService().collectIds(projects), true);
     }
 
@@ -635,7 +632,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return sort
      */
     public String sortByCreationDate(SortOrder sortOrder) {
-        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getName()).order(sortOrder).toString();
+        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getKey()).order(sortOrder).toString();
     }
 
     /**
@@ -669,19 +666,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         ProcessDTO processDTO = new ProcessDTO();
         processDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject processJSONObject = jsonObject.getJsonObject("_source");
-        processDTO.setTitle(processJSONObject.getString(ProcessTypeField.TITLE.getName()));
-        processDTO.setOutputName(processJSONObject.getString(ProcessTypeField.OUTPUT_NAME.getName()));
-        processDTO.setWikiField(processJSONObject.getString(ProcessTypeField.WIKI_FIELD.getName()));
-        processDTO.setCreationDate(processJSONObject.getString(ProcessTypeField.CREATION_DATE.getName()));
-        processDTO.setPropertiesSize(
-            getSizeOfRelatedPropertyForDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName()));
-        processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getName(),
+        processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(processJSONObject));
+        processDTO.setOutputName(ProcessTypeField.OUTPUT_NAME.getStringValue(processJSONObject));
+        processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
+        processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
+        processDTO.setPropertiesSize(ProcessTypeField.PROPERTIES.getSizeOfProperty(processJSONObject));
+        processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getKey(),
             serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));
-        processDTO.setSortHelperArticles(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_ARTICLES.getName()));
-        processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getName()));
-        processDTO.setSortHelperImages(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_IMAGES.getName()));
-        processDTO.setSortHelperMetadata(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_METADATA.getName()));
+        processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(processJSONObject));
+        processDTO.setSortHelperDocstructs(processJSONObject.getInt(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getKey()));
+        processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(processJSONObject));
+        processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(processJSONObject));
         processDTO.setTifDirectoryExists(
             checkIfTifDirectoryExists(processDTO.getId(), processDTO.getTitle(), processDTO.getProcessBaseUri()));
         processDTO.setBatches(getBatchesForProcessDTO(processJSONObject));
@@ -689,23 +685,23 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             convertRelatedJSONObjects(processJSONObject, processDTO);
         } else {
             ProjectDTO projectDTO = new ProjectDTO();
-            projectDTO.setId(processJSONObject.getInt(ProcessTypeField.PROJECT_ID.getName()));
-            projectDTO.setTitle(processJSONObject.getString(ProcessTypeField.PROJECT_TITLE.getName()));
-            projectDTO.setActive(processJSONObject.getBoolean(ProcessTypeField.PROJECT_ACTIVE.getName()));
+            projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(processJSONObject));
+            projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(processJSONObject));
+            projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(processJSONObject));
             processDTO.setProject(projectDTO);
         }
         return processDTO;
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProcessDTO processDTO) throws DataException {
-        Integer project = jsonObject.getInt(ProcessTypeField.PROJECT_ID.getName());
+        Integer project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
             processDTO.setProject(serviceManager.getProjectService().findById(project));
         }
 
         processDTO.setBatchID(getBatchID(processDTO));
         // TODO: leave it for now - right now it displays only status
-        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getName(),
+        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             serviceManager.getTaskService()));
         processDTO.setImageFolderInUse(isImageFolderInUse(processDTO));
         processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
@@ -715,14 +711,14 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setBlockedUser(getBlockedUser(processDTO));
     }
 
-    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) {
-        JsonArray jsonArray = jsonObject.getJsonArray(ProcessTypeField.BATCHES.getName());
+    private List<BatchDTO> getBatchesForProcessDTO(JsonObject jsonObject) throws DataException {
+        JsonArray jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
         List<BatchDTO> batchDTOList = new ArrayList<>();
         for (JsonValue singleObject : jsonArray) {
             BatchDTO batchDTO = new BatchDTO();
-            batchDTO.setId(singleObject.asJsonObject().getInt(BatchTypeField.ID.getName()));
-            batchDTO.setTitle(singleObject.asJsonObject().getString(BatchTypeField.TITLE.getName()));
-            batchDTO.setType(singleObject.asJsonObject().getString(BatchTypeField.TYPE.getName()));
+            batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject.asJsonObject()));
+            batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject.asJsonObject()));
+            batchDTO.setType(BatchTypeField.TYPE.getStringValue(singleObject.asJsonObject()));
             batchDTOList.add(batchDTO);
         }
         return batchDTOList;
@@ -1672,7 +1668,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return amount as Long
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-        return count(createSimpleQuery(ProcessTypeField.TITLE.getName(), title, true, Operator.AND).toString());
+        return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND).toString());
     }
 
     /**
@@ -2180,6 +2176,24 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setMimetype(pfg.getMimeType());
         virtualFileGroup.setFileSuffix(pfg.getSuffix());
         return virtualFileGroup;
+    }
+
+    /**
+     * Set showClosedProcesses.
+     *
+     * @param showClosedProcesses as boolean
+     */
+    public void setShowClosedProcesses(boolean showClosedProcesses) {
+        this.showClosedProcesses = showClosedProcesses;
+    }
+
+    /**
+     * Set showInactiveProjects.
+     *
+     * @param showInactiveProjects as boolean
+     */
+    public void setShowInactiveProjects(boolean showInactiveProjects) {
+        this.showInactiveProjects = showInactiveProjects;
     }
 
     /**

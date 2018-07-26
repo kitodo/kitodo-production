@@ -31,13 +31,13 @@ public class RulesetType extends BaseType<Ruleset> {
         String clientName = Objects.nonNull(ruleset.getClient()) ? ruleset.getClient().getName() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(RulesetTypeField.TITLE.getName(), preventNull(ruleset.getTitle()));
-        jsonObjectBuilder.add(RulesetTypeField.FILE.getName(), preventNull(ruleset.getFile()));
-        jsonObjectBuilder.add(RulesetTypeField.ORDER_METADATA_BY_RULESET.getName(), ruleset.isOrderMetadataByRuleset());
-        jsonObjectBuilder.add(RulesetTypeField.FILE_CONTENT.getName(), "");
-        jsonObjectBuilder.add(RulesetTypeField.ACTIVE.getName(), ruleset.isActive());
-        jsonObjectBuilder.add(RulesetTypeField.CLIENT_ID.getName(), clientId);
-        jsonObjectBuilder.add(RulesetTypeField.CLIENT_NAME.getName(), clientName);
+        jsonObjectBuilder.add(RulesetTypeField.TITLE.getKey(), preventNull(ruleset.getTitle()));
+        jsonObjectBuilder.add(RulesetTypeField.FILE.getKey(), preventNull(ruleset.getFile()));
+        jsonObjectBuilder.add(RulesetTypeField.ORDER_METADATA_BY_RULESET.getKey(), ruleset.isOrderMetadataByRuleset());
+        jsonObjectBuilder.add(RulesetTypeField.FILE_CONTENT.getKey(), "");
+        jsonObjectBuilder.add(RulesetTypeField.ACTIVE.getKey(), ruleset.isActive());
+        jsonObjectBuilder.add(RulesetTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObjectBuilder.add(RulesetTypeField.CLIENT_NAME.getKey(), clientName);
         return jsonObjectBuilder.build();
     }
 }

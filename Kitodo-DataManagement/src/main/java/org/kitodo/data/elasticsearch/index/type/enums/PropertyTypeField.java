@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum PropertyTypeField {
+public enum PropertyTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -28,12 +28,8 @@ public enum PropertyTypeField {
         this.name = name;
     }
 
-    /**
-     * Get name.
-     *
-     * @return value of name
-     */
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }

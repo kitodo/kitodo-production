@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.io.BackupFileRotation;
@@ -69,11 +69,9 @@ public class FileService {
     public boolean createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException {
         if (!fileExist(parentFolderUri.resolve(directoryName))) {
             CommandService commandService = serviceManager.getCommandService();
-            String path = ConfigCore.getKitodoDataDirectory() + parentFolderUri + "/" + directoryName + "/";
-            path = path.replace("//", "/");
-            if (SystemUtils.IS_OS_WINDOWS) {
-                path = path.replace("/", "\\");
-            }
+            String path = FileSystems.getDefault()
+                    .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
+                    .normalize().toAbsolutePath().toString();
             List<String> commandParameter = Collections.singletonList(path);
             File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
             CommandResult commandResult = commandService.runCommand(script, commandParameter);

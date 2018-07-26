@@ -14,11 +14,7 @@ package org.kitodo.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +46,10 @@ public class TemplateForm extends TemplateBaseForm {
 
     private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
-    private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
     private Template template;
     private Task task;
+    private boolean showInactiveTemplates = false;
     private String title;
     private transient ServiceManager serviceManager = new ServiceManager();
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -68,24 +64,23 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Check if closed processes should be shown.
+     * Check if inactive templates should be shown.
      *
      * @return true or false
      */
-    @Override
-    public boolean isShowClosedProcesses() {
-        return this.showClosedProcesses;
+    public boolean isShowInactiveTemplates() {
+        return this.showInactiveTemplates;
     }
 
     /**
-     * Set if closed processes should be shown.
+     * Set if inactive templates should be shown.
      *
-     * @param showClosedProcesses
+     * @param showInactiveTemplates
      *            true or false
      */
-    @Override
-    public void setShowClosedProcesses(boolean showClosedProcesses) {
-        this.showClosedProcesses = showClosedProcesses;
+    public void setShowInactiveTemplates(boolean showInactiveTemplates) {
+        this.showInactiveTemplates = showInactiveTemplates;
+        serviceManager.getTemplateService().setShowInactiveTemplates(showInactiveTemplates);
     }
 
     /**
@@ -107,6 +102,7 @@ public class TemplateForm extends TemplateBaseForm {
     @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
+        serviceManager.getTemplateService().setShowInactiveProjects(showInactiveProjects);
     }
 
     /**
@@ -286,27 +282,6 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
-    }
-
-    /**
-     * Get diagram image for current template.
-     *
-     * @return diagram image file
-     */
-    public InputStream getTasksDiagram() {
-        String fileName = this.template.getWorkflow().getFileName() + ".svg";
-        File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName);
-        try {
-            return new FileInputStream(tasksDiagram);
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            return new InputStream() {
-                @Override
-                public int read() {
-                    return -1;
-                }
-            };
-        }
     }
 
     /**

@@ -108,18 +108,17 @@ public class GranularityForm {
      *         in faces_config.xml
      */
     public String createProcessesClick() {
-        ProzesskopieForm prozesskopieForm = (ProzesskopieForm) Helper.getManagedBeanValue("ProzesskopieForm");
-        if (!prozesskopieForm.isContentValid(false)) {
+        //TODO: find more elegant way to validate content from processCopyForm - avoid injection
+        /*if (!processCopyForm.isContentValid(false)) {
             return null;
         }
         if (course == null || course.getNumberOfProcesses() < 1) {
             Helper.setErrorMessage("errorDataIncomplete", "granularity.header");
             return null;
         }
-        Helper.removeManagedBean("ProzesskopieForm");
-        CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(prozesskopieForm, course,
+        CreateNewspaperProcessesTask createProcesses = new CreateNewspaperProcessesTask(processCopyForm, course,
                 generateBatches);
-        TaskManager.addTask(createProcesses);
+        TaskManager.addTask(createProcesses);*/
         return "/pages/taskmanager";
     }
 

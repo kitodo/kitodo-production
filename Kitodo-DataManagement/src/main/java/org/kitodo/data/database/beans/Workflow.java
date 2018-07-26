@@ -103,7 +103,7 @@ public class Workflow extends BaseIndexedBean {
      *
      * @return true or false
      */
-    public Boolean isActive() {
+    public boolean isActive() {
         if (Objects.isNull(this.active)) {
             this.active = true;
         }
@@ -124,7 +124,7 @@ public class Workflow extends BaseIndexedBean {
      *
      * @return true or false
      */
-    public Boolean isReady() {
+    public boolean isReady() {
         if (Objects.isNull(this.ready)) {
             this.ready = false;
         }

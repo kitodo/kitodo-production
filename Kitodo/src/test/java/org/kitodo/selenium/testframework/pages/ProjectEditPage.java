@@ -11,15 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import org.apache.commons.lang.SystemUtils;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProjectEditPage extends Page {
 
@@ -43,16 +40,13 @@ public class ProjectEditPage extends Page {
     @FindBy(className = "ui-selectonemenu-trigger")
     private WebElement selectTrigger;
 
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:startdate_input")
-    private WebElement startDateInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:enddate_input")
-    private WebElement endDateInput;
-
     public ProjectEditPage() {
         super("pages/projectEdit.jsf");
+    }
+
+    @Override
+    public RulesetEditPage goTo() {
+        return null;
     }
 
     public ProjectEditPage insertProjectData(Project project) {
@@ -64,22 +58,11 @@ public class ProjectEditPage extends Page {
         selectTrigger.click();
         WebElement option = Browser.getDriver().findElement(By.id("editForm:projectTabView:client_1"));
         option.click();
-        startDateInput.clear();
-        endDateInput.clear();
-        if (SystemUtils.USER_LANGUAGE.equals("en")) {
-            startDateInput.sendKeys("08/05/18");
-            endDateInput.sendKeys("08/05/19");
-        } else {
-            startDateInput.sendKeys("05.08.18");
-            endDateInput.sendKeys("05.08.19");
-        }
         return this;
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButton(saveProjectButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getProjectsPage().getUrl()));
+        clickButtonAndWaitForRedirect(saveProjectButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

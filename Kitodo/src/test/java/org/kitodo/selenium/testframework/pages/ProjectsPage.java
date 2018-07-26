@@ -11,22 +11,17 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
-import org.kitodo.selenium.testframework.Browser;
+import java.util.List;
+
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
-import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
-
-public class ProjectsPage extends Page {
+public class ProjectsPage extends Page<ProjectsPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView")
@@ -39,6 +34,10 @@ public class ProjectsPage extends Page {
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView:templateTable_data")
     private WebElement templatesTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:workflowTable_data")
+    private WebElement workflowsTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView:docketTable_data")
@@ -57,12 +56,20 @@ public class ProjectsPage extends Page {
     private WebElement newProjectButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "projectForm:newWorkflowButton")
+    private WebElement newWorkflowButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newDocketButton")
     private WebElement newDocketButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    private WebElement createProcess;
 
     public ProjectsPage() {
         super("pages/projects.jsf");
@@ -85,11 +92,7 @@ public class ProjectsPage extends Page {
      * @return The users page.
      */
     public ProjectsPage switchToTabByIndex(int index) throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        clickTab(index, projectsTabView);
-        return this;
+        return switchToTabByIndex(index, projectsTabView);
     }
 
     public int countListedProjects() throws Exception {
@@ -102,6 +105,11 @@ public class ProjectsPage extends Page {
     public int countListedTemplates() throws Exception {
         switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
         return getRowsOfTable(templatesTable).size();
+    }
+
+    public int countListedWorkflows() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+        return getRowsOfTable(workflowsTable).size();
     }
 
     public int countListedDockets() throws Exception {
@@ -124,6 +132,16 @@ public class ProjectsPage extends Page {
             goTo();
         }
         return getTableDataByColumn(projectsTable, 1);
+    }
+
+    /**
+     * Returns a list of all workflow titles which were displayed on workflows page.
+     *
+     * @return list of workflow titles
+     */
+    public List<String> getWorkflowTitles() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+        return getTableDataByColumn(workflowsTable, 0);
     }
 
     /**
@@ -150,6 +168,10 @@ public class ProjectsPage extends Page {
         return getTableDataByColumn(rulesetsTable, 0);
     }
 
+    public void createNewProcess() {
+        createProcess.click();
+    }
+
     /**
      * Go to edit page for creating a new project.
      *
@@ -160,12 +182,23 @@ public class ProjectsPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new project button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newProjectButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getProjectEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newProjectButton, Pages.getProjectEditPage().getUrl());
         return Pages.getProjectEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new workflow.
+     *
+     * @return workflow edit page
+     */
+    public WorkflowEditPage createNewWorkflow() throws Exception {
+
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        clickButtonAndWaitForRedirect(newWorkflowButton, Pages.getWorkflowEditPage().getUrl());
+        return Pages.getWorkflowEditPage();
     }
 
     /**
@@ -178,11 +211,7 @@ public class ProjectsPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new docket button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newDocketButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getDocketEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newDocketButton, Pages.getDocketEditPage().getUrl());
         return Pages.getDocketEditPage();
     }
 
@@ -196,11 +225,7 @@ public class ProjectsPage extends Page {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new ruleset button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newRulesetButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getRulesetEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
     }
 }

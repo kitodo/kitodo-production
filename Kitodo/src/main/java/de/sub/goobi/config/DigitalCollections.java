@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.goobi.production.constants.FileNames;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -101,15 +100,14 @@ public class DigitalCollections {
     }
 
     private static Element getRoot() throws JDOMException, IOException {
-        String fileName = FilenameUtils.concat(ConfigCore.getKitodoConfigDirectory(),
-            FileNames.DIGITAL_COLLECTIONS_FILE);
-        if (!(new File(fileName).exists())) {
-            throw new FileNotFoundException("File not found: " + fileName);
+        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.DIGITAL_COLLECTIONS_FILE);
+        if (!(file.exists())) {
+            throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
         }
 
         // import file and determine root
         SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(new File(fileName));
+        Document doc = builder.build(file);
         return doc.getRootElement();
     }
 

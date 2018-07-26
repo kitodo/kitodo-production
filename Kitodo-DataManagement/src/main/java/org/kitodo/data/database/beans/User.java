@@ -63,6 +63,9 @@ public class User extends BaseIndexedBean {
     @Column(name = "metadataLanguage")
     private String metadataLanguage;
 
+    @Column(name = "language")
+    private String language;
+
     @Column(name = "withMassDownload")
     private boolean withMassDownload = false;
 
@@ -98,6 +101,7 @@ public class User extends BaseIndexedBean {
         this.projects = new ArrayList<>();
         this.tasks = new ArrayList<>();
         this.filters = new ArrayList<>();
+        this.setLanguage("de");
     }
 
     /**
@@ -110,6 +114,7 @@ public class User extends BaseIndexedBean {
 
         this.setId(user.getId());
         this.setIndexAction(user.getIndexAction());
+        this.setLanguage(user.getLanguage());
         this.active = user.active;
         this.configProductionDateShow = user.configProductionDateShow;
         this.css = user.css;
@@ -287,6 +292,25 @@ public class User extends BaseIndexedBean {
 
     public void setMetadataLanguage(String metadataLanguage) {
         this.metadataLanguage = metadataLanguage;
+    }
+
+    /**
+     * Get user language.
+     *
+     * @return user language
+     */
+    public String getLanguage() {
+        return language;
+    }
+
+    /**
+     * Set user language.
+     *
+     * @param language
+     *            String
+     */
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
     public String getLdapLogin() {

@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch.index.type.enums;
 
-public enum WorkflowTypeField {
+public enum WorkflowTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
@@ -25,12 +25,8 @@ public enum WorkflowTypeField {
         this.name = name;
     }
 
-    /**
-     * Get name.
-     *
-     * @return value of name
-     */
-    public String getName() {
+    @Override
+    public String toString() {
         return name;
     }
 }
