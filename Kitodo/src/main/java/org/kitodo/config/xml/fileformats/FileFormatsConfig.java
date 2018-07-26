@@ -11,10 +11,8 @@
 
 package org.kitodo.config.xml.fileformats;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.nio.file.FileSystems;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,9 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.myfaces.util.FilenameUtils;
-import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.config.Config;
-import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
  * A {@code kitodo_fileFormats.xml} config file. This class corresponds to the
@@ -44,9 +40,8 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 @XmlRootElement(name = "kitodo_fileFormats")
 public class FileFormatsConfig {
 
-    private static final URI CONFIG_FILE_URI = FileSystems.getDefault()
-            .getPath(FilenameUtils.concat(Config.getKitodoConfigDirectory(), "kitodo_fileFormats.xml")).toAbsolutePath()
-            .toUri();
+    private final static File CONFIG_FILE = new File(
+            FilenameUtils.concat(Config.getKitodoConfigDirectory(), "kitodo_fileFormats.xml"));
 
     @XmlElement(required = true)
     protected List<FileFormat> fileFormat;
@@ -62,13 +57,9 @@ public class FileFormatsConfig {
      *             incorrect
      */
     public static List<FileFormat> getFileFormats() throws IOException, JAXBException {
-        KitodoServiceLoader<FileManagementInterface> fileManagementInterface = new KitodoServiceLoader<>(
-                FileManagementInterface.class);
-        try (InputStream bytes = fileManagementInterface.loadModule().read(CONFIG_FILE_URI)) {
-            Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
-            FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(bytes);
-            return read.fileFormat;
-        }
+        Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
+        FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
+        return read.fileFormat;
     }
 
     /**
