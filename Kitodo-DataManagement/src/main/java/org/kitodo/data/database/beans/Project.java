@@ -55,10 +55,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * The constant ANCHOR_SEPARATOR holds the character U+00A6
-     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors, if
-     * several of them are needed in one project. The anchors must then be listed
-     * the hierarchical order they have to be applied, that is the topmost anchor in
-     * first place, followed by the second one and so on.
+     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
+     * if several of them are needed in one project. The anchors must then be
+     * listed the hierarchical order they have to be applied, that is the
+     * topmost anchor in first place, followed by the second one and so on.
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
 
@@ -162,13 +162,16 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
+    /**
+     * The variable {@code template} is populated from
+     * {@link org.goobi.webapi.resources.Projects} when calling
+     * <code><i>${SERVLET_CONTEXT}</i>/rest/projects</code> to output the
+     * templates available within a project as XML child nodes of the respective
+     * project.
+     */
     @Transient
     @XmlElement(name = "template")
-    public List<Template> template; // The ‘template’ variable is populated from
-                                   // org.goobi.webapi.resources.Projects
-    // when calling ${SERVLET_CONTEXT}/rest/projects to output the templates
-    // available within a project as XML child
-    // nodes of the respective project.
+    public List<Template> template;
 
     /**
      * Constructor.
@@ -232,7 +235,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     /**
      * Set templates.
      *
-     * @param templates as list of templates
+     * @param templates
+     *            as list of templates
      */
     public void setTemplates(List<Template> templates) {
         this.templates = templates;
