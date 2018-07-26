@@ -14,11 +14,7 @@ package org.kitodo.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -286,27 +282,6 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
-    }
-
-    /**
-     * Get diagram image for current template.
-     *
-     * @return diagram image file
-     */
-    public InputStream getTasksDiagram() {
-        String fileName = this.template.getWorkflow().getFileName() + ".svg";
-        File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName);
-        try {
-            return new FileInputStream(tasksDiagram);
-        } catch (FileNotFoundException e) {
-            logger.error(e.getMessage(), e);
-            return new InputStream() {
-                @Override
-                public int read() {
-                    return -1;
-                }
-            };
-        }
     }
 
     /**
