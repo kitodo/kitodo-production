@@ -30,6 +30,8 @@ class Query {
     private static final String OR = "%2B"; // URL-encoded +
     private static final String NOT = "-";
 
+    private int maximumRecords = 0;
+
     // Example: Kalliope-URL returning the mods data for a given ead.id
     // http://kalliope-verbund.info/sru?version=1.2&operation=searchRetrieve&query=ead.id=DE-611-HS-2256337&recordSchema=mods
 
@@ -160,7 +162,22 @@ class Query {
         }
     }
 
+    /**
+     * Set maximum records to retrieve for a query.
+     * Value is added to getQueryUrl() call if value is greater then 0.
+     *
+     * @param maximumRecords
+     *                  number of maximum records for retrieving
+     */
+    void setMaximumRecords(int maximumRecords) {
+        this.maximumRecords = maximumRecords;
+    }
+
     String getQueryUrl() {
-        return this.queryUrl;
+        if (this.maximumRecords > 0) {
+            return this.queryUrl + "&maximumRecords=" + this.maximumRecords;
+        } else {
+            return this.queryUrl;
+        }
     }
 }

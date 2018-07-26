@@ -29,6 +29,7 @@
         <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
         <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
         <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
+        <maximumChildRecords>50</maximumChildRecords>
         <searchFields>
             <searchField label="Title" value="ead.title" />
             <searchField label="Creator" value="ead.creator" />
