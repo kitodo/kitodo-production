@@ -12,6 +12,7 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.awaitility.core.Predicate;
 import org.kitodo.selenium.testframework.Browser;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -90,6 +92,31 @@ public abstract class Page<T> {
         return !isAt();
     }
 
+    /**
+     * Find row matching to give table, click toggle row and return index of found
+     * row.
+     * 
+     * @param dataTable
+     *            table for search
+     * @param objectTitle
+     *            searched row
+     * @return index of found row
+     */
+    int triggerRowToggle(WebElement dataTable, String objectTitle) {
+        List<WebElement> tableRows = getRowsOfTable(dataTable);
+
+        for (int i = 0; i < tableRows.size(); i++) {
+            WebElement tableRow = tableRows.get(i);
+            if (Browser.getCellDataByRow(tableRow, 1).equals(objectTitle)) {
+                tableRow.findElement(By.className("ui-row-toggler")).click();
+                return i;
+            }
+        }
+
+        throw new NotFoundException(
+                "Row for title " + objectTitle + " was not found!");
+    }
+
     @SuppressWarnings("unchecked")
     T switchToTabByIndex(int index, WebElement tabView) throws Exception {
         if (isNotAt()) {
@@ -117,14 +144,15 @@ public abstract class Page<T> {
      */
     protected void clickButtonAndWaitForRedirect(WebElement button, String url) {
         WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
-        for (int attempt = 1; attempt < 4; attempt++){
+        for (int attempt = 1; attempt < 4; attempt++) {
             try {
                 await("Wait for button clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
-                    .ignoreExceptions().until(() -> isButtonClicked.matches(button));
+                        .ignoreExceptions().until(() -> isButtonClicked.matches(button));
                 webDriverWait.until(ExpectedConditions.urlContains(url));
                 return;
             } catch (TimeoutException e) {
-                logger.error("Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
+                logger.error(
+                    "Clicking on button with id " + button.getAttribute("id") + " was not successful. Retrying now.");
             }
         }
         throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));
