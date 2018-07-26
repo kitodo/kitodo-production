@@ -1166,12 +1166,11 @@ public class Metadaten {
         }
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-            DocStructInterface temp = this.docStruct;
-            this.docStruct = docStruct;
+
             this.ajaxPageStart = this.pagesStart;
             this.ajaxPageEnd = this.pagesEnd;
-            ajaxSeitenStartUndEndeSetzen();
-            this.docStruct = temp;
+            ajaxSeitenStartUndEndeSetzen(docStruct);
+
         }
         readMetadataAsFirstTree();
     }
@@ -2031,8 +2030,9 @@ public class Metadaten {
 
     /**
      * die Seiten über die Ajax-Felder festlegen.
+     * @param docStruct
      */
-    public void ajaxSeitenStartUndEndeSetzen() {
+    public void ajaxSeitenStartUndEndeSetzen(DocStructInterface docStruct) {
         boolean startPageOk = false;
         boolean endPageOk = false;
 
@@ -2050,7 +2050,7 @@ public class Metadaten {
 
         // if pages are ok
         if (startPageOk && endPageOk) {
-            setPageStartAndEnd();
+            setPageStartAndEnd(docStruct);
         } else {
             Helper.setErrorMessage("Selected image(s) unavailable");
         }
@@ -2058,25 +2058,28 @@ public class Metadaten {
 
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
+     * @param docStruct
      */
-    public void setPageStartAndEnd() {
+    public void setPageStartAndEnd(DocStructInterface docStruct) {
         int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
         int lastPage = Integer.parseInt(this.allPagesSelectionLastPage.split(":")[0]) - 1;
 
         int selectionCount = lastPage - startPage + 1;
         if (selectionCount > 0) {
+
             /* alle bisher zugewiesenen Seiten entfernen */
-            this.docStruct.getAllToReferences().clear();
+            docStruct.getAllToReferences().clear();
             int zaehler = 0;
             while (zaehler < selectionCount) {
-                this.docStruct.addReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct(),
+                docStruct.addReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct(),
                     "logical_physical");
+                this.docStruct.removeReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct());
                 zaehler++;
             }
         } else {
             Helper.setErrorMessage("Last page before first page is not allowed");
         }
-        determinePagesStructure(this.docStruct);
+        determinePagesStructure(docStruct);
 
     }
 

@@ -61,6 +61,7 @@
                             <h:outputText value="#{msgs.firstPage}:"/>
                             <p:selectOneMenu id="selectFirstPageOnAddNode" value="#{Metadaten.pagesStart}" filter="true"
                                              filterMatchMode="startsWith">
+                                <f:selectItem itemLabel="#{msgs.firstPage}" itemValue="" />
                                 <f:selectItems value="#{Metadaten.allPages}"/>
                             </p:selectOneMenu>
                         </p:row>
@@ -69,13 +70,14 @@
                             <h:outputText value="#{msgs.lastPage}:"/>
                             <p:selectOneMenu id="selectLastPageOnAddNode" value="#{Metadaten.pagesEnd}" filter="true"
                                              filterMatchMode="startsWith">
+                                <f:selectItem itemLabel="#{msgs.lastPage}" itemValue="" />
                                 <f:selectItems value="#{Metadaten.allPages}"/>
                             </p:selectOneMenu>
                         </p:row>
 
                         <p:row>
                             <p:commandButton id="addSingleDocStrucSubmitBtn" value="#{msgs.apply}" action="#{Metadaten.addSingleNodeWithPages}"
-                                             update="structureTreeForm"
+                                             update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                                              oncomplete="PF('dialogAddDocStrucType').hide();"/>
                         </p:row>
                     </p:panelGrid>
