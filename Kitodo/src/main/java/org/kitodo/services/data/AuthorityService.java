@@ -187,7 +187,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, AuthorityDTO authorityDTO) throws DataException {
-        authorityDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.USER_GROUPS.getName(),
+        authorityDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, AuthorityTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
     }
 
@@ -195,9 +195,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         if (authorityDTO.getUserGroupsSize() > 0) {
             List<UserGroupDTO> userGroups = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserGroupTypeField.TITLE.getName());
+            subKeys.add(UserGroupTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                AuthorityTypeField.USER_GROUPS.getName(), subKeys);
+                AuthorityTypeField.USER_GROUPS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserGroupDTO userGroup = new UserGroupDTO();
                 userGroup.setId(relatedProperty.getId());

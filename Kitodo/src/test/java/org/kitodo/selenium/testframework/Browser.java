@@ -25,15 +25,13 @@ import org.kitodo.selenium.testframework.enums.BrowserType;
 import org.kitodo.selenium.testframework.helper.WebDriverProvider;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Browser {
     private static final Logger logger = LogManager.getLogger(Browser.class);
@@ -41,7 +39,7 @@ public class Browser {
     private static RemoteWebDriver webDriver;
     private static Actions actions;
     private static final String GECKO_DRIVER_VERSION = "0.19.1";
-    private static final String CHROME_DRIVER_VERSION = "2.35";
+    private static final String CHROME_DRIVER_VERSION = "2.40";
     private static boolean onTravis = false;
     private static BrowserType browserType = BrowserType.CHROME;
 
@@ -106,6 +104,15 @@ public class Browser {
                 userDir + "/target/extracts/");
         }
         webDriver = new FirefoxDriver();
+    }
+
+    public static boolean isAlertPresent() {
+        try {
+            webDriver.switchTo().alert();
+            return true;
+        } catch (NoAlertPresentException e) {
+            return false;
+        }
     }
 
     /**
@@ -173,30 +180,6 @@ public class Browser {
             logger.error(e.getMessage());
         }
         return screenshotFile;
-    }
-
-    /**
-     * Click a save button that is disabled and enabled via Ajax, resulting in a
-     * small delay before its 'disabled' state is updated on the page. For that
-     * reason this function incorporates a short delay to allow the button to become
-     * enabled properly.
-     *
-     * @param webElement
-     *            the save button to be clicked
-     */
-    public static void clickAjaxSaveButton(WebElement webElement) {
-        for (int attempt = 1; attempt < 50; attempt++) {
-            try {
-                new WebDriverWait(webDriver, 5).ignoring(StaleElementReferenceException.class)
-                        .until(ExpectedConditions.elementToBeClickable(webElement));
-                webElement.click();
-                Thread.sleep(5000);
-                return;
-            } catch (StaleElementReferenceException | InterruptedException e) {
-                logger.warn("Save button is not accessible, retry now (" + attempt + ". attempt)");
-            }
-        }
-        throw new StaleElementReferenceException("Could not access save button!");
     }
 
     public static List<WebElement> getRowsOfTable(WebElement table) {

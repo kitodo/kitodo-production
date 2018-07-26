@@ -35,10 +35,10 @@ public class ProjectType extends BaseType<Project> {
         List<Folder> projectFolders = project.getFolders();
         for (Folder folder : projectFolders) {
             JsonObject folderObject = Json.createObjectBuilder()
-                    .add(ProjectTypeField.FOLDER_FILE_GROUP.getName(), preventNull(folder.getFileGroup()))
-                    .add(ProjectTypeField.FOLDER_URL_STRUCTURE.getName(), preventNull(folder.getUrlStructure()))
-                    .add(ProjectTypeField.FOLDER_MIME_TYPE.getName(), preventNull(folder.getMimeType()))
-                    .add(ProjectTypeField.FOLDER_PATH.getName(), preventNull(folder.getPath())).build();
+                    .add(ProjectTypeField.FOLDER_FILE_GROUP.getKey(), preventNull(folder.getFileGroup()))
+                    .add(ProjectTypeField.FOLDER_URL_STRUCTURE.getKey(), preventNull(folder.getUrlStructure()))
+                    .add(ProjectTypeField.FOLDER_MIME_TYPE.getKey(), preventNull(folder.getMimeType()))
+                    .add(ProjectTypeField.FOLDER_PATH.getKey(), preventNull(folder.getPath())).build();
             folders.add(folderObject);
         }
 
@@ -46,21 +46,21 @@ public class ProjectType extends BaseType<Project> {
         String clientName = Objects.nonNull(project.getClient()) ? project.getClient().getName() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(ProjectTypeField.TITLE.getName(), preventNull(project.getTitle()));
-        jsonObjectBuilder.add(ProjectTypeField.START_DATE.getName(), getFormattedDate(project.getStartDate()));
-        jsonObjectBuilder.add(ProjectTypeField.END_DATE.getName(), getFormattedDate(project.getEndDate()));
-        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_PAGES.getName(), project.getNumberOfPages());
-        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_VOLUMES.getName(), project.getNumberOfVolumes());
-        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getName(), project.getFileFormatDmsExport());
-        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_INTERNAL.getName(), project.getFileFormatInternal());
-        jsonObjectBuilder.add(ProjectTypeField.METS_RIGTS_OWNER.getName(), project.getMetsRightsOwner());
-        jsonObjectBuilder.add(ProjectTypeField.ACTIVE.getName(), project.isActive());
-        jsonObjectBuilder.add(ProjectTypeField.PROCESSES.getName(), addObjectRelation(project.getProcesses(), true));
-        jsonObjectBuilder.add(ProjectTypeField.TEMPLATES.getName(), addObjectRelation(project.getTemplates(), true));
-        jsonObjectBuilder.add(ProjectTypeField.USERS.getName(), addObjectRelation(project.getUsers(), true));
-        jsonObjectBuilder.add(ProjectTypeField.CLIENT_ID.getName(), clientId);
-        jsonObjectBuilder.add(ProjectTypeField.CLIENT_NAME.getName(), clientName);
-        jsonObjectBuilder.add(ProjectTypeField.FOLDER.getName(), folders.build());
+        jsonObjectBuilder.add(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
+        jsonObjectBuilder.add(ProjectTypeField.START_DATE.getKey(), getFormattedDate(project.getStartDate()));
+        jsonObjectBuilder.add(ProjectTypeField.END_DATE.getKey(), getFormattedDate(project.getEndDate()));
+        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_PAGES.getKey(), project.getNumberOfPages());
+        jsonObjectBuilder.add(ProjectTypeField.NUMBER_OF_VOLUMES.getKey(), project.getNumberOfVolumes());
+        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_DMS_EXPORT.getKey(), project.getFileFormatDmsExport());
+        jsonObjectBuilder.add(ProjectTypeField.FILE_FORMAT_INTERNAL.getKey(), project.getFileFormatInternal());
+        jsonObjectBuilder.add(ProjectTypeField.METS_RIGTS_OWNER.getKey(), project.getMetsRightsOwner());
+        jsonObjectBuilder.add(ProjectTypeField.ACTIVE.getKey(), project.isActive());
+        jsonObjectBuilder.add(ProjectTypeField.PROCESSES.getKey(), addObjectRelation(project.getProcesses(), true));
+        jsonObjectBuilder.add(ProjectTypeField.TEMPLATES.getKey(), addObjectRelation(project.getTemplates(), true));
+        jsonObjectBuilder.add(ProjectTypeField.USERS.getKey(), addObjectRelation(project.getUsers(), true));
+        jsonObjectBuilder.add(ProjectTypeField.CLIENT_ID.getKey(), clientId);
+        jsonObjectBuilder.add(ProjectTypeField.CLIENT_NAME.getKey(), clientName);
+        jsonObjectBuilder.add(ProjectTypeField.FOLDER.getKey(), folders.build());
         return jsonObjectBuilder.build();
     }
 }

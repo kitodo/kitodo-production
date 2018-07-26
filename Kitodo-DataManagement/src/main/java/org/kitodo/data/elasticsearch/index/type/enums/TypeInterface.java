@@ -21,6 +21,15 @@ import org.kitodo.data.exceptions.DataException;
 interface TypeInterface {
 
     /**
+     * Get key for type.
+     *
+     * @return value of key - actually toString()
+     */
+    default String getKey() {
+        return this.toString();
+    }
+
+    /**
      * Get boolean value from given json object.
      * 
      * @param jsonObject

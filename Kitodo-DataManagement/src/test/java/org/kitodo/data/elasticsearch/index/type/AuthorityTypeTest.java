@@ -67,7 +67,7 @@ public class AuthorityTypeTest {
         assertEquals("Key title doesn't match to given value!", "First",
             AuthorityTypeField.TITLE.getStringValue(actual));
 
-        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = actual.getJsonArray(AuthorityTypeField.USER_GROUPS.getKey());
         assertEquals("Size userGroups doesn't match to given value!", 1, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);

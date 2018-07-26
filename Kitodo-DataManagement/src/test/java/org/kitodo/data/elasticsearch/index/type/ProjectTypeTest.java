@@ -320,7 +320,7 @@ public class ProjectTypeTest {
             ProjectTypeField.END_DATE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key metsRightsOwner doesn't match to given value!", "",
-            actual.getString(ProjectTypeField.METS_RIGTS_OWNER.getName()));
+            ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual));
         assertEquals("Key numberOfVolumes doesn't match to given value!", 20,
             ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
         assertEquals("Key numberOfPages doesn't match to given value!", 2000,
@@ -408,7 +408,7 @@ public class ProjectTypeTest {
         assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
             ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
 
-        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
+        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
@@ -460,13 +460,13 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
+        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         assertEquals("Size processes doesn't match to given value!", 0, processes.size());
 
-        JsonArray projectFileGroups = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
-        assertEquals("Size projectFileGroups doesn't match to given value!", 0, projectFileGroups.size());
+        JsonArray folder = ProjectTypeField.FOLDER.getJsonArray(actual);
+        assertEquals("Size projectFileGroups doesn't match to given value!", 0, folder.size());
 
-        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
+        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, users.size());
     }
 
@@ -480,7 +480,7 @@ public class ProjectTypeTest {
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
         assertEquals("Amount of keys is incorrect!", 15, actual.keySet().size());
 
-        JsonArray processes = actual.getJsonArray(ProjectTypeField.PROCESSES.getName());
+        JsonArray processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
         JsonObject process = processes.getJsonObject(0);
         assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
 
@@ -488,11 +488,11 @@ public class ProjectTypeTest {
         JsonObject template = templates.getJsonObject(0);
         assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
 
-        JsonArray folders = actual.getJsonArray(ProjectTypeField.FOLDER.getName());
+        JsonArray folders = ProjectTypeField.FOLDER.getJsonArray(actual);
         JsonObject folder = folders.getJsonObject(0);
         assertEquals("Amount of keys in folders is incorrect!", 4, folder.keySet().size());
 
-        JsonArray users = actual.getJsonArray(ProjectTypeField.USERS.getName());
+        JsonArray users = ProjectTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);
         assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
     }

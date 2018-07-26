@@ -85,29 +85,29 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
         if (objects != null) {
             for (F property : objects) {
                 JsonObjectBuilder jsonObject = Json.createObjectBuilder();
-                jsonObject.add(AuthorityTypeField.ID.getName(), property.getId());
+                jsonObject.add(AuthorityTypeField.ID.getKey(), property.getId());
                 if (title) {
                     if (property instanceof Batch) {
                         Batch batch = (Batch) property;
-                        jsonObject.add(BatchTypeField.TITLE.getName(), preventNull(batch.getTitle()));
+                        jsonObject.add(BatchTypeField.TITLE.getKey(), preventNull(batch.getTitle()));
                         String type = batch.getType() != null ? batch.getType().toString() : "";
-                        jsonObject.add(BatchTypeField.TYPE.getName(), type);
+                        jsonObject.add(BatchTypeField.TYPE.getKey(), type);
                     } else if (property instanceof BaseTemplateBean) {
-                        jsonObject.add(ProcessTypeField.TITLE.getName(), preventNull(((BaseTemplateBean) property).getTitle()));
+                        jsonObject.add(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
                     } else if (property instanceof Project) {
-                        jsonObject.add(ProjectTypeField.TITLE.getName(), preventNull(((Project) property).getTitle()));
+                        jsonObject.add(ProjectTypeField.TITLE.getKey(), preventNull(((Project) property).getTitle()));
                     } else if (property instanceof User) {
-                        jsonObject.add(UserTypeField.LOGIN.getName(), preventNull(((User) property).getLogin()));
-                        jsonObject.add(UserTypeField.NAME.getName(), preventNull(((User) property).getName()));
-                        jsonObject.add(UserTypeField.SURNAME.getName(), preventNull(((User) property).getSurname()));
+                        jsonObject.add(UserTypeField.LOGIN.getKey(), preventNull(((User) property).getLogin()));
+                        jsonObject.add(UserTypeField.NAME.getKey(), preventNull(((User) property).getName()));
+                        jsonObject.add(UserTypeField.SURNAME.getKey(), preventNull(((User) property).getSurname()));
                     } else if (property instanceof UserGroup) {
-                        jsonObject.add(UserGroupTypeField.TITLE.getName(), preventNull(((UserGroup) property).getTitle()));
+                        jsonObject.add(UserGroupTypeField.TITLE.getKey(), preventNull(((UserGroup) property).getTitle()));
                     } else if (property instanceof Task) {
-                        jsonObject.add(TaskTypeField.TITLE.getName(), preventNull(((Task) property).getTitle()));
+                        jsonObject.add(TaskTypeField.TITLE.getKey(), preventNull(((Task) property).getTitle()));
                     } else if (property instanceof Filter) {
-                        jsonObject.add(FilterTypeField.VALUE.getName(), preventNull(((Filter) property).getValue()));
+                        jsonObject.add(FilterTypeField.VALUE.getKey(), preventNull(((Filter) property).getValue()));
                     } else if (property instanceof Authority) {
-                        jsonObject.add(AuthorityTypeField.TITLE.getName(), preventNull(((Authority) property).getTitle()));
+                        jsonObject.add(AuthorityTypeField.TITLE.getKey(), preventNull(((Authority) property).getTitle()));
                     }
                 }
                 result.add(jsonObject.build());

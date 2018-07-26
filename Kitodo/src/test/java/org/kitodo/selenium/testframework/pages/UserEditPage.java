@@ -12,12 +12,9 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UserEditPage extends Page<UserEditPage> {
     @SuppressWarnings("unused")
@@ -68,9 +65,7 @@ public class UserEditPage extends Page<UserEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        Browser.clickAjaxSaveButton(saveUserButton);
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 30); //seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
+        clickButtonAndWaitForRedirect(saveUserButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

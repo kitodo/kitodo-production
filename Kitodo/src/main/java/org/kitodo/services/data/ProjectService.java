@@ -165,7 +165,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
-        QueryBuilder query = createSimpleQuery(ProjectTypeField.ACTIVE.getName(), active, true);
+        QueryBuilder query = createSimpleQuery(ProjectTypeField.ACTIVE.getKey(), active, true);
         return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), related);
     }
 

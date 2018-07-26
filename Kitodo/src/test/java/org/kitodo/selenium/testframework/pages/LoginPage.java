@@ -43,7 +43,7 @@ public class LoginPage extends Page<LoginPage> {
      */
     @Override
     public LoginPage goTo() {
-        Browser.goTo(URL);
+        Browser.goTo(this.getUrl());
         return this;
     }
 

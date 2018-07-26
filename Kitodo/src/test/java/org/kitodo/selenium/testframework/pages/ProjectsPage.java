@@ -11,20 +11,15 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
-import org.kitodo.selenium.testframework.Browser;
+import java.util.List;
+
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
-import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
@@ -187,12 +182,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
             goTo();
         }
         newElementButton.click();
-
-        await("Wait for create new project button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newProjectButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getProjectEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newProjectButton, Pages.getProjectEditPage().getUrl());
         return Pages.getProjectEditPage();
     }
 
@@ -207,12 +197,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
             goTo();
         }
         newElementButton.click();
-
-        await("Wait for create new workflow button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newWorkflowButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getWorkflowEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newWorkflowButton, Pages.getWorkflowEditPage().getUrl());
         return Pages.getWorkflowEditPage();
     }
 
@@ -226,11 +211,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new docket button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newDocketButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getDocketEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newDocketButton, Pages.getDocketEditPage().getUrl());
         return Pages.getDocketEditPage();
     }
 
@@ -244,11 +225,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
             goTo();
         }
         newElementButton.click();
-        await("Wait for create new ruleset button").atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS)
-                .ignoreExceptions().until(() -> isButtonClicked.matches(newRulesetButton));
-
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
-        wait.until(ExpectedConditions.urlContains(Pages.getRulesetEditPage().getUrl()));
+        clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
     }
 }

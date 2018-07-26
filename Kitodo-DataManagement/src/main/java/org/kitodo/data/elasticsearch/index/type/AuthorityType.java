@@ -23,8 +23,8 @@ public class AuthorityType extends BaseType<Authority> {
     @Override
     JsonObject getJsonObject(Authority authority) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(AuthorityTypeField.TITLE.getName(), preventNull(authority.getTitle()));
-        jsonObjectBuilder.add(AuthorityTypeField.USER_GROUPS.getName(), addObjectRelation(authority.getUserGroups(), true));
+        jsonObjectBuilder.add(AuthorityTypeField.TITLE.getKey(), preventNull(authority.getTitle()));
+        jsonObjectBuilder.add(AuthorityTypeField.USER_GROUPS.getKey(), addObjectRelation(authority.getUserGroups(), true));
         return jsonObjectBuilder.build();
     }
 }

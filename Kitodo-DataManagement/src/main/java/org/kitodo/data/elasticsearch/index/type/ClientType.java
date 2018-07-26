@@ -23,8 +23,8 @@ public class ClientType extends BaseType<Client> {
     @Override
     JsonObject getJsonObject(Client client) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(ClientTypeField.NAME.getName(), preventNull(client.getName()));
-        jsonObjectBuilder.add(ClientTypeField.PROJECTS.getName(), addObjectRelation(client.getProjects(), true));
+        jsonObjectBuilder.add(ClientTypeField.NAME.getKey(), preventNull(client.getName()));
+        jsonObjectBuilder.add(ClientTypeField.PROJECTS.getKey(), addObjectRelation(client.getProjects(), true));
         return jsonObjectBuilder.build();
     }
 

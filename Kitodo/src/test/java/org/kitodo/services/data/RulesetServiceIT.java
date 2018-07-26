@@ -110,7 +110,7 @@ public class RulesetServiceIT {
     public void shouldFindByFile() {
         String expected = "ruleset_test.xml";
         await().untilAsserted(() -> assertEquals("Ruleset was not found in index!", expected, rulesetService
-                .findByFile("ruleset_test.xml").getJsonObject("_source").getString(RulesetTypeField.FILE.getName())));
+                .findByFile("ruleset_test.xml").getJsonObject("_source").getString(RulesetTypeField.FILE.getKey())));
     }
 
     @Test

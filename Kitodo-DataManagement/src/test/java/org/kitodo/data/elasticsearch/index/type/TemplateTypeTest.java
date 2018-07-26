@@ -210,7 +210,7 @@ public class TemplateTypeTest {
         HttpEntity document = templateType.createDocument(template);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
 
         JsonArray tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         JsonObject task = tasks.getJsonObject(0);

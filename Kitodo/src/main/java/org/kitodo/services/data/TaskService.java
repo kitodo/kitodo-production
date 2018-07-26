@@ -100,7 +100,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     private BoolQueryBuilder createUserTaskQuery(User user) {
         BoolQueryBuilder subquery = new BoolQueryBuilder();
-        subquery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), user.getId(), true));
+        subquery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
         subquery.should(createSimpleQuery("users.id", user.getId(), true));
         for (UserGroup userGroup : user.getUserGroups()) {
             subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
@@ -108,15 +108,15 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(subquery);
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.LOCKED.getValue(), false));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), TaskStatus.DONE.getValue(), false));
-        query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getName(), 0, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
+        query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
         if (hideCorrectionTasks) {
-            query.must(createSimpleQuery(TaskTypeField.PRIORITY.getName(), 10, true));
+            query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), 10, true));
         }
         if (!showAutomaticTasks) {
-            query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), "false", true));
+            query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
 
         return query;
@@ -294,11 +294,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (!open && !inProcessing) {
             boolQuery.must(getQueryForProcessingStatus(processingStatus));
         } else if (open && !inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 1, true));
+            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));
         } else if (!open && inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), 2, true));
+            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 2, true));
         } else {
-            boolQuery.must(createSetQuery(TaskTypeField.PROCESSING_STATUS.getName(), processingStatus, true));
+            boolQuery.must(createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true));
         }
 
         Set<Integer> userGroups = new HashSet<>();
@@ -309,7 +309,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getName(), 0, true));
+        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
         return count(boolQuery.toString());
     }
@@ -322,7 +322,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query as QueryBuilder
      */
     public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
-        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getName(), processingStatus, true);
+        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
     }
 
     /**
@@ -333,7 +333,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return list of JSON objects with tasks for specific process id
      */
     public List<JsonObject> findByProcessId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getName(), id, true);
+        QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), id, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -345,7 +345,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query as QueryBuilder
      */
     public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
-        return createSetQuery(TaskTypeField.PROCESS_ID.getName(), processIds, true);
+        return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processIds, true);
     }
 
     /**
@@ -360,8 +360,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     List<JsonObject> findByProcessingStatusAndUser(TaskStatus taskStatus, Integer processingUser, String sort)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -379,9 +379,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
             Integer priority, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getName(), priority, true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -399,9 +399,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
             boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), String.valueOf(typeAutomatic), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -421,10 +421,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
             Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getName(), taskStatus.getValue(), true));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getName(), processingUser, true));
-        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getName(), priority, true));
-        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getName(), String.valueOf(typeAutomatic), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
+        query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), processingUser, true));
+        query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), priority, true));
+        query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), String.valueOf(typeAutomatic), true));
         return searcher.findDocuments(query.toString(), sort);
     }
 
@@ -443,11 +443,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         Integer editType = TaskTypeField.EDIT_TYPE.getIntValue(taskJSONObject);
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
-        JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getName());
+        JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
         taskDTO.setProcessingTime(processingTime != JsonValue.NULL ? processingTime.toString() : null);
-        JsonValue processingBegin = taskJSONObject.get(TaskTypeField.PROCESSING_BEGIN.getName());
+        JsonValue processingBegin = taskJSONObject.get(TaskTypeField.PROCESSING_BEGIN.getKey());
         taskDTO.setProcessingBegin(processingBegin != JsonValue.NULL ? processingBegin.toString() : null);
-        JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getName());
+        JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getKey());
         taskDTO.setProcessingEnd(processingEnd != JsonValue.NULL ? processingEnd.toString() : null);
         taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
         taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
@@ -481,8 +481,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
         taskDTO.setUsers(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getName(), serviceManager.getUserService()));
-        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getName(),
+            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
+        taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
     }
 

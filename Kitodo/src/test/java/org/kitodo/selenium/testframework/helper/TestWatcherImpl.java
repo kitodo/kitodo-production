@@ -20,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 import org.kitodo.selenium.testframework.Browser;
-import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebDriverException;
 
 public class TestWatcherImpl extends TestWatcher {
@@ -73,14 +72,5 @@ public class TestWatcherImpl extends TestWatcher {
         properties.put(MAIL_PASSWORD, System.getenv().get(MAIL_PASSWORD));
         properties.put(MAIL_RECIPIENT, System.getenv().get(MAIL_RECIPIENT));
         return properties;
-    }
-
-    @Override
-    protected void finished(Description description) {
-        try {
-            Pages.getTopNavigation().logout();
-        } catch (InterruptedException | InstantiationException | IllegalAccessException e) {
-            logger.error(e.getMessage());
-        }
     }
 }

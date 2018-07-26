@@ -11,7 +11,13 @@
 
 package org.kitodo.services.data;
 
+import de.sub.goobi.config.ConfigCore;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +25,8 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -34,12 +42,14 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
+import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
 public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
+    private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
     private boolean showInactiveTemplates = false;
@@ -172,8 +182,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query;
 
         if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(
-                    findBySort(false, true, sort, offset, size), false);
+            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
         }
 
         query = readFilters(filterMap);
@@ -210,8 +219,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         BoolQueryBuilder query = null;
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false,
-                false);
+            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.TEMPLATE, false, false);
             if (!showInactiveTemplates) {
                 query.must(serviceManager.getProcessService().getQuerySortHelperStatus(false));
             }
@@ -231,6 +239,14 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setOutputName(TemplateTypeField.OUTPUT_NAME.getStringValue(templateJSONObject));
         templateDTO.setWikiField(TemplateTypeField.WIKI_FIELD.getStringValue(templateJSONObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));
+        templateDTO.setDocket(
+            serviceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(templateJSONObject)));
+        templateDTO.setRuleset(
+            serviceManager.getRulesetService().findById(TemplateTypeField.RULESET.getIntValue(templateJSONObject)));
+        WorkflowDTO workflowDTO = new WorkflowDTO();
+        workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
+        workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
+        templateDTO.setWorkflow(workflowDTO);
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
@@ -258,6 +274,33 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
         query.must(serviceManager.getProcessService().getQueryProjectActive(active));
         return searcher.findDocuments(query.toString(), sort, offset, size);
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram(String fileName) {
+        if (Objects.nonNull(fileName) && !fileName.equals("")) {
+            File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
+            try {
+                return new FileInputStream(tasksDiagram);
+            } catch (FileNotFoundException e) {
+                logger.error(e.getMessage(), e);
+                return getEmptyInputStream();
+            }
+        }
+        return getEmptyInputStream();
+    }
+
+    private InputStream getEmptyInputStream() {
+        return new InputStream() {
+            @Override
+            public int read() {
+                return -1;
+            }
+        };
     }
 
     /**
@@ -304,7 +347,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     /**
      * Set show inactive projects.
      *
-     * @param showInactiveProjects as boolean
+     * @param showInactiveProjects
+     *            as boolean
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
@@ -313,7 +357,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     /**
      * Set show inactive templates.
      *
-     * @param showInactiveTemplates as boolean
+     * @param showInactiveTemplates
+     *            as boolean
      */
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
