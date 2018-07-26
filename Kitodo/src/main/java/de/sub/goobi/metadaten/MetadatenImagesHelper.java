@@ -358,7 +358,7 @@ public class MetadatenImagesHelper {
         }
         logger.trace("tmpSize: {}", tmpSize);
         Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(Parameters.KITODO_CONTENT_SERVER_URL);
-        if (!kitodoContentServerUrl.isPresent()) {
+        if (kitodoContentServerUrl.get().isEmpty()) {
             logger.trace("api");
             // TODO source image files are locked under windows forever after
             // converting to png begins.

@@ -3812,6 +3812,7 @@ public class Metadaten {
                     .filter(path -> path.toFile().isFile())
                     .filter(path -> path.toFile().canRead())
                     .filter(path -> path.toString().endsWith(".png"))
+                    .sorted()
                     .map(Path::getFileName)
                     .map(Path::toString)
                     .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/" + FULLSIZE_FOLDER_NAME + "/" + filename)
