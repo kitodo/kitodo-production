@@ -40,7 +40,7 @@ import org.kitodo.config.Config;
 @XmlRootElement(name = "kitodo_fileFormats")
 public class FileFormatsConfig {
 
-    private final static File CONFIG_FILE = new File(
+    private static final File CONFIG_FILE = new File(
             FilenameUtils.concat(Config.getKitodoConfigDirectory(), "kitodo_fileFormats.xml"));
 
     @XmlElement(required = true)
