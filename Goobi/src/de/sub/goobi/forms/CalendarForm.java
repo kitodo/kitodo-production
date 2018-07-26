@@ -11,38 +11,55 @@
 
 package de.sub.goobi.forms;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.model.bibliography.course.Block;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
+import org.goobi.production.model.bibliography.course.IndividualIssue;
 import org.goobi.production.model.bibliography.course.Issue;
+import org.goobi.production.model.bibliography.course.metadata.CountableMetadata;
+import org.goobi.production.model.bibliography.course.metadata.MetadataEditMode;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
+import org.joda.time.MonthDay;
 import org.joda.time.ReadablePartial;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import de.sub.goobi.beans.Regelsatz;
 import de.sub.goobi.config.ConfigMain;
 import de.sub.goobi.helper.DateUtils;
 import de.sub.goobi.helper.FacesUtils;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.XMLUtils;
-import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
+import de.unigoettingen.sub.search.opac.ConfigOpac;
+
+import ugh.dl.DocStructType;
+import ugh.dl.MetadataType;
 
 /**
  * The class CalendarForm provides the screen logic for a JSF calendar editor to
@@ -556,6 +573,198 @@ public class CalendarForm {
     }
 
     /**
+     * A meta-data controller of a calendar form.
+     */
+    public class MetadataController {
+        /**
+         * Metadata under edit.
+         */
+        private CountableMetadata metadata;
+
+        /**
+         * Temporary cache to store the key, because meta-data may have changed.
+         */
+        private String keyCache;
+
+        /**
+         * Creates a new meta-data controller.
+         *
+         * @param metadata
+         *            meta-data under edit
+         */
+        public MetadataController(CountableMetadata metadata) {
+            this.metadata = metadata;
+        }
+
+        /**
+         * Deletes this instance.
+         */
+        public void deleteClick() {
+            blockShowing.deleteMetadata(metadata);
+        }
+
+        /**
+         * Returns the edit mode selected of the meta-data controller.
+         *
+         * @return the edit mode selected
+         */
+        public String getEditModeSelected() {
+            if (metadata.getEditMode(metadataShowing).equals(MetadataEditMode.DELETE)
+                    && blockShowing.getMetadata(metadata.getMetadataType(), metadataShowing, true) != null) {
+                return MetadataEditMode.HIDDEN.toString();
+            } else {
+                return metadata.getEditMode(metadataShowing).toString();
+            }
+        }
+
+        /**
+         * Returns the meta-data key selected of the meta-data controller.
+         *
+         * @return the meta-data key selected
+         */
+        public String getMetadataKeySelected() {
+            MetadataType metadataType = metadata.getMetadataType();
+            return metadataType == null ? "" : metadataType.getName();
+        }
+
+        /**
+         * Returns the mode selected of the meta-data controller.
+         *
+         * @return the mode selected
+         */
+        public String getModeSelected() {
+            Granularity stepSize = metadata.getStepSize();
+            return stepSize == null ? "" : stepSize.toString();
+        }
+
+        /**
+         * Returns the value of the meta-data controller.
+         *
+         * @return the value
+         */
+        public String getValue() {
+            return metadata.getValue(metadataShowing, course.getYearStart());
+        }
+
+        /**
+         * Returns whether the meta-data controller is an edit mode changeable.
+         *
+         * @return whether the meta-data controller is an edit mode changeable
+         */
+        public boolean isEditModeChangeable() {
+            return !metadata.getEditMode(metadataShowing).equals(MetadataEditMode.DEFINE)
+                    || metadata.getMetadataType() != null
+                            && blockShowing.getMetadata(metadata.getMetadataType(), metadataShowing, false) != null;
+        }
+
+        /**
+         * Sets the edit mode selected of the meta-data controller.
+         *
+         * @param editModeSelected
+         *            the edit mode selected to be set
+         */
+        public void setEditModeSelected(String editModeSelected) {
+            String caseLabel = metadata.getEditMode(getMetadataLastShowing()).toString() + " → " + editModeSelected;
+            switch (caseLabel) {
+                case "CONTINUE → DELETE":
+                    metadata.setDelete(metadataShowing);
+                break;
+                case "DEFINE → CONTINUE":
+                    CountableMetadata previousMetadata = blockShowing.getMetadata(metadata.getMetadataType(),
+                            getMetadataLastShowing(), false);
+                    if (previousMetadata != null) {
+                        previousMetadata.setDelete(null);
+                    }
+                // fall through
+                case "DEFINE → DELETE":
+                    blockShowing.deleteMetadata(metadata);
+                    keyCache = null;
+                break;
+                case "DELETE → CONTINUE":
+                    metadata.setDelete(null);
+                break;
+                case "CONTINUE → DEFINE":
+                    metadata.setDelete(metadataShowing);
+                 // fall through
+                case "DELETE → DEFINE":
+                    CountableMetadata metadataBefore = metadata;
+                    metadata = new CountableMetadata(blockShowing, metadataShowing);
+                    metadata.setStartValue(metadataBefore.getValue(getMetadataLastShowing(), course.getYearStart()));
+                    metadata.setStepSize(metadataBefore.getStepSize());
+                    blockShowing.addMetadata(metadataBefore, metadata);
+                break;
+            }
+            setMetadataKeySelected();
+        }
+
+        /**
+         * Sets the meta-data key selected of the meta-data controller.
+         */
+        private void setMetadataKeySelected() {
+            try {
+                String rulesetType = ConfigOpac.getDoctypeByName(docType).getRulesetType();
+                DocStructType docStructType = null;
+                for (int i = 0; i <= 4; i++) {
+                    docStructType = ruleset.getPreferences().getDocStrctTypeByName(rulesetType);
+                    if (i < 4) {
+                        rulesetType = docStructType.getAllAllowedDocStructTypes().get(0);
+                    }
+                }
+                for (MetadataType metadataType : docStructType.getAllMetadataTypes()) {
+                    if (metadataType.getName().equals(keyCache)) {
+                        metadata.setMetadataType(metadataType);
+                        break;
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                Helper.setFehlerMeldung("DocketNotFound", e.getMessage());
+            }
+        }
+
+        /**
+         * Sets the meta-data key selected of the meta-data controller.
+         *
+         * @param metadataKeySelected
+         *            the meta-data key selected to be set
+         */
+        public void setMetadataKeySelected(String metadataKeySelected) {
+            this.keyCache = metadataKeySelected;
+        }
+
+        /**
+         * Sets the mode selected of the meta-data controller.
+         *
+         * @param modeSelected
+         *            the mode selected to be set
+         */
+        public void setModeSelected(String modeSelected) {
+            try{
+                metadata.setStepSize(Granularity.valueOf(modeSelected));
+            }catch(IllegalArgumentException e){
+                metadata.setStepSize(null);
+            }
+        }
+
+        /**
+         * Sets the value of the meta-data controller. If the value is empty in the creation step and the user
+         * navigates away, the empty create metadata is removed.
+         *
+         * @param value
+         *            the value to be set
+         */
+        public void setValue(String value) {
+            if(metadata.getEditMode(getMetadataLastShowing()).equals(MetadataEditMode.DEFINE)){
+                if(value.trim().isEmpty() && !metadataShowing.equals(metadataShowingBefore)){
+                    blockShowing.deleteMetadata(metadata);
+                    Helper.setMeldung("calendar.metadata.removedEmptyEntry");
+                }else{
+                    metadata.setStartValue(value);
+                }
+            }
+        }
+    }
+
+    /**
      * The constant field ISSUE_COLOURS holds a regular expression to parse date
      * inputs in a flexible way.
      */
@@ -615,6 +824,20 @@ public class CalendarForm {
     protected Course course;
 
     /**
+     * The field ruleset holds the ruleset record from the database previously
+     * selected on the first page to create a process. This field is a managed
+     * property which is automatically populated by JSF upon form creation by
+     * calling setRuleset(). This behaviour is configured in faces-config.xml
+     */
+    // @ManagedProperty(value = "#{ProzesskopieForm.docType}")
+    private String docType;
+
+    /**
+     * If true, the edit dialogue for year properties is showing.
+     */
+    private boolean editingYear = false;
+
+    /**
      * The field firstAppearanceInToChange is set in the setter method
      * setFirstAppearance to notify the setter method setLastAppearance that the
      * date of first appearance has to be changed. Java Server Faces tries to
@@ -631,6 +854,38 @@ public class CalendarForm {
      * atomically.
      */
     private LocalDate firstAppearanceIsToChange = null;
+
+    /**
+     * The first day of the year, if not parsable.
+     */
+    private String invalidYearStart;
+
+    /**
+     * Can resolve the string IDs passed in HTML to the day and issue.
+     */
+    protected HashMap<String, Pair<LocalDate, Issue>> metadataResolver = new HashMap<String, Pair<LocalDate, Issue>>();
+
+    /**
+     * Points to the issue currently showing in the meta-data display.
+     */
+    protected Pair<LocalDate, Issue> metadataShowing = null;
+
+    /**
+     * Points to the issue showing in the meta-data display before it was
+     * changed. If not {@code null}, values must be written to the issue which
+     * was showing when the user entered the values, not the one the user
+     * selected to show next.
+     */
+    private Pair<LocalDate, Issue> metadataShowingBefore = null;
+
+    /**
+     * The field ruleset holds the ruleset record from the database previously
+     * selected on the first page to create a process. This field is a managed
+     * property which is automatically populated by JSF upon form creation by
+     * calling setRuleset(). This behaviour is configured in faces-config.xml
+     */
+    // @ManagedProperty(value = "#{ProzesskopieForm.prozessKopie.regelsatz}")
+    private Regelsatz ruleset;
 
     /**
      * The constant field TODAY hold the date of today. Reading the system clock
@@ -677,6 +932,13 @@ public class CalendarForm {
      */
     public void addIssueClick() {
         blockShowing.addIssue(new Issue(course));
+    }
+
+    /**
+     * Adds a new meta-data to the block under edit.
+     */
+    public void addMetadataClick() {
+        blockShowing.addMetadata(new CountableMetadata(blockShowing, metadataShowing));
     }
 
     /**
@@ -774,7 +1036,7 @@ public class CalendarForm {
             }
             if (course.getNumberOfProcesses() == 0) {
                 granularityWasTemporarilyAdded = true;
-                course.splitInto(Granularity.DAYS, CreateNewspaperProcessesTask.FIRST_OF_JANUARY);
+                course.splitInto(Granularity.DAYS);
             }
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
             FacesUtils.sendDownload(data, "course.xml");
@@ -789,6 +1051,19 @@ public class CalendarForm {
                 course.clearProcesses();
             }
         }
+    }
+
+    /**
+     * The function formatYearStart() formats the user output for the year start.
+     *
+     * @param yearStart
+     *            the begin of the year as JodaTime object
+     * @return user output
+     */
+    private static String formatYearStart(MonthDay yearStart) {
+        String yearFormat = Helper.getTranslation("calendar.yearSettings.yearStart.format");
+        DateTimeFormatter formatter = DateTimeFormat.forPattern(yearFormat);
+        return formatter.print(yearStart);
     }
 
     /**
@@ -832,7 +1107,7 @@ public class CalendarForm {
             blockChangerResolver.put(value, block);
             Map<String, String> item = new HashMap<String, String>();
             item.put("value", value);
-            item.put("label", block.toString(DateUtils.DATE_FORMATTER));
+            item.put("label", block.toString(getUserDateFormat()));
             result.add(item);
         }
         return result;
@@ -949,6 +1224,108 @@ public class CalendarForm {
     }
 
     /**
+     * Returns the list of meta-data of the calendar form.
+     *
+     * @return the list of meta-data
+     */
+    public List<MetadataController> getMetadata() {
+        if (blockShowing == null) {
+            return Collections.emptyList();
+        }
+        Collection<CountableMetadata> metadata = blockShowing.getMetadata();
+        List<MetadataController> result = new ArrayList<>(metadata.size());
+        if (metadataShowing == null) {
+            setMetadataSelected(getMetadataOptions().get(0).get("value"));
+        }
+        for (CountableMetadata metadatum : metadata) {
+            MetadataEditMode editMode = metadatum.getEditMode(metadataShowing);
+            if (editMode != null && !MetadataEditMode.HIDDEN.equals(editMode)) {
+                result.add(new MetadataController(metadatum));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the list of meta-data key options of the meta-data controller.
+     *
+     * @return the list of meta-data key options
+     */
+    public List<Map<String, String>> getMetadataKeyOptions() {
+        List<Map<String, String>> result = new ArrayList<>();
+        try {
+            String rulesetType = ConfigOpac.getDoctypeByName(this.docType).getRulesetType();
+            DocStructType docStructType = null;
+            for (int i = 0; i <= 4; i++) {
+                docStructType = ruleset.getPreferences().getDocStrctTypeByName(rulesetType);
+                if (i < 4) {
+                    List<String> allAllowedDocStructTypes = docStructType.getAllAllowedDocStructTypes();
+                    if (allAllowedDocStructTypes == null) {
+                        Helper.setFehlerMeldung( "DocStructType " + docStructType.getName() + " has no allowed child type.");
+                        return Collections.emptyList();
+                    }
+                    rulesetType = allAllowedDocStructTypes.get(0);
+                }
+            }
+            String language = (String) Helper.getManagedBeanValue("#{LoginForm.myBenutzer.metadatenSprache}");
+            for (MetadataType metadataType : docStructType.getAllMetadataTypes()) {
+                Map<String, String> option = new HashMap<>(3);
+                option.put("value", metadataType.getName());
+                option.put("label", metadataType.getLanguage(language));
+                result.add(option);
+            }
+        } catch (FileNotFoundException e) {
+            Helper.setFehlerMeldung("DocketNotFound", e.getMessage());
+        }
+        return result;
+    }
+
+    /**
+     * Returns the meta-data last showing of the calendar form.
+     *
+     * @return the meta-data last showing
+     */
+    private Pair<LocalDate, Issue> getMetadataLastShowing() {
+        return metadataShowingBefore == null ? metadataShowing : metadataShowingBefore;
+    }
+
+    /**
+     * Returns the list of meta-data options of the calendar form.
+     *
+     * @return the list of meta-data options
+     */
+    public List<Map<String, String>> getMetadataOptions() {
+        List<Map<String, String>> result = new ArrayList<>();
+        metadataResolver.clear();
+        if (blockShowing != null && blockShowing.getLastAppearance() != null) {
+            for (LocalDate day = blockShowing.getFirstAppearance(); !day
+                    .isAfter(blockShowing.getLastAppearance()); day = day.plusDays(1)) {
+                for (IndividualIssue issue : blockShowing.getIndividualIssues(day)) {
+                    Map<String, String> entry = new HashMap<>(3);
+                    String value = ISODateTimeFormat.date().print(day) + '#'
+                            + Integer.toHexString(System.identityHashCode(issue.getIssue()));
+                    entry.put("value", value);
+                    entry.put("label", issue.getHeading().isEmpty() ? getUserDateFormat().print(day)
+                            : getUserDateFormat().print(day) + ", " + issue.getHeading());
+                    result.add(entry);
+                    metadataResolver.put(value, Pair.of(day, issue.getIssue()));
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the meta-data selected of the calendar form.
+     *
+     * @return the meta-data selected
+     */
+    public String getMetadataSelected() {
+        return metadataShowing != null ? ISODateTimeFormat.date().print(metadataShowing.getLeft()) + '#'
+                + Integer.toHexString(System.identityHashCode(metadataShowing.getRight())) : "";
+    }
+
+    /**
      * The function getUploadedFile() is the getter method for the property
      * "uploadedFile" which is write-only, however Faces requires is.
      *
@@ -969,6 +1346,26 @@ public class CalendarForm {
     }
 
     /**
+     * Returns the user date format of the calendar form.
+     *
+     * @return the user date format
+     */
+    private DateTimeFormatter getUserDateFormat() {
+        DateTimeFormatter dateFormat = DateTimeFormat.mediumDate();
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        if (facesContext != null) {
+            UIViewRoot viewRoot = facesContext.getViewRoot();
+            if (viewRoot != null) {
+                Locale locale = viewRoot.getLocale();
+                if (locale != null) {
+                    dateFormat = dateFormat.withLocale(locale);
+                }
+            }
+        }
+        return dateFormat;
+    }
+
+    /**
      * The function getYear() returns the year to be shown in the calendar sheet
      * as read-only property "year".
      *
@@ -979,6 +1376,28 @@ public class CalendarForm {
     }
 
     /**
+     * The function getYearName() returns the name of the year. The name of the
+     * year is optional and maybe empty. Typical values are “Business year”,
+     * “Fiscal year”, or “Season”.
+     *
+     * @return the name of the year
+     */
+    public String getYearName() {
+        return course.getYearName();
+    }
+
+    /**
+     * The function getYearStart() returns the beginning of the year. Typically,
+     * this is the 1ˢᵗ of January, but it can be changed here to other days as
+     * well. The beginning of the year must parse and must not not be empty.
+     *
+     * @return the name of the year
+     */
+    public String getYearStart() {
+        return course.getYearStart() == null ? invalidYearStart : formatYearStart(course.getYearStart());
+    }
+
+    /**
      * The method hideUploadClick() will be called by Faces if the user clicks
      * the cancel button leave the dialog to upload a course of appearance XML
      * file.
@@ -986,6 +1405,15 @@ public class CalendarForm {
     public void hideUploadClick() {
         neglectEmptyBlock();
         uploadShowing = false;
+    }
+
+    /**
+     * Returns whether the calendar form is an editing year.
+     *
+     * @return whether this is an editing year
+     */
+    public boolean isEditingYear() {
+        return editingYear;
     }
 
     /**
@@ -1034,6 +1462,22 @@ public class CalendarForm {
             return "";
         }
         return "ShowGranularityPicker";
+    }
+
+    /**
+     * Method executed if the edit year button is clicked.
+     */
+    public void onEditYearClick() {
+        this.editingYear = true;
+    }
+
+    /**
+     * Method executed if the save button in the edit year settings box is clicked.
+     */
+    public void onSaveYearPropertiesClick() {
+        if(invalidYearStart == null){
+            this.editingYear = false;
+        }
     }
 
     /**
@@ -1089,6 +1533,24 @@ public class CalendarForm {
     }
 
     /**
+     * The function parseYearStart() parses the user input for the year start.
+     *
+     * @param yearStart
+     *            user input to parse
+     * @return the begin of the year as JodaTime object
+     * @throws IllegalArgumentException
+     *             if the string cannot be parsed
+     * @throws IllegalFieldValueException
+     *             if the string represents an illegal date
+     */
+    private static MonthDay parseYearStart(String yearStart) {
+        String yearFormat = Helper.getTranslation("calendar.yearSettings.yearStart.format");
+        DateTimeFormatter parser = DateTimeFormat.forPattern(yearFormat);
+        LocalDate localDate = parser.parseLocalDate(yearStart.trim());
+        return new MonthDay(localDate.getMonthOfYear(), localDate.getDayOfMonth());
+    }
+
+    /**
      * The method populateByCalendar() populates an empty calendar sheet by
      * iterating on LocalDate.
      *
@@ -1100,7 +1562,7 @@ public class CalendarForm {
         Block currentBlock = null;
         ReadablePartial nextYear = new LocalDate(yearShowing + 1, DateTimeConstants.JANUARY, 1);
         for (LocalDate date = new LocalDate(yearShowing, DateTimeConstants.JANUARY, 1); date.isBefore(nextYear); date = date
-                .plusDays(1)) {
+                 .plusDays(1)) {
             Cell cell = sheet.get(date.getDayOfMonth() - 1).get(date.getMonthOfYear() - 1);
             cell.setDate(date);
             if (currentBlock == null || !currentBlock.isMatch(date)) {
@@ -1167,6 +1629,17 @@ public class CalendarForm {
             checkBlockPlausibility();
             navigate();
         }
+    }
+
+    /**
+     * Method called by JFS to pass the docType selected from the first page of
+     * edit.
+     *
+     * @param docType
+     *            passed docType
+     */
+    public void setDocType(String docType) {
+        this.docType = docType;
     }
 
     /**
@@ -1275,6 +1748,28 @@ public class CalendarForm {
     }
 
     /**
+     * Sets the meta-data selected of the calendar form.
+     *
+     * @param metadataSelected
+     *            the meta-data selected to be set
+     */
+    public void setMetadataSelected(String metadataSelected) {
+        metadataShowingBefore = metadataShowing;
+        metadataShowing = metadataResolver.get(metadataSelected);
+    }
+
+    /**
+     * Method called by JFS to pass the ruleset selected from the first page of
+     * edit.
+     *
+     * @param ruleset
+     *            passed ruleset
+     */
+    public void setRuleset(Regelsatz ruleset) {
+        this.ruleset = ruleset;
+    }
+
+    /**
      * The method setUploadedFile() will be called by Faces to store the new
      * value of the read-write property "uploadedFile", which is a reference to
      * the binary data the user provides for upload.
@@ -1284,6 +1779,38 @@ public class CalendarForm {
      */
     public void setUploadedFile(UploadedFile data) {
         uploadedFile = data;
+    }
+
+    /**
+     * The function getYearName() returns the name of the year. The name of the
+     * year is optional and maybe empty. Typical values are “Business year”,
+     * “Fiscal year”, or “Season”.
+     *
+     * @param yearName
+     *            the name of the year
+     */
+    public void setYearName(String yearName) {
+        course.setYearName(yearName);
+    }
+
+    /**
+     * The function getYearStart() returns the beginning of the year. Typically,
+     * this is the 1ˢᵗ of January, but it can be changed here to other days as
+     * well. The beginning of the year must parse and must not not be empty.
+     *
+     * @param yearStart
+     *            the beginning of the year
+     */
+    public void setYearStart(String yearStart) {
+        String trimmedYearStart = yearStart.trim();
+        try {
+            course.setYearStart(parseYearStart(trimmedYearStart));
+            this.invalidYearStart = null;
+        } catch (IllegalArgumentException e) {
+            Helper.setFehlerMeldung("calendar.yearSettings.yearStart.IllegalArgumentException", e.getMessage());
+            course.setYearStart(null);
+            this.invalidYearStart = trimmedYearStart;
+        }
     }
 
     /**
@@ -1309,7 +1836,7 @@ public class CalendarForm {
                 return;
             }
             Document xml = XMLUtils.load(uploadedFile.getInputStream());
-            course = new Course(xml);
+            course = new Course(xml, docType, ruleset);
             blockShowing = course.get(0);
             Helper.removeManagedBean("GranularityForm");
             navigate();

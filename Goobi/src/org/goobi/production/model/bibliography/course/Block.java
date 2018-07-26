@@ -12,11 +12,16 @@
 package org.goobi.production.model.bibliography.course;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.goobi.production.model.bibliography.course.metadata.CountableMetadata;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormatter;
+
+import ugh.dl.MetadataType;
 
 /**
  * The class Block is a bean class that represents an interval of time in the
@@ -67,6 +72,11 @@ public class Block {
     private List<Issue> issues;
 
     /**
+     * Meta-data associated with this block.
+     */
+    private List<CountableMetadata> metadata = new ArrayList<CountableMetadata>();
+
+    /**
      * Default constructor. Creates a Block object without any data.
      *
      * @param course
@@ -107,6 +117,28 @@ public class Block {
     public boolean addIssue(Issue issue) {
         clearProcessesIfNecessary(issue);
         return issues.add(issue);
+    }
+
+    /**
+     * Adds a meta-data entry to this block.
+     *
+     * @param countableMetadata
+     *            meta-data to add
+     */
+    public void addMetadata(CountableMetadata countableMetadata) {
+        metadata.add(countableMetadata);
+    }
+
+    /**
+     * Adds a meta-data entry to this block.
+     * 
+     * @param index
+     *            insert position
+     * @param countableMetadata
+     *            meta-data to add
+     */
+    public void addMetadata(CountableMetadata index, CountableMetadata countableMetadata) {
+        metadata.add(metadata.indexOf(index) + 1, countableMetadata);
     }
 
     /**
@@ -169,6 +201,14 @@ public class Block {
             }
         }
         return result;
+    }
+
+    /**
+     * Deletes a metadata entry from this block.
+     * @param metadata entry to remove
+     */
+    public void deleteMetadata(CountableMetadata metadata) {
+        this.metadata.remove(metadata);
     }
 
     /**
@@ -239,6 +279,17 @@ public class Block {
     }
 
     /**
+     * Returns the index of the issue.
+     *
+     * @param issue
+     *            issue whose index is to be returned
+     * @return the index of the issue
+     */
+    public int getIssueIndex(Issue issue) {
+        return issues.indexOf(issue);
+    }
+
+    /**
      * The function getLastAppearance() returns the date the regularity of this
      * block ends with.
      *
@@ -246,6 +297,56 @@ public class Block {
      */
     public LocalDate getLastAppearance() {
         return lastAppearance;
+    }
+
+    /**
+     * Returns the meta-data assigned to this block.
+     *
+     * @return the meta-data
+     */
+    public Collection<CountableMetadata> getMetadata() {
+        return metadata;
+    }
+
+    /**
+     * Returns all meta-data counters from this block for the given metadataType
+     * that starts on the given day.
+     *
+     * @param metadataType
+     *            metadataType to compare
+     * @param issue
+     *            creation point to compare
+     * @param create
+     *            if the meta-data was created (else deleted)
+     * @return true, if there is such a counter
+     */
+    public CountableMetadata getMetadata(MetadataType metadataType, Pair<LocalDate, Issue> issue, boolean create) {
+        for (CountableMetadata metaDatum : metadata) {
+            if (metaDatum.matches(metadataType, issue, create)) {
+                return metaDatum;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns true, if there is a counter in this block for the given
+     * metadataType that starts on the given day.
+     *
+     * @param issue
+     *            creation point to compare
+     * @param create
+     *            if the meta-data was created (else deleted)
+     * @return true, if there is such a counter
+     */
+    public Iterable<CountableMetadata> getMetadata(Pair<LocalDate, Issue> issue, Boolean create) {
+        List<CountableMetadata> result = new ArrayList<>();
+        for (CountableMetadata metaDatum : metadata) {
+            if (metaDatum.matches(null, issue, create)) {
+                result.add(metaDatum);
+            }
+        }
+        return result;
     }
 
     /**
