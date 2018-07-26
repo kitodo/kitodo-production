@@ -281,7 +281,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, UserGroupDTO userGroupDTO) throws DataException {
-        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getName(),
+        userGroupDTO.setUsers(convertRelatedJSONObjectToDTO(jsonObject, UserGroupTypeField.USERS.getKey(),
             serviceManager.getUserService()));
     }
 
@@ -289,9 +289,9 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroupDTO.getAuthorizationsSize() > 0) {
             List<AuthorityDTO> authorizations = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(AuthorityTypeField.TITLE.getName());
+            subKeys.add(AuthorityTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserGroupTypeField.AUTHORITIES.getName(), subKeys);
+                UserGroupTypeField.AUTHORITIES.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 AuthorityDTO authorization = new AuthorityDTO();
                 authorization.setId(relatedProperty.getId());
@@ -308,10 +308,10 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         if (userGroupDTO.getUsersSize() > 0) {
             List<UserDTO> users = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(UserTypeField.NAME.getName());
-            subKeys.add(UserTypeField.SURNAME.getName());
+            subKeys.add(UserTypeField.NAME.getKey());
+            subKeys.add(UserTypeField.SURNAME.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
-                UserGroupTypeField.USERS.getName(), subKeys);
+                UserGroupTypeField.USERS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {
                 UserDTO user = new UserDTO();
                 user.setId(relatedProperty.getId());

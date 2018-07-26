@@ -119,7 +119,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     }
 
     private QueryBuilder getQueryForType(String type) {
-        return createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true, Operator.AND);
+        return createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true, Operator.AND);
     }
 
     /**
@@ -135,9 +135,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      */
     public List<JsonObject> findByTitle(String title, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(PropertyTypeField.TITLE.getName(), title, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -155,9 +155,9 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
      */
     List<JsonObject> findByValue(String value, String type, boolean contains) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(PropertyTypeField.VALUE.getName(), value, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.VALUE.getKey(), value, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -179,10 +179,10 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
     List<JsonObject> findByTitleAndValue(String title, String value, String type, boolean contains)
             throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(PropertyTypeField.TITLE.getName(), title, contains, Operator.AND));
-        query.must(createSimpleQuery(PropertyTypeField.VALUE.getName(), value, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.TITLE.getKey(), title, contains, Operator.AND));
+        query.must(createSimpleQuery(PropertyTypeField.VALUE.getKey(), value, contains, Operator.AND));
         if (type != null) {
-            query.must(createSimpleQuery(PropertyTypeField.TYPE.getName(), type, true));
+            query.must(createSimpleQuery(PropertyTypeField.TYPE.getKey(), type, true));
         }
         return searcher.findDocuments(query.toString());
     }
@@ -194,7 +194,7 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         JsonObject propertyJSONObject = jsonObject.getJsonObject("_source");
         propertyDTO.setTitle(PropertyTypeField.TITLE.getStringValue(propertyJSONObject));
         propertyDTO.setValue(PropertyTypeField.VALUE.getStringValue(propertyJSONObject));
-        JsonValue creationDate = propertyJSONObject.get(PropertyTypeField.CREATION_DATE.getName());
+        JsonValue creationDate = propertyJSONObject.get(PropertyTypeField.CREATION_DATE.getKey());
         propertyDTO.setCreationDate(creationDate != JsonValue.NULL ? creationDate.toString() : null);
         return propertyDTO;
     }

@@ -26,18 +26,18 @@ public class UserType extends BaseType<User> {
     @Override
     JsonObject getJsonObject(User user) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-        jsonObjectBuilder.add(UserTypeField.NAME.getName(), preventNull(user.getName()));
-        jsonObjectBuilder.add(UserTypeField.SURNAME.getName(), preventNull(user.getSurname()));
-        jsonObjectBuilder.add(UserTypeField.LOGIN.getName(), preventNull(user.getLogin()));
-        jsonObjectBuilder.add(UserTypeField.LDAP_LOGIN.getName(), preventNull(user.getLdapLogin()));
-        jsonObjectBuilder.add(UserTypeField.ACTIVE.getName(), user.isActive());
-        jsonObjectBuilder.add(UserTypeField.LOCATION.getName(), preventNull(user.getLocation()));
-        jsonObjectBuilder.add(UserTypeField.METADATA_LANGUAGE.getName(), preventNull(user.getMetadataLanguage()));
-        jsonObjectBuilder.add(UserTypeField.USER_GROUPS.getName(), addObjectRelation(user.getUserGroups(), true));
-        jsonObjectBuilder.add(UserTypeField.FILTERS.getName(), addObjectRelation(user.getFilters(), true));
-        jsonObjectBuilder.add(UserTypeField.PROJECTS.getName(), addObjectRelation(user.getProjects(), true));
-        jsonObjectBuilder.add(UserTypeField.PROCESSING_TASKS.getName(), addObjectRelation(user.getProcessingTasks()));
-        jsonObjectBuilder.add(UserTypeField.TASKS.getName(), addObjectRelation(user.getTasks()));
+        jsonObjectBuilder.add(UserTypeField.NAME.getKey(), preventNull(user.getName()));
+        jsonObjectBuilder.add(UserTypeField.SURNAME.getKey(), preventNull(user.getSurname()));
+        jsonObjectBuilder.add(UserTypeField.LOGIN.getKey(), preventNull(user.getLogin()));
+        jsonObjectBuilder.add(UserTypeField.LDAP_LOGIN.getKey(), preventNull(user.getLdapLogin()));
+        jsonObjectBuilder.add(UserTypeField.ACTIVE.getKey(), user.isActive());
+        jsonObjectBuilder.add(UserTypeField.LOCATION.getKey(), preventNull(user.getLocation()));
+        jsonObjectBuilder.add(UserTypeField.METADATA_LANGUAGE.getKey(), preventNull(user.getMetadataLanguage()));
+        jsonObjectBuilder.add(UserTypeField.USER_GROUPS.getKey(), addObjectRelation(user.getUserGroups(), true));
+        jsonObjectBuilder.add(UserTypeField.FILTERS.getKey(), addObjectRelation(user.getFilters(), true));
+        jsonObjectBuilder.add(UserTypeField.PROJECTS.getKey(), addObjectRelation(user.getProjects(), true));
+        jsonObjectBuilder.add(UserTypeField.PROCESSING_TASKS.getKey(), addObjectRelation(user.getProcessingTasks()));
+        jsonObjectBuilder.add(UserTypeField.TASKS.getKey(), addObjectRelation(user.getTasks()));
         return jsonObjectBuilder.build();
     }
 }

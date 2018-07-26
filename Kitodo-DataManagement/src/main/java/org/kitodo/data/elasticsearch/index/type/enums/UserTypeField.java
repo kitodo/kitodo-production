@@ -33,15 +33,6 @@ public enum UserTypeField implements TypeInterface {
         this.name = name;
     }
 
-    /**
-     * Get name.
-     *
-     * @return value of name
-     */
-    public String getName() {
-        return name;
-    }
-
     @Override
     public String toString() {
         return name;

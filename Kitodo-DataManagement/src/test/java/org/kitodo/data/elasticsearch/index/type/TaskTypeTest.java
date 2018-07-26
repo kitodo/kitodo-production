@@ -160,7 +160,7 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "First",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray users = actual.getJsonArray(TaskTypeField.USERS.getName());
+        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, users.size());
 
         JsonObject user = users.getJsonObject(0);
@@ -169,7 +169,7 @@ public class TaskTypeTest {
         user = users.getJsonObject(1);
         assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
 
-        JsonArray userGroups = actual.getJsonArray(TaskTypeField.USER_GROUPS.getName());
+        JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
         JsonObject userGroup = userGroups.getJsonObject(0);
@@ -200,7 +200,7 @@ public class TaskTypeTest {
         assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
         assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
-            actual.get(TaskTypeField.PROCESSING_END.getName()));
+            actual.get(TaskTypeField.PROCESSING_END.getKey()));
         assertEquals("Key processingTime doesn't match to given value!", "2017-02-17",
             TaskTypeField.PROCESSING_TIME.getStringValue(actual));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
@@ -261,11 +261,11 @@ public class TaskTypeTest {
         assertEquals("Key processingUser doesn't match to given value!", 0,
             TaskTypeField.PROCESSING_USER.getIntValue(actual));
         assertEquals("Key processingBegin doesn't match to given value!", JsonValue.NULL,
-            actual.get(TaskTypeField.PROCESSING_BEGIN.getName()));
+            actual.get(TaskTypeField.PROCESSING_BEGIN.getKey()));
         assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
-            actual.get(TaskTypeField.PROCESSING_END.getName()));
+            actual.get(TaskTypeField.PROCESSING_END.getKey()));
         assertEquals("Key processingTime doesn't match to given value!", JsonValue.NULL,
-            actual.get(TaskTypeField.PROCESSING_TIME.getName()));
+            actual.get(TaskTypeField.PROCESSING_TIME.getKey()));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
         assertFalse("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
