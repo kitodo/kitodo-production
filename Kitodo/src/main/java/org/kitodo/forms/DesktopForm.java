@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +61,7 @@ public class DesktopForm extends BasisForm {
     public List getTasks() {
         try {
             return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
-        } catch (DataException e) {
+        } catch (DataException | JsonException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("tasks") }, logger, e);
             return new ArrayList();
         }
@@ -74,7 +75,7 @@ public class DesktopForm extends BasisForm {
     public List getProcesses() {
         try {
             return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
-        } catch (DataException e) {
+        } catch (DataException | JsonException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("processes") }, logger, e);
             return new ArrayList();
         }
@@ -88,7 +89,7 @@ public class DesktopForm extends BasisForm {
     public List getProjects() {
         try {
             return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
-        } catch (DataException e) {
+        } catch (DataException | JsonException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
             return new ArrayList();
         }
@@ -104,7 +105,7 @@ public class DesktopForm extends BasisForm {
     public ProjectDTO getProject(ProcessDTO processDTO) {
         try {
             return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
-        } catch (DataException e) {
+        } catch (DataException | JsonException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("project") }, logger, e);
             return null;
         }
@@ -152,7 +153,7 @@ public class DesktopForm extends BasisForm {
                     return 0L;
             }
 
-        } catch (DataException e) {
+        } catch (DataException | JsonException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;
