@@ -21,7 +21,7 @@ public class StartPage extends Page<StartPage> {
 
     @Override
     public StartPage goTo() {
-        Browser.goTo(URL);
+        Browser.goTo(this.getUrl());
         return this;
     }
 }

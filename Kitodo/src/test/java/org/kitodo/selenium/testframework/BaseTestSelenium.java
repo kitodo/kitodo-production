@@ -18,7 +18,6 @@ import java.net.URI;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
@@ -73,11 +72,6 @@ public class BaseTestSelenium {
         MockDatabase.stopNode();
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
-    }
-
-    @Before
-    public void login() throws Exception {
-        Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
     /**

@@ -11,13 +11,25 @@
 
 package org.kitodo.selenium;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 
 public class RemovingST extends BaseTestSelenium {
+
+    @Before
+    public void login() throws Exception {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+    }
+
+    @After
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+    }
 
     @Test
     public void removeProcessTest() throws Exception {

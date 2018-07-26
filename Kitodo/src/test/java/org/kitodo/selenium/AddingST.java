@@ -20,7 +20,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.SystemUtils;
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
@@ -43,6 +45,19 @@ import org.openqa.selenium.By;
 public class AddingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
+
+    @Before
+    public void login() throws Exception {
+        Pages.getLoginPage().goTo().performLoginAsAdmin();
+    }
+
+    @After
+    public void logout() throws Exception {
+        Pages.getTopNavigation().logout();
+        if (Browser.isAlertPresent()) {
+            Browser.getDriver().switchTo().alert().accept();
+        }
+    }
 
     @Test
     public void addProjectTest() throws Exception {
