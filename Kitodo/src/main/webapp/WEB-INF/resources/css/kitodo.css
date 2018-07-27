@@ -1046,7 +1046,7 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 }
 
 .so-folder-use {
-    margin: 0 15px;
+    margin: 0 15px 1.3em 15px;
     width: calc(100% - 64px);
 }
 

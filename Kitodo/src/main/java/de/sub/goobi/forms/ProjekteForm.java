@@ -79,6 +79,16 @@ public class ProjekteForm extends BasisForm {
     private Folder generatorSource;
 
     /**
+     * Folder with media to use for the viewer.
+     */
+    private Folder mediaView;
+
+    /**
+     * Folder with media to use for the preview.
+     */
+    private Folder preview;
+
+    /**
      * Empty default constructor that also sets the LazyDTOModel instance of
      * this bean.
      */
@@ -370,42 +380,6 @@ public class ProjekteForm extends BasisForm {
         return filteredFolderList;
     }
 
-    /**
-     * Returns the folder to use as source for generation of derived resources
-     * of this project.
-     *
-     * @return the source folder for generation
-     */
-    public Folder getGeneratorSource() {
-        if (generatorSource == null) {
-            List<Folder> folderList = getFolderList();
-            if (folderList.isEmpty()) {
-                return new Folder() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public String toString() {
-                        return Helper.getTranslation("folderUse.createFolderToSelectOne");
-                    }
-                };
-            } else {
-                generatorSource = folderList.get(0);
-            }
-        }
-        return generatorSource;
-    }
-
-    /**
-     * Sets the folder to use as source for generation of derived resources of
-     * this project.
-     *
-     * @param generatorSource
-     *            source folder for generation to set
-     */
-    public void setGeneratorSource(Folder generatorSource) {
-        this.generatorSource = generatorSource;
-    }
-
     public Folder getMyFolder() {
         return this.myFolder;
     }
@@ -432,6 +406,65 @@ public class ProjekteForm extends BasisForm {
             }
         }
         return mimeTypes;
+    }
+
+    /**
+     * Returns the folder to use as source for generation of derived resources
+     * of this project.
+     *
+     * @return the source folder for generation
+     */
+    public Folder getGeneratorSource() {
+        return generatorSource;
+    }
+
+    /**
+     * Sets the folder to use as source for generation of derived resources of
+     * this project.
+     *
+     * @param generatorSource
+     *            source folder for generation to set
+     */
+    public void setGeneratorSource(Folder generatorSource) {
+        this.generatorSource = generatorSource;
+    }
+
+    /**
+     * Returns the folder to use for the media view.
+     * 
+     * @return media view folder
+     */
+    public Folder getMediaView() {
+        return mediaView;
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     * 
+     * @param mediaView
+     *            media view folder
+     */
+    public void setMediaView(Folder mediaView) {
+        this.mediaView = mediaView;
+    }
+
+    /**
+     * Returns the folder to use for preview.
+     * 
+     * @return preview folder
+     */
+    public Folder getPreview() {
+        return preview;
+    }
+
+    /**
+     * Sets the folder to use for preview.
+     *
+     * @param preview
+     *            preview folder
+     */
+    public void setPreview(Folder preview) {
+        this.preview = preview;
     }
 
     /**
