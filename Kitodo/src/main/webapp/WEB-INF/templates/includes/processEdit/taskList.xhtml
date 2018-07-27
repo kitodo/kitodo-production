@@ -142,11 +142,6 @@
 
     </p:dataTable>
 
-    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
-        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-    </p:confirmDialog>
-
     <p:commandButton action="#{ProzessverwaltungForm.newTask}"
                      value="#{msgs.taskAdd}"
                      rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
