@@ -58,6 +58,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -69,6 +70,7 @@ public class MassImportForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private static final long serialVersionUID = -4225927414279404442L;
     private Template template;
+    private Project project;
     private List<Process> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
@@ -104,13 +106,19 @@ public class MassImportForm extends BasisForm {
     }
 
     /**
-     * Prepare.
+     * Prepare template and project for which new process will be created.
      *
-     * @return String
+     * @param templateId
+     *            id of template to query from database
+     * @param projectId
+     *            id of project to query from database
+     *
+     * @return path to page with form
      */
-    public String prepare(int id) {
+    public String prepare(int templateId, int projectId) {
         try {
-            this.template = serviceManager.getTemplateService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(templateId);
+            this.project = serviceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;

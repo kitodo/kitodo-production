@@ -255,13 +255,14 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(projectJSONObject));
         projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(projectJSONObject));
         projectDTO.setActive(ProjectTypeField.ACTIVE.getBooleanValue(projectJSONObject));
-        projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
         ClientDTO clientDTO = new ClientDTO();
         clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(projectJSONObject));
         clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(projectJSONObject));
         projectDTO.setClient(clientDTO);
         if (!related) {
             convertRelatedJSONObjects(projectJSONObject, projectDTO);
+        } else {
+            projectDTO.setTemplates(getTemplatesForProjectDTO(projectJSONObject));
         }
         return projectDTO;
     }
@@ -283,6 +284,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
+        projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(), serviceManager.getTemplateService()));
     }
 
     /**

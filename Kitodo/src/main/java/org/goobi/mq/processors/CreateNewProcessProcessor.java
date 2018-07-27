@@ -173,7 +173,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
 
         Template selectedTemplate = getTemplateByTitle(templateTitle);
         result.setTemplate(selectedTemplate);
-        result.prepare(selectedTemplate.getId());
+        result.prepare(selectedTemplate.getId(), selectedTemplate.getProject().getId());
         return result;
     }
 
