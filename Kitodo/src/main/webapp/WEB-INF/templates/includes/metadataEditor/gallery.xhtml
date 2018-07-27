@@ -54,13 +54,10 @@
                     <f:selectItems value="#{Metadaten.allTifFolders}"/>
                     <f:ajax listener="#{Metadaten.updateImagesFolder()}"/>
                 </p:selectOneMenu>
-                <p:commandButton id="readImagesButton" value="#{msgs.generatePNGs}"
-                                 action="#{Metadaten.generatePNGs()}"
-                                 style="vertical-align: top">
-                    <p:confirm header="#{msgs.generatePNGs}"
-                               message="#{msgs.confirm}"
-                               icon="ui-icon-alert"/>
-                </p:commandButton>
+                <p:commandButton id="readImagesButton"
+                                 value="#{msgs.generatePNGs}"
+                                 style="vertical-align: top"
+                                 onclick="PF('generatePNGsConfirmDialog').show()"/>
             </p:panel>
 
             <!-- Pages in structured view -->

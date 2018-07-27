@@ -125,15 +125,36 @@
             </div>
         </p:panel>
 
-        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="generatePNGsConfirmDialog">
-            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" onclick="PF('convertTIFFDialog').show()"/>
-            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-        </p:confirmDialog>
 
     </ui:define>
     <ui:define name="dialog">
-        <p:dialog header="Generating PNGs" modal="true" id="convertTIFFDialog" widgetVar="convertTIFFDialog">
-            <h:outputText value="#{Metadaten.numberOfConvertedImages} / #{Metadaten.numberOfImagesInCurrentTifFolder}" />
+        <h:form>
+            <p:confirmDialog header="#{msgs.generatePNGs}"
+                             message="#{msgs.confirm}"
+                             icon="ui-icon-alert"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="confirm-delete"
+                             widgetVar="generatePNGsConfirmDialog">
+                <p:commandButton value="Yes"
+                                 styleClass="ui-confirmdialog-yes"
+                                 icon="ui-icon-check"
+                                 onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
+                                 action="#{Metadaten.generatePNGs()}"
+                                 immediate="true"/>
+                <p:commandButton value="No"
+                                 type="button"
+                                 styleClass="ui-confirmdialog-no"
+                                 icon="ui-icon-close"
+                                 onclick="PF('generatePNGsConfirmDialog').hide()"/>
+            </p:confirmDialog>
+        </h:form>
+        <p:dialog header="Generating PNGs"
+                  global="true"
+                  modal="true"
+                  id="convertTIFFDialog"
+                  widgetVar="convertTIFFDialog">
+            <h:outputText value="#{Metadaten.numberOfConvertedImages} / #{Metadaten.numberOfImagesInCurrentTifFolder}"/>
         </p:dialog>
     </ui:define>
     <ui:define name="breadcrumbs">
