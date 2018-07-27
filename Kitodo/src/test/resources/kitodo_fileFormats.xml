@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<kitodo_fileFormats>
+    <fileFormat extension="xml" mimeType="application/alto+xml">
+        <label>Analyzed Layout and Text (application/alto+xml, *.xml)</label>
+    </fileFormat>
+    <fileFormat extension="gif" fileType="GIF" formatName="gif" imageFileFormat="GIF" mimeType="image/gif">
+        <label>Graphics Interchange Format (image/gif, *.gif)</label>
+        <label lang="ar">تنسيق تبادل الرسومات (image/gif, *.gif)</label>
+    </fileFormat>
+    <fileFormat extension="jp2" fileType="JPEG_2000" imageFileFormat="JPEG2000" mimeType="image/jp2">
+        <label>JPEG 2000 (image/jp2, *.jp2)</label>
+    </fileFormat>
+    <fileFormat extension="jpg" fileType="JPEG" formatName="jpg" imageFileFormat="JPEG" mimeType="image/jpeg">
+        <label>JPEG File Interchange Format (image/jpeg, *.jpg)</label>
+    </fileFormat>
+    <fileFormat extension="pdf" fileType="PDF" mimeType="application/pdf">
+        <label>Portable Document Format (application/pdf, *.pdf)</label>
+    </fileFormat>
+    <fileFormat extension="png" fileType="PNG" formatName="png" imageFileFormat="PNG" mimeType="image/png">
+        <label>Portable Network Graphics (image/png, *.png)</label>
+    </fileFormat>
+    <fileFormat extension="tif" fileType="TIFF" imageFileFormat="TIFF" mimeType="image/tiff">
+        <label>Tagged Image File Format (image/tiff, *.tif)</label>
+    </fileFormat>
+    <fileFormat extension="bmp" formatName="bmp" imageFileFormat="BMP" mimeType="image/bmp">
+        <label>Windows Bitmap (image/bmp, *.bmp)</label>
+    </fileFormat>
+</kitodo_fileFormats>
