@@ -97,7 +97,8 @@
                 <div class="thumbnailWrapper">
                     <ui:repeat value="#{Metadaten.images}" var="image">
                         <p:commandLink update="imagePreviewForm" rendered="#{Metadaten.isAccessGranted(image)}">
-                            <img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/>
+                            <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                            <h:outputText><img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/></h:outputText>
                             <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
                         </p:commandLink>
                         <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
@@ -113,7 +114,8 @@
                     <div id="thumbnailStripe" style="width: 10%; display: inline-block; float: right">
                         <ui:repeat value="#{Metadaten.images}" var="image">
                             <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{Metadaten.isAccessGranted(image)}">
-                                <img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/>
+                                <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                                <h:outputText><img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/></h:outputText>
                                 <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
                             </p:commandLink>
                             <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
