@@ -18,7 +18,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -41,12 +40,6 @@ public class Authority extends BaseIndexedBean {
 
     @ManyToMany(mappedBy = "authorities", cascade = CascadeType.PERSIST)
     private List<UserGroup> userGroups;
-
-    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
-    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
-
-    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
-    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     /**
      * The constructor for setting title and assignables.
@@ -169,52 +162,6 @@ public class Authority extends BaseIndexedBean {
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
-    }
-
-    /**
-     * Gets userGroupClientAuthorityRelations.
-     *
-     * @return The userGroupClientAuthorityRelations.
-     */
-    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
-        if (this.userGroupClientAuthorityRelations == null) {
-            this.userGroupClientAuthorityRelations = new ArrayList<>();
-        }
-        return userGroupClientAuthorityRelations;
-    }
-
-    /**
-     * Sets userGroupClientAuthorityRelations.
-     *
-     * @param userGroupClientAuthorityRelations
-     *            The userGroupClientAuthorityRelations.
-     */
-    public void setUserGroupClientAuthorityRelations(
-            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
-        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
-    }
-
-    /**
-     * Gets userGroupProjectAuthorityRelations.
-     *
-     * @return The userGroupProjectAuthorityRelations.
-     */
-    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
-        if (this.userGroupProjectAuthorityRelations == null) {
-            this.userGroupProjectAuthorityRelations = new ArrayList<>();
-        }
-        return userGroupProjectAuthorityRelations;
-    }
-
-    /**
-     * Sets userGroupProjectAuthorityRelations.
-     *
-     * @param userGroupProjectAuthorityRelations
-     *            The userGroupProjectAuthorityRelations.
-     */
-    public void setUserGroupProjectAuthorityRelations(
-            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
-        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 
     @Override

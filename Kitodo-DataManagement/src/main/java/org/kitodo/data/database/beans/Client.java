@@ -17,6 +17,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -32,8 +33,8 @@ public class Client extends BaseIndexedBean {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    private List<User> users;
 
     /**
      * Gets name.
@@ -77,26 +78,24 @@ public class Client extends BaseIndexedBean {
     }
 
     /**
-     * Gets userGroupClientAuthorityRelations.
+     * Gets users.
      *
-     * @return The userGroupClientAuthorityRelations.
+     * @return The users.
      */
-    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
-        if (this.userGroupClientAuthorityRelations == null) {
-            this.userGroupClientAuthorityRelations = new ArrayList<>();
-        }
-        return userGroupClientAuthorityRelations;
+    public List<User> getUsers() {
+        return users;
     }
 
     /**
-     * Sets userGroupClientAuthorityRelations.
+     * Sets users.
      *
-     * @param userGroupClientAuthorityRelations
-     *            The userGroupClientAuthorityRelations.
+     * @param users The users.
      */
-    public void setUserGroupClientAuthorityRelations(
-            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
-        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
+    public void setUsers(List<User> users) {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
+        this.users = users;
     }
 
     @Override

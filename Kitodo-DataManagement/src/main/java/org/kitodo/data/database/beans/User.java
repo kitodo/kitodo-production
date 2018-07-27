@@ -94,6 +94,10 @@ public class User extends BaseIndexedBean {
             foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
     private List<Project> projects;
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "client_x_user", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_client_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_client_x_user_client_id")) })
+    private List<Client> clients;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Filter> filters;
 
@@ -144,6 +148,12 @@ public class User extends BaseIndexedBean {
             this.projects = user.projects;
         } else {
             this.projects = new ArrayList<>();
+        }
+
+        if (user.clients != null) {
+            this.clients = user.clients;
+        } else {
+            this.clients = new ArrayList<>();
         }
 
         if (user.tasks != null) {
@@ -280,6 +290,27 @@ public class User extends BaseIndexedBean {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    /**
+     * Gets clients.
+     *
+     * @return The clients.
+     */
+    public List<Client> getClients() {
+        if (this.clients == null) {
+            this.clients = new ArrayList<>();
+        }
+        return clients;
+    }
+
+    /**
+     * Sets clients.
+     *
+     * @param clients The clients.
+     */
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
     }
 
     public boolean isConfigProductionDateShow() {

@@ -19,8 +19,6 @@ import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
-import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,48 +56,48 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     private void insertClientAuthoritiesFromUserGroup(
             List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
-        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
-                .getUserGroupClientAuthorityRelations();
-
-        for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
-
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
-                        relation.getAuthority().getTitle() + "_CLIENT_ANY");
-
-            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
-                simpleGrantedAuthorities.add(simpleGrantedAuthority);
-            }
-
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                        relation.getAuthority().getTitle() + "_CLIENT_" + relation.getClient().getId());
-
-            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
-            }
-        }
+//        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
+//                .getUserGroupClientAuthorityRelations();
+//
+//        for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
+//
+//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+//                        relation.getAuthority().getTitle() + "_CLIENT_ANY");
+//
+//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
+//                simpleGrantedAuthorities.add(simpleGrantedAuthority);
+//            }
+//
+//            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+//                        relation.getAuthority().getTitle() + "_CLIENT_" + relation.getClient().getId());
+//
+//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
+//                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
+//            }
+//        }
     }
 
     private void insertProjectAuthoritiesFromUserGroup(
             List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
-        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = userGroup
-                .getUserGroupProjectAuthorityRelations();
-
-        for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelations) {
-
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
-                    relation.getAuthority().getTitle() + "_PROJECT_ANY");
-
-            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
-                simpleGrantedAuthorities.add(simpleGrantedAuthority);
-            }
-
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                    relation.getAuthority().getTitle() + "_PROJECT_" + relation.getProject().getId());
-
-            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
-            }
-        }
+//        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = userGroup
+//                .getUserGroupProjectAuthorityRelations();
+//
+//        for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelations) {
+//
+//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
+//                    relation.getAuthority().getTitle() + "_PROJECT_ANY");
+//
+//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
+//                simpleGrantedAuthorities.add(simpleGrantedAuthority);
+//            }
+//
+//            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
+//                    relation.getAuthority().getTitle() + "_PROJECT_" + relation.getProject().getId());
+//
+//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
+//                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
+//            }
+//        }
     }
 
     /**

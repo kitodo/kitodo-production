@@ -13,7 +13,6 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,7 +21,6 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -42,12 +40,6 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) }, inverseJoinColumns = {@JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<Authority> authorities;
-
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
-    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations;
-
-    @OneToMany(mappedBy = "userGroup", cascade = CascadeType.ALL)
-    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     /**
      * The Constructor.
@@ -142,52 +134,6 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     /**
-     * Gets userGroupClientAuthorityRelations.
-     *
-     * @return The userGroupClientAuthorityRelations.
-     */
-    public List<UserGroupClientAuthorityRelation> getUserGroupClientAuthorityRelations() {
-        if (this.userGroupClientAuthorityRelations == null) {
-            this.userGroupClientAuthorityRelations = new ArrayList<>();
-        }
-        return userGroupClientAuthorityRelations;
-    }
-
-    /**
-     * Sets userGroupClientAuthorityRelations.
-     *
-     * @param userGroupClientAuthorityRelations
-     *            The userGroupClientAuthorityRelations.
-     */
-    public void setUserGroupClientAuthorityRelations(
-            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations) {
-        this.userGroupClientAuthorityRelations = userGroupClientAuthorityRelations;
-    }
-
-    /**
-     * Gets userGroupProjectAuthorityRelations.
-     *
-     * @return The userGroupProjectAuthorityRelations.
-     */
-    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
-        if (this.userGroupProjectAuthorityRelations == null) {
-            this.userGroupProjectAuthorityRelations = new ArrayList<>();
-        }
-        return userGroupProjectAuthorityRelations;
-    }
-
-    /**
-     * Sets userGroupProjectAuthorityRelations.
-     *
-     * @param userGroupProjectAuthorityRelations
-     *            The userGroupProjectAuthorityRelations.
-     */
-    public void setUserGroupProjectAuthorityRelations(
-            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
-        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
-    }
-
-    /**
      * Gets authorities of the usergroup which are related to given project.
      * 
      * @param project
@@ -197,13 +143,13 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByProject(Project project) {
         List<Authority> authorities = new ArrayList<>();
 
-        if (Objects.nonNull(this.userGroupProjectAuthorityRelations)) {
-            for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
-                if (project.equals(relation.getProject())) {
-                    authorities.add(relation.getAuthority());
-                }
-            }
-        }
+//        if (Objects.nonNull(this.userGroupProjectAuthorityRelations)) {
+//            for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
+//                if (project.equals(relation.getProject())) {
+//                    authorities.add(relation.getAuthority());
+//                }
+//            }
+//        }
         return authorities;
     }
 
@@ -217,13 +163,13 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     public List<Authority> getAuthoritiesByClient(Client client) {
         List<Authority> authorities = new ArrayList<>();
 
-        if (Objects.nonNull(this.userGroupClientAuthorityRelations)) {
-            for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
-                if (client.equals(relation.getClient())) {
-                    authorities.add(relation.getAuthority());
-                }
-            }
-        }
+//        if (Objects.nonNull(this.userGroupClientAuthorityRelations)) {
+//            for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
+//                if (client.equals(relation.getClient())) {
+//                    authorities.add(relation.getAuthority());
+//                }
+//            }
+//        }
         return authorities;
     }
 

@@ -29,8 +29,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
-import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
@@ -52,12 +50,10 @@ public class BenutzergruppenForm extends BasisForm {
     private Client selectedClient;
     private boolean clientsAvailable = false;
     private boolean clientAuthoritiesChanged = false;
-    private List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelationsToDelete = new ArrayList<>();
 
     private Project selectedProject;
     private boolean projectsAvailable = false;
     private boolean projectAuthoritiesChanged = false;
-    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelationsToDelete = new ArrayList<>();
 
     private String usergroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String usergroupEditPath = MessageFormat.format(REDIRECT_PATH, "usergroupEdit");
@@ -129,30 +125,30 @@ public class BenutzergruppenForm extends BasisForm {
         try {
             this.serviceManager.getUserGroupService().save(this.userGroup);
 
-            if (clientAuthoritiesChanged) {
-                for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelationsToDelete) {
-                    relation.setAuthority(null);
-                    relation.setClient(null);
-                    relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
-                }
-                this.userGroupClientAuthorityRelationsToDelete.clear();
-                this.clientAuthoritiesChanged = false;
-            }
-
-            if (projectAuthoritiesChanged) {
-                for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelationsToDelete) {
-                    relation.setAuthority(null);
-                    relation.setProject(null);
-                    relation.setUserGroup(null);
-                    this.serviceManager.getUserGroupProjectAuthorityRelationService().removeFromDatabase(relation);
-                }
-                this.userGroupProjectAuthorityRelationsToDelete.clear();
-                this.projectAuthoritiesChanged = false;
-            }
+//            if (clientAuthoritiesChanged) {
+//                for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelationsToDelete) {
+//                    relation.setAuthority(null);
+//                    relation.setClient(null);
+//                    relation.setUserGroup(null);
+//                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
+//                }
+//                this.userGroupClientAuthorityRelationsToDelete.clear();
+//                this.clientAuthoritiesChanged = false;
+//            }
+//
+//            if (projectAuthoritiesChanged) {
+//                for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelationsToDelete) {
+//                    relation.setAuthority(null);
+//                    relation.setProject(null);
+//                    relation.setUserGroup(null);
+//                    this.serviceManager.getUserGroupProjectAuthorityRelationService().removeFromDatabase(relation);
+//                }
+//                this.userGroupProjectAuthorityRelationsToDelete.clear();
+//                this.projectAuthoritiesChanged = false;
+//            }
 
             return usergroupListPath;
-        } catch (DataException | DAOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
@@ -177,18 +173,18 @@ public class BenutzergruppenForm extends BasisForm {
                 Helper.setErrorMessage("userGroupAssignedError");
                 return null;
             }
-            for (UserGroupClientAuthorityRelation relation : userGroup.getUserGroupClientAuthorityRelations()) {
-                relation.setAuthority(null);
-                relation.setClient(null);
-                relation.setUserGroup(null);
-                this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
-            }
+//            for (UserGroupClientAuthorityRelation relation : userGroup.getUserGroupClientAuthorityRelations()) {
+//                relation.setAuthority(null);
+//                relation.setClient(null);
+//                relation.setUserGroup(null);
+//                this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
+//            }
             if (!this.userGroup.getGlobalAuthorities().isEmpty()) {
                 this.userGroup.setGlobalAuthorities(new ArrayList<>());
                 this.serviceManager.getUserGroupService().save(this.userGroup);
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
-        } catch (DataException | DAOException e) {
+        } catch (DataException e) {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
@@ -214,8 +210,8 @@ public class BenutzergruppenForm extends BasisForm {
         setSaveDisabled(true);
         initializeSelectedClient();
         initializeSelectedProject();
-        userGroupClientAuthorityRelationsToDelete.clear();
-        userGroupProjectAuthorityRelationsToDelete.clear();
+//        userGroupClientAuthorityRelationsToDelete.clear();
+//        userGroupProjectAuthorityRelationsToDelete.clear();
     }
 
     /**
@@ -296,68 +292,68 @@ public class BenutzergruppenForm extends BasisForm {
         List<Authority> targetAuthorities = clientAuthorities.getTarget();
         List<Authority> sourceAuthorities = clientAuthorities.getSource();
 
-        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = this.userGroup
-                .getUserGroupClientAuthorityRelations();
+//        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = this.userGroup
+//                .getUserGroupClientAuthorityRelations();
 
-        modifyClientRelationsByPickedAuthorities(userGroupClientAuthorityRelations, targetAuthorities);
-        modifyClientRelationsByNotPickedAuthorities(userGroupClientAuthorityRelations, sourceAuthorities);
-
-        this.userGroup.setUserGroupClientAuthorityRelations(userGroupClientAuthorityRelations);
+//        modifyClientRelationsByPickedAuthorities(userGroupClientAuthorityRelations, targetAuthorities);
+//        modifyClientRelationsByNotPickedAuthorities(userGroupClientAuthorityRelations, sourceAuthorities);
+//
+//        this.userGroup.setUserGroupClientAuthorityRelations(userGroupClientAuthorityRelations);
     }
 
-    private UserGroupClientAuthorityRelation getClientRelationCopyWithId(
-            List<UserGroupClientAuthorityRelation> relationsWithId, UserGroupClientAuthorityRelation relation) {
-        for (UserGroupClientAuthorityRelation relationItem : relationsWithId) {
-            if (relation.equals(relationItem)) {
-                if (relationItem.getId() != null) {
-                    return relationItem;
-                } else {
-                    return relation;
-                }
-            }
-        }
-        return new UserGroupClientAuthorityRelation();
-    }
+//    private UserGroupClientAuthorityRelation getClientRelationCopyWithId(
+//            List<UserGroupClientAuthorityRelation> relationsWithId, UserGroupClientAuthorityRelation relation) {
+//        for (UserGroupClientAuthorityRelation relationItem : relationsWithId) {
+//            if (relation.equals(relationItem)) {
+//                if (relationItem.getId() != null) {
+//                    return relationItem;
+//                } else {
+//                    return relation;
+//                }
+//            }
+//        }
+//        return new UserGroupClientAuthorityRelation();
+//    }
 
-    private void modifyClientRelationsByPickedAuthorities(
-            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
-            List<Authority> authoritiesToCheck) {
-        for (Authority authority : authoritiesToCheck) {
-            UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation(
-                    this.userGroup, this.selectedClient, authority);
+//    private void modifyClientRelationsByPickedAuthorities(
+//            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
+//            List<Authority> authoritiesToCheck) {
+//        for (Authority authority : authoritiesToCheck) {
+//            UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation(
+//                    this.userGroup, this.selectedClient, authority);
+//
+//            if (this.userGroupClientAuthorityRelationsToDelete.contains(userGroupClientAuthorityRelation)) {
+//
+//                userGroupClientAuthorityRelations.add(getClientRelationCopyWithId(
+//                    userGroupClientAuthorityRelationsToDelete, userGroupClientAuthorityRelation));
+//                this.clientAuthoritiesChanged = true;
+//                this.userGroupClientAuthorityRelationsToDelete.remove(userGroupClientAuthorityRelation);
+//            }
+//            if (!userGroupClientAuthorityRelations.contains(userGroupClientAuthorityRelation)) {
+//                userGroupClientAuthorityRelations.add(userGroupClientAuthorityRelation);
+//            }
+//        }
+//    }
 
-            if (this.userGroupClientAuthorityRelationsToDelete.contains(userGroupClientAuthorityRelation)) {
-
-                userGroupClientAuthorityRelations.add(getClientRelationCopyWithId(
-                    userGroupClientAuthorityRelationsToDelete, userGroupClientAuthorityRelation));
-                this.clientAuthoritiesChanged = true;
-                this.userGroupClientAuthorityRelationsToDelete.remove(userGroupClientAuthorityRelation);
-            }
-            if (!userGroupClientAuthorityRelations.contains(userGroupClientAuthorityRelation)) {
-                userGroupClientAuthorityRelations.add(userGroupClientAuthorityRelation);
-            }
-        }
-    }
-
-    private void modifyClientRelationsByNotPickedAuthorities(
-            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
-            List<Authority> authoritiesToCheck) {
-
-        for (Authority authority : authoritiesToCheck) {
-            UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation(
-                    this.userGroup, this.selectedClient, authority);
-
-            if (userGroupClientAuthorityRelations.contains(userGroupClientAuthorityRelation)) {
-                this.clientAuthoritiesChanged = true;
-
-                userGroupClientAuthorityRelation = getClientRelationCopyWithId(userGroupClientAuthorityRelations,
-                    userGroupClientAuthorityRelation);
-
-                userGroupClientAuthorityRelations.remove(userGroupClientAuthorityRelation);
-                this.userGroupClientAuthorityRelationsToDelete.add(userGroupClientAuthorityRelation);
-            }
-        }
-    }
+//    private void modifyClientRelationsByNotPickedAuthorities(
+//            List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations,
+//            List<Authority> authoritiesToCheck) {
+//
+//        for (Authority authority : authoritiesToCheck) {
+//            UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation(
+//                    this.userGroup, this.selectedClient, authority);
+//
+//            if (userGroupClientAuthorityRelations.contains(userGroupClientAuthorityRelation)) {
+//                this.clientAuthoritiesChanged = true;
+//
+//                userGroupClientAuthorityRelation = getClientRelationCopyWithId(userGroupClientAuthorityRelations,
+//                    userGroupClientAuthorityRelation);
+//
+//                userGroupClientAuthorityRelations.remove(userGroupClientAuthorityRelation);
+//                this.userGroupClientAuthorityRelationsToDelete.add(userGroupClientAuthorityRelation);
+//            }
+//        }
+//    }
 
     /**
      * Return the list of available authority levels and the list of authority
@@ -387,68 +383,68 @@ public class BenutzergruppenForm extends BasisForm {
         List<Authority> targetAuthorities = projectAuthorities.getTarget();
         List<Authority> sourceAuthorities = projectAuthorities.getSource();
 
-        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = this.userGroup
-                .getUserGroupProjectAuthorityRelations();
-
-        modifyProjectRelationsByPickedAuthorities(userGroupProjectAuthorityRelations, targetAuthorities);
-        modifyProjectRelationsByNotPickedAuthorities(userGroupProjectAuthorityRelations, sourceAuthorities);
-
-        this.userGroup.setUserGroupProjectAuthorityRelations(userGroupProjectAuthorityRelations);
+//        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = this.userGroup
+//                .getUserGroupProjectAuthorityRelations();
+//
+//        modifyProjectRelationsByPickedAuthorities(userGroupProjectAuthorityRelations, targetAuthorities);
+//        modifyProjectRelationsByNotPickedAuthorities(userGroupProjectAuthorityRelations, sourceAuthorities);
+//
+//        this.userGroup.setUserGroupProjectAuthorityRelations(userGroupProjectAuthorityRelations);
     }
 
-    private UserGroupProjectAuthorityRelation getProjectRelationCopyWithId(
-            List<UserGroupProjectAuthorityRelation> relationsWithId, UserGroupProjectAuthorityRelation relation) {
-        for (UserGroupProjectAuthorityRelation relationItem : relationsWithId) {
-            if (relation.equals(relationItem)) {
-                if (relationItem.getId() != null) {
-                    return relationItem;
-                } else {
-                    return relation;
-                }
-            }
-        }
-        return new UserGroupProjectAuthorityRelation();
-    }
+//    private UserGroupProjectAuthorityRelation getProjectRelationCopyWithId(
+//            List<UserGroupProjectAuthorityRelation> relationsWithId, UserGroupProjectAuthorityRelation relation) {
+//        for (UserGroupProjectAuthorityRelation relationItem : relationsWithId) {
+//            if (relation.equals(relationItem)) {
+//                if (relationItem.getId() != null) {
+//                    return relationItem;
+//                } else {
+//                    return relation;
+//                }
+//            }
+//        }
+//        return new UserGroupProjectAuthorityRelation();
+//    }
 
-    private void modifyProjectRelationsByPickedAuthorities(
-            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
-            List<Authority> authoritiesToCheck) {
-        for (Authority authority : authoritiesToCheck) {
-            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
-                    this.userGroup, this.selectedProject, authority);
+//    private void modifyProjectRelationsByPickedAuthorities(
+//            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
+//            List<Authority> authoritiesToCheck) {
+//        for (Authority authority : authoritiesToCheck) {
+//            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
+//                    this.userGroup, this.selectedProject, authority);
+//
+//            if (this.userGroupProjectAuthorityRelationsToDelete.contains(userGroupProjectAuthorityRelation)) {
+//
+//                userGroupProjectAuthorityRelations.add(getProjectRelationCopyWithId(
+//                    this.userGroupProjectAuthorityRelationsToDelete, userGroupProjectAuthorityRelation));
+//                this.projectAuthoritiesChanged = true;
+//                this.userGroupProjectAuthorityRelationsToDelete.remove(userGroupProjectAuthorityRelation);
+//            }
+//            if (!userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
+//                userGroupProjectAuthorityRelations.add(userGroupProjectAuthorityRelation);
+//            }
+//        }
+//    }
 
-            if (this.userGroupProjectAuthorityRelationsToDelete.contains(userGroupProjectAuthorityRelation)) {
-
-                userGroupProjectAuthorityRelations.add(getProjectRelationCopyWithId(
-                    this.userGroupProjectAuthorityRelationsToDelete, userGroupProjectAuthorityRelation));
-                this.projectAuthoritiesChanged = true;
-                this.userGroupProjectAuthorityRelationsToDelete.remove(userGroupProjectAuthorityRelation);
-            }
-            if (!userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
-                userGroupProjectAuthorityRelations.add(userGroupProjectAuthorityRelation);
-            }
-        }
-    }
-
-    private void modifyProjectRelationsByNotPickedAuthorities(
-            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
-            List<Authority> authoritiesToCheck) {
-
-        for (Authority authority : authoritiesToCheck) {
-            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
-                    this.userGroup, this.selectedProject, authority);
-
-            if (userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
-                this.projectAuthoritiesChanged = true;
-
-                userGroupProjectAuthorityRelation = getProjectRelationCopyWithId(userGroupProjectAuthorityRelations,
-                    userGroupProjectAuthorityRelation);
-
-                userGroupProjectAuthorityRelations.remove(userGroupProjectAuthorityRelation);
-                this.userGroupProjectAuthorityRelationsToDelete.add(userGroupProjectAuthorityRelation);
-            }
-        }
-    }
+//    private void modifyProjectRelationsByNotPickedAuthorities(
+//            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations,
+//            List<Authority> authoritiesToCheck) {
+//
+//        for (Authority authority : authoritiesToCheck) {
+//            UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation(
+//                    this.userGroup, this.selectedProject, authority);
+//
+//            if (userGroupProjectAuthorityRelations.contains(userGroupProjectAuthorityRelation)) {
+//                this.projectAuthoritiesChanged = true;
+//
+//                userGroupProjectAuthorityRelation = getProjectRelationCopyWithId(userGroupProjectAuthorityRelations,
+//                    userGroupProjectAuthorityRelation);
+//
+//                userGroupProjectAuthorityRelations.remove(userGroupProjectAuthorityRelation);
+//                this.userGroupProjectAuthorityRelationsToDelete.add(userGroupProjectAuthorityRelation);
+//            }
+//        }
+//    }
 
     /**
      * Gets selectedClient.
