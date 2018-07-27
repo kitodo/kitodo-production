@@ -25,7 +25,7 @@
                              iconPos="right"/>
             <p:commandButton id="deleteButton" value="#{msgs.delete}"
                              action="#{Metadaten.deleteNode}"
-                             update="metadataEditor"
+                             update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                              icon="fa fa-minus-circle fa-lg"
                              iconPos="right"/>
             <p:commandButton id="linkButton" value="#{msgs.link}"
