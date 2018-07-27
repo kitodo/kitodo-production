@@ -16,8 +16,10 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
 
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -180,6 +182,22 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public void createNewProcess() {
         createProcess.click();
+    }
+
+    public List<String> getProjectDetails() {
+        int index = triggerRowToggle(projectsTable, "First project");
+        WebElement detailsTable = Browser.getDriver()
+                .findElement(By.id("projectsTabView:projectsTable:" + index + ":projectDetailTable"));
+        return getTableDataByColumn(detailsTable, 1);
+    }
+
+    public List<String> getTemplateDetails() {
+        int index = triggerRowToggle(templatesTable, "First template");
+        WebElement detailsTable = Browser.getDriver()
+                .findElement(By.id("projectsTabView:templateTable:" + index + ":templateDetailTable"));
+        List<String> details = getTableDataByColumn(detailsTable, 1);
+        details.addAll(getTableDataByColumn(detailsTable, 3));
+        return details;
     }
 
     /**
