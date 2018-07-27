@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Client;
@@ -29,6 +28,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workflow;
@@ -69,31 +69,40 @@ public class AddingST extends BaseTestSelenium {
     }
 
     @Test
+    public void addTemplateTest() throws Exception {
+        Template template = new Template();
+        template.setTitle("MockTemplate");
+        Pages.getProjectsPage().createNewTemplate().insertTemplateData(template).save();
+        boolean templateAvailable = Pages.getProjectsPage().getTemplateTitles().contains(template.getTitle());
+        assertTrue("Created Template was not listed at templates table!", templateAvailable);
+    }
+
+    @Test
     public void addProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         Pages.getProjectsPage().switchToTabByIndex(TabIndex.TEMPLATES.getIndex()).createNewProcess();
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
         boolean processAvailable = Pages.getProcessesPage().getProcessTitles().contains(generatedTitle);
-        Assert.assertTrue("Created Process was not listed at processes table!", processAvailable);
+        assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
 
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
         workflow.setFileName("testWorkflow");
-        Pages.getProjectsPage().goTo().createNewWorkflow().insertWorkflowData(workflow).save();
-        Assert.assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+        Pages.getProjectsPage().createNewWorkflow().insertWorkflowData(workflow).save();
+        assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         List<String> workflowTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.WORKFLOWS.getIndex()).getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("Process_1");
-        Assert.assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
+        assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
     }
 
     @Test
     public void addDocketTest() throws Exception {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
-        Pages.getProjectsPage().goTo().createNewDocket().insertDocketData(docket).save();
+        Pages.getProjectsPage().createNewDocket().insertDocketData(docket).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         List<String> docketTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.DOCKETS.getIndex()).getDocketTitles();
         boolean docketAvailable = docketTitles.contains(docket.getTitle());
@@ -104,7 +113,7 @@ public class AddingST extends BaseTestSelenium {
     public void addRulesetTest() throws Exception {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");
-        Pages.getProjectsPage().goTo().createNewRuleset().insertRulesetData(ruleset).save();
+        Pages.getProjectsPage().createNewRuleset().insertRulesetData(ruleset).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
         List<String> rulesetTitles = Pages.getProjectsPage().switchToTabByIndex(TabIndex.RULESETS.getIndex()).getRulesetTitles();
         boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());

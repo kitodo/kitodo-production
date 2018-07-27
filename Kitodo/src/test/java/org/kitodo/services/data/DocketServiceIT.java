@@ -57,7 +57,7 @@ public class DocketServiceIT {
     @Test
     public void shouldCountAllDockets() {
         await().untilAsserted(
-            () -> assertEquals("Dockets were not counted correctly!", Long.valueOf(3), docketService.count()));
+            () -> assertEquals("Dockets were not counted correctly!", Long.valueOf(4), docketService.count()));
     }
 
     @Test
@@ -70,7 +70,7 @@ public class DocketServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
         Long amount = docketService.countDatabaseRows();
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Dockets were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test
@@ -83,13 +83,13 @@ public class DocketServiceIT {
     @Test
     public void shouldFindAllDockets() throws Exception {
         List<Docket> dockets = docketService.getAll();
-        assertEquals("Not all dockets were found in database!", 3, dockets.size());
+        assertEquals("Not all dockets were found in database!", 4, dockets.size());
     }
 
     @Test
     public void shouldGetAllDocketsInGivenRange() throws Exception {
         List<Docket> dockets = docketService.getAll(1, 10);
-        assertEquals("Not all dockets were found in database!", 2, dockets.size());
+        assertEquals("Not all dockets were found in database!", 3, dockets.size());
     }
 
     @Test
@@ -115,7 +115,7 @@ public class DocketServiceIT {
     @Test
     public void shouldFindManyByClientId() {
         await().untilAsserted(
-            () -> assertEquals("Dockets were not found in index!", 2, docketService.findByClientId(1).size()));
+            () -> assertEquals("Dockets were not found in index!", 3, docketService.findByClientId(1).size()));
     }
 
     @Test
@@ -165,7 +165,7 @@ public class DocketServiceIT {
     @Test
     public void shouldFindAllDocketsDocuments() {
         await().untilAsserted(
-            () -> assertEquals("Not all dockets were found in index!", 3, docketService.findAllDocuments().size()));
+            () -> assertEquals("Not all dockets were found in index!", 4, docketService.findAllDocuments().size()));
     }
 
     @Test
@@ -173,21 +173,21 @@ public class DocketServiceIT {
         Docket docket = new Docket();
         docket.setTitle("To Remove");
         docketService.save(docket);
-        Docket foundDocket = docketService.getById(4);
+        Docket foundDocket = docketService.getById(5);
         assertEquals("Additional docket was not inserted in database!", "To Remove", foundDocket.getTitle());
 
         docketService.remove(foundDocket);
         exception.expect(DAOException.class);
-        docketService.getById(4);
+        docketService.getById(5);
 
         docket = new Docket();
         docket.setTitle("To remove");
         docketService.save(docket);
-        foundDocket = docketService.getById(5);
+        foundDocket = docketService.getById(6);
         assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
 
-        docketService.remove(5);
+        docketService.remove(6);
         exception.expect(DAOException.class);
-        docketService.getById(5);
+        docketService.getById(6);
     }
 }
