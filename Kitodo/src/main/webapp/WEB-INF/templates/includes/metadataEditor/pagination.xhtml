@@ -22,7 +22,9 @@
             <p:commandButton id="newButton" value="#{msgs.newElement}"
                              onclick="PF('dialogAddDocStrucType').show();"
                              icon="fa fa-plus-circle fa-lg"
-                             iconPos="right"/>
+                             iconPos="right">
+                <p:ajax update="dialogAddDocStrucTypeForm"/>
+            </p:commandButton>
             <p:commandButton id="deleteButton" value="#{msgs.delete}"
                              action="#{Metadaten.deleteNode}"
                              update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
