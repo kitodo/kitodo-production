@@ -74,6 +74,11 @@ public class ProjekteForm extends BasisForm {
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
+     * Folder to use as source for generation of derived resources.
+     */
+    private Folder generatorSource;
+
+    /**
      * Empty default constructor that also sets the LazyDTOModel instance of
      * this bean.
      */
@@ -363,6 +368,42 @@ public class ProjekteForm extends BasisForm {
             }
         }
         return filteredFolderList;
+    }
+
+    /**
+     * Returns the folder to use as source for generation of derived resources
+     * of this project.
+     *
+     * @return the source folder for generation
+     */
+    public Folder getGeneratorSource() {
+        if (generatorSource == null) {
+            List<Folder> folderList = getFolderList();
+            if (folderList.isEmpty()) {
+                return new Folder() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public String toString() {
+                        return Helper.getTranslation("folderUse.createFolderToSelectOne");
+                    }
+                };
+            } else {
+                generatorSource = folderList.get(0);
+            }
+        }
+        return generatorSource;
+    }
+
+    /**
+     * Sets the folder to use as source for generation of derived resources of
+     * this project.
+     *
+     * @param generatorSource
+     *            source folder for generation to set
+     */
+    public void setGeneratorSource(Folder generatorSource) {
+        this.generatorSource = generatorSource;
     }
 
     public Folder getMyFolder() {

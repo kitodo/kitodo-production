@@ -171,4 +171,14 @@
                                          value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
     </p:panel>
+    <p:panel>
+        <div class="ot-folder-use">
+            <h:outputText value="#{msgs.folderUse}"/>
+        </div>
+
+        <p:outputLabel for="generatorSource" value="#{msgs['folderUse.generatorSource']}" styleClass="la-folder-use"/>
+        <p:selectOneMenu id="generatorSource" value="#{ProjekteForm.generatorSource}" styleClass="so-folder-use">
+            <f:selectItems value="#{ProjekteForm.folderList}" />
+        </p:selectOneMenu>
+    </p:panel>
 </ui:composition>

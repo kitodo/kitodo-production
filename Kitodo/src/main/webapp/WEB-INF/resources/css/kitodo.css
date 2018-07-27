@@ -1035,6 +1035,21 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
     cursor: default;
 }
 
+.ot-folder-use {
+    border-top: 3px solid #999;
+    font-weight: bold;
+    padding: .75em 1.5em;
+}
+
+.la-folder-use {
+    padding-left: 16px;
+}
+
+.so-folder-use {
+    margin: 0 15px;
+    width: calc(100% - 64px);
+}
+
 /*----------------------------------------------------------------------
 min 700px
 ----------------------------------------------------------------------*/
