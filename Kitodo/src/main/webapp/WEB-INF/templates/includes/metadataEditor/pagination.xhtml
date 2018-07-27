@@ -104,7 +104,7 @@
             <p:commandLink id="createPaginationButton"
                            action="#{Metadaten.createPagination}"
                            value="#{msgs.paginationRead}"
-                           update="metadataEditor"
+                           update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                            immediate="true"/>
             <p:commandButton id="okButton" value="OK"
                              action="#{Metadaten.setShowPagination(false)}"
