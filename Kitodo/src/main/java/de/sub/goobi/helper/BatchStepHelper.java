@@ -127,15 +127,15 @@ public class BatchStepHelper extends BatchHelper {
         this.properties = process.getProperties();
     }
 
-    private void saveStep() throws DataException {
-        Process p = this.currentStep.getProcess();
+    private void saveStep() throws DataException, DAOException {
+        Process p = serviceManager.getProcessService().getById(this.currentStep.getProcess().getId());
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
             if (processProperty.getTitle() == null) {
                 p.getProperties().remove(processProperty);
             }
         }
-        this.serviceManager.getProcessService().save(this.currentStep.getProcess());
+        this.serviceManager.getProcessService().save(p);
     }
 
     /**

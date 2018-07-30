@@ -4037,6 +4037,7 @@ public class Metadaten {
     public void solveProblem(String comment) {
         BatchStepHelper batchStepHelper = new BatchStepHelper();
         batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
+        refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
         wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
         serviceManager.getProcessService().setWikiField(wikiField, this.process);
@@ -4045,7 +4046,7 @@ public class Metadaten {
         } catch (DataException e) {
             e.printStackTrace();
         }
-        refreshProcess(process);
+        refreshProcess(this.process);
     }
 
     /**

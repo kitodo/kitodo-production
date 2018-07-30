@@ -381,6 +381,7 @@ public class WorkflowControllerService {
         currentTask.setProcessingTime(date);
         serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
+        serviceManager.getTaskService().save(currentTask);
 
         Task correctionTask = serviceManager.getTaskService().getById(getProblem().getId());
         correctionTask.setProcessingStatusEnum(TaskStatus.OPEN);
@@ -418,6 +419,7 @@ public class WorkflowControllerService {
         currentTask.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         currentTask.setProcessingTime(date);
         serviceManager.getTaskService().replaceProcessingUser(currentTask, getCurrentUser());
+        serviceManager.getTaskService().save(currentTask);
 
         // TODO: find more suitable name for this task
         // tasks which was executed at the moment of correction reporting
@@ -430,8 +432,8 @@ public class WorkflowControllerService {
                 openTaskForProcessing(correctionTask);
                 Property processProperty = prepareSolveMessageProperty(property, currentTask);
                 serviceManager.getPropertyService().save(processProperty);
-                updateProcessSortHelperStatus(currentTask.getProcess());
-
+                updateProcessSortHelperStatus(serviceManager.getProcessService().getById(currentTask.getProcess().getId()));
+                currentTask=correctionTask;
             }
         }
 
