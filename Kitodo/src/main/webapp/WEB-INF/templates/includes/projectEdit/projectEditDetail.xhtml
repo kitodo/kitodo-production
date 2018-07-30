@@ -75,6 +75,15 @@
                    <p:ajax event="change" oncomplete="toggleSave()" />
                </p:selectBooleanCheckbox>
             </div>
+
+            <ui:fragment rendered="#{ProjekteForm.copyTemplates}">
+                <div>
+                    <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
+                    <p:selectBooleanCheckbox id="copyTemplates" class="input" value="#{ProjekteForm.copyTemplates}">
+                        <p:ajax event="change" oncomplete="toggleSave()" />
+                    </p:selectBooleanCheckbox>
+                </div>
+            </ui:fragment>
         </p:row>
     </p:panelGrid>
 </ui:composition>
