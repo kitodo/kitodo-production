@@ -35,3 +35,19 @@ UPDATE workpiece_x_property JOIN workpiece ON workpiece_x_property.process_id = 
 
 DROP TABLE template;
 DROP TABLE workpiece;
+
+-- 5. Restore foreign keys
+
+ALTER TABLE template_x_property
+   ADD CONSTRAINT `FK_template_x_property_template_id`
+ FOREIGN KEY (process_id) REFERENCES process (id);
+ALTER TABLE template_x_property
+   ADD CONSTRAINT `FK_template_x_property_property_id`
+ FOREIGN KEY (property_id) REFERENCES property (id);
+
+ALTER TABLE workpiece_x_property
+   ADD CONSTRAINT `FK_workpiece_x_property_workpiece_id`
+ FOREIGN KEY (process_id) REFERENCES process (id);
+ALTER TABLE workpiece_x_property
+   ADD CONSTRAINT `FK_workpiece_x_property_property_id`
+ FOREIGN KEY (property_id) REFERENCES property (id);
