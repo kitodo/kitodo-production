@@ -113,9 +113,9 @@ public class Workflow extends BaseIndexedBean {
     /**
      * Set workflow as active.
      *
-     * @param active as Boolean
+     * @param active as boolean
      */
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -134,9 +134,9 @@ public class Workflow extends BaseIndexedBean {
     /**
      * Set workflow as ready to use.
      *
-     * @param ready as Boolean
+     * @param ready as boolean
      */
-    public void setReady(Boolean ready) {
+    public void setReady(boolean ready) {
         this.ready = ready;
     }
 

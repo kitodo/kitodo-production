@@ -31,6 +31,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Workflow;
@@ -130,14 +131,14 @@ public class WorkflowForm extends BasisForm {
     private void saveFiles() {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
-        svgDiagram = requestParameterMap.get("svg");
-        if (Objects.nonNull(svgDiagram)) {
-            saveSVGDiagram();
-        }
 
-        xmlDiagram = requestParameterMap.get("xml");
+        xmlDiagram = requestParameterMap.get("diagram");
         if (Objects.nonNull(xmlDiagram)) {
+            svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
+            xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+
             saveXMLDiagram();
+            saveSVGDiagram();
         }
     }
 

@@ -70,9 +70,9 @@ public class Docket extends BaseIndexedBean {
     /**
      * Set docket as active.
      *
-     * @param active as Boolean
+     * @param active as boolean
      */
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
