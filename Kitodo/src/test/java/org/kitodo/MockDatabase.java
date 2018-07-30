@@ -264,28 +264,29 @@ public class MockDatabase {
 
 
     private static void insertAuthorities() throws DataException {
+        String globalAssignableAuthoritySuffix = "_globalAssignable";
         String clientAssignableAuthoritySuffix = "_clientAssignable";
         String projectAssignableAuthoritySuffix = "_projectAssignable";
         List<Authority> authorities = new ArrayList<>();
 
-        authorities.add(new Authority("admin"));
+        authorities.add(new Authority("admin" + globalAssignableAuthoritySuffix));
 
         //Client
-        authorities.add(new Authority("viewAllClients"));
-        authorities.add(new Authority("viewClient"));
-        authorities.add(new Authority("editClient"));
-        authorities.add(new Authority("deleteClient"));
-        authorities.add(new Authority("addClient"));
+        authorities.add(new Authority("viewAllClients" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addClient" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewClient" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("editClient" + clientAssignableAuthoritySuffix));
 
         //Project
-        authorities.add(new Authority("viewProject"));
-        authorities.add(new Authority("viewAllProjects"));
-        authorities.add(new Authority("editProject"));
-        authorities.add(new Authority("deleteProject"));
-        authorities.add(new Authority("addProject"));
+        authorities.add(new Authority("viewProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProjects" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProject" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewProject" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllProjects" + clientAssignableAuthoritySuffix));
@@ -297,11 +298,11 @@ public class MockDatabase {
         authorities.add(new Authority("editProject" + projectAssignableAuthoritySuffix));
 
         //Docket
-        authorities.add(new Authority("viewAllDockets"));
-        authorities.add(new Authority("viewDocket"));
-        authorities.add(new Authority("addDocket"));
-        authorities.add(new Authority("editDocket"));
-        authorities.add(new Authority("deleteDocket"));
+        authorities.add(new Authority("viewAllDockets" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteDocket" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
@@ -323,19 +324,19 @@ public class MockDatabase {
         authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllProcesses"));
-        authorities.add(new Authority("viewProcess"));
-        authorities.add(new Authority("addProcess"));
-        authorities.add(new Authority("editProcess"));
-        authorities.add(new Authority("editProcessMetaData"));
-        authorities.add(new Authority("editProcessStructureData"));
-        authorities.add(new Authority("editProcessPagination"));
-        authorities.add(new Authority("editProcessImages"));
-        authorities.add(new Authority("viewProcessMetaData"));
-        authorities.add(new Authority("viewProcessStructureData"));
-        authorities.add(new Authority("viewProcessPagination"));
-        authorities.add(new Authority("viewProcessImages"));
-        authorities.add(new Authority("deleteProcess"));
+        authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessMetaData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + globalAssignableAuthoritySuffix));
 
         authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
@@ -362,11 +363,11 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessImages" + projectAssignableAuthoritySuffix));
 
         //Task
-        authorities.add(new Authority("viewAllTasks"));
-        authorities.add(new Authority("viewTask"));
-        authorities.add(new Authority("addTask"));
-        authorities.add(new Authority("editTask"));
-        authorities.add(new Authority("deleteTask"));
+        authorities.add(new Authority("viewAllTasks" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewTask" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllTasks" + clientAssignableAuthoritySuffix));
@@ -381,11 +382,11 @@ public class MockDatabase {
         authorities.add(new Authority("addTask" + projectAssignableAuthoritySuffix));
 
         //UserGroup
-        authorities.add(new Authority("viewAllUserGroups"));
-        authorities.add(new Authority("viewUserGroup"));
-        authorities.add(new Authority("addUserGroup"));
-        authorities.add(new Authority("editUserGroup"));
-        authorities.add(new Authority("deleteUserGroup"));
+        authorities.add(new Authority("viewAllUserGroups" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUserGroup" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewUserGroup" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllUserGroups" + clientAssignableAuthoritySuffix));
@@ -394,11 +395,11 @@ public class MockDatabase {
         authorities.add(new Authority("addUserGroup" + clientAssignableAuthoritySuffix));
 
         //User
-        authorities.add(new Authority("viewAllUsers"));
-        authorities.add(new Authority("viewUser"));
-        authorities.add(new Authority("addUser"));
-        authorities.add(new Authority("editUser"));
-        authorities.add(new Authority("deleteUser"));
+        authorities.add(new Authority("viewAllUsers" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUser" + globalAssignableAuthoritySuffix));
         
         authorities.add(new Authority("viewUser" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewAllUsers" + clientAssignableAuthoritySuffix));

@@ -51,17 +51,27 @@ public class SecurityUserDetails extends User implements UserDetails {
         for (UserGroup userGroup : userGroups) {
             List<Authority> authorities = userGroup.getAuthorities();
             for (Authority authority : authorities) {
+                if (authority.getTitle().contains(serviceManager.getAuthorityService().getGlobalAuthoritySuffix())) {
+                    insertGlobalAuthorities(userAuthorities, authority);
+                }
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getClientAuthoritySuffix())) {
                     insertClientAuthorities(userAuthorities, authority, clients);
-                } else if (authority.getTitle()
-                        .contains(serviceManager.getAuthorityService().getProjectAuthoritySuffix())) {
-                    insertProjectAuthoritiesFromUserGroup(userAuthorities, authority, projects);
-                } else {
-                    userAuthorities.add(new SimpleGrantedAuthority(authority.getTitle() + "_GLOBAL"));
+                }
+                if (authority.getTitle().contains(serviceManager.getAuthorityService().getProjectAuthoritySuffix())) {
+                    insertProjectAuthorities(userAuthorities, authority, projects);
                 }
             }
         }
         return userAuthorities;
+    }
+
+    private void insertGlobalAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority) {
+        String authorityTitle = authority.getTitle()
+            .replace(serviceManager.getAuthorityService().getGlobalAuthoritySuffix(), "");
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_GLOBAL");
+        if (!userAuthorities.contains(simpleGrantedAuthority)) {
+            userAuthorities.add(simpleGrantedAuthority);
+        }
     }
 
     private void insertClientAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
@@ -82,8 +92,8 @@ public class SecurityUserDetails extends User implements UserDetails {
         }
     }
 
-    private void insertProjectAuthoritiesFromUserGroup(List<SimpleGrantedAuthority> userAuthorities,
-            Authority authority, List<Project> projects) {
+    private void insertProjectAuthorities(List<SimpleGrantedAuthority> userAuthorities,
+                                          Authority authority, List<Project> projects) {
         for (Project project : projects) {
             String authorityTitle = authority.getTitle()
                     .replace(serviceManager.getAuthorityService().getProjectAuthoritySuffix(), "");

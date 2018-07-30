@@ -42,6 +42,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
+    private final String globalAuthoritySuffix = "_globalAssignable";
     private final String clientAuthoritySuffix = "_clientAssignable";
     private final String projectAuthoritySuffix = "_projectAssignable";
 
@@ -67,6 +68,15 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             }
         }
         return instance;
+    }
+
+    /**
+     * Gets globalAuthoritySuffix.
+     *
+     * @return The globalAuthoritySuffix.
+     */
+    public String getGlobalAuthoritySuffix() {
+        return globalAuthoritySuffix;
     }
 
     /**
@@ -174,6 +184,15 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
+     * Gets all authorities which are assignable globally.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> getAllAssignableGlobal() throws DAOException {
+        return filterAuthorities(getAll(), globalAuthoritySuffix);
+    }
+
+    /**
      * Gets all authorities which are assignable for any client.
      *
      * @return The list of authorities.
@@ -192,6 +211,33 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
+     * Filters global assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableGlobal(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, globalAuthoritySuffix);
+    }
+
+    /**
+     * Filters client assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableToClients(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, clientAuthoritySuffix);
+    }
+
+    /**
+     * Filters project assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableToProjects(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, projectAuthoritySuffix);
+    }
+
+    /**
      * Filters a list of authorities by checking if title contains the given filter.
      * 
      * @param authoritiesToFilter
@@ -200,7 +246,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      *            The filter as String object.
      * @return The filtered list of authorities.
      */
-    public List<Authority> filterAuthorities(List<Authority> authoritiesToFilter, String filter) {
+    private List<Authority> filterAuthorities(List<Authority> authoritiesToFilter, String filter) {
         List<Authority> filteredAuthorities = new ArrayList<>();
         for (Authority authority : authoritiesToFilter) {
             if (authority.getTitle().contains(filter)) {

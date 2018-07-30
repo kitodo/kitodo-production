@@ -75,9 +75,9 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldFindByTitle() {
-        int expected = 2;
+        int expected = 1;
         await().untilAsserted(() -> assertEquals("Authority was not found in index!", expected,
-            authorityService.findByTitle("viewAllUserGroups", true).size()));
+            authorityService.findByTitle("viewAllUserGroups_globalAssignable", true).size()));
     }
 
     @Test

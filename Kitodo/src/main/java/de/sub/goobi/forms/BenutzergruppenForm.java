@@ -165,10 +165,10 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getGlobalAuthorities() {
-        List<Authority> assignedAuthorities = userGroup.getGlobalAuthorities();
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableGlobal(userGroup.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
-            availableAuthorities = serviceManager.getAuthorityService().getAll();
+            availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
             availableAuthorities.removeAll(assignedAuthorities);
         } catch (DAOException e) {
             logger.error(e.getMessage(), e);
@@ -197,7 +197,7 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getClientAssignableAuthorities() {
-        List<Authority> assignedAuthorities = this.userGroup.getClientAuthorities();
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToClients(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
@@ -235,7 +235,7 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getProjectAssignableAuthorities() {
-        List<Authority> assignedAuthorities = this.userGroup.getProjectAuthorities();
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToProjects(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects();

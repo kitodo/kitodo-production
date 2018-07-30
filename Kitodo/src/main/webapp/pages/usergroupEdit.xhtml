@@ -90,10 +90,6 @@
                                     <h3>
                                         <h:outputText value="#{msgs.authoritiesGlobal}"/>
                                     </h3>
-                                    <div style="visibility: hidden;margin-top: 15px">
-                                        <p:outputLabel for="hiddenSelect" value="hidden"/>
-                                        <p:selectOneMenu id="hiddenSelect" value="hidden"/>
-                                    </div>
                                     <p:pickList id="authoritiesGlobalPick"
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 filterMatchMode="contains"
@@ -101,35 +97,22 @@
                                                 disabled="#{isViewMode}"
                                                 value="#{BenutzergruppenForm.globalAuthorities}"
                                                 converter="#{authorityConverter}"
-                                                var="authority" itemLabel="#{authority.title}"
-                                                onTransfer="toggleSave()"
-                                                itemValue="#{authority}">
+                                                var="authority" itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                                itemValue="#{authority}"
+                                                onTransfer="toggleSave()">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
                                         <f:facet name="targetCaption"
                                                  style="color: #000;">#{msgs.assigned}</f:facet>
+                                        <p:ajax event="transfer"/>
                                     </p:pickList>
                                 </h:panelGroup>
 
                                 <!--client authorities-->
-                                <h:panelGroup rendered="#{BenutzergruppenForm.clientsAvailable}">
+                                <h:panelGroup>
                                     <h3>
                                         <h:outputText value="#{msgs.authoritiesClient}"/>
                                     </h3>
-                                    <div style="margin-top: 15px">
-                                        <p:outputLabel for="clientSelect" value="#{msgs.client}"/>
-                                        <p:selectOneMenu id="clientSelect"
-                                                         converter="#{clientConverter}"
-                                                         value="#{BenutzergruppenForm.selectedClient}">
-                                            <f:selectItems value="#{BenutzergruppenForm.clients}" var="client"
-                                                           itemValue="#{client}"
-                                                           itemLabel="#{client.name}"/>
-                                            <p:ajax event="change"
-                                                    update="authoritiesClientPick"
-                                                    oncomplete="toggleSave()"
-                                            />
-                                        </p:selectOneMenu>
-                                    </div>
                                     <p:pickList id="authoritiesClientPick"
                                                 value="#{BenutzergruppenForm.clientAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
@@ -139,7 +122,7 @@
                                                 filterMatchMode="contains"
                                                 responsive="true"
                                                 onTransfer="toggleSave()"
-                                                itemLabel="#{authority.title}"
+                                                itemLabel="#{authority.getTitleWithoutSuffix()}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
@@ -149,23 +132,10 @@
                                     </p:pickList>
                                 </h:panelGroup>
                                 <!--project authorities-->
-                                <h:panelGroup rendered="#{BenutzergruppenForm.projectsAvailable}">
+                                <h:panelGroup>
                                     <h3>
                                         <h:outputText value="#{msgs.authoritiesProject}"/>
                                     </h3>
-                                    <div style="margin-top: 15px">
-                                        <p:outputLabel for="projectSelect" value="#{msgs.project}"/>
-                                        <p:selectOneMenu id="projectSelect"
-                                                         converter="#{projectConverter}"
-                                                         value="#{BenutzergruppenForm.selectedProject}">
-                                            <f:selectItems value="#{BenutzergruppenForm.projects}" var="project"
-                                                           itemValue="#{project}"
-                                                           itemLabel="#{project.title}"/>
-                                            <p:ajax event="change"
-                                                    update="authoritiesProjectPick"
-                                                    oncomplete="toggleSave()"/>
-                                        </p:selectOneMenu>
-                                    </div>
                                     <p:pickList id="authoritiesProjectPick"
                                                 value="#{BenutzergruppenForm.projectAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
@@ -175,7 +145,7 @@
                                                 responsive="true"
                                                 var="authority"
                                                 onTransfer="toggleSave()"
-                                                itemLabel="#{authority.title}"
+                                                itemLabel="#{authority.getTitleWithoutSuffix()}"
                                                 itemValue="#{authority}">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>

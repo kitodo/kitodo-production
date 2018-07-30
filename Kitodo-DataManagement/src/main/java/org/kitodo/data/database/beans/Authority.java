@@ -58,6 +58,14 @@ public class Authority extends BaseIndexedBean {
     }
 
     /**
+     * Gets the title without suffixes seperated by "_" e.g. "admin_global" will become "admin".
+     * @return The title without suffix.
+     */
+    public String getTitleWithoutSuffix() {
+        return title.split("_")[0];
+    }
+
+    /**
      * Sets the title.
      *
      * @param title

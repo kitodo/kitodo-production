@@ -18,6 +18,7 @@ DROP COLUMN projectAssignable,
 DROP COLUMN clientAssignable,
 DROP COLUMN globalAssignable;
 
+
 -- Add table user_x_client
 CREATE TABLE client_x_user (
   `client_id` INT(11) NOT NULL,
@@ -30,6 +31,14 @@ foreign key (user_id) REFERENCES user(id);
 ALTER TABLE client_x_user add constraint `FK_client_x_user_client_id`
 foreign key (client_id) REFERENCES client(id);
 
+-- 2. Switch off safe updates
+SET SQL_SAFE_UPDATES = 0;
+
+-- Add '_globalAssignable' to every existing authority entry
+UPDATE authority set title=concat(title,'_globalAssignable');
+
+-- 4. Switch on safe updates
+SET SQL_SAFE_UPDATES = 1;
 
 -- Add authorities to replace the assignable columns
 # Client
