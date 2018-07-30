@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid columns="2" cellpadding="10" id="folder" layout="grid">
+        <p:row>
+            <div>
+                <h:outputText value="#{msgs.project}:"/>
+                <h:outputText value="#{MassImportForm.template.project.title}"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="folderDigitalCollections" value="#{msgs.digitalCollections}:"/>
+                <p:selectManyMenu id="folderDigitalCollections" value="#{MassImportForm.digitalCollections}">
+                    <f:selectItems value="#{MassImportForm.possibleDigitalCollection}"
+                                   var="digitalCollection" itemLabel="#{digitalCollection}"
+                                   itemValue="#{digitalCollection}"/>
+                </p:selectManyMenu>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="folderImportPlugins" value="#{msgs.importplugin}:"/>
+                <p:selectOneMenu id="folderImportPlugins" value="#{MassImportForm.currentPlugin}">
+                    <!-- TODO: find other way to include it -->
+                    <!--<f:ajax event="change" render="formupload"/>-->
+                    <f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue=""/>
+                    <f:selectItems value="#{MassImportForm.usablePluginsForFolder}"
+                                   var="plugin" itemLabel="#{plugin}" itemValue="#{plugin}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="filenames" value="#{msgs.files}:"/>
+                <p:selectManyMenu value="#{MassImportForm.selectedFilenames}" id="filenames">
+                    <f:selectItems itemLabel="#{file}" itemValue="#{file}" var="file"
+                                   value="#{MassImportForm.allFilenames}"/>
+                </p:selectManyMenu>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>

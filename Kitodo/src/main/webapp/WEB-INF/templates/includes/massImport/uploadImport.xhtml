@@ -1,0 +1,66 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid columns="2" cellpadding="10" id="upload" layout="grid">
+        <p:row>
+            <div>
+                <h:outputText value="#{msgs.project}:"/>
+                <h:outputText value="#{MassImportForm.template.project.title}"/>
+            </div>
+
+            <div>
+                <h:outputText value="#{msgs.searchOPAC}" style="display:inline"/>
+                <p:selectOneMenu id="katalogauswahl" value="#{MassImportForm.opacCatalogue}">
+                    <f:selectItems value="#{MassImportForm.allOpacCatalogues}"
+                                   var="step" itemLabel="#{step}" itemValue="#{step}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="uploadDigitalCollections" value="#{msgs.digitalCollections}:"/>
+                <p:selectManyMenu id="uploadDigitalCollections" value="#{MassImportForm.digitalCollections}" size="5">
+                    <f:selectItems value="#{MassImportForm.possibleDigitalCollection}"
+                                   var="digitalCollection" itemLabel="#{digitalCollection}" itemValue="#{digitalCollection}"/>
+                </p:selectManyMenu>
+            </div>
+        </p:row>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="uploadImportPlugins" value="#{msgs.importplugin}:"/>
+                <p:selectOneMenu id="uploadImportPlugins" value="#{MassImportForm.currentPlugin}">
+                    <!-- TODO: find other way to include it -->
+                    <!--<f:ajax event="change" render="formupload"/>-->
+                    <f:selectItem itemLabel="#{msgs.selectPlugin}" itemValue=""/>
+                    <f:selectItems value="#{MassImportForm.usablePluginsForFiles}"
+                                   var="plugin" itemLabel="#{plugin}" itemValue="#{plugin}"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="fileUpload3" value="#{msgs.uploadImport}:"/>
+                <p:panel>
+                    <p:fileUpload id="fileUpload3" value="#{MassImportForm.uploadedFile}"
+                                  mode="simple" skinSimple="true" required="false"/>
+                    <p:commandButton value="#{msgs.uploadFile}" id="uploadButton" action="#{MassImportForm.uploadFile}"/>
+                </p:panel>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>
