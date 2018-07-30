@@ -90,8 +90,7 @@ public class UsersPage extends Page<UsersPage> {
         if (isNotAt()) {
             goTo();
         }
-        List<WebElement> listOfRows = getRowsOfTable(usersTableData);
-        return listOfRows.size();
+        return getRowsOfTable(usersTableData).size();
     }
 
     /**
@@ -101,8 +100,7 @@ public class UsersPage extends Page<UsersPage> {
      */
     public int countListedUserGroups() throws Exception {
         switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
-        List<WebElement> listOfRows = getRowsOfTable(userGroupsTable);
-        return listOfRows.size();
+        return getRowsOfTable(userGroupsTable).size();
     }
 
     /**
@@ -112,20 +110,18 @@ public class UsersPage extends Page<UsersPage> {
      */
     public int countListedClients() throws Exception {
         switchToTabByIndex(TabIndex.CLIENTS.getIndex());
-        List<WebElement> listOfRows = getRowsOfTable(clientsTable);
-        return listOfRows.size();
+        return getRowsOfTable(clientsTable).size();
     }
 
 
     /**
      * Counts rows of ldap groups table.
      *
-     * @return The number of rows of ldab groups table.
+     * @return The number of rows of ldap groups table.
      */
     public int countListedLdapGroups() throws Exception {
         switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
-        List<WebElement> listOfRows = getRowsOfTable(ldapGroupsTable);
-        return listOfRows.size();
+        return getRowsOfTable(ldapGroupsTable).size();
     }
 
     /**
@@ -163,9 +159,7 @@ public class UsersPage extends Page<UsersPage> {
      * @return The list of ldap group titles
      */
     public List<String> getLdapGroupNames() throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
+        switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
         return getTableDataByColumn(ldapGroupsTable, 0);
     }
 

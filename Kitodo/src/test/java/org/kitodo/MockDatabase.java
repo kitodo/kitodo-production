@@ -438,7 +438,7 @@ public class MockDatabase {
 
         Docket secondDocket = new Docket();
         secondDocket.setTitle("second");
-        secondDocket.setFile("docket.xsl");
+        secondDocket.setFile("MetsModsGoobi_to_MetsKitodo.xsl");
         secondDocket.setClient(client);
         serviceManager.getDocketService().save(secondDocket);
 
@@ -447,6 +447,12 @@ public class MockDatabase {
         thirdDocket.setFile("third_docket.xsl");
         thirdDocket.setClient(serviceManager.getClientService().getById(2));
         serviceManager.getDocketService().save(thirdDocket);
+
+        Docket fourthDocket = new Docket();
+        fourthDocket.setTitle("tester");
+        fourthDocket.setFile("docket.xsl");
+        fourthDocket.setClient(client);
+        serviceManager.getDocketService().save(fourthDocket);
     }
 
     private static void insertLdapServers() throws DAOException {
@@ -722,6 +728,9 @@ public class MockDatabase {
         firstProject.setEndDate(localDate.toDate());
         firstProject.setNumberOfPages(30);
         firstProject.setNumberOfVolumes(2);
+        firstProject.setFileFormatInternal("Mets");
+        firstProject.setFileFormatDmsExport("Mets");
+        firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
         Client client = serviceManager.getClientService().getById(1);
