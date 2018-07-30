@@ -72,6 +72,50 @@ ALTER TABLE folder
   ADD CONSTRAINT `FK_folder_project_id` FOREIGN KEY (project_id) REFERENCES project (id);
 
 
+-- Make sure we have LOCAL, MAX and THUMBS file groups
+--
+-- LOCAL file group was existing internally and hard-coded without being
+-- visible in the database in the past; MAX and THUMBS are typically already
+-- existing, but if not, they will be added here. They are pre-configured as
+-- non-linking and non-export, so behaviour won’t be changed.
+
+INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
+  SELECT 'LOCAL'      as fileGroup,
+         ''           as urlStructure,
+         'image/tiff' as mimeType,
+         ''           as path,          -- path is set later, see below
+         project.id   as project_id,
+         0            as copyFolder,
+         'NO'         as linkingMode
+  FROM project
+  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'LOCAL')
+  WHERE folder.id IS NULL;
+
+INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
+  SELECT 'MAX'        as fileGroup,
+         'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/' as urlStructure,
+         'image/jpeg' as mimeType,
+         ''           as path,          -- path is set later, see below
+         project.id   as project_id,
+         0            as copyFolder,
+         'NO'         as linkingMode
+  FROM project
+  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'MAX')
+  WHERE folder.id IS NULL;
+
+INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
+  SELECT 'THUMBS'     as fileGroup,
+         'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/' as urlStructure,
+         'image/jpeg' as mimeType,
+         ''           as path,          -- path is set later, see below
+         project.id   as project_id,
+         0            as copyFolder,
+         'NO'         as linkingMode
+  FROM project
+  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'THUMBS')
+  WHERE folder.id IS NULL;
+
+
 -- Fill in path column
 --
 -- In this example, we use Linux file separator and the _tif suffix for the
