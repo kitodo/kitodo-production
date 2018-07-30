@@ -42,8 +42,8 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
-    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
-    private static final String PROJECT_AUTHORITY_SUFFIX = "_projectAssignable";
+    private final String clientAuthoritySuffix = "_clientAssignable";
+    private final String projectAuthoritySuffix = "_projectAssignable";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -67,6 +67,24 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             }
         }
         return instance;
+    }
+
+    /**
+     * Gets clientAuthoritySuffix.
+     *
+     * @return The clientAuthoritySuffix.
+     */
+    public String getClientAuthoritySuffix() {
+        return clientAuthoritySuffix;
+    }
+
+    /**
+     * Gets projectAuthoritySuffix.
+     *
+     * @return The projectAuthoritySuffix.
+     */
+    public String getProjectAuthoritySuffix() {
+        return projectAuthoritySuffix;
     }
 
     /**
@@ -161,7 +179,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> getAllAssignableToClients() throws DAOException {
-        return filterAuthorities(getAll(), CLIENT_AUTHORITY_SUFFIX);
+        return filterAuthorities(getAll(), clientAuthoritySuffix);
     }
 
     /**
@@ -170,7 +188,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      * @return The list of authorities.
      */
     public List<Authority> getAllAssignableToProjects() throws DAOException {
-        return filterAuthorities(getAll(), PROJECT_AUTHORITY_SUFFIX);
+        return filterAuthorities(getAll(), projectAuthoritySuffix);
     }
 
     /**
