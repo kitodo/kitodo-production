@@ -79,7 +79,7 @@ public class UserGroupServiceIT {
         UserGroup userGroup = userGroupService.getById(1);
         assertEquals("User group title is not matching", "Admin", userGroup.getTitle());
         assertEquals("User group first authorities title is not matching", "viewAllClients",
-            userGroup.getAuthorities().get(0).getTitle());
+            userGroup.getAuthorities().get(1).getTitle());
     }
 
     @Test
@@ -164,7 +164,7 @@ public class UserGroupServiceIT {
 
     @Test
     public void shouldFindManyByAuthorization() {
-        await().untilAsserted(() -> assertEquals("User group was not found in index!", 2,
+        await().untilAsserted(() -> assertEquals("User group was not found in index!", 1,
             userGroupService.findByAuthorizationTitle("viewAllClients").size()));
     }
 
@@ -208,7 +208,7 @@ public class UserGroupServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
-        int expected = 36;
+        int expected = 109;
         assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
@@ -217,7 +217,7 @@ public class UserGroupServiceIT {
         UserGroup userGroup = userGroupService.getById(1);
         List<Authority> actual = userGroup.getAuthorities();
         assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients",
-            actual.get(0).getTitle());
+            actual.get(1).getTitle());
     }
 
     @Test
@@ -237,7 +237,7 @@ public class UserGroupServiceIT {
         List<UserGroupDTO> userGroupDTOS = userGroupService
                 .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
-        assertEquals("Incorrect authorization!", "viewAllClients", authorityDTO.getTitle());
+        assertEquals("Incorrect authorization!", "admin", authorityDTO.getTitle());
     }
 
     @Test

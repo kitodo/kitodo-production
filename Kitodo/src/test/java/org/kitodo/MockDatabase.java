@@ -277,8 +277,8 @@ public class MockDatabase {
         authorities.add(new Authority("deleteClient"));
         authorities.add(new Authority("addClient"));
         
-        authorities.add(new Authority("viewClient " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editClient " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewClient" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editClient" + clientAssignableAuthoritySuffix));
 
         //Project
         authorities.add(new Authority("viewProject"));
@@ -287,14 +287,14 @@ public class MockDatabase {
         authorities.add(new Authority("deleteProject"));
         authorities.add(new Authority("addProject"));
         
-        authorities.add(new Authority("viewProject " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProjects " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProject " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProject " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProjects" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProject" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewProject " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProject " + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProject" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + projectAssignableAuthoritySuffix));
 
         //Docket
         authorities.add(new Authority("viewAllDockets"));
@@ -303,25 +303,25 @@ public class MockDatabase {
         authorities.add(new Authority("editDocket"));
         authorities.add(new Authority("deleteDocket"));
         
-        authorities.add(new Authority("viewDocket " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllDockets " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editDocket " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteDocket " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addDocket " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
 
         //ruleset
-        authorities.add(new Authority("viewRuleset " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllRulesets " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editRuleset " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteRuleset " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addRuleset " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
 
         //process
-        authorities.add(new Authority("viewProcess " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
 
         authorities.add(new Authority("viewAllProcesses"));
         authorities.add(new Authority("viewProcess"));
@@ -337,29 +337,29 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessImages"));
         authorities.add(new Authority("deleteProcess"));
 
-        authorities.add(new Authority("viewProcess " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess " + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + projectAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("editProcessMetaData " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessMetaData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("editProcessMetaData " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessStructureData " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessPagination " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcessImages " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessMetaData " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessStructureData " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessPagination " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewProcessImages " + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessMetaData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + projectAssignableAuthoritySuffix));
 
         //Task
         authorities.add(new Authority("viewAllTasks"));
@@ -368,17 +368,17 @@ public class MockDatabase {
         authorities.add(new Authority("editTask"));
         authorities.add(new Authority("deleteTask"));
         
-        authorities.add(new Authority("viewTask " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTasks " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllTasks" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewTask " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllTasks " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editTask " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteTask " + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("addTask " + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllTasks" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + projectAssignableAuthoritySuffix));
 
         //UserGroup
         authorities.add(new Authority("viewAllUserGroups"));
@@ -387,11 +387,11 @@ public class MockDatabase {
         authorities.add(new Authority("editUserGroup"));
         authorities.add(new Authority("deleteUserGroup"));
         
-        authorities.add(new Authority("viewUserGroup " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUserGroups " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUserGroup " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUserGroup " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUserGroup " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllUserGroups" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUserGroup" + clientAssignableAuthoritySuffix));
 
         //User
         authorities.add(new Authority("viewAllUsers"));
@@ -400,11 +400,11 @@ public class MockDatabase {
         authorities.add(new Authority("editUser"));
         authorities.add(new Authority("deleteUser"));
         
-        authorities.add(new Authority("viewUser " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllUsers " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editUser " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteUser " + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addUser " + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllUsers" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
 
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
@@ -710,29 +710,37 @@ public class MockDatabase {
     }
 
     public static void insertClients() throws DataException, DAOException {
-        User firstUser = serviceManager.getUserService().getById(1);
-        User secondUser = serviceManager.getUserService().getById(2);
-
+        boolean usersAvailable = serviceManager.getUserService().getAll().size() > 0;
         Client client = new Client();
         client.setName("First client");
-        client.getUsers().add(firstUser);
-        client.getUsers().add(secondUser);
-        serviceManager.getClientService().save(client);
-        firstUser.getClients().add(client);
-        serviceManager.getUserService().save(firstUser);
+
+        if (usersAvailable) {
+            User firstUser = serviceManager.getUserService().getById(1);
+            User secondUser = serviceManager.getUserService().getById(2);
+            client.getUsers().add(firstUser);
+            client.getUsers().add(secondUser);
+            firstUser.getClients().add(client);
+            serviceManager.getClientService().save(client);
+            serviceManager.getUserService().save(firstUser);
+        } else {
+            serviceManager.getClientService().save(client);
+        }
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
-        secondClient.getUsers().add(secondUser);
-        serviceManager.getClientService().save(secondClient);
-        secondUser.getClients().add(secondClient);
-        serviceManager.getUserService().save(secondUser);
+        if (usersAvailable) {
+            User secondUser = serviceManager.getUserService().getById(2);
+            secondClient.getUsers().add(secondUser);
+            secondUser.getClients().add(secondClient);
+            serviceManager.getClientService().save(secondClient);
+            serviceManager.getUserService().save(secondUser);
+        } else {
+            serviceManager.getClientService().save(secondClient);
+        }
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
         serviceManager.getClientService().save(thirdClient);
-
-
     }
 
     private static void insertProjects() throws DAOException, DataException {

@@ -80,29 +80,6 @@ public class BenutzergruppenForm extends BasisForm {
     public String save() {
         try {
             this.serviceManager.getUserGroupService().save(this.userGroup);
-
-//            if (clientAuthoritiesChanged) {
-//                for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelationsToDelete) {
-//                    relation.setAuthority(null);
-//                    relation.setClient(null);
-//                    relation.setUserGroup(null);
-//                    this.serviceManager.getUserGroupClientAuthorityRelationService().removeFromDatabase(relation);
-//                }
-//                this.userGroupClientAuthorityRelationsToDelete.clear();
-//                this.clientAuthoritiesChanged = false;
-//            }
-//
-//            if (projectAuthoritiesChanged) {
-//                for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelationsToDelete) {
-//                    relation.setAuthority(null);
-//                    relation.setProject(null);
-//                    relation.setUserGroup(null);
-//                    this.serviceManager.getUserGroupProjectAuthorityRelationService().removeFromDatabase(relation);
-//                }
-//                this.userGroupProjectAuthorityRelationsToDelete.clear();
-//                this.projectAuthoritiesChanged = false;
-//            }
-
             return usergroupListPath;
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);

@@ -448,7 +448,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetAuthorizationOfUser() throws Exception {
-        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(0);
+        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(1);
         assertEquals("Authority title is incorrect!", "viewAllClients", authority.getTitle());
     }
 
