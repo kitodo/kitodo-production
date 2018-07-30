@@ -30,10 +30,6 @@
             <ui:insert name="pageTabView">
                 <p:tabView/>
             </ui:insert>
-            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
-                <p:commandButton id="yesButton" value="#{msgs.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" immediate="true" update="processesTabView:processesForm:processesTable"/>
-                <p:commandButton id="noButton" value="#{msgs.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-            </p:confirmDialog>
         </p:panel>
         <h:outputScript name="content.js" target="body" library="js"/>
     </ui:define>

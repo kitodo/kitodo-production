@@ -45,6 +45,14 @@ public abstract class Page<T> {
     @FindBy(className = "ui-messages-error-summary")
     private WebElement errorMessage;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "yesButton")
+    WebElement confirmRemoveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "noButton")
+    WebElement cancelRemoveButton;
+
     private String URL;
 
     Page(String URL) {

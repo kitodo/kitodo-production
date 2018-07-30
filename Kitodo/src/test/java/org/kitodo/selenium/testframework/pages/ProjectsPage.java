@@ -25,6 +25,8 @@ import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
@@ -78,6 +80,22 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    private WebElement createProcess;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:projectsTable:0:projectActionForm:deleteProject")
+    private WebElement deleteFirstProjectButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:docketTable:0:actionForm:deleteDocket")
+    private WebElement deleteFirstDocketButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:rulesetTable:0:actionForm:deleteRuleset")
+    private WebElement deleteFirstRulesetButton;
 
     public ProjectsPage() {
         super("pages/projects.jsf");
@@ -278,5 +296,40 @@ public class ProjectsPage extends Page<ProjectsPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
+    }
+
+    /**
+     * Remove the first project in the projects list on the projects page.
+     */
+    public void deleteFirstProject() throws Exception {
+        deleteFirstElement(deleteFirstProjectButton, TabIndex.PROJECTS.getIndex());
+    }
+
+    /**
+     * Remove the first docket in the docket list on the dockets page.
+     */
+    public void deleteFirstDocket() throws Exception {
+        deleteFirstElement(deleteFirstDocketButton, TabIndex.DOCKETS.getIndex());
+    }
+
+    /**
+     * Remove the first ruleset in the ruleset list on the ruleset page.
+     */
+    public void deleteFirstRuleset() throws Exception {
+        deleteFirstElement(deleteFirstRulesetButton, TabIndex.RULESETS.getIndex());
+    }
+
+    private void deleteFirstElement(WebElement deleteButton, int index) throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        switchToTabByIndex(index);
+        deleteButton.click();
+        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
+                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
+        confirmRemoveButton.click();
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        wait.until(ExpectedConditions.urlContains(Pages.getProjectsPage().getUrl()));
+
     }
 }

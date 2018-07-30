@@ -26,6 +26,8 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UsersPage extends Page<UsersPage> {
 
@@ -68,6 +70,22 @@ public class UsersPage extends Page<UsersPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:usersTable:0:actionForm:deleteUser")
+    private WebElement deleteFirstUserButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:userGroupsTable:0:actionForm:deleteUsergroup")
+    private WebElement deleteFirstUserGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:clientsTable:0:actionForm:deleteClient")
+    private WebElement deleteFirstClientButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:ldapGroupsTable:0:actionForm:deleteLdapgroup")
+    private WebElement deleteFirstLDAPGroupButton;
 
     public UsersPage() {
         super("pages/users.jsf");
@@ -289,5 +307,47 @@ public class UsersPage extends Page<UsersPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newClientButton, Pages.getClientEditPage().getUrl());
         return Pages.getClientEditPage();
+    }
+
+    /**
+     * Remove the first user in the user list on the user page.
+     */
+    public void deleteFirstUser() throws Exception {
+        deleteFirstElement(deleteFirstUserButton, TabIndex.USERS.getIndex());
+    }
+
+    /**
+     * Remove the first user group in the user group list on the user page.
+     */
+    public void deleteFirstUserGroup() throws Exception {
+        deleteFirstElement(deleteFirstUserGroupButton, TabIndex.USER_GROUPS.getIndex());
+    }
+
+    /**
+     * Remove the first client in the client list on the user page.
+     */
+    public void deleteFirstClient() throws Exception {
+        deleteFirstElement(deleteFirstClientButton, TabIndex.CLIENTS.getIndex());
+    }
+
+    /**
+     * Remove the first LDAP group in the LDAP group list on the user page.
+     */
+    public void deleteFirstLDAPGroup() throws Exception {
+        deleteFirstElement(deleteFirstLDAPGroupButton, TabIndex.LDAP_GROUPS.getIndex());
+    }
+
+    private void deleteFirstElement(WebElement button, int tabIndex) throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        switchToTabByIndex(tabIndex);
+        button.click();
+        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
+                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
+        confirmRemoveButton.click();
+        Thread.sleep(Browser.getDelayAfterDelete());
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
     }
 }

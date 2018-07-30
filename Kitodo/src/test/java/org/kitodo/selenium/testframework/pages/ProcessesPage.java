@@ -35,14 +35,6 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @FindBy(id = "processesTabView:processesForm:processesTable:0:deleteProcess")
     private WebElement removeFirstProcessButton;
 
-    @SuppressWarnings("unused")
-    @FindBy(id = "yesButton")
-    private WebElement confirmRemoveButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "noButton")
-    private WebElement cancelRemoveButton;
-
     public ProcessesPage() {
         super("pages/processes.jsf");
     }
