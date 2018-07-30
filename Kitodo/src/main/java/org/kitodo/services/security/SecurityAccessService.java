@@ -434,26 +434,6 @@ public class SecurityAccessService {
         return clientIdList;
     }
 
-    /**
-     * Get list of client id for given authority title.
-     *
-     * @return list of Client ids
-     */
-    public List<Integer> getClientIdListForAnyAuthority() {
-        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-        return getIdsOfAuthoritiesByFilter(authorities,"_" + CLIENT_IDENTIFIER + "_");
-    }
-
-    /**
-     * Get list of project id for given authority title.
-     *
-     * @return list of Project ids
-     */
-    public List<Integer> getProjectIdListForAnyAuthority() {
-        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-        return getIdsOfAuthoritiesByFilter(authorities,"_" + PROJECT_IDENTIFIER + "_");
-    }
-
     private List<Integer> getIdsOfAuthoritiesByFilter(Collection<? extends GrantedAuthority> authorities, String filter) {
         List<Integer> idList = new ArrayList<>();
         for (GrantedAuthority authority : authorities) {

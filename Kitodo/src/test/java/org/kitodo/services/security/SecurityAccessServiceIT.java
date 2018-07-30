@@ -45,7 +45,7 @@ public class SecurityAccessServiceIT {
     public void shouldGetAuthorities() {
         Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
                 .getAuthorities();
-        Assert.assertEquals("Security context holder does not hold the corresponding authorities", 36,
+        Assert.assertEquals("Security context holder does not hold the corresponding authorities", 44,
             authorities.size());
     }
 

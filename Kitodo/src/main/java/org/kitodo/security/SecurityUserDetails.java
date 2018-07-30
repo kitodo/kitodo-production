@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,9 @@ public class SecurityUserDetails extends User implements UserDetails {
      */
     private Client sessionClient;
 
+    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
+    private static final String PROJECT_AUTHORITY_SUFFIX = "_projectAssignable";
+
     public SecurityUserDetails(final User user) {
         super(user);
     }
@@ -40,64 +44,55 @@ public class SecurityUserDetails extends User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         List<UserGroup> userGroups = super.getUserGroups();
-        List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+        List<Client> clients = super.getClients();
+        List<Project> projects = super.getProjects();
+        List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
         for (UserGroup userGroup : userGroups) {
-            List<Authority> authorities = userGroup.getGlobalAuthorities();
+            List<Authority> authorities = userGroup.getAuthorities();
             for (Authority authority : authorities) {
-                grantedAuthorities.add(new SimpleGrantedAuthority(authority.getTitle() + "_GLOBAL"));
+                if (authority.getTitle().contains(CLIENT_AUTHORITY_SUFFIX)) {
+                    insertClientAuthorities(userAuthorities, authority, clients);
+                } else if (authority.getTitle().contains(PROJECT_AUTHORITY_SUFFIX)) {
+                    insertProjectAuthoritiesFromUserGroup(userAuthorities, authority, projects);
+                } else {
+                    userAuthorities.add(new SimpleGrantedAuthority(authority.getTitle() + "_GLOBAL"));
+                }
             }
-
-            insertClientAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
-            insertProjectAuthoritiesFromUserGroup(grantedAuthorities, userGroup);
         }
-        return grantedAuthorities;
+        return userAuthorities;
     }
 
-    private void insertClientAuthoritiesFromUserGroup(
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
-//        List<UserGroupClientAuthorityRelation> userGroupClientAuthorityRelations = userGroup
-//                .getUserGroupClientAuthorityRelations();
-//
-//        for (UserGroupClientAuthorityRelation relation : userGroupClientAuthorityRelations) {
-//
-//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
-//                        relation.getAuthority().getTitle() + "_CLIENT_ANY");
-//
-//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
-//                simpleGrantedAuthorities.add(simpleGrantedAuthority);
-//            }
-//
-//            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-//                        relation.getAuthority().getTitle() + "_CLIENT_" + relation.getClient().getId());
-//
-//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
-//                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
-//            }
-//        }
+    private void insertClientAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
+            List<Client> clients) {
+        for (Client client : clients) {
+            String authorityTitle = authority.getTitle().replace(CLIENT_AUTHORITY_SUFFIX, "");
+
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_ANY");
+            if (!userAuthorities.contains(simpleGrantedAuthority)) {
+                userAuthorities.add(simpleGrantedAuthority);
+            }
+            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(authorityTitle + "_CLIENT_" + client.getId());
+            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
+                userAuthorities.add(simpleGrantedAuthorityWithId);
+            }
+        }
     }
 
     private void insertProjectAuthoritiesFromUserGroup(
-            List<SimpleGrantedAuthority> simpleGrantedAuthorities, UserGroup userGroup) {
-//        List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations = userGroup
-//                .getUserGroupProjectAuthorityRelations();
-//
-//        for (UserGroupProjectAuthorityRelation relation : userGroupProjectAuthorityRelations) {
-//
-//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(
-//                    relation.getAuthority().getTitle() + "_PROJECT_ANY");
-//
-//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthority)) {
-//                simpleGrantedAuthorities.add(simpleGrantedAuthority);
-//            }
-//
-//            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-//                    relation.getAuthority().getTitle() + "_PROJECT_" + relation.getProject().getId());
-//
-//            if (!simpleGrantedAuthorities.contains(simpleGrantedAuthorityWithId)) {
-//                simpleGrantedAuthorities.add(simpleGrantedAuthorityWithId);
-//            }
-//        }
+            List<SimpleGrantedAuthority> userAuthorities, Authority authority, List<Project> projects) {
+        for (Project project : projects) {
+            String authorityTitle = authority.getTitle().replace(PROJECT_AUTHORITY_SUFFIX, "");
+
+            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_PROJECT_ANY");
+            if (!userAuthorities.contains(simpleGrantedAuthority)) {
+                userAuthorities.add(simpleGrantedAuthority);
+            }
+            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(authorityTitle + "_PROJECT_" + project.getId());
+            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
+                userAuthorities.add(simpleGrantedAuthorityWithId);
+            }
+        }
     }
 
     /**

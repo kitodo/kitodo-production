@@ -28,6 +28,9 @@ import javax.persistence.Table;
 public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
 
+    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
+    private static final String PROJECT_AUTHORITY_SUFFIX = "_projectAssignable";
+
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
@@ -78,7 +81,7 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      *
      * @return The authorities.
      */
-    public List<Authority> getGlobalAuthorities() {
+    public List<Authority> getAuthorities() {
         if (this.authorities == null) {
             this.authorities = new ArrayList<>();
         }
@@ -86,12 +89,59 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     }
 
     /**
+     * Gets global authorities.
+     *
+     * @return The global authorities.
+     */
+    public List<Authority> getGlobalAuthorities() {
+        List<Authority> globalAuthorities = new ArrayList<>();
+        for (Authority authority : getAuthorities()) {
+            if (!authority.getTitle().contains(CLIENT_AUTHORITY_SUFFIX)
+                    && !authority.getTitle().contains(PROJECT_AUTHORITY_SUFFIX)) {
+                globalAuthorities.add(authority);
+            }
+        }
+        return globalAuthorities;
+    }
+
+    /**
+     * Gets client authorities.
+     *
+     * @return The client authorities.
+     */
+    public List<Authority> getClientAuthorities() {
+        List<Authority> clientAuthorities = new ArrayList<>();
+        for (Authority authority : getAuthorities()) {
+            if (authority.getTitle().contains(CLIENT_AUTHORITY_SUFFIX)) {
+                clientAuthorities.add(authority);
+            }
+        }
+        return clientAuthorities;
+    }
+
+    /**
+     * Gets project authorities.
+     *
+     * @return The project authorities.
+     */
+    public List<Authority> getProjectAuthorities() {
+        List<Authority> projectAuthorities = new ArrayList<>();
+        for (Authority authority : getAuthorities()) {
+            if (authority.getTitle().contains(PROJECT_AUTHORITY_SUFFIX)) {
+                projectAuthorities.add(authority);
+            }
+        }
+        return projectAuthorities;
+    }
+
+
+    /**
      * Sets authorities.
      *
      * @param authorities
      *            The authorities.
      */
-    public void setGlobalAuthorities(List<Authority> authorities) {
+    public void setAuthorities(List<Authority> authorities) {
         this.authorities = authorities;
     }
 
@@ -131,46 +181,6 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
-    }
-
-    /**
-     * Gets authorities of the usergroup which are related to given project.
-     * 
-     * @param project
-     *            The Project.
-     * @return The List of authorities.
-     */
-    public List<Authority> getAuthoritiesByProject(Project project) {
-        List<Authority> authorities = new ArrayList<>();
-
-//        if (Objects.nonNull(this.userGroupProjectAuthorityRelations)) {
-//            for (UserGroupProjectAuthorityRelation relation : this.userGroupProjectAuthorityRelations) {
-//                if (project.equals(relation.getProject())) {
-//                    authorities.add(relation.getAuthority());
-//                }
-//            }
-//        }
-        return authorities;
-    }
-
-    /**
-     * Gets authorities of the usergroup which are related to given client.
-     *
-     * @param client
-     *            The Client.
-     * @return The List of authorities.
-     */
-    public List<Authority> getAuthoritiesByClient(Client client) {
-        List<Authority> authorities = new ArrayList<>();
-
-//        if (Objects.nonNull(this.userGroupClientAuthorityRelations)) {
-//            for (UserGroupClientAuthorityRelation relation : this.userGroupClientAuthorityRelations) {
-//                if (client.equals(relation.getClient())) {
-//                    authorities.add(relation.getAuthority());
-//                }
-//            }
-//        }
-        return authorities;
     }
 
     @Override

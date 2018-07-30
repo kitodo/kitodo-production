@@ -79,7 +79,7 @@ public class UserGroupServiceIT {
         UserGroup userGroup = userGroupService.getById(1);
         assertEquals("User group title is not matching", "Admin", userGroup.getTitle());
         assertEquals("User group first authorities title is not matching", "viewAllClients",
-            userGroup.getGlobalAuthorities().get(0).getTitle());
+            userGroup.getAuthorities().get(0).getTitle());
     }
 
     @Test
@@ -215,7 +215,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAuthorizations() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> actual = userGroup.getGlobalAuthorities();
+        List<Authority> actual = userGroup.getAuthorities();
         assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients",
             actual.get(0).getTitle());
     }
@@ -243,7 +243,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldSaveAndRemoveAuthorizationForUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> authorities = userGroup.getGlobalAuthorities();
+        List<Authority> authorities = userGroup.getAuthorities();
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
@@ -252,7 +252,7 @@ public class UserGroupServiceIT {
 
         authorities.add(authority);
 
-        userGroup.setGlobalAuthorities(authorities);
+        userGroup.setAuthorities(authorities);
         userGroupService.save(userGroup);
 
         userGroup = userGroupService.getById(1);

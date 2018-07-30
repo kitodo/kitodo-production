@@ -42,6 +42,9 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
+    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
+    private static final String PROJECT_AUTHORITY_SUFFIX = "_projectAssignable";
+
     /**
      * Constructor with Searcher and Indexer assigning.
      */
@@ -142,7 +145,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
         if (authority.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : authority.getUserGroups()) {
-                userGroup.getGlobalAuthorities().remove(authority);
+                userGroup.getAuthorities().remove(authority);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
@@ -157,8 +160,8 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      *
      * @return The list of authorities.
      */
-    public List<Authority> getAllAssignableToClients() {
-        return getByQuery("FROM Authority WHERE clientAssignable = 1");
+    public List<Authority> getAllAssignableToClients() throws DAOException {
+        return filterAuthorities(getAll(), CLIENT_AUTHORITY_SUFFIX);
     }
 
     /**
@@ -166,8 +169,27 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      *
      * @return The list of authorities.
      */
-    public List<Authority> getAllAssignableToProjects() {
-        return getByQuery("FROM Authority WHERE projectAssignable = 1");
+    public List<Authority> getAllAssignableToProjects() throws DAOException {
+        return filterAuthorities(getAll(), PROJECT_AUTHORITY_SUFFIX);
+    }
+
+    /**
+     * Filters a list of authorities by checking if title contains the given filter.
+     * 
+     * @param authoritiesToFilter
+     *            The list of Authorities to filter.
+     * @param filter
+     *            The filter as String object.
+     * @return The filtered list of authorities.
+     */
+    public List<Authority> filterAuthorities(List<Authority> authoritiesToFilter, String filter) {
+        List<Authority> filteredAuthorities = new ArrayList<>();
+        for (Authority authority : authoritiesToFilter) {
+            if (authority.getTitle().contains(filter)) {
+                filteredAuthorities.add(authority);
+            }
+        }
+        return filteredAuthorities;
     }
 
     @Override

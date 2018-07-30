@@ -9,96 +9,111 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
+-- Removing tables and columns of former authority relation concept
 DROP TABLE userGroup_x_project_x_authority;
 DROP TABLE userGroup_x_client_x_authority;
 
 ALTER TABLE authority
-DROP COLUMN `projectAssignable`,
-DROP COLUMN `clientAssignable`,
-DROP COLUMN `globalAssignable`;
+DROP COLUMN projectAssignable,
+DROP COLUMN clientAssignable,
+DROP COLUMN globalAssignable;
 
+-- Add table user_x_client
+CREATE TABLE client_x_user (
+  `client_id` INT(11) NOT NULL,
+  `user_id` INT(11) NOT NULL)
+  DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+ALTER TABLE client_x_user add constraint `FK_client_x_user_user_id`
+foreign key (user_id) REFERENCES user(id);
+
+ALTER TABLE client_x_user add constraint `FK_client_x_user_client_id`
+foreign key (client_id) REFERENCES client(id);
+
+
+-- Add authorities to replace the assignable columns
 # Client
-INSERT INTO authority (title) VALUES ('viewClient_Client');
-INSERT INTO authority (title) VALUES ('editClient_Client');
+INSERT INTO authority (title) VALUES ('viewClient_clientAssignable');
+INSERT INTO authority (title) VALUES ('editClient_clientAssignable');
 
 # Project
-INSERT INTO authority (title) VALUES ('viewProject_Client');
-INSERT INTO authority (title) VALUES ('viewAllProjects_Client');
-INSERT INTO authority (title) VALUES ('editProject_Client');
-INSERT INTO authority (title) VALUES ('deleteProject_Client');
-INSERT INTO authority (title) VALUES ('addProject_Client');
+INSERT INTO authority (title) VALUES ('viewProject_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllProjects_clientAssignable');
+INSERT INTO authority (title) VALUES ('editProject_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteProject_clientAssignable');
+INSERT INTO authority (title) VALUES ('addProject_clientAssignable');
 
-INSERT INTO authority (title) VALUES ('viewProject_Project');
-INSERT INTO authority (title) VALUES ('editProject_Project');
+INSERT INTO authority (title) VALUES ('viewProject_projectAssignable');
+INSERT INTO authority (title) VALUES ('editProject_projectAssignable');
 
 # Docket
-INSERT INTO authority (title) VALUES ('viewDocket_Client');
-INSERT INTO authority (title) VALUES ('viewAllDockets_Client');
-INSERT INTO authority (title) VALUES ('editDocket_Client');
-INSERT INTO authority (title) VALUES ('deleteDocket_Client');
-INSERT INTO authority (title) VALUES ('addDocket_Client');
+INSERT INTO authority (title) VALUES ('viewDocket_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllDockets_clientAssignable');
+INSERT INTO authority (title) VALUES ('editDocket_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteDocket_clientAssignable');
+INSERT INTO authority (title) VALUES ('addDocket_clientAssignable');
 
 # Ruleset
-INSERT INTO authority (title) VALUES ('viewRuleset_Client');
-INSERT INTO authority (title) VALUES ('viewAllRulesets_Client');
-INSERT INTO authority (title) VALUES ('editRuleset_Client');
-INSERT INTO authority (title) VALUES ('deleteRuleset_Client');
-INSERT INTO authority (title) VALUES ('addRuleset_Client');
+INSERT INTO authority (title) VALUES ('viewRuleset_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllRulesets_clientAssignable');
+INSERT INTO authority (title) VALUES ('editRuleset_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteRuleset_clientAssignable');
+INSERT INTO authority (title) VALUES ('addRuleset_clientAssignable');
 
 # Process
-INSERT INTO authority (title) VALUES ('viewProcess_Client');
-INSERT INTO authority (title) VALUES ('viewAllProcesses_Client');
-INSERT INTO authority (title) VALUES ('editProcess_Client');
-INSERT INTO authority (title) VALUES ('deleteProcess_Client');
-INSERT INTO authority (title) VALUES ('addProcess_Client');
+INSERT INTO authority (title) VALUES ('viewProcess_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllProcesses_clientAssignable');
+INSERT INTO authority (title) VALUES ('editProcess_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteProcess_clientAssignable');
+INSERT INTO authority (title) VALUES ('addProcess_clientAssignable');
 
-INSERT INTO authority (title) VALUES ('viewProcess_Project');
-INSERT INTO authority (title) VALUES ('viewAllProcesses_Project');
-INSERT INTO authority (title) VALUES ('editProcess_Project');
-INSERT INTO authority (title) VALUES ('deleteProcess_Project');
-INSERT INTO authority (title) VALUES ('addProcess_Project');
+INSERT INTO authority (title) VALUES ('viewProcess_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewAllProcesses_projectAssignable');
+INSERT INTO authority (title) VALUES ('editProcess_projectAssignable');
+INSERT INTO authority (title) VALUES ('deleteProcess_projectAssignable');
+INSERT INTO authority (title) VALUES ('addProcess_projectAssignable');
 
-INSERT INTO authority (title) VALUES ('editProcessMetaData_Client');
-INSERT INTO authority (title) VALUES ('editProcessStructureData_Client');
-INSERT INTO authority (title) VALUES ('editProcessPagination_Client');
-INSERT INTO authority (title) VALUES ('editProcessImages_Client');
-INSERT INTO authority (title) VALUES ('viewProcessMetaData_Client');
-INSERT INTO authority (title) VALUES ('viewProcessStructureData_Client');
-INSERT INTO authority (title) VALUES ('viewProcessPagination_Client');
-INSERT INTO authority (title) VALUES ('viewProcessImages_Client');
+INSERT INTO authority (title) VALUES ('editProcessMetaData_clientAssignable');
+INSERT INTO authority (title) VALUES ('editProcessStructureData_clientAssignable');
+INSERT INTO authority (title) VALUES ('editProcessPagination_clientAssignable');
+INSERT INTO authority (title) VALUES ('editProcessImages_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessMetaData_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessStructureData_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessPagination_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessImages_clientAssignable');
 
-INSERT INTO authority (title) VALUES ('editProcessMetaData_Project');
-INSERT INTO authority (title) VALUES ('editProcessStructureData_Project');
-INSERT INTO authority (title) VALUES ('editProcessPagination_Project');
-INSERT INTO authority (title) VALUES ('editProcessImages_Project');
-INSERT INTO authority (title) VALUES ('viewProcessMetaData_Project');
-INSERT INTO authority (title) VALUES ('viewProcessStructureData_Project');
-INSERT INTO authority (title) VALUES ('viewProcessPagination_Project');
-INSERT INTO authority (title) VALUES ('viewProcessImages_Project');
+INSERT INTO authority (title) VALUES ('editProcessMetaData_projectAssignable');
+INSERT INTO authority (title) VALUES ('editProcessStructureData_projectAssignable');
+INSERT INTO authority (title) VALUES ('editProcessPagination_projectAssignable');
+INSERT INTO authority (title) VALUES ('editProcessImages_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessMetaData_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessStructureData_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessPagination_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewProcessImages_projectAssignable');
 
 # Task
-INSERT INTO authority (title) VALUES ('viewTask_Client');
-INSERT INTO authority (title) VALUES ('viewAllTasks_Client');
-INSERT INTO authority (title) VALUES ('editTask_Client');
-INSERT INTO authority (title) VALUES ('deleteTask_Client');
-INSERT INTO authority (title) VALUES ('addTask_Client');
+INSERT INTO authority (title) VALUES ('viewTask_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllTasks_clientAssignable');
+INSERT INTO authority (title) VALUES ('editTask_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteTask_clientAssignable');
+INSERT INTO authority (title) VALUES ('addTask_clientAssignable');
 
-INSERT INTO authority (title) VALUES ('viewTask_Project');
-INSERT INTO authority (title) VALUES ('viewAllTasks_Project');
-INSERT INTO authority (title) VALUES ('editTask_Project');
-INSERT INTO authority (title) VALUES ('deleteTask_Project');
-INSERT INTO authority (title) VALUES ('addTask_Project');
+INSERT INTO authority (title) VALUES ('viewTask_projectAssignable');
+INSERT INTO authority (title) VALUES ('viewAllTasks_projectAssignable');
+INSERT INTO authority (title) VALUES ('editTask_projectAssignable');
+INSERT INTO authority (title) VALUES ('deleteTask_projectAssignable');
+INSERT INTO authority (title) VALUES ('addTask_projectAssignable');
 
 # UserGroup
-INSERT INTO authority (title) VALUES ('viewUserGroup_Client');
-INSERT INTO authority (title) VALUES ('viewAllUserGroups_Client');
-INSERT INTO authority (title) VALUES ('editUserGroup_Client');
-INSERT INTO authority (title) VALUES ('deleteUserGroup_Client');
-INSERT INTO authority (title) VALUES ('addUserGroup_Client');
+INSERT INTO authority (title) VALUES ('viewUserGroup_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllUserGroups_clientAssignable');
+INSERT INTO authority (title) VALUES ('editUserGroup_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteUserGroup_clientAssignable');
+INSERT INTO authority (title) VALUES ('addUserGroup_clientAssignable');
 
 # User
-INSERT INTO authority (title) VALUES ('viewUser_Client');
-INSERT INTO authority (title) VALUES ('viewAllUsers_Client');
-INSERT INTO authority (title) VALUES ('editUser_Client');
-INSERT INTO authority (title) VALUES ('deleteUser_Client');
-INSERT INTO authority (title) VALUES ('addUser_Client');
+INSERT INTO authority (title) VALUES ('viewUser_clientAssignable');
+INSERT INTO authority (title) VALUES ('viewAllUsers_clientAssignable');
+INSERT INTO authority (title) VALUES ('editUser_clientAssignable');
+INSERT INTO authority (title) VALUES ('deleteUser_clientAssignable');
+INSERT INTO authority (title) VALUES ('addUser_clientAssignable');

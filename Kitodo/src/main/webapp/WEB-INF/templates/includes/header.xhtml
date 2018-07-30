@@ -130,7 +130,7 @@
                                 </li>
                                 <div id="clientList" style="display: none">
                                     <p:outputPanel deferred="true" deferredMode="visible">
-                                        <p:repeat value="#{SessionClientController.clientsOfCurrentUser}" var="client">
+                                        <p:repeat value="#{SessionClientController.availableClientsOfCurrentUser}" var="client">
                                             <li class="toggle-list">
                                                 <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
                                             </li>
@@ -180,7 +180,7 @@
                                      converter="#{clientConverter}"
                                      value="#{SessionClientController.selectedClient}"
                                      autoWidth="false">
-                            <f:selectItems value="#{SessionClientController.clientsOfCurrentUser}" var="client" itemValue="#{client}"
+                            <f:selectItems value="#{SessionClientController.availableClientsOfCurrentUser}" var="client" itemValue="#{client}"
                                            itemLabel="#{client.name}"/>
                         </p:selectOneMenu>
                     </p>

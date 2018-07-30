@@ -99,7 +99,7 @@
                                                 filterMatchMode="contains"
                                                 responsive="true"
                                                 disabled="#{isViewMode}"
-                                                value="#{BenutzergruppenForm.authorities}"
+                                                value="#{BenutzergruppenForm.globalAuthorities}"
                                                 converter="#{authorityConverter}"
                                                 var="authority" itemLabel="#{authority.title}"
                                                 onTransfer="toggleSave()"
@@ -131,7 +131,7 @@
                                         </p:selectOneMenu>
                                     </div>
                                     <p:pickList id="authoritiesClientPick"
-                                                value="#{BenutzergruppenForm.authoritiesByCurrentClient}"
+                                                value="#{BenutzergruppenForm.clientAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
                                                 var="authority"
                                                 disabled="#{isViewMode}"
@@ -167,7 +167,7 @@
                                         </p:selectOneMenu>
                                     </div>
                                     <p:pickList id="authoritiesProjectPick"
-                                                value="#{BenutzergruppenForm.authoritiesByCurrentProject}"
+                                                value="#{BenutzergruppenForm.projectAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 disabled="#{isViewMode}"

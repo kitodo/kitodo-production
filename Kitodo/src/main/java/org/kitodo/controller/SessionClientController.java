@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.context.RequestContext;
 
@@ -63,7 +62,7 @@ public class SessionClientController {
     }
 
     private Client getFirstClientOfCurrentUser() {
-        return getClientsOfCurrentUser().get(0);
+        return getAvailableClientsOfCurrentUser().get(0);
     }
 
     private boolean userIsAdmin() {
@@ -71,7 +70,7 @@ public class SessionClientController {
     }
 
     private boolean userHasOnlyOneClient() {
-        return getClientsOfCurrentUser().size() == 1;
+        return getAvailableClientsOfCurrentUser().size() == 1;
     }
 
     /**
@@ -108,7 +107,7 @@ public class SessionClientController {
     }
 
     public boolean areClientsAvailableForUser() {
-        return !getClientsOfCurrentUser().isEmpty();
+        return !getAvailableClientsOfCurrentUser().isEmpty();
     }
 
     /**
@@ -141,27 +140,13 @@ public class SessionClientController {
     }
 
     /**
-     * Gets all clients of user assigned projects.
+     * Gets all clients to which the user directly assigned and also those from user assigned projects.
      *
      * @return The list of clients.
      */
-    public List<Client> getClientsOfCurrentUser() {
-        if (serviceManager.getSecurityAccessService().hasAnyAuthorityGlobal()) {
-            try {
-                return serviceManager.getClientService().getAll();
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
-        return getClientsByUsersAuthorities();
-    }
-
-    private List<Client> getClientsByUsersAuthorities() {
-        List<Client> clients = serviceManager.getClientService()
-                .getByIds(serviceManager.getSecurityAccessService().getClientIdListForAnyAuthority());
-        List<Project> projects = serviceManager.getProjectService()
-                .getByIds(serviceManager.getSecurityAccessService().getProjectIdListForAnyAuthority());
-        for (Project project : projects) {
+    public List<Client> getAvailableClientsOfCurrentUser() {
+        List<Client> clients = serviceManager.getUserService().getAuthenticatedUser().getClients();
+        for (Project project : serviceManager.getUserService().getAuthenticatedUser().getProjects()) {
             if (!clients.contains(project.getClient())) {
                 clients.add(project.getClient());
             }

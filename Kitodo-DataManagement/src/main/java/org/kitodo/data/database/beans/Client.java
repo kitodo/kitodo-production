@@ -83,6 +83,9 @@ public class Client extends BaseIndexedBean {
      * @return The users.
      */
     public List<User> getUsers() {
+        if (this.users == null) {
+            this.users = new ArrayList<>();
+        }
         return users;
     }
 
@@ -92,9 +95,6 @@ public class Client extends BaseIndexedBean {
      * @param users The users.
      */
     public void setUsers(List<User> users) {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
-        }
         this.users = users;
     }
 
