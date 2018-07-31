@@ -30,6 +30,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
+import org.kitodo.forms.FolderGenerator;
 
 /**
  * Stores configuration settings regarding a type of sub-folder in the process

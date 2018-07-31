@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.database.beans;
+package org.kitodo.forms;
+
+import org.kitodo.data.database.beans.Folder;
 
 /**
  * An encapsulation to access the generator properties of the folder.
@@ -66,7 +68,7 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    FolderGenerator(Folder folder) {
+    public FolderGenerator(Folder folder) {
         this.folder = folder;
     }
 
