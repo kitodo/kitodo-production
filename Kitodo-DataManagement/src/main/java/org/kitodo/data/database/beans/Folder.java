@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.beans;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -279,10 +280,17 @@ public class Folder extends BaseBean {
     }
 
     /**
-     * Returns the path of the folder.
+     * Returns the path pattern, containing the path to the folder relative to
+     * the process directory, and maybe an extra file name pattern.
      *
-     * @return the path
+     * @deprecated This getter is here to be used by Hibernate and JSF to access
+     *             the field value, but should not be used for other purpose,
+     *             unless you know what you are doing. Use
+     *             {@link #getRelativePath()}.
+     *
+     * @return path with optional filename pattern
      */
+    @Deprecated
     public String getPath() {
         return this.path;
     }
@@ -294,6 +302,51 @@ public class Folder extends BaseBean {
      */
     public Project getProject() {
         return this.project;
+    }
+
+    /**
+     * Returns the path to the folder.
+     *
+     * @return the path
+     */
+    @Transient
+    public String getRelativePath() {
+        int lastDelimiter = path.lastIndexOf(File.separatorChar);
+        return path.substring(lastDelimiter + 1).indexOf('*') > -1
+                ? lastDelimiter >= 0 ? path.substring(0, lastDelimiter) : ""
+                : path;
+    }
+
+    /**
+     * Returns the filename suffix with file extension for the UGH library.
+     *
+     * @deprecated This is a temporary solution and should no longer be used
+     *             after that the UGH is removed.
+     * @param extensionWithoutDot
+     *            filename extension without dot, to be read from the
+     *            configuration. The extension can be retrieved from the
+     *            configuration based on the mimeType, but reading the
+     *            configuration is part of the core module, so it cannot be done
+     *            here and must be returned here from the collar.
+     * @return the filename suffix with file extension
+     */
+    @Deprecated
+    @Transient
+    public String getUGHTail(String extensionWithoutDot) {
+        String lastSegment = path.substring(path.lastIndexOf(File.separatorChar) + 1);
+        if (lastSegment.indexOf('*') > -1) {
+            if (lastSegment.startsWith("*.")) {
+                String tail = lastSegment.substring(2);
+                if (tail.endsWith(".*")) {
+                    tail = tail.substring(0, tail.length() - 1).concat(extensionWithoutDot);
+                }
+                return tail;
+            } else {
+                throw new UnsupportedOperationException("The UGH does not support file name prefixes");
+            }
+        } else {
+            return extensionWithoutDot;
+        }
     }
 
     /**
@@ -430,7 +483,10 @@ public class Folder extends BaseBean {
     }
 
     /**
-     * Sets the path of the folder.
+     * Sets the path pattern, containing the path to the folder relative to the
+     * process directory, and maybe an extra file name pattern. This getter is
+     * here to be used by Hibernate and JSF to access the field value, but
+     * should not be used for other purpose, unless you know what you are doing.
      *
      * @param path
      *            pat to set

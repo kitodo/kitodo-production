@@ -64,28 +64,16 @@ ALTER TABLE projectFileGroup
         COMMENT 'Path to the folder relative to the process directory, may contain variables';
 
 
--- Delete column 'previewImage'. 'previewImage' is now part of 'linkingMode'.
-
-ALTER TABLE projectFileGroup DROP previewImage;
-
-
 -- Rename table 'projectfilegroup' into 'folder'
 
 ALTER TABLE projectFileGroup RENAME TO folder;
 
 
--- Rename foreign key constraints
-
-ALTER TABLE folder
-  DROP FOREIGN KEY `FK_projectFileGroup_project_id`,
-  ADD CONSTRAINT `FK_folder_project_id` FOREIGN KEY (project_id) REFERENCES project (id);
-
-
 -- Fill in path column
 --
--- In this example, we use Linux file separator and the _tif suffix for the
--- source images folder. You may want to adjust these values before migrating
--- your system.
+-- In this example, we use the Linux (and Java default) file separator and the
+--     _tif suffix for the source images folder. You may want to adjust these
+--     values before migrating your system.
 
 UPDATE folder SET path = 'images/(processtitle)_tif'
   WHERE id > 0 AND fileGroup = 'LOCAL' AND path = '';
@@ -99,3 +87,70 @@ UPDATE folder SET path = 'ocr/alto'
 -- all remaining cases
 UPDATE folder SET path = CONCAT('jpgs/', LOWER(fileGroup))
   WHERE id > 0 AND path = '';
+
+
+-- Delete suffix in all cases it is equal to the configured file extension.
+
+UPDATE folder
+  SET suffix = ''
+  WHERE id > 0 AND (
+    mimeType = 'image/jpeg' AND suffix = 'jpg' OR
+    mimeType = 'application/pdf' AND suffix = 'pdf' OR
+    (mimeType = 'text/xml' OR mimeType = 'application/alto+xml') 
+      AND suffix = 'xml' OR
+    mimeType = 'image/tiff' AND suffix = 'tif' OR
+    mimeType = 'image/png' AND suffix = 'png' OR
+    mimeType = 'image/jp2' AND suffix = 'jp2' OR
+    mimeType = 'image/bmp' AND suffix = 'bmp' OR
+    mimeType = 'image/gif' AND suffix = 'gif'
+  );
+
+
+-- In the remaining cases, replace the configured file extension by the
+-- replcement character if the suffix ends with it.
+
+UPDATE folder
+  SET suffix = concat(substring(suffix, 1, char_length(suffix) - 4), '.*')
+  WHERE id > 0 AND (
+    mimeType = 'image/jpeg' AND right(suffix, 4) = '.jpg' OR
+    mimeType = 'application/pdf' AND suffix = '.pdf' OR
+    (mimeType = 'text/xml' OR mimeType = 'application/alto+xml') 
+      AND right(suffix, 4) = '.xml' OR
+    mimeType = 'image/tiff' AND right(suffix, 4) = '.tif' OR
+    mimeType = 'image/png' AND right(suffix, 4) = '.png' OR
+    mimeType = 'image/jp2' AND right(suffix, 4) = '.jp2' OR
+    mimeType = 'image/bmp' AND right(suffix, 4) = '.bmp' OR
+    mimeType = 'image/gif' AND right(suffix, 4) = '.gif'
+  );
+  
+  
+-- To attach the special case suffixes to the path column, make sure the path
+--     ends with the file separator. In this example, we use the Linux (and
+--     Java default) file separator. You may want to adjust these values before
+--     migrating your system.
+
+UPDATE folder
+  SET path = concat(path, '/')
+  WHERE id > 0 AND suffix <> '' AND right(path, 1) <> '/';
+
+
+-- Attach the special case suffixes to the path column.
+
+UPDATE folder
+  SET path = concat(path, concat('*.', suffix))
+  WHERE id > 0 AND suffix <> '';
+
+
+-- Delete columns 'suffix' and 'previewImage'. 'previewImage' is now part of
+--     'linkingMode'; 'suffix' depends on 'mimeType' and needs no extra storage.
+
+ALTER TABLE folder
+  DROP previewImage,
+  DROP suffix;
+
+
+-- Rename foreign key constraints
+
+ALTER TABLE folder
+  DROP FOREIGN KEY `FK_projectFileGroup_project_id`,
+  ADD CONSTRAINT `FK_folder_project_id` FOREIGN KEY (project_id) REFERENCES project (id);
