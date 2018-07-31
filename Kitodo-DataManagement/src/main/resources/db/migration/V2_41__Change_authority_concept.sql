@@ -9,7 +9,7 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
--- Removing tables and columns of former authority relation concept
+-- 1. Removing tables and columns of former authority relation concept
 DROP TABLE userGroup_x_project_x_authority;
 DROP TABLE userGroup_x_client_x_authority;
 
@@ -18,29 +18,38 @@ DROP COLUMN projectAssignable,
 DROP COLUMN clientAssignable,
 DROP COLUMN globalAssignable;
 
-
--- Add table user_x_client
+-- 2. Add table user_x_client
 CREATE TABLE client_x_user (
-  `client_id` INT(11) NOT NULL,
+  `client_id` INT(11) DEFAULT NULL,
   `user_id` INT(11) NOT NULL)
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- 3. Add foreign keys
 ALTER TABLE client_x_user add constraint `FK_client_x_user_user_id`
 foreign key (user_id) REFERENCES user(id);
 
 ALTER TABLE client_x_user add constraint `FK_client_x_user_client_id`
 foreign key (client_id) REFERENCES client(id);
 
--- 2. Switch off safe updates
+-- 4. Switch off safe updates
 SET SQL_SAFE_UPDATES = 0;
 
--- Add '_globalAssignable' to every existing authority entry
+-- 5. Assign the dummy client to every user
+INSERT INTO client_x_user (client_id, user_id) SELECT null, id FROM user;
+
+UPDATE client_x_user client_x_userTable, (SELECT * FROM client WHERE name = 'Client_ChangeMe') dummyClient
+SET client_x_userTable.client_id = dummyClient.id WHERE client_x_userTable.client_id IS NULL;
+
+-- 6. Set client_id column to not null
+ALTER TABLE client_x_user MODIFY COLUMN client_id INT(11) NOT NULL;
+
+-- 7. Add '_globalAssignable' to every existing authority entry
 UPDATE authority set title=concat(title,'_globalAssignable');
 
--- 4. Switch on safe updates
+-- 8. Switch on safe updates
 SET SQL_SAFE_UPDATES = 1;
 
--- Add authorities to replace the assignable columns
+-- 9. Add authorities to replace the client and project assignable columns
 # Client
 INSERT INTO authority (title) VALUES ('viewClient_clientAssignable');
 INSERT INTO authority (title) VALUES ('editClient_clientAssignable');
