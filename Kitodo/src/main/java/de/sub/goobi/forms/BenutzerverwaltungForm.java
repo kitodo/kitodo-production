@@ -39,6 +39,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -219,6 +220,47 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {Helper.getTranslation("userGroup"), userGroupId }, logger, e);
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Remove user from client.
+     *
+     * @return empty String
+     */
+    public String deleteFromClient() {
+        int clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+        try {
+            Client client = serviceManager.getClientService().getById(clientId);
+            this.userObject.getClients().remove(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
+                logger, e);
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Add user to project.
+     *
+     * @return empty String or null
+     */
+    public String addToClient() {
+        Integer clientId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            Client client = serviceManager.getClientService().getById(clientId);
+            for (Client assignedClient : this.userObject.getClients()) {
+                if (assignedClient.equals(client)) {
+                    return null;
+                }
+            }
+            this.userObject.getClients().add(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
+                logger, e);
             return null;
         }
         return null;

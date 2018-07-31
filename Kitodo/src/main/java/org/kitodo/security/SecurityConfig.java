@@ -93,9 +93,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // view...... Authority to view entity at edit page
         // edit...... Authority to change and save entities at edit page
         http.authorizeRequests()
-            .antMatchers("/pages/clients.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
-                "viewAllClients_" + GLOBAL)
             .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,
                 EDIT_CLIENT + GLOBAL,
@@ -164,6 +161,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_USERS + CLIENT_ANY,
                 VIEW_ALL_USER_GROUPS + GLOBAL,
                 VIEW_ALL_USER_GROUPS + CLIENT_ANY,
+                "viewAllClients_" + GLOBAL,
                 "viewAllLdapGroups_" + GLOBAL)
             .antMatchers("/pages/userEdit.jsf*").hasAnyAuthority(
                 ADMIN_GLOBAL,

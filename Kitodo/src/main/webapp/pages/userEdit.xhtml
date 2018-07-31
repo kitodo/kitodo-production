@@ -200,6 +200,33 @@
                                  class="button-filled-green">
                 </p:commandButton>
             </p:tab>
+            <!-- clients -->
+            <p:tab id="clientTab" title="#{msgs.clientList}">
+                <p:dataTable id="clientDatatable" var="client" value="#{BenutzerverwaltungForm.userObject.clients}">
+                    <p:column headerText="#{msgs.clientList}">
+                        <h:outputText value="#{client.name}"/>
+                    </p:column>
+                    <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
+                        <p:commandLink id="deleteFromClient"
+                                       action="#{BenutzerverwaltungForm.deleteFromClient}"
+                                       title="#{msgs.clientDeleteFrom}"
+                                       immediate="true"
+                                       oncomplete="toggleSave()"
+                                       update="@form">
+                            <i class="fa fa-trash-o fa-lg"/>
+                            <f:param name="ID" value="#{item.id}"/>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton onclick="PF('addClientDialog').show()"
+                                 id="addClientButton"
+                                 value="#{msgs.clientAdd}"
+                                 icon="fa fa-plus-circle fa-lg"
+                                 immediate="true"
+                                 rendered="#{isEditMode || isCreateMode}"
+                                 class="button-filled-green">
+                </p:commandButton>
+            </p:tab>
         </p:tabView>
     </ui:define>
 
@@ -224,5 +251,6 @@
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditClientsPopup.xhtml"/>
     </ui:define>
 </ui:composition>
