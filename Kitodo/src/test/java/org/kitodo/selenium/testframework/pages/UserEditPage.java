@@ -59,12 +59,24 @@ public class UserEditPage extends Page<UserEditPage> {
     private WebElement addUserToGroupButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "editForm:userTabView:addClientButton")
+    private WebElement addUserToClientButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "userGroupForm:selectUserGroupTable_data")
     private WebElement selectUserGroupTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "userClientForm:selectClientTable_data")
+    private WebElement selectClientTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "addUserGroupDialog")
     private WebElement addToUserGroupDialog;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "addClientDialog")
+    private WebElement addToClientDialog;
 
     public UserEditPage() {
         super("pages/userEdit.jsf");
@@ -111,6 +123,19 @@ public class UserEditPage extends Page<UserEditPage> {
             }
         }
         throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+    }
+
+    public UserEditPage addUserToClient(String clientName) {
+        addUserToClientButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
+        for (WebElement tableRow : tableRows) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(clientName)) {
+                clickLinkOfTableRow(tableRow);
+                Browser.closeDialog(addToClientDialog);
+                return this;
+            }
+        }
+        throw new NoSuchElementException("No client with given title was found: " + clientName);
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {

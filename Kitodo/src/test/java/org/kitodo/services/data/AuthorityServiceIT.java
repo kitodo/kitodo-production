@@ -68,7 +68,7 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldFindById() {
-        String expected = "viewAllClients";
+        String expected = "viewAllClients_globalAssignable";
         await().untilAsserted(
             () -> assertEquals("Authority was not found in index!", expected, authorityService.findById(2).getTitle()));
     }
@@ -96,7 +96,7 @@ public class AuthorityServiceIT {
     @Test
     public void shouldNotSaveAlreadyExistingAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
-        adminAuthority.setTitle("viewClient");
+        adminAuthority.setTitle("viewAllClients_globalAssignable");
         exception.expect(DataException.class);
         authorityService.save(adminAuthority);
     }

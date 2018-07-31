@@ -318,16 +318,11 @@ public class MockDatabase {
         authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
 
         //process
-        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
-
         authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("addProcess" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("editProcess" + globalAssignableAuthoritySuffix));
+
         authorities.add(new Authority("editProcessMetaData" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("editProcessStructureData" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("editProcessPagination" + globalAssignableAuthoritySuffix));
@@ -338,11 +333,11 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessImages" + globalAssignableAuthoritySuffix));
         authorities.add(new Authority("deleteProcess" + globalAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("editProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("deleteProcess" + projectAssignableAuthoritySuffix));
-        authorities.add(new Authority("addProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
 
         authorities.add(new Authority("editProcessMetaData" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("editProcessStructureData" + clientAssignableAuthoritySuffix));
@@ -352,6 +347,12 @@ public class MockDatabase {
         authorities.add(new Authority("viewProcessStructureData" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewProcessPagination" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("viewProcessImages" + clientAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + projectAssignableAuthoritySuffix));
 
         authorities.add(new Authority("editProcessMetaData" + projectAssignableAuthoritySuffix));
         authorities.add(new Authority("editProcessStructureData" + projectAssignableAuthoritySuffix));
@@ -1246,7 +1247,7 @@ public class MockDatabase {
         secondUserGroup.setTitle("Random");
 
         List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(serviceManager.getAuthorityService().getById(1));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(2));
         userAuthorities.add(serviceManager.getAuthorityService().getById(12));
         userAuthorities.add(serviceManager.getAuthorityService().getById(16));
         userAuthorities.add(serviceManager.getAuthorityService().getById(4));

@@ -21,12 +21,14 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="addProjectDialog"
+                      id="addProjectDialog"
                       header="#{msgs.addProjects}"
                       width="700px"
                       modal="true"
                       dynamic="true">
                 <h:form id="userProjectForm">
                     <p:dataTable var="item"
+                                 id="selectProjectTable"
                                  value="#{ProjekteForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"

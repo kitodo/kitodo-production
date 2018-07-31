@@ -23,6 +23,7 @@ public enum TabIndex {
     USER_DETAILS(0),
     USER_USER_GROUPS(1),
     USER_PROJECT_LIST(2),
+    USER_CLIENT_LIST(3),
 
     // projects page
     PROJECTS(0),
