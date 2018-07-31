@@ -164,14 +164,14 @@ public class BenutzergruppenForm extends BasisForm {
      *
      * @return DualListModel of available and assigned authority levels
      */
-    public DualListModel<Authority> getGlobalAuthorities() {
+    public DualListModel<Authority> getGlobalAssignableAuthorities() {
         List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableGlobal(userGroup.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
             availableAuthorities.removeAll(assignedAuthorities);
         } catch (DAOException e) {
-            logger.error(e.getMessage(), e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return new DualListModel<>(availableAuthorities, assignedAuthorities);
     }
@@ -180,11 +180,18 @@ public class BenutzergruppenForm extends BasisForm {
      * Assign the target property of given DualListModel of authorities to
      * 'userGroup' using a PrimeFaces PickList object.
      *
-     * @param authorities
+     * @param globalAuthoritiesModel
      *            list of authority assigned to 'userGroup'
      */
-    public void setAuthorities(DualListModel<Authority> authorities) {
-        this.userGroup.setAuthorities(authorities.getTarget());
+    public void setGlobalAssignableAuthorities(DualListModel<Authority> globalAuthoritiesModel) {
+        for (Authority authority : globalAuthoritiesModel.getSource()) {
+            userGroup.getAuthorities().remove(authority);
+        }
+        for (Authority authority : globalAuthoritiesModel.getTarget()) {
+            if (!userGroup.getAuthorities().contains(authority)) {
+                userGroup.getAuthorities().add(authority);
+            }
+        }
     }
 
     /**

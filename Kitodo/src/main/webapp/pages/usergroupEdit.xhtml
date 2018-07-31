@@ -47,10 +47,6 @@
                          rendered="#{isEditMode || isCreateMode}"
                          value="#{msgs.save}"
                          action="#{BenutzergruppenForm.save}"
-                         process="editForm:usergroupTabView:authoritiesGlobalPick,
-                                  editForm:usergroupTabView:authoritiesClientPick,
-                                  editForm:usergroupTabView:titleInput,
-                                  editForm:usergroupTabView:authoritiesProjectPick"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          styleClass="button-filled-blue"
@@ -58,8 +54,9 @@
                                         'summary':'#{msgs.userGroupSaving}',
                                         'detail':'#{msgs.youWillBeRedirected}',
                                         'severity':'info'});"
-                         disabled="#{BenutzergruppenForm.saveDisabled}"
-                         update="notifications"/>
+
+                         update="notifications"
+                         disabled="#{BenutzergruppenForm.saveDisabled}"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{BenutzergruppenForm.setSaveDisabled(false)}"
                          update="save"
@@ -86,8 +83,9 @@
                         <div>
                             <p:panelGrid columns="3" layout="grid">
                                 <!--global authorities-->
+
                                 <h:panelGroup>
-                                    <h3>
+                                    <h3 style="margin-bottom: 20px">
                                         <h:outputText value="#{msgs.authoritiesGlobal}"/>
                                     </h3>
                                     <p:pickList id="authoritiesGlobalPick"
@@ -95,22 +93,22 @@
                                                 filterMatchMode="contains"
                                                 responsive="true"
                                                 disabled="#{isViewMode}"
-                                                value="#{BenutzergruppenForm.globalAuthorities}"
+                                                value="#{BenutzergruppenForm.globalAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
-                                                var="authority" itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                                var="authority"
+                                                itemLabel="#{authority.getTitleWithoutSuffix()}"
                                                 itemValue="#{authority}"
                                                 onTransfer="toggleSave()">
                                         <f:facet name="sourceCaption"
                                                  style="color: #000;">#{msgs.available}</f:facet>
                                         <f:facet name="targetCaption"
                                                  style="color: #000;">#{msgs.assigned}</f:facet>
-                                        <p:ajax event="transfer"/>
                                     </p:pickList>
                                 </h:panelGroup>
 
                                 <!--client authorities-->
                                 <h:panelGroup>
-                                    <h3>
+                                    <h3 style="margin-bottom: 20px">
                                         <h:outputText value="#{msgs.authoritiesClient}"/>
                                     </h3>
                                     <p:pickList id="authoritiesClientPick"
@@ -128,12 +126,12 @@
                                                  style="color: #000;">#{msgs.available}</f:facet>
                                         <f:facet name="targetCaption"
                                                  style="color: #000;">#{msgs.assigned}</f:facet>
-                                        <p:ajax event="transfer"/>
                                     </p:pickList>
                                 </h:panelGroup>
+
                                 <!--project authorities-->
                                 <h:panelGroup>
-                                    <h3>
+                                    <h3 style="margin-bottom: 20px">
                                         <h:outputText value="#{msgs.authoritiesProject}"/>
                                     </h3>
                                     <p:pickList id="authoritiesProjectPick"
@@ -151,7 +149,6 @@
                                                  style="color: #000;">#{msgs.available}</f:facet>
                                         <f:facet name="targetCaption"
                                                  style="color: #000;">#{msgs.assigned}</f:facet>
-                                        <p:ajax event="transfer"/>
                                     </p:pickList>
                                 </h:panelGroup>
                             </p:panelGrid>
