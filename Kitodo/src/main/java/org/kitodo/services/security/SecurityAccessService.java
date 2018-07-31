@@ -244,21 +244,6 @@ public class SecurityAccessService {
     }
 
     /**
-     * Returns the Ids of clients for which teh user has authorities for.
-     *
-     * @return ids of client ids as array of integer.
-     */
-    public List<Integer> getClientIdsForUserHasAuthoritesFor() {
-        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-        for (GrantedAuthority grantedAuthority : authorities) {
-            if (grantedAuthority.getAuthority().contains(CLIENT_IDENTIFIER)) {
-                System.out.println(grantedAuthority.getAuthority());
-            }
-        }
-        return new ArrayList<>();
-    }
-
-    /**
      * Checks if the current user is admin or has a specified authority globally.
      *
      * @param authorityTitle
