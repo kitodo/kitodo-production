@@ -21,7 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -65,20 +65,20 @@ public class ReaderTest {
     }
 
     @Test
-    public void shouldConvertWorkflowToTemplate() throws Exception {
+    public void shouldConvertWorkflowToTasks() throws Exception {
         Reader reader = new Reader("extended-test");
 
-        Template template = new Template();
-        template.setTitle("Title");
-        template = reader.convertWorkflowToTemplate(template);
-        template.getTasks().sort(Comparator.comparing(Task::getOrdering));
+        Workflow workflow = new Workflow();
+        workflow.setTitle("Title");
+        workflow = reader.convertTasks(workflow);
+        workflow.getTasks().sort(Comparator.comparing(Task::getOrdering));
 
-        Task task = template.getTasks().get(0);
+        Task task = workflow.getTasks().get(0);
         assertEquals("Process definition - workflow's task was read incorrectly!", "Say hello", task.getTitle());
         assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getPriority().intValue());
         assertEquals("Process definition - workflow's task was read incorrectly!", 1, task.getOrdering().intValue());
 
-        task = template.getTasks().get(1);
+        task = workflow.getTasks().get(1);
         assertEquals("Process definition - workflow's task was read incorrectly!", "Test script", task.getScriptName());
         assertNull("Process definition - workflow's task was read incorrectly!", task.getScriptPath());
         assertEquals("Process definition - workflow's task was read incorrectly!", 2, task.getOrdering().intValue());

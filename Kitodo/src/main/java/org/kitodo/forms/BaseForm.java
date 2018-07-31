@@ -11,17 +11,25 @@
 
 package org.kitodo.forms;
 
+import de.sub.goobi.helper.Helper;
+
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.base.SearchDatabaseService;
 import org.primefaces.event.TabChangeEvent;
 
 public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
+    private static final Logger logger = LogManager.getLogger(BaseForm.class);
     protected transient ServiceManager serviceManager = new ServiceManager();
     String zurueck = null;
     protected String filter = "";
@@ -166,5 +174,16 @@ public class BaseForm implements Serializable {
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void reload(BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
+        if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
+            try {
+                searchDatabaseService.refresh(baseBean);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
+            }
+        }
     }
 }

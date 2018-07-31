@@ -119,6 +119,7 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String PROPERTIES_SAVED = "propertiesSaved";
     private static final String PROPERTY_SAVED = "propertySaved";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
@@ -441,8 +442,18 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getTaskService());
+        saveTask();
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
+    }
+
+    private void saveTask() {
+        try {
+            serviceManager.getTaskService().save(this.task);
+            serviceManager.getTaskService().evict(this.task);
+            reload(this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getTaskService());
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+        }
     }
 
     /**
@@ -490,42 +501,80 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Remove User.
+     * Add user group to task.
      *
-     * @return empty String
-     */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove UserGroup.
-     *
-     * @return empty String
-     */
-    public String deleteUserGroup() {
-        deleteUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Add UserGroup.
-     *
-     * @return empty String
+     * @return null
      */
     public String addUserGroup() {
-        addUserGroup(this.task);
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            for (UserGroup taskUserGroup : task.getUserGroups()) {
+                if (taskUserGroup.equals(userGroup)) {
+                    return null;
+                }
+            }
+            this.task.getUserGroups().add(userGroup);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+        }
         return null;
     }
 
     /**
-     * Add User.
+     * Add user to task.
      *
-     * @return empty String
+     * @return null
      */
     public String addUser() {
-        addUser(this.task);
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            for (User taskUser : task.getUsers()) {
+                if (taskUser.equals(user)) {
+                    return null;
+                }
+            }
+            this.task.getUsers().add(user);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+        }
+        return null;
+    }
+
+    /**
+     * Remove user from task.
+     *
+     * @return null
+     */
+    public String deleteUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            this.task.getUsers().remove(user);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+        }
+        return null;
+    }
+
+    /**
+     * Remove user group from task.
+     *
+     * @return null
+     */
+    public String deleteUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            this.task.getUserGroups().remove(userGroup);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READ,
+                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+        }
         return null;
     }
 

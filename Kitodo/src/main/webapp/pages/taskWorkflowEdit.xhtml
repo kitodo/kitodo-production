@@ -19,7 +19,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{TemplateForm.loadTask(id)}" />
+        <f:viewAction action="#{WorkflowForm.loadTask(id)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -28,53 +28,48 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.taskAdd}" rendered="#{empty TemplateForm.task.title}"/>
-            <h:outputText value="#{msgs.taskDetails} (#{TemplateForm.task.title})"
-                          rendered="#{not empty TemplateForm.task.title}"/>
+            <h:outputText value="#{msgs.taskAdd}" rendered="#{empty WorkflowForm.task.title}"/>
+            <h:outputText value="#{msgs.taskDetails} (#{WorkflowForm.task.title})"
+                          rendered="#{not empty WorkflowForm.task.title}"/>
         </h3>
         <p:commandButton id="save" value="#{msgs.save}"
-                         action="#{TemplateForm.saveTaskAndRedirect}"
+                         action="#{WorkflowForm.saveTaskAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{TemplateForm.saveDisabled}"
+                         disabled="#{WorkflowForm.saveDisabled}"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{TemplateForm.setSaveDisabled(false)}"
+                         actionListener="#{WorkflowForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  outcome="templateEdit?id=#{TemplateForm.template.id}"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
+        <p:button id="cancel" value="#{msgs.cancel}" outcome="workflowEdit?id=#{WorkflowForm.workflow.id}"
+                  onclick="setConfirmUnload(false);" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="tabs">
             <p:tab title="#{msgs.details}">
-                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditDetails.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/taskWorkflowEdit/taskEditDetails.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.user}">
-                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsers.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/taskWorkflowEdit/taskEditUsers.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.userGroup}">
-                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsergroups.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/taskWorkflowEdit/taskEditUsergroups.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>
 
     <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsergroupsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsersPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/taskWorkflowEdit/taskEditUsergroupsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/taskWorkflowEdit/taskEditUsersPopup.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.template}" outcome="projects"/></li>
-        <li><h:link value="#{msgs.editTemplate}" outcome="templateEdit?id=#{TemplateForm.template.id}"/></li>
+        <li><h:link value="#{msgs.workflow}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.editWorkflow}" outcome="workflowEdit?id=#{WorkflowForm.workflow.id}"/></li>
         <li><a href="">#{msgs.taskDetails}</a></li>
     </ui:define>
 </ui:composition>

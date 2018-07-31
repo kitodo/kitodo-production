@@ -17,12 +17,12 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:dataTable var="usergroup" id="usergroupTable"
-                 value="#{TemplateForm.task.userGroups}">
+                 value="#{WorkflowForm.task.userGroups}">
         <p:column headerText="#{msgs.title}">
             <h:outputText value="#{usergroup.title}"/>
         </p:column>
         <p:column headerText="#{msgs.delete}">
-            <p:commandLink action="#{TemplateForm.deleteUserGroup}"
+            <p:commandLink action="#{WorkflowForm.deleteUserGroup}"
                            id="deleteUsergroup"
                            immediate="true"
                            oncomplete="toggleSave()"

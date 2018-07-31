@@ -31,8 +31,8 @@ public class TaskType extends BaseType<Task> {
         Integer processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
         Integer processId = task.getProcess() != null ? task.getProcess().getId() : 0;
         String processTitle = task.getProcess() != null ? task.getProcess().getTitle() : "";
-        Integer templateId = task.getTemplate() != null ? task.getTemplate().getId() : 0;
-        String templateTitle = task.getTemplate() != null ? task.getTemplate().getTitle() : "";
+        Integer workflowId = task.getWorkflow() != null ? task.getWorkflow().getId() : 0;
+        String workflowTitle = task.getWorkflow() != null ? task.getWorkflow().getTitle() : "";
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
@@ -54,8 +54,8 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add(TaskTypeField.PROCESSING_USER.getKey(), processingUser);
         jsonObjectBuilder.add(TaskTypeField.PROCESS_ID.getKey(), processId);
         jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), processTitle);
-        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
-        jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), templateTitle);
+        jsonObjectBuilder.add(TaskTypeField.WORKFLOW_ID.getKey(), workflowId);
+        jsonObjectBuilder.add(TaskTypeField.WORKFLOW_TITLE.getKey(), workflowTitle);
         jsonObjectBuilder.add(TaskTypeField.USERS.getKey(), addObjectRelation(task.getUsers()));
         jsonObjectBuilder.add(TaskTypeField.USER_GROUPS.getKey(), addObjectRelation(task.getUserGroups()));
         return jsonObjectBuilder.build();

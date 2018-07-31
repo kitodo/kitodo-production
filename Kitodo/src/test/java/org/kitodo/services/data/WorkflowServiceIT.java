@@ -18,9 +18,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class WorkflowServiceIT {
@@ -30,7 +32,7 @@ public class WorkflowServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
-        MockDatabase.insertWorkflows();
+        MockDatabase.insertProcessesFull();
     }
 
     @AfterClass
@@ -44,12 +46,23 @@ public class WorkflowServiceIT {
         Workflow workflow = workflowService.getById(1);
         boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFileName().equals("test");
         assertTrue("Workflow was not found in database!", condition);
+
+        assertEquals("Workflow was found but tasks were not inserted!", 1, workflow.getTasks().size());
     }
 
     @Test
-    public void shouldGetAllWorkflows() throws Exception {
-        List<Workflow> workflows = workflowService.getAll();
-        assertEquals("Workflows were not found in database!", 2, workflows.size());
+    public void shouldFindWorkflow() throws Exception {
+        WorkflowDTO workflow = workflowService.findById(1);
+        boolean condition = workflow.getTitle().equals("say-hello") && workflow.getFileName().equals("test");
+        assertTrue("Workflow was not found in database!", condition);
+
+        assertEquals("Workflow was found but tasks were not inserted!", 1, workflow.getTasks().size());
+    }
+
+    @Test
+    public void shouldFindAllWorkflows() throws Exception {
+        List<WorkflowDTO> workflows = workflowService.findAll();
+        assertEquals("Workflows were not found in database!", 3, workflows.size());
     }
 
     @Test
@@ -62,5 +75,27 @@ public class WorkflowServiceIT {
     public void shouldGetAvailableWorkflows() {
         List<Workflow> workflows = workflowService.getAvailableWorkflows();
         assertEquals("Workflows were not found in database!", 1, workflows.size());
+    }
+
+    @Test
+    public void shouldHasCompleteTasks() throws Exception {
+        Workflow workflow = workflowService.getById(1);
+        boolean condition = workflowService.hasCompleteTasks(workflow.getTasks());
+        assertTrue("Workflow doesn't have complete tasks!", condition);
+
+        workflow = workflowService.getById(3);
+        condition = workflowService.hasCompleteTasks(workflow.getTasks());
+        assertFalse("Workflow has complete tasks!", condition);
+    }
+
+    @Test
+    public void shouldHasCompleteDTOTasks() throws Exception {
+        WorkflowDTO workflowDTO = workflowService.findById(1);
+        boolean condition = workflowService.hasCompleteTasksDTO(workflowDTO.getTasks());
+        assertTrue("Workflow DTO doesn't have complete tasks!", condition);
+
+        workflowDTO = workflowService.findById(3);
+        condition = workflowService.hasCompleteTasksDTO(workflowDTO.getTasks());
+        assertFalse("Workflow DTO has complete tasks!", condition);
     }
 }

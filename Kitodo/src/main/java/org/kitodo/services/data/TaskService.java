@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +38,12 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
 import org.kitodo.data.database.helper.enums.TaskEditType;
@@ -110,7 +112,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         query.must(subquery);
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
-        query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
+        query.must(createSimpleQuery(TaskTypeField.WORKFLOW_ID.getKey(), 0, true));
 
         if (hideCorrectionTasks) {
             query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), 10, true));
@@ -147,7 +149,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     protected void manageDependenciesForIndex(Task task)
             throws CustomResponseException, DAOException, DataException, IOException {
         manageProcessDependenciesForIndex(task);
-        manageTemplateDependenciesForIndex(task);
+        manageWorkflowDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
         manageUsersDependenciesForIndex(task);
         manageUserGroupsDependenciesForIndex(task);
@@ -166,16 +168,16 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
-    private void manageTemplateDependenciesForIndex(Task task) throws CustomResponseException, IOException {
+    private void manageWorkflowDependenciesForIndex(Task task) throws CustomResponseException, IOException {
         if (task.getIndexAction().equals(IndexAction.DELETE)) {
-            Template template = task.getTemplate();
-            if (Objects.nonNull(template)) {
-                template.getTasks().remove(task);
-                serviceManager.getTemplateService().saveToIndex(template, false);
+            Workflow workflow = task.getWorkflow();
+            if (Objects.nonNull(workflow)) {
+                workflow.getTasks().remove(task);
+                serviceManager.getWorkflowService().saveToIndex(workflow, false);
             }
         } else {
-            Template template = task.getTemplate();
-            serviceManager.getTemplateService().saveToIndex(template, false);
+            Workflow workflow = task.getWorkflow();
+            serviceManager.getWorkflowService().saveToIndex(workflow, false);
         }
     }
 
@@ -309,7 +311,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
         nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
         boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
+        boolQuery.must(createSimpleQuery(TaskTypeField.WORKFLOW_ID.getKey(), 0, true));
 
         return count(boolQuery.toString());
     }
@@ -471,6 +473,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
         }
 
+        Integer workflow = TaskTypeField.WORKFLOW_ID.getIntValue(taskJSONObject);
+        if (workflow > 0) {
+            taskDTO.setWorkflow(serviceManager.getWorkflowService().findById(workflow, true));
+        }
+
         if (!related) {
             convertRelatedJSONObjects(taskJSONObject, taskDTO);
         }
@@ -486,6 +493,63 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
         taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
+    }
+
+    /**
+     * Compare index and database, according to comparisons results save or remove
+     * tasks.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    void saveOrRemoveTasksInIndex(BaseIndexedBean baseIndexedBean)
+            throws CustomResponseException, DAOException, IOException, DataException {
+        List<Integer> database = new ArrayList<>();
+        List<Integer> index = new ArrayList<>();
+        List<Task> tasks;
+
+        if (baseIndexedBean instanceof Process) {
+            tasks = ((Process) baseIndexedBean).getTasks();
+        } else if (baseIndexedBean instanceof Workflow) {
+            tasks = ((Workflow) baseIndexedBean).getTasks();
+        } else {
+            return;
+        }
+
+        for (Task task : tasks) {
+            database.add(task.getId());
+            serviceManager.getTaskService().saveToIndex(task, false);
+        }
+
+        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(baseIndexedBean.getId());
+        for (JsonObject object : searchResults) {
+            index.add(getIdFromJSONObject(object));
+        }
+
+        List<Integer> missingInIndex = findMissingValues(database, index);
+        List<Integer> notNeededInIndex = findMissingValues(index, database);
+        for (Integer missing : missingInIndex) {
+            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
+        }
+
+        for (Integer notNeeded : notNeededInIndex) {
+            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
+        }
+    }
+
+    /**
+     * Compare two list and return difference between them.
+     *
+     * @param firstList
+     *            list from which records can be remove
+     * @param secondList
+     *            records stored here will be removed from firstList
+     * @return difference between two lists
+     */
+    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
+        List<Integer> newList = new ArrayList<>(firstList);
+        newList.removeAll(secondList);
+        return newList;
     }
 
     /**

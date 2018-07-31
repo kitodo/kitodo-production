@@ -27,6 +27,7 @@ public class WorkflowType extends BaseType<Workflow> {
         jsonObjectBuilder.add(WorkflowTypeField.FILE_NAME.getKey(), preventNull(workflow.getFileName()));
         jsonObjectBuilder.add(WorkflowTypeField.READY.getKey(), workflow.isReady());
         jsonObjectBuilder.add(WorkflowTypeField.ACTIVE.getKey(), workflow.isActive());
+        jsonObjectBuilder.add(WorkflowTypeField.TASKS.getKey(), addObjectRelation(workflow.getTasks(), true));
         return jsonObjectBuilder.build();
     }
 }

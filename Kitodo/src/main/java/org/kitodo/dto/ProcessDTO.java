@@ -23,6 +23,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
+    private List<TaskDTO> tasks = new ArrayList<>();
     private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
     private UserDTO blockedUser;
     private Integer progressClosed;
@@ -96,6 +97,29 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
+    }
+
+
+    /**
+     * Get list of tasks.
+     *
+     * @return list of tasks as TaskDTO
+     */
+    public List<TaskDTO> getTasks() {
+        if (Objects.isNull(this.tasks)) {
+            this.tasks = new ArrayList<>();
+        }
+        return this.tasks;
+    }
+
+    /**
+     * Set list of tasks.
+     *
+     * @param tasks
+     *            list of tasks as TaskDTO
+     */
+    public void setTasks(List<TaskDTO> tasks) {
+        this.tasks = tasks;
     }
 
     /**

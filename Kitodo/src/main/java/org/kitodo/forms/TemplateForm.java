@@ -14,8 +14,6 @@ package org.kitodo.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
@@ -31,14 +29,11 @@ import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
 @SessionScoped
@@ -53,7 +48,6 @@ public class TemplateForm extends TemplateBaseForm {
     private String title;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
 
     /**
      * Constructor.
@@ -126,46 +120,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Add UserGroup.
-     *
-     * @return empty String
-     */
-    public String addUserGroup() {
-        addUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Add User.
-     *
-     * @return empty String
-     */
-    public String addUser() {
-        addUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove User.
-     *
-     * @return empty String
-     */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove UserGroup.
-     *
-     * @return empty String
-     */
-    public String deleteUserGroup() {
-        deleteUserGroup(this.task);
-        return null;
-    }
-
-    /**
      * Duplicate the selected template.
      *
      * @param itemId
@@ -186,23 +140,12 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
->>>>>>> Add backend functionality for copy template
      * Save template.
      */
     private void save() {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return;
-            }
-
-            try {
-                if (this.template.getTasks().isEmpty()) {
-                    Reader reader = new Reader(this.template.getWorkflow().getFileName());
-                    this.template = reader.convertWorkflowToTemplate(this.template);
-                }
-            } catch (IOException e) {
-                Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
                 return;
             }
 
@@ -231,65 +174,6 @@ public class TemplateForm extends TemplateBaseForm {
         return templateListPath;
     }
 
-    /**
-     * Remove template if there is no assigned processes.
-     */
-    public void delete() {
-        if (!this.template.getProcesses().isEmpty()) {
-            Helper.setErrorMessage("processAssignedError");
-        } else {
-            try {
-                serviceManager.getTemplateService().remove(this.template);
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
-                    logger, e);
-            }
-        }
-    }
-
-    /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setTemplate(this.template);
-        this.template.getTasks().add(this.task);
-        return taskEditPath;
-    }
-
-    /**
-     * Remove task.
-     */
-    public void removeTask() {
-        try {
-            this.template.getTasks().remove(this.task);
-            List<User> users = this.task.getUsers();
-            for (User user : users) {
-                user.getTasks().remove(this.task);
-            }
-
-            List<UserGroup> userGroups = this.task.getUserGroups();
-            for (UserGroup userGroup : userGroups) {
-                userGroup.getTasks().remove(this.task);
-            }
-
-            serviceManager.getTaskService().remove(this.task);
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Save task and redirect to processEdit view.
-     *
-     * @return url to templateEdit view
-     */
-    public String saveTaskAndRedirect() {
-        saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
-            serviceManager.getTemplateService());
-        return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
-    }
-
     private boolean renameAfterProcessTitleChanged() {
         String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
@@ -300,18 +184,6 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.setTitle(this.title);
         }
         return true;
-    }
-
-    /**
-     * Get diagram image for current template.
-     *
-     * @return diagram image file
-     */
-    public InputStream getTasksDiagram() {
-        if (Objects.nonNull(this.template.getWorkflow())) {
-            return serviceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getFileName());
-        }
-        return serviceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**
@@ -383,24 +255,6 @@ public class TemplateForm extends TemplateBaseForm {
             setSaveDisabled(false);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
-                logger, e);
-        }
-    }
-
-    /**
-     * Method being used as viewAction for task form.
-     *
-     * @param id
-     *            of the task to load
-     */
-    public void loadTask(int id) {
-        try {
-            if (id != 0) {
-                setTask(this.serviceManager.getTaskService().getById(id));
-            }
-            setSaveDisabled(true);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                 logger, e);
         }
     }

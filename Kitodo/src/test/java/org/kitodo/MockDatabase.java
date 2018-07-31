@@ -153,6 +153,7 @@ public class MockDatabase {
         insertRulesets();
         insertProjects();
         insertFolders();
+        insertWorkflows();
         insertTemplates();
         insertProcesses();
         insertBatches();
@@ -161,7 +162,6 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
-        insertWorkflows();
         insertRemovableObjects();
     }
 
@@ -177,6 +177,7 @@ public class MockDatabase {
         insertFolders();
         insertProcessForWorkflow();
         insertBatches();
+        insertWorkflows();
         insertTemplateForWorkflow();
         insertProcessPropertiesForWorkflow();
         insertWorkpieceProperties();
@@ -540,6 +541,7 @@ public class MockDatabase {
         firstTemplate.setDocket(serviceManager.getDocketService().getById(2));
         firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
+        firstTemplate.setWorkflow(serviceManager.getWorkflowService().getById(1));
         serviceManager.getTemplateService().save(firstTemplate);
 
         Project thirdProject = serviceManager.getProjectService().getById(3);
@@ -892,7 +894,7 @@ public class MockDatabase {
     }
 
     private static void insertTasks() throws DAOException, DataException {
-        Template firstTemplate = serviceManager.getTemplateService().getById(1);
+        Workflow firstWorkflow = serviceManager.getWorkflowService().getById(1);
         UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
         User secondUser = serviceManager.getUserService().getById(2);
 
@@ -910,8 +912,8 @@ public class MockDatabase {
         User firstUser = serviceManager.getUserService().getById(1);
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
-        firstTask.setTemplate(firstTemplate);
-        firstTemplate.getTasks().add(firstTask);
+        firstTask.setWorkflow(firstWorkflow);
+        firstWorkflow.getTasks().add(firstTask);
         firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         firstUser.getProcessingTasks().add(firstTask);
@@ -963,7 +965,7 @@ public class MockDatabase {
         fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
 
-        Template secondTemplate = serviceManager.getTemplateService().getById(2);
+        Workflow secondWorkflow = serviceManager.getWorkflowService().getById(2);
 
         Task fifthTask = new Task();
         fifthTask.setTitle("Closed");
@@ -974,7 +976,7 @@ public class MockDatabase {
         fifthTask.setProcessingBegin(localDate.toDate());
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(secondUser);
-        fifthTask.setTemplate(secondTemplate);
+        fifthTask.setWorkflow(secondWorkflow);
         fifthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fifthTask);
 
@@ -988,7 +990,7 @@ public class MockDatabase {
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         sixthTask.setUserGroups(serviceManager.getUserGroupService().getAll());
         sixthTask.setProcessingUser(secondUser);
-        sixthTask.setTemplate(secondTemplate);
+        sixthTask.setWorkflow(secondWorkflow);
         serviceManager.getTaskService().save(sixthTask);
 
         Process secondProcess = serviceManager.getProcessService().getById(2);
@@ -1024,7 +1026,7 @@ public class MockDatabase {
     }
 
     private static void insertTasksForWorkflow() throws DAOException, DataException {
-        Template template = serviceManager.getTemplateService().getById(1);
+        Workflow workflow = serviceManager.getWorkflowService().getById(1);
 
         Task firstTask = new Task();
         UserGroup userGroup = serviceManager.getUserGroupService().getById(1);
@@ -1041,11 +1043,10 @@ public class MockDatabase {
         User firstUser = serviceManager.getUserService().getById(1);
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
-        firstTask.setTemplate(template);
+        firstTask.setWorkflow(workflow);
         firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         serviceManager.getTaskService().save(firstTask);
-        serviceManager.getTemplateService().save(template);
         firstUser.getProcessingTasks().add(firstTask);
         serviceManager.getUserService().save(firstUser);
 
@@ -1060,7 +1061,7 @@ public class MockDatabase {
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.DONE);
-        secondTask.setTemplate(template);
+        secondTask.setWorkflow(workflow);
         secondTask.getUsers().add(blockedUser);
         secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
@@ -1076,7 +1077,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 25);
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
-        thirdTask.setTemplate(template);
+        thirdTask.setWorkflow(workflow);
         thirdTask.getUsers().add(secondUser);
         serviceManager.getTaskService().save(thirdTask);
 
@@ -1090,7 +1091,7 @@ public class MockDatabase {
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         fourthTask.setProcessingUser(secondUser);
-        fourthTask.setTemplate(template);
+        fourthTask.setWorkflow(workflow);
         fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
 
@@ -1308,7 +1309,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DataException {
+    private static void insertWorkflows() throws DataException {
         Workflow firstWorkflow = new Workflow("say-hello", "test");
         firstWorkflow.setActive(true);
         firstWorkflow.setReady(true);
@@ -1317,6 +1318,10 @@ public class MockDatabase {
         Workflow secondWorkflow = new Workflow("gateway", "gateway");
         secondWorkflow.setReady(false);
         serviceManager.getWorkflowService().save(secondWorkflow);
+
+        Workflow thirdWorkflow = new Workflow("notask", "notask");
+        thirdWorkflow.setReady(false);
+        serviceManager.getWorkflowService().save(thirdWorkflow);
     }
 
     /**

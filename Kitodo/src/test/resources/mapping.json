@@ -592,22 +592,6 @@
                     },
                     "fielddata": true
                 },
-                "tasks": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
                 "title": {
                     "type": "text",
                     "fields": {
@@ -693,7 +677,7 @@
                         }
                     }
                 },
-                "templateForTask": {
+                "workflowForTask": {
                     "properties": {
                         "id": {
                             "type": "long"
@@ -1163,6 +1147,22 @@
                 },
                 "active": {
                     "type": "boolean"
+                },
+                "tasks": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

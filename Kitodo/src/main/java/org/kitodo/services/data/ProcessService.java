@@ -298,40 +298,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 serviceManager.getTaskService().removeFromIndex(task, false);
             }
         } else {
-            saveOrRemoveTasksInIndex(process);
-        }
-    }
-
-    /**
-     * Compare index and database, according to comparisons results save or
-     * remove tasks.
-     *
-     * @param process
-     *            object
-     */
-    private void saveOrRemoveTasksInIndex(Process process)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        List<Integer> database = new ArrayList<>();
-        List<Integer> index = new ArrayList<>();
-
-        for (Task task : process.getTasks()) {
-            database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task, false);
-        }
-
-        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(process.getId());
-        for (JsonObject object : searchResults) {
-            index.add(getIdFromJSONObject(object));
-        }
-
-        List<Integer> missingInIndex = findMissingValues(database, index);
-        List<Integer> notNeededInIndex = findMissingValues(index, database);
-        for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
-        }
-
-        for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
+            serviceManager.getTaskService().saveOrRemoveTasksInIndex(process);
         }
     }
 
@@ -371,21 +338,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 serviceManager.getPropertyService().saveToIndex(workpiece, false);
             }
         }
-    }
-
-    /**
-     * Compare two list and return difference between them.
-     *
-     * @param firstList
-     *            list from which records can be remove
-     * @param secondList
-     *            records stored here will be removed from firstList
-     * @return difference between two lists
-     */
-    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
-        List<Integer> newList = new ArrayList<>(firstList);
-        newList.removeAll(secondList);
-        return newList;
     }
 
     /**

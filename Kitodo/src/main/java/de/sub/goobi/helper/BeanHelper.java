@@ -106,7 +106,7 @@ public class BeanHelper {
     public static void copyTasks(Template processTemplate, Process processCopy) {
         List<Task> tasks = new ArrayList<>();
 
-        for (Task templateTask : processTemplate.getTasks()) {
+        for (Task templateTask : processTemplate.getWorkflow().getTasks()) {
             Task task = new Task(templateTask);
             task.setProcess(processCopy);
             tasks.add(task);

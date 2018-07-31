@@ -51,9 +51,6 @@ public class Template extends BaseTemplateBean {
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
-    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Task> tasks;
-
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "project_x_template", joinColumns = {
             @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_project_x_template_template_id")) },
@@ -67,7 +64,6 @@ public class Template extends BaseTemplateBean {
     public Template() {
         this.title = "";
         this.inChoiceListShown = true;
-        this.tasks = new ArrayList<>();
         this.creationDate = new Date();
     }
 
@@ -186,27 +182,6 @@ public class Template extends BaseTemplateBean {
      */
     public void setDocket(Docket docket) {
         this.docket = docket;
-    }
-
-    /**
-     * Get list of task.
-     *
-     * @return list of Task objects or empty list
-     */
-    public List<Task> getTasks() {
-        if (this.tasks == null) {
-            this.tasks = new ArrayList<>();
-        }
-        return this.tasks;
-    }
-
-    /**
-     * Set tasks.
-     *
-     * @param tasks as list of task
-     */
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
     }
 
     /**

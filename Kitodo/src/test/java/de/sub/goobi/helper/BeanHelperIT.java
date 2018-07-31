@@ -20,6 +20,7 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
@@ -55,9 +56,14 @@ public class BeanHelperIT {
     public void shouldCopyTasks() throws Exception {
         Reader reader = new Reader("gateway");
 
+        Workflow workflow = new Workflow();
+        workflow.setTitle("Title");
+        workflow = reader.convertTasks(workflow);
+
         Template template = new Template();
         template.setTitle("Title");
-        template = reader.convertWorkflowToTemplate(template);
+        template.setWorkflow(workflow);
+
         Process process = new Process();
 
         BeanHelper.copyTasks(template, process);

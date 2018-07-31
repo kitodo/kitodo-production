@@ -11,12 +11,19 @@
 
 package org.kitodo.dto;
 
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.kitodo.services.ServiceManager;
+
 public class WorkflowDTO extends BaseDTO {
 
     private String title;
     private String fileName;
     private boolean ready;
     private boolean active;
+    private List<TaskDTO> tasks = new ArrayList<>();
 
     /**
      * Get title.
@@ -92,5 +99,34 @@ public class WorkflowDTO extends BaseDTO {
      */
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+
+    /**
+     * Get list of tasks.
+     *
+     * @return list of tasks as TaskDTO
+     */
+    public List<TaskDTO> getTasks() {
+        return tasks;
+    }
+
+    /**
+     * Set list of tasks.
+     *
+     * @param tasks
+     *            list of tasks as TaskDTO
+     */
+    public void setTasks(List<TaskDTO> tasks) {
+        this.tasks = tasks;
+    }
+
+    /**
+     * Get diagram image.
+     *
+     * @return value of diagramImage
+     */
+    public InputStream getDiagramImage() {
+        return new ServiceManager().getWorkflowService().getTasksDiagram(this.getFileName());
     }
 }
