@@ -154,7 +154,7 @@ public class WorkflowTypeTest {
         HttpEntity document = workflowType.createDocument(workflow);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 7, actual.keySet().size());
 
         JsonArray tasks = WorkflowTypeField.TASKS.getJsonArray(actual);
         JsonObject task = tasks.getJsonObject(0);
