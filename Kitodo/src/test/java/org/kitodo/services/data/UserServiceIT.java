@@ -363,6 +363,12 @@ public class UserServiceIT {
     }
 
     @Test
+    public void shouldFindClientSize() {
+        await().untilAsserted(
+            () -> assertEquals("Projects' size is incorrect!", 1, userService.findById(1).getClientsSize()));
+    }
+
+    @Test
     public void shouldGetProjectsSize() {
         await().untilAsserted(
             () -> assertEquals("Projects' size is incorrect!", 2, userService.findById(1).getProjectsSize()));

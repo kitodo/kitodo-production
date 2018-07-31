@@ -24,6 +24,7 @@ public enum UserTypeField implements TypeInterface {
     USER_GROUPS("userGroups"),
     FILTERS("filters"),
     PROJECTS("projects"),
+    CLIENTS("clients"),
     PROCESSING_TASKS("processingTasks"),
     TASKS("tasks");
 

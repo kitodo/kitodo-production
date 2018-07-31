@@ -24,6 +24,7 @@ import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ClientType;
 import org.kitodo.data.elasticsearch.index.type.enums.ClientTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ClientDTO;
@@ -90,7 +91,7 @@ public class ClientService extends SearchService<Client, ClientDTO, ClientDAO> {
         if (clientDTO.getProjectsSize() > 0) {
             List<ProjectDTO> projects = new ArrayList<>();
             List<String> subKeys = new ArrayList<>();
-            subKeys.add(ClientTypeField.NAME.getKey());
+            subKeys.add(ProjectTypeField.TITLE.getKey());
             List<RelatedProperty> relatedProperties = getRelatedArrayPropertyForDTO(jsonObject,
                 ClientTypeField.PROJECTS.getKey(), subKeys);
             for (RelatedProperty relatedProperty : relatedProperties) {

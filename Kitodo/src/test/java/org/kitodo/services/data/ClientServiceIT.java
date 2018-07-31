@@ -59,7 +59,7 @@ public class ClientServiceIT {
     }
 
     @Test
-    public void shouldFindAllAuthorizations() {
+    public void shouldFindAllClients() {
         await().untilAsserted(
             () -> assertEquals("Not all clients were found in database!", 3, clientService.findAll().size()));
     }
