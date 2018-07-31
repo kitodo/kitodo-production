@@ -88,53 +88,6 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
         return this.authorities;
     }
 
-//    /**
-//     * Gets global authorities.
-//     *
-//     * @return The global authorities.
-//     */
-//    public List<Authority> getGlobalAuthorities() {
-//        List<Authority> globalAuthorities = new ArrayList<>();
-//        for (Authority authority : getAuthorities()) {
-//            if (!authority.getTitle().contains(CLIENT_AUTHORITY_SUFFIX)
-//                    && !authority.getTitle().contains(PROJECT_AUTHORITY_SUFFIX)) {
-//                globalAuthorities.add(authority);
-//            }
-//        }
-//        return globalAuthorities;
-//    }
-//
-//    /**
-//     * Gets client authorities.
-//     *
-//     * @return The client authorities.
-//     */
-//    public List<Authority> getClientAuthorities() {
-//        List<Authority> clientAuthorities = new ArrayList<>();
-//        for (Authority authority : getAuthorities()) {
-//            if (authority.getTitle().contains(CLIENT_AUTHORITY_SUFFIX)) {
-//                clientAuthorities.add(authority);
-//            }
-//        }
-//        return clientAuthorities;
-//    }
-
-    /**
-     * Gets project authorities.
-     *
-     * @return The project authorities.
-     */
-    public List<Authority> getProjectAuthorities() {
-        List<Authority> projectAuthorities = new ArrayList<>();
-        for (Authority authority : getAuthorities()) {
-            if (authority.getTitle().contains(PROJECT_AUTHORITY_SUFFIX)) {
-                projectAuthorities.add(authority);
-            }
-        }
-        return projectAuthorities;
-    }
-
-
     /**
      * Sets authorities.
      *

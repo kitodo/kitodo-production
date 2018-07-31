@@ -22,6 +22,7 @@ DROP COLUMN globalAssignable;
 CREATE TABLE client_x_user (
   `client_id` INT(11) DEFAULT NULL,
   `user_id` INT(11) NOT NULL)
+  ENGINE=InnoDB
   DEFAULT CHARACTER SET = utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 3. Add foreign keys
