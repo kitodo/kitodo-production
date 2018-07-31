@@ -198,6 +198,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.title = title;
     }
 
+    /**
+     * Returns the list of users of this project.
+     *
+     * @return the folders
+     */
     public List<User> getUsers() {
         if (this.users == null) {
             this.users = new ArrayList<>();
@@ -209,6 +214,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.users = users;
     }
 
+    /**
+     * Returns the list of processes of this project.
+     *
+     * @return the folders
+     */
     public List<Process> getProcesses() {
         if (this.processes == null) {
             this.processes = new ArrayList<>();
@@ -312,6 +322,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
+    /**
+     * Returns the list of folders of this project.
+     *
+     * @return the folders
+     */
     public List<Folder> getFolders() {
         if (this.folders == null) {
             this.folders = new ArrayList<>();
@@ -319,6 +334,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.folders;
     }
 
+    /**
+     * Sets the list of folders of this project.
+     *
+     * @param folders
+     *            list of folders to set
+     */
     public void setFolders(List<Folder> folders) {
         this.folders = folders;
     }

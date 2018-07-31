@@ -18,6 +18,9 @@ import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
 
+    /**
+     * Creates a new folder service.
+     */
     public FolderService() {
         super(new FolderDAO());
     }
