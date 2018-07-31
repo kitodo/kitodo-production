@@ -87,7 +87,7 @@ public class Template extends BaseTemplateBean {
      *
      * @param active as Boolean
      */
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
