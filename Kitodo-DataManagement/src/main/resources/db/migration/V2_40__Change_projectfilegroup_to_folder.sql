@@ -14,22 +14,31 @@
 --     (enum {ALL, EXISTING, NO, PREVIEW_IMAGE}) linkingMode
 
 ALTER TABLE projectFileGroup
-  ADD copyFolder   tinyint(1) NOT NULL DEFAULT 1
+  ADD copyFolder   tinyint(1)  NOT NULL DEFAULT 1
         COMMENT 'whether the folder is copied during export',
-  ADD createFolder tinyint(1) NOT NULL DEFAULT 1
+  ADD createFolder tinyint(1)  NOT NULL DEFAULT 1
         COMMENT 'whether the folder is created with a new process',
-  ADD derivative   double              DEFAULT NULL
+  ADD derivative   double               DEFAULT NULL
         COMMENT 'the percentage of scaling for createDerivative()',
-  ADD dpi          int(11)             DEFAULT NULL
+  ADD dpi          int(11)              DEFAULT NULL
         COMMENT 'the new DPI for changeDpi()',
-  ADD imageScale   double              DEFAULT NULL
+  ADD imageScale   double               DEFAULT NULL
         COMMENT 'the percentage of scaling for getScaledWebImage()',
-  ADD imageSize    int(11)             DEFAULT NULL
+  ADD imageSize    int(11)              DEFAULT NULL
         COMMENT 'the new width in pixels for getSizedWebImage()',
-  ADD linkingMode  varchar(13) NOT NULL COLLATE utf8mb4_unicode_ci DEFAULT 'ALL'
+  ADD linkingMode  varchar(13) NOT NULL DEFAULT 'ALL'
         COMMENT 'how to link the contents in a METS fileGrp',
   ADD CONSTRAINT CK_folder_linkingMode
         CHECK (linkingMode IN ('ALL', 'EXISTING', 'NO', 'PREVIEW_IMAGE'));
+
+
+-- Make sure there are no NULL values in string fields. This should not be the
+--     case, but may be on databases with a long version history.
+
+UPDATE projectFileGroup SET name = '' WHERE id > 0 AND name IS NULL;
+UPDATE projectFileGroup SET path = '' WHERE id > 0 AND path IS NULL;
+UPDATE projectFileGroup SET folder = '' WHERE id > 0 AND folder IS NULL;
+
 
 -- Set 'linkingMode' column to 'EXISTING' where 'folder' is not empty
 
@@ -47,17 +56,17 @@ UPDATE projectFileGroup SET linkingMode = 'PREVIEW_IMAGE'
 --     'folder' => 'path' (no column with same name as table)
 
 ALTER TABLE projectFileGroup
-  CHANGE name   fileGroup    varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  CHANGE path   urlStructure varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  CHANGE folder path         varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL;
+  CHANGE name   fileGroup    varchar(255) NOT NULL DEFAULT ''
+        COMMENT 'USE attribute for METS fileGroup',
+  CHANGE path   urlStructure varchar(255) NOT NULL DEFAULT ''
+        COMMENT 'Path where the folder is published on a web server',
+  CHANGE folder path         varchar(255) NOT NULL DEFAULT ''
+        COMMENT 'Path to the folder relative to the process directory, may contain variables';
 
 
--- Delete columns 'suffix' and 'previewImage'. 'previewImage' is now part of
---     'linkingMode'; 'suffix' depends on 'mimeType' and needs no extra storage.
+-- Delete column 'previewImage'. 'previewImage' is now part of 'linkingMode'.
 
-ALTER TABLE projectFileGroup
-  DROP previewImage,
-  DROP suffix;
+ALTER TABLE projectFileGroup DROP previewImage;
 
 
 -- Rename table 'projectfilegroup' into 'folder'
