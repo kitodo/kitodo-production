@@ -37,7 +37,9 @@ public class TaskDTO extends BaseDTO {
     private ProcessDTO process;
     private TemplateDTO template;
     private List<UserDTO> users = new ArrayList<>();
+    private int usersSize;
     private List<UserGroupDTO> userGroups = new ArrayList<>();
+    private int userGroupsSize;
     private boolean typeAutomatic;
     private boolean typeMetadata;
     private boolean typeImportFileUpload;
@@ -334,6 +336,25 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
+     * Get user size.
+     *
+     * @return the size of the user list
+     */
+    public int getUsersSize() {
+        return this.usersSize;
+    }
+
+    /**
+     * Set users size.
+     *
+     * @param usersSize
+     *            as int
+     */
+    public void setUsersSize(int usersSize) {
+        this.usersSize = usersSize;
+    }
+
+    /**
      * Get list of user's groups.
      * 
      * @return list of user's groups as UserGroupDTO.
@@ -350,6 +371,25 @@ public class TaskDTO extends BaseDTO {
      */
     public void setUserGroups(List<UserGroupDTO> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    /**
+     * Get user group size.
+     *
+     * @return the size of the userGroup list
+     */
+    public int getUserGroupsSize() {
+        return this.userGroupsSize;
+    }
+
+    /**
+     * Set user groups size.
+     *
+     * @param userGroupsSize
+     *            as int
+     */
+    public void setUserGroupsSize(int userGroupsSize) {
+        this.userGroupsSize = userGroupsSize;
     }
 
     /**
