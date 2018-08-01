@@ -16,7 +16,7 @@ public enum ClientTypeField implements TypeInterface {
     ID("id"),
     NAME("clientName"),
     PROJECTS("projects"),
-    USERS("users"), ;
+    USERS("users");
 
     private String name;
 
