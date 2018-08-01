@@ -43,13 +43,9 @@
             </div>
             <div>
                 <p:outputLabel for="client" value="#{msgs.client}"/>
-                <p:selectOneMenu id="client"
-                                 converter="#{clientConverter}"
-                                 value="#{ProjekteForm.myProjekt.client}"
+                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjekteForm.myProjekt.client}"
                                  disabled="#{ProjekteForm.lockedDetail}">
-                    <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
-                    <f:selectItems value="#{ProjekteForm.clients}" var="client" itemValue="#{client}"
-                                   itemLabel="#{client.name}"/>
+                    <f:selectItems value="#{ProjekteForm.clients}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

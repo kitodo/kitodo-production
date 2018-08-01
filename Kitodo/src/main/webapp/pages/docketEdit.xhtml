@@ -79,12 +79,8 @@
                     <p:row>
                         <div>
                             <p:outputLabel for="client" value="#{msgs.client}"/>
-                            <p:selectOneMenu id="client"
-                                             converter="#{clientConverter}"
-                                             value="#{DocketForm.myDocket.client}">
-                                <f:selectItem itemLabel="#{msgs.clientNon}" itemValue="noClient"/>
-                                <f:selectItems value="#{DocketForm.clients}" var="client" itemValue="#{client}"
-                                               itemLabel="#{client.name}"/>
+                            <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{DocketForm.myDocket.client}">
+                                <f:selectItems value="#{DocketForm.clients}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>

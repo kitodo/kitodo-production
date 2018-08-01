@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -43,6 +42,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
@@ -348,12 +348,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - get LDAP group choice list.
      */
     public List<SelectItem> getLdapGruppeAuswahlListe() {
-        List<SelectItem> myLdapGruppen = new ArrayList<>();
-        List<LdapGroup> temp = serviceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
-        for (LdapGroup gru : temp) {
-            myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitle(), null));
-        }
-        return myLdapGruppen;
+        return SelectItemList.getLdapGroups();
     }
 
     /**

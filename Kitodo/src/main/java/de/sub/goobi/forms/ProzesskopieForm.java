@@ -71,7 +71,6 @@ import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
-import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -83,6 +82,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
@@ -393,30 +393,7 @@ public class ProzesskopieForm implements Serializable {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getProcessesForChoiceList() {
-        List<Process> processes = new ArrayList<>();
-        // TODO Change to check the corresponding authority
-        if (serviceManager.getSecurityAccessService().isAdmin()) {
-            try {
-                processes = serviceManager.getProcessService().getAll();
-            } catch (DAOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        } else {
-            User currentUser = serviceManager.getUserService().getAuthenticatedUser();
-            if (Objects.nonNull(currentUser)) {
-                for (Project project : currentUser.getProjects()) {
-                    processes.addAll(project.getProcesses());
-                }
-            }
-        }
-
-        processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
-
-        List<SelectItem> processSelectItems = new ArrayList<>();
-        for (Process process : processes) {
-            processSelectItems.add(new SelectItem(process.getId(), process.getTitle(), null));
-        }
-        return processSelectItems;
+        return SelectItemList.getProcessesForChoiceList();
     }
 
     /**

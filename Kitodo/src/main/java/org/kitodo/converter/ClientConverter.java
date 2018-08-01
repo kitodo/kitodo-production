@@ -36,16 +36,15 @@ public class ClientConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-        if (value.equals("noClient")) {
-            // we need to return null if we want to write null value to database
+        if (Objects.isNull(value) || value.isEmpty()) {
             return null;
-        }
-
-        try {
-            return serviceManager.getClientService().getById(Integer.parseInt(value));
-        } catch (DAOException e) {
-            logger.error(e.getMessage());
-            return "0";
+        } else {
+            try {
+                return serviceManager.getClientService().getById(Integer.parseInt(value));
+            } catch (DAOException e) {
+                logger.error(e.getMessage());
+                return "0";
+            }
         }
     }
 
