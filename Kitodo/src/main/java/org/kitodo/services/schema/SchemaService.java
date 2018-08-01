@@ -205,7 +205,7 @@ public class SchemaService {
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getPath(), process);
+                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
                 if (serviceManager.getFileService().fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()

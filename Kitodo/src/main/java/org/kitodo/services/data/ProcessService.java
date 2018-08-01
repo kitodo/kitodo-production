@@ -2108,7 +2108,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getPath()).toURI();
+                URI folderUri = new File(folder.getRelativePath()).toURI();
                 if (fileService.fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()
@@ -2181,14 +2181,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setName(folder.getFileGroup());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
         virtualFileGroup.setMimetype(folder.getMimeType());
-        virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+        virtualFileGroup.setFileSuffix(
+            folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
         return virtualFileGroup;
     }
 
     /**
      * Set showClosedProcesses.
      *
-     * @param showClosedProcesses as boolean
+     * @param showClosedProcesses
+     *            as boolean
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
@@ -2197,7 +2199,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Set showInactiveProjects.
      *
-     * @param showInactiveProjects as boolean
+     * @param showInactiveProjects
+     *            as boolean
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;

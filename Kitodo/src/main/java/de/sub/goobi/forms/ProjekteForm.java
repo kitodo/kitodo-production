@@ -51,6 +51,19 @@ public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
     private Project myProjekt;
+
+    /**
+     * The folder currently under edit in the pop-up dialog.
+     */
+    /*
+     * This is a hack. The clean solution would be to have an inner class bean
+     * for the data table row an dialog, but this approach was introduced
+     * decades ago and has been maintained until today.
+     *
+     * Trifle: “Mỹ” (vietn. “America”) is a tribute to a programming style
+     * called “American programming”, that is characterized by voluntarily
+     * breaking conventions if it “makes it easier to get stuff done”.
+     */
     private Folder myFolder;
     private transient ServiceManager serviceManager = new ServiceManager();
 
@@ -380,10 +393,21 @@ public class ProjekteForm extends BasisForm {
         return filteredFolderList;
     }
 
+    /**
+     * Returns the folder currently under edit in the pop-up dialog.
+     *
+     * @return the folder currently under edit
+     */
     public Folder getMyFolder() {
         return this.myFolder;
     }
 
+    /**
+     * Sets the folder currently under edit in the pop-up dialog.
+     *
+     * @param myFolder
+     *            folder to set to be under edit now
+     */
     public void setMyFolder(Folder myFolder) {
         this.myFolder = myFolder;
     }
