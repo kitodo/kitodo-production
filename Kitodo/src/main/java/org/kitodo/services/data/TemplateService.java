@@ -337,7 +337,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return true;
         }
         for (TaskDTO task : tasks) {
-            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+            if (task.getUserGroups().isEmpty() && task.getUsers().isEmpty()) {
                 return true;
             }
         }
