@@ -163,6 +163,27 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
     /**
+     * Folder to use as source for generation of derived resources.
+     */
+    @ManyToOne
+    @JoinColumn(name = "generatorSource_folder_id", foreignKey = @ForeignKey(name = "FK_project_generatorSource_folder_id"))
+    private Folder generatorSource;
+
+    /**
+     * Folder with media to use for the viewer.
+     */
+    @ManyToOne
+    @JoinColumn(name = "mediaView_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
+    private Folder mediaView;
+
+    /**
+     * Folder with media to use for the preview.
+     */
+    @ManyToOne
+    @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
+    private Folder preview;
+
+    /**
      * The variable {@code template} is populated from
      * {@link org.goobi.webapi.resources.Projects} when calling
      * <code><i>${SERVLET_CONTEXT}</i>/rest/projects</code> to output the
@@ -590,6 +611,65 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     public void setUserGroupProjectAuthorityRelations(
             List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
         this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
+    }
+
+    /**
+     * Returns the folder to use as source for generation of derived resources
+     * of this project.
+     *
+     * @return the source folder for generation
+     */
+    public Folder getGeneratorSource() {
+        return generatorSource;
+    }
+
+    /**
+     * Sets the folder to use as source for generation of derived resources of
+     * this project.
+     *
+     * @param generatorSource
+     *            source folder for generation to set
+     */
+    public void setGeneratorSource(Folder generatorSource) {
+        this.generatorSource = generatorSource;
+    }
+
+    /**
+     * Returns the folder to use for the media view.
+     *
+     * @return media view folder
+     */
+    public Folder getMediaView() {
+        return mediaView;
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param mediaView
+     *            media view folder
+     */
+    public void setMediaView(Folder mediaView) {
+        this.mediaView = mediaView;
+    }
+
+    /**
+     * Returns the folder to use for preview.
+     *
+     * @return preview folder
+     */
+    public Folder getPreview() {
+        return preview;
+    }
+
+    /**
+     * Sets the folder to use for preview.
+     *
+     * @param preview
+     *            preview folder
+     */
+    public void setPreview(Folder preview) {
+        this.preview = preview;
     }
 
     @Override
