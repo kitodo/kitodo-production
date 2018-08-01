@@ -31,7 +31,7 @@ public class UserDTO extends BaseDTO {
     private List<UserGroupDTO> userGroups = new ArrayList<>();
     private Integer userGroupSize;
     private List<ClientDTO> clients = new ArrayList<>();
-    private Integer clientsSize;
+    private int clientsSize;
     private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
     private List<TaskDTO> tasks = new ArrayList<>();

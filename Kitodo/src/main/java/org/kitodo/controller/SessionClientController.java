@@ -19,8 +19,6 @@ import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.services.ServiceManager;
@@ -31,10 +29,9 @@ import org.primefaces.context.RequestContext;
 public class SessionClientController {
 
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(SessionClientController.class);
 
     private Client selectedClient;
-    protected static final String NO_CLIENT_SELECTED = "clientSelectNone";
+    private static final String NO_CLIENT_SELECTED = "clientSelectNone";
 
     /**
      * Gets the name of the current session client. In case that no session client
@@ -102,10 +99,18 @@ public class SessionClientController {
         return serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
     }
 
+    /**
+     * Sets the current selected client as session client.
+     */
     public void setSelectedClientAsSessionClient() {
         setSessionClient(selectedClient);
     }
 
+    /**
+     * Checks if clients are available for current user.
+     * 
+     * @return true if if clients are available for current user.
+     */
     public boolean areClientsAvailableForUser() {
         return !getAvailableClientsOfCurrentUser().isEmpty();
     }

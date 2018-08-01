@@ -17,7 +17,6 @@ import java.util.List;
 public class ClientDTO extends BaseDTO {
     private String name;
     private List<UserDTO> users = new ArrayList<>();
-    private Integer usersSize;
     private List<ProjectDTO> projects = new ArrayList<>();
     private int projectsSize;
 
@@ -57,25 +56,6 @@ public class ClientDTO extends BaseDTO {
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
-    }
-
-    /**
-     * Gets usersSize.
-     *
-     * @return The usersSize.
-     */
-    public int getUsersSize() {
-        return usersSize;
-    }
-
-    /**
-     * Sets usersSize.
-     *
-     * @param usersSize
-     *            The usersSize.
-     */
-    public void setUsersSize(Integer usersSize) {
-        this.usersSize = usersSize;
     }
 
     /**
