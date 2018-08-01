@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -124,9 +125,7 @@ public class Task extends BaseIndexedBean {
      * this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
+    @JoinTable(name = "task_x_user", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
@@ -134,10 +133,16 @@ public class Task extends BaseIndexedBean {
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
+
+    /**
+     * This field contains information about folders, whose contents are to be
+     * generated in this task.
+     */
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "task_x_folder", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")) })
+    private List<Folder> folders;
 
     @Transient
     private String localizedTitle;
@@ -155,7 +160,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Copy constructor.
-     * 
+     *
      * @param templateTask
      *            task to copy
      */
@@ -362,7 +367,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get list of users.
-     * 
+     *
      * @return list of User objects or empty list
      */
     public List<User> getUsers() {
@@ -374,7 +379,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set list of users.
-     * 
+     *
      * @param users
      *            as list
      */
@@ -384,7 +389,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get list of user groups.
-     * 
+     *
      * @return list of UserGroup objects or empty list
      */
     public List<UserGroup> getUserGroups() {
@@ -396,12 +401,47 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set list of user groups.
-     * 
+     *
      * @param userGroups
      *            as list
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    /**
+     * Get list of available folders.
+     *
+     * @return list of Folder objects or empty list
+     */
+    public List<Folder> getPossibleFolders() {
+        Project project = template.getProject();
+        return project.getFolders().parallelStream()
+                .filter(λ -> !λ.equals(project.getGeneratorSource() && (λ.getDerivative().isPresent()
+                        || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent())))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get list of folders.
+     *
+     * @return list of Folder objects or empty list
+     */
+    public List<Folder> getFolders() {
+        if (this.folders == null) {
+            this.folders = new ArrayList<>();
+        }
+        return this.folders;
+    }
+
+    /**
+     * Set list of folders.
+     *
+     * @param folders
+     *            as list
+     */
+    public void setFolders(List<Folder> folders) {
+        this.folders = folders;
     }
 
     public boolean isTypeExportRussian() {
@@ -427,7 +467,7 @@ public class Task extends BaseIndexedBean {
     /**
      * Set task type images. If types is true, it also sets type images read to
      * true.
-     * 
+     *
      * @param typeImagesWrite
      *            true or false
      */
@@ -503,8 +543,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can identify
-     * change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can
+     * identify change done to task.
      *
      * @return workflow id as String
      */
@@ -516,8 +556,8 @@ public class Task extends BaseIndexedBean {
      * Set workflow id.
      *
      * @param workflowId
-     *            id of task object in diagram - by this id we can identify change
-     *            done to task
+     *            id of task object in diagram - by this id we can identify
+     *            change done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
@@ -565,7 +605,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get localized title.
-     * 
+     *
      * @return localized title as String
      */
     public String getLocalizedTitle() {
@@ -574,7 +614,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set localized titles as String.
-     * 
+     *
      * @param localizedTitle
      *            as String
      */
@@ -586,7 +626,7 @@ public class Task extends BaseIndexedBean {
     // files
     /**
      * Get task title with user full name.
-     * 
+     *
      * @return task title with user full name as String
      */
     public String getTitleWithUserName() {
@@ -634,28 +674,18 @@ public class Task extends BaseIndexedBean {
             return false;
         }
         Task task = (Task) o;
-        return homeDirectory == task.homeDirectory
-            && typeMetadata == task.typeMetadata
-            && typeAutomatic == task.typeAutomatic
-            && typeImportFileUpload == task.typeImportFileUpload
-            && typeExportRussian == task.typeExportRussian
-            && typeImagesRead == task.typeImagesRead
-            && typeImagesWrite == task.typeImagesWrite
-            && typeExportDMS == task.typeExportDMS
-            && typeAcceptClose == task.typeAcceptClose
-            && typeCloseVerify == task.typeCloseVerify
-            && Objects.equals(title, task.title)
-            && Objects.equals(priority, task.priority)
-            && Objects.equals(ordering, task.ordering)
-            && Objects.equals(processingStatus, task.processingStatus)
-            && Objects.equals(processingTime, task.processingTime)
-            && Objects.equals(processingBegin, task.processingBegin)
-            && Objects.equals(processingEnd, task.processingEnd)
-            && Objects.equals(editType, task.editType)
-            && Objects.equals(scriptName, task.scriptName)
-            && Objects.equals(scriptPath, task.scriptPath)
-            && Objects.equals(batchStep, task.batchStep)
-            && Objects.equals(workflowId, task.workflowId);
+        return homeDirectory == task.homeDirectory && typeMetadata == task.typeMetadata
+                && typeAutomatic == task.typeAutomatic && typeImportFileUpload == task.typeImportFileUpload
+                && typeExportRussian == task.typeExportRussian && typeImagesRead == task.typeImagesRead
+                && typeImagesWrite == task.typeImagesWrite && typeExportDMS == task.typeExportDMS
+                && typeAcceptClose == task.typeAcceptClose && typeCloseVerify == task.typeCloseVerify
+                && Objects.equals(title, task.title) && Objects.equals(priority, task.priority)
+                && Objects.equals(ordering, task.ordering) && Objects.equals(processingStatus, task.processingStatus)
+                && Objects.equals(processingTime, task.processingTime)
+                && Objects.equals(processingBegin, task.processingBegin)
+                && Objects.equals(processingEnd, task.processingEnd) && Objects.equals(editType, task.editType)
+                && Objects.equals(scriptName, task.scriptName) && Objects.equals(scriptPath, task.scriptPath)
+                && Objects.equals(batchStep, task.batchStep) && Objects.equals(workflowId, task.workflowId);
     }
 
     @Override
