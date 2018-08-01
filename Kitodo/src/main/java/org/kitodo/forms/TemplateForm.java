@@ -37,7 +37,7 @@ import org.kitodo.model.LazyDTOModel;
 
 @Named("TemplateForm")
 @SessionScoped
-public class TemplateForm extends TemplateBaseForm {
+public class TemplateForm extends BaseForm {
 
     private static final long serialVersionUID = 2890900843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateForm.class);
@@ -81,7 +81,6 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return true or false
      */
-    @Override
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }
@@ -92,7 +91,6 @@ public class TemplateForm extends TemplateBaseForm {
      * @param showInactiveProjects
      *            true or false
      */
-    @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
         serviceManager.getTemplateService().setShowInactiveProjects(showInactiveProjects);

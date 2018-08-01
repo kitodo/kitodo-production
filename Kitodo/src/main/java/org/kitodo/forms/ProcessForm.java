@@ -90,7 +90,7 @@ import org.kitodo.services.workflow.WorkflowControllerService;
 
 @Named("ProcessForm")
 @SessionScoped
-public class ProcessForm extends TemplateBaseForm {
+public class ProcessForm extends BaseForm {
     private static final long serialVersionUID = 2838270843176821134L;
     private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
@@ -1379,7 +1379,6 @@ public class ProcessForm extends TemplateBaseForm {
      *            boolean flag signaling whether inactive projects should be
      *            displayed or not
      */
-    @Override
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;
         serviceManager.getProcessService().setShowInactiveProjects(showInactiveProjects);
@@ -1391,7 +1390,6 @@ public class ProcessForm extends TemplateBaseForm {
      * @return parameter controlling whether inactive projects should be
      *         displayed or not
      */
-    @Override
     public boolean isShowInactiveProjects() {
         return this.showInactiveProjects;
     }
