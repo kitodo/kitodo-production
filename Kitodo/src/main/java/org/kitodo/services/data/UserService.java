@@ -14,9 +14,13 @@ package org.kitodo.services.data;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.json.JsonObject;
@@ -639,6 +645,42 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             }
             userDTO.setUserGroups(userGroups);
         }
+    }
+
+    /**
+     * Check validity of given login.
+     * 
+     * @param login
+     *            to validation
+     * @param filePath
+     *            to file with black list of signs
+     * @return true or false
+     */
+    public boolean isLoginValid(String login, String filePath) {
+        String patternString = "[A-Za-z0-9@_\\-.]*";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(login);
+        if (!matcher.matches()) {
+            Helper.setErrorMessage("loginNotValid", new Object[] {login});
+            return false;
+        }
+
+        // Go through the file line by line and compare to invalid characters
+        try (FileInputStream fis = new FileInputStream(filePath);
+                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
+                BufferedReader in = new BufferedReader(isr)) {
+            String str;
+            while ((str = in.readLine()) != null) {
+                if (str.length() > 0 && login.equalsIgnoreCase(str)) {
+                    Helper.setErrorMessage("loginNotValid", new Object[] {login});
+                    return false;
+                }
+            }
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return false;
+        }
+        return true;
     }
 
     /**
