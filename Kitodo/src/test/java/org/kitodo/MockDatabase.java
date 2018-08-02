@@ -56,11 +56,12 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
+import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -99,7 +100,7 @@ public class MockDatabase {
     }
 
     public static void stopDatabaseServer() {
-        if(tcpServer.isRunning(true)){
+        if (tcpServer.isRunning(true)) {
             tcpServer.shutdown();
         }
     }
@@ -151,7 +152,7 @@ public class MockDatabase {
         insertDockets();
         insertRulesets();
         insertProjects();
-        insertProjectFileGroups();
+        insertFolders();
         insertTemplates();
         insertProcesses();
         insertBatches();
@@ -174,7 +175,7 @@ public class MockDatabase {
         insertDockets();
         insertRulesets();
         insertProjects();
-        insertProjectFileGroups();
+        insertFolders();
         insertProcessForWorkflow();
         insertBatches();
         insertTemplateForWorkflow();
@@ -209,13 +210,14 @@ public class MockDatabase {
         }
     }
 
-    private static String randomString(int lenght){
+    private static String randomString(int lenght) {
         final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         SecureRandom rnd = new SecureRandom();
 
         StringBuilder sb = new StringBuilder(lenght);
-        for( int i = 0; i < lenght; i++ )
-            sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+        for (int i = 0; i < lenght; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
         return sb.toString();
     }
 
@@ -588,7 +590,7 @@ public class MockDatabase {
         serviceManager.getProcessService().save(secondProcess);
     }
 
-    private static void  insertTemplateForWorkflow() throws DAOException, DataException {
+    private static void insertTemplateForWorkflow() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
 
         Template template = new Template();
@@ -777,54 +779,62 @@ public class MockDatabase {
         serviceManager.getUserService().save(thirdUser);
     }
 
-    private static void insertProjectFileGroups() throws DAOException, DataException {
+    private static void insertFolders() throws DAOException, DataException {
         Project project = serviceManager.getProjectService().getById(1);
 
-        ProjectFileGroup firstProjectFileGroup = new ProjectFileGroup();
-        firstProjectFileGroup.setName("MAX");
-        firstProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
-        firstProjectFileGroup.setMimeType("image/jpeg");
-        firstProjectFileGroup.setSuffix("jpg");
-        firstProjectFileGroup.setPreviewImage(false);
-        firstProjectFileGroup.setProject(project);
+        Folder firstFolder = new Folder();
+        firstFolder.setFileGroup("MAX");
+        firstFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/");
+        firstFolder.setMimeType("image/jpeg");
+        firstFolder.setPath("jpgs/max");
+        firstFolder.setCopyFolder(true);
+        firstFolder.setCreateFolder(true);
+        firstFolder.setDerivative(1.0);
+        firstFolder.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup secondProjectFileGroup = new ProjectFileGroup();
-        secondProjectFileGroup.setName("DEFAULT");
-        secondProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
-        secondProjectFileGroup.setMimeType("image/jpeg");
-        secondProjectFileGroup.setSuffix("jpg");
-        secondProjectFileGroup.setPreviewImage(false);
-        secondProjectFileGroup.setProject(project);
+        Folder secondFolder = new Folder();
+        secondFolder.setFileGroup("DEFAULT");
+        secondFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/");
+        secondFolder.setMimeType("image/jpeg");
+        secondFolder.setPath("jpgs/default");
+        secondFolder.setCopyFolder(true);
+        secondFolder.setCreateFolder(true);
+        secondFolder.setDerivative(0.8);
+        secondFolder.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup thirdProjectFileGroup = new ProjectFileGroup();
-        thirdProjectFileGroup.setName("THUMBS");
-        thirdProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
-        thirdProjectFileGroup.setMimeType("image/jpeg");
-        thirdProjectFileGroup.setSuffix("jpg");
-        thirdProjectFileGroup.setPreviewImage(false);
-        thirdProjectFileGroup.setProject(project);
+        Folder thirdFolder = new Folder();
+        thirdFolder.setFileGroup("THUMBS");
+        thirdFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/");
+        thirdFolder.setMimeType("image/jpeg");
+        thirdFolder.setPath("jpgs/thumbs");
+        thirdFolder.setCopyFolder(true);
+        thirdFolder.setCreateFolder(true);
+        thirdFolder.setImageSize(150);
+        thirdFolder.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup fourthProjectFileGroup = new ProjectFileGroup();
-        fourthProjectFileGroup.setName("FULLTEXT");
-        fourthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
-        fourthProjectFileGroup.setMimeType("text/xml");
-        fourthProjectFileGroup.setSuffix("xml");
-        fourthProjectFileGroup.setPreviewImage(false);
-        fourthProjectFileGroup.setProject(project);
+        Folder fourthFolder = new Folder();
+        fourthFolder.setFileGroup("FULLTEXT");
+        fourthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/");
+        fourthFolder.setMimeType("text/xml");
+        fourthFolder.setPath("ocr/alto");
+        fourthFolder.setCopyFolder(true);
+        fourthFolder.setCreateFolder(true);
+        fourthFolder.setLinkingMode(LinkingMode.ALL);
 
-        ProjectFileGroup fifthProjectFileGroup = new ProjectFileGroup();
-        fifthProjectFileGroup.setName("DOWNLOAD");
-        fifthProjectFileGroup.setPath("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
-        fifthProjectFileGroup.setMimeType("application/pdf");
-        fifthProjectFileGroup.setSuffix("pdf");
-        fifthProjectFileGroup.setPreviewImage(false);
-        fifthProjectFileGroup.setProject(project);
+        Folder fifthFolder = new Folder();
+        fifthFolder.setFileGroup("DOWNLOAD");
+        fifthFolder.setUrlStructure("http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/");
+        fifthFolder.setMimeType("application/pdf");
+        fifthFolder.setPath("pdf");
+        fifthFolder.setCopyFolder(true);
+        fifthFolder.setCreateFolder(true);
+        fifthFolder.setLinkingMode(LinkingMode.ALL);
 
-        project.getProjectFileGroups().add(firstProjectFileGroup);
-        project.getProjectFileGroups().add(secondProjectFileGroup);
-        project.getProjectFileGroups().add(thirdProjectFileGroup);
-        project.getProjectFileGroups().add(fourthProjectFileGroup);
-        project.getProjectFileGroups().add(fifthProjectFileGroup);
+        project.getFolders().add(firstFolder);
+        project.getFolders().add(secondFolder);
+        project.getFolders().add(thirdFolder);
+        project.getFolders().add(fourthFolder);
+        project.getFolders().add(fifthFolder);
 
         serviceManager.getProjectService().save(project);
     }
@@ -1267,8 +1277,8 @@ public class MockDatabase {
     }
 
     /**
-     * Clean database after class. Truncate all tables, reset id sequences and clear
-     * session.
+     * Clean database after class. Truncate all tables, reset id sequences and
+     * clear session.
      */
     public static void cleanDatabase() {
         Session session = HibernateUtil.getSession();

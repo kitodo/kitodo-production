@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -215,8 +217,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                 runForActionTwo();
             }
         } catch (DAOException | ReadException | PreferencesException | IOException | TypeNotAllowedForParentException
-                | MetadataTypeNotAllowedException | TypeNotAllowedAsChildException | WriteException
-                | RuntimeException e) {
+                | MetadataTypeNotAllowedException | TypeNotAllowedAsChildException | WriteException | RuntimeException
+                | JAXBException e) {
             String message = e.getClass().getSimpleName() + " while " + (action == 1 ? "examining " : "exporting ")
                     + (process != null ? process.getTitle() : "") + ": " + e.getMessage();
             setException(new RuntimeException(message, e));
@@ -242,8 +244,9 @@ public class ExportNewspaperBatchTask extends EmptyTask {
         dividend = 0;
     }
 
-    private void runForActionTwo() throws IOException, MetadataTypeNotAllowedException, PreferencesException,
-            ReadException, TypeNotAllowedAsChildException, TypeNotAllowedForParentException, WriteException {
+    private void runForActionTwo()
+            throws IOException, MetadataTypeNotAllowedException, PreferencesException, ReadException,
+            TypeNotAllowedAsChildException, TypeNotAllowedForParentException, WriteException, JAXBException {
         while (processesIterator.hasNext()) {
             if (isInterrupted()) {
                 return;
@@ -253,7 +256,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
             new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(process,
-                serviceManager.getUserService().getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),
+                serviceManager.getUserService().getHomeDirectory(
+                    serviceManager.getUserService().getAuthenticatedUser()),
                 extendedData.getDigitalDocument());
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
         }
@@ -572,7 +576,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             try {
                 rank = Integer.valueOf(identifier);
             } catch (NumberFormatException e) {
-                logger.warn("Cannot place {} \"{}\" correctly because its sorting criterion is not numeric.", type, identifier);
+                logger.warn("Cannot place {} \"{}\" correctly because its sorting criterion is not numeric.", type,
+                    identifier);
             }
             parent.addChild(positionByRank(parent.getAllChildren(), identifierField, rank), child);
 
@@ -617,7 +622,8 @@ public class ExportNewspaperBatchTask extends EmptyTask {
                         } catch (NumberFormatException e) {
                             String typeName = aforeborn.getDocStructType() != null
                                     && aforeborn.getDocStructType().getName() != null
-                                    ? aforeborn.getDocStructType().getName() : "cross-reference";
+                                            ? aforeborn.getDocStructType().getName()
+                                            : "cross-reference";
                             logger.warn(
                                 "Cannot determine position to place {} correctly because the sorting criterion "
                                         + "of one of its siblings is \"{}\", but must be numeric.",

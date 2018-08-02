@@ -13,20 +13,32 @@ package de.sub.goobi.forms;
 
 import de.sub.goobi.helper.Helper;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
+import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.xml.fileformats.FileFormat;
+import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
@@ -39,14 +51,27 @@ public class ProjekteForm extends BasisForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
     private Project myProjekt;
-    private ProjectFileGroup myFilegroup;
+
+    /**
+     * The folder currently under edit in the pop-up dialog.
+     */
+    /*
+     * This is a hack. The clean solution would be to have an inner class bean
+     * for the data table row an dialog, but this approach was introduced
+     * decades ago and has been maintained until today.
+     *
+     * Trifle: “Mỹ” (vietn. “America”) is a tribute to a programming style
+     * called “American programming”, that is characterized by voluntarily
+     * breaking conventions if it “makes it easier to get stuff done”.
+     */
+    private Folder myFolder;
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    // lists accepting the preliminary actions of adding and delting filegroups
-    // it needs the execution of commit fileGroups to make these changes
+    // lists accepting the preliminary actions of adding and delting folders
+    // it needs the execution of commit folders to make these changes
     // permanent
-    private List<Integer> newFileGroups = new ArrayList<>();
-    private List<Integer> deletedFileGroups = new ArrayList<>();
+    private List<Integer> newFolders = new ArrayList<>();
+    private List<Integer> deletedFolders = new ArrayList<>();
 
     private boolean lockedDetail;
     private boolean lockedMets;
@@ -56,8 +81,14 @@ public class ProjekteForm extends BasisForm {
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this
-     * bean.
+     * Cash for the list of possible MIME types. So that the list does not have
+     * to be read from file several times for one page load.
+     */
+    private Map<String, String> mimeTypes = Collections.emptyMap();
+
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of
+     * this bean.
      */
     public ProjekteForm() {
         super();
@@ -65,17 +96,17 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * This method deletes file groups by their id's in the list.
+     * This method deletes folders by their IDs in the list.
      *
-     * @param fileGroups
-     *            List
+     * @param folderIds
+     *            IDs of folders to delete
      */
-    private void deleteFileGroups(List<Integer> fileGroups) {
+    private void deleteFolders(List<Integer> folderIds) {
         if (Objects.nonNull(this.myProjekt)) {
-            for (Integer id : fileGroups) {
-                for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
+            for (Integer id : folderIds) {
+                for (Folder f : this.myProjekt.getFolders()) {
                     if (f.getId() == null ? id == null : f.getId().equals(id)) {
-                        this.myProjekt.getProjectFileGroups().remove(f);
+                        this.myProjekt.getFolders().remove(f);
                         break;
                     }
                 }
@@ -84,30 +115,30 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * this method flushes the newFileGroups List, thus makes them permanent and
+     * this method flushes the newFolders list, thus makes them permanent and
      * deletes those marked for deleting, making the removal permanent.
      */
-    private void commitFileGroups() {
-        // resetting the List of new fileGroups
-        this.newFileGroups = new ArrayList<>();
-        // deleting the fileGroups marked for deletion
-        deleteFileGroups(this.deletedFileGroups);
-        // resetting the List of fileGroups marked for deletion
-        this.deletedFileGroups = new ArrayList<>();
+    private void commitFolders() {
+        // resetting the list of new folders
+        this.newFolders = new ArrayList<>();
+        // deleting the folders marked for deletion
+        deleteFolders(this.deletedFolders);
+        // resetting the list of folders marked for deletion
+        this.deletedFolders = new ArrayList<>();
     }
 
     /**
-     * This needs to be executed in order to rollback adding of file groups.
+     * This needs to be executed in order to rollback adding of folders.
      *
      * @return page address
      */
     public String cancel() {
-        // flushing new fileGroups
-        deleteFileGroups(this.newFileGroups);
-        // resetting the List of new fileGroups
-        this.newFileGroups = new ArrayList<>();
-        // resetting the List of fileGroups marked for deletion
-        this.deletedFileGroups = new ArrayList<>();
+        // flushing new folders
+        deleteFolders(this.newFolders);
+        // resetting the list of new folders
+        this.newFolders = new ArrayList<>();
+        // resetting the List of folders marked for deletion
+        this.deletedFolders = new ArrayList<>();
         return projectListPath;
     }
 
@@ -130,8 +161,8 @@ public class ProjekteForm extends BasisForm {
      * @param itemId
      *            ID of the project to duplicate
      * @return page address; either redirect to the edit project page or return
-     *         'null' if the project could not be retrieved, which will prompt JSF
-     *         to remain on the same page and reuse the bean.
+     *         'null' if the project could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
      */
     public String duplicateProject(Integer itemId) {
         setLockedDetail(false);
@@ -147,14 +178,15 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Saves current project if title is not empty and redirects to projects page.
+     * Saves current project if title is not empty and redirects to projects
+     * page.
      *
      * @return page or null
      */
     public String save() {
         serviceManager.getProjectService().evict(this.myProjekt);
         // call this to make saving and deleting permanent
-        this.commitFileGroups();
+        this.commitFolders();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setErrorMessage("errorProjectNoTitleGiven");
             return null;
@@ -176,7 +208,7 @@ public class ProjekteForm extends BasisForm {
      */
     public String apply() {
         // call this to make saving and deleting permanent
-        this.commitFileGroups();
+        this.commitFolders();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setErrorMessage("Can not save project with empty title!");
             return null;
@@ -213,44 +245,44 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Add file group.
+     * Add folder.
      *
      * @return String
      */
-    public String addFileGroup() {
-        this.myFilegroup = new ProjectFileGroup();
-        this.myFilegroup.setProject(this.myProjekt);
-        this.newFileGroups.add(this.myFilegroup.getId());
+    public String addFolder() {
+        this.myFolder = new Folder();
+        this.myFolder.setProject(this.myProjekt);
+        this.newFolders.add(this.myFolder.getId());
         return this.zurueck;
     }
 
     /**
-     * Save file group.
+     * Save folder.
      */
-    public void saveFileGroup() {
-        if (this.myProjekt.getProjectFileGroups() == null) {
-            this.myProjekt.setProjectFileGroups(new ArrayList<>());
+    public void saveFolder() {
+        if (this.myProjekt.getFolders() == null) {
+            this.myProjekt.setFolders(new ArrayList<>());
         }
-        if (!this.myProjekt.getProjectFileGroups().contains(this.myFilegroup)) {
-            this.myProjekt.getProjectFileGroups().add(this.myFilegroup);
+        if (!this.myProjekt.getFolders().contains(this.myFolder)) {
+            this.myProjekt.getFolders().add(this.myFolder);
         }
     }
 
     /**
-     * Delete file group.
+     * Delete folder.
      *
      * @return page
      */
-    public String deleteFileGroup() {
-        // to be deleted fileGroups ids are listed
+    public String deleteFolder() {
+        // to be deleted folder IDs are listed
         // and deleted after a commit
-        this.deletedFileGroups.add(this.myFilegroup.getId());
+        this.deletedFolders.add(this.myFolder.getId());
         return null;
     }
 
     /**
      * Get project.
-     * 
+     *
      * @return Project object
      */
     public Project getMyProjekt() {
@@ -327,31 +359,62 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * The need to commit deleted fileGroups only after the save action requires a
-     * filter, so that those filegroups marked for delete are not shown anymore.
+     * The need to commit deleted folders only after the save action requires a
+     * filter, so that those folders marked for delete are not shown anymore.
      *
      * @return modified ArrayList
      */
-    public List<ProjectFileGroup> getFileGroupList() {
-        List<ProjectFileGroup> filteredFileGroupList = new ArrayList<>(this.myProjekt.getProjectFileGroups());
+    public List<Folder> getFolderList() {
+        List<Folder> filteredFolderList = new ArrayList<>(this.myProjekt.getFolders());
 
-        for (Integer id : this.deletedFileGroups) {
-            for (ProjectFileGroup f : this.myProjekt.getProjectFileGroups()) {
+        for (Integer id : this.deletedFolders) {
+            for (Folder f : this.myProjekt.getFolders()) {
                 if (f.getId() == null ? id == null : f.getId().equals(id)) {
-                    filteredFileGroupList.remove(f);
+                    filteredFolderList.remove(f);
                     break;
                 }
             }
         }
-        return filteredFileGroupList;
+        return filteredFolderList;
     }
 
-    public ProjectFileGroup getMyFilegroup() {
-        return this.myFilegroup;
+    /**
+     * Returns the folder currently under edit in the pop-up dialog.
+     *
+     * @return the folder currently under edit
+     */
+    public Folder getMyFolder() {
+        return this.myFolder;
     }
 
-    public void setMyFilegroup(ProjectFileGroup myFilegroup) {
-        this.myFilegroup = myFilegroup;
+    /**
+     * Sets the folder currently under edit in the pop-up dialog.
+     *
+     * @param myFolder
+     *            folder to set to be under edit now
+     */
+    public void setMyFolder(Folder myFolder) {
+        this.myFolder = myFolder;
+    }
+
+    /**
+     * Returns the list of possible MIME types to display them in the drop-down
+     * select.
+     *
+     * @return possible MIME types
+     */
+    public Map<String, String> getMimeTypes() {
+        if (mimeTypes.isEmpty()) {
+            try {
+                Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+                List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
+                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
+                    λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
+            } catch (IOException | JAXBException | RuntimeException e) {
+                Helper.setErrorMessage("errorReading", new Object[] {e.getMessage() }, logger, e);
+            }
+        }
+        return mimeTypes;
     }
 
     /**
@@ -391,8 +454,8 @@ public class ProjekteForm extends BasisForm {
      *
      * @param id
      *            ID of the project for which the template titles are returned.
-     * @return String containing the templates titles of the project with the given
-     *         ID
+     * @return String containing the templates titles of the project with the
+     *         given ID
      */
     public String getProjectTemplateTitles(int id) {
         try {

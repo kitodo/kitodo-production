@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -211,7 +213,7 @@ public class GoobiScript {
                     }
                     Helper.setMessage("Content deleted for " + title);
                 } catch (IOException | RuntimeException e) {
-                    Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title}, logger, e);
+                    Helper.setErrorMessage("errorDeleting", new Object[] {"content for " + title }, logger, e);
                 }
             }
             if (!contentOnly) {
@@ -221,7 +223,7 @@ public class GoobiScript {
                     Helper.setMessage("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
-                            new Object[] {Helper.getTranslation("process") + " " + title}, logger, e);
+                        new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
                 }
             }
         }
@@ -757,7 +759,8 @@ public class GoobiScript {
                 }
                 dms.startExport(process);
             } catch (DocStructHasNoTypeException | PreferencesException | WriteException
-                    | MetadataTypeNotAllowedException | ReadException | IOException | ExportFileException e) {
+                    | MetadataTypeNotAllowedException | ReadException | IOException | ExportFileException
+                    | JAXBException e) {
                 logger.error(e.getMessage(), e);
             }
         }

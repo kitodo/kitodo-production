@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -116,12 +118,13 @@ public class ExportDms extends ExportMets {
         try {
             return startExport(process, inZielVerzeichnis,
                 serviceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
-        } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException e) {
+        } catch (WriteException | PreferencesException | ReadException | IOException | RuntimeException
+                | JAXBException e) {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
             } else {
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[]{process.getTitle()}, logger, e);
+                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
             return false;
         }
@@ -139,7 +142,7 @@ public class ExportDms extends ExportMets {
      * @return boolean
      */
     public boolean startExport(Process process, URI inZielVerzeichnis, DigitalDocumentInterface newFile)
-            throws IOException, WriteException, PreferencesException {
+            throws IOException, WriteException, PreferencesException, JAXBException {
 
         this.myPrefs = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         this.atsPpnBand = process.getTitle();
@@ -189,7 +192,7 @@ public class ExportDms extends ExportMets {
             if (!fileService.delete(userHome)) {
                 Helper.setErrorMessage(
                     Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
-                        Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
+                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Home")));
                 return false;
             }
             prepareUserDirectory(zielVerzeichnis);
@@ -244,21 +247,21 @@ public class ExportDms extends ExportMets {
         // delete old import folder
         if (!fileService.delete(userHomeProcess)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Import")));
             return false;
         }
         // delete old success folder
         URI successFolder = URI.create(project.getDmsImportSuccessPath() + "/" + processTitle);
         if (!fileService.delete(successFolder)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // delete old error folder
         URI errorFolder = URI.create(project.getDmsImportErrorPath() + "/" + processTitle);
         if (!fileService.delete(errorFolder)) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)),
-                    Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
+                Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
             return false;
         }
 
@@ -289,7 +292,7 @@ public class ExportDms extends ExportMets {
                 exportDmsTask.setException(e);
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())), e);
             } else {
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[]{process.getTitle()}, logger, e);
+                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
             return null;
         }
@@ -309,14 +312,14 @@ public class ExportDms extends ExportMets {
             if (exportDmsTask != null) {
                 exportDmsTask.setException(e);
             } else {
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[]{process.getTitle()}, logger, e);
+                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {process.getTitle() }, logger, e);
             }
             return false;
         }
     }
 
     private void asyncExportWithImport(Process process, FileformatInterface gdzfile, URI userHome)
-            throws IOException, PreferencesException, WriteException {
+            throws IOException, PreferencesException, WriteException, JAXBException {
         String fileFormat = process.getProject().getFileFormatDmsExport();
 
         if (exportDmsTask != null) {
@@ -363,7 +366,7 @@ public class ExportDms extends ExportMets {
                 logger.error(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(processTitle)));
             } else {
                 Thread.currentThread().interrupt();
-                Helper.setErrorMessage(ERROR_EXPORT, new Object[]{processTitle}, logger, e);
+                Helper.setErrorMessage(ERROR_EXPORT, new Object[] {processTitle }, logger, e);
             }
         }
 
@@ -389,7 +392,7 @@ public class ExportDms extends ExportMets {
     }
 
     private void exportWithoutImport(Process process, FileformatInterface gdzfile, URI destinationDirectory)
-            throws IOException, PreferencesException, WriteException {
+            throws IOException, PreferencesException, WriteException, JAXBException {
         if (MetadataFormat
                 .findFileFormatsHelperByName(process.getProject().getFileFormatDmsExport()) == MetadataFormat.METS) {
             writeMetsFile(process, fileService.createResource(destinationDirectory, atsPpnBand + ".xml"), gdzfile,
@@ -581,7 +584,7 @@ public class ExportDms extends ExportMets {
             exportDmsTask.setException(e);
             logger.error("Could not create destination directory", e);
         } else {
-            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {processTitle}, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORT, new Object[] {processTitle }, logger, e);
         }
     }
 

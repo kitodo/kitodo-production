@@ -29,9 +29,9 @@ import javax.json.JsonValue;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -160,8 +160,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            if true - find active projects, if false - find not active
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object, if
-     *            false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object,
+     *            if false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
@@ -290,8 +290,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @param project
      *            The project to check
-     * @return true, if project is complete and can be used, false, if project is
-     *         incomplete
+     * @return true, if project is complete and can be used, false, if project
+     *         is incomplete
      */
     public boolean isProjectComplete(Project project) {
         boolean projectsXmlExists = (new File(
@@ -343,20 +343,25 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setMetsPurl(baseProject.getMetsPurl());
         duplicatedProject.setMetsContentIDs(baseProject.getMetsContentIDs());
 
-        ArrayList<ProjectFileGroup> duplicatedFileGroups = new ArrayList<>();
-        for (ProjectFileGroup projectFileGroup : baseProject.getProjectFileGroups()) {
-            ProjectFileGroup duplicatedGroup = new ProjectFileGroup();
-            duplicatedGroup.setMimeType(projectFileGroup.getMimeType());
-            duplicatedGroup.setName(projectFileGroup.getName());
-            duplicatedGroup.setPath(projectFileGroup.getPath());
-            duplicatedGroup.setPreviewImage(projectFileGroup.isPreviewImage());
-            duplicatedGroup.setSuffix(projectFileGroup.getSuffix());
-            duplicatedGroup.setFolder(projectFileGroup.getFolder());
+        ArrayList<Folder> duplicatedFolders = new ArrayList<>();
+        for (Folder folder : baseProject.getFolders()) {
+            Folder duplicatedFolder = new Folder();
+            duplicatedFolder.setMimeType(folder.getMimeType());
+            duplicatedFolder.setFileGroup(folder.getFileGroup());
+            duplicatedFolder.setUrlStructure(folder.getUrlStructure());
+            duplicatedFolder.setPath(folder.getPath());
 
-            duplicatedGroup.setProject(duplicatedProject);
-            duplicatedFileGroups.add(duplicatedGroup);
+            duplicatedFolder.setProject(duplicatedProject);
+            duplicatedFolder.setCopyFolder(folder.isCopyFolder());
+            duplicatedFolder.setCreateFolder(folder.isCreateFolder());
+            duplicatedFolder.setDerivative(folder.getDerivative().orElse(null));
+            duplicatedFolder.setDpi(folder.getDpi().orElse(null));
+            duplicatedFolder.setImageScale(folder.getImageScale().orElse(null));
+            duplicatedFolder.setImageSize(folder.getImageSize().orElse(null));
+            duplicatedFolder.setLinkingMode(folder.getLinkingMode());
+            duplicatedFolders.add(duplicatedFolder);
         }
-        duplicatedProject.setProjectFileGroups(duplicatedFileGroups);
+        duplicatedProject.setFolders(duplicatedFolders);
 
         return duplicatedProject;
     }
@@ -369,7 +374,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      */
     public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
         Project project = serviceManager.getProjectService().getById(id);
-        return String.join(", ", project.getTemplates().stream().map(Template::getTitle)
-                .collect(Collectors.toList()));
+        return String.join(", ", project.getTemplates().stream().map(Template::getTitle).collect(Collectors.toList()));
     }
 }

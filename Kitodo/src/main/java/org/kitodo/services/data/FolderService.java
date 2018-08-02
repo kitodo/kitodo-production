@@ -11,15 +11,18 @@
 
 package org.kitodo.services.data;
 
-import org.kitodo.data.database.beans.ProjectFileGroup;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.ProjectFileGroupDAO;
+import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class ProjectFileGroupService extends SearchDatabaseService<ProjectFileGroup, ProjectFileGroupDAO> {
+public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
 
-    public ProjectFileGroupService() {
-        super(new ProjectFileGroupDAO());
+    /**
+     * Creates a new folder service.
+     */
+    public FolderService() {
+        super(new FolderDAO());
     }
 
     @Override

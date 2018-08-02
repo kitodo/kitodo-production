@@ -17,10 +17,10 @@ import org.kitodo.services.data.BatchService;
 import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
+import org.kitodo.services.data.FolderService;
 import org.kitodo.services.data.LdapGroupService;
 import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
-import org.kitodo.services.data.ProjectFileGroupService;
 import org.kitodo.services.data.ProjectService;
 import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
@@ -53,7 +53,7 @@ public class ServiceManager {
     private LdapServerService ldapServerService;
     private PropertyService propertyService;
     private ProcessService processService;
-    private ProjectFileGroupService projectFileGroupService;
+    private FolderService folderService;
     private ProjectService projectService;
     private RulesetService rulesetService;
     private TaskService taskService;
@@ -133,9 +133,9 @@ public class ServiceManager {
         }
     }
 
-    private void initializeProjectFileGroupService() {
-        if (projectFileGroupService == null) {
-            projectFileGroupService = new ProjectFileGroupService();
+    private void initializeFolderService() {
+        if (folderService == null) {
+            folderService = new FolderService();
         }
     }
 
@@ -248,7 +248,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize AuthorityService if it is not yet initialized and next return it.
+     * Initialize AuthorityService if it is not yet initialized and next return
+     * it.
      *
      * @return AuthorityService object
      */
@@ -278,7 +279,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize DataEditorService if it is not yet initialized and next return it.
+     * Initialize DataEditorService if it is not yet initialized and next return
+     * it.
      *
      * @return DataEditorService object
      */
@@ -352,14 +354,13 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize ProjectFileGroupService if it is not yet initialized and next
-     * return it.
+     * Initialize FolderService if it is not yet initialized and next return it.
      *
-     * @return ProjectFileGroupService object
+     * @return FolderService object
      */
-    public ProjectFileGroupService getProjectFileGroupService() {
-        initializeProjectFileGroupService();
-        return projectFileGroupService;
+    public FolderService getFolderService() {
+        initializeFolderService();
+        return folderService;
     }
 
     /**
@@ -396,8 +397,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize SecurityAccessService if it is not yet initialized and next return
-     * it.
+     * Initialize SecurityAccessService if it is not yet initialized and next
+     * return it.
      *
      * @return SecurityAccessService object
      */
@@ -417,7 +418,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize TemplateService if it is not yet initialized and next return it.
+     * Initialize TemplateService if it is not yet initialized and next return
+     * it.
      *
      * @return TemplateService object
      */
@@ -470,7 +472,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize WorkflowService if it is not yet initialized and next return it.
+     * Initialize WorkflowService if it is not yet initialized and next return
+     * it.
      *
      * @return WorkflowService object
      */
@@ -490,7 +493,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize CommandService if it is not yet initialized and next return it.
+     * Initialize CommandService if it is not yet initialized and next return
+     * it.
      *
      * @return CommandService object
      */
@@ -510,7 +514,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize FileStructureValidationService if it is not yet initialized and next return it.
+     * Initialize FileStructureValidationService if it is not yet initialized
+     * and next return it.
      *
      * @return FileStructureValidationService object
      */
@@ -520,7 +525,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize LongTimePreservationValidationService if it is not yet initialized and next return it.
+     * Initialize LongTimePreservationValidationService if it is not yet
+     * initialized and next return it.
      *
      * @return LongTimePreservationValidationService object
      */
@@ -530,7 +536,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize MetadataValidationService if it is not yet initialized and next return it.
+     * Initialize MetadataValidationService if it is not yet initialized and
+     * next return it.
      *
      * @return MetadataValidationService object
      */
@@ -540,7 +547,8 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize WorkflowControllerService if it is not yet initialized and next return it.
+     * Initialize WorkflowControllerService if it is not yet initialized and
+     * next return it.
      *
      * @return WorkflowControllerService object
      */

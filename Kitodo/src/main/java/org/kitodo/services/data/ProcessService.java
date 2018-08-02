@@ -47,6 +47,7 @@ import javax.json.JsonValue;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
@@ -76,12 +77,14 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.Parameters;
+import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -401,6 +404,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return countDatabaseRows("SELECT COUNT(*) FROM Process");
     }
 
+    @Override
     public void refresh(Process process) {
         dao.refresh(process);
     }
@@ -1717,7 +1721,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
 
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
-            throws IOException, PreferencesException, WriteException {
+            throws IOException, PreferencesException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         String atsPpnBand = process.getTitle();
 
@@ -2030,7 +2034,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the FileFormat-Object to use for Mets-Writing
      */
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
-            boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException {
+            boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
         Project project = process.getProject();
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
@@ -2099,32 +2103,34 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
          */
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
-        VariableReplacer vp = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
-        List<ProjectFileGroup> fileGroups = project.getProjectFileGroups();
-        for (ProjectFileGroup pfg : fileGroups) {
+        VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
+        List<Folder> folders = project.getFolders();
+        for (Folder folder : folders) {
             // check if source files exists
-            if (pfg.getFolder() != null && pfg.getFolder().length() > 0) {
-                URI folder = new File(pfg.getFolder()).toURI();
-                if (fileService.fileExist(folder) && !serviceManager.getFileService().getSubUris(folder).isEmpty()) {
-                    mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
+            if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
+                URI folderUri = new File(folder.getRelativePath()).toURI();
+                if (fileService.fileExist(folderUri)
+                        && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
+                    mm.getDigitalDocument().getFileSet()
+                            .addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
                 }
-            } else {
-                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(pfg, vp));
+            } else if (!folder.getLinkingMode().equals(LinkingMode.NO)) {
+                mm.getDigitalDocument().getFileSet().addVirtualFileGroup(prepareVirtualFileGroup(folder, variables));
             }
         }
 
         // Replace rights and digiprov entries.
-        mm.setRightsOwner(vp.replace(project.getMetsRightsOwner()));
-        mm.setRightsOwnerLogo(vp.replace(project.getMetsRightsOwnerLogo()));
-        mm.setRightsOwnerSiteURL(vp.replace(project.getMetsRightsOwnerSite()));
-        mm.setRightsOwnerContact(vp.replace(project.getMetsRightsOwnerMail()));
-        mm.setDigiprovPresentation(vp.replace(project.getMetsDigiprovPresentation()));
-        mm.setDigiprovReference(vp.replace(project.getMetsDigiprovReference()));
-        mm.setDigiprovPresentationAnchor(vp.replace(project.getMetsDigiprovPresentationAnchor()));
-        mm.setDigiprovReferenceAnchor(vp.replace(project.getMetsDigiprovReferenceAnchor()));
+        mm.setRightsOwner(variables.replace(project.getMetsRightsOwner()));
+        mm.setRightsOwnerLogo(variables.replace(project.getMetsRightsOwnerLogo()));
+        mm.setRightsOwnerSiteURL(variables.replace(project.getMetsRightsOwnerSite()));
+        mm.setRightsOwnerContact(variables.replace(project.getMetsRightsOwnerMail()));
+        mm.setDigiprovPresentation(variables.replace(project.getMetsDigiprovPresentation()));
+        mm.setDigiprovReference(variables.replace(project.getMetsDigiprovReference()));
+        mm.setDigiprovPresentationAnchor(variables.replace(project.getMetsDigiprovPresentationAnchor()));
+        mm.setDigiprovReferenceAnchor(variables.replace(project.getMetsDigiprovReferenceAnchor()));
 
-        mm.setPurlUrl(vp.replace(project.getMetsPurl()));
-        mm.setContentIDs(vp.replace(project.getMetsContentIDs()));
+        mm.setPurlUrl(variables.replace(project.getMetsPurl()));
+        mm.setContentIDs(variables.replace(project.getMetsContentIDs()));
 
         // Set mets pointers. MetsPointerPathAnchor or mptrAnchorUrl is the
         // pointer used to point to the superordinate (anchor) file, that is
@@ -2135,7 +2141,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         String anchorPointersToReplace = project.getMetsPointerPath();
         mm.setMptrUrl(null);
         for (String anchorPointerToReplace : anchorPointersToReplace.split(Project.ANCHOR_SEPARATOR)) {
-            String anchorPointer = vp.replace(anchorPointerToReplace);
+            String anchorPointer = variables.replace(anchorPointerToReplace);
             mm.setMptrUrl(anchorPointer);
         }
 
@@ -2143,7 +2149,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // from the (lowest) superordinate (anchor) file to the lowest level
         // file (the non-anchor file).
         String anchor = project.getMetsPointerPathAnchor();
-        String pointer = vp.replace(anchor);
+        String pointer = variables.replace(anchor);
         mm.setMptrAnchorUrl(pointer);
 
         try {
@@ -2169,19 +2175,22 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return true;
     }
 
-    private VirtualFileGroupInterface prepareVirtualFileGroup(ProjectFileGroup pfg, VariableReplacer variableReplacer) {
+    private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
+            throws IOException, JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
-        virtualFileGroup.setName(pfg.getName());
-        virtualFileGroup.setPathToFiles(variableReplacer.replace(pfg.getPath()));
-        virtualFileGroup.setMimetype(pfg.getMimeType());
-        virtualFileGroup.setFileSuffix(pfg.getSuffix());
+        virtualFileGroup.setName(folder.getFileGroup());
+        virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
+        virtualFileGroup.setMimetype(folder.getMimeType());
+        virtualFileGroup.setFileSuffix(
+            folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
         return virtualFileGroup;
     }
 
     /**
      * Set showClosedProcesses.
      *
-     * @param showClosedProcesses as boolean
+     * @param showClosedProcesses
+     *            as boolean
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
         this.showClosedProcesses = showClosedProcesses;
@@ -2190,7 +2199,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Set showInactiveProjects.
      *
-     * @param showInactiveProjects as boolean
+     * @param showInactiveProjects
+     *            as boolean
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
         this.showInactiveProjects = showInactiveProjects;

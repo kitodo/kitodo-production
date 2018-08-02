@@ -77,7 +77,9 @@ public class User extends BaseIndexedBean {
     private LdapGroup ldapGroup;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
+    @JoinTable(name = "user_x_userGroup", joinColumns = {@JoinColumn(name = "user_id",
+        foreignKey = @ForeignKey(name = "FK_user_x_userGroup_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id",
+            foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
@@ -87,7 +89,9 @@ public class User extends BaseIndexedBean {
     private List<Task> processingTasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "project_x_user", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
+    @JoinTable(name = "project_x_user", joinColumns = {@JoinColumn(name = "user_id",
+        foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "project_id",
+            foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
     private List<Project> projects;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)

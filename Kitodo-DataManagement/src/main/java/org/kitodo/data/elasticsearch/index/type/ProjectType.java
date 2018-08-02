@@ -19,8 +19,8 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.ProjectFileGroup;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 
 /**
@@ -31,17 +31,15 @@ public class ProjectType extends BaseType<Project> {
     @Override
     JsonObject getJsonObject(Project project) {
 
-        JsonArrayBuilder projectFileGroups = Json.createArrayBuilder();
-        List<ProjectFileGroup> projectProjectFileGroups = project.getProjectFileGroups();
-        for (ProjectFileGroup projectFileGroup : projectProjectFileGroups) {
-            JsonObject projectFileGroupObject = Json.createObjectBuilder()
-                    .add(ProjectTypeField.PFG_NAME.getKey(), preventNull(projectFileGroup.getName()))
-                    .add(ProjectTypeField.PFG_PATH.getKey(), preventNull(projectFileGroup.getPath()))
-                    .add(ProjectTypeField.PFG_MIME_TYPE.getKey(), preventNull(projectFileGroup.getMimeType()))
-                    .add(ProjectTypeField.PFG_SUFFIX.getKey(), preventNull(projectFileGroup.getSuffix()))
-                    .add(ProjectTypeField.PFG_FOLDER.getKey(), preventNull(projectFileGroup.getFolder()))
-                    .build();
-            projectFileGroups.add(projectFileGroupObject);
+        JsonArrayBuilder folders = Json.createArrayBuilder();
+        List<Folder> projectFolders = project.getFolders();
+        for (Folder folder : projectFolders) {
+            JsonObject folderObject = Json.createObjectBuilder()
+                    .add(ProjectTypeField.FOLDER_FILE_GROUP.getKey(), preventNull(folder.getFileGroup()))
+                    .add(ProjectTypeField.FOLDER_URL_STRUCTURE.getKey(), preventNull(folder.getUrlStructure()))
+                    .add(ProjectTypeField.FOLDER_MIME_TYPE.getKey(), preventNull(folder.getMimeType()))
+                    .add(ProjectTypeField.FOLDER_PATH.getKey(), preventNull(folder.getPath())).build();
+            folders.add(folderObject);
         }
 
         Integer clientId = Objects.nonNull(project.getClient()) ? project.getClient().getId() : 0;
@@ -62,7 +60,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObjectBuilder.add(ProjectTypeField.USERS.getKey(), addObjectRelation(project.getUsers(), true));
         jsonObjectBuilder.add(ProjectTypeField.CLIENT_ID.getKey(), clientId);
         jsonObjectBuilder.add(ProjectTypeField.CLIENT_NAME.getKey(), clientName);
-        jsonObjectBuilder.add(ProjectTypeField.PROJECT_FILE_GROUPS.getKey(), projectFileGroups.build());
+        jsonObjectBuilder.add(ProjectTypeField.FOLDER.getKey(), folders.build());
         return jsonObjectBuilder.build();
     }
 }

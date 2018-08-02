@@ -28,12 +28,11 @@ public enum ProjectTypeField implements TypeInterface {
     USERS("users"),
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
-    PROJECT_FILE_GROUPS("projectFileGroups"),
-    PFG_NAME("name"),
-    PFG_PATH("path"),
-    PFG_MIME_TYPE("mimeType"),
-    PFG_SUFFIX("suffix"),
-    PFG_FOLDER("folder");
+    FOLDER("folder"),
+    FOLDER_FILE_GROUP("fileGroup"),
+    FOLDER_URL_STRUCTURE("urlStructure"),
+    FOLDER_MIME_TYPE("mimeType"),
+    FOLDER_PATH("path");
 
     private String name;
 

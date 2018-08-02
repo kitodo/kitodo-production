@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import javax.xml.bind.annotation.XmlAttribute;

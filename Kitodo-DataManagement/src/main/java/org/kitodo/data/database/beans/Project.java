@@ -55,10 +55,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     /**
      * The constant ANCHOR_SEPARATOR holds the character U+00A6
-     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors, if
-     * several of them are needed in one project. The anchors must then be listed
-     * the hierarchical order they have to be applied, that is the topmost anchor in
-     * first place, followed by the second one and so on.
+     * (&ldquo;&brvbar;&rdquo;) which can be used to separate multiple anchors,
+     * if several of them are needed in one project. The anchors must then be
+     * listed the hierarchical order they have to be applied, that is the
+     * topmost anchor in first place, followed by the second one and so on.
      */
     public static final String ANCHOR_SEPARATOR = "\u00A6";
 
@@ -153,7 +153,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<Template> templates;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProjectFileGroup> projectFileGroups;
+    private List<Folder> folders;
 
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
@@ -162,13 +162,16 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
     private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
 
+    /**
+     * The variable {@code template} is populated from
+     * {@link org.goobi.webapi.resources.Projects} when calling
+     * <code><i>${SERVLET_CONTEXT}</i>/rest/projects</code> to output the
+     * templates available within a project as XML child nodes of the respective
+     * project.
+     */
     @Transient
     @XmlElement(name = "template")
-    public List<Template> template; // The ‘template’ variable is populated from
-                                   // org.goobi.webapi.resources.Projects
-    // when calling ${SERVLET_CONTEXT}/rest/projects to output the templates
-    // available within a project as XML child
-    // nodes of the respective project.
+    public List<Template> template;
 
     /**
      * Constructor.
@@ -195,6 +198,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.title = title;
     }
 
+    /**
+     * Returns the list of users of this project.
+     *
+     * @return the folders
+     */
     public List<User> getUsers() {
         if (this.users == null) {
             this.users = new ArrayList<>();
@@ -206,6 +214,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.users = users;
     }
 
+    /**
+     * Returns the list of processes of this project.
+     *
+     * @return the folders
+     */
     public List<Process> getProcesses() {
         if (this.processes == null) {
             this.processes = new ArrayList<>();
@@ -232,7 +245,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     /**
      * Set templates.
      *
-     * @param templates as list of templates
+     * @param templates
+     *            as list of templates
      */
     public void setTemplates(List<Template> templates) {
         this.templates = templates;
@@ -308,15 +322,26 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportCreateProcessFolder = dmsImportCreateProcessFolder;
     }
 
-    public List<ProjectFileGroup> getProjectFileGroups() {
-        if (this.projectFileGroups == null) {
-            this.projectFileGroups = new ArrayList<>();
+    /**
+     * Returns the list of folders of this project.
+     *
+     * @return the folders
+     */
+    public List<Folder> getFolders() {
+        if (this.folders == null) {
+            this.folders = new ArrayList<>();
         }
-        return this.projectFileGroups;
+        return this.folders;
     }
 
-    public void setProjectFileGroups(List<ProjectFileGroup> projectFileGroups) {
-        this.projectFileGroups = projectFileGroups;
+    /**
+     * Sets the list of folders of this project.
+     *
+     * @param folders
+     *            list of folders to set
+     */
+    public void setFolders(List<Folder> folders) {
+        this.folders = folders;
     }
 
     public String getMetsRightsOwner() {
