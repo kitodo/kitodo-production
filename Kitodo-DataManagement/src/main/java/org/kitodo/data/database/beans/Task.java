@@ -12,10 +12,10 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,6 +30,7 @@ import javax.persistence.Transient;
 
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.forms.TaskGenerator;
 
 @Entity
 @Table(name = "task")
@@ -137,12 +138,12 @@ public class Task extends BaseIndexedBean {
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about folders, whose contents are to be
-     * generated in this task.
+     * This field contains information about typeGenerate, whose contents are to
+     * be generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_folder", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")) })
-    private List<Folder> folders;
+    @JoinTable(name = "typeGenerate_task_x_folder", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")) })
+    private List<Folder> typeGenerate;
 
     @Transient
     private String localizedTitle;
@@ -410,38 +411,48 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of available folders.
+     * Get list of type generate.
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getPossibleFolders() {
-        Project project = template.getProject();
-        return project.getFolders().parallelStream()
-                .filter(λ -> !λ.equals(project.getGeneratorSource() && (λ.getDerivative().isPresent()
-                        || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent())))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Get list of folders.
-     *
-     * @return list of Folder objects or empty list
-     */
-    public List<Folder> getFolders() {
-        if (this.folders == null) {
-            this.folders = new ArrayList<>();
+    public List<Folder> getTypeGenerate() {
+        if (this.typeGenerate == null) {
+            this.typeGenerate = new ArrayList<>();
         }
-        return this.folders;
+        return typeGenerate;
     }
 
     /**
-     * Set list of folders.
+     * Set list of type generate.
      *
-     * @param folders
+     * @param typeGenerate
      *            as list
      */
-    public void setFolders(List<Folder> folders) {
-        this.folders = folders;
+    public void setTypeGenerate(List<Folder> typeGenerate) {
+        this.typeGenerate = typeGenerate;
+    }
+
+    /**
+     * Get list of folders to generate.
+     *
+     * @return list of Folder objects or empty list
+     */
+    @SuppressWarnings("serial")
+    @Transient
+    public List<TaskGenerator> getGenerators() {
+        if (this.typeGenerate == null) {
+            this.typeGenerate = new ArrayList<>();
+        }
+        Project project = template.getProject();
+        Folder source = project.getGeneratorSource();
+        return source == null ? Collections.emptyList() : new ArrayList<TaskGenerator>() {
+            {
+                project.getFolders().stream()
+                        .filter(λ -> !λ.equals(source) && (λ.getDerivative().isPresent() || λ.getDpi().isPresent()
+                                || λ.getImageScale().isPresent() || λ.getImageSize().isPresent()))
+                        .map(λ -> new TaskGenerator(λ, typeGenerate)).forEach(this::add);
+            }
+        };
     }
 
     public boolean isTypeExportRussian() {

@@ -100,8 +100,16 @@
                 <p:outputLabel for="batchStep" value="#{msgs.batchStep}"/>
                 <p:selectBooleanCheckbox id="batchStep" value="#{ProzessverwaltungForm.task.batchStep}" class="input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
+                </p:selectBooleanCheckbox> 
             </div>
+            <p:repeat var="generator" value="#{ProzessverwaltungForm.task.generators}">
+                <div>
+                    <p:outputLabel for="generator" value="#{msgs.generator} #{generator.label}"/>
+                    <p:selectBooleanCheckbox id="generator" value="generator.value" class="input">
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectBooleanCheckbox>
+                </div>
+            </p:repeat>
         </p:row>
     </p:panelGrid>
 </ui:composition>
