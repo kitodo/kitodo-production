@@ -92,8 +92,10 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
             String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
             authenticator.setUserDnPatterns(new String[] {userDn });
 
-            this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
-                    new CustomLdapAuthoritiesPopulator());
+            LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(authenticator);
+            ldapAuthenticationProvider.setUserDetailsContextMapper(new LdapUserDetailsContextMapper());
+
+            this.authenticationProvider = ldapAuthenticationProvider;
         } else {
             throw new AuthenticationServiceException("No ldap-server specified on users ldap-group");
         }

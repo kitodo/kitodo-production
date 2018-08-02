@@ -29,6 +29,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SecurityUserDetails extends User implements UserDetails {
 
+    private static final long serialVersionUID = 2950419497162715796L;
+
     /**
      * The client which was selected by user after login.
      */
