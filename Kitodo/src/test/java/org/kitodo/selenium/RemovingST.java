@@ -11,10 +11,7 @@
 
 package org.kitodo.selenium;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
@@ -24,13 +21,14 @@ import org.kitodo.services.ServiceManager;
 
 public class RemovingST extends BaseTestSelenium {
 
-    private ServiceManager serviceManager = new ServiceManager();
+    private static ServiceManager serviceManager = new ServiceManager();
 
-    private UsersPage usersPage;
-    private ProjectsPage projectsPage;
-    private ProcessesPage processesPage;
+    private static UsersPage usersPage;
+    private static ProjectsPage projectsPage;
+    private static ProcessesPage processesPage;
 
-    public void setup() throws Exception {
+    @BeforeClass
+    public static void setup() throws Exception {
         usersPage = Pages.getUsersPage();
         projectsPage = Pages.getProjectsPage();
         processesPage = Pages.getProcessesPage();
