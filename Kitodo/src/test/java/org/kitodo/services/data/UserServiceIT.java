@@ -349,20 +349,17 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetTasksSize() {
-        Integer firstExpected = 7;
         await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", firstExpected, userService.findById(2).getTasksSize()));
+            () -> assertEquals("Tasks' size is incorrect!", 7, userService.findById(2).getTasks().size()));
 
-        Integer secondExpected = 6;
         await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", secondExpected, userService.findById(3).getTasksSize()));
+            () -> assertEquals("Tasks' size is incorrect!", 6, userService.findById(3).getTasks().size()));
     }
 
     @Test
     public void shouldGetProcessingTasksSize() {
-        Integer expected = 2;
-        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", expected,
-            userService.findById(1).getProcessingTasksSize()));
+        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 2,
+            userService.findById(1).getProcessingTasks().size()));
     }
 
     @Test

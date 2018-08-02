@@ -33,9 +33,7 @@ public class UserDTO extends BaseDTO {
     private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
     private List<TaskDTO> tasks = new ArrayList<>();
-    private Integer tasksSize;
     private List<TaskDTO> processingTasks = new ArrayList<>();
-    private Integer processingTasksSize;
 
     /**
      * Get login.
@@ -305,25 +303,6 @@ public class UserDTO extends BaseDTO {
     }
 
     /**
-     * Get size of processing task list.
-     *
-     * @return size of task list as Integer
-     */
-    public Integer getTasksSize() {
-        return tasksSize;
-    }
-
-    /**
-     * Set size of task list.
-     *
-     * @param tasksSize
-     *            as Integer
-     */
-    public void setTasksSize(Integer tasksSize) {
-        this.tasksSize = tasksSize;
-    }
-
-    /**
      * Get list of processing tasks.
      *
      * @return list of processing tasks as TaskDTO
@@ -340,24 +319,5 @@ public class UserDTO extends BaseDTO {
      */
     public void setProcessingTasks(List<TaskDTO> processingTasks) {
         this.processingTasks = processingTasks;
-    }
-
-    /**
-     * Get size of processing task list.
-     * 
-     * @return size of processing task list as Integer
-     */
-    public Integer getProcessingTasksSize() {
-        return processingTasksSize;
-    }
-
-    /**
-     * Set size of processing task list.
-     * 
-     * @param processingTasksSize
-     *            as Integer
-     */
-    public void setProcessingTasksSize(Integer processingTasksSize) {
-        this.processingTasksSize = processingTasksSize;
     }
 }

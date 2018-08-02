@@ -1,0 +1,110 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
+    </f:metadata>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <script>
+            window.onload = function () {checkForm('editForm')};
+        </script>
+        <h3>
+            <h:outputText value="#{msgs.massImport} (#{msgs.prozessvorlage}: '#{MassImportForm.template.title}')"/>
+        </h3>
+        <p:commandButton id="save" value="#{msgs.save}"
+                         action="#{MassImportForm.convertData}"
+                         icon="fa fa-floppy-o fa-lg" iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('sticky-notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications, sticky-notifications"
+                         rendered="#{!MassImportForm.hasNextPage}"/>
+        <p:button value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary-button"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="massImportTabView" activeIndex="#{MassImportForm.activeTabIndex}">
+            <p:tab id="recordImportTab" title="#{msgs.recordImport}">
+                <p:dataTable var="property" id="processProperties" value="#{MassImportForm.properties}">
+                    <h:column>
+                        <h:outputText value="#{property.name}:"/>
+                    </h:column>
+
+                    <h:column>
+                        <h:panelGroup id="propertyValue" rendered="#{property.type.name == 'text'}">
+                            <p:inputText id="inputText" value="#{property.value}" required="#{property.required}"/>
+                        </h:panelGroup>
+
+                        <!-- numbers only -->
+                        <h:panelGroup id="propertyNumber"
+                                      rendered="#{property.type.name == 'integer' || property.type.name == 'number'}">
+                            <p:inputText id="number" value="#{property.value}" required="#{property.required}">
+                                <f:validateLongRange minimum="0"/>
+                            </p:inputText>
+                        </h:panelGroup>
+
+                        <!--  SelectOneMenu -->
+                        <h:panelGroup id="propertyList" rendered="#{(property.type.name == 'list')}">
+                            <p:selectOneMenu value="#{property.value}" id="selectMenu" required="#{property.required}">
+                                <f:selectItems id="propertyListItem" value="#{property.possibleValues}"
+                                               var="properties" itemLabel="#{properties}" itemValue="#{properties}"/>
+                            </p:selectOneMenu>
+                        </h:panelGroup>
+
+                        <!--  SelectManyMenu -->
+                        <h:panelGroup id="propertySelect" rendered="#{(property.type.name == 'listmultiselect')}">
+                            <h:selectManyListbox id="selectManyMenu" value="#{property.valueList}"
+                                                 size="5" required="#{property.required}">
+                                <f:selectItems id="propertySelectItem" value="#{property.possibleValues}"
+                                               var="propertys" itemLabel="#{propertys}"
+                                               itemValue="#{propertys}"/>
+                            </h:selectManyListbox>
+                        </h:panelGroup>
+
+                        <!--  Boolean -->
+                        <h:panelGroup id="propertyBoolean" rendered="#{(property.type.name == 'boolean')}">
+                            <p:selectBooleanCheckbox id="checkbox" value="#{property.booleanValue}"
+                                                     required="#{property.required}"/>
+                        </h:panelGroup>
+
+                        <!--  Date  -->
+                        <h:panelGroup id="propertyDate" rendered="#{(property.type.name == 'date')}">
+                            <p:calendar id="propertyCalendar" value="#{property.value}" locale="#{SpracheForm.locale}"
+                                        navigator="true" pattern="dd.MM.yyyy" />
+                        </h:panelGroup>
+                    </h:column>
+                </p:dataTable>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
+        <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
+        <li><a href="">#{msgs.massImport}</a></li>
+    </ui:define>
+
+</ui:composition>
