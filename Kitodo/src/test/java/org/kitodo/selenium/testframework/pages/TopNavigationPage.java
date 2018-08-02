@@ -145,16 +145,6 @@ public class TopNavigationPage {
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to clients page
-     */
-    void gotoClients() throws InterruptedException {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkClients);
-        linkClients.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
-    }
-
-    /**
      * Hovers dashboard menu and clicks on link to system page
      */
     void gotoSystem() throws InterruptedException {
