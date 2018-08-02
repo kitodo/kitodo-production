@@ -11,8 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
+import java.util.concurrent.TimeUnit;
+
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -35,6 +39,9 @@ public class TasksPage extends Page<TasksPage> {
     @Override
     public TasksPage goTo() throws Exception {
         Pages.getTopNavigation().gotoTasks();
+        await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
         return this;
     }
 

@@ -55,6 +55,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @Override
     public ProcessesPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProcesses();
+        await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
         return this;
     }
 
@@ -66,8 +69,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     /**
-     * Returns a list of all processes titles which were displayed on process
-     * page.
+     * Returns a list of all processes titles which were displayed on process page.
      *
      * @return list of processes titles
      */
@@ -83,8 +85,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
             goTo();
         }
         removeFirstProcessButton.click();
-        await("Wait for 'confirm delete' button to be displayed").atMost(Browser.getDelayAfterNewItemClick(),
-                TimeUnit.MILLISECONDS).ignoreExceptions().until(() -> confirmRemoveButton.isDisplayed());
+        await("Wait for 'confirm delete' button to be displayed")
+                .atMost(Browser.getDelayAfterNewItemClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> confirmRemoveButton.isDisplayed());
         confirmRemoveButton.click();
         Thread.sleep(Browser.getDelayAfterDelete());
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60); // seconds
