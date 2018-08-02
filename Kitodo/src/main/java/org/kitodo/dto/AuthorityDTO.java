@@ -20,7 +20,7 @@ import java.util.List;
 public class AuthorityDTO extends BaseDTO {
     private String title;
     private List<UserGroupDTO> userGroups = new ArrayList<>();
-    private Integer userGroupsSize;
+    private int userGroupsSize;
 
     /**
      * Get title.
@@ -63,9 +63,9 @@ public class AuthorityDTO extends BaseDTO {
     /**
      * Get size of user groups.
      *
-     * @return size of user groups as Integer
+     * @return size of user groups as int
      */
-    public Integer getUserGroupsSize() {
+    public int getUserGroupsSize() {
         return userGroupsSize;
     }
 
@@ -73,9 +73,9 @@ public class AuthorityDTO extends BaseDTO {
      * Set size of user groups.
      *
      * @param usersSize
-     *            as Integer
+     *            as int
      */
-    public void setUserGroupsSize(Integer usersSize) {
+    public void setUserGroupsSize(int usersSize) {
         this.userGroupsSize = usersSize;
     }
 }

@@ -674,7 +674,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setOutputName(ProcessTypeField.OUTPUT_NAME.getStringValue(processJSONObject));
         processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
         processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
-        processDTO.setPropertiesSize(ProcessTypeField.PROPERTIES.getSizeOfProperty(processJSONObject));
         processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getKey(),
             serviceManager.getPropertyService()));
         processDTO.setSortedCorrectionSolutionMessages(getSortedCorrectionSolutionMessages(processDTO));

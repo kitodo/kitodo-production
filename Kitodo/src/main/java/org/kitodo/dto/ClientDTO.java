@@ -17,7 +17,7 @@ import java.util.List;
 public class ClientDTO extends BaseDTO {
     private String name;
     private List<ProjectDTO> projects = new ArrayList<>();
-    private Integer projectsSize;
+    private int projectsSize;
 
     /**
      * Gets title.
@@ -62,17 +62,17 @@ public class ClientDTO extends BaseDTO {
      *
      * @return The projectsSize.
      */
-    public Integer getProjectsSize() {
+    public int getProjectsSize() {
         return projectsSize;
     }
 
     /**
-     * Sets projectsSize.
+     * Sets projects size.
      *
      * @param projectsSize
-     *            The projectsSize.
+     *            projects size as int
      */
-    public void setProjectsSize(Integer projectsSize) {
+    public void setProjectsSize(int projectsSize) {
         this.projectsSize = projectsSize;
     }
 }

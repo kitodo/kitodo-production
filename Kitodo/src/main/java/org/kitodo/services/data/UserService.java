@@ -557,8 +557,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setFullName(getFullName(userDTO));
         userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
         userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
-        userDTO.setTasksSize(UserTypeField.TASKS.getSizeOfProperty(userJSONObject));
-        userDTO.setProcessingTasksSize(UserTypeField.PROCESSING_TASKS.getSizeOfProperty(userJSONObject));
         userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
 
         if (!related) {
@@ -579,6 +577,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getProjectService()));
         userDTO.setTasks(
             convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getKey(), serviceManager.getTaskService()));
+        userDTO.setProcessingTasks(
+                convertRelatedJSONObjectToDTO(
+                        jsonObject, UserTypeField.PROCESSING_TASKS.getKey(), serviceManager.getTaskService()));
         userDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
     }
