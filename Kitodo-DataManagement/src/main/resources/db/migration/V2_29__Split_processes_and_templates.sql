@@ -85,23 +85,34 @@ SET t.template_id = temp.id,
   t.process_id = NULL
 WHERE t.process_id = temp.old_id;
 
--- 10. Remove templates from process table
+-- 10. Delete processes from batches that are templates
+--
+-- If someone ever linked that together, which was possible in the front-end,
+-- this is a mistake in the data. Batches are were not inteded to ever contain
+-- templates, and those batches cannot ever have been useful for anything.
+--
+
+DELETE batch_x_process FROM batch_x_process
+  LEFT JOIN process ON batch_x_process.process_id = process.id
+  WHERE process.template = 1;
+
+-- 11. Remove templates from process table
 --
 
 DELETE FROM process
 WHERE template = 1;
 
--- 11. Switch on safe updates
+-- 12. Switch on safe updates
 --
 
 SET SQL_SAFE_UPDATES = 1;
 
--- 12. Drop column with old ids
+-- 13. Drop column with old ids
 --
 
 ALTER TABLE template DROP old_id;
 
--- 13. Add foreign keys
+-- 14. Add foreign keys
 --
 
 ALTER TABLE task ADD CONSTRAINT `FK_task_process_id`

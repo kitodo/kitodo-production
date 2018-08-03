@@ -38,6 +38,14 @@
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
+        <p:column headerText="#{msgs.clients}">
+            <ui:repeat var="client"
+                       value="#{item.clients}"
+                       varStatus="status">
+                <h:outputText value="#{client.name}"/>
+                <h:outputText value=", " rendered="#{not status.last}"/>
+            </ui:repeat>
+        </p:column>
         <p:column headerText="#{msgs.projects}">
             <ui:repeat var="project"
                        value="#{item.projects}"

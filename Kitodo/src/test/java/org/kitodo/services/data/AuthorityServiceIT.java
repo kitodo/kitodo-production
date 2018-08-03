@@ -23,13 +23,14 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 
 public class AuthorityServiceIT {
 
     private static final AuthorityService authorityService = new ServiceManager().getAuthorityService();
-    private final int EXPECTED_AUTHORITIES_COUNT = 36;
+    private final int EXPECTED_AUTHORITIES_COUNT = 109;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -67,7 +68,7 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldFindById() {
-        String expected = "viewClient";
+        String expected = "viewAllClients_globalAssignable";
         await().untilAsserted(
             () -> assertEquals("Authority was not found in index!", expected, authorityService.findById(2).getTitle()));
     }
@@ -76,7 +77,7 @@ public class AuthorityServiceIT {
     public void shouldFindByTitle() {
         int expected = 1;
         await().untilAsserted(() -> assertEquals("Authority was not found in index!", expected,
-            authorityService.findByTitle("viewAllUserGroups", true).size()));
+            authorityService.findByTitle("viewAllUserGroups_globalAssignable", true).size()));
     }
 
     @Test
@@ -95,20 +96,20 @@ public class AuthorityServiceIT {
     @Test
     public void shouldNotSaveAlreadyExistingAuthorities() throws DataException {
         Authority adminAuthority = new Authority();
-        adminAuthority.setTitle("viewClient");
+        adminAuthority.setTitle("viewAllClients_globalAssignable");
         exception.expect(DataException.class);
         authorityService.save(adminAuthority);
     }
 
     @Test
-    public void shouldGetAllClientAssignableAuthorities() {
+    public void shouldGetAllClientAssignableAuthorities() throws DAOException {
         List<Authority> authorities = authorityService.getAllAssignableToClients();
-        assertEquals("Client assignable authorities were not found database!", 32, authorities.size());
+        assertEquals("Client assignable authorities were not found database!", 45, authorities.size());
     }
 
     @Test
-    public void shouldGetAllProjectAssignableAuthorities() {
+    public void shouldGetAllProjectAssignableAuthorities() throws DAOException {
         List<Authority> authorities = authorityService.getAllAssignableToProjects();
-        assertEquals("Project assignable authorities were not found database!", 17, authorities.size());
+        assertEquals("Project assignable authorities were not found database!", 20, authorities.size());
     }
 }

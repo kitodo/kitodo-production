@@ -458,15 +458,17 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
         taskDTO.setUsersSize(TaskTypeField.USERS.getSizeOfProperty(taskJSONObject));
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
+
+        /*
+         * we read list of process but not list of templates because only process tasks
+         * are displayed on the task list and reading list of templates would cause
+         * never ending loop as list of templates reads list of tasks
+         */
         Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
             taskDTO.setProcess(serviceManager.getProcessService().findById(process, true));
             taskDTO.setBatchAvailable(serviceManager.getProcessService()
                     .isProcessAssignedToOnlyOneLogisticBatch(taskDTO.getProcess().getBatches()));
-        }
-        Integer template = TaskTypeField.TEMPLATE_ID.getIntValue(taskJSONObject);
-        if (template > 0) {
-            taskDTO.setTemplate(serviceManager.getTemplateService().findById(template, true));
         }
 
         if (!related) {
@@ -716,7 +718,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Set hide correction tasks.
      *
-     * @param hideCorrectionTasks as boolean
+     * @param hideCorrectionTasks
+     *            as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
         this.hideCorrectionTasks = hideCorrectionTasks;
@@ -725,7 +728,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     /**
      * Set show automatic tasks.
      *
-     * @param showAutomaticTasks as boolean
+     * @param showAutomaticTasks
+     *            as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
         this.showAutomaticTasks = showAutomaticTasks;

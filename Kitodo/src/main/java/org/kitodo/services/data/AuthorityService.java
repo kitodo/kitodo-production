@@ -42,6 +42,10 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private final ServiceManager serviceManager = new ServiceManager();
     private static AuthorityService instance = null;
 
+    private final String globalAuthoritySuffix = "_globalAssignable";
+    private final String clientAuthoritySuffix = "_clientAssignable";
+    private final String projectAuthoritySuffix = "_projectAssignable";
+
     /**
      * Constructor with Searcher and Indexer assigning.
      */
@@ -64,6 +68,33 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
             }
         }
         return instance;
+    }
+
+    /**
+     * Gets globalAuthoritySuffix.
+     *
+     * @return The globalAuthoritySuffix.
+     */
+    public String getGlobalAuthoritySuffix() {
+        return globalAuthoritySuffix;
+    }
+
+    /**
+     * Gets clientAuthoritySuffix.
+     *
+     * @return The clientAuthoritySuffix.
+     */
+    public String getClientAuthoritySuffix() {
+        return clientAuthoritySuffix;
+    }
+
+    /**
+     * Gets projectAuthoritySuffix.
+     *
+     * @return The projectAuthoritySuffix.
+     */
+    public String getProjectAuthoritySuffix() {
+        return projectAuthoritySuffix;
     }
 
     /**
@@ -142,7 +173,7 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     private void manageUserGroupsDependenciesForIndex(Authority authority) throws CustomResponseException, IOException {
         if (authority.getIndexAction() == IndexAction.DELETE) {
             for (UserGroup userGroup : authority.getUserGroups()) {
-                userGroup.getGlobalAuthorities().remove(authority);
+                userGroup.getAuthorities().remove(authority);
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         } else {
@@ -153,12 +184,21 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
+     * Gets all authorities which are assignable globally.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> getAllAssignableGlobal() throws DAOException {
+        return filterAuthorities(getAll(), globalAuthoritySuffix);
+    }
+
+    /**
      * Gets all authorities which are assignable for any client.
      *
      * @return The list of authorities.
      */
-    public List<Authority> getAllAssignableToClients() {
-        return getByQuery("FROM Authority WHERE clientAssignable = 1");
+    public List<Authority> getAllAssignableToClients() throws DAOException {
+        return filterAuthorities(getAll(), clientAuthoritySuffix);
     }
 
     /**
@@ -166,8 +206,54 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      *
      * @return The list of authorities.
      */
-    public List<Authority> getAllAssignableToProjects() {
-        return getByQuery("FROM Authority WHERE projectAssignable = 1");
+    public List<Authority> getAllAssignableToProjects() throws DAOException {
+        return filterAuthorities(getAll(), projectAuthoritySuffix);
+    }
+
+    /**
+     * Filters global assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableGlobal(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, globalAuthoritySuffix);
+    }
+
+    /**
+     * Filters client assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableToClients(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, clientAuthoritySuffix);
+    }
+
+    /**
+     * Filters project assignable authorities out of an given list of authorities.
+     *
+     * @return The list of authorities.
+     */
+    public List<Authority> filterAssignableToProjects(List<Authority> authoritiesToFilter) {
+        return filterAuthorities(authoritiesToFilter, projectAuthoritySuffix);
+    }
+
+    /**
+     * Filters a list of authorities by checking if title contains the given filter.
+     * 
+     * @param authoritiesToFilter
+     *            The list of Authorities to filter.
+     * @param filter
+     *            The filter as String object.
+     * @return The filtered list of authorities.
+     */
+    private List<Authority> filterAuthorities(List<Authority> authoritiesToFilter, String filter) {
+        List<Authority> filteredAuthorities = new ArrayList<>();
+        for (Authority authority : authoritiesToFilter) {
+            if (authority.getTitle().contains(filter)) {
+                filteredAuthorities.add(authority);
+            }
+        }
+        return filteredAuthorities;
     }
 
     @Override

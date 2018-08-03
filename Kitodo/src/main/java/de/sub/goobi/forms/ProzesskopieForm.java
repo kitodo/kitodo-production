@@ -262,6 +262,7 @@ public class ProzesskopieForm implements Serializable {
     private List<String> possibleDigitalCollection;
     private Template template = new Template();
     private Process prozessKopie = new Process();
+    private Project project;
     private boolean useOpac;
     private boolean useTemplates;
     private Integer auswahl;
@@ -277,17 +278,22 @@ public class ProzesskopieForm implements Serializable {
     protected static final String INCOMPLETE_DATA = "errorDataIncomplete";
 
     /**
-     * Prepare.
+     * Prepare template and project for which new process will be created.
      *
-     * @return empty String
+     * @param templateId
+     *            id of template to query from database
+     * @param projectId
+     *            id of project to query from database
+     *
+     * @return path to page with form
      */
-    public String prepare(int id) {
+    public String prepare(int templateId, int projectId) {
         atstsl = "";
         try {
-            this.template = serviceManager.getTemplateService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(templateId);
+            this.project = serviceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
-            Helper.setErrorMessage("Process " + id + " not found.");
+            Helper.setErrorMessage("Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return null;
         }
 

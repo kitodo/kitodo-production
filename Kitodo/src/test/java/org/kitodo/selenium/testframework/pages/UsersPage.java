@@ -11,10 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.selenium.testframework.Browser;
@@ -33,7 +35,7 @@ public class UsersPage extends Page<UsersPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:usersTable_data")
-    private WebElement usersTableData;
+    private WebElement usersTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:userGroupsTable_data")
@@ -78,6 +80,9 @@ public class UsersPage extends Page<UsersPage> {
      */
     public UsersPage goTo() throws Exception {
         Pages.getTopNavigation().gotoUsers();
+        await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
         return this;
     }
 
@@ -90,7 +95,7 @@ public class UsersPage extends Page<UsersPage> {
         if (isNotAt()) {
             goTo();
         }
-        return getRowsOfTable(usersTableData).size();
+        return getRowsOfTable(usersTable).size();
     }
 
     /**
@@ -221,7 +226,7 @@ public class UsersPage extends Page<UsersPage> {
                 return Pages.getUserGroupEditPage();
             }
         }
-        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+        throw new NoSuchElementException("No user group with given title was not found: " + userGroupTitle);
     }
 
     /**
@@ -245,10 +250,10 @@ public class UsersPage extends Page<UsersPage> {
         throw new NoSuchElementException("No ldap group with given title was found: " + ldapGroupTitle);
     }
 
-    private void clickEditLinkOfTableRow(WebElement tableRow) throws InterruptedException {
+    private void clickEditLinkOfTableRow(WebElement tableRow) throws Exception {
         WebElement ldapGroupEditLink = tableRow.findElement(By.tagName("a"));
         ldapGroupEditLink.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
+        Thread.sleep(Browser.getDelayMinAfterLinkClick());
     }
 
     /**

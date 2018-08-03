@@ -14,20 +14,14 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -39,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -128,38 +123,12 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        boolean valid;
-        String patternStr = "[A-Za-z0-9@_\\-.]*";
-        Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(inLogin);
-        valid = matcher.matches();
-        if (!valid) {
-            Helper.setErrorMessage("loginNotValid");
-        }
-
-        /* Pfad zur Datei ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes"
                 + File.separator + "kitodo_loginBlacklist.txt";
-        /*
-         * Datei zeilenweise durchlaufen und die auf ungültige Zeichen
-         * vergleichen
-         */
-        try (FileInputStream fis = new FileInputStream(filename);
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr)) {
-            String str;
-            while ((str = in.readLine()) != null) {
-                if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
-                    valid = false;
-                    Helper.setErrorMessage("Login " + str, "loginNotValid");
-                }
-            }
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return valid;
+
+        return serviceManager.getUserService().isLoginValid(inLogin, filename);
     }
 
     /**
@@ -189,16 +158,21 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String deleteFromGroup() {
-        int gruppenID = Integer.parseInt(Helper.getRequestParameter("ID"));
-
-        List<UserGroup> neu = new ArrayList<>();
-        for (UserGroup userGroup : this.userObject.getUserGroups()) {
-            if (userGroup.getId() != gruppenID) {
-                neu.add(userGroup);
+        try {
+            int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            List<UserGroup> neu = new ArrayList<>();
+            for (UserGroup userGroup : this.userObject.getUserGroups()) {
+                if (userGroup.getId() != userGroupId) {
+                    neu.add(userGroup);
+                }
             }
+            this.userObject.setUserGroups(neu);
+            return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+            return null;
         }
-        this.userObject.setUserGroups(neu);
-        return null;
+
     }
 
     /**
@@ -207,8 +181,9 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String or null
      */
     public String addToGroup() {
-        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        int userGroupId = 0;
         try {
+            userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             for (UserGroup b : this.userObject.getUserGroups()) {
                 if (b.equals(userGroup)) {
@@ -220,6 +195,56 @@ public class BenutzerverwaltungForm extends BasisForm {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {Helper.getTranslation("userGroup"), userGroupId }, logger, e);
             return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+        }
+        return null;
+    }
+
+    /**
+     * Remove user from client.
+     *
+     * @return empty String
+     */
+    public String deleteFromClient() {
+        int clientId = 0;
+        try {
+            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Client client = serviceManager.getClientService().getById(clientId);
+            this.userObject.getClients().remove(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
+                logger, e);
+            return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return null;
+    }
+
+    /**
+     * Add user to project.
+     *
+     * @return empty String or null
+     */
+    public String addToClient() {
+        int clientId = 0;
+        try {
+            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Client client = serviceManager.getClientService().getById(clientId);
+            for (Client assignedClient : this.userObject.getClients()) {
+                if (assignedClient.equals(client)) {
+                    return null;
+                }
+            }
+            this.userObject.getClients().add(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
+                logger, e);
+            return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return null;
         }
         return null;
     }
@@ -230,13 +255,17 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String
      */
     public String deleteFromProject() {
-        int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
+        int projectId = 0;
         try {
+            projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
+            return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
         return null;
@@ -248,8 +277,9 @@ public class BenutzerverwaltungForm extends BasisForm {
      * @return empty String or null
      */
     public String addToProject() {
-        Integer projectId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        int projectId = 0;
         try {
+            projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Project project = serviceManager.getProjectService().getById(projectId);
             for (Project p : this.userObject.getProjects()) {
                 if (p.equals(project)) {
@@ -260,6 +290,9 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
+            return null;
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
         return null;

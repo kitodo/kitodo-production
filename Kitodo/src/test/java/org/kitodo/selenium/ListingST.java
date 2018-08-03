@@ -56,21 +56,22 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
         List<String> detailsProject =  Pages.getProjectsPage().getProjectDetails();
-        assertEquals("Displayed wrong number of project's details", 3, detailsProject.size());
+        //TODO : check out how exactly columns and rows are calculated
+        assertEquals("Displayed wrong number of project's details", 5, detailsProject.size());
         assertEquals("Displayed wrong project's save format", "Mets", detailsProject.get(0));
         assertEquals("Displayed wrong project's DMS export format", "Mets", detailsProject.get(1));
         assertEquals("Displayed wrong project's METS owner", "Test Owner", detailsProject.get(2));
+        assertEquals("Displayed wrong project's template", "First template", detailsProject.get(3));
 
         int templatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
         int templatesDisplayed = Pages.getProjectsPage().countListedTemplates();
         assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
         List<String> detailsTemplate =  Pages.getProjectsPage().getTemplateDetails();
-        assertEquals("Displayed wrong number of template's details", 4, detailsTemplate.size());
+        //TODO : check out how exactly columns and rows are calculated
+        assertEquals("Displayed wrong number of template's details", 3, detailsTemplate.size());
         assertEquals("Displayed wrong template's workflow", "", detailsTemplate.get(0));
-        assertEquals("Displayed wrong template's docket", "second", detailsTemplate.get(1));
-        assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
-        assertEquals("Displayed wrong template's ruleset", "SLUBHH", detailsTemplate.get(3));
+        assertEquals("Displayed wrong template's rulset", "SLUBHH", detailsTemplate.get(1));
 
         int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
         int workflowsDisplayed = Pages.getProjectsPage().countListedWorkflows();

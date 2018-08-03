@@ -159,9 +159,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
     private Client client;
 
-    @OneToMany(mappedBy = "authority", cascade = CascadeType.ALL)
-    private List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations;
-
     /**
      * Folder to use as source for generation of derived resources.
      */
@@ -591,26 +588,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    /**
-     * Gets userGroupProjectAuthorityRelations.
-     *
-     * @return The userGroupProjectAuthorityRelations.
-     */
-    public List<UserGroupProjectAuthorityRelation> getUserGroupProjectAuthorityRelations() {
-        return userGroupProjectAuthorityRelations;
-    }
-
-    /**
-     * Sets userGroupProjectAuthorityRelations.
-     *
-     * @param userGroupProjectAuthorityRelations
-     *            The userGroupProjectAuthorityRelations.
-     */
-    public void setUserGroupProjectAuthorityRelations(
-            List<UserGroupProjectAuthorityRelation> userGroupProjectAuthorityRelations) {
-        this.userGroupProjectAuthorityRelations = userGroupProjectAuthorityRelations;
     }
 
     /**

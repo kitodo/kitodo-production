@@ -76,6 +76,27 @@
 
                     <h:outputText value="#{msgs.metsRightsOwner}:"/>
                     <h:outputText value="#{item.metsRightsOwner}"/>
+
+                    <h:outputText value="#{msgs.templates}:"/>
+                    <h:form id="createProcessForm">
+                        <p:repeat value="#{item.templates}" var="template" id="templates">
+                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
+                                <h:outputText value="#{template.title} "/>
+
+                                <h:outputText rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editProcess')}">
+                                    <h:commandLink action="#{ProzesskopieForm.prepare(template.id,item.id)}" id="createProcess"
+                                                   title="#{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                    </h:commandLink>
+
+                                    <h:commandLink action="#{MassImportForm.prepare(template.id,item.id)}" id="createMassProcess"
+                                                   title="#{msgs.massImport}: #{template.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                    </h:commandLink>
+                                </h:outputText>
+                            </p:panelGrid>
+                        </p:repeat>
+                    </h:form>
                 </p:panelGrid>
             </div>
         </p:rowExpansion>

@@ -32,6 +32,40 @@
                             }
                         }
                     }
+                },
+                "users": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "login": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "surname": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -981,6 +1015,22 @@
                             "type": "long"
                         },
                         "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "clients": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "clientName": {
                             "type": "text",
                             "fields": {
                                 "keyword": {
