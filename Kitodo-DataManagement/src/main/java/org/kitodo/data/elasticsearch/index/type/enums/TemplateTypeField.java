@@ -17,15 +17,14 @@ public enum TemplateTypeField implements TypeInterface {
     TITLE("title"),
     OUTPUT_NAME("outputName"),
     CREATION_DATE("creationDate"),
+    ACTIVE("active"),
     WIKI_FIELD("wikiField"),
     SORT_HELPER_STATUS("sortHelperStatus"),
     WORKFLOW_TITLE("workflow.title"),
     WORKFLOW_FILE_NAME("workflow.fileName"),
-    PROJECT_ID("project.id"),
-    PROJECT_TITLE("project.title"),
-    PROJECT_ACTIVE("project.active"),
     DOCKET("docket"),
     RULESET("ruleset"),
+    PROJECTS("projects"),
     TASKS("tasks");
 
     private String name;

@@ -308,7 +308,7 @@ public class ProzesskopieForm implements Serializable {
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
         this.prozessKopie.setTemplate(this.template);
-        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setProject(this.project);
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
@@ -324,7 +324,7 @@ public class ProzesskopieForm implements Serializable {
         // projektabhängig die richtigen Felder in der Gui anzeigen
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.template.getProject().getTitle());
+            cp = new ConfigProjects(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -1567,7 +1567,7 @@ public class ProzesskopieForm implements Serializable {
 
         }
         StringBuilder newTitle = new StringBuilder();
-        String titleDefinition = getTitleDefinition(this.template.getProject().getTitle(), this.docType);
+        String titleDefinition = getTitleDefinition(this.project.getTitle(), this.docType);
 
         StringTokenizer tokenizer = new StringTokenizer(titleDefinition, "+");
         /* jetzt den Bandtitel parsen */
@@ -1721,7 +1721,7 @@ public class ProzesskopieForm implements Serializable {
     public void calculateTiffHeader() {
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.template.getProject().getTitle());
+            cp = new ConfigProjects(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;

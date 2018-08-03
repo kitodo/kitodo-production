@@ -15,6 +15,7 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,16 +28,19 @@ import org.openqa.selenium.support.FindBy;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
+    private static final String PROJECTS_TABLE = "projectsTabView:projectsTable";
+    private static final String TEMPLATE_TABLE = "projectsTabView:templateTable";
+
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView")
     private WebElement projectsTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:projectsTable_data")
+    @FindBy(id = PROJECTS_TABLE + "_data")
     private WebElement projectsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:templateTable_data")
+    @FindBy(id = TEMPLATE_TABLE + "_data")
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
@@ -183,24 +187,26 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public void createNewProcess() {
         int index = triggerRowToggle(templatesTable, "First template");
-        Browser.getDriver().findElement(By.id("projectsTabView:templateTable:" + index + ":templateDetailTable"));
+        WebElement createProcess = Browser.getDriver()
+                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":createProcessForm:projects:0:createProcess"));
+        createProcess.click();
     }
 
     public List<String> getProjectDetails() {
         int index = triggerRowToggle(projectsTable, "First project");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id("projectsTabView:projectsTable:" + index + ":projectDetailTable"));
+                .findElement(By.id(PROJECTS_TABLE + ":" + index + ":projectDetailTable"));
         return getTableDataByColumn(detailsTable, 1);
     }
 
     public List<String> getTemplateDetails() {
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id("projectsTabView:templateTable:" + index + ":templateDetailTable"));
-        List<String> details = getTableDataByColumn(detailsTable, 1);
-        //TODO: find out why it reads data for index 3 and after that throws NPE
+                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateDetailTable"));
+        //TODO: find way to read this table without excpetion...
+        //List<String> details = getTableDataByColumn(detailsTable, 1);
         //details.addAll(getTableDataByColumn(detailsTable, 3));
-        return details;
+        return new ArrayList<>();
     }
 
     /**

@@ -149,7 +149,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
-    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)

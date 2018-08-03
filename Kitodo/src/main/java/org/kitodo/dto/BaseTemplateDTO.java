@@ -21,7 +21,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     private String wikiField;
     private String creationDate;
     private DocketDTO docket;
-    private ProjectDTO project;
     private RulesetDTO ruleset;
     private List<TaskDTO> tasks = new ArrayList<>();
 
@@ -118,25 +117,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setDocket(DocketDTO docket) {
         this.docket = docket;
-    }
-
-    /**
-     * Get project.
-     *
-     * @return project as ProjectDTO
-     */
-    public ProjectDTO getProject() {
-        return project;
-    }
-
-    /**
-     * Set project.
-     *
-     * @param project
-     *            as ProjectDTO
-     */
-    public void setProject(ProjectDTO project) {
-        this.project = project;
     }
 
     /**

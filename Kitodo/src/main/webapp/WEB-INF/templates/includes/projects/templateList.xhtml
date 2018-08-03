@@ -39,8 +39,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:outputText>
                 <h:form id="templateActionForm">
-                    <h:link id="editProcess" outcome="/pages/templateEdit"
-                            title="#{msgs.editTemplate}">
+                    <h:link id="editTemplate" outcome="/pages/templateEdit" title="#{msgs.editTemplate}">
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
@@ -64,23 +63,23 @@
                     <h:outputText value="#{msgs.ruleset}:"/>
                     <h:outputText value="#{item.ruleset.title}"/>
 
-                    <h:outputText value="#{msgs.project}:"/>
+                    <h:outputText value="#{msgs.projects}:"/>
                     <h:form id="createProcessForm">
-                            <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
-                                <h:outputText value="#{item.project.title} "/>
+                        <p:panelGrid columns="2" columnClasses="label, actionsColumn" id="templateActionDetailTable">
+                            <p:repeat value="#{item.projects}" var="project" id="projects">
+                                <h:outputText value="#{project.title} "/>
 
-                                <h:outputText rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('editProcess')}">
-                                    <h:commandLink action="#{ProzesskopieForm.prepare(item.id,item.project.id)}" id="createProcess"
-                                                   title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
-                                    </h:commandLink>
+                                <h:commandLink action="#{ProzesskopieForm.prepare(item.id,project.id)}" id="createProcess"
+                                               title="#{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                    <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
+                                </h:commandLink>
 
-                                    <h:commandLink action="#{MassImportForm.prepare(item.id,item.project.id)}" id="createMassProcess"
-                                                   title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
-                                        <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
-                                    </h:commandLink>
-                                </h:outputText>
-                           </p:panelGrid>
+                                <h:commandLink action="#{MassImportForm.prepare(item.id,item.project.id)}" id="createMassProcess"
+                                               title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
+                                    <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
+                                </h:commandLink>
+                            </p:repeat>
+                        </p:panelGrid>
                     </h:form>
                 </p:panelGrid>
 

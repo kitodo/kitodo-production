@@ -108,7 +108,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
-        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setProject(this.project);
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.prozessKopie.setDocket(this.template.getDocket());
         this.digitalCollections = new ArrayList<>();
@@ -147,7 +147,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
         this.prozessKopie = new Process();
         this.prozessKopie.setTitle("");
-        this.prozessKopie.setProject(this.template.getProject());
+        this.prozessKopie.setProject(this.project);
         this.prozessKopie.setRuleset(this.template.getRuleset());
         this.digitalCollections = new ArrayList<>();
 
@@ -163,7 +163,7 @@ public class CopyProcess extends ProzesskopieForm {
         // the GUI
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.template.getProject().getTitle());
+            cp = new ConfigProjects(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -748,7 +748,7 @@ public class CopyProcess extends ProzesskopieForm {
         StringBuilder newTitle = new StringBuilder();
         String titleDefinition;
         try {
-            titleDefinition = getTitleDefinition(this.template.getProject().getTitle(), this.docType);
+            titleDefinition = getTitleDefinition(this.project.getTitle(), this.docType);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;
@@ -813,7 +813,7 @@ public class CopyProcess extends ProzesskopieForm {
         String tifDefinition;
         ConfigProjects cp;
         try {
-            cp = new ConfigProjects(this.template.getProject().getTitle());
+            cp = new ConfigProjects(this.project.getTitle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return;

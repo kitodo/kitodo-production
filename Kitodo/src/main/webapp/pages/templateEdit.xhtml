@@ -29,7 +29,7 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{not empty TemplateForm.template.title}"/>
-            <h:outputText value="#{msgs.newProcessTemplate}" rendered="#{empty TemplateForm.template.title}"/>
+            <h:outputText value="#{msgs.newTemplate}" rendered="#{empty TemplateForm.template.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -39,7 +39,8 @@
                          iconPos="right"
                          disabled="#{TemplateForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         update="notifications"/>
+                         update="notifications"
+                         immediate="true"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{TemplateForm.setSaveDisabled(false)}"
                          update="save"

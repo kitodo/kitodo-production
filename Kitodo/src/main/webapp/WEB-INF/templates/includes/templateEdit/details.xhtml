@@ -19,7 +19,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.templateTitle}"/>
-                <p:inputText id="title" placeholder="#{msgs.processTitle}"
+                <p:inputText id="title" placeholder="#{msgs.templateTitle}"
                              value="#{TemplateForm.title}"
                              class="input"
                              required="#{empty param['editForm:saveButtonToggler']}">
@@ -29,16 +29,17 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectOneMenu id="project" value="#{TemplateForm.template.project}" converter="#{projectConverter}"
+                <p:selectManyMenu id="project" value="#{TemplateForm.template.projects}" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{TemplateForm.projects}"/>
+                    <f:selectItems value="#{TemplateForm.projects}" var="project" itemLabel="#{project.title}" itemValue="#{project}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
+                </p:selectManyMenu>
             </div>
 
             <div>
                 <p:outputLabel for="workflow" value="#{msgs.workflow}"/>
-                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}" converter="#{workflowConverter}"
+                <p:selectOneMenu id="workflow" value="#{TemplateForm.template.workflow}"
+                                 converter="#{workflowConverter}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
                     <f:selectItems value="#{TemplateForm.workflows}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
@@ -67,7 +68,15 @@
 
             <div>
                 <p:outputLabel for="showInList" value="#{msgs.showInSelectList}"/>
-                <p:selectBooleanCheckbox id="showInList" styleClass="input" value="#{TemplateForm.template.inChoiceListShown}">
+                <p:selectBooleanCheckbox id="showInList" styleClass="input"
+                                         value="#{TemplateForm.template.inChoiceListShown}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+
+            <div>
+                <p:outputLabel for="active" value="#{msgs.active}"/>
+                <p:selectBooleanCheckbox id="active" styleClass="input" value="#{TemplateForm.template.active}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
