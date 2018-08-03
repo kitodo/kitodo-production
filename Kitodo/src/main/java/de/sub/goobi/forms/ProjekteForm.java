@@ -25,6 +25,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
@@ -374,6 +375,10 @@ public class ProjekteForm extends BasisForm {
         return filteredFolderList;
     }
 
+    private Map<String, Folder> getFolderMap() {
+        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::toString, Function.identity()));
+    }
+
     /**
      * Returns the folder currently under edit in the pop-up dialog.
      *
@@ -419,8 +424,9 @@ public class ProjekteForm extends BasisForm {
      *
      * @return the source folder for generation
      */
-    public Folder getGeneratorSource() {
-        return myProjekt.getGeneratorSource();
+    public String getGeneratorSource() {
+        Folder source = myProjekt.getGeneratorSource();
+        return source == null ? null : source.toString();
     }
 
     /**
@@ -430,8 +436,8 @@ public class ProjekteForm extends BasisForm {
      * @param generatorSource
      *            source folder for generation to set
      */
-    public void setGeneratorSource(Folder generatorSource) {
-        myProjekt.setGeneratorSource(generatorSource);
+    public void setGeneratorSource(String generatorSource) {
+        myProjekt.setGeneratorSource(getFolderMap().get(generatorSource));
     }
 
     /**
@@ -439,8 +445,9 @@ public class ProjekteForm extends BasisForm {
      *
      * @return media view folder
      */
-    public Folder getMediaView() {
-        return myProjekt.getMediaView();
+    public String getMediaView() {
+        Folder mediaView = myProjekt.getMediaView();
+        return mediaView == null ? null : mediaView.toString();
     }
 
     /**
@@ -449,8 +456,8 @@ public class ProjekteForm extends BasisForm {
      * @param mediaView
      *            media view folder
      */
-    public void setMediaView(Folder mediaView) {
-        myProjekt.setMediaView(mediaView);
+    public void setMediaView(String mediaView) {
+        myProjekt.setMediaView(getFolderMap().get(mediaView));
     }
 
     /**
@@ -458,8 +465,9 @@ public class ProjekteForm extends BasisForm {
      *
      * @return preview folder
      */
-    public Folder getPreview() {
-        return myProjekt.getPreview();
+    public String getPreview() {
+        Folder preview = myProjekt.getPreview();
+        return preview == null ? null : preview.toString();
     }
 
     /**
@@ -468,8 +476,8 @@ public class ProjekteForm extends BasisForm {
      * @param preview
      *            preview folder
      */
-    public void setPreview(Folder preview) {
-        myProjekt.setPreview(preview);
+    public void setPreview(String preview) {
+        myProjekt.setPreview(getFolderMap().get(preview));
     }
 
     /**
