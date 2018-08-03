@@ -482,23 +482,6 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Return the template titles of the project with the given ID "id".
-     *
-     * @param id
-     *            ID of the project for which the template titles are returned.
-     * @return String containing the templates titles of the project with the
-     *         given ID
-     */
-    public String getProjectTemplateTitles(int id) {
-        try {
-            return serviceManager.getProjectService().getProjectTemplatesTitlesAsString(id);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("unableToRetrieveTemplates", logger, e);
-            return null;
-        }
-    }
-
-    /**
      * Gets all available clients.
      *
      * @return The list of clients.
