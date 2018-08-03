@@ -310,10 +310,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @return the duplicated Project
      */
-    public Project duplicateProject(Integer itemId) throws DAOException {
+    public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
-
-        Project baseProject = getById(itemId);
 
         // Project _title_ should explicitly _not_ be duplicated!
         duplicatedProject.setStartDate(baseProject.getStartDate());
