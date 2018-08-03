@@ -26,8 +26,6 @@ import org.kitodo.services.data.PropertyService;
 import org.kitodo.services.data.RulesetService;
 import org.kitodo.services.data.TaskService;
 import org.kitodo.services.data.TemplateService;
-import org.kitodo.services.data.UserGroupClientAuthorityRelationService;
-import org.kitodo.services.data.UserGroupProjectAuthorityRelationService;
 import org.kitodo.services.data.UserGroupService;
 import org.kitodo.services.data.UserService;
 import org.kitodo.services.data.WorkflowService;
@@ -59,8 +57,6 @@ public class ServiceManager {
     private TaskService taskService;
     private TemplateService templateService;
     private UserGroupService userGroupService;
-    private UserGroupClientAuthorityRelationService userGroupClientAuthorityRelationService;
-    private UserGroupProjectAuthorityRelationService userGroupProjectAuthorityRelationService;
     private UserService userService;
     private WorkflowService workflowService;
     private FileService fileService;
@@ -178,18 +174,6 @@ public class ServiceManager {
     private void initializeUserGroupService() {
         if (userGroupService == null) {
             userGroupService = UserGroupService.getInstance();
-        }
-    }
-
-    private void initializeUserGroupClientAuthorityRelationService() {
-        if (userGroupClientAuthorityRelationService == null) {
-            userGroupClientAuthorityRelationService = UserGroupClientAuthorityRelationService.getInstance();
-        }
-    }
-
-    private void initializeUserGroupProjectAuthorityRelationService() {
-        if (userGroupProjectAuthorityRelationService == null) {
-            userGroupProjectAuthorityRelationService = UserGroupProjectAuthorityRelationService.getInstance();
         }
     }
 
@@ -437,28 +421,6 @@ public class ServiceManager {
     public UserGroupService getUserGroupService() {
         initializeUserGroupService();
         return userGroupService;
-    }
-
-    /**
-     * Initialize UserGroupClientAuthorityRelationService if it is not yet
-     * initialized and next return it.
-     *
-     * @return UserGroupClientAuthorityRelationService object
-     */
-    public UserGroupClientAuthorityRelationService getUserGroupClientAuthorityRelationService() {
-        initializeUserGroupClientAuthorityRelationService();
-        return userGroupClientAuthorityRelationService;
-    }
-
-    /**
-     * Initialize UserGroupProjectAuthorityRelationService if it is not yet
-     * initialized and next return it.
-     *
-     * @return UserGroupProjectAuthorityRelationService object
-     */
-    public UserGroupProjectAuthorityRelationService getUserGroupProjectAuthorityRelationService() {
-        initializeUserGroupProjectAuthorityRelationService();
-        return userGroupProjectAuthorityRelationService;
     }
 
     /**

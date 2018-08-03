@@ -72,7 +72,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllUsers() {
         await().untilAsserted(
-            () -> assertEquals("Users were not counted correctly!", Long.valueOf(3), userService.count()));
+            () -> assertEquals("Users were not counted correctly!", Long.valueOf(4), userService.count()));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
         Long amount = userService.countDatabaseRows();
-        assertEquals("Users were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("Users were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test
@@ -118,13 +118,13 @@ public class UserServiceIT {
     @Test
     public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
-        assertEquals("Not all users were found in database!", 3, users.size());
+        assertEquals("Not all users were found in database!", 4, users.size());
     }
 
     @Test
     public void shouldGetAllUsersInGivenRange() throws Exception {
         List<User> users = userService.getAll(2, 10);
-        assertEquals("Not all users were found in database!", 1, users.size());
+        assertEquals("Not all users were found in database!", 2, users.size());
     }
 
     @Test
@@ -251,7 +251,7 @@ public class UserServiceIT {
     @Test
     public void shouldFindManyByLocation() {
         await().untilAsserted(
-            () -> assertEquals("Users were not found in index!", 2, userService.findByLocation("Dresden").size()));
+            () -> assertEquals("Users were not found in index!", 3, userService.findByLocation("Dresden").size()));
     }
 
     @Test
@@ -286,7 +286,7 @@ public class UserServiceIT {
     @Test
     public void shouldNotFindByUserGroupId() {
         await().untilAsserted(
-            () -> assertEquals("User was found in index!", 0, userService.findByUserGroupId(3).size()));
+            () -> assertEquals("User was found in index!", 1, userService.findByUserGroupId(3).size()));
     }
 
     @Test
@@ -349,20 +349,23 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetTasksSize() {
-        Integer firstExpected = 7;
         await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", firstExpected, userService.findById(2).getTasksSize()));
+            () -> assertEquals("Tasks' size is incorrect!", 7, userService.findById(2).getTasks().size()));
 
-        Integer secondExpected = 6;
         await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", secondExpected, userService.findById(3).getTasksSize()));
+            () -> assertEquals("Tasks' size is incorrect!", 6, userService.findById(3).getTasks().size()));
     }
 
     @Test
     public void shouldGetProcessingTasksSize() {
-        Integer expected = 2;
-        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", expected,
-            userService.findById(1).getProcessingTasksSize()));
+        await().untilAsserted(() -> assertEquals("Processing tasks' size is incorrect!", 2,
+            userService.findById(1).getProcessingTasks().size()));
+    }
+
+    @Test
+    public void shouldFindClientSize() {
+        await().untilAsserted(
+            () -> assertEquals("Projects' size is incorrect!", 1, userService.findById(1).getClientsSize()));
     }
 
     @Test
@@ -419,19 +422,19 @@ public class UserServiceIT {
     @Test
     public void shouldFindAllVisibleUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 3, userService.findAllVisibleUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllVisibleUsers().size()));
 
-        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 3,
+        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 4,
             userService.findAllVisibleUsersWithRelations().size()));
     }
 
     @Test
     public void shouldFindAllActiveUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 2, userService.findAllActiveUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 3, userService.findAllActiveUsers().size()));
 
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 2, userService.findAllActiveUsersWithRelations().size()));
+            () -> assertEquals("Size of users is incorrect!", 3, userService.findAllActiveUsersWithRelations().size()));
     }
 
     @Test
@@ -450,9 +453,9 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetAuthorizationOfUser() throws Exception {
-        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getGlobalAuthorities().get(0);
-        assertEquals("Authority title is incorrect!", "viewAllClients", authority.getTitle());
+    public void shouldGetAuthorityOfUser() throws Exception {
+        Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(1);
+        assertEquals("Authority title is incorrect!", "viewAllClients_globalAssignable", authority.getTitle());
     }
 
     @Test

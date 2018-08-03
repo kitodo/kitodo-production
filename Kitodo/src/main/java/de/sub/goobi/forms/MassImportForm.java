@@ -17,10 +17,11 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Files;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -64,10 +66,11 @@ import org.kitodo.services.ServiceManager;
 
 @Named("MassImportForm")
 @SessionScoped
-public class MassImportForm implements Serializable {
+public class MassImportForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private static final long serialVersionUID = -4225927414279404442L;
     private Template template;
+    private Project project;
     private List<Process> processes;
     private List<String> digitalCollections;
     private List<String> possibleDigitalCollections;
@@ -88,6 +91,9 @@ public class MassImportForm implements Serializable {
     private List<Process> processList;
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
     private static final String OPAC_CONFIG = "configurationOPAC";
+    private String massImportPath = MessageFormat.format(REDIRECT_PATH, "massImport");
+    private String massImportTwoPath = MessageFormat.format(REDIRECT_PATH, "massImport2");
+    private String massImportThreePath = MessageFormat.format(REDIRECT_PATH, "massImport3");
 
     /**
      * Constructor.
@@ -100,13 +106,19 @@ public class MassImportForm implements Serializable {
     }
 
     /**
-     * Prepare.
+     * Prepare template and project for which new process will be created.
      *
-     * @return String
+     * @param templateId
+     *            id of template to query from database
+     * @param projectId
+     *            id of project to query from database
+     *
+     * @return path to page with form
      */
-    public String prepare(int id) {
+    public String prepare(int templateId, int projectId) {
         try {
-            this.template = serviceManager.getTemplateService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(templateId);
+            this.project = serviceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
@@ -116,7 +128,7 @@ public class MassImportForm implements Serializable {
             return null;
         }
         initializePossibleDigitalCollections();
-        return "/pages/MassImport";
+        return massImportPath;
     }
 
     /**
@@ -252,7 +264,7 @@ public class MassImportForm implements Serializable {
 
         this.idList = null;
         this.records = "";
-        return "/pages/MassImportFormPage3";
+        return massImportThreePath;
     }
 
     private void iterateOverAnswer(List<ImportObject> answer) throws DataException, IOException {
@@ -682,7 +694,8 @@ public class MassImportForm implements Serializable {
      * @return boolean
      */
     public boolean getHasNextPage() {
-        java.lang.reflect.Method method;
+        //TODO: find out why not error is thrown here
+        /*Method method;
         try {
             method = this.plugin.getClass().getMethod(GET_CURRENT_DOC_STRUCTS);
             Object o = method.invoke(this.plugin);
@@ -702,7 +715,7 @@ public class MassImportForm implements Serializable {
             return !list.isEmpty();
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        }*/
         return false;
     }
 
@@ -728,7 +741,7 @@ public class MassImportForm implements Serializable {
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return "/pages/MassImportFormPage2";
+        return massImportTwoPath;
     }
 
     /**

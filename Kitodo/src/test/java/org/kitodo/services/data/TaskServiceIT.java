@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,7 +29,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.dto.TaskDTO;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -117,7 +117,7 @@ public class TaskServiceIT {
     @Test
     public void shouldFindManyByProcessingStatusAndUser() {
         await().untilAsserted(() -> assertEquals("Not all tasks were found in database!", 2,
-                taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
+            taskService.findByProcessingStatusAndUser(TaskStatus.INWORK, 2, null).size()));
     }
 
     @Test
@@ -143,8 +143,8 @@ public class TaskServiceIT {
         taskService.replaceProcessingUser(task, null);
         taskService.save(task);
 
-        TaskDTO taskDTO = taskService.findById(6, false);
-        assertNull("Processing user is not null!", taskDTO.getProcessingUser());
+        await().pollDelay(3, TimeUnit.SECONDS).atMost(9, TimeUnit.SECONDS).untilAsserted(
+            () -> assertNull("Processing user is not null!", taskService.findById(6, false).getProcessingUser()));
         size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 0, size);
 
@@ -153,8 +153,8 @@ public class TaskServiceIT {
         taskService.replaceProcessingUser(task, user);
         taskService.save(task);
 
-        taskDTO = taskService.findById(6, false);
-        assertEquals("Incorrect id of processing user!", Integer.valueOf(1), taskDTO.getProcessingUser().getId());
+        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", Integer.valueOf(1),
+            taskService.findById(6, false).getProcessingUser().getId()));
         size = userService.findByProcessingTask(6, false).size();
         assertEquals("Incorrect amount of processing users!", 1, size);
 
@@ -162,11 +162,11 @@ public class TaskServiceIT {
         user = userService.getById(2);
         taskService.replaceProcessingUser(task, user);
         taskService.save(task);
-        taskDTO = taskService.findById(6, false);
-        assertEquals("Incorrect id of processing user!", Integer.valueOf(2), taskDTO.getProcessingUser().getId());
-        Thread.sleep(1000);
-        size = userService.findByProcessingTask(6, false).size();
-        assertEquals("Incorrect amount of processing users!", 1, size);
+
+        await().untilAsserted(() -> assertEquals("Incorrect id of processing user!", Integer.valueOf(2),
+            taskService.findById(6, false).getProcessingUser().getId()));
+        await().untilAsserted(() -> assertEquals("Incorrect amount of processing users!", 1,
+            userService.findByProcessingTask(6, false).size()));
     }
 
     @Test

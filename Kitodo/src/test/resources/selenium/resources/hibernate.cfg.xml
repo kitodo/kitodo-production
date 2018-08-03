@@ -74,8 +74,6 @@
         <mapping class="org.kitodo.data.database.beans.Template"/>
         <mapping class="org.kitodo.data.database.beans.User"/>
         <mapping class="org.kitodo.data.database.beans.UserGroup"/>
-        <mapping class="org.kitodo.data.database.beans.UserGroupClientAuthorityRelation"/>
-        <mapping class="org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation"/>
         <mapping class="org.kitodo.data.database.beans.Workflow"/>
 
     </session-factory>

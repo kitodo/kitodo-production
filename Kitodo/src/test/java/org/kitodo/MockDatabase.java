@@ -68,8 +68,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.UserGroupClientAuthorityRelation;
-import org.kitodo.data.database.beans.UserGroupProjectAuthorityRelation;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
@@ -161,8 +159,6 @@ public class MockDatabase {
         insertTemplateProperties();
         insertUserFilters();
         insertTasks();
-        insertUserGroupClientAuthorityRelations();
-        insertUserGroupProjectAuthorityRelations();
         insertWorkflows();
     }
 
@@ -200,8 +196,6 @@ public class MockDatabase {
         insertUsers();
         insertClients();
         insertProjects();
-        insertUserGroupClientAuthorityRelations();
-        insertUserGroupProjectAuthorityRelations();
     }
 
     private static class ExtendedNode extends Node {
@@ -268,135 +262,151 @@ public class MockDatabase {
         return settingsMap;
     }
 
-    private static void insertUserGroupClientAuthorityRelations() throws DAOException {
-        UserGroupClientAuthorityRelation userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-
-        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-
-        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-
-        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-
-        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(1));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-
-        userGroupClientAuthorityRelation = new UserGroupClientAuthorityRelation();
-        userGroupClientAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
-        userGroupClientAuthorityRelation.setClient(serviceManager.getClientService().getById(2));
-        userGroupClientAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupClientAuthorityRelationService().saveToDatabase(userGroupClientAuthorityRelation);
-    }
-
-    private static void insertUserGroupProjectAuthorityRelations() throws DAOException {
-        UserGroupProjectAuthorityRelation userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(1));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(3));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(1));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(2));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(2));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(2));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-
-        userGroupProjectAuthorityRelation = new UserGroupProjectAuthorityRelation();
-        userGroupProjectAuthorityRelation.setUserGroup(serviceManager.getUserGroupService().getById(3));
-        userGroupProjectAuthorityRelation.setProject(serviceManager.getProjectService().getById(3));
-        userGroupProjectAuthorityRelation.setAuthority(serviceManager.getAuthorityService().getById(1));
-        serviceManager.getUserGroupProjectAuthorityRelationService().saveToDatabase(userGroupProjectAuthorityRelation);
-    }
 
     private static void insertAuthorities() throws DataException {
+        String globalAssignableAuthoritySuffix = "_globalAssignable";
+        String clientAssignableAuthoritySuffix = "_clientAssignable";
+        String projectAssignableAuthoritySuffix = "_projectAssignable";
         List<Authority> authorities = new ArrayList<>();
-        authorities.add(new Authority("viewAllClients", true, false, false));
-        authorities.add(new Authority("viewClient", true, true, false));
-        authorities.add(new Authority("editClient", true, true, false));
-        authorities.add(new Authority("deleteClient", true, false, false));
-        authorities.add(new Authority("addClient", true, false, false));
 
-        authorities.add(new Authority("viewProject", true, true, true));
-        authorities.add(new Authority("viewAllProjects", true, true, false));
-        authorities.add(new Authority("editProject", true, true, true));
-        authorities.add(new Authority("deleteProject", true, true, false));
-        authorities.add(new Authority("addProject", true, true, false));
+        authorities.add(new Authority("admin" + globalAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllDockets", true, true, true));
-        authorities.add(new Authority("viewDocket", true, true, true));
-        authorities.add(new Authority("addDocket", true, true, true));
-        authorities.add(new Authority("editDocket", true, true, true));
-        authorities.add(new Authority("deleteDocket", true, true, true));
+        //Client
+        authorities.add(new Authority("viewAllClients" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteClient" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addClient" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewClient" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editClient" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllProcesses", true, true, true));
-        authorities.add(new Authority("viewProcess", true, true, true));
-        authorities.add(new Authority("addProcess", true, true, true));
-        authorities.add(new Authority("editProcess", true, true, true));
-        authorities.add(new Authority("deleteProcess", true, true, true));
+        //Project
+        authorities.add(new Authority("viewProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProjects" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProject" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProject" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProjects" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProject" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProject" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllTasks", true, true, true));
-        authorities.add(new Authority("viewTask", true, true, true));
-        authorities.add(new Authority("addTask", true, true, true));
-        authorities.add(new Authority("editTask", true, true, true));
-        authorities.add(new Authority("deleteTask", true, true, true));
+        authorities.add(new Authority("viewProject" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProject" + projectAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllUserGroups", true, true, false));
-        authorities.add(new Authority("viewUserGroup", true, true, false));
-        authorities.add(new Authority("addUserGroup", true, true, false));
-        authorities.add(new Authority("editUserGroup", true, true, false));
-        authorities.add(new Authority("deleteUserGroup", true, true, false));
+        //Docket
+        authorities.add(new Authority("viewAllDockets" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editDocket" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteDocket" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllDockets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteDocket" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addDocket" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("viewAllUsers", true, true, false));
-        authorities.add(new Authority("viewUser", true, true, false));
-        authorities.add(new Authority("addUser", true, true, false));
-        authorities.add(new Authority("editUser", true, true, false));
-        authorities.add(new Authority("deleteUser", true, true, false));
+        //ruleset
+        authorities.add(new Authority("viewRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllRulesets" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteRuleset" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addRuleset" + clientAssignableAuthoritySuffix));
 
-        authorities.add(new Authority("admin", true, false, false));
+        //process
+        authorities.add(new Authority("viewAllProcesses" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + globalAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("editProcessMetaData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + globalAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + clientAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("editProcessMetaData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + clientAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllProcesses" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteProcess" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("addProcess" + projectAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("editProcessMetaData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessStructureData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessPagination" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editProcessImages" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessMetaData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessStructureData" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessPagination" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewProcessImages" + projectAssignableAuthoritySuffix));
+
+        //Task
+        authorities.add(new Authority("viewAllTasks" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllTasks" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + clientAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllTasks" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("editTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteTask" + projectAssignableAuthoritySuffix));
+        authorities.add(new Authority("addTask" + projectAssignableAuthoritySuffix));
+
+        //UserGroup
+        authorities.add(new Authority("viewAllUserGroups" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUserGroup" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUserGroup" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllUserGroups" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUserGroup" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUserGroup" + clientAssignableAuthoritySuffix));
+
+        //User
+        authorities.add(new Authority("viewAllUsers" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUser" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUser" + globalAssignableAuthoritySuffix));
+        
+        authorities.add(new Authority("viewUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllUsers" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
 
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
@@ -701,14 +711,34 @@ public class MockDatabase {
         serviceManager.getPropertyService().save(thirdProcessProperty);
     }
 
-    public static void insertClients() throws DataException {
+    public static void insertClients() throws DataException, DAOException {
+        boolean usersAvailable = serviceManager.getUserService().getAll().size() > 0;
         Client client = new Client();
         client.setName("First client");
-        serviceManager.getClientService().save(client);
+
+        if (usersAvailable) {
+            User firstUser = serviceManager.getUserService().getById(1);
+            User secondUser = serviceManager.getUserService().getById(2);
+            client.getUsers().add(firstUser);
+            client.getUsers().add(secondUser);
+            firstUser.getClients().add(client);
+            serviceManager.getClientService().save(client);
+            serviceManager.getUserService().save(firstUser);
+        } else {
+            serviceManager.getClientService().save(client);
+        }
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
-        serviceManager.getClientService().save(secondClient);
+        if (usersAvailable) {
+            User secondUser = serviceManager.getUserService().getById(2);
+            secondClient.getUsers().add(secondUser);
+            secondUser.getClients().add(secondClient);
+            serviceManager.getClientService().save(secondClient);
+            serviceManager.getUserService().save(secondUser);
+        } else {
+            serviceManager.getClientService().save(secondClient);
+        }
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
@@ -1190,22 +1220,40 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         serviceManager.getUserService().save(thirdUser);
+
+        User fourthUser = new User();
+        fourthUser.setName("Max");
+        fourthUser.setSurname("Mustermann");
+        fourthUser.setLogin("mmustermann");
+        fourthUser.setPassword(passwordEncoder.encrypt("test"));
+        fourthUser.setLdapLogin("mmustermann");
+        fourthUser.setLocation("Dresden");
+        fourthUser.setTableSize(20);
+        fourthUser.setLanguage("de");
+        fourthUser.setCss("old/userStyles/classic.css");
+        fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
+        serviceManager.getUserService().save(fourthUser);
     }
 
     private static void insertUserGroups() throws DAOException, DataException {
-        List<Authority> adminAuthorities = serviceManager.getAuthorityService().getAll();
+        List<Authority> allAuthorities = serviceManager.getAuthorityService().getAll();
 
         UserGroup firstUserGroup = new UserGroup();
         firstUserGroup.setTitle("Admin");
-        firstUserGroup.setGlobalAuthorities(adminAuthorities);
+        firstUserGroup.setAuthorities(allAuthorities);
         serviceManager.getUserGroupService().save(firstUserGroup);
 
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setTitle("Random");
 
         List<Authority> userAuthorities = new ArrayList<>();
-        userAuthorities.add(serviceManager.getAuthorityService().getById(1));
-        secondUserGroup.setGlobalAuthorities(userAuthorities);
+        userAuthorities.add(serviceManager.getAuthorityService().getById(2));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(12));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(16));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(4));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(20));
+        userAuthorities.add(serviceManager.getAuthorityService().getById(19));
+        secondUserGroup.setAuthorities(userAuthorities);
         serviceManager.getUserGroupService().save(secondUserGroup);
 
         UserGroup thirdUserGroup = new UserGroup();

@@ -154,12 +154,12 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     private void manageAuthorizationsDependenciesForIndex(UserGroup userGroup)
             throws CustomResponseException, IOException {
         if (userGroup.getIndexAction() == IndexAction.DELETE) {
-            for (Authority authority : userGroup.getGlobalAuthorities()) {
+            for (Authority authority : userGroup.getAuthorities()) {
                 authority.getUserGroups().remove(userGroup);
                 serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         } else {
-            for (Authority authority : userGroup.getGlobalAuthorities()) {
+            for (Authority authority : userGroup.getAuthorities()) {
                 serviceManager.getAuthorityService().saveToIndex(authority, false);
             }
         }
@@ -334,7 +334,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
      * @return authorizations as list of Strings
      */
     public List<String> getAuthorizationsAsString(UserGroup userGroup) {
-        List<Authority> authorities = userGroup.getGlobalAuthorities();
+        List<Authority> authorities = userGroup.getAuthorities();
         List<String> stringAuthorizations = new ArrayList<>();
         for (Authority authority : authorities) {
             stringAuthorizations.add(authority.getTitle());

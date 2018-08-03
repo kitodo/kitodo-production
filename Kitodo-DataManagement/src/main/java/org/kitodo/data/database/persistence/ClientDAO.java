@@ -11,7 +11,9 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -48,5 +50,20 @@ public class ClientDAO extends BaseDAO<Client> {
     @Override
     public void remove(Integer id) throws DAOException {
         removeObject(Client.class, id);
+    }
+
+    /**
+     * Gets clients from given list of ids.
+     *
+     * @param clientIds
+     *            list of client ids
+     * @return list of clients
+     */
+    public List<Client> getByIds(List<Integer> clientIds) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientIds", clientIds);
+        return getByQuery(
+            "FROM Client WHERE id IN :clientIds",
+            parameters);
     }
 }

@@ -49,6 +49,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -66,6 +67,7 @@ public class CopyProcess extends ProzesskopieForm {
     private String opacKatalog;
     private Template template = new Template();
     private Process prozessKopie = new Process();
+    private Project project;
     /* komplexe Anlage von Vorgängen anhand der xml-Konfiguration */
     private boolean useOpac;
     private boolean useTemplates;
@@ -117,11 +119,12 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public String prepare(int id) {
+    public String prepare(int templateId, int projectId) {
         try {
-            this.template = serviceManager.getTemplateService().getById(id);
+            this.template = serviceManager.getTemplateService().getById(templateId);
+            this.project = serviceManager.getProjectService().getById(projectId);
         } catch (DAOException e) {
-            logger.error(e.getMessage());
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
         if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {

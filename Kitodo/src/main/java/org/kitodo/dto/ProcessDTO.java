@@ -22,7 +22,6 @@ public class ProcessDTO extends BaseTemplateDTO {
 
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
-    private Integer propertiesSize;
     private List<PropertyDTO> sortedCorrectionSolutionMessages = new ArrayList<>();
     private UserDTO blockedUser;
     private Integer progressClosed;
@@ -77,25 +76,6 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
-    }
-
-    /**
-     * Get size od properties.
-     *
-     * @return size of properties
-     */
-    public Integer getPropertiesSize() {
-        return propertiesSize;
-    }
-
-    /**
-     * Set size of properties.
-     *
-     * @param propertiesSize
-     *            as Integer
-     */
-    public void setPropertiesSize(Integer propertiesSize) {
-        this.propertiesSize = propertiesSize;
     }
 
     /**

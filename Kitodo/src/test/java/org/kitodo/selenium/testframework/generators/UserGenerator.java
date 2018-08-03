@@ -17,19 +17,20 @@ import org.kitodo.data.database.beans.User;
 public class UserGenerator {
 
     public static User generateUser() {
+        String suffix = generateRandomString(5);
+
         User user = new User();
-        user.setPassword(generatePassword());
-        user.setName("MockName");
-        user.setSurname("MockSurname");
-        user.setLogin("MockUserLogin");
+        user.setPassword(generateRandomString(10));
+        user.setName("Name" + suffix);
+        user.setSurname("Surname" + suffix);
+        user.setLogin("UserLogin" + suffix);
         user.setLocation("MockLocation");
         user.setMetadataLanguage("de");
 
         return user;
     }
 
-    private static String generatePassword() {
-        int length = 10;
+    private static String generateRandomString(int length) {
         return RandomStringUtils.random(length, true, false);
     }
 }

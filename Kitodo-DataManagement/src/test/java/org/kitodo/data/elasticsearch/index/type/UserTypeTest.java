@@ -240,7 +240,7 @@ public class UserTypeTest {
         HttpEntity document = userType.createDocument(user);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 12, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
 
         JsonArray filters = UserTypeField.FILTERS.getJsonArray(actual);
         JsonObject filter = filters.getJsonObject(0);

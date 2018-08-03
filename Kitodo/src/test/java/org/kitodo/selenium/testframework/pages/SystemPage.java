@@ -54,6 +54,9 @@ public class SystemPage extends Page<SystemPage> {
     @Override
     public SystemPage goTo() throws Exception {
         Pages.getTopNavigation().gotoSystem();
+        await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
         return this;
     }
 
