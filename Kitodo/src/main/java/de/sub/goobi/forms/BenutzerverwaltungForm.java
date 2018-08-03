@@ -14,20 +14,14 @@ package de.sub.goobi.forms;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -129,38 +123,12 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        boolean valid;
-        String patternStr = "[A-Za-z0-9@_\\-.]*";
-        Pattern pattern = Pattern.compile(patternStr);
-        Matcher matcher = pattern.matcher(inLogin);
-        valid = matcher.matches();
-        if (!valid) {
-            Helper.setErrorMessage("loginNotValid");
-        }
-
-        /* Pfad zur Datei ermitteln */
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes"
                 + File.separator + "kitodo_loginBlacklist.txt";
-        /*
-         * Datei zeilenweise durchlaufen und die auf ungültige Zeichen
-         * vergleichen
-         */
-        try (FileInputStream fis = new FileInputStream(filename);
-                InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
-                BufferedReader in = new BufferedReader(isr)) {
-            String str;
-            while ((str = in.readLine()) != null) {
-                if (str.length() > 0 && inLogin.equalsIgnoreCase(str)) {
-                    valid = false;
-                    Helper.setErrorMessage("Login " + str, "loginNotValid");
-                }
-            }
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return valid;
+
+        return serviceManager.getUserService().isLoginValid(inLogin, filename);
     }
 
     /**
