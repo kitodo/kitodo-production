@@ -11,10 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -84,6 +86,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     public ProjectsPage goTo() throws Exception {
         Pages.getTopNavigation().gotoProjects();
+        await("Wait for execution of link click").pollDelay(Browser.getDelayMinAfterLinkClick(), TimeUnit.MILLISECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
         return this;
     }
 

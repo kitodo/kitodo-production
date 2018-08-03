@@ -120,83 +120,66 @@ public class TopNavigationPage {
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to help page
+     * Hovers dashboard menu and clicks on link to help page.
      */
-    void gotoHelp() throws InterruptedException {
+    void gotoHelp() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkHelp);
         linkHelp.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to tasks page
+     * Hovers dashboard menu and clicks on link to tasks page.
      */
-     void gotoTasks() throws InterruptedException {
+     void gotoTasks() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkTasks);
         linkTasks.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to processes page
+     * Hovers dashboard menu and clicks on link to processes page.
      */
-    void gotoProcesses() throws InterruptedException {
+    void gotoProcesses() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkProcesses);
         linkProcesses.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to projects page
+     * Hovers dashboard menu and clicks on link to projects page.
      */
-    void gotoProjects() throws InterruptedException {
+    void gotoProjects() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkProjects);
         linkProjects.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to users page
+     * Hovers dashboard menu and clicks on link to users page.
      */
-    void gotoUsers() throws InterruptedException {
+    void gotoUsers() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkUsers);
         linkUsers.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to modules page
+     * Hovers dashboard menu and clicks on link to modules page.
      */
-    void gotoModules() throws InterruptedException {
+    void gotoModules() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkModules);
         linkModules.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**
-     * Hovers dashboard menu and clicks on link to clients page
+     * Hovers dashboard menu and clicks on link to system page.
      */
-    void gotoClients() throws InterruptedException {
-        hoverWebElement(dashboardMenuButton);
-        hoverWebElement(linkClients);
-        linkClients.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
-    }
-
-    /**
-     * Hovers dashboard menu and clicks on link to system page
-     */
-    void gotoSystem() throws InterruptedException {
+    void gotoSystem() {
         hoverWebElement(dashboardMenuButton);
         hoverWebElement(linkSystem);
         linkSystem.click();
-        Thread.sleep(Browser.getDelayAfterLinkClick());
     }
 
     /**

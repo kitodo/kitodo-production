@@ -46,7 +46,8 @@ public class Browser {
     private static int delayIndexing = 3000;
     private static int delayAfterLogin = 2000;
     private static int delayAfterLogout = 3000;
-    private static int delayAfterLinkClick = 500;
+    private static int delayMinAfterLinkClick = 500;
+    private static int delayMaxAfterLinkClick = 1500;
     private static int delayAfterHoverMenu = 500;
     private static int delayAfterNewItemClick = 500;
     private static int delayAfterPickListClick = 1500;
@@ -263,12 +264,21 @@ public class Browser {
     }
 
     /**
-     * Gets delayAfterLinkClick.
+     * Get min delay after link was clicked.
      *
-     * @return The delayAfterLinkClick.
+     * @return min delay after link was clicked
      */
-    public static int getDelayAfterLinkClick() {
-        return delayAfterLinkClick;
+    public static int getDelayMinAfterLinkClick() {
+        return delayMinAfterLinkClick;
+    }
+
+    /**
+     * Get max delay after link was clicked.
+     *
+     * @return max delay after link was clicked
+     */
+    public static int getDelayMaxAfterLinkClick() {
+        return delayMaxAfterLinkClick;
     }
 
     /**
