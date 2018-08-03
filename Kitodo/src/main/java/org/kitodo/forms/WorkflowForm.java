@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -39,6 +40,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
 
@@ -50,10 +52,12 @@ public class WorkflowForm extends BasisForm {
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
     private transient ServiceManager serviceManager = new ServiceManager();
+    private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
+    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
 
@@ -68,13 +72,10 @@ public class WorkflowForm extends BasisForm {
      * Read XML for file chosen out of the select list.
      */
     public void readXMLDiagram() {
-        readXMLDiagram(this.workflow.getFileName());
-    }
+        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
 
-    private void readXMLDiagram(String xmlDiagramName) {
-        try (InputStream inputStream = serviceManager.getFileService()
-                .read(new File(diagramsFolder + encodeXMLDiagramName(xmlDiagramName)).toURI());
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (InputStream inputStream = fileService.read(xmlDiagramURI);
+             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -87,58 +88,60 @@ public class WorkflowForm extends BasisForm {
         }
     }
 
-    void saveSVGDiagram() {
-        try (OutputStream outputStream = serviceManager.getFileService()
-                .write(new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI());
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-            bufferedWriter.write(svgDiagram);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    void saveXMLDiagram() {
-        try (OutputStream outputStream = serviceManager.getFileService()
-                .write(new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI());
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-            bufferedWriter.write(xmlDiagram);
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
-     * Save workflow.
-     */
-    public void save() {
-        saveFiles();
-        saveWorkflow();
-    }
-
     /**
      * Save workflow and redirect to list view.
      *
      * @return url to list view
      */
     public String saveAndRedirect() {
-        save();
+        try {
+            if (saveFiles()) {
+                saveWorkflow();
+            } else {
+                Helper.setErrorMessage("Files were not save!");
+                return null;
+            }
+        } catch (RuntimeException e) {
+            logger.error(e.getMessage());
+        }
         return workflowListPath;
     }
 
     /**
-     * Save updated content of the diagram.
+     * Save content of the diagram files.
+     *
+     * @return true if save, false if not
      */
-    private void saveFiles() {
+    private boolean saveFiles() {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
+
+        URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg")
+                .toURI();
+        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
 
         xmlDiagram = requestParameterMap.get("diagram");
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
 
-            saveXMLDiagram();
-            saveSVGDiagram();
+            saveFile(svgDiagramURI, svgDiagram);
+            saveFile(xmlDiagramURI, xmlDiagram);
+        } else if (Objects.nonNull(requestParameterMap.get("id"))) {
+            // TODO: find way to send content in first request - now it comes on second
+            // FIXME: it causes problem with redirect!
+            throw new RuntimeException("No diagram parameter was passed in request.");
+        }
+
+        return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
+    }
+
+    void saveFile(URI fileURI, String fileContent) {
+        try (OutputStream outputStream = fileService.write(fileURI);
+             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+            bufferedWriter.write(fileContent);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
@@ -166,6 +169,8 @@ public class WorkflowForm extends BasisForm {
             if (isWorkflowAlreadyInUse(this.workflow)) {
                 this.workflow.setActive(false);
                 Workflow newWorkflow = new Workflow(diagram.getId(), decodedXMLDiagramName);
+                newWorkflow.setActive(this.workflow.isActive());
+                newWorkflow.setReady(this.workflow.isReady());
                 serviceManager.getWorkflowService().save(newWorkflow);
             }
             serviceManager.getWorkflowService().save(this.workflow);
@@ -200,13 +205,13 @@ public class WorkflowForm extends BasisForm {
         try {
             if (id != 0) {
                 setWorkflow(this.serviceManager.getWorkflowService().getById(id));
-                readXMLDiagram(this.workflow.getFileName());
+                readXMLDiagram();
             } else {
                 newWorkflow();
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("workflow"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("workflow"), id }, logger, e);
         }
     }
 
@@ -253,7 +258,7 @@ public class WorkflowForm extends BasisForm {
      *
      * @return content of SVG diagram file as String
      */
-    public String getSvgDiagram() {
+    String getSvgDiagram() {
         return svgDiagram;
     }
 
@@ -263,7 +268,7 @@ public class WorkflowForm extends BasisForm {
      * @param svgDiagram
      *            content of SVG diagram as String
      */
-    public void setSvgDiagram(String svgDiagram) {
+    void setSvgDiagram(String svgDiagram) {
         this.svgDiagram = svgDiagram;
     }
 }
