@@ -19,7 +19,7 @@ import org.kitodo.services.ServiceManager;
 public class TemplateDTO extends BaseTemplateDTO {
 
     private WorkflowDTO workflow;
-    private boolean containsUnreachableSteps;
+    private boolean canBeUsedForProcess;
 
     /**
      * Get diagram image.
@@ -52,21 +52,21 @@ public class TemplateDTO extends BaseTemplateDTO {
     }
 
     /**
-     * Get information if process contains unreachable tasks.
+     * Get information if template doesn't contain unreachable tasks and is active.
      *
      * @return true or false
      */
-    public boolean isContainsUnreachableSteps() {
-        return containsUnreachableSteps;
+    public boolean isCanBeUsedForProcess() {
+        return canBeUsedForProcess;
     }
 
     /**
-     * Set information if process contains unreachable tasks.
+     * Set information if template doesn't contain unreachable tasks and is active.
      *
-     * @param containsUnreachableSteps
+     * @param canBeUsedForProcess
      *            as boolean
      */
-    public void setContainsUnreachableSteps(boolean containsUnreachableSteps) {
-        this.containsUnreachableSteps = containsUnreachableSteps;
+    public void setCanBeUsedForProcess(boolean canBeUsedForProcess) {
+        this.canBeUsedForProcess = canBeUsedForProcess;
     }
 }

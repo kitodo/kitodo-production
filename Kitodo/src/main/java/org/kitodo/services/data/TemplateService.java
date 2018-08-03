@@ -247,6 +247,9 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
         templateDTO.setWorkflow(workflowDTO);
+        templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
+                serviceManager.getTaskService()));
+        templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
@@ -264,8 +267,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     private void convertRelatedJSONObjects(JsonObject jsonObject, TemplateDTO templateDTO) throws DataException {
         Integer project = TemplateTypeField.PROJECT_ID.getIntValue(jsonObject);
         templateDTO.setProject(serviceManager.getProjectService().findById(project));
-        templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, "tasks", serviceManager.getTaskService()));
-        templateDTO.setContainsUnreachableSteps(containsDtoUnreachableSteps(templateDTO.getTasks()));
     }
 
     private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
@@ -325,23 +326,23 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Check whether the template contains tasks that are not assigned to a user or
-     * user group.
+     * Check whether the tasks assigned to template are complete. If it contains
+     * tasks that are not assigned to a user or user group - tasks are not complete.
      *
      * @param tasks
      *            list of tasks for testing
      * @return true or false
      */
-    public boolean containsDtoUnreachableSteps(List<TaskDTO> tasks) {
+    boolean hasCompleteTasks(List<TaskDTO> tasks) {
         if (tasks.isEmpty()) {
-            return true;
+            return false;
         }
         for (TaskDTO task : tasks) {
             if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     /**
