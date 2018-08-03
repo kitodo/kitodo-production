@@ -55,13 +55,13 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) {
         if (ldapAuthentication) {
             try {
-                User user = serviceManager.getUserService().getByLogin(authentication.getName());
+                User user = serviceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
                 configureAndActivateLdapAuthentication(user.getLdapGroup());
             } catch (DAOException e) {
                 // getByLogin() throws DAOExeption, it must be converted in
                 // UsernameNotFoundException
                 // in order to match interface method signature
-                throw new UsernameNotFoundException("Could not read Username from database!");
+                throw new UsernameNotFoundException("Error on reading user from database!");
             }
         }
         return authenticationProvider.authenticate(authentication);

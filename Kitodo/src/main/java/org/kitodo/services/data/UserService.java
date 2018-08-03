@@ -217,6 +217,25 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
+     * Gets user by ldap login and in case that no user can be found the normal
+     * login is used as fallback. UsernameNotFoundException is thrown when no user
+     * can be found also with fallback.
+     * 
+     * @param login
+     *            The login uf the user.
+     * @return The user object.
+     */
+    public User getByLdapLoginWithFallback(String login) throws DAOException {
+        User user;
+        try {
+            user = serviceManager.getUserService().getByLdapLogin(login);
+        } catch (UsernameNotFoundException e) {
+            user = serviceManager.getUserService().getByLogin(login);
+        }
+        return user;
+    }
+
+    /**
      * Gets user by login.
      *
      * @param login

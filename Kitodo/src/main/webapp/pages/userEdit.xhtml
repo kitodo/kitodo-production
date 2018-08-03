@@ -93,6 +93,15 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
+                            <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
+                            <p:inputText id="ldapLogin"
+                                         class="input"
+                                         disabled="#{isViewMode}"
+                                         placeholder="#{msgs.ldaplogin}"
+                                         value="#{BenutzerverwaltungForm.userObject.ldapLogin}"
+                                         readonly="#{BenutzerverwaltungForm.userObject.id ne null}"/>
+                        </div>
+                        <div>
                             <p:outputLabel for="active" value="#{msgs.isActive}"/>
                             <p:selectBooleanCheckbox id="active"
                                                      styleClass="input"
