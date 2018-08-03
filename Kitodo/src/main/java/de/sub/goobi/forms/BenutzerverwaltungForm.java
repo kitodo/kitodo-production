@@ -111,7 +111,6 @@ public class BenutzerverwaltungForm extends BasisForm {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
-
             } else {
                 Helper.setErrorMessage("loginInUse");
                 return null;
@@ -167,12 +166,10 @@ public class BenutzerverwaltungForm extends BasisForm {
                 }
             }
             this.userObject.setUserGroups(neu);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
-            return null;
         }
-
+        return null;
     }
 
     /**
@@ -194,7 +191,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {Helper.getTranslation("userGroup"), userGroupId }, logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
         }
@@ -215,7 +211,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -241,10 +236,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }
@@ -263,10 +256,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }
@@ -290,10 +281,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }

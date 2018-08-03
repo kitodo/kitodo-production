@@ -263,7 +263,6 @@ public class BatchForm extends BasisForm {
                     serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READ, logger, e);
-                return null;
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
