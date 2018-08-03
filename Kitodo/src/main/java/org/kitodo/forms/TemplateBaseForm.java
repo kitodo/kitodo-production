@@ -14,18 +14,12 @@ package org.kitodo.forms;
 import de.sub.goobi.forms.BasisForm;
 import de.sub.goobi.helper.Helper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -173,48 +167,6 @@ public class TemplateBaseForm extends BasisForm {
             }
         }
         task.setOrdering(ordering);
-    }
-
-    /**
-     * Get rulesets for select list.
-     *
-     * @return list of rulesets as SelectItems
-     */
-    public List<SelectItem> getRulesets() {
-        List<SelectItem> myPrefs = new ArrayList<>();
-        List<Ruleset> temp = serviceManager.getRulesetService().getByQuery("from Ruleset ORDER BY title");
-        for (Ruleset ruleset : temp) {
-            myPrefs.add(new SelectItem(ruleset, ruleset.getTitle(), null));
-        }
-        return myPrefs;
-    }
-
-    /**
-     * Get dockets for select list.
-     *
-     * @return list of dockets as SelectItems
-     */
-    public List<SelectItem> getDockets() {
-        List<SelectItem> answer = new ArrayList<>();
-        List<Docket> temp = serviceManager.getDocketService().getByQuery("from Docket ORDER BY title");
-        for (Docket docket : temp) {
-            answer.add(new SelectItem(docket, docket.getTitle(), null));
-        }
-        return answer;
-    }
-
-    /**
-     * Get list of projects.
-     *
-     * @return list of SelectItem objects
-     */
-    public List<SelectItem> getProjects() {
-        List<SelectItem> projects = new ArrayList<>();
-        List<Project> temp = serviceManager.getProjectService().getByQuery("from Project ORDER BY title");
-        for (Project project : temp) {
-            projects.add(new SelectItem(project, project.getTitle(), null));
-        }
-        return projects;
     }
 
     protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {

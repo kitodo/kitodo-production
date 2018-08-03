@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,6 +38,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
@@ -164,13 +166,8 @@ public class DocketForm extends BasisForm {
      *
      * @return list of Client objects
      */
-    public List<Client> getClients() {
-        try {
-            return serviceManager.getClientService().getAll();
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
-            return new ArrayList<>();
-        }
+    public List<SelectItem> getClients() {
+        return SelectItemList.getClients();
     }
 
     /**

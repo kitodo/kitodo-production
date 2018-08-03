@@ -502,6 +502,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 20);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setSortHelperImages(30);
+        firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(serviceManager.getDocketService().getById(1));
         firstProcess.setProject(project);
         firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));

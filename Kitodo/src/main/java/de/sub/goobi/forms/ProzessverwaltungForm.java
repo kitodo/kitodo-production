@@ -45,6 +45,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
@@ -82,6 +83,7 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.forms.TemplateBaseForm;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -1603,6 +1605,32 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         }
     }
 
+    /**
+     * Get dockets for select list.
+     *
+     * @return list of dockets as SelectItem objects
+     */
+    public List<SelectItem> getDockets() {
+        return SelectItemList.getDockets();
+    }
+
+    /**
+     * Get list of projects.
+     *
+     * @return list of projects as SelectItem objects
+     */
+    public List<SelectItem> getProjects() {
+        return SelectItemList.getProjects();
+    }
+
+    /**
+     * Get rulesets for select list.
+     *
+     * @return list of rulesets as SelectItem objects
+     */
+    public List<SelectItem> getRulesets() {
+        return SelectItemList.getRulesets();
+    }
     /**
      * Get list od DTO processes.
      *
