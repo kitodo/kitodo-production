@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
@@ -217,5 +218,14 @@ public class ProjectServiceIT {
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
         assertEquals("Client names doesnt match", "First client", project.getClient().getName());
+    }
+
+    @Test
+    public void shouldGetByIds() {
+        List<Integer> projectIds = new ArrayList<>();
+        projectIds.add(1);
+        projectIds.add(2);
+        List<Project> projects = projectService.getByIds(projectIds);
+        assertEquals("Projects were not found database!", 2, projects.size());
     }
 }

@@ -11,13 +11,14 @@
 
 package org.kitodo.selenium.testframework.pages;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.kitodo.selenium.testframework.Browser;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -71,6 +72,14 @@ public class TopNavigationPage {
     @FindBy(id = "linkSystem")
     private WebElement linkSystem;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "select-session-client-form:setSessionClientButton")
+    private WebElement acceptClientSelectionButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "select-session-client-form:cancelSessionClientSelectionButton")
+    private WebElement cancelClientSelectionButton;
+
     /**
      * Hovers user menu and logs out.
      */
@@ -82,6 +91,32 @@ public class TopNavigationPage {
         hoverWebElement(logoutButton);
         logoutButton.click();
         Thread.sleep(Browser.getDelayAfterLogout());
+    }
+
+    public String getSessionClient() throws InterruptedException {
+        await("Wait for visible user menu button").atMost(20, TimeUnit.SECONDS).ignoreExceptions()
+            .untilTrue(new AtomicBoolean(userMenuButton.isDisplayed()));
+
+        hoverWebElement(userMenuButton);
+        if (!logoutButton.isDisplayed()) {
+            userMenuButton.click();
+            Thread.sleep(Browser.getDelayAfterHoverMenu());
+        }
+        WebElement element = Browser.getDriver().findElementById("sessionClient").findElement(By.tagName("b"));
+        return element.getText();
+    }
+
+    public void acceptClientSelection() throws InterruptedException {
+        acceptClientSelectionButton.click();
+        Thread.sleep(5000);
+    }
+
+    public void cancelClientSelection() {
+        cancelClientSelectionButton.click();
+    }
+
+    public boolean isClientSelectionPossible() {
+        return acceptClientSelectionButton.isEnabled();
     }
 
     /**

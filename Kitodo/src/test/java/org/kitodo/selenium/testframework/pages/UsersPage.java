@@ -33,7 +33,7 @@ public class UsersPage extends Page<UsersPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:usersTable_data")
-    private WebElement usersTableData;
+    private WebElement usersTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "usersTabView:userGroupsTable_data")
@@ -90,7 +90,7 @@ public class UsersPage extends Page<UsersPage> {
         if (isNotAt()) {
             goTo();
         }
-        return getRowsOfTable(usersTableData).size();
+        return getRowsOfTable(usersTable).size();
     }
 
     /**
@@ -221,7 +221,7 @@ public class UsersPage extends Page<UsersPage> {
                 return Pages.getUserGroupEditPage();
             }
         }
-        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+        throw new NoSuchElementException("No user group with given title was not found: " + userGroupTitle);
     }
 
     /**

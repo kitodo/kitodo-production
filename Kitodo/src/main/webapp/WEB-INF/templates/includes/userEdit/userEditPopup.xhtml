@@ -21,12 +21,14 @@
         <h:body>
             <!-- edit dialog -->
             <p:dialog widgetVar="addUserGroupDialog"
+                      id="addUserGroupDialog"
                       header="#{msgs.userGroupsAdd}"
                       width="700px"
                       modal="true"
                       dynamic="true">
                 <h:form id="userGroupForm">
                     <p:dataTable var="item"
+                                 id="selectUserGroupTable"
                                  value="#{BenutzergruppenForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"

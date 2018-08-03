@@ -77,7 +77,7 @@ public class UserGroupTypeTest {
         adminAuthorities.add(managerAuthority);
         adminAuthorities.add(userAuthority);
 
-        firstUserGroup.setGlobalAuthorities(adminAuthorities);
+        firstUserGroup.setAuthorities(adminAuthorities);
 
         firstUserGroup.setUsers(users);
         userGroups.add(firstUserGroup);
@@ -85,7 +85,7 @@ public class UserGroupTypeTest {
         UserGroup secondUserGroup = new UserGroup();
         secondUserGroup.setId(2);
         secondUserGroup.setTitle("Random");
-        secondUserGroup.setGlobalAuthorities(adminAuthorities);
+        secondUserGroup.setAuthorities(adminAuthorities);
         userGroups.add(secondUserGroup);
 
         return userGroups;

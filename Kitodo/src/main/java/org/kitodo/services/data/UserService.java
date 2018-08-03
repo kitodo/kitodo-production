@@ -37,6 +37,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.Parameters;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -249,6 +250,20 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public SecurityUserDetails getAuthenticatedUser() {
         return serviceManager.getSecurityAccessService().getAuthenticatedSecurityUserDetails();
+    }
+
+    /**
+     * Gets the session client of the current authenticated user.
+     * 
+     * @return The client object or null if no session client is set or no user is
+     *         authenticated.
+     */
+    public Client getSessionClientOfAuthenticatedUser() {
+        if (Objects.nonNull(getAuthenticatedUser())) {
+            return getAuthenticatedUser().getSessionClient();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -557,6 +572,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         userDTO.setFullName(getFullName(userDTO));
         userDTO.setFiltersSize(UserTypeField.FILTERS.getSizeOfProperty(userJSONObject));
         userDTO.setProjectsSize(UserTypeField.PROJECTS.getSizeOfProperty(userJSONObject));
+        userDTO.setClientsSize(UserTypeField.CLIENTS.getSizeOfProperty(userJSONObject));
         userDTO.setUserGroupSize(UserTypeField.USER_GROUPS.getSizeOfProperty(userJSONObject));
 
         if (!related) {
@@ -575,6 +591,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getFilterService()));
         userDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.PROJECTS.getKey(),
             serviceManager.getProjectService()));
+        userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
+            serviceManager.getClientService()));
         userDTO.setTasks(
             convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getKey(), serviceManager.getTaskService()));
         userDTO.setProcessingTasks(

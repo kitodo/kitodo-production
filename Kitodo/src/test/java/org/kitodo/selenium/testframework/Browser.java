@@ -204,6 +204,10 @@ public class Browser {
         return cells.get(columnIndex).getText();
     }
 
+    public static void closeDialog(WebElement dialog) {
+        dialog.findElement(By.className("ui-dialog-titlebar-close")).click();
+    }
+
     /**
      * Gets delayAfterLogin.
      *

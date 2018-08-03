@@ -318,11 +318,24 @@ body.first-visit #portal-header {
     background-color: #d8d8d8;
     }
 
-#header-nav #nav-user li:last-child a {
+#header-nav #nav-user li.color-orange a {
     background-color: #f94a15;
     border-color: #f94a15;
     color: #fff;
     }
+
+#header-nav #nav-user li.toggle-list {
+    background-color: #d8d8d8;
+}
+
+#header-nav #nav-user li.toggle-list a.ui-commandlink {
+    border-top: 1px solid #d3d3d3
+}
+
+#header-nav #nav-user > li > div > span > div {
+    padding: 0;
+    border-width: 0;
+}
 
 #header-nav .nav-item-col {
     width: calc(50% - 45px);
@@ -820,6 +833,58 @@ main i.fa {
     color: #d8d8d8;
     hyphens: auto;
     line-height: 22px;
+}
+
+.select-client-note {
+    background: #F94A15;
+    padding: 16px 32px 16px 32px;
+    color: #ffffff;
+    hyphens: auto;
+    line-height: 22px;
+}
+
+.client-select-dialog {
+    background: #f3f3f3;
+}
+
+.client-select-dialog > .ui-dialog-titlebar > .ui-dialog-title {
+    color: #000000;
+    font-size: 150%;
+    margin-top: 25px;
+    line-height: 150%;
+}
+
+.client-select-dialog > .ui-dialog-content {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.client-select-dialog > .ui-dialog-content > #select-session-client-form > .select-client-selector {
+    padding: 16px 32px 16px 32px;
+}
+
+#select-session-client-form > .select-client-selector > .ui-selectonemenu {
+    margin-top: 8px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#select-session-client-form > .select-client-selector > .ui-panelgrid {
+    margin-top: 20px;
+    width: 100%;
+}
+
+#select-session-client-form > .select-client-selector > .ui-panelgrid > tbody > .ui-panelgrid-even {
+    background: transparent;
+}
+
+#select-session-client-form > .select-client-selector > .ui-panelgrid > tbody > .ui-panelgrid-even > .ui-panelgrid-cell {
+    padding: 0;
+}
+
+.client-select-dialog > .ui-widget-header {
+    padding-left: 32px;
+    background: transparent;
 }
 
 /*----------------------------------------------------------------------

@@ -78,8 +78,8 @@ public class UserGroupServiceIT {
     public void shouldGetUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         assertEquals("User group title is not matching", "Admin", userGroup.getTitle());
-        assertEquals("User group first authorities title is not matching", "viewAllClients",
-            userGroup.getGlobalAuthorities().get(0).getTitle());
+        assertEquals("User group first authorities title is not matching", "viewAllClients_globalAssignable",
+            userGroup.getAuthorities().get(1).getTitle());
     }
 
     @Test
@@ -165,13 +165,13 @@ public class UserGroupServiceIT {
     @Test
     public void shouldFindManyByAuthorization() {
         await().untilAsserted(() -> assertEquals("User group was not found in index!", 2,
-            userGroupService.findByAuthorizationTitle("viewAllClients").size()));
+            userGroupService.findByAuthorizationTitle("viewAllClients_globalAssignable").size()));
     }
 
     @Test
     public void shouldFindOneByAuthorization() {
         await().untilAsserted(() -> assertEquals("User group was not found in index!", 1,
-            userGroupService.findByAuthorizationTitle("viewAllUsers").size()));
+            userGroupService.findByAuthorizationTitle("viewAllUsers_globalAssignable").size()));
     }
 
     @Test
@@ -208,16 +208,16 @@ public class UserGroupServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
-        int expected = 36;
+        int expected = 109;
         assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
     @Test
-    public void shouldGetAuthorizations() throws Exception {
+    public void shouldGetAuthorities() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> actual = userGroup.getGlobalAuthorities();
-        assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients",
-            actual.get(0).getTitle());
+        List<Authority> actual = userGroup.getAuthorities();
+        assertEquals("Permission strings doesn't match to given plain text!", "viewAllClients_globalAssignable",
+            actual.get(1).getTitle());
     }
 
     @Test
@@ -229,7 +229,7 @@ public class UserGroupServiceIT {
     }
 
     @Test
-    public void shouldGetAuthorizationForAdmin() throws Exception {
+    public void shouldGetAuthorityForAdmin() throws Exception {
         await().untilAsserted(
                 () -> assertEquals("Incorrect amount of found user groups", 1, userGroupService
                         .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true).size()));
@@ -237,13 +237,13 @@ public class UserGroupServiceIT {
         List<UserGroupDTO> userGroupDTOS = userGroupService
                 .convertJSONObjectsToDTOs(userGroupService.findByTitle("Admin", true), true);
         AuthorityDTO authorityDTO = userGroupDTOS.get(0).getAuthorities().get(0);
-        assertEquals("Incorrect authorization!", "viewAllClients", authorityDTO.getTitle());
+        assertEquals("Incorrect authority!", "admin_globalAssignable", authorityDTO.getTitle());
     }
 
     @Test
     public void shouldSaveAndRemoveAuthorizationForUserGroup() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
-        List<Authority> authorities = userGroup.getGlobalAuthorities();
+        List<Authority> authorities = userGroup.getAuthorities();
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
@@ -252,7 +252,7 @@ public class UserGroupServiceIT {
 
         authorities.add(authority);
 
-        userGroup.setGlobalAuthorities(authorities);
+        userGroup.setAuthorities(authorities);
         userGroupService.save(userGroup);
 
         userGroup = userGroupService.getById(1);

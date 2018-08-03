@@ -28,6 +28,9 @@ public class SecurityAccessService {
 
     private static SecurityAccessService instance = null;
     private static ServiceManager serviceManager = new ServiceManager();
+    private static final String GLOBAL_IDENTIFIER = "GLOBAL";
+    private static final String CLIENT_IDENTIFIER = "CLIENT";
+    private static final String PROJECT_IDENTIFIER = "PROJECT";
 
     /**
      * Return singleton variable of type SecurityAccessService.
@@ -126,7 +129,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityForProject(String authorityTitle, int projectId) {
-        String titleOfRequiredAuthority = authorityTitle + "_PROJECT_" + projectId;
+        String titleOfRequiredAuthority = authorityTitle + "_" + PROJECT_IDENTIFIER + "_" + projectId;
         return hasAuthority(titleOfRequiredAuthority);
     }
 
@@ -168,7 +171,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityForClient(String authorityTitle, int clientId) {
-        String titleOfRequiredAuthority = authorityTitle + "_CLIENT_" + clientId;
+        String titleOfRequiredAuthority = authorityTitle + "_" + CLIENT_IDENTIFIER + "_" + clientId;
         return hasAuthority(titleOfRequiredAuthority);
     }
 
@@ -203,7 +206,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority.
      */
     public boolean hasAuthorityGlobal(String authorityTitle) {
-        return hasAuthority(authorityTitle + "_GLOBAL");
+        return hasAuthority(authorityTitle + "_" + GLOBAL_IDENTIFIER);
     }
 
     /**
@@ -219,6 +222,21 @@ public class SecurityAccessService {
         String[] authorityTitlesArray = getStringArray(authorityTitles);
         for (String authorityTitle : authorityTitlesArray) {
             if (hasAuthorityGlobal(authorityTitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the current user has any authority globally.
+     * 
+     * @return True if the current user has any authority globally.
+     */
+    public boolean hasAnyAuthorityGlobal() {
+        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
+        for (GrantedAuthority grantedAuthority : authorities) {
+            if (grantedAuthority.getAuthority().contains(GLOBAL_IDENTIFIER)) {
                 return true;
             }
         }
@@ -299,7 +317,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority for any client.
      */
     public boolean hasAuthorityForAnyClient(String authorityTitle) {
-        return hasAuthority(authorityTitle + "_CLIENT_ANY");
+        return hasAuthority(authorityTitle + "_" + CLIENT_IDENTIFIER + "_ANY");
     }
 
     /**
@@ -310,7 +328,7 @@ public class SecurityAccessService {
      * @return True if the current user has the specified authority for any project.
      */
     public boolean hasAuthorityForAnyProject(String authorityTitle) {
-        return hasAuthority(authorityTitle + "_PROJECT_ANY");
+        return hasAuthority(authorityTitle + "_" + PROJECT_IDENTIFIER + "_ANY");
     }
 
     /**
@@ -390,23 +408,43 @@ public class SecurityAccessService {
      * 
      * @param authorityTitle
      *            as String
-     * @return list of Client id
+     * @return list of Client ids
      */
     public List<Integer> getClientIdListForAuthority(String authorityTitle) {
         List<Integer> clientIdList = new ArrayList<>();
-        Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
-
         if (hasAuthorityForAnyClient(authorityTitle)) {
-            for (GrantedAuthority authority : authorities) {
-                String currentAuthority = authority.getAuthority();
-                String authorityPart = authorityTitle + "_CLIENT_";
-                if (currentAuthority.contains(authorityPart) && !currentAuthority.equals(authorityPart + "ANY")) {
-                    Integer clientId = Integer.valueOf(currentAuthority.replace(authorityPart, ""));
-                    clientIdList.add(clientId);
+            Collection<? extends GrantedAuthority> authorities = getAuthoritiesOfCurrentAuthentication();
+            clientIdList = getIdsOfAuthoritiesByFilter(authorities,authorityTitle + "_" + CLIENT_IDENTIFIER + "_");
+        }
+        return clientIdList;
+    }
+
+    private List<Integer> getIdsOfAuthoritiesByFilter(Collection<? extends GrantedAuthority> authorities, String filter) {
+        List<Integer> idList = new ArrayList<>();
+        for (GrantedAuthority authority : authorities) {
+            String currentAuthority = authority.getAuthority();
+            if (currentAuthority.contains(filter) && !currentAuthority.contains(filter + "ANY")) {
+                int id = getNumberAfterLastUnderscore(currentAuthority);
+                if (!idList.contains(id)) {
+                    idList.add(getNumberAfterLastUnderscore(currentAuthority));
                 }
             }
         }
-        return clientIdList;
+        return idList;
+    }
+
+    /**
+     * Returns the last number of a string which is separated by an underscore "_"
+     * as integer. In case of more than on underscore, the last one is used.
+     * 
+     * @param string
+     *            The string which needs to have at least one underscore, e.g.
+     *            "test_123"
+     * @return The last number as int
+     */
+    private int getNumberAfterLastUnderscore(String string) {
+        String id = string.substring(string.lastIndexOf("_") + 1);
+        return Integer.valueOf(id);
     }
 
     /**
