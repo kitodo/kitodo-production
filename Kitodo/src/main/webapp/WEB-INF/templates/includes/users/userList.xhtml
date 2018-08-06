@@ -31,25 +31,19 @@
             <h:outputText value="#{item.location}"/>
         </p:column>
         <p:column headerText="#{msgs.userGroups}">
-            <ui:repeat var="usergroup"
-                       value="#{item.userGroups}"
-                       varStatus="status">
+            <ui:repeat var="usergroup" value="#{item.userGroups}" varStatus="status">
                 <h:outputText value="#{usergroup.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
         <p:column headerText="#{msgs.clients}">
-            <ui:repeat var="client"
-                       value="#{item.clients}"
-                       varStatus="status">
+            <ui:repeat var="client" value="#{item.clients}" varStatus="status">
                 <h:outputText value="#{client.name}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
         </p:column>
         <p:column headerText="#{msgs.projects}">
-            <ui:repeat var="project"
-                       value="#{item.projects}"
-                       varStatus="status">
+            <ui:repeat var="project" value="#{item.projects}" varStatus="status">
                 <h:outputText value="#{project.title}"/>
                 <h:outputText value=", " rendered="#{not status.last}"/>
             </ui:repeat>
@@ -67,7 +61,6 @@
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
-            <p:commandLink action="#{LoginForm.EinloggenAls}" title="#{msgs.userLoadProfile}"><i class="fa fa-user-plus fa-lg"/></p:commandLink>
         </p:column>
     </p:dataTable>
 </ui:composition>
