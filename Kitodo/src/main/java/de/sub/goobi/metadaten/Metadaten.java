@@ -3827,6 +3827,15 @@ public class Metadaten {
     }
 
     /**
+     * Determines whether the list of images exists.
+     *
+     * @return boolean being true when the list contains at least one image
+     */
+    public boolean isImageListExistent() {
+        return getImages().size() > 0;
+    }
+
+    /**
      * Retrieve and return physical page number of given DocStructInterface 'pageDocStruct'.
      * @param pageDocStruct DocStructInterface whose physical page number is returned.
      * @return physical page number of given DocStructInterface pageDocStruct

@@ -61,7 +61,7 @@
             </p:panel>
 
             <!-- Pages in structured view -->
-            <ui:fragment rendered="#{Metadaten.viewMode eq 'list'}">
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'list' and Metadaten.imageListExistent}">
                 <p:fieldset id="structuredPagesField">
                     <p:dataList id="structuredPages"
                                 var="structureElement"
@@ -93,7 +93,7 @@
             </ui:fragment>
 
             <!-- Pages in UNstructured view -->
-            <ui:fragment rendered="#{Metadaten.viewMode eq 'grid'}">
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'grid' and Metadaten.imageListExistent}">
                 <div class="thumbnailWrapper">
                     <ui:repeat value="#{Metadaten.images}" var="image">
                         <p:commandLink update="imagePreviewForm" rendered="#{Metadaten.isAccessGranted(image)}">
@@ -108,7 +108,7 @@
             </ui:fragment>
 
             <!-- View current page with OpenLayers -->
-            <ui:fragment rendered="#{Metadaten.viewMode eq 'preview'}">
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'preview' and Metadaten.imageListExistent}">
                 <!-- OpenLayers Kitodo custom controls -->
                 <div id="olWrapper" style="overflow-x: auto; height: 100%">
                     <div id="thumbnailStripe" style="width: 10%; display: inline-block; float: right">
