@@ -625,3 +625,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .ui-grid .ui-grid-row {
     padding: 0 8px;
 }
+
+.no-header thead {
+    display: none !important;
+}

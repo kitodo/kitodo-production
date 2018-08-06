@@ -81,11 +81,11 @@
                 </p:commandButton>
             </h:panelGroup>
 
-            <p:dataTable id="metadataTable" rendered="#{!empty Metadaten.myMetadaten}" value="#{Metadaten.myMetadaten}"
+            <p:dataTable id="metadataTable"
+                         rendered="#{!empty Metadaten.myMetadaten}"
+                         styleClass="no-header"
+                         value="#{Metadaten.myMetadaten}"
                          var="item">
-                <f:facet name="header">
-                    #{msgs.metadata}
-                </f:facet>
 
                 <p:column style="width: 75%">
                     <p:outputLabel value="#{item.typ}"/>
