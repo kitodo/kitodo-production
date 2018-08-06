@@ -77,6 +77,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
@@ -92,6 +93,7 @@ public class MockDatabase {
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
     private static Server tcpServer;
+    private static HashMap<String, Integer> removableObjectIDs;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -160,6 +162,7 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertWorkflows();
+        insertRemovableObjects();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -1360,4 +1363,53 @@ public class MockDatabase {
         session.clear();
         transaction.commit();
     }
+
+
+    private static void insertRemovableObjects() throws DataException {
+
+        removableObjectIDs = new HashMap<>();
+
+        Client client = new Client();
+        client.setName("Removable client");
+        serviceManager.getClientService().save(client);
+        removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
+
+        Docket docket = new Docket();
+        docket.setTitle("Removable docket");
+        serviceManager.getDocketService().save(docket);
+        removableObjectIDs.put(ObjectType.DOCKET.name(), docket.getId());
+
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle("Removable ruleset");
+        serviceManager.getRulesetService().save(ruleset);
+        removableObjectIDs.put(ObjectType.RULESET.name(), ruleset.getId());
+
+        User user = new User();
+        user.setName("Removable user");
+        serviceManager.getUserService().save(user);
+        removableObjectIDs.put(ObjectType.USER.name(), user.getId());
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("Removable user group");
+        serviceManager.getUserGroupService().save(userGroup);
+        removableObjectIDs.put(ObjectType.USERGROUP.name(), userGroup.getId());
+
+    }
+
+    /**
+     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of removable database objects as values.
+     * @return
+     *      HashMap containing IDs of removable instances of ObjectsTypes
+     */
+    public static HashMap<String, Integer> getRemovableObjectIDs() {
+        if (removableObjectIDs.isEmpty()) {
+            try {
+                insertRemovableObjects();
+            } catch (DataException e) {
+                logger.error("Unable to save removable objects to test database!");
+            }
+        }
+        return removableObjectIDs;
+    }
+
 }

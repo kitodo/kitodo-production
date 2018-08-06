@@ -18,7 +18,9 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -26,8 +28,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class UsersPage extends Page<UsersPage> {
 
@@ -310,44 +310,32 @@ public class UsersPage extends Page<UsersPage> {
     }
 
     /**
-     * Remove the first user in the user list on the user page.
+     * Remove user from corresponding list on user page.
      */
-    public void deleteFirstUser() throws Exception {
-        deleteFirstElement(deleteFirstUserButton, TabIndex.USERS.getIndex());
+    public void deleteRemovableUser() throws Exception {
+        deleteElement("User",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.USER.name()),
+                TabIndex.USERS.getIndex(),
+                usersTabView);
     }
 
     /**
-     * Remove the first user group in the user group list on the user page.
+     * Remove user group from corresponding list on user page.
      */
-    public void deleteFirstUserGroup() throws Exception {
-        deleteFirstElement(deleteFirstUserGroupButton, TabIndex.USER_GROUPS.getIndex());
+    public void deleteRemovableUserGroup() throws Exception {
+        deleteElement("Usergroup",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.USERGROUP.name()),
+                TabIndex.USER_GROUPS.getIndex(),
+                usersTabView);
     }
 
     /**
-     * Remove the first client in the client list on the user page.
+     * Remove client from corresponding list on user page.
      */
-    public void deleteFirstClient() throws Exception {
-        deleteFirstElement(deleteFirstClientButton, TabIndex.CLIENTS.getIndex());
-    }
-
-    /**
-     * Remove the first LDAP group in the LDAP group list on the user page.
-     */
-    public void deleteFirstLDAPGroup() throws Exception {
-        deleteFirstElement(deleteFirstLDAPGroupButton, TabIndex.LDAP_GROUPS.getIndex());
-    }
-
-    private void deleteFirstElement(WebElement button, int tabIndex) throws Exception {
-        if (!isAt()) {
-            goTo();
-        }
-        switchToTabByIndex(tabIndex);
-        button.click();
-        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
-                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
-        confirmRemoveButton.click();
-        Thread.sleep(Browser.getDelayAfterDelete());
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
-        wait.until(ExpectedConditions.urlContains(Pages.getUsersPage().getUrl()));
+    public void deleteRemovableClient() throws Exception {
+        deleteElement("Client",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.CLIENT.name()),
+                TabIndex.CLIENTS.getIndex(),
+                usersTabView);
     }
 }

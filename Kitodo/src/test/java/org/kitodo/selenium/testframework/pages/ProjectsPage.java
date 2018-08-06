@@ -19,14 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.MockDatabase;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
@@ -299,37 +299,22 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
-     * Remove the first project in the projects list on the projects page.
+     * Remove docket from corresponding list on project page.
      */
-    public void deleteFirstProject() throws Exception {
-        deleteFirstElement(deleteFirstProjectButton, TabIndex.PROJECTS.getIndex());
+    public void deleteDocket() throws Exception {
+        deleteElement("Docket",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
+                TabIndex.DOCKETS.getIndex(),
+                projectsTabView);
     }
 
     /**
-     * Remove the first docket in the docket list on the dockets page.
+     * Remove ruleset from corresponding list on project page.
      */
-    public void deleteFirstDocket() throws Exception {
-        deleteFirstElement(deleteFirstDocketButton, TabIndex.DOCKETS.getIndex());
-    }
-
-    /**
-     * Remove the first ruleset in the ruleset list on the ruleset page.
-     */
-    public void deleteFirstRuleset() throws Exception {
-        deleteFirstElement(deleteFirstRulesetButton, TabIndex.RULESETS.getIndex());
-    }
-
-    private void deleteFirstElement(WebElement deleteButton, int index) throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        switchToTabByIndex(index);
-        deleteButton.click();
-        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
-                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
-        confirmRemoveButton.click();
-        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
-        wait.until(ExpectedConditions.urlContains(Pages.getProjectsPage().getUrl()));
-
+    public void deleteRuleset() throws Exception {
+        deleteElement("Ruleset",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
+                TabIndex.RULESETS.getIndex(),
+                projectsTabView);
     }
 }
