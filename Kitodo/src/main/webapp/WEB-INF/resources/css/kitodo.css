@@ -908,6 +908,9 @@ Metadata Editor
 
 #metadataEditorWrapper {
     height: 700px;
+    margin-left: 16px;
+    margin-right: 16px;
+    width: calc(100% - 32px);
     white-space: nowrap;
 }
 
