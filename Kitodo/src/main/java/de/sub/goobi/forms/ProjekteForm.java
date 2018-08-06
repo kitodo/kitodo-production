@@ -224,17 +224,15 @@ public class ProjekteForm extends BasisForm {
         this.commitFolders();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setErrorMessage("Can not save project with empty title!");
-            return null;
         } else {
             try {
                 serviceManager.getProjectService().save(this.myProjekt);
                 Helper.setMessage("Project saved!");
-                return null;
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
-                return null;
             }
         }
+        return null;
     }
 
     /**
