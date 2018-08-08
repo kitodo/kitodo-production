@@ -110,7 +110,7 @@
                             <f:param value="#{generator.label}"/>
                         </h:outputFormat>
                     </p:outputLabel>
-                    <p:selectBooleanCheckbox id="generator" value="generator.value" class="input">
+                    <p:selectBooleanCheckbox id="generator" value="#{generator.value}" class="input">
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectBooleanCheckbox>
                 </div>
