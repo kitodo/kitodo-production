@@ -121,4 +121,18 @@ public class LdapGruppenForm extends BasisForm {
     public void setMyLdapGruppe(LdapGroup myLdapGruppe) {
         this.myLdapGruppe = myLdapGruppe;
     }
+
+    /**
+     * Set LDAP group by ID.
+     *
+     * @param ldapgroupID
+     *          ID of LDAP group to set.
+     */
+    public void setLdapGroupById(int ldapgroupID) {
+        try {
+            setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(ldapgroupID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find ldap group with ID " + ldapgroupID, logger, e);
+        }
+    }
 }

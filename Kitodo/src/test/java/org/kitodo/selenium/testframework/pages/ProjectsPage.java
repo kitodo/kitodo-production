@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.MockDatabase;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -78,6 +80,22 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    private WebElement createProcess;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:projectsTable:0:projectActionForm:deleteProject")
+    private WebElement deleteFirstProjectButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:docketTable:0:actionForm:deleteDocket")
+    private WebElement deleteFirstDocketButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:rulesetTable:0:actionForm:deleteRuleset")
+    private WebElement deleteFirstRulesetButton;
 
     public ProjectsPage() {
         super("pages/projects.jsf");
@@ -278,5 +296,25 @@ public class ProjectsPage extends Page<ProjectsPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
+    }
+
+    /**
+     * Remove docket from corresponding list on project page.
+     */
+    public void deleteDocket() throws Exception {
+        deleteElement("Docket",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
+                TabIndex.DOCKETS.getIndex(),
+                projectsTabView);
+    }
+
+    /**
+     * Remove ruleset from corresponding list on project page.
+     */
+    public void deleteRuleset() throws Exception {
+        deleteElement("Ruleset",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
+                TabIndex.RULESETS.getIndex(),
+                projectsTabView);
     }
 }

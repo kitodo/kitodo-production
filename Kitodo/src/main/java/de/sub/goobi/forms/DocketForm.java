@@ -108,22 +108,17 @@ public class DocketForm extends BasisForm {
 
     /**
      * Delete docket.
-     *
-     * @return page or empty String
      */
-    public String deleteDocket() {
+    public void deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setErrorMessage("docketInUse");
-                return null;
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
-            return null;
         }
-        return "/pages/DocketList";
     }
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {
@@ -155,6 +150,20 @@ public class DocketForm extends BasisForm {
 
     public Docket getMyDocket() {
         return this.myDocket;
+    }
+
+    /**
+     * Set docket by ID.
+     *
+     * @param docketID
+     *          ID of docket to set.
+     */
+    public void setDocketById(int docketID) {
+        try {
+            setMyDocket(serviceManager.getDocketService().getById(docketID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find docket with ID " + docketID, logger, e);
+        }
     }
 
     public void setMyDocket(Docket docket) {

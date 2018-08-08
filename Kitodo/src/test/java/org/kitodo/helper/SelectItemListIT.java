@@ -55,7 +55,7 @@ public class SelectItemListIT {
     @Test
     public void shouldGetClients() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getClients().size()));
+                () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getClients().size()));
 
         List<SelectItem> selectItems = SelectItemList.getClients();
 
@@ -64,7 +64,8 @@ public class SelectItemListIT {
 
         assertEquals("Second item is not sorted correctly!", "First client", selectItems.get(1).getLabel());
         assertEquals("Third item is not sorted correctly!", "Not used client", selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "Second client", selectItems.get(3).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "Removable client", selectItems.get(3).getLabel());
+        assertEquals("Fifth item is not sorted correctly!", "Second client", selectItems.get(4).getLabel());
 
         assertThat("Second item is not a Client type!", selectItems.get(1).getValue(), instanceOf(Client.class));
     }
@@ -72,14 +73,15 @@ public class SelectItemListIT {
     @Test
     public void shouldGetDockets() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getDockets().size()));
+                () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets().size()));
 
         List<SelectItem> selectItems = SelectItemList.getDockets();
 
-        assertEquals("First item is not sorted correctly!", "default", selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "second", selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "tester", selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "third", selectItems.get(3).getLabel());
+        assertEquals("First item is not sorted correctly!", "Removable docket", selectItems.get(0).getLabel());
+        assertEquals("Second item is not sorted correctly!", "default", selectItems.get(1).getLabel());
+        assertEquals("Third item is not sorted correctly!", "second", selectItems.get(2).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "tester", selectItems.get(3).getLabel());
+        assertEquals("Fifth item is not sorted correctly!", "third", selectItems.get(4).getLabel());
 
         assertThat("First item is not a Docket type!", selectItems.get(0).getValue(), instanceOf(Docket.class));
     }
@@ -124,13 +126,14 @@ public class SelectItemListIT {
     @Test
     public void shouldGetRulesets() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getRulesets().size()));
+                () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets().size()));
 
         List<SelectItem> selectItems = SelectItemList.getRulesets();
 
-        assertEquals("First item is not sorted correctly!", "SLUBBB", selectItems.get(0).getLabel());
-        assertEquals("Second item is not sorted correctly!", "SLUBDD", selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "SLUBHH", selectItems.get(2).getLabel());
+        assertEquals("First item is not sorted correctly!", "Removable ruleset", selectItems.get(0).getLabel());
+        assertEquals("Second item is not sorted correctly!", "SLUBBB", selectItems.get(1).getLabel());
+        assertEquals("Third item is not sorted correctly!", "SLUBDD", selectItems.get(2).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "SLUBHH", selectItems.get(3).getLabel());
 
         assertThat("First item is not a Ruleset type!", selectItems.get(0).getValue(), instanceOf(Ruleset.class));
     }

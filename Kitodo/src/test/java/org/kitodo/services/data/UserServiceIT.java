@@ -72,7 +72,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllUsers() {
         await().untilAsserted(
-            () -> assertEquals("Users were not counted correctly!", Long.valueOf(4), userService.count()));
+            () -> assertEquals("Users were not counted correctly!", Long.valueOf(5), userService.count()));
     }
 
     @Test
@@ -102,7 +102,7 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
         Long amount = userService.countDatabaseRows();
-        assertEquals("Users were not counted correctly!", Long.valueOf(4), amount);
+        assertEquals("Users were not counted correctly!", Long.valueOf(5), amount);
     }
 
     @Test
@@ -118,13 +118,13 @@ public class UserServiceIT {
     @Test
     public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
-        assertEquals("Not all users were found in database!", 4, users.size());
+        assertEquals("Not all users were found in database!", 5, users.size());
     }
 
     @Test
     public void shouldGetAllUsersInGivenRange() throws Exception {
         List<User> users = userService.getAll(2, 10);
-        assertEquals("Not all users were found in database!", 2, users.size());
+        assertEquals("Not all users were found in database!", 3, users.size());
     }
 
     @Test
@@ -422,19 +422,19 @@ public class UserServiceIT {
     @Test
     public void shouldFindAllVisibleUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllVisibleUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 5, userService.findAllVisibleUsers().size()));
 
-        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 4,
+        await().untilAsserted(() -> assertEquals("Size of users is incorrect!", 5,
             userService.findAllVisibleUsersWithRelations().size()));
     }
 
     @Test
     public void shouldFindAllActiveUsers() {
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 3, userService.findAllActiveUsers().size()));
+            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllActiveUsers().size()));
 
         await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 3, userService.findAllActiveUsersWithRelations().size()));
+            () -> assertEquals("Size of users is incorrect!", 4, userService.findAllActiveUsersWithRelations().size()));
     }
 
     @Test

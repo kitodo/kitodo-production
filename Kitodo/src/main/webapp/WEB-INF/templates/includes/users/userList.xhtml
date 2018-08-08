@@ -56,11 +56,23 @@
             </h:outputText>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-            <h:link outcome="userEdit" title="#{msgs.userEdit}"
-                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
-                <f:param name="id" value="#{item.id}"/>
-                <i class="fa fa-pencil-square-o fa-lg"/>
-            </h:link>
+            <h:form id="actionForm">
+                <h:link outcome="userEdit" title="#{msgs.userEdit}"
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUser')}">
+                    <f:param name="id" value="#{item.id}"/>
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+                <p:commandLink action="#{LoginForm.EinloggenAls}" title="#{msgs.userLoadProfile}"><i class="fa fa-user-plus fa-lg"/></p:commandLink>
+                <p:commandLink id="deleteUser"
+                               action="#{BenutzerverwaltungForm.delete}"
+                               update="usersTabView:usersTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{BenutzerverwaltungForm.userById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteUser}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:form>
         </p:column>
     </p:dataTable>
 </ui:composition>

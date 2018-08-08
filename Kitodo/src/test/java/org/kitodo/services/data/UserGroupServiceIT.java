@@ -59,19 +59,19 @@ public class UserGroupServiceIT {
     @Test
     public void shouldCountAllUserGroups() {
         await().untilAsserted(
-            () -> assertEquals("User groups were not counted correctly!", Long.valueOf(3), userGroupService.count()));
+            () -> assertEquals("User groups were not counted correctly!", Long.valueOf(4), userGroupService.count()));
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForUserGroups() throws Exception {
         Long amount = userGroupService.countDatabaseRows();
-        assertEquals("User groups were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals("User groups were not counted correctly!", Long.valueOf(4), amount);
     }
 
     @Test
     public void shouldFindAllUserGroups() {
         await().untilAsserted(
-            () -> assertEquals("Not all user's groups were found in database!", 3, userGroupService.findAll().size()));
+            () -> assertEquals("Not all user's groups were found in database!", 4, userGroupService.findAll().size()));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class UserGroupServiceIT {
     @Test
     public void shouldGetAllUserGroupsInGivenRange() throws Exception {
         List<UserGroup> userGroups = userGroupService.getAll(1, 10);
-        assertEquals("Not all user's groups were found in database!", 2, userGroups.size());
+        assertEquals("Not all user's groups were found in database!", 3, userGroups.size());
     }
 
     @Test

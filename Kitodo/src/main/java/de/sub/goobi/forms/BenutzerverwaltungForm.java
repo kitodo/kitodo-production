@@ -137,18 +137,13 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Please note that deleting a user in goobi.production will not delete the
      * user from a connected LDAP service.
      * </p>
-     *
-     * @return a string indicating the screen showing up after the command has
-     *         been performed.
      */
-    public String delete() {
+    public void delete() {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer") }, logger, e);
-            return null;
         }
-        return userListPath;
     }
 
     /**
@@ -306,6 +301,20 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.userObject = serviceManager.getUserService().getById(userObject.getId());
         } catch (DAOException e) {
             this.userObject = userObject;
+        }
+    }
+
+    /**
+     * Set user by ID.
+     *
+     * @param userID
+     *      ID of user to set.
+     */
+    public void setUserById(int userID) {
+        try {
+            setUserObject(serviceManager.getUserService().getById(userID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find user with ID " + userID, logger, e);
         }
     }
 

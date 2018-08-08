@@ -18,7 +18,9 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -68,6 +70,22 @@ public class UsersPage extends Page<UsersPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "newElementForm:newLdapGroupButton")
     private WebElement newLdapGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:usersTable:0:actionForm:deleteUser")
+    private WebElement deleteFirstUserButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:userGroupsTable:0:actionForm:deleteUsergroup")
+    private WebElement deleteFirstUserGroupButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:clientsTable:0:actionForm:deleteClient")
+    private WebElement deleteFirstClientButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "usersTabView:ldapGroupsTable:0:actionForm:deleteLdapgroup")
+    private WebElement deleteFirstLDAPGroupButton;
 
     public UsersPage() {
         super("pages/users.jsf");
@@ -289,5 +307,35 @@ public class UsersPage extends Page<UsersPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newClientButton, Pages.getClientEditPage().getUrl());
         return Pages.getClientEditPage();
+    }
+
+    /**
+     * Remove user from corresponding list on user page.
+     */
+    public void deleteRemovableUser() throws Exception {
+        deleteElement("User",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.USER.name()),
+                TabIndex.USERS.getIndex(),
+                usersTabView);
+    }
+
+    /**
+     * Remove user group from corresponding list on user page.
+     */
+    public void deleteRemovableUserGroup() throws Exception {
+        deleteElement("Usergroup",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.USERGROUP.name()),
+                TabIndex.USER_GROUPS.getIndex(),
+                usersTabView);
+    }
+
+    /**
+     * Remove client from corresponding list on user page.
+     */
+    public void deleteRemovableClient() throws Exception {
+        deleteElement("Client",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.CLIENT.name()),
+                TabIndex.CLIENTS.getIndex(),
+                usersTabView);
     }
 }
