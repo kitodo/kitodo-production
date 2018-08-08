@@ -114,7 +114,7 @@ public class Task extends BaseIndexedBean {
     private User processingUser;
 
     @ManyToOne
-    @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
+    @JoinColumn(name = "template_id", nullable = false, foreignKey = @ForeignKey(name = "FK_task_template_id"))
     private Template template;
 
     @ManyToOne
@@ -438,21 +438,20 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     @SuppressWarnings("serial")
-    @Transient
     public List<TaskGenerator> getGenerators() {
         if (this.typeGenerate == null) {
             this.typeGenerate = new ArrayList<>();
         }
         Project project = template.getProject();
         Folder source = project.getGeneratorSource();
-        return source == null ? Collections.emptyList() : new ArrayList<TaskGenerator>() {
+        return Objects.nonNull(source) ? new ArrayList<TaskGenerator>() {
             {
                 project.getFolders().stream()
                         .filter(λ -> !λ.equals(source) && (λ.getDerivative().isPresent() || λ.getDpi().isPresent()
                                 || λ.getImageScale().isPresent() || λ.getImageSize().isPresent()))
                         .map(λ -> new TaskGenerator(λ, typeGenerate)).forEach(this::add);
             }
-        };
+        } : Collections.emptyList();
     }
 
     public boolean isTypeExportRussian() {
