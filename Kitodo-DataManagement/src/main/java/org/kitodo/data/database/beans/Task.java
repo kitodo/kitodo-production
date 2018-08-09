@@ -118,7 +118,7 @@ public class Task extends BaseIndexedBean {
     private User processingUser;
 
     @ManyToOne
-    @JoinColumn(name = "template_id", nullable = false, foreignKey = @ForeignKey(name = "FK_task_template_id"))
+    @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
     private Template template;
 
     @ManyToOne
