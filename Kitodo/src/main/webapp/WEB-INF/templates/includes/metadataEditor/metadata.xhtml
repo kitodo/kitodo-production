@@ -87,15 +87,11 @@
                          value="#{Metadaten.myMetadaten}"
                          var="item">
 
-                <p:column style="width: 75%">
+                <p:column style="width: 100%">
                     <p:outputLabel value="#{item.typ}"/>
                     <p:inputTextarea value="#{item.value}" rows="2" style="width:100%;">
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
-                </p:column>
-
-                <p:column style="width: 25%; text-align: center">
-
                     <p:commandButton update="metadata:metadataTable"
                                      icon="fa fa-clipboard" immediate="true"
                                      title="#{msgs.metadataCopy}" action="#{Metadaten.copy}">
