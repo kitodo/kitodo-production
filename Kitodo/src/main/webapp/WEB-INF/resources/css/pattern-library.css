@@ -350,6 +350,12 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     display: grid;
 }
 
+.ui-inputfield.ui-selectmanymenu {
+    height: auto;
+    padding-top: .5em;
+    padding-bottom: .5em;
+}
+
 .ui-spinner-input {
     text-align: left;
 }
