@@ -93,14 +93,20 @@
                         <p:ajax event="blur"/>
                     </p:inputTextarea>
                     <p:commandButton update="metadata:metadataTable"
-                                     icon="fa fa-clipboard" immediate="true"
-                                     title="#{msgs.metadataCopy}" action="#{Metadaten.copy}">
+                                     icon="fa fa-clipboard"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     title="#{msgs.metadataCopy}"
+                                     action="#{Metadaten.copy}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                     </p:commandButton>
 
                     <p:commandButton update="metadata:metadataTable"
-                                     icon="fa fa-trash" immediate="true"
-                                     title="#{msgs.metadataDelete}" action="#{Metadaten.delete}">
+                                     icon="fa fa-trash"
+                                     immediate="true"
+                                     tabindex="-1"
+                                     title="#{msgs.metadataDelete}"
+                                     action="#{Metadaten.delete}">
                         <f:setPropertyActionListener value="#{item}" target="#{Metadaten.curMetadatum}"/>
                     </p:commandButton>
                 </p:column>
