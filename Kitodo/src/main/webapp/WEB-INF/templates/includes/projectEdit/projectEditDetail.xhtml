@@ -44,7 +44,8 @@
             <div>
                 <p:outputLabel for="client" value="#{msgs.client}"/>
                 <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjekteForm.myProjekt.client}"
-                                 disabled="#{ProjekteForm.lockedDetail}">
+                                 disabled="#{ProjekteForm.lockedDetail}"
+                                 required="#{not empty param['editForm:save']}">
                     <f:selectItems value="#{ProjekteForm.clients}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
