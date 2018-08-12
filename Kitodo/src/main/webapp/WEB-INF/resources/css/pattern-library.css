@@ -9,6 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+:root {
+    --error-border: #b94a48;
+    --error-background: #f2dede;
+}
+
 body {
     color: #1b2b36;
 }
@@ -20,6 +25,18 @@ a {
 a:hover {
     color: #004f81;
     text-decoration: underline;
+}
+
+.ui-state-error {
+    border-color: var(--error-border) !important;
+}
+
+label.ui-state-error {
+    background-color: white !important;
+}
+
+input.ui-state-error {
+    background-color: var(--error-background) !important;
 }
 
 .ui-state-hover,
