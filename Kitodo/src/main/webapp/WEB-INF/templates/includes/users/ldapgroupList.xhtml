@@ -34,10 +34,22 @@
             <h:outputText value="#{item.gidNumber}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-            <h:link outcome="ldapgroupEdit">
-                <f:param name="id" value="#{item.id}" />
-                <i class="fa fa-pencil-square-o fa-lg"/>
-            </h:link>
+            <h:form id="actionForm">
+                <h:link outcome="ldapgroupEdit">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+                <p:commandLink id="deleteLdapgroup"
+                               action="#{LdapGruppenForm.deleteLdapGroup}"
+                               title="#{msgs.delete}"
+                               update="usersTabView:ldapGroupsTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{LdapGruppenForm.ldapGroupById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteLdapgroup}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:form>
         </p:column>
     </p:dataTable>
 </ui:composition>

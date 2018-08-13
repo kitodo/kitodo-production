@@ -28,7 +28,6 @@
             <p:commandButton action="#{TemplateForm.setOrderingUp}"
                              id="orderUp"
                              update="editForm:templateTabView:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="toggleSave()"
                              icon="fa fa-long-arrow-up" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
@@ -36,7 +35,6 @@
             <p:commandButton action="#{TemplateForm.setOrderingDown}"
                              id="orderDown"
                              update="editForm:templateTabView:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                              oncomplete="toggleSave()"
                              icon="fa fa-long-arrow-down" styleClass="ui-button-small">
                 <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
@@ -53,13 +51,11 @@
         <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
             <h:link outcome="taskTemplateEdit" id="editTask"
-                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.template.project.client.id,item.template.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
-                           rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.template.project.client.id,item.template.project.id)}"
                            title="#{msgs.delete}"
                            action="#{TemplateForm.removeTask}"
                            immediate="true"
@@ -111,7 +107,6 @@
 
     <p:commandButton action="#{TemplateForm.newTask}"
                      value="#{msgs.taskAdd}"
-                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.template.project.client.id,item.template.project.id)}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
                      styleClass="button-filled-green"

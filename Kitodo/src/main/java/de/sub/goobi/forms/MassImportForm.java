@@ -183,7 +183,7 @@ public class MassImportForm extends BasisForm {
         List<Element> projectNames = project.getChildren("name");
         for (Element projectName : projectNames) {
             // all all collections to list
-            if (projectName.getText().equalsIgnoreCase(this.template.getProject().getTitle())) {
+            if (projectName.getText().equalsIgnoreCase(this.project.getTitle())) {
                 List<Element> myCols = project.getChildren("DigitalCollection");
                 for (Element digitalCollection : myCols) {
                     if (digitalCollection.getAttribute(defaultString) != null
@@ -316,8 +316,8 @@ public class MassImportForm extends BasisForm {
         if (basename.contains("\\")) {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
-        URI temporalFile = serviceManager.getFileService().createResource(FilenameUtils
-                .concat(ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
+        URI temporalFile = serviceManager.getFileService().createResource(
+            FilenameUtils.concat(ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }
@@ -391,7 +391,7 @@ public class MassImportForm extends BasisForm {
 
     private void removeImportFileNameFromSelectedFileNames(ImportObject io) {
         URI importFileName = io.getImportFileName();
-        Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage()});
+        Helper.setErrorMessage("importFailedError", new Object[] {io.getProcessTitle(), io.getErrorMessage() });
         if (Objects.nonNull(importFileName) && !serviceManager.getFileService().getFileName(importFileName).isEmpty()
                 && selectedFilenames != null && !selectedFilenames.isEmpty()) {
             selectedFilenames.remove(importFileName.getRawPath());
@@ -485,7 +485,7 @@ public class MassImportForm extends BasisForm {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("errorReading", new Object[]{Helper.getTranslation(OPAC_CONFIG)}, logger, e);
+            Helper.setErrorMessage("errorReading", new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
         return allOpacCatalogues;
     }

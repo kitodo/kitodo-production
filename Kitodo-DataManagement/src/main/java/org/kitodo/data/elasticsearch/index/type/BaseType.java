@@ -96,6 +96,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
                         jsonObject.add(ProcessTypeField.TITLE.getKey(), preventNull(((BaseTemplateBean) property).getTitle()));
                     } else if (property instanceof Project) {
                         jsonObject.add(ProjectTypeField.TITLE.getKey(), preventNull(((Project) property).getTitle()));
+                        jsonObject.add(ProjectTypeField.ACTIVE.getKey(), ((Project) property).isActive());
                     } else if (property instanceof User) {
                         jsonObject.add(UserTypeField.LOGIN.getKey(), preventNull(((User) property).getLogin()));
                         jsonObject.add(UserTypeField.NAME.getKey(), preventNull(((User) property).getName()));

@@ -45,6 +45,14 @@ public abstract class Page<T> {
     @FindBy(className = "ui-messages-error-summary")
     private WebElement errorMessage;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "yesButton")
+    WebElement confirmRemoveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "noButton")
+    WebElement cancelRemoveButton;
+
     private String URL;
 
     Page(String URL) {
@@ -166,4 +174,18 @@ public abstract class Page<T> {
     Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
         return !webElement.getAttribute("value").equals("");
     };
+
+    void deleteElement(String objectType, int removableID, int tabIndex, WebElement tabView) throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        switchToTabByIndex(tabIndex, tabView);
+        Browser.getDriver().findElement(By.xpath("//a[@href='/kitodo/pages/" + objectType.toLowerCase() + "Edit.jsf?id=" + removableID + "']/following-sibling::a[@id[contains(., 'delete" + objectType + "')]]")).click();
+        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
+                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
+        confirmRemoveButton.click();
+        Thread.sleep(Browser.getDelayAfterDelete());
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);
+        wait.until(ExpectedConditions.urlContains(getUrl()));
+    }
 }

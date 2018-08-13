@@ -97,7 +97,7 @@ public class TemplateDAO extends BaseDAO<Template> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("projects", projects);
         return getByQuery(
-            "SELECT t FROM Template AS t JOIN t.project AS p WHERE p.id IN (:projects) ORDER BY t.title ASC",
+            "SELECT t FROM Template AS t JOIN t.projects AS p WHERE p.id IN (:projects) ORDER BY t.title ASC",
             parameters);
     }
 
@@ -107,6 +107,6 @@ public class TemplateDAO extends BaseDAO<Template> {
      * @return list of all active templates as Template objects
      */
     public List<Template> getActiveTemplates() {
-        return getByQuery("SELECT t FROM Template AS t INNER JOIN t.project AS p WHERE p.active = 1");
+        return getByQuery("SELECT t FROM Template AS t INNER JOIN t.projects AS p WHERE p.active = 1");
     }
 }

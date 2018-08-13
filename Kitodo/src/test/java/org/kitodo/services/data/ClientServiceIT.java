@@ -49,7 +49,7 @@ public class ClientServiceIT {
     @Test
     public void shouldGetAllClients() throws Exception {
         List<Client> clients = clientService.getAll();
-        assertEquals("Clients were not found database!", 3, clients.size());
+        assertEquals("Clients were not found database!", 4, clients.size());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ClientServiceIT {
     @Test
     public void shouldFindAllClients() {
         await().untilAsserted(
-            () -> assertEquals("Not all clients were found in database!", 3, clientService.findAll().size()));
+            () -> assertEquals("Not all clients were found in database!", 4, clientService.findAll().size()));
     }
 
     @Test

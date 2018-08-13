@@ -32,7 +32,6 @@ public class WorkflowFormTest {
 
     private static FileService fileService = new ServiceManager().getFileService();
 
-
     @BeforeClass
     public static void createDiagrams() throws Exception {
         fileService.createDirectory(URI.create(""), "diagrams");
@@ -90,13 +89,16 @@ public class WorkflowFormTest {
                 "  </bpmn:process>\n" +
                 "</bpmn:definitions>\n";
 
+        URI xmlDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml").toURI();
+
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setXmlDiagram(xmlDiagram);
         modelerForm.setWorkflow(new Workflow("test", "test"));
-        modelerForm.saveXMLDiagram();
+        modelerForm.saveFile(xmlDiagramURI, xmlDiagram);
 
         assertEquals("Diagram XML was not saved!", xmlDiagram, modelerForm.getXmlDiagram());
-        assertTrue("Diagram SVG was not saved!", new File(ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml").exists());
+        assertTrue("Diagram SVG was not saved!",
+            new File(ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml").exists());
     }
 
     @Test
@@ -165,12 +167,15 @@ public class WorkflowFormTest {
                 "stroke: white; stroke-width: 15px;\"/><rect x=\"-6\" y=\"-6\" width=\"12\" height=\"24\" " +
                 "class=\"djs-outline\" style=\"fill: none;\"/></g></g></svg>";
 
+        URI svgDiagramURI = new File(ConfigCore.getKitodoDiagramDirectory() + "testSVG.svg").toURI();
+
         WorkflowForm modelerForm = new WorkflowForm();
         modelerForm.setSvgDiagram(svgDiagram);
         modelerForm.setWorkflow(new Workflow("test", "testSVG"));
-        modelerForm.saveSVGDiagram();
+        modelerForm.saveFile(svgDiagramURI, svgDiagram);
 
         assertEquals("Diagram SVG was not saved!", svgDiagram, modelerForm.getSvgDiagram());
-        assertTrue("Diagram SVG was not saved!", new File(ConfigCore.getKitodoDiagramDirectory() + "testSVG.svg").exists());
+        assertTrue("Diagram SVG was not saved!",
+            new File(ConfigCore.getKitodoDiagramDirectory() + "testSVG.svg").exists());
     }
 }

@@ -17,12 +17,6 @@
         <!--import="java.io.PrintWriter,java.util.List,org.apache.myfaces.shared_tomahawk.util.ExceptionUtils"-->
         <!--isErrorPage="true" %>-->
 
-<!-- ########################################
-
-        Startseite
-
-        #########################################-->
-
 <html
     xmlns="http://www.w3.org/1999/xhtml"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
@@ -31,17 +25,10 @@
     xmlns:t="http://myfaces.apache.org/tomahawk"
     >
     <f:view locale="#{SpracheForm.locale}">
-        <ui:include src="inc/head.xhtml" />
         <h:body>
-            <table class="headTable" cellspacing="0" cellpadding="0"
-                       style="padding-left:5px;padding-right:5px;margin-top:5px;">
-                <ui:include src="inc/tbl_Kopf.xhtml" />
-            </table>
-            <table cellspacing="5" cellpadding="0" class="layoutTable"
-                       align="center">
+            <table cellspacing="5" cellpadding="0" class="layoutTable" align="center">
 
                 <tr>
-                    <ui:include src="/pages/inc/tbl_Navigation.xhtml"/>
                     <td valign="top" class="layoutInhalt">
 
                         <!-- ++++++++++++++++     Inhalt      ++++++++++++++++ -->
@@ -126,7 +113,6 @@
 
                     </td>
                 </tr>
-                <ui:include src="/pages/inc/tbl_Fuss.xhtml"/>
             </table>
 
             <script language="javascript" type="text/javascript">

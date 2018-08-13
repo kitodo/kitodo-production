@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -37,6 +38,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
@@ -106,22 +108,17 @@ public class DocketForm extends BasisForm {
 
     /**
      * Delete docket.
-     *
-     * @return page or empty String
      */
-    public String deleteDocket() {
+    public void deleteDocket() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setErrorMessage("docketInUse");
-                return null;
             } else {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
-            return null;
         }
-        return "/pages/DocketList";
     }
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {
@@ -155,6 +152,20 @@ public class DocketForm extends BasisForm {
         return this.myDocket;
     }
 
+    /**
+     * Set docket by ID.
+     *
+     * @param docketID
+     *          ID of docket to set.
+     */
+    public void setDocketById(int docketID) {
+        try {
+            setMyDocket(serviceManager.getDocketService().getById(docketID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find docket with ID " + docketID, logger, e);
+        }
+    }
+
     public void setMyDocket(Docket docket) {
         this.myDocket = docket;
     }
@@ -164,13 +175,8 @@ public class DocketForm extends BasisForm {
      *
      * @return list of Client objects
      */
-    public List<Client> getClients() {
-        try {
-            return serviceManager.getClientService().getAll();
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
-            return new ArrayList<>();
-        }
+    public List<SelectItem> getClients() {
+        return SelectItemList.getClients();
     }
 
     /**
