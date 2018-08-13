@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
@@ -43,6 +42,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
@@ -111,7 +111,6 @@ public class BenutzerverwaltungForm extends BasisForm {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
-
             } else {
                 Helper.setErrorMessage("loginInUse");
                 return null;
@@ -138,18 +137,13 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Please note that deleting a user in goobi.production will not delete the
      * user from a connected LDAP service.
      * </p>
-     *
-     * @return a string indicating the screen showing up after the command has
-     *         been performed.
      */
-    public String delete() {
+    public void delete() {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("benutzer") }, logger, e);
-            return null;
         }
-        return userListPath;
     }
 
     /**
@@ -167,12 +161,10 @@ public class BenutzerverwaltungForm extends BasisForm {
                 }
             }
             this.userObject.setUserGroups(neu);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
-            return null;
         }
-
+        return null;
     }
 
     /**
@@ -194,7 +186,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {Helper.getTranslation("userGroup"), userGroupId }, logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
         }
@@ -215,7 +206,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -241,10 +231,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("client"), clientId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }
@@ -263,10 +251,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }
@@ -290,10 +276,8 @@ public class BenutzerverwaltungForm extends BasisForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation("project"), projectId },
                 logger, e);
-            return null;
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return null;
         }
         return null;
     }
@@ -317,6 +301,20 @@ public class BenutzerverwaltungForm extends BasisForm {
             this.userObject = serviceManager.getUserService().getById(userObject.getId());
         } catch (DAOException e) {
             this.userObject = userObject;
+        }
+    }
+
+    /**
+     * Set user by ID.
+     *
+     * @param userID
+     *      ID of user to set.
+     */
+    public void setUserById(int userID) {
+        try {
+            setUserObject(serviceManager.getUserService().getById(userID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find user with ID " + userID, logger, e);
         }
     }
 
@@ -348,12 +346,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Ldap-Konfiguration - get LDAP group choice list.
      */
     public List<SelectItem> getLdapGruppeAuswahlListe() {
-        List<SelectItem> myLdapGruppen = new ArrayList<>();
-        List<LdapGroup> temp = serviceManager.getLdapGroupService().getByQuery("from LdapGroup ORDER BY title");
-        for (LdapGroup gru : temp) {
-            myLdapGruppen.add(new SelectItem(gru.getId(), gru.getTitle(), null));
-        }
-        return myLdapGruppen;
+        return SelectItemList.getLdapGroups();
     }
 
     /**

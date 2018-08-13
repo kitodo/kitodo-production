@@ -207,7 +207,7 @@ public class ProjectServiceIT {
         ProjectService projectService = new ServiceManager().getProjectService();
 
         Project initialProject = projectService.getById(1);
-        Project duplicatedProject = projectService.duplicateProject(1);
+        Project duplicatedProject = projectService.duplicateProject(initialProject);
 
         assertEquals(
             "DMS export file format of duplicated project does not match DMS export file format of original project!",

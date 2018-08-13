@@ -622,10 +622,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            true or false
      * @return query as QueryBuilder
      */
-    public QueryBuilder getQueryProjectActive(boolean active) throws DataException {
-        List<ProjectDTO> projects = serviceManager.getProjectService().findByActive(active, true);
-        return createSetQuery(ProcessTypeField.PROJECT_ID.getKey(),
-            serviceManager.getFilterService().collectIds(projects), true);
+    public QueryBuilder getQueryProjectActive(boolean active) {
+        return createSimpleQuery(ProcessTypeField.PROJECT_ACTIVE.getKey(), active, true);
     }
 
     /**
@@ -2180,8 +2178,10 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setName(folder.getFileGroup());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
         virtualFileGroup.setMimetype(folder.getMimeType());
-        virtualFileGroup.setFileSuffix(
-            folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
+        if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
+            virtualFileGroup.setFileSuffix(
+                    folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
+        }
         return virtualFileGroup;
     }
 

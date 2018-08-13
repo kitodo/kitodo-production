@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -32,7 +31,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -310,10 +308,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *
      * @return the duplicated Project
      */
-    public Project duplicateProject(Integer itemId) throws DAOException {
+    public Project duplicateProject(Project baseProject) {
         Project duplicatedProject = new Project();
-
-        Project baseProject = getById(itemId);
 
         // Project _title_ should explicitly _not_ be duplicated!
         duplicatedProject.setStartDate(baseProject.getStartDate());
@@ -366,17 +362,6 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         duplicatedProject.setFolders(duplicatedFolders);
 
         return duplicatedProject;
-    }
-
-    /**
-     * Return a string containing a comma separated list of process templates
-     * associated with this project.
-     *
-     * @return process templates associated with this project
-     */
-    public String getProjectTemplatesTitlesAsString(int id) throws DAOException {
-        Project project = serviceManager.getProjectService().getById(id);
-        return String.join(", ", project.getTemplates().stream().map(Template::getTitle).collect(Collectors.toList()));
     }
 
     /**

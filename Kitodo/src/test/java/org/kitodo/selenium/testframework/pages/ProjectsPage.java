@@ -15,9 +15,12 @@ import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.MockDatabase;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
@@ -27,16 +30,19 @@ import org.openqa.selenium.support.FindBy;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
+    private static final String PROJECTS_TABLE = "projectsTabView:projectsTable";
+    private static final String TEMPLATE_TABLE = "projectsTabView:templateTable";
+
     @SuppressWarnings("unused")
     @FindBy(id = "projectsTabView")
     private WebElement projectsTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:projectsTable_data")
+    @FindBy(id = PROJECTS_TABLE + "_data")
     private WebElement projectsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:templateTable_data")
+    @FindBy(id = TEMPLATE_TABLE + "_data")
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
@@ -74,6 +80,22 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    private WebElement createProcess;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:projectsTable:0:projectActionForm:deleteProject")
+    private WebElement deleteFirstProjectButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:docketTable:0:actionForm:deleteDocket")
+    private WebElement deleteFirstDocketButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "projectsTabView:rulesetTable:0:actionForm:deleteRuleset")
+    private WebElement deleteFirstRulesetButton;
 
     public ProjectsPage() {
         super("pages/projects.jsf");
@@ -183,24 +205,26 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public void createNewProcess() {
         int index = triggerRowToggle(templatesTable, "First template");
-        Browser.getDriver().findElement(By.id("projectsTabView:templateTable:" + index + ":templateDetailTable"));
+        WebElement createProcess = Browser.getDriver()
+                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":createProcessForm:projects:0:createProcess"));
+        createProcess.click();
     }
 
     public List<String> getProjectDetails() {
         int index = triggerRowToggle(projectsTable, "First project");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id("projectsTabView:projectsTable:" + index + ":projectDetailTable"));
+                .findElement(By.id(PROJECTS_TABLE + ":" + index + ":projectDetailTable"));
         return getTableDataByColumn(detailsTable, 1);
     }
 
     public List<String> getTemplateDetails() {
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id("projectsTabView:templateTable:" + index + ":templateDetailTable"));
-        List<String> details = getTableDataByColumn(detailsTable, 1);
-        //TODO: find out why it reads data for index 3 and after that throws NPE
+                .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":templateDetailTable"));
+        //TODO: find way to read this table without excpetion...
+        //List<String> details = getTableDataByColumn(detailsTable, 1);
         //details.addAll(getTableDataByColumn(detailsTable, 3));
-        return details;
+        return new ArrayList<>();
     }
 
     /**
@@ -272,5 +296,25 @@ public class ProjectsPage extends Page<ProjectsPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
+    }
+
+    /**
+     * Remove docket from corresponding list on project page.
+     */
+    public void deleteDocket() throws Exception {
+        deleteElement("Docket",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
+                TabIndex.DOCKETS.getIndex(),
+                projectsTabView);
+    }
+
+    /**
+     * Remove ruleset from corresponding list on project page.
+     */
+    public void deleteRuleset() throws Exception {
+        deleteElement("Ruleset",
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
+                TabIndex.RULESETS.getIndex(),
+                projectsTabView);
     }
 }

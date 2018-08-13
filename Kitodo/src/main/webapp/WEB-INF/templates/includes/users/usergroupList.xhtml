@@ -28,11 +28,23 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
-            <h:link outcome="usergroupEdit" title="#{msgs.userGroupEdit}"
-                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUserGroup')}">
-                <f:param name="id" value="#{item.id}" />
-                <i class="fa fa-pencil-square-o fa-lg"/>
-            </h:link>
+            <h:form id="actionForm">
+                <h:link outcome="usergroupEdit" title="#{msgs.userGroupEdit}"
+                        rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewUserGroup')}">
+                    <f:param name="id" value="#{item.id}" />
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+                <p:commandLink id="deleteUsergroup"
+                               action="#{BenutzergruppenForm.delete}"
+                               title="#{msgs.delete}"
+                               update="usersTabView:userGroupsTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{BenutzergruppenForm.userGroupById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteUsergroup}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:form>
         </p:column>
     </p:dataTable>
 </ui:composition>

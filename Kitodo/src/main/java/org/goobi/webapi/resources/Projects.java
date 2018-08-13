@@ -51,10 +51,12 @@ public class Projects {
         try {
             List<Template> processTemplates = new ServiceManager().getTemplateService().getAll();
             for (Template processTemplate : processTemplates) {
-                Project project = processTemplate.getProject();
-                Set<Template> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
-                templates.add(processTemplate);
-                data.put(project, templates);
+                List<Project> projects = processTemplate.getProjects();
+                for (Project project : projects) {
+                    Set<Template> templates = data.containsKey(project) ? data.get(project) : new HashSet<>();
+                    templates.add(processTemplate);
+                    data.put(project, templates);
+                }
             }
             List<Project> result = new ArrayList<>();
             for (Map.Entry<Project, Set<Template>> entry : data.entrySet()) {

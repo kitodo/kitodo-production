@@ -781,7 +781,7 @@ main i.fa {
     margin-bottom: 1.3em;
 }
 
-#login-section input[type=text], #login-section input[type=password] {
+#login-section input[id=username], #login-section input[type=password] {
     border: 1px solid #0071bc;
     border-radius: 3px;
     padding: 10px;

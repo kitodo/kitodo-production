@@ -16,7 +16,8 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:o="http://omnifaces.org/ui">
 
     <f:view locale="#{SpracheForm.locale}">
         <h:head>
@@ -66,6 +67,7 @@
                 <p:commandButton id="noButton" value="#{msgs.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
             </p:confirmDialog>
             <ui:insert name="dialog"/>
+            <o:highlight styleClass="ui-state-error" />
         </h:body>
     </f:view>
 </html>

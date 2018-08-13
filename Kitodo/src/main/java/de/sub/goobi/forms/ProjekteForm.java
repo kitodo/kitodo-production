@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
 
@@ -37,12 +38,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -62,6 +64,7 @@ public class ProjekteForm extends BasisForm {
      * decades ago and has been maintained until today.
      */
     private Folder myFolder;
+    private Project baseProject;
     private transient ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting folders
@@ -73,6 +76,7 @@ public class ProjekteForm extends BasisForm {
     private boolean lockedDetail;
     private boolean lockedMets;
     private boolean lockedTechnical;
+    private boolean copyTemplates;
     private static final String PROJECT = "project";
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
@@ -165,8 +169,10 @@ public class ProjekteForm extends BasisForm {
         setLockedDetail(false);
         setLockedTechnical(false);
         setLockedMets(false);
+        setCopyTemplates(true);
         try {
-            this.myProjekt = serviceManager.getProjectService().duplicateProject(itemId);
+            this.baseProject = serviceManager.getProjectService().getById(itemId);
+            this.myProjekt = serviceManager.getProjectService().duplicateProject(baseProject);
             return projectEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage("unableToDuplicateProject", logger, e);
@@ -189,6 +195,13 @@ public class ProjekteForm extends BasisForm {
             return null;
         } else {
             try {
+                if (this.copyTemplates) {
+                    for (Template template : this.baseProject.getTemplates()) {
+                        template.getProjects().add(this.myProjekt);
+                        this.myProjekt.getTemplates().add(template);
+                    }
+                    setCopyTemplates(false);
+                }
                 serviceManager.getProjectService().save(this.myProjekt);
                 return projectListPath;
             } catch (DataException e) {
@@ -208,37 +221,30 @@ public class ProjekteForm extends BasisForm {
         this.commitFolders();
         if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
             Helper.setErrorMessage("Can not save project with empty title!");
-            return null;
         } else {
             try {
                 serviceManager.getProjectService().save(this.myProjekt);
                 Helper.setMessage("Project saved!");
-                return null;
             } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
-                return null;
             }
         }
+        return null;
     }
 
     /**
      * Remove.
-     *
-     * @return String
      */
-    public String delete() {
+    public void delete() {
         if (!this.myProjekt.getUsers().isEmpty()) {
             Helper.setErrorMessage("userAssignedError");
-            return null;
         } else {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
-                return null;
             }
         }
-        return projectListPath;
     }
 
     /**
@@ -299,6 +305,20 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
+     * Set project by ID.
+     *
+     * @param projectID
+     *          ID of project to set.
+     */
+    public void setProjectById(int projectID) {
+        try {
+            setMyProjekt(serviceManager.getProjectService().getById(projectID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find project with ID " + projectID, logger, e);
+        }
+    }
+
+    /**
      * Getter for lockedDetail.
      *
      * @return the lockedDetail
@@ -353,6 +373,25 @@ public class ProjekteForm extends BasisForm {
      */
     public void setLockedTechnical(boolean lockedTechnical) {
         this.lockedTechnical = lockedTechnical;
+    }
+
+
+    /**
+     * Set copy templates.
+     *
+     * @param copyTemplates as boolean
+     */
+    public void setCopyTemplates(boolean copyTemplates) {
+        this.copyTemplates = copyTemplates;
+    }
+
+    /**
+     * Get copy templates.
+     *
+     * @return value of copy templates
+     */
+    public boolean isCopyTemplates() {
+        return copyTemplates;
     }
 
     /**
@@ -513,33 +552,11 @@ public class ProjekteForm extends BasisForm {
     }
 
     /**
-     * Return the template titles of the project with the given ID "id".
-     *
-     * @param id
-     *            ID of the project for which the template titles are returned.
-     * @return String containing the templates titles of the project with the
-     *         given ID
-     */
-    public String getProjectTemplateTitles(int id) {
-        try {
-            return serviceManager.getProjectService().getProjectTemplatesTitlesAsString(id);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("unableToRetrieveTemplates", logger, e);
-            return null;
-        }
-    }
-
-    /**
      * Gets all available clients.
      *
      * @return The list of clients.
      */
-    public List<Client> getClients() {
-        try {
-            return serviceManager.getClientService().getAll();
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
-            return new ArrayList<>();
-        }
+    public List<SelectItem> getClients() {
+        return SelectItemList.getClients();
     }
 }

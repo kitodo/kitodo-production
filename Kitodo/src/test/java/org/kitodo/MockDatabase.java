@@ -77,6 +77,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
@@ -92,6 +93,7 @@ public class MockDatabase {
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static final ServiceManager serviceManager = new ServiceManager();
     private static Server tcpServer;
+    private static HashMap<String, Integer> removableObjectIDs;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -160,6 +162,7 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertWorkflows();
+        insertRemovableObjects();
     }
 
     public static void insertProcessesForWorkflowFull() throws DAOException, DataException {
@@ -502,6 +505,7 @@ public class MockDatabase {
         LocalDate localDate = new LocalDate(2017, 1, 20);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setSortHelperImages(30);
+        firstProcess.setInChoiceListShown(true);
         firstProcess.setDocket(serviceManager.getDocketService().getById(1));
         firstProcess.setProject(project);
         firstProcess.setRuleset(serviceManager.getRulesetService().getById(1));
@@ -538,7 +542,7 @@ public class MockDatabase {
         firstTemplate.setCreationDate(localDate.toDate());
         firstTemplate.setInChoiceListShown(true);
         firstTemplate.setDocket(serviceManager.getDocketService().getById(2));
-        firstTemplate.setProject(project);
+        firstTemplate.getProjects().add(project);
         firstTemplate.setRuleset(serviceManager.getRulesetService().getById(2));
         serviceManager.getTemplateService().save(firstTemplate);
 
@@ -550,7 +554,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 2, 10);
         secondTemplate.setCreationDate(localDate.toDate());
         secondTemplate.setDocket(serviceManager.getDocketService().getById(1));
-        secondTemplate.setProject(thirdProject);
+        secondTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(secondTemplate);
         secondTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         secondTemplate.setInChoiceListShown(true);
@@ -564,7 +568,7 @@ public class MockDatabase {
         localDate = new LocalDate(2018, 2, 10);
         thirdTemplate.setCreationDate(localDate.toDate());
         thirdTemplate.setDocket(serviceManager.getDocketService().getById(1));
-        thirdTemplate.setProject(thirdProject);
+        thirdTemplate.getProjects().add(thirdProject);
         thirdProject.getTemplates().add(thirdTemplate);
         thirdTemplate.setRuleset(serviceManager.getRulesetService().getById(1));
         thirdTemplate.setInChoiceListShown(true);
@@ -611,7 +615,7 @@ public class MockDatabase {
         template.setCreationDate(localDate.toDate());
         template.setInChoiceListShown(true);
         template.setDocket(serviceManager.getDocketService().getById(1));
-        template.setProject(project);
+        template.getProjects().add(project);
         template.setRuleset(serviceManager.getRulesetService().getById(1));
         serviceManager.getTemplateService().save(template);
     }
@@ -1359,4 +1363,53 @@ public class MockDatabase {
         session.clear();
         transaction.commit();
     }
+
+
+    private static void insertRemovableObjects() throws DataException {
+
+        removableObjectIDs = new HashMap<>();
+
+        Client client = new Client();
+        client.setName("Removable client");
+        serviceManager.getClientService().save(client);
+        removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
+
+        Docket docket = new Docket();
+        docket.setTitle("Removable docket");
+        serviceManager.getDocketService().save(docket);
+        removableObjectIDs.put(ObjectType.DOCKET.name(), docket.getId());
+
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle("Removable ruleset");
+        serviceManager.getRulesetService().save(ruleset);
+        removableObjectIDs.put(ObjectType.RULESET.name(), ruleset.getId());
+
+        User user = new User();
+        user.setName("Removable user");
+        serviceManager.getUserService().save(user);
+        removableObjectIDs.put(ObjectType.USER.name(), user.getId());
+
+        UserGroup userGroup = new UserGroup();
+        userGroup.setTitle("Removable user group");
+        serviceManager.getUserGroupService().save(userGroup);
+        removableObjectIDs.put(ObjectType.USERGROUP.name(), userGroup.getId());
+
+    }
+
+    /**
+     * Return HashMap containing ObjectTypes as keys and Integers denoting IDs of removable database objects as values.
+     * @return
+     *      HashMap containing IDs of removable instances of ObjectsTypes
+     */
+    public static HashMap<String, Integer> getRemovableObjectIDs() {
+        if (removableObjectIDs.isEmpty()) {
+            try {
+                insertRemovableObjects();
+            } catch (DataException e) {
+                logger.error("Unable to save removable objects to test database!");
+            }
+        }
+        return removableObjectIDs;
+    }
+
 }

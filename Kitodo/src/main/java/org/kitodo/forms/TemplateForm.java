@@ -17,7 +17,6 @@ import de.sub.goobi.helper.Helper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,9 +33,9 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.Reader;
@@ -210,7 +209,7 @@ public class TemplateForm extends TemplateBaseForm {
 
             try {
                 serviceManager.getTemplateService().save(this.template);
-            } catch (DataException e) {
+            } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
             }
         } else {
@@ -225,9 +224,11 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        save();
-        serviceManager.getTemplateService().evict(this.template);
-        this.template = null;
+        try {
+            save();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
         return templateListPath;
     }
 
@@ -295,7 +296,33 @@ public class TemplateForm extends TemplateBaseForm {
             return serviceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getFileName());
         }
         return serviceManager.getTemplateService().getTasksDiagram("");
+    }
 
+    /**
+     * Get list of dockets for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    public List<SelectItem> getDockets() {
+        return SelectItemList.getDockets();
+    }
+
+    /**
+     * Get list of projects for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    public List<SelectItem> getProjects() {
+        return SelectItemList.getProjects();
+    }
+
+    /**
+     * Get list of rulesets for select list.
+     *
+     * @return list of SelectItem objects
+     */
+    public List<SelectItem> getRulesets() {
+        return SelectItemList.getRulesets();
     }
 
     /**
@@ -304,12 +331,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return list of SelectItem objects
      */
     public List<SelectItem> getWorkflows() {
-        List<SelectItem> workflows = new ArrayList<>();
-        List<Workflow> temp = serviceManager.getWorkflowService().getAvailableWorkflows();
-        for (Workflow workflow : temp) {
-            workflows.add(new SelectItem(workflow, workflow.getTitle(), null));
-        }
-        return workflows;
+        return SelectItemList.getWorkflows();
     }
 
     /**
@@ -327,7 +349,7 @@ public class TemplateForm extends TemplateBaseForm {
             } else {
                 newTemplate();
             }
-            setSaveDisabled(true);
+            setSaveDisabled(false);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("template"), id }, logger, e);
         }

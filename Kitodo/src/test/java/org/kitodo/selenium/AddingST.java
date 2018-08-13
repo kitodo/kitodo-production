@@ -154,9 +154,7 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
-        Pages.getUsersPage().createNewLdapGroup().insertLdapGroupData(ldapGroup);
-
-        Pages.getLdapGroupEditPage().save();
+        Pages.getUsersPage().createNewLdapGroup().insertLdapGroupData(ldapGroup).save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
         boolean ldapGroupAvailable = Pages.getUsersPage().getLdapGroupNames().contains(ldapGroup.getTitle());
@@ -170,11 +168,9 @@ public class AddingST extends BaseTestSelenium {
     public void addClientTest() throws Exception {
         Client client = new Client();
         client.setName("MockClient");
-        Pages.getUsersPage().switchToTabByIndex(TabIndex.CLIENTS.getIndex()).createNewClient()
-                .insertClientData(client).save();
+        Pages.getUsersPage().createNewClient().insertClientData(client).save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
-        boolean clientAvailable = Pages.getUsersPage().switchToTabByIndex(TabIndex.CLIENTS.getIndex())
-                .getClientNames().contains(client.getName());
+        boolean clientAvailable = Pages.getUsersPage().getClientNames().contains(client.getName());
         assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
 
@@ -183,18 +179,16 @@ public class AddingST extends BaseTestSelenium {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
 
-        Pages.getUsersPage().goTo().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex()).createNewUserGroup()
-                .setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities().assignAllClientAuthorities()
-                .assignAllProjectAuthorities();
+        Pages.getUsersPage().createNewUserGroup().setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
+                .assignAllClientAuthorities().assignAllProjectAuthorities();
 
         Pages.getUserGroupEditPage().save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
-        List<String> userGroupTitles = Pages.getUsersPage().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex())
-                .getUserGroupTitles();
+        List<String> userGroupTitles = Pages.getUsersPage().getUserGroupTitles();
         assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
-        int assignedGlobalAuthorities = Pages.getUsersPage().switchToTabByIndex(TabIndex.USER_GROUPS.getIndex())
+        int assignedGlobalAuthorities = Pages.getUsersPage()
                 .editUserGroup(userGroup.getTitle()).countAssignedGlobalAuthorities();
         assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
             assignedGlobalAuthorities);

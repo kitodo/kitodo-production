@@ -27,16 +27,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 
@@ -169,17 +170,26 @@ public class RulesetForm extends BasisForm {
     }
 
     /**
+     * Set ruleset by ID.
+     *
+     * @param rulesetID
+     *          ID of the ruleset to set.
+     */
+    public void setRulesetById(int rulesetID) {
+        try {
+            setRuleset(serviceManager.getRulesetService().getById(rulesetID));
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find ruleset with ID " + rulesetID, logger, e);
+        }
+    }
+
+    /**
      * Get all available clients.
      *
      * @return list of Client objects
      */
-    public List<Client> getClients() {
-        try {
-            return serviceManager.getClientService().getAll();
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("clients") }, logger, e);
-            return new ArrayList<>();
-        }
+    public List<SelectItem> getClients() {
+        return SelectItemList.getClients();
     }
 
     /**
@@ -197,6 +207,21 @@ public class RulesetForm extends BasisForm {
         } catch (IOException e) {
             Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("rulesets")}, logger, e);
             return new ArrayList();
+        }
+    }
+
+    /**
+     * Delete ruleset.
+     */
+    public void deleteRuleset() {
+        try {
+            if (hasAssignedProcesses(ruleset)) {
+                Helper.setErrorMessage("rulesetInUse");
+            } else {
+                this.serviceManager.getRulesetService().remove(this.ruleset);
+            }
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
         }
     }
 }

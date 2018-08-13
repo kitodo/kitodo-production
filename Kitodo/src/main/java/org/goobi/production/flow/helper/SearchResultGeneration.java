@@ -80,11 +80,7 @@ public class SearchResultGeneration {
             query.mustNot(serviceManager.getProcessService().getQuerySortHelperStatus(true));
         }
         if (!this.showInactiveProjects) {
-            try {
-                query.mustNot(serviceManager.getProcessService().getQueryProjectActive(false));
-            } catch (DataException e) {
-                logger.error(e.getMessage(), e);
-            }
+            query.mustNot(serviceManager.getProcessService().getQueryProjectActive(false));
         }
 
         try {

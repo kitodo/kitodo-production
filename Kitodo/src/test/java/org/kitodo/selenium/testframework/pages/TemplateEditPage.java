@@ -29,10 +29,6 @@ public class TemplateEditPage extends Page<TemplateEditPage> {
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:templateTabView:project")
-    private WebElement projectSelect;
-
-    @SuppressWarnings("unused")
     @FindBy(id = "editForm:templateTabView:workflow")
     private WebElement workflowSelect;
 
@@ -57,9 +53,7 @@ public class TemplateEditPage extends Page<TemplateEditPage> {
 
     public TemplateEditPage insertTemplateData(Template template) {
         titleInput.sendKeys(template.getTitle());
-        projectSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).click();
-        Browser.getDriver().findElement(By.id(projectSelect.getAttribute("id") + "_0")).click();
-
+        Browser.getDriver().findElements(By.className("ui-selectlistbox-item")).get(0).click();
         workflowSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).click();
         Browser.getDriver().findElement(By.id(workflowSelect.getAttribute("id") + "_0")).click();
 

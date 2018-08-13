@@ -38,6 +38,17 @@
                                action="#{ProjekteForm.duplicateProject(project.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
+                <p:commandLink id="deleteProject"
+                               action="#{ProjekteForm.delete}"
+                               title="#{msgs.delete}"
+                               update="projectTable"
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteProject', project.client.id, project.id)}">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{project.id}" target="#{ProjekteForm.projectById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{msgs.confirmDeleteProject}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
             </h:form>
         </p:column>
     </p:dataTable>
