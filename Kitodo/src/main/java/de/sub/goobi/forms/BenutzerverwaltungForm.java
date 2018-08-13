@@ -25,8 +25,8 @@ import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
+import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
 import javax.servlet.http.HttpSession;
 
@@ -42,7 +42,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
-import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
@@ -319,43 +318,14 @@ public class BenutzerverwaltungForm extends BasisForm {
     }
 
     /**
-     * Ldap-Konfiguration - choose LDAP group.
-     */
-    public Integer getLdapGruppeAuswahl() {
-        if (this.userObject.getLdapGroup() != null) {
-            return this.userObject.getLdapGroup().getId();
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Ldap-Konfiguration - set LDAP group.
-     */
-    public void setLdapGruppeAuswahl(Integer inAuswahl) {
-        if (inAuswahl != 0) {
-            try {
-                this.userObject.setLdapGroup(serviceManager.getLdapGroupService().getById(inAuswahl));
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapGroup") }, logger, e);
-            }
-        }
-    }
-
-    /**
-     * Ldap-Konfiguration - get LDAP group choice list.
-     */
-    public List<SelectItem> getLdapGruppeAuswahlListe() {
-        return SelectItemList.getLdapGroups();
-    }
-
-    /**
      * Writes the user at ldap server.
      */
     public String writeUserAtLdapServer() {
         try {
             serviceManager.getLdapServerService().createNewUser(this.userObject,
                 passwordEncoder.decrypt(this.userObject.getPassword()));
+        } catch (NameAlreadyBoundException e) {
+            Helper.setErrorMessage("Ldap entry already exists", logger, e);
         } catch (NoSuchAlgorithmException | NamingException | IOException | RuntimeException e) {
             Helper.setErrorMessage("Could not generate ldap entry", logger, e);
         }
