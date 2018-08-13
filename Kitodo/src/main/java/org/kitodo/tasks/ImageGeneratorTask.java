@@ -16,6 +16,7 @@ import static org.kitodo.tasks.ImageGeneratorStep.GENERATE_IMAGES;
 import static org.kitodo.tasks.ImageGeneratorStep.LIST_SOURCE_FOLDER;
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
+import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
@@ -32,11 +33,15 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 
 public class ImageGeneratorTask extends EmptyTask {
+    private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
+
     /**
      * Folder with source images.
      */
@@ -96,7 +101,7 @@ public class ImageGeneratorTask extends EmptyTask {
         this.variant = variant;
         this.outputs = outputs;
         this.state = LIST_SOURCE_FOLDER;
-        this.position = 0;
+        this.position = -1;
         this.sources = Collections.emptyList();
         this.toBeGenerated = new LinkedList<>();
         this.vars = new HashMap<>();
@@ -118,7 +123,7 @@ public class ImageGeneratorTask extends EmptyTask {
         this.position = master.position;
         this.sources = master.sources;
         this.toBeGenerated = master.toBeGenerated;
-        this.vars = vars;
+        this.vars = master.vars;
     }
 
     /**
@@ -191,8 +196,9 @@ public class ImageGeneratorTask extends EmptyTask {
                         throw new IllegalStateException("Illegal ImageGeneratorStep value to switch: " + state);
                 }
                 position++;
-                super.setProgress(100d * position
-                        + (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
+                super.setProgress(100d
+                        * (position
+                                + (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0))
                         + 1 / (variant.equals(ALL_IMAGES) ? 2 + sources.size()
                                 : 1 + sources.size() + toBeGenerated.size()));
                 if (isInterrupted()) {
@@ -200,6 +206,7 @@ public class ImageGeneratorTask extends EmptyTask {
                 }
             }
         } catch (RuntimeException | IOException | JAXBException e) {
+            logger.error(e);
             setException(e);
         }
     }

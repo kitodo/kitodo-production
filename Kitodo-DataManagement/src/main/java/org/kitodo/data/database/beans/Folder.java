@@ -483,7 +483,7 @@ public class Folder extends BaseBean {
         int firstStar = lastSegment.indexOf('*');
         if (firstStar == -1) {
             root = Paths.get(Config.getKitodoDataDirectory(), projectId, replaceInString(path, vars)).toUri();
-            pattern = ".*\\." + Pattern.quote(extensionWithoutDot);
+            pattern = "(.*)\\." + Pattern.quote(extensionWithoutDot);
         } else {
             String realPath = replaceInString(path.substring(0, lastSeparator), vars);
             root = (realPath.isEmpty() ? Paths.get(Config.getKitodoDataDirectory(), projectId)
@@ -502,13 +502,14 @@ public class Folder extends BaseBean {
         KitodoServiceLoader<FileManagementInterface> fileManagementInterface = new KitodoServiceLoader<>(
                 FileManagementInterface.class);
         Pattern compiledPattern = Pattern.compile(pattern);
-        List<URI> uris = fileManagementInterface.loadModule()
-                .getSubUris((dir, name) -> compiledPattern.matcher(name).matches(), root);
-        return uris.parallelStream().collect(Collectors.toMap(λ -> {
-            Matcher matcher = compiledPattern.matcher(FilenameUtils.getName(λ.getPath()));
-            matcher.matches();
-            return matcher.group(1);
-        }, Function.identity()));
+        return fileManagementInterface.loadModule()
+                .getSubUris((dir, name) -> compiledPattern.matcher(name).matches(), root).parallelStream()
+                .map(λ -> new File(FilenameUtils.concat(Config.getKitodoDataDirectory(), λ.getPath())).toURI())
+                .collect(Collectors.toMap(λ -> {
+                    Matcher matcher = compiledPattern.matcher(FilenameUtils.getName(λ.getPath()));
+                    matcher.matches();
+                    return matcher.group(1);
+                }, Function.identity()));
     }
 
     @Transient

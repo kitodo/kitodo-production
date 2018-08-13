@@ -181,7 +181,7 @@
                                 </h:commandLink>
 
                                 <!-- Re-generate missing and damaged images button -->
-                                <h:commandLink id="action13"
+                                <h:commandLink id="action16"
                                                rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.regenerateMissingImagesDamagedButtonClick}"
                                                title="#{msgs.regenerateMissingAndDamagedImages}">
@@ -191,7 +191,7 @@
                                 </h:commandLink>
 
                                 <!-- Re-generate missing images button -->
-                                <h:commandLink id="action14"
+                                <h:commandLink id="action17"
                                                rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.generateMissingImagesButtonClick}"
                                                title="#{msgs.generateMissingImages}">
