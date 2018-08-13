@@ -14,17 +14,17 @@
 --     (enum {ALL, EXISTING, NO, PREVIEW_IMAGE}) linkingMode
 
 ALTER TABLE projectFileGroup
-  ADD copyFolder   tinyint(1) NOT NULL DEFAULT 1
+  ADD copyFolder   tinyint(1)  NOT NULL DEFAULT 1
         COMMENT 'whether the folder is copied during export',
-  ADD createFolder tinyint(1) NOT NULL DEFAULT 1
+  ADD createFolder tinyint(1)  NOT NULL DEFAULT 1
         COMMENT 'whether the folder is created with a new process',
-  ADD derivative   double              DEFAULT NULL
+  ADD derivative   double               DEFAULT NULL
         COMMENT 'the percentage of scaling for createDerivative()',
-  ADD dpi          int(11)             DEFAULT NULL
+  ADD dpi          int(11)              DEFAULT NULL
         COMMENT 'the new DPI for changeDpi()',
-  ADD imageScale   double              DEFAULT NULL
+  ADD imageScale   double               DEFAULT NULL
         COMMENT 'the percentage of scaling for getScaledWebImage()',
-  ADD imageSize    int(11)             DEFAULT NULL
+  ADD imageSize    int(11)              DEFAULT NULL
         COMMENT 'the new width in pixels for getSizedWebImage()',
   ADD linkingMode  varchar(13) NOT NULL DEFAULT 'ALL'
         COMMENT 'how to link the contents in a METS fileGrp',
@@ -69,50 +69,6 @@ ALTER TABLE projectFileGroup
 ALTER TABLE projectFileGroup RENAME TO folder;
 
 
--- Make sure we have LOCAL, MAX and THUMBS file groups
---
--- LOCAL file group was existing internally and hard-coded without being
--- visible in the database in the past; MAX and THUMBS are typically already
--- existing, but if not, they will be added here. They are pre-configured as
--- non-linking and non-export, so behaviour won’t be changed.
-
-INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
-  SELECT 'LOCAL'      as fileGroup,
-         ''           as urlStructure,
-         'image/tiff' as mimeType,
-         ''           as path,          -- path is set later, see below
-         project.id   as project_id,
-         0            as copyFolder,
-         'NO'         as linkingMode
-  FROM project
-  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'LOCAL')
-  WHERE folder.id IS NULL;
-
-INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
-  SELECT 'MAX'        as fileGroup,
-         'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/' as urlStructure,
-         'image/jpeg' as mimeType,
-         ''           as path,          -- path is set later, see below
-         project.id   as project_id,
-         0            as copyFolder,
-         'NO'         as linkingMode
-  FROM project
-  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'MAX')
-  WHERE folder.id IS NULL;
-
-INSERT INTO folder (fileGroup, urlStructure, mimeType, path, project_id, copyFolder, linkingMode)
-  SELECT 'THUMBS'     as fileGroup,
-         'http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/' as urlStructure,
-         'image/jpeg' as mimeType,
-         ''           as path,          -- path is set later, see below
-         project.id   as project_id,
-         0            as copyFolder,
-         'NO'         as linkingMode
-  FROM project
-  LEFT JOIN folder ON (folder.project_id = project.id AND folder.fileGroup = 'THUMBS')
-  WHERE folder.id IS NULL;
-
-
 -- Fill in path column
 --
 -- In this example, we use the Linux (and Java default) file separator and the
@@ -131,6 +87,7 @@ UPDATE folder SET path = 'ocr/alto'
 -- all remaining cases
 UPDATE folder SET path = CONCAT('jpgs/', LOWER(fileGroup))
   WHERE id > 0 AND path = '';
+
 
 -- Delete suffix in all cases it is equal to the configured file extension.
 
