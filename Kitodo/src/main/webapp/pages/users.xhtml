@@ -38,6 +38,9 @@
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapServer')}"
+                            icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -60,6 +63,10 @@
             <p:tab title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.ldapServers}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapServers')}">
+                <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>

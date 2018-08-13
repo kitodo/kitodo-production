@@ -41,7 +41,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
 
     /**
-     * The private Constructor.
+     * The private Constructor which initialy reads the .
      */
     private DynamicAuthenticationProvider() {
         setLdapAuthentication(ConfigCore.getBooleanParameter(Parameters.LDAP_USE));
