@@ -18,6 +18,7 @@ import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.exceptions.ExportFileException;
+import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadatenSperrung;
 
 import java.io.IOException;
@@ -55,6 +56,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.tasks.ImageGeneratorTask;
+import org.kitodo.tasks.ImageGeneratorTaskVariant;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -432,6 +435,48 @@ public class AktuelleSchritteForm extends BasisForm {
     public void executeScript() throws DAOException, DataException {
         Task task = serviceManager.getTaskService().getById(this.currentTask.getId());
         serviceManager.getTaskService().executeScript(task, this.scriptPath, false);
+    }
+
+    /**
+     * Regenerate all images.
+     */
+    public void regenerateAllImagesButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getTypeGenerate()));
+            Helper.setMessage("regenerateAllImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Regenerate missing and damaged images.
+     */
+    public void regenerateMissingImagesDamagedButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getTypeGenerate()));
+            Helper.setMessage("regenerateMissingAndDamagedImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Generate missing images.
+     */
+    public void generateMissingImagesButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getTypeGenerate()));
+            Helper.setMessage("regenerateMissingImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     public int getAllImages() {

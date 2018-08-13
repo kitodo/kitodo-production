@@ -153,7 +153,7 @@
                                     <h:outputText value="#{msgs.importDms}"/>
                                 </h:commandLink>
 
-                                <!-- Metadaten-button -->
+                                <!-- Edit meta-data button -->
                                 <h:commandLink id="action10"
                                                rendered="#{task.typeMetadata and process.blockedUser == null}"
                                                action="#{Metadaten.readXml}"
@@ -168,6 +168,36 @@
                                              value="#{process.id}"/>
                                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                                     <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
+                                </h:commandLink>
+
+                                <!-- Re-generate all images button -->
+                                <h:commandLink id="action12"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.regenerateAllImagesButtonClick}"
+                                               title="#{msgs.regenerateAllImages}">
+                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
+                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.regenerateAllImages}"/>
+                                </h:commandLink>
+
+                                <!-- Re-generate missing and damaged images button -->
+                                <h:commandLink id="action13"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.regenerateMissingImagesDamagedButtonClick}"
+                                               title="#{msgs.regenerateMissingAndDamagedImages}">
+                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
+                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.regenerateMissingAndDamagedImages}"/>
+                                </h:commandLink>
+
+                                <!-- Re-generate missing images button -->
+                                <h:commandLink id="action14"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.generateMissingImagesButtonClick}"
+                                               title="#{msgs.generateMissingImages}">
+                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
+                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
+                                    <h:outputText value="#{msgs.generateMissingImages}"/>
                                 </h:commandLink>
 
                                 <!-- Edit Cancel-buttons -->

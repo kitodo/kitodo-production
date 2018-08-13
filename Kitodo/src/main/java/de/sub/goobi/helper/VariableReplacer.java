@@ -309,7 +309,7 @@ public class VariableReplacer {
     }
 
     private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
-                                                     String resultTop) {
+            String resultTop) {
         String result = "";
         switch (metadataLevel) {
             case FIRSTCHILD:
