@@ -17,7 +17,6 @@ import static javax.persistence.CascadeType.PERSIST;
 import static javax.persistence.CascadeType.REFRESH;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +31,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.forms.TaskGenerator;
@@ -458,16 +458,17 @@ public class Task extends BaseIndexedBean {
         if (this.typeGenerate == null) {
             this.typeGenerate = new ArrayList<>();
         }
-        Project project = template.getProject();
-        Folder source = project.getGeneratorSource();
-        return Objects.nonNull(source) ? new ArrayList<TaskGenerator>() {
+        List<Project> projects = template.getProjects();
+        return new ArrayList<TaskGenerator>() {
             {
-                project.getFolders().stream()
-                        .filter(λ -> !λ.equals(source) && (λ.getDerivative().isPresent() || λ.getDpi().isPresent()
-                                || λ.getImageScale().isPresent() || λ.getImageSize().isPresent()))
+                projects.stream().filter(λ -> Objects.nonNull(λ.getGeneratorSource()))
+                        .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())))
+                        .filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft())
+                        .filter(λ -> λ.getDerivative().isPresent() || λ.getDpi().isPresent()
+                                || λ.getImageScale().isPresent() || λ.getImageSize().isPresent())
                         .map(λ -> new TaskGenerator(λ, typeGenerate)).forEach(this::add);
             }
-        } : Collections.emptyList();
+        };
     }
 
     public boolean isTypeExportRussian() {
