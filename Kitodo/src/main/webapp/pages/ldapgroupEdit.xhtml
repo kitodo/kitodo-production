@@ -153,6 +153,16 @@
                     </p:row>
                     <p:row>
                         <div>
+                            <p:outputLabel for="ldapServer" value="#{msgs.ldapServer}"/>
+                            <p:selectOneMenu id="ldapServer" converter="#{ldapServerConverter}" value="#{LdapGruppenForm.myLdapGruppe.ldapServer}">
+                                <f:selectItems value="#{LdapServerForm.ldapServers}"
+                                               var="ldapServer"
+                                               itemValue="#{ldapServer}"
+                                               itemLabel="#{ldapServer.title}"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
                             <p:outputLabel for="gecos" value="gecos"/>
                             <p:inputText id="gecos"
                                          class="input"
