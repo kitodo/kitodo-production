@@ -124,13 +124,13 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="password" value="#{msgs.password}"/>
+                            <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
                             <p:password id="password"
                                         class="input"
-                                        disabled="#{isViewMode}"
+                                        rendered="#{isCreateMode}"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
-                                        onblur="toggleSave()"
+                                        onchange="toggleSave()"
                                         required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
@@ -170,6 +170,14 @@
                                      immediate="true"
                                      disabled="#{isViewMode}"
                                      rendered="#{AuthenticationController.ldapAuthentication}"
+                                     class="button-filled-green">
+                    </p:commandButton>
+                    <p:commandButton onclick="PF('changePasswordDialog').show()"
+                                     id="changePasswordButton"
+                                     value="#{msgs.passwordChange}"
+                                     icon="fa fa-pencil fa-lg"
+                                     immediate="true"
+                                     rendered="#{isEditMode}"
                                      class="button-filled-green">
                     </p:commandButton>
                 </div>
@@ -281,6 +289,7 @@
     <!-- add user groups dialog -->
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditChangePasswordPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditClientsPopup.xhtml"/>
     </ui:define>

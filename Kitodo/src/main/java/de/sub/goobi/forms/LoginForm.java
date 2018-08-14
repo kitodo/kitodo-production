@@ -22,9 +22,8 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.services.ServiceManager;
 
 @Named("LoginForm")
@@ -37,51 +36,43 @@ public class LoginForm implements Serializable {
     private boolean alreadyLoggedIn = false;
     private String passwordChanged;
     private String passwordChangedRepeat;
-    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private boolean firstVisit = true;
 
     /**
-     * Save changed password.
+     * Save changed password at database and in case Ldap authentication is active
+     * also on ldap server.
      *
-     * @return null
      */
-    public String saveChangedPassword() {
-        /* ist das aktuelle Passwort korrekt angegeben ? */
-        /* ist das neue Passwort beide Male gleich angegeben? */
+    public void saveChangedPassword() {
         if (!this.passwordChanged.equals(this.passwordChangedRepeat)) {
             Helper.setErrorMessage("passwordsDontMatch");
         } else {
             try {
-                /* wenn alles korrekt, dann jetzt speichern */
-                serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwordChanged);
-                User temp = serviceManager.getUserService().getById(this.myBenutzer.getId());
-                temp.setPassword(passwordEncoder.encrypt(this.passwordChanged));
-                serviceManager.getUserService().save(temp);
-                this.myBenutzer = temp;
+                if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
+                    serviceManager.getLdapServerService().changeUserPassword(this.myBenutzer, this.passwordChanged);
+                }
+                serviceManager.getUserService().changeUserPassword(this.myBenutzer, this.passwordChanged);
                 Helper.setMessage("passwordChanged");
-            } catch (DAOException | DataException e) {
+            } catch (DataException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {"user" }, logger, e);
             } catch (NoSuchAlgorithmException e) {
                 Helper.setErrorMessage("ldap error", logger, e);
             }
         }
-        return null;
     }
 
     /**
      * Save user configuration.
      *
-     * @return null
      */
-    public String saveUserConfiguration() {
+    public void saveUserConfiguration() {
         try {
             serviceManager.getUserService().save(this.myBenutzer);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("user") }, logger, e);
         }
-        return null;
     }
 
     /*

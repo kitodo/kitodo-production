@@ -11,7 +11,6 @@
 
 package de.sub.goobi.forms;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 
 import java.io.File;
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -43,6 +41,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
 import org.kitodo.services.ServiceManager;
@@ -340,10 +339,6 @@ public class BenutzerverwaltungForm extends BasisForm {
         this.hideInactiveUsers = hideInactiveUsers;
     }
 
-    public boolean getLdapUsage() {
-        return ConfigCore.getBooleanParameter(Parameters.LDAP_USE);
-    }
-
     /**
      * Method being used as viewAction for user edit form.
      *
@@ -420,5 +415,23 @@ public class BenutzerverwaltungForm extends BasisForm {
             }
         }
         return false;
+    }
+
+    /**
+     * Changes the password for current user in database and in case Ldap
+     * authentication is active also on ldap server.
+     */
+    public void changePasswordForCurrentUser() {
+        try {
+            if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
+                serviceManager.getLdapServerService().changeUserPassword(userObject, this.password);
+            }
+            serviceManager.getUserService().changeUserPassword(userObject, this.password);
+            Helper.setMessage("passwordChanged");
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {"user" }, logger, e);
+        } catch (NoSuchAlgorithmException e) {
+            Helper.setErrorMessage("ldap error", logger, e);
+        }
     }
 }
