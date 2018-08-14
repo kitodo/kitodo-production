@@ -68,6 +68,7 @@ public class LoginForm implements Serializable {
      *
      */
     public void saveUser() {
+
         try {
             serviceManager.getUserService().save(this.myBenutzer);
         } catch (DataException e) {
