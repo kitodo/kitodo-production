@@ -98,13 +98,14 @@
                                          class="input"
                                          disabled="#{isViewMode}"
                                          placeholder="#{msgs.ldaplogin}"
+                                         onchange="toggleSave()"
                                          value="#{BenutzerverwaltungForm.userObject.ldapLogin}"/>
                         </div>
                         <div>
                             <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
                             <p:selectOneMenu id="ldapGroup"  value="#{BenutzerverwaltungForm.userObject.ldapGroup}"
                                              disabled="#{isViewMode}"
-                                             required="#{empty param['editForm:saveButtonToggler']}">
+                                             converter="#{ldapGroupConverter}">
                                 <f:selectItems value="#{LdapGruppenForm.ldapGroups}" var="ldapGroup"
                                                itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
