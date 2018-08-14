@@ -90,7 +90,9 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      * pattern.
      *
      * @param url
-     *            The ldapGroup Object.
+     *            The url to ldap server.
+     * @param userDn
+     *            The user dn pattern.
      */
     private void configureAuthenticationProvider(String url, String userDn) {
 

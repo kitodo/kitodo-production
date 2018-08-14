@@ -40,6 +40,6 @@ public class SecurityLdapUserDetails extends SecurityUserDetails implements Ldap
 
     @Override
     public void eraseCredentials() {
-        super.setPassword("");
+        super.setPassword("*PROTECTED*");
     }
 }

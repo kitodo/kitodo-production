@@ -21,10 +21,21 @@ import org.kitodo.security.DynamicAuthenticationProvider;
 public class AuthenticationController {
     private DynamicAuthenticationProvider dynamicAuthenticationProvider = DynamicAuthenticationProvider.getInstance();
 
+    /**
+     * Check if ldap authentication is active.
+     * 
+     * @return true if ldap authentication is active.
+     */
     public boolean isLdapAuthentication() {
         return dynamicAuthenticationProvider.isLdapAuthentication();
     }
 
+    /**
+     * Sets ldap authentication.
+     * 
+     * @param ldapAuthentication
+     *            the ldapAuthentication as boolean value
+     */
     public void setLdapAuthentication(boolean ldapAuthentication) {
         dynamicAuthenticationProvider.setLdapAuthentication(ldapAuthentication);
     }
