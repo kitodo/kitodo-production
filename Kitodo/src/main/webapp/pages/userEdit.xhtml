@@ -168,7 +168,8 @@
                                      value="#{msgs.ldapKonfigurationSchreiben}"
                                      icon="fa fa-user-plus fa-lg"
                                      immediate="true"
-                                     rendered="#{isEditMode || isCreateMode}"
+                                     disabled="#{isViewMode}"
+                                     rendered="#{AuthenticationController.ldapAuthentication}"
                                      class="button-filled-green">
                     </p:commandButton>
                 </div>
