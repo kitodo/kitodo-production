@@ -41,10 +41,10 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     private LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
 
     /**
-     * The private Constructor which initialy reads the .
+     * The private Constructor which initially reads the local config.
      */
     private DynamicAuthenticationProvider() {
-        setLdapAuthentication(ConfigCore.getBooleanParameter(Parameters.LDAP_USE));
+        readLocalConfig();
     }
 
     /**
@@ -68,7 +68,8 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         if (ldapAuthentication) {
             try {
                 User user = serviceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
-                configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(), user.getLdapGroup().getUserDN());
+                configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(),
+                    user.getLdapGroup().getUserDN());
             } catch (DAOException e) {
                 // getByLogin() throws DAOExeption, it must be converted in
                 // UsernameNotFoundException
@@ -85,13 +86,13 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     /**
-     * This method activates ldap authentication and configures ldap url and
-     * userDn pattern.
+     * This method activates ldap authentication and configures ldap url and userDn
+     * pattern.
      *
      * @param url
      *            The ldapGroup Object.
      */
-    public void configureAuthenticationProvider(String url, String userDn) {
+    private void configureAuthenticationProvider(String url, String userDn) {
 
         if (Objects.nonNull(url) && Objects.nonNull(userDn)) {
 
@@ -101,7 +102,6 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                 this.ldapContextSource.setUrl(url);
             }
             this.ldapContextSource.afterPropertiesSet();
-
 
             if (Objects.isNull(this.bindAuthenticator)) {
                 this.bindAuthenticator = new BindAuthenticator(ldapContextSource);
@@ -117,37 +117,28 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
         }
     }
 
-    /**
-     * This method activates database authentication.
-     */
-    public void activateDatabaseAuthentication() {
+    private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(serviceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
         this.authenticationProvider = daoAuthenticationProvider;
     }
 
+    /**
+     * This activates the Ldap authentication with initial url and userDn. These
+     * values are later replace by the user information when authentication is
+     * performed.
+     */
     private void activateLdapAuthentication() {
-        configureAuthenticationProvider("ldap://0.0.0.0","no userDn");
+        configureAuthenticationProvider("ldap://0.0.0.0", "no userDn");
     }
 
-    /**
-     * This method reads local config and sets authentication flag.
-     */
-    public void readLocalConfig() {
-        ldapAuthentication = ConfigCore.getBooleanParameter(Parameters.LDAP_USE);
-    }
-
-    /**
-     * This method initializes the authentication provider with database
-     * authentication.
-     */
-    public void initializeAuthenticationProvider() {
-        activateDatabaseAuthentication();
+    private void readLocalConfig() {
+        setLdapAuthentication(ConfigCore.getBooleanParameter(Parameters.LDAP_USE));
     }
 
     private String[] convertUserDn(String userDn) {
-        return new String[] {userDn.replaceFirst("\\{login}", "{0}")};
+        return new String[] {userDn.replaceFirst("\\{login}", "{0}") };
     }
 
     /**

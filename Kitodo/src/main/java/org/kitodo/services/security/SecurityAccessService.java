@@ -23,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
 
 public class SecurityAccessService {
 
@@ -77,10 +76,6 @@ public class SecurityAccessService {
             Object principal = getCurrentAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
                 return (SecurityUserDetails) principal;
-            }
-            if (principal instanceof LdapUserDetails) {
-//                LdapUserDetails ldapUserDetails = (LdapUserDetailsImpl) principal;
-//                return (LdapUserDetailsImpl) principal;
             }
         }
         return null;
