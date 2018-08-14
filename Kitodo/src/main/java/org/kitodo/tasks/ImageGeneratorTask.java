@@ -38,6 +38,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.exceptions.UnknownCaseException;
 
 public class ImageGeneratorTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
@@ -193,7 +194,7 @@ public class ImageGeneratorTask extends EmptyTask {
                         break;
 
                     default:
-                        throw new IllegalStateException("Illegal ImageGeneratorStep value to switch: " + state);
+                        throw new UnknownCaseException(ImageGeneratorStep.class, state);
                 }
                 position++;
                 super.setProgress(100d
