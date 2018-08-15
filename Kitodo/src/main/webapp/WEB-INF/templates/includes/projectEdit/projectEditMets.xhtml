@@ -21,7 +21,7 @@
                 onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
                 onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
                 id="metsLockedButton" value="#{ProjekteForm.lockedMets}">
-            <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
+            <p:ajax event="change" update="metsParamaterForm mets-file-groups preview mediaView generatorSource" />
         </p:selectBooleanButton>
     </p:panel>
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
@@ -171,4 +171,31 @@
                                          value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
     </p:panel>
+
+    <!-- folder use -->
+    <div class="ot-folder-use">
+        <h:outputText value="#{msgs.folderUse}"/>
+    </div>
+
+    <!-- folder for preview -->
+    <p:outputLabel for="preview" value="#{msgs['folderUse.preview']}" styleClass="la-folder-use"/>
+    <p:selectOneMenu id="preview" value="#{ProjekteForm.preview}" styleClass="so-folder-use" disabled="#{ProjekteForm.lockedMets}">
+        <f:selectItem itemLabel="#{msgs['folderUse.preview.disabled']}" itemValue="#{null}" noSelectionOption="true" />
+        <f:selectItems value="#{ProjekteForm.folderList}" />
+    </p:selectOneMenu>
+
+    <!-- folder for media view -->
+    <p:outputLabel for="mediaView" value="#{msgs['folderUse.mediaView']}" styleClass="la-folder-use"/>
+    <p:selectOneMenu id="mediaView" value="#{ProjekteForm.mediaView}" styleClass="so-folder-use" disabled="#{ProjekteForm.lockedMets}">
+        <f:selectItem itemLabel="#{msgs['folderUse.mediaView.disabled']}" itemValue="#{null}" noSelectionOption="true" />
+        <f:selectItems value="#{ProjekteForm.folderList}" />
+    </p:selectOneMenu>
+
+    <!-- source folder for content generation -->
+    <p:outputLabel for="generatorSource" value="#{msgs['folderUse.generatorSource']}" styleClass="la-folder-use"/>
+    <p:selectOneMenu id="generatorSource" value="#{ProjekteForm.generatorSource}" styleClass="so-folder-use"
+        disabled="#{ProjekteForm.lockedMets}">
+        <f:selectItem itemLabel="#{msgs['folderUse.generatorSource.disabled']}" itemValue="#{null}" noSelectionOption="true" />
+        <f:selectItems value="#{ProjekteForm.folderList}" />
+    </p:selectOneMenu>
 </ui:composition>

@@ -515,4 +515,9 @@ public class Folder extends BaseBean {
     public void setUrlStructure(String urlStructure) {
         this.urlStructure = urlStructure;
     }
+
+    @Override
+    public String toString() {
+        return path + (path.isEmpty() || fileGroup.isEmpty() ? "" : ", ") + fileGroup;
+    }
 }

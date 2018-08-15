@@ -25,6 +25,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.SessionScoped;
@@ -61,10 +62,6 @@ public class ProjekteForm extends BasisForm {
      * This is a hack. The clean solution would be to have an inner class bean
      * for the data table row an dialog, but this approach was introduced
      * decades ago and has been maintained until today.
-     *
-     * Trifle: “Mỹ” (vietn. “America”) is a tribute to a programming style
-     * called “American programming”, that is characterized by voluntarily
-     * breaking conventions if it “makes it easier to get stuff done”.
      */
     private Folder myFolder;
     private Project baseProject;
@@ -417,6 +414,10 @@ public class ProjekteForm extends BasisForm {
         return filteredFolderList;
     }
 
+    private Map<String, Folder> getFolderMap() {
+        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::toString, Function.identity()));
+    }
+
     /**
      * Returns the folder currently under edit in the pop-up dialog.
      *
@@ -454,6 +455,68 @@ public class ProjekteForm extends BasisForm {
             }
         }
         return mimeTypes;
+    }
+
+    /**
+     * Returns the folder to use as source for generation of derived resources
+     * of this project.
+     *
+     * @return the source folder for generation
+     */
+    public String getGeneratorSource() {
+        Folder source = myProjekt.getGeneratorSource();
+        return source == null ? null : source.toString();
+    }
+
+    /**
+     * Sets the folder to use as source for generation of derived resources of
+     * this project.
+     *
+     * @param generatorSource
+     *            source folder for generation to set
+     */
+    public void setGeneratorSource(String generatorSource) {
+        myProjekt.setGeneratorSource(getFolderMap().get(generatorSource));
+    }
+
+    /**
+     * Returns the folder to use for the media view.
+     *
+     * @return media view folder
+     */
+    public String getMediaView() {
+        Folder mediaView = myProjekt.getMediaView();
+        return mediaView == null ? null : mediaView.toString();
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param mediaView
+     *            media view folder
+     */
+    public void setMediaView(String mediaView) {
+        myProjekt.setMediaView(getFolderMap().get(mediaView));
+    }
+
+    /**
+     * Returns the folder to use for preview.
+     *
+     * @return preview folder
+     */
+    public String getPreview() {
+        Folder preview = myProjekt.getPreview();
+        return preview == null ? null : preview.toString();
+    }
+
+    /**
+     * Sets the folder to use for preview.
+     *
+     * @param preview
+     *            preview folder
+     */
+    public void setPreview(String preview) {
+        myProjekt.setPreview(getFolderMap().get(preview));
     }
 
     /**
