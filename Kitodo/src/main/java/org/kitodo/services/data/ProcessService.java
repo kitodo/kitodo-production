@@ -2105,7 +2105,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getRelativePath()).toURI();
+                URI folderUri = new File(folder.getRelativePath(variables.mapOfVariables())).toURI();
                 if (fileService.fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()
@@ -2180,7 +2180,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setMimetype(folder.getMimeType());
         if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
             virtualFileGroup.setFileSuffix(
-                    folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
+                folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
         }
         return virtualFileGroup;
     }

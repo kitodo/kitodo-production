@@ -18,13 +18,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -365,5 +371,81 @@ public class VariableReplacer {
             results.add(m.toMatchResult());
         }
         return results;
+    }
+
+    /**
+     * Returns a map of the non-meta variables of this variable replacer.
+     *
+     * @return map of the non-meta variables
+     * @throws IOException
+     *             if I/O fails
+     */
+    public Map<String, String> mapOfVariables() throws IOException {
+        Map<String, String> result = new HashMap<>();
+        String processPath = replaceSlashAndSeparator(processService.getProcessDataDirectory(this.process));
+        String tifPath = replaceSlashAndSeparator(processService.getImagesTifDirectory(false, this.process));
+        String imagePath = replaceSlashAndSeparator(fileService.getImagesDirectory(this.process));
+        String origPath = replaceSlashAndSeparator(processService.getImagesOrigDirectory(false, this.process));
+        String metaFile = replaceSlash(fileService.getMetadataFilePath(this.process));
+        String ocrBasisPath = replaceSlashAndSeparator(fileService.getOcrDirectory(this.process));
+        String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
+        String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
+        String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
+        String prefs = ConfigCore.getParameter(Parameters.DIR_RULESETS) + this.process.getRuleset().getFile();
+
+        result.put("tifurl", tifPath);
+        result.put("origurl", origPath);
+        result.put("imageurl", imagePath);
+
+        result.put("tifpath", tifPath);
+        result.put("origpath", origPath);
+        result.put("imagepath", imagePath);
+        result.put("processpath", processPath);
+        result.put("importpath", importPath);
+        result.put("sourcepath", sourcePath);
+        result.put("ocrbasispath", ocrBasisPath);
+        result.put("ocrplaintextpath", ocrPlaintextPath);
+        result.put("processtitle", this.process.getTitle());
+        result.put("processid", String.valueOf(this.process.getId().intValue()));
+        result.put("metaFile", metaFile);
+        result.put("prefs", prefs);
+
+        if (this.task != null) {
+            String taskId = String.valueOf(this.task.getId());
+            String taskName = this.task.getTitle();
+
+            result.put("stepid", taskId);
+            result.put("stepname", taskName);
+        }
+
+        Arrays.asList(Pair.of(this.process.getWorkpieces(), "workpiece."),
+            Pair.of(this.process.getTemplates(), "template."), Pair.of(this.process.getProperties(), "process."))
+                .parallelStream().flatMap(λ -> λ.getLeft().parallelStream().map(μ -> Pair.of(μ, λ.getRight())))
+                .flatMap(λ -> toAnyCase(λ.getLeft().getTitle()).parallelStream().map(μ -> λ.getRight().concat(μ))
+                        .map(μ -> Pair.of(μ, λ.getValue())))
+                .forEach(λ -> result.put(λ.getKey(), λ.getValue()));
+
+        return result;
+    }
+
+    /**
+     * Converts a String to all of its upper/lowercase variants.
+     *
+     * @param string
+     *            input string
+     * @return a set with all variants of the string
+     */
+    public static Set<String> toAnyCase(String string) {
+        if ((string == null) || (string.length() == 0)) {
+            return new HashSet<String>(Arrays.asList(string));
+        }
+        Set<String> recursion = toAnyCase(string.substring(1));
+        Set<String> result = new HashSet<String>((int) Math.ceil((2 * recursion.size()) / 0.75));
+        String first = string.substring(0, 1);
+        for (String s : recursion) {
+            result.add(first.toUpperCase().concat(s));
+            result.add(first.toLowerCase().concat(s));
+        }
+        return result;
     }
 }

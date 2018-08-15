@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -42,6 +43,7 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.Config;
 import org.kitodo.forms.FolderGenerator;
+import org.kitodo.helper.LexicographicalOrder;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
@@ -68,6 +70,10 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
  * However, a {@code Folder} can also only exist on the drive without being
  * exported to METS. Or, it can exist only virtually without correspondence on a
  * drive, just to produce the METS {@code <fileGrp>} structure.
+ *
+ * <p>
+ * <b>Special behavior of the {@code path}:</b> In some installations This is a
+ * legacy usage and should not be promoted.
  */
 @Entity
 @Table(name = "folder")
@@ -298,7 +304,7 @@ public class Folder extends BaseBean {
      * @deprecated This getter is here to be used by Hibernate and JSF to access
      *             the field value, but should not be used for other purpose,
      *             unless you know what you are doing. Use
-     *             {@link #getRelativePath()}.
+     *             {@link #getRelativePath(Map)}.
      *
      * @return path with optional filename pattern
      */
@@ -322,11 +328,12 @@ public class Folder extends BaseBean {
      * @return the path
      */
     @Transient
-    public String getRelativePath() {
+    public String getRelativePath(Map<String, String> vars) {
         int lastDelimiter = path.lastIndexOf(File.separatorChar);
-        return path.substring(lastDelimiter + 1).indexOf('*') > -1
+        return replaceInString(path.substring(lastDelimiter + 1).indexOf('*') > -1
                 ? lastDelimiter >= 0 ? path.substring(0, lastDelimiter) : ""
-                : path;
+                : path,
+            vars);
     }
 
     /**
@@ -509,7 +516,7 @@ public class Folder extends BaseBean {
                     Matcher matcher = compiledPattern.matcher(FilenameUtils.getName(λ.getPath()));
                     matcher.matches();
                     return matcher.group(1);
-                }, Function.identity()));
+                }, Function.identity(), (previous, latest) -> latest, () -> new TreeMap<>(new LexicographicalOrder())));
     }
 
     @Transient
