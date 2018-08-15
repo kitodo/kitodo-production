@@ -104,7 +104,8 @@ public class MetadatenImagesHelper {
                 serviceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
-                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
+                    directory);
+            // fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         // retrieve existing pages/images
@@ -357,7 +358,7 @@ public class MetadatenImagesHelper {
         }
         logger.trace("tmpSize: {}", tmpSize);
         Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(Parameters.KITODO_CONTENT_SERVER_URL);
-        if (!kitodoContentServerUrl.isPresent()) {
+        if (kitodoContentServerUrl.get().isEmpty()) {
             logger.trace("api");
             // TODO source image files are locked under windows forever after
             // converting to png begins.
@@ -496,25 +497,6 @@ public class MetadatenImagesHelper {
         }
     }
 
-    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
-        List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-        if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
-                String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
-                for (URI currentImage : dataList) {
-                    String currentFileName = fileService.getFileName(currentImage);
-                    if (currentFileName.equals(fileNamePrefix)) {
-                        orderedFileNameList.add(currentImage);
-                        break;
-                    }
-                }
-            }
-        }
-        return orderedFileNameList;
-    }
-
     /**
      * Get image files.
      *
@@ -532,6 +514,25 @@ public class MetadatenImagesHelper {
             }
         }
         return orderedFileList;
+    }
+
+    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
+        List<URI> orderedFileNameList = new ArrayList<>();
+        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        if (pagesList != null) {
+            for (DocStructInterface page : pagesList) {
+                String fileName = page.getImageName();
+                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
+                for (URI currentImage : dataList) {
+                    String currentFileName = fileService.getFileName(currentImage);
+                    if (currentFileName.equals(fileNamePrefix)) {
+                        orderedFileNameList.add(currentImage);
+                        break;
+                    }
+                }
+            }
+        }
+        return orderedFileNameList;
     }
 
     /**

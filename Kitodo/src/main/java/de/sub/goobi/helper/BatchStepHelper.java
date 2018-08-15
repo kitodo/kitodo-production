@@ -47,8 +47,6 @@ public class BatchStepHelper extends BatchHelper {
     private List<Task> steps;
     private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
     private Task currentStep;
-    private String problemTask;
-    private String solutionTask;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
     private String processName = "";
@@ -73,6 +71,9 @@ public class BatchStepHelper extends BatchHelper {
             this.processName = this.currentStep.getProcess().getTitle();
             loadProcessProperties(this.currentStep);
         }
+    }
+
+    public BatchStepHelper() {
     }
 
     public List<Task> getSteps() {
@@ -126,23 +127,22 @@ public class BatchStepHelper extends BatchHelper {
         this.properties = process.getProperties();
     }
 
-    private void saveStep() throws DataException {
-        Process p = this.currentStep.getProcess();
+    private void saveStep() throws DataException, DAOException {
+        Process p = serviceManager.getProcessService().getById(this.currentStep.getProcess().getId());
         List<Property> props = p.getProperties();
         for (Property processProperty : props) {
             if (processProperty.getTitle() == null) {
                 p.getProperties().remove(processProperty);
             }
         }
-        this.serviceManager.getProcessService().save(this.currentStep.getProcess());
+        this.serviceManager.getProcessService().save(p);
     }
 
     /**
      * Error management for single.
      */
-    public String reportProblemForSingle() {
+    public void reportProblemForSingle() {
         this.myDav.uploadFromHome(this.currentStep.getProcess());
-        this.problem.setId(getIdForCorrection(this.problemTask));
         serviceManager.getWorkflowControllerService().setProblem(getProblem());
         try {
             this.currentStep = serviceManager.getWorkflowControllerService().reportProblem(this.currentStep);
@@ -151,19 +151,16 @@ public class BatchStepHelper extends BatchHelper {
             Helper.setErrorMessage("correctionReportProblem", logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
-        this.problemTask = "";
-        return "";
     }
 
     /**
      * Error management for all.
      */
     // TODO: when method will be used should only execute, return value must be given in Form class
-    public String reportProblemForAll() {
+    public void reportProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
             this.myDav.uploadFromHome(this.currentStep.getProcess());
-            this.problem.setId(getIdForCorrection(this.problemTask));
             serviceManager.getWorkflowControllerService().setProblem(getProblem());
             try {
                 setCurrentStep(serviceManager.getWorkflowControllerService().reportProblem(this.currentStep));
@@ -173,8 +170,6 @@ public class BatchStepHelper extends BatchHelper {
             }
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
-        this.problemTask = "";
-        return "";
     }
 
     /**
@@ -210,22 +205,15 @@ public class BatchStepHelper extends BatchHelper {
 
     /**
      * Solve problem for single.
-     *
-     * @return String
      */
-    public String solveProblemForSingle() {
-        this.solution.setId(getIdForCorrection(this.solutionTask));
-        serviceManager.getWorkflowControllerService().setSolution(getSolution());
+    public void solveProblemForSingle(Task currentStep) {
+        this.currentStep = currentStep;
         try {
             setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
             saveStep();
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
-        setSolution(serviceManager.getWorkflowControllerService().getSolution());
-        this.solutionTask = "";
-
-        return "";
     }
 
     /**
@@ -236,7 +224,6 @@ public class BatchStepHelper extends BatchHelper {
     public String solveProblemForAll() {
         for (Task task : this.steps) {
             this.currentStep = task;
-            this.solution.setId(getIdForCorrection(this.solutionTask));
             serviceManager.getWorkflowControllerService().setSolution(getSolution());
             try {
                 setCurrentStep(serviceManager.getWorkflowControllerService().solveProblem(this.currentStep));
@@ -246,7 +233,6 @@ public class BatchStepHelper extends BatchHelper {
             }
         }
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
-        this.solutionTask = "";
 
         return "";
     }
@@ -286,25 +272,6 @@ public class BatchStepHelper extends BatchHelper {
     }
 
     /**
-     * Get problem Task as String.
-     *
-     * @return problem Task as String
-     */
-    public String getProblemTask() {
-        return this.problemTask;
-    }
-
-    /**
-     * Set problem Task as String.
-     *
-     * @param problemTask
-     *            as String
-     */
-    public void setProblemTask(String problemTask) {
-        this.problemTask = problemTask;
-    }
-
-    /**
      * Get solution.
      *
      * @return Solution object
@@ -321,25 +288,6 @@ public class BatchStepHelper extends BatchHelper {
      */
     public void setSolution(Solution solution) {
         this.solution = solution;
-    }
-
-    /**
-     * Get solution Task as String.
-     *
-     * @return solution Task as String
-     */
-    public String getSolutionTask() {
-        return this.solutionTask;
-    }
-
-    /**
-     * Set solution Task as String.
-     *
-     * @param solutionTask
-     *            as String
-     */
-    public void setSolutionTask(String solutionTask) {
-        this.solutionTask = solutionTask;
     }
 
     /**

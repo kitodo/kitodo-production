@@ -1,0 +1,35 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel id="structureWrapperPanel" styleClass="wrapperPanel">
+        <p:tree value="#{Metadaten.treeNodes}" var="element"
+                selectionMode="single" id="docStruct"
+                selection="#{Metadaten.selectedTreeNode}"
+                draggable="true" droppable="true" dragdropScope="DocStructTree">
+            <p:ajax event="select" listener="#{Metadaten.onNodeSelect}"
+                    update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+            <p:ajax event="dragdrop" listener="#{Metadaten.onNodeDragDrop}"
+                    update="structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"/>
+            <p:treeNode expandedIcon="ui-icon-document" collapsedIcon="ui-icon-document">
+                <ui:param name="elementType" value="#{element.type.getNameByLanguage(SpracheForm.locale)}"/>
+                <h:outputText value="#{elementType}"/> <h:outputText
+                    value=" #{Metadaten.getPhysicalPageNumber(element)}" rendered="#{elementType eq msgs.page}"/>
+            </p:treeNode>
+        </p:tree>
+    </p:panel>
+</ui:composition>

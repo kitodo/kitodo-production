@@ -1,0 +1,135 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:panel id="galleryWrapperPanel" styleClass="wrapperPanel">
+
+        <h:form id="imagePreviewForm" style="height: 100%">
+            <span id="imageData" data-image="#{request.contextPath}#{Metadaten.currentImage}"/>
+            <p:panelGrid id="imageControlPanel" columns="3" style="right: 17px; top: 9px; position: absolute;">
+                <p:column>
+                    <p:commandButton id="listViewButton"
+                                     update="imagePreviewForm galleryHeadingWrapper"
+                                     icon="fa fa-list"
+                                     styleClass="#{Metadaten.viewMode eq 'list' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="list" target="#{Metadaten.viewMode}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column>
+                    <p:commandButton id="gridViewButton"
+                                     update="imagePreviewForm galleryHeadingWrapper"
+                                     icon="fa fa-th-large"
+                                     styleClass="#{Metadaten.viewMode eq 'grid' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="grid" target="#{Metadaten.viewMode}"/>
+                    </p:commandButton>
+                </p:column>
+                <p:column>
+                    <p:commandButton id="previewButton"
+                                     update="imagePreviewForm galleryHeadingWrapper"
+                                     icon="fa fa-image"
+                                     styleClass="#{Metadaten.viewMode eq 'preview' ? 'active' : 'inactive'}">
+                        <f:setPropertyActionListener value="preview" target="#{Metadaten.viewMode}"/>
+                    </p:commandButton>
+                </p:column>
+            </p:panelGrid>
+
+            <p:panel>
+                <p:outputLabel for="tifFolders" value="#{msgs.currentFolder}" style="vertical-align: top"/>
+                <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
+                    <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
+                    <f:selectItems value="#{Metadaten.allTifFolders}"/>
+                    <f:ajax listener="#{Metadaten.updateImagesFolder()}"/>
+                </p:selectOneMenu>
+                <p:commandButton id="readImagesButton"
+                                 value="#{msgs.generatePNGs}"
+                                 style="vertical-align: top"
+                                 onclick="PF('generatePNGsConfirmDialog').show()"/>
+            </p:panel>
+
+            <!-- Pages in structured view -->
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'list' and Metadaten.imageListExistent}">
+                <p:fieldset id="structuredPagesField">
+                    <p:dataList id="structuredPages"
+                                var="structureElement"
+                                value="#{Metadaten.allStructureElements}"
+                                type="definition"
+                                binding="#{currentElement}">
+                        <h:outputText value="#{structureElement.getDocStructType().getNameByLanguage(SpracheForm.locale)}" style="font-weight: bold;"/>
+                        <p:dataList styleClass="structureElementDataList"
+                                    id="structureElementDataList"
+                                    var="page"
+                                    value="#{Metadaten.getPageReferencesToDocStruct(structureElement)}"
+                                    binding="#{structuredThumbnail}">
+                            <ui:param name="filePath" value="#{Metadaten.getPageImageFilePath(page)}"/>
+                            <p:panel id="structuredPagePanel" header="#{msgs.page} #{Metadaten.getPhysicalPageNumber(page)}" rendered="#{Metadaten.isAccessGranted(filePath)}">
+                                <p:commandLink update="structureTreeForm, imagePreviewForm">
+                                    <img src="#{request.contextPath}#{Metadaten.getThumbnail(filePath)}" class="thumbnail #{Metadaten.currentImage eq filePath ? 'active' : ''}"/>
+                                    <f:setPropertyActionListener value="#{filePath}" target="#{Metadaten.currentImage}"/>
+                                    <f:setPropertyActionListener value="#{page}" target="#{Metadaten.myStrukturelement}"/>
+                                </p:commandLink>
+                            </p:panel>
+                            <p:draggable id="structuredPagesDraggable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList:#{structuredThumbnail.rowIndex}:structuredPagePanel"
+                                         revert="true" stack=".ui-panel"/>
+                        </p:dataList>
+                        <p:droppable id="structuredPagesDroppable" for="imagePreviewForm:structuredPages:#{currentElement.rowIndex}:structureElementDataList">
+                            <p:ajax listener="#{Metadaten.onPageDrop}" update="imagePreviewForm, structureTreeForm:docStruct"/>
+                        </p:droppable>
+                    </p:dataList>
+                </p:fieldset>
+            </ui:fragment>
+
+            <!-- Pages in UNstructured view -->
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'grid' and Metadaten.imageListExistent}">
+                <div class="thumbnailWrapper">
+                    <ui:repeat value="#{Metadaten.images}" var="image">
+                        <p:commandLink update="imagePreviewForm" rendered="#{Metadaten.isAccessGranted(image)}">
+                            <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                            <h:outputText><img class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/></h:outputText>
+                            <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
+                        </p:commandLink>
+                        <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
+                        <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
+                    </ui:repeat>
+                </div>
+            </ui:fragment>
+
+            <!-- View current page with OpenLayers -->
+            <ui:fragment rendered="#{Metadaten.viewMode eq 'preview' and Metadaten.imageListExistent}">
+                <!-- OpenLayers Kitodo custom controls -->
+                <div id="olWrapper" style="overflow-x: auto; height: 100%">
+                    <div id="thumbnailStripe" style="width: 10%; display: inline-block; float: right">
+                        <ui:repeat value="#{Metadaten.images}" var="image">
+                            <p:commandLink update="imagePreviewForm, galleryHeadingWrapper" rendered="#{Metadaten.isAccessGranted(image)}">
+                                <!-- outputText is needed to remove whitespace produced by correct code indent -->
+                                <h:outputText><img style="display: inline;" class="thumbnail #{Metadaten.currentImage eq image ? 'active' : ''}" src="#{request.contextPath}#{Metadaten.getThumbnail(image)}"/></h:outputText>
+                                <f:setPropertyActionListener value="#{image}" target="#{Metadaten.currentImage}"/>
+                            </p:commandLink>
+                            <!-- FIXME: primefaces does not find the image, need to prefix the path with 'window.location.host'! -->
+                            <!--<p:graphicImage styleClass="thumbnail" name="#{image}" alt="#{image}" title="#{image}"/>-->
+                        </ui:repeat>
+                    </div>
+                    <ui:fragment rendered="#{Metadaten.isAccessGranted(Metadaten.currentImage)}">
+                        <h:outputStylesheet name="webjars/openlayers/4.5.0/ol.css"/>
+                        <h:outputScript name="js/ol_custom.js"/>
+                        <div id="map" class="map" style="width: 85%; height: 100%; display: inline-block; float: left"/>
+                    </ui:fragment>
+                </div>
+            </ui:fragment>
+
+        </h:form>
+    </p:panel>
+</ui:composition>

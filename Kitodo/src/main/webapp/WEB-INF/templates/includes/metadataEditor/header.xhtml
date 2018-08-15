@@ -1,0 +1,38 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panel styleClass="content-header">
+        <h3>
+            <h:outputText value="#{msgs.metadatenBearbeiten} (#{Metadaten.process.title})"/>
+        </h3>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         action="#{Metadaten.saveMetadataToXmlAndGoToProcessPage}"
+                         value="#{msgs.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         update="notifications"/>
+        <p:commandButton value="#{msgs.validate}"
+                         action="#{Metadaten.validate}"
+                         update="metadataEditor"
+                         icon="fa fa-check fa-lg"
+                         iconPos="right"
+                         styleClass="secondary-button"/>
+        <p:button value="#{msgs.cancel}" outcome="processes" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+    </p:panel>
+</ui:composition>

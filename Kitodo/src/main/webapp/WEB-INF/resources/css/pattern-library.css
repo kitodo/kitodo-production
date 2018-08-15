@@ -226,18 +226,18 @@ button .ui-icon {
 }
 
 .ui-chkbox .ui-chkbox-icon {
-  width: 80%;
-  height: 40%;
-  position: relative;
-  left: 10%;
-  top: 30%;
-  background: #fff;
-  background-image: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-
+    width: 80%;
+    height: 40%;
+    position: relative;
+    left: 10%;
+    top: 30%;
+    background: #fff;
+    background-image: none;
+    border-radius: 8px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .ui-chkbox .ui-chkbox-icon:after {
   position: relative;
@@ -272,6 +272,50 @@ button .ui-icon {
 .ui-treetable tfoot td {
     border: 0px;
     padding: 8px 16px;
+}
+
+#metadata\:metadataTable td {
+    padding: 8px 10px;
+}
+
+#metadata\:personTable .ui-button {
+    margin: 10px 0;
+}
+
+#metadata .ui-datatable-even {
+    background: #fff;
+}
+
+#metadata .ui-datatable-odd {
+    background: #f3f3f3;
+}
+
+#imagePreviewForm\:imageControlPanel {
+    margin-bottom: 10px;
+}
+
+#imagePreviewForm\:imageControlPanel tr {
+    background-color: #d8d8d8;
+}
+
+#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell {
+    padding: 0;
+}
+
+#imagePreviewForm\:imageControlPanel .ui-panelgrid-cell:nth-child(2) {
+    border-left: 3px solid #0071bc;
+}
+
+#imagePreviewForm\:imageControlPanel button {
+    background-color: #d8d8d8;
+}
+
+#imagePreviewForm\:imageControlPanel button.active .fa {
+    color: white;
+}
+
+#imagePreviewForm\:imageControlPanel button.inactive .fa {
+    color: #0071bc;
 }
 
 .ui-panelgrid .ui-panelgrid-cell {
@@ -580,4 +624,8 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 
 .ui-grid .ui-grid-row {
     padding: 0 8px;
+}
+
+.no-header thead {
+    display: none !important;
 }

@@ -888,6 +888,264 @@ main i.fa {
 }
 
 /*----------------------------------------------------------------------
+Metadata Editor
+----------------------------------------------------------------------*/
+
+#metadataEditor.ui-panel,
+#metadataEditor > .ui-panel-content {
+    padding: 0;
+}
+
+#metadataEditorHeader {
+    padding: 1em 16px;
+    margin-bottom: 1em;
+}
+
+#metadataEditorHeader .ui-panel,
+#metadataEditorHeader .ui-panel-content {
+    padding: 0;
+}
+
+#metadataEditorWrapper {
+    height: 700px;
+    margin-left: 16px;
+    margin-right: 16px;
+    width: calc(100% - 32px);
+    white-space: nowrap;
+}
+
+.collapsibleWrapper {
+    display: inline-block;
+    height: 100%;
+    box-sizing: border-box;
+    vertical-align: top;
+    position: relative;
+    padding: 10px 0 0 0;
+    background: #d8d8d8;
+    overflow: visible !important;
+    white-space: initial;
+}
+
+.collapsibleWrapper > button {
+    position: absolute;
+    top: -10px;
+    left: 8px;
+    background: #0071bc;
+    color: #fff;
+    border: solid 1px #fff;
+}
+
+.collapsibleWrapper > button:disabled {
+    background: #d8d8d8;
+}
+
+.collapsibleWrapper.collapsed .columnExpandButton {
+    transform: scaleX(-1);
+}
+
+.collapsibleWrapper .columnHeadingWrapper {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 8px;
+    font-weight: bold;
+}
+
+.collapsibleWrapper .columnHeadingWrapper button {
+    float: right;
+    background: none;
+    border: none;
+    height: 40px;
+}
+
+.collapsibleWrapper.collapsed .columnHeadingWrapper button {
+    display: none;
+}
+
+.collapsibleWrapper .columnHeadingWrapper button.collapsed {
+    transform: scaleY(-1);
+}
+
+.collapsibleWrapper.collapsed .columnHeading {
+    position: absolute;
+    transform: rotate(90deg);
+    top: -10px;
+    left: 0px;
+    width: 200px;
+    height: 42px;
+    line-height: 42px;
+    z-index: 10;
+    transform-origin: 0 100%;
+}
+
+.collapsibleWrapper > .ui-panel, .collapsibleWrapper > .ui-panel > .ui-panel-content {
+    background: transparent;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+.collapsibleWrapper.collapsed > .ui-panel {
+    visibility: hidden;
+}
+
+.wrapperPanel.ui-panel,
+.wrapperPanel.ui-panel > .ui-panel-content {
+    padding: 0;
+}
+
+#metadataEditorWrapper .resizer {
+    display: inline-block;
+    height: 100%;
+    width: 5px;
+    cursor: ew-resize;
+}
+
+#metadataEditorWrapper .resizer.disabled {
+    pointer-events: none;
+}
+
+#metadataEditorWrapper #verticalResizer {
+    height: 5px;
+    background: white;
+    cursor: ns-resize;
+}
+
+#metadataEditorWrapper #verticalResizer.disabled {
+    pointer-events: none;
+}
+
+#secondColumnPanel {
+    height: calc(100% - 40px);
+}
+
+#metadataPanel,
+#commentPanel,
+#galleryPanel {
+    overflow-y: scroll;
+}
+
+#galleryPanel {
+    height: 100%;
+}
+
+#metadataPanel.collapsed,
+#commentPanel.collapsed {
+    display: none;
+}
+
+
+/*
+Column content
+ */
+
+#structureTreeForm\:structurePanel > .ui-panel-content,
+#structureTreeForm\:paginationPanel > .ui-panel-content,
+#metaDataPanel > .ui-panel-content,
+#commentPanel > .ui-panel-content {
+    padding: 0;
+}
+
+#structureTreeForm {
+    height: 100%;
+}
+
+#structureTreeForm\:structurePanel {
+    overflow-y: scroll;
+    height: 50%;
+    box-sizing: border-box;
+}
+
+#structureTreeForm\:paginationPanel {
+    margin-top: 5px;
+    height: calc(50% - 45px);
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#structureTreeForm\:actionButtons .ui-panelgrid-cell {
+    padding: 2px;
+}
+
+#structureTreeForm\:actionButtons .ui-button {
+    width: 100%;
+}
+
+.pagination-active {
+    filter: opacity(100%);
+}
+
+.pagination-inactive {
+    filter: opacity(35%);
+}
+
+.structureElementDataList {
+    min-height: 75px;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+#metadata input {
+    width: 100%;
+}
+
+#metadata\:metadataTable td {
+    padding: 5px;
+}
+
+#metadata\:personTable .ui-button {
+    margin: 10px 0;
+}
+
+#metadata .ui-datatable-even {
+    background: #fff;
+}
+
+#metadata .ui-datatable-odd {
+    background: #f3f3f3;
+}
+
+.rotate-right {
+    top: 65px !important;
+    left: .5em;
+    right: auto !important;
+}
+
+.rotate-left {
+    top: 95px !important;
+    left: .5em;
+    right: auto !important;
+}
+
+.thumbnailWrapper {
+    margin-left: 5px;
+}
+
+.thumbnail {
+    height: 60px;
+    border: 1px solid black;
+    margin: 3px;
+}
+
+.thumbnail.active {
+    border: 2px solid red;
+}
+
+#imagePreviewForm\:structuredPages ul {
+    list-style-type: none;
+}
+
+#imagePreviewForm\:structuredPages ul li {
+    display: inline-block;
+}
+
+#imagePreviewForm\:structuredPages ul li span.ui-panel-title {
+    margin: 0;
+}
+
+/*----------------------------------------------------------------------
 Footer
 ----------------------------------------------------------------------*/
 

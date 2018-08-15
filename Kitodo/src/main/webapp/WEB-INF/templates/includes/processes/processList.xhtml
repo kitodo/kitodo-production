@@ -55,6 +55,8 @@
                     <f:param name="ProzesseID" value="#{item.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
+                    <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
+                    <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
                 </h:commandLink>
                 <h:commandLink action="#{ProzessverwaltungForm.exportMets(item.id)}" id="exportMets" title="#{msgs.exportMets}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
