@@ -17,7 +17,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Task;
 
 /**
- * An encapsulation to access the generator properties of the folder.
+ * An encapsulation to access the generator properties of the task.
  */
 public class TaskGenerator {
     /**
@@ -26,7 +26,7 @@ public class TaskGenerator {
     private Folder folder;
 
     /**
-     * Modifyable list containing enabled generators. This list is member of the
+     * Modifiable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
     private List<Folder> typeGenerate;
