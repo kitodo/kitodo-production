@@ -40,6 +40,13 @@
                              iconPos="right"/>
         </p:panelGrid>
         <p:panelGrid id="paginationPanelGrid" columns="1" rendered="#{Metadaten.showPagination}">
+            <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
+                              required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
+                              filter="true" filterMatchMode="contains">
+                <f:selectItems value="#{Metadaten.allPages}"/>
+                <p:ajax update="paginationSelection"/>
+
+            </p:selectManyMenu>
             <h:outputText value="#{msgs.pagination}"/>
             <p:selectOneMenu id="paginationTypeSelect"
                              value="#{Metadaten.paginator.paginationType}">
@@ -104,11 +111,16 @@
             <p:commandLink id="createPaginationButton"
                            action="#{Metadaten.createPagination}"
                            value="#{msgs.paginationRead}"
-                           update="structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
+                           update="paginationSelection,structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                            immediate="true"/>
+            <p:commandButton id="startPagination" action="#{Metadaten.changePagination}"
+                             update="structureTreeForm:paginationSelection"
+                             value="start">
+            </p:commandButton>
             <p:commandButton id="okButton" value="OK"
                              action="#{Metadaten.setShowPagination(false)}"
-                             update="structureTreeForm"/>
+                             update="structureTreeForm"
+                             immediate="true"/>
         </p:panelGrid>
     </p:panel>
 </ui:composition>
