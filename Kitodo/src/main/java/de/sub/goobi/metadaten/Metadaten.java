@@ -12,13 +12,13 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.XmlArtikelZaehlen;
 import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
-import de.sub.goobi.helper.BatchStepHelper;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
@@ -111,7 +111,7 @@ import org.primefaces.model.TreeNode;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
- * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
+ * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
@@ -544,20 +544,8 @@ public class Metadaten {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
 
-    /**
-     * Gets addable metadata types from tempTyp.
-     *
-     * @return The addable metadata types from tempTyp.
-     */
-    public List<SelectItem> getAddableMetadataTypesFromTempType() {
-        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-        DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
-
-        return getAddableMetadataTypes(ds, this.tempMetadatumList);
-    }
-
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStructInterface myDocStruct,
-            ArrayList<MetadatumImpl> tempMetadatumList) {
+                                                          ArrayList<MetadatumImpl> tempMetadatumList) {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // determine all addable metadata types
@@ -596,6 +584,18 @@ public class Metadaten {
             }
         }
         return selectItems;
+    }
+
+    /**
+     * Gets addable metadata types from tempTyp.
+     *
+     * @return The addable metadata types from tempTyp.
+     */
+    public List<SelectItem> getAddableMetadataTypesFromTempType() {
+        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
+
+        return getAddableMetadataTypes(ds, this.tempMetadatumList);
     }
 
     /**
@@ -2030,7 +2030,7 @@ public class Metadaten {
 
     /**
      * die Seiten über die Ajax-Felder festlegen.
-     * @param docStruct
+     * @param docStruct the doc structure for which the pages are set
      */
     public void ajaxSeitenStartUndEndeSetzen(DocStructInterface docStruct) {
         boolean startPageOk = false;
@@ -2058,7 +2058,7 @@ public class Metadaten {
 
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
-     * @param docStruct
+     * @param docStruct the doc structure for which the pages are set
      */
     public void setPageStartAndEnd(DocStructInterface docStruct) {
         int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
@@ -2568,19 +2568,6 @@ public class Metadaten {
     }
 
     /**
-     * Get structure tree 3.
-     *
-     * @return list of HashMaps
-     */
-    public List<HashMap<String, Object>> getStrukturBaum3() {
-        if (this.treeNodeStruct != null) {
-            return this.treeNodeStruct.getChildrenAsList();
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Returns the current selected TreeNode.
      *
      * @return The TreeNode.
@@ -2695,19 +2682,6 @@ public class Metadaten {
                 Helper.setErrorMessage(
                     dragDocStruct.getDocStructType() + " not allowed as child of " + dropDocStruct.getDocStructType());
             }
-        }
-    }
-
-    /**
-     * Get all structure trees 3.
-     *
-     * @return list of HashMaps
-     */
-    public List<HashMap<String, Object>> getStrukturBaum3Alle() {
-        if (this.treeNodeStruct != null) {
-            return this.treeNodeStruct.getChildrenAsListAlle();
-        } else {
-            return Collections.emptyList();
         }
     }
 
@@ -2967,9 +2941,8 @@ public class Metadaten {
     /**
      * Delete selected pages.
      */
-    public void deleteSelectedPages() throws IOException {
+    void deleteSelectedPages() throws IOException {
         List<Integer> selectedPages = new ArrayList<>();
-        List<DocStructInterface> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
@@ -2980,6 +2953,8 @@ public class Metadaten {
         if (selectedPages.isEmpty()) {
             return;
         }
+
+        List<DocStructInterface> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
 
         removeReferenceToSelectedPages(selectedPages, allPages);
 
@@ -3283,7 +3258,7 @@ public class Metadaten {
     }
 
     /**
-     * Deletes the metadata group
+     * Deletes the metadata group.
      *
      * @param metadataGroup
      *            metadata group to delete.
@@ -3513,7 +3488,7 @@ public class Metadaten {
 
     /**
      * Convert the TIFF images of the current process to PNG images for the metadata web frontend and
-     * copy them to them to the webapps/images/[processID]/fullsize/ folder!
+     * copy them to them to the webapps/images/[processID]/fullsize/ folder.
      */
     private void convertImages() {
         if (Objects.nonNull(this.currentTifFolder)) {
@@ -3617,13 +3592,19 @@ public class Metadaten {
         try {
             FileUtils.deleteDirectory(new File(fullsizePath));
         } catch (IOException e) {
-            logger.error("ERROR: unable to delete directory '" + fullsizePath + "' containing fullsize PNG copies of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
+            logger.error("ERROR: unable to delete directory '"
+                    + fullsizePath
+                    + "' containing fullsize PNG copies of TIFF images ("
+                    + "reason: " + e.getLocalizedMessage() + ")");
         }
 
         try {
             FileUtils.deleteDirectory(new File(thumbnailPath));
         } catch (IOException e) {
-            logger.error("ERROR: unable to delete directory '" + thumbnailPath + "' containing PNG thumbnails of TIFF images (" + "reason: " + e.getLocalizedMessage() + ")");
+            logger.error("ERROR: unable to delete directory '"
+                    + thumbnailPath
+                    + "' containing PNG thumbnails of TIFF images ("
+                    + "reason: " + e.getLocalizedMessage() + ")");
         }
     }
 
@@ -3681,8 +3662,8 @@ public class Metadaten {
     }
 
     /**
-     *
-     * @param dragDropEvent
+     * Event listener for drag drop event.
+     * @param dragDropEvent the event that triggers this listener
      */
     public void onPageDrop(DragDropEvent dragDropEvent) {
 
@@ -3731,8 +3712,8 @@ public class Metadaten {
     /**
      * Retrieve and return list of all DocStructInferface instances
      * referencing the given DocStructInterfaces 'docStruct'.
-     * @param docStruct
-     * @return
+     * @param docStruct the DocStructInterface for which the references are determined
+     * @return list of DocStructInterface instances referencing the given DocStructInterface docStruct
      */
     public List<DocStructInterface> getPageReferencesToDocStruct(DocStructInterface docStruct) {
         List<DocStructInterface> pageReferenceDocStructs = new LinkedList<>();
@@ -3795,7 +3776,8 @@ public class Metadaten {
                     return "IMAGE_PATH_NOT_FOUND";
                 }
             default:
-                logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is " + allMetadata.size() + " (1 expected)!");
+                logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is "
+                        + allMetadata.size() + " (1 expected)!");
                 return "IMAGE_PATH_NOT_FOUND";
         }
     }
@@ -3803,7 +3785,7 @@ public class Metadaten {
     /**
      * Get list of image file paths for current process.
      *
-     * @return List<String> List of images.
+     * @return List of images.
      */
     public List<String> getImages() {
         updateImagesFolder();
@@ -3818,7 +3800,8 @@ public class Metadaten {
                     .sorted()
                     .map(Path::getFileName)
                     .map(Path::toString)
-                    .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/" + FULLSIZE_FOLDER_NAME + "/" + filename)
+                    .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/"
+                            + FULLSIZE_FOLDER_NAME + "/" + filename)
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -3848,6 +3831,11 @@ public class Metadaten {
         }
     }
 
+    /**
+     * Checks and returns whether access is granted to the image with the given filepath "imagePath".
+     * @param imagePath the filepath of the image for which access rights are checked
+     * @return true if access is granted and false otherwise
+     */
     public boolean isAccessGranted(String imagePath) {
         String imageName = FilenameUtils.getName(imagePath);
         String filePath;
@@ -3863,13 +3851,18 @@ public class Metadaten {
         return image.canRead();
     }
 
+    /**
+     * Update the image folder.
+     */
     public void updateImagesFolder() {
         String uriSeparator = "/";
         String[] pathParts = this.currentTifFolder.toString().split(uriSeparator);
         if (pathParts.length > 0) {
             subfolderName = pathParts[pathParts.length - 1];
-            fullsizePath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator + FULLSIZE_FOLDER_NAME + File.separator;
-            thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator + THUMBNAIL_FOLDER_NAME + File.separator;
+            fullsizePath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
+                    + FULLSIZE_FOLDER_NAME + File.separator;
+            thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
+                    + THUMBNAIL_FOLDER_NAME + File.separator;
         } else {
             logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator + "' resulted in an empty array!");
         }
@@ -4013,7 +4006,8 @@ public class Metadaten {
      */
     public List<Task> getPreviousStepsForProblemReporting() {
         refreshProcess(this.process);
-        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(serviceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
+        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(
+                serviceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
                 this.process.getId());
     }
 
