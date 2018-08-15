@@ -105,7 +105,7 @@ public class MetadatenImagesHelper {
         } else {
             checkIfImagesValid(process.getTitle(),
                     directory);
-//                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
+            // fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         // retrieve existing pages/images
@@ -497,25 +497,6 @@ public class MetadatenImagesHelper {
         }
     }
 
-    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
-        List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-        if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
-                String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
-                for (URI currentImage : dataList) {
-                    String currentFileName = fileService.getFileName(currentImage);
-                    if (currentFileName.equals(fileNamePrefix)) {
-                        orderedFileNameList.add(currentImage);
-                        break;
-                    }
-                }
-            }
-        }
-        return orderedFileNameList;
-    }
-
     /**
      * Get image files.
      *
@@ -533,6 +514,25 @@ public class MetadatenImagesHelper {
             }
         }
         return orderedFileList;
+    }
+
+    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
+        List<URI> orderedFileNameList = new ArrayList<>();
+        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        if (pagesList != null) {
+            for (DocStructInterface page : pagesList) {
+                String fileName = page.getImageName();
+                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
+                for (URI currentImage : dataList) {
+                    String currentFileName = fileService.getFileName(currentImage);
+                    if (currentFileName.equals(fileNamePrefix)) {
+                        orderedFileNameList.add(currentImage);
+                        break;
+                    }
+                }
+            }
+        }
+        return orderedFileNameList;
     }
 
     /**

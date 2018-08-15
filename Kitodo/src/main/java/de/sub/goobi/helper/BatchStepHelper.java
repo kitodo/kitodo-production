@@ -205,8 +205,6 @@ public class BatchStepHelper extends BatchHelper {
 
     /**
      * Solve problem for single.
-     *
-     * @return String
      */
     public void solveProblemForSingle(Task currentStep) {
         this.currentStep = currentStep;
