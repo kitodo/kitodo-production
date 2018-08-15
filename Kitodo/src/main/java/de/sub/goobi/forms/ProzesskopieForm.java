@@ -49,10 +49,10 @@ import org.apache.commons.lang.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
+import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.CataloguePlugin.Hit;
 import org.goobi.production.plugin.CataloguePlugin.QueryBuilder;
-import org.goobi.production.plugin.PluginLoader;
 import org.jdom.JDOMException;
 import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.DocStructInterface;
@@ -69,6 +69,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.Config;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -817,7 +818,28 @@ public class ProzesskopieForm implements Serializable {
 
         startTaskScriptThreads();
 
+        if (Config.getBooleanParameter("createDummyImagesAtProcessCreation")) {
+            createDummyImages();
+        }
+
         return processListPath;
+    }
+
+    private void createDummyImages() throws IOException {
+        URI processDirectory = serviceManager.getFileService().getProcessBaseUriForExistingProcess(this.prozessKopie);
+        String imageDirectoryName = this.prozessKopie.getTitle() + "_" + Config.getParameter("MetsEditorDefaultSuffix");
+        URI imagesDirectory = serviceManager.getFileService().createDirectory(serviceManager.getFileService().createDirectory(processDirectory,"images"), imageDirectoryName);
+
+        //Load number of digits to create valid filenames
+        String numberOfDigits = extractNumber(Config.getParameter("ImagePrefix"));
+
+        for (int i = 1; i <= this.guessedImages; i++) {
+            serviceManager.getFileService().createResource(imagesDirectory, String.format("%0" + numberOfDigits + "d", i) + ".tif");
+        }
+    }
+
+    private String extractNumber(String string) {
+        return string.replaceAll("\\D+","");
     }
 
     private void processAdditionalField(AdditionalField field) throws PreferencesException {

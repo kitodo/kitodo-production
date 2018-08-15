@@ -55,7 +55,15 @@
                                itemValue="#{type}"
                                itemLabel="#{type.label}"/>
             </p:selectOneMenu>
-            <p:inputText id="paginationValue" value="#{Metadaten.paginationValue}"/>
+            <h:outputLabel value="#{msgs.paginationStartValue}:" for="paginationStartValue"/>
+            <h:panelGrid columns="2">
+                <p:inputText id="paginationStartValue" required="true"
+                             value="#{Metadaten.paginationValue}"
+                             label="#{msgs.paginationStartValue}"
+                             requiredMessage="#{msgs.paginationStartValueNotSpecified}">
+                </p:inputText>
+                <p:message for="paginationStartValue" display="icon"/>
+            </h:panelGrid>
             <p:outputLabel for="fictitiousCheckbox" value="#{msgs.paginationFictitious}"/>
             <p:selectBooleanCheckbox id="fictitiousCheckbox"
                                      class="input" style="margin-bottom: 0"
