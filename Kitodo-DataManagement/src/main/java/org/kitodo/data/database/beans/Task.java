@@ -126,7 +126,9 @@ public class Task extends BaseIndexedBean {
      * this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
+    @JoinTable(name = "task_x_user", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
@@ -134,7 +136,9 @@ public class Task extends BaseIndexedBean {
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     /**
@@ -142,7 +146,10 @@ public class Task extends BaseIndexedBean {
      * be generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "typeGenerate_task_x_folder", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")) })
+    @JoinTable(name = "typeGenerate_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")),
+        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
+    )
     private List<Folder> typeGenerate;
 
     @Transient
@@ -554,8 +561,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can
-     * identify change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can identify
+     * change done to task.
      *
      * @return workflow id as String
      */
@@ -567,8 +574,8 @@ public class Task extends BaseIndexedBean {
      * Set workflow id.
      *
      * @param workflowId
-     *            id of task object in diagram - by this id we can identify
-     *            change done to task
+     *            id of task object in diagram - by this id we can identify change
+     *            done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
