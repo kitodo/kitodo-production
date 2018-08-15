@@ -99,6 +99,7 @@ public class FolderGenerator {
      *            name of output format to be used in other cases, may be empty
      *            when derivatives is generated
      * @param vars
+     *            variables to be replaced in the file path
      * @throws IOException
      *             if I/O fails
      */

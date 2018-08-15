@@ -16,13 +16,12 @@ import static org.kitodo.tasks.ImageGeneratorStep.GENERATE_IMAGES;
 import static org.kitodo.tasks.ImageGeneratorStep.LIST_SOURCE_FOLDER;
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
-import de.sub.goobi.forms.AktuelleSchritteForm;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.io.IOException;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -41,7 +40,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.exceptions.UnknownCaseException;
 
 public class ImageGeneratorTask extends EmptyTask {
-    private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
+    private static final Logger logger = LogManager.getLogger(ImageGeneratorTask.class);
 
     /**
      * Folder with source images.
@@ -102,7 +101,6 @@ public class ImageGeneratorTask extends EmptyTask {
         this.variant = variant;
         this.outputs = outputs;
         this.state = LIST_SOURCE_FOLDER;
-        this.position = -1;
         this.sources = Collections.emptyList();
         this.toBeGenerated = new LinkedList<>();
         this.vars = new HashMap<>();
@@ -147,9 +145,10 @@ public class ImageGeneratorTask extends EmptyTask {
     @Override
     public void run() {
         try {
-            while (super.getProgress() < 100) {
+            do {
                 switch (state) {
                     case LIST_SOURCE_FOLDER:
+                        super.setWorkDetail(Helper.getTranslation("listSourceFolder"));
                         sources = sourceFolder
                                 .listContents(vars,
                                     FileFormatsConfig.getFileFormat(sourceFolder.getMimeType()).get()
@@ -157,10 +156,15 @@ public class ImageGeneratorTask extends EmptyTask {
                                 .entrySet().stream().map(λ -> Pair.of(λ.getKey(), λ.getValue()))
                                 .collect(Collectors.toList());
                         state = DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED;
+                        position = -1;
                         break;
 
                     case DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED:
                         Pair<String, URI> source = sources.get(position);
+                        if (!variant.equals(ALL_IMAGES)) {
+                            super.setWorkDetail(Helper.getTranslation("determineWhichImagesNeedToBeGenerated",
+                                Arrays.asList(source.getKey())));
+                        }
                         List<Folder> generations = outputs.parallelStream()
                                 .filter(variant.getFilter(vars, source.getKey())).collect(Collectors.toList());
                         if (!generations.isEmpty()) {
@@ -175,17 +179,15 @@ public class ImageGeneratorTask extends EmptyTask {
 
                     case GENERATE_IMAGES:
                         Pair<Pair<String, URI>, List<Folder>> generation = toBeGenerated.get(position);
-                        generation.getRight().parallelStream().forEach(λ -> {
-                            try {
-                                FileFormat fileFormat = FileFormatsConfig.getFileFormat(λ.getMimeType()).get();
-                                Pair<String, URI> dataSource = generation.getLeft();
-                                λ.getGenerator().generate(dataSource.getValue(), dataSource.getKey(),
-                                    fileFormat.getExtension(false), fileFormat.getImageFileFormat(),
-                                    fileFormat.getFormatName(), vars);
-                            } catch (IOException | JAXBException e) {
-                                throw new UndeclaredThrowableException(e);
-                            }
-                        });
+                        super.setWorkDetail(
+                            Helper.getTranslation("generateImages", Arrays.asList(generation.getKey().getKey())));
+                        for (Folder folder : generation.getRight()) {
+                            FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
+                            Pair<String, URI> dataSource = generation.getLeft();
+                            folder.getGenerator().generate(dataSource.getValue(), dataSource.getKey(),
+                                fileFormat.getExtension(false), fileFormat.getImageFileFormat(),
+                                fileFormat.getFormatName(), vars);
+                        }
 
                         if (position == toBeGenerated.size() - 1) {
                             super.setProgress(100);
@@ -197,19 +199,24 @@ public class ImageGeneratorTask extends EmptyTask {
                         throw new UnknownCaseException(ImageGeneratorStep.class, state);
                 }
                 position++;
-                super.setProgress(100d
-                        * (position
-                                + (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0))
-                        + 1 / (variant.equals(ALL_IMAGES) ? 2 + sources.size()
-                                : 1 + sources.size() + toBeGenerated.size()));
+                setProgress();
                 if (isInterrupted()) {
                     return;
                 }
-            }
+            } while (!(state.equals(GENERATE_IMAGES) && position == toBeGenerated.size()));
         } catch (RuntimeException | IOException | JAXBException e) {
-            logger.error(e);
+            logger.error(e.getMessage(), e);
             setException(e);
         }
+    }
+
+    private void setProgress() {
+        int numerator = (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
+                + (variant.equals(ALL_IMAGES) && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0
+                        : position)
+                + 1;
+        int denominator = sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1;
+        super.setProgress(100d * numerator / denominator);
     }
 
     /**
