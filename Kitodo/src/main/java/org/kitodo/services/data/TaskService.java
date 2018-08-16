@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
+import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -58,6 +59,8 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.tasks.ImageGenerator;
+import org.kitodo.tasks.ImageGeneratorTaskVariant;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
@@ -460,9 +463,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
 
         /*
-         * we read list of process but not list of templates because only process tasks
-         * are displayed on the task list and reading list of templates would cause
-         * never ending loop as list of templates reads list of tasks
+         * we read list of process but not list of templates because only
+         * process tasks are displayed on the task list and reading list of
+         * templates would cause never ending loop as list of templates reads
+         * list of tasks
          */
         Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
@@ -689,6 +693,23 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
         save(task);
+    }
+
+    public void generateImages(EmptyTask worker, Task task, boolean automatic) throws DataException {
+        Process process = task.getProcess();
+        ImageGenerator generator = new ImageGenerator(process.getTitle(), process.getProject().getGeneratorSource(),
+                ImageGeneratorTaskVariant.ALL_IMAGES, task.getTypeGenerate());
+        generator.setWorker(worker);
+        if (automatic) {
+            if (worker.getException() == null) {
+                task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                task.setProcessingStatus(TaskStatus.DONE.getValue());
+            } else {
+                task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                save(task);
+            }
+        }
     }
 
     /**
