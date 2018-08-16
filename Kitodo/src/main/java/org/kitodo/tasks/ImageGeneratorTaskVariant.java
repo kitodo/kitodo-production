@@ -20,7 +20,10 @@ import java.util.function.Predicate;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.validation.State;
+import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtimepreservation.FileType;
 import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValidationInterface;
 import org.kitodo.config.xml.fileformats.FileFormat;
@@ -49,9 +52,17 @@ public enum ImageGeneratorTaskVariant {
         @Override
         public Predicate<? super Folder> getFilter(Map<String, String> vars, String canonical) {
             return λ -> {
+                Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
-                    return !λ.getURIIfExists(vars, canonical,
+                    boolean present = λ.getURIIfExists(vars, canonical,
                         FileFormatsConfig.getFileFormat(λ.getMimeType()).get().getExtension(false)).isPresent();
+                    if (present) {
+                        logger.debug("Image {0} was found in folder {1}.", canonical, λ);
+                        return false;
+                    } else {
+                        logger.debug("Image {0} not found in folder {1}: Marked for generation.", canonical, λ);
+                        return true;
+                    }
                 } catch (IOException | JAXBException e) {
                     throw new UndeclaredThrowableException(e);
                 }
@@ -67,20 +78,35 @@ public enum ImageGeneratorTaskVariant {
         @Override
         public Predicate<? super Folder> getFilter(Map<String, String> vars, String canonical) {
             return λ -> {
+                Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
                     FileFormat fileFormat = FileFormatsConfig.getFileFormat(λ.getMimeType()).get();
                     Optional<URI> imageURI = λ.getURIIfExists(vars, canonical, fileFormat.getExtension(false));
                     if (!imageURI.isPresent()) {
-                        return false;
+                        logger.info("Image {0} not found in folder {1}: Marked for generation.", canonical, λ);
+                        return true;
                     } else {
                         Optional<FileType> fileType = fileFormat.getFileType();
                         if (fileType.isPresent()) {
-                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader
-                                    = new KitodoServiceLoader<>(LongTimePreservationValidationInterface.class);
-                            return !longTimePreservationValidationInterfaceLoader.loadModule()
-                                    .validate(imageURI.get(), fileType.get()).getState().equals(State.SUCCESS);
+                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader = new KitodoServiceLoader<>(
+                                    LongTimePreservationValidationInterface.class);
+                            ValidationResult result = longTimePreservationValidationInterfaceLoader.loadModule()
+                                    .validate(imageURI.get(), fileType.get());
+                            if (result.getState().equals(State.SUCCESS)) {
+                                logger.info("Image {0} in folder {1} was validated {2}.", canonical, λ,
+                                    result.getState());
+                                return false;
+                            } else {
+                                logger.info("Image {0} in folder {1} was validated {2}. Image marked for regeneration.",
+                                    canonical, λ, result.getState());
+                                result.getResultMessages().forEach(logger::debug);
+                                return true;
+                            }
                         } else {
-                            return false;
+                            logger.warn(
+                                "Image {0} in folder {1} cannot be validated: No validator configured. Image marked for regeneration.",
+                                canonical, λ);
+                            return true;
                         }
                     }
                 } catch (IOException | JAXBException e) {

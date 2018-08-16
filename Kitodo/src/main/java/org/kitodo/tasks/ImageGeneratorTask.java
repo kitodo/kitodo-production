@@ -21,12 +21,14 @@ import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -165,8 +167,24 @@ public class ImageGeneratorTask extends EmptyTask {
                             super.setWorkDetail(Helper.getTranslation("determineWhichImagesNeedToBeGenerated",
                                 Arrays.asList(source.getKey())));
                         }
-                        List<Folder> generations = outputs.parallelStream()
-                                .filter(variant.getFilter(vars, source.getKey())).collect(Collectors.toList());
+
+                        /*
+                         * The generation variant MISSING_OR_DAMAGED_IMAGES uses
+                         * the image validation module to check whether image
+                         * files are damaged. For reasons unknown, the
+                         * ModuleLoader does not work when invoked from a
+                         * parallelStream(). That's why we use a classic loop
+                         * here. This could be parallelized after the underlying
+                         * problem has been resolved.
+                         */
+                        List<Folder> generations = new ArrayList<Folder>(outputs.size());
+                        Predicate<? super Folder> requiresGeneration = variant.getFilter(vars, source.getKey());
+                        for (Folder folder : outputs) {
+                            if (requiresGeneration.test(folder)) {
+                                generations.add(folder);
+                            }
+                        }
+
                         if (!generations.isEmpty()) {
                             toBeGenerated.add(Pair.of(source, generations));
                         }
@@ -181,6 +199,16 @@ public class ImageGeneratorTask extends EmptyTask {
                         Pair<Pair<String, URI>, List<Folder>> generation = toBeGenerated.get(position);
                         super.setWorkDetail(
                             Helper.getTranslation("generateImages", Arrays.asList(generation.getKey().getKey())));
+                        logger.info("Generating ".concat(generation.toString()));
+
+                        /*
+                         * The image generation uses the image management module
+                         * to generate the images. For reasons unknown, the
+                         * ModuleLoader does not work when invoked from a
+                         * parallelStream(). That's why we use a classic loop
+                         * here. This could be parallelized after the underlying
+                         * problem has been resolved.
+                         */
                         for (Folder folder : generation.getRight()) {
                             FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
                             Pair<String, URI> dataSource = generation.getLeft();
@@ -199,24 +227,21 @@ public class ImageGeneratorTask extends EmptyTask {
                         throw new UnknownCaseException(ImageGeneratorStep.class, state);
                 }
                 position++;
-                setProgress();
+                super.setProgress(100d
+                        * ((state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
+                                + (variant.equals(ALL_IMAGES)
+                                        && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0 : position)
+                                + 1)
+                        / (sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1));
                 if (isInterrupted()) {
                     return;
                 }
             } while (!(state.equals(GENERATE_IMAGES) && position == toBeGenerated.size()));
+            logger.info("Completed");
         } catch (RuntimeException | IOException | JAXBException e) {
             logger.error(e.getMessage(), e);
             setException(e);
         }
-    }
-
-    private void setProgress() {
-        int numerator = (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
-                + (variant.equals(ALL_IMAGES) && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0
-                        : position)
-                + 1;
-        int denominator = sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1;
-        super.setProgress(100d * numerator / denominator);
     }
 
     /**
