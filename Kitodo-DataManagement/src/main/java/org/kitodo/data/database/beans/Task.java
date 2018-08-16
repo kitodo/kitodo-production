@@ -11,16 +11,12 @@
 
 package org.kitodo.data.database.beans;
 
-import static javax.persistence.CascadeType.DETACH;
-import static javax.persistence.CascadeType.MERGE;
-import static javax.persistence.CascadeType.PERSIST;
-import static javax.persistence.CascadeType.REFRESH;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -129,34 +125,33 @@ public class Task extends BaseIndexedBean {
      * This field contains information about users, which are allowed to work on
      * this task.
      */
-    @ManyToMany(cascade = PERSIST)
-    @JoinTable(name = "task_x_user",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id"))
-    )
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "task_x_user", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
      * This field contains information about user's groups, which are allowed to
      * work on this task.
      */
-    @ManyToMany(cascade = PERSIST)
-    @JoinTable(name = "task_x_userGroup",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id"))
-    )
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "task_x_userGroup", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about folders whose contents are to be
-     * generated in this task.
+     * This field contains information about typeGenerate, whose contents are to
+     * be generated in this task.
      */
-    @ManyToMany(cascade = {PERSIST, MERGE, REFRESH, DETACH })
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "typeGenerate_task_x_folder",
         joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
     private List<Folder> typeGenerate;
+
     @Transient
     private String localizedTitle;
 
