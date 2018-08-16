@@ -40,7 +40,15 @@ import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.exceptions.UnknownCaseException;
+import org.kitodo.production.thread.ImageGeneratorTask;
+import org.kitodo.production.thread.TaskScriptThread;
 
+/**
+ * A program that generates images using the image management interface. This
+ * program is run by the {@link ImageGeneratorTask} when the user manually
+ * initiates the creation of the images. If the images are generated when the
+ * task is completed, this is done by the {@link TaskScriptThread}.
+ */
 public class ImageGenerator implements Runnable {
     private static final Logger logger = LogManager.getLogger(ImageGeneratorTask.class);
 

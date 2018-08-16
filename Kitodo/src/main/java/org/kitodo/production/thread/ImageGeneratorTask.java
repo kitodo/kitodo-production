@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.tasks;
+package org.kitodo.production.thread;
 
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
@@ -19,12 +19,18 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.tasks.ImageGenerator;
+import org.kitodo.tasks.ImageGeneratorTaskVariant;
 
+/**
+ * Performs creating images in the task manager, when the operator clicks on it
+ * manually.
+ */
 public class ImageGeneratorTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ImageGeneratorTask.class);
 
     /**
-     * Image generator to be run by this thread;
+     * Image generator to be run by this thread.
      */
     private ImageGenerator imageGenerator;
 
