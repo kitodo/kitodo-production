@@ -88,8 +88,8 @@ public enum ImageGeneratorTaskVariant {
                     } else {
                         Optional<FileType> fileType = fileFormat.getFileType();
                         if (fileType.isPresent()) {
-                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader = new KitodoServiceLoader<>(
-                                    LongTimePreservationValidationInterface.class);
+                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader
+                                    = new KitodoServiceLoader<>(LongTimePreservationValidationInterface.class);
                             ValidationResult result = longTimePreservationValidationInterfaceLoader.loadModule()
                                     .validate(imageURI.get(), fileType.get());
                             if (result.getState().equals(State.SUCCESS)) {
@@ -121,7 +121,7 @@ public enum ImageGeneratorTaskVariant {
      *
      * @param canonical
      *            canonical part of the file name
-     * @return
+     * @return the filter for the generator variant
      */
     public abstract Predicate<? super Folder> getFilter(Map<String, String> vars, String canonical);
 }
