@@ -350,6 +350,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     display: grid;
 }
 
+.ui-inputfield.ui-selectonelistbox,
 .ui-inputfield.ui-selectmanymenu {
     height: auto;
     padding-top: .5em;
