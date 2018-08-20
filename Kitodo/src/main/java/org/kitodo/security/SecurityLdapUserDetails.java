@@ -14,6 +14,9 @@ package org.kitodo.security;
 import org.kitodo.data.database.beans.User;
 import org.springframework.security.ldap.userdetails.LdapUserDetails;
 
+/**
+ * This Class is an extension for the SecurityUserDetails class and is used when user authentication is made against ldap.
+ */
 public class SecurityLdapUserDetails extends SecurityUserDetails implements LdapUserDetails {
 
     private static final long serialVersionUID = 2955619497162715796L;

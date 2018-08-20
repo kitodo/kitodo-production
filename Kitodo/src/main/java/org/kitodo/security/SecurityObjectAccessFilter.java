@@ -29,6 +29,11 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.web.filter.GenericFilterBean;
 
+/**
+ * This filter handles the accessibility of urls which contains the parameter
+ * "id". The access is denied if the user does not have the
+ * corresponding authority for the current id.
+ */
 public class SecurityObjectAccessFilter extends GenericFilterBean {
     private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
     private SecurityAccessService securityAccessService = new ServiceManager().getSecurityAccessService();

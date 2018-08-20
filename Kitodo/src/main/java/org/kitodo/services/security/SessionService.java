@@ -28,6 +28,9 @@ public class SessionService {
     private static SessionService instance = null;
     private SessionRegistry sessionRegistry;
 
+    /**
+     * Private constructor which is getting the SessionRegistry from the main SecurityConfig class.
+     */
     private SessionService() {
         SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
