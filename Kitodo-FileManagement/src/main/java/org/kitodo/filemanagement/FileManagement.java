@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -40,6 +41,8 @@ public class FileManagement implements FileManagementInterface {
 
     private static final Logger logger = LogManager.getLogger(FileManagement.class);
     private static final FileMapper fileMapper = new FileMapper();
+
+    private static final String IMAGES_DIRECTORY_NAME = "images";
 
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
@@ -375,10 +378,13 @@ public class FileManagement implements FileManagementInterface {
             String resourceName) {
         processTitle = encodeTitle(processTitle);
         final String ocr = "/ocr/";
+        if (Objects.isNull(resourceName)) {
+            resourceName = "";
+        }
 
         switch (processSubType) {
             case IMAGE:
-                return processID + "/images/" + resourceName;
+                return processID + "/" + IMAGES_DIRECTORY_NAME + "/" + resourceName;
             case IMAGE_SOURCE:
                 return getSourceDirectory(processID, processTitle) + resourceName;
             case META_XML:
@@ -424,16 +430,19 @@ public class FileManagement implements FileManagementInterface {
      * @return the source directory as a string
      */
     private URI getSourceDirectory(String processId, String processTitle) {
-        final String source = "_source";
+        final String suffix = "_" + Config.getParameter("DIRECTORY_SUFFIX", "tif");
         URI dir = URI.create(getProcessSubType(processId, processTitle, ProcessSubType.IMAGE, null));
-        FilenameFilter filterDirectory = new FileNameEndsWithFilter(source);
+        FilenameFilter filterDirectory = new FileNameEndsWithFilter(suffix);
         URI sourceFolder = URI.create("");
         try {
             List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.isEmpty()) {
-                sourceFolder = dir.resolve(processTitle + source);
+                sourceFolder = dir.resolve(processTitle + suffix);
                 if (Config.getBooleanParameter("createSourceFolder", false)) {
-                    createDirectory(dir, processTitle + source);
+                    if (!fileExist(dir)) {
+                        createDirectory(dir.resolve(".."), IMAGES_DIRECTORY_NAME);
+                    }
+                    createDirectory(dir, processTitle + suffix);
                 }
             } else {
                 sourceFolder = dir.resolve(directories.get(0));
