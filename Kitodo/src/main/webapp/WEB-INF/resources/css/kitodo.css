@@ -470,6 +470,7 @@ section#content-section {
 #desktopGrid_content {
     display: flex;
     flex-direction: column;
+    padding: 0 8px;
 }
 
 #desktopGrid .ui-grid-row {
@@ -485,6 +486,10 @@ section#content-section {
 
 #desktopGrid td.actionsColumn form a:last-of-type {
     margin-right: 0;
+}
+
+#desktopGrid.ui-panelgrid .ui-panelgrid-cell {
+    padding: 0 8px 16px 8px !important;
 }
 
 #desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell {
@@ -505,6 +510,7 @@ section#content-section {
 #desktopGrid_content .desktop-widget,
 #desktopGrid_content .desktop-widget > div{
     height: 100%;
+    padding: 0;
 }
 
 .task-table-column, .process-table-column {
