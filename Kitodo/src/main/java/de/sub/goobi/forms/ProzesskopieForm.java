@@ -755,7 +755,7 @@ public class ProzesskopieForm implements Serializable {
     /**
      * Anlegen des Prozesses und save der Metadaten.
      */
-    public String createNewProcess() throws ReadException, IOException, PreferencesException, WriteException {
+    public String createNewProcess() {
 
         // evict set up id to null
         serviceManager.getProcessService().evict(this.prozessKopie);
@@ -777,7 +777,12 @@ public class ProzesskopieForm implements Serializable {
 
         String baseProcessDirectory = serviceManager.getProcessService().getProcessDataDirectory(this.prozessKopie)
                 .toString();
-        boolean successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        boolean successful = false;
+        try {
+            successful = serviceManager.getFileService().createMetaDirectory(URI.create(""), baseProcessDirectory);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
         if (!successful) {
             String message = "Metadata directory: " + baseProcessDirectory + " in path: "
                     + ConfigCore.getKitodoDataDirectory() + " was not created!";
@@ -798,50 +803,40 @@ public class ProzesskopieForm implements Serializable {
          * wenn eine RDF-Konfiguration vorhanden ist (z.B. aus dem Opac-Import,
          * oder frisch angelegt), dann diese ergänzen
          */
-        if (this.rdf != null) {
-            insertLogicalDocStruct();
+        try {
+            if (this.rdf != null) {
+                insertLogicalDocStruct();
 
-            for (AdditionalField field : this.additionalFields) {
-                if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
-                    processAdditionalField(field);
+                for (AdditionalField field : this.additionalFields) {
+                    if (field.isUghbinding() && field.getShowDependingOnDoctype()) {
+                        processAdditionalField(field);
+                    }
                 }
+
+                updateMetadata();
+                insertCollections();
+                insertImagePath();
             }
 
-            updateMetadata();
-            insertCollections();
-            insertImagePath();
+            // Create configured directories
+            serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
+            serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
+
+            startTaskScriptThreads();
+
+            if (Config.getBooleanParameter("createDummyImagesAtProcessCreation", false)) {
+                createDummyImages();
+            }
+        } catch (IOException | PreferencesException | WriteException | ReadException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
 
-        // Create configured directories
-        serviceManager.getProcessService().createProcessDirs(this.prozessKopie);
-        serviceManager.getProcessService().readMetadataFile(this.prozessKopie);
-
-        startTaskScriptThreads();
-
-        if (Config.getBooleanParameter("createDummyImagesAtProcessCreation")) {
-            createDummyImages();
-        }
 
         return processListPath;
     }
 
     private void createDummyImages() throws IOException {
-        URI processDirectory = serviceManager.getFileService().getProcessBaseUriForExistingProcess(this.prozessKopie);
-        String imageDirectoryName = this.prozessKopie.getTitle() + "_" + Config.getParameter("MetsEditorDefaultSuffix");
-        URI imagesDirectory = serviceManager.getFileService().createDirectory(
-            serviceManager.getFileService().createDirectory(processDirectory, "images"), imageDirectoryName);
-
-        // Load number of digits to create valid filenames
-        String numberOfDigits = extractNumber(Config.getParameter("ImagePrefix"));
-
-        for (int i = 1; i <= this.guessedImages; i++) {
-            serviceManager.getFileService().createResource(imagesDirectory,
-                String.format("%0" + numberOfDigits + "d", i) + ".tif");
-        }
-    }
-
-    private String extractNumber(String string) {
-        return string.replaceAll("\\D+","");
+        serviceManager.getFileService().createDummyImagesForProcess(this.prozessKopie, this.guessedImages);
     }
 
     private void processAdditionalField(AdditionalField field) throws PreferencesException {
@@ -952,7 +947,7 @@ public class ProzesskopieForm implements Serializable {
             }
             MetadataInterface newMetadata = UghImplementation.INSTANCE.createMetadata(mdt);
             String path = serviceManager.getFileService().getImagesDirectory(this.prozessKopie)
-                    + this.prozessKopie.getTitle().trim() + DIRECTORY_SUFFIX;
+                    + this.prozessKopie.getTitle().trim() + "_" + DIRECTORY_SUFFIX;
             if (SystemUtils.IS_OS_WINDOWS) {
                 newMetadata.setStringValue("file:/" + path);
             } else {
