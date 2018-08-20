@@ -284,7 +284,7 @@ public class ProcessServiceIT {
     public void shouldGetSourceDirectory() throws Exception {
         Process process = processService.getById(1);
         URI directory = fileService.getSourceDirectory(process);
-        boolean condition = directory.getRawPath().contains("1/images/First__process_source");
+        boolean condition = directory.getRawPath().contains("1/images/First__process_tif");
         assertTrue("Source directory doesn't match to given directory!", condition);
     }
 
