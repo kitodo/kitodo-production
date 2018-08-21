@@ -24,12 +24,12 @@
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.tasks}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="secondary-button reload-button">
+                                  styleClass="plain">
                                 <p:ajax update="taskTable"/>
                         </p:commandButton>
                         <p:button id="allTasks" value="#{msgs.allTasks}"
                                   outcome="tasks"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
                     </div>
                 </div>
                 <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
@@ -40,12 +40,12 @@
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.processes}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="secondary-button reload-button">
+                                  styleClass="plain">
                                 <p:ajax update="processTable"/>
                         </p:commandButton>
                         <p:button id="allProcesses" value="#{msgs.allProcesses}"
                                   outcome="processes"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
 
                     </div>
                 </div>
@@ -57,12 +57,12 @@
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.projects}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="secondary-button reload-button">
+                                  styleClass="plain">
                             <p:ajax update="projectTable"/>
                         </p:commandButton>
                         <p:button id="allProjects" value="#{msgs.allProjects}"
                                   outcome="projects"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary-button"/>
+                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
                     </div>
                 </div>
                 <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
@@ -72,7 +72,7 @@
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.databaseStatistic}</h3>
                         <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="secondary-button reload-button">
+                                  styleClass="plain">
                             <p:ajax update="statisticsTable"/>
                         </p:commandButton>
                     </div>

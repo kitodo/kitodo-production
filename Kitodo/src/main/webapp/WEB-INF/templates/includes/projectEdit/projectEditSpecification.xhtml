@@ -19,9 +19,13 @@
     <h:outputScript name="js/clipboard.js" target="body" />
     <p:panel>
         <p:selectBooleanButton
-                onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
-                id="specificationLockedButton" value="#{ProjekteForm.lockedTechnical}">
+                onLabel="#{msgs.locked}"
+                offLabel="#{msgs.unlocked}"
+                onIcon="fa fa-lock fa-lg"
+                offIcon="fa fa-unlock fa-lg"
+                styleClass="callto"
+                id="specificationLockedButton"
+                value="#{ProjekteForm.lockedTechnical}">
             <p:ajax event="change" update="technischeDatenForm" />
         </p:selectBooleanButton>
     </p:panel>

@@ -230,6 +230,10 @@ body.first-visit #portal-header {
     padding-bottom: 15px;
     }
 
+#header-nav > ul > li > a > i {
+    color: inherit;
+}
+
 #header-nav li:hover a {
     color: #1b2b36;
     }
@@ -271,6 +275,10 @@ body.first-visit #portal-header {
     display: block;
     border-top: 1px solid #d8d8d8;
     }
+
+#header-nav li ul li a i {
+    color: inherit;
+}
 
 #header-nav li ul li:hover a {
     background-color: #1b2b36 !important;
@@ -748,10 +756,6 @@ main i.fa {
 
 #editForm\:tabs\:taskTable\:taskOrder {
     width: 90px;
-}
-
-#editForm .button-filled-green {
-    margin: 16px;
 }
 
 .statusColumn,
@@ -1297,19 +1301,6 @@ tbody#projectsTabView\:projectsTable_data > tr.ui-widget-content > td {
 
 .ui-picklist.ui-picklist-responsive .ui-picklist-list-wrapper {
     width: 45%;
-}
-
-.ui-commandlink.button-blue,
-.button-blue .ui-icon {
-    color: #0071bc;
-    background: transparent;
-    border: none;
-}
-
-.ui-commandlink.button-filled-green,
-.button-filled-green > .ui-button,
-.ui-button.button-filled-green {
-    background: #42ba37 !important;
 }
 
 .buttonset {

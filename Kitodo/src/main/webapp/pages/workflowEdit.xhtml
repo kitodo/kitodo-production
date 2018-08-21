@@ -46,7 +46,6 @@
                             'detail':'#{msgs.youWillBeRedirected}',
                             'severity':'info'});"
                          disabled="#{WorkflowForm.saveDisabled}"
-                         styleClass="button-filled-blue"
                          immediate="true"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{WorkflowForm.setSaveDisabled(false)}"
@@ -54,7 +53,7 @@
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
                   outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

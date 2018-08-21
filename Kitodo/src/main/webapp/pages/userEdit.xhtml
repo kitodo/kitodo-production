@@ -51,14 +51,13 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{BenutzerverwaltungForm.saveDisabled}"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         styleClass="button-filled-blue"/>
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{BenutzerverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -168,9 +167,10 @@
                                  id="addUserGroupButton"
                                  value="#{msgs.userGroupsAdd}"
                                  icon="fa fa-plus-circle fa-lg"
+                                 iconPos="right"
                                  immediate="true"
                                  rendered="#{isEditMode || isCreateMode}"
-                                 class="button-filled-green">
+                                 class="callto m-1em">
                 </p:commandButton>
             </p:tab>
             <!-- projects -->
@@ -195,9 +195,10 @@
                                  id="addProjectButton"
                                  value="#{msgs.addProjects}"
                                  icon="fa fa-plus-circle fa-lg"
+                                 iconPos="right"
                                  immediate="true"
                                  rendered="#{isEditMode || isCreateMode}"
-                                 class="button-filled-green">
+                                 class="callto m-1em">
                 </p:commandButton>
             </p:tab>
             <!-- clients -->

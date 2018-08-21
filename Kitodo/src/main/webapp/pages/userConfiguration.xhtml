@@ -18,6 +18,12 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.userConfiguration}</h3>
+
+        <p:button value="#{msgs.cancel}"
+                  outcome="desktop.jsf"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

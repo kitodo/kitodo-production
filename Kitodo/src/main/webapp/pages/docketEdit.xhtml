@@ -39,7 +39,6 @@
                          action="#{DocketForm.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         styleClass="button-filled-blue"
                          disabled="#{DocketForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({
                             'summary':'#{msgs.docketSaving}',
@@ -49,9 +48,11 @@
                          actionListener="#{DocketForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}" onclick="setConfirmUnload(false);"
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
                   outcome="projects.jsf?id=#{ProjekteForm.activeTabIndex}"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  icon="fa fa-times fa-lg" iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
