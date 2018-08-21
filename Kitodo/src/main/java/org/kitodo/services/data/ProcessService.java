@@ -1712,7 +1712,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 ff = UghImplementation.INSTANCE.createRDFFile(prefs);
                 break;
         }
-        ff.read(metadataFile.getPath());
+        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
 
         return ff;
     }
