@@ -11,6 +11,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  *
 -->
+<!-- Change History -->
+
+<!-- August, 2018 -->
+<!-- Version 1.0 -->
+<!-- Changes:
+	 initial Draft completed
+-->
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
            targetNamespace="http://meta.kitodo.org/v1/" xmlns="http://meta.kitodo.org/v1/"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
