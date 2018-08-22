@@ -39,7 +39,7 @@
                              icon="fa fa-list-ol fa-lg"
                              iconPos="right"/>
         </p:panelGrid>
-        <p:panelGrid columns="2">
+        <p:panelGrid columns="2" columnClasses="alignTop,alignTop">
             <h:panelGroup rendered="#{Metadaten.showPagination}">
                 <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}" style="height: 100%"
                                   required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
@@ -51,6 +51,22 @@
             </h:panelGroup>
             <h:panelGroup>
                 <p:panelGrid id="paginationPanelGrid" columns="2" rendered="#{Metadaten.showPagination}">
+                    <h:outputLabel value="#{msgs.insertNewImages}" for="newPagesCount"/>
+
+                    <h:panelGroup>
+                        <p:inputText id="newPagesCount"
+                                     value="#{Metadaten.numberOfImagesToAdd}"
+                                     label="#{msgs.paginationStartValue}">
+                            <p:ajax event="blur"/>
+                        </p:inputText>
+
+                        <p:commandButton id="generateDummyImagesButton" value="#{msgs.insert}"
+                                         action="#{Metadaten.addNewImagesAndPaginate}"
+                                         update="structureTreeForm"
+                                         immediate="true"/>
+                    </h:panelGroup>
+
+
                     <h:outputText value="#{msgs.pagination}"/>
                     <p:selectOneMenu id="paginationTypeSelect"
                                      value="#{Metadaten.paginator.paginationType}">
@@ -102,23 +118,12 @@
                                    update="paginationSelection,structureTreeForm,structureTreeForm:structureWrapperPanel,structureTreeForm:paginationWrapperPanel,metadataWrapperPanel,commentWrapperPanel,galleryWrapperPanel"
                                    immediate="true"/>
 
-                    <p:commandButton id="okButton" value="OK"
+                    <p:commandButton id="okButton" value="#{msgs.back}"
                                      action="#{Metadaten.setShowPagination(false)}"
                                      update="structureTreeForm"
                                      immediate="true"/>
 
-                        <h:outputLabel value="Neue Bilder einfügen:" for="newPagesCount"/>
-                        <p:inputText id="newPagesCount"
-                                     value="#{Metadaten.numberOfImagesToAdd}"
-                                     label="#{msgs.paginationStartValue}">
-                            <p:ajax event="blur"/>
-                        </p:inputText>
 
-                        <p:commandButton id="generateDummyImagesButton" value="OK"
-                                         action="#{Metadaten.addNewImagesAndPaginate}"
-                                         update="structureTreeForm"
-                                         immediate="true"
-                                         />
                 </p:panelGrid>
             </h:panelGroup>
         </p:panelGrid>

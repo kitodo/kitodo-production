@@ -3506,13 +3506,16 @@ public class Metadaten {
         }
     }
 
+    /**
+     * Creates dummy images for current process and paginates by configured standard setting.
+     */
     public void addNewImagesAndPaginate() {
         try {
             serviceManager.getFileService().createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
+            createPagination();
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-
     }
 
     /**

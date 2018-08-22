@@ -164,7 +164,7 @@
                                     <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
-                                    <logViolationsToConsole>false</logViolationsToConsole>
+                                    <logViolationsToConsole>true</logViolationsToConsole>
                                     <maxAllowedViolations>${maxAllowedViolations}</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>
