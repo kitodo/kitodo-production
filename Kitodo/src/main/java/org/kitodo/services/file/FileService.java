@@ -841,21 +841,23 @@ public class FileService {
     }
 
     /**
-     * Creates images files with 0 kb size at images source folder of given process.
+     * Creates images files by copy of a configured source dummy image at images source folder of given process.
      * 
      * @param process
      *            The process object.
-     * @param numberOfImages
+     * @param numberOfNewImages
      *            The number of images to be created.
      */
-    public void createDummyImagesForProcess(Process process, int numberOfImages) throws IOException {
+    public void createDummyImagesForProcess(Process process, int numberOfNewImages) throws IOException {
         URI imagesDirectory = getSourceDirectory(process);
+        int startValue = serviceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
+        URI dummyImage = Paths.get(ConfigCore.getParameter(Parameters.DUMMY_IMAGE)).toUri();
 
         // Load number of digits to create valid filenames
         String numberOfDigits = extractNumber(Config.getParameter("ImagePrefix"));
 
-        for (int i = 1; i <= numberOfImages; i++) {
-            createResource(imagesDirectory, String.format("%0" + numberOfDigits + "d", i) + ".tif");
+        for (int i = startValue; i < startValue + numberOfNewImages; i++) {
+            copyFile(dummyImage, imagesDirectory.resolve(String.format("%0" + numberOfDigits + "d", i) + ".tif"));
         }
     }
 

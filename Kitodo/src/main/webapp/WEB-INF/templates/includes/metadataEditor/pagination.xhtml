@@ -106,6 +106,19 @@
                                      action="#{Metadaten.setShowPagination(false)}"
                                      update="structureTreeForm"
                                      immediate="true"/>
+
+                        <h:outputLabel value="Neue Bilder einfügen:" for="newPagesCount"/>
+                        <p:inputText id="newPagesCount"
+                                     value="#{Metadaten.numberOfImagesToAdd}"
+                                     label="#{msgs.paginationStartValue}">
+                            <p:ajax event="blur"/>
+                        </p:inputText>
+
+                        <p:commandButton id="generateDummyImagesButton" value="OK"
+                                         action="#{Metadaten.addNewImagesAndPaginate}"
+                                         update="structureTreeForm"
+                                         immediate="true"
+                                         />
                 </p:panelGrid>
             </h:panelGroup>
         </p:panelGrid>
