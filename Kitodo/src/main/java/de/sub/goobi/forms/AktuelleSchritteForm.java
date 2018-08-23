@@ -630,8 +630,10 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return values for wiki field
      */
     public String getWikiField() {
-        return this.currentTask.getProcess().getWikiField();
-
+        if (Objects.nonNull(this.currentTask) && Objects.nonNull(this.currentTask.getProcess())) {
+            return this.currentTask.getProcess().getWikiField();
+        }
+        return "";
     }
 
     /**

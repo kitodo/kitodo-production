@@ -47,6 +47,7 @@
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                    <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
