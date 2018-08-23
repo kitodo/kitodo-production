@@ -125,6 +125,11 @@ public class AktuelleSchritteForm extends BasisForm {
             return null;
         } else {
             setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
+            try {
+                serviceManager.getTaskService().save(this.currentTask);
+            } catch (DataException e) {
+                Helper.setErrorMessage("Error saving task", logger, e);
+            }
         }
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
