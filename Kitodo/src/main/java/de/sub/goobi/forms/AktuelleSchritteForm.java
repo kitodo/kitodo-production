@@ -263,6 +263,7 @@ public class AktuelleSchritteForm extends BasisForm {
      */
     public String schrittDurchBenutzerAbschliessen() throws DataException, IOException {
         setCurrentTask(serviceManager.getWorkflowControllerService().closeTaskByUser(this.currentTask));
+        serviceManager.getTaskService().save(this.currentTask);
         return taskListPath;
     }
 
