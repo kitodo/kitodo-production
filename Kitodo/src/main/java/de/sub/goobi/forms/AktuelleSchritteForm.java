@@ -125,6 +125,11 @@ public class AktuelleSchritteForm extends BasisForm {
             return null;
         } else {
             setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
+            try {
+                serviceManager.getTaskService().save(this.currentTask);
+            } catch (DataException e) {
+                Helper.setErrorMessage("Error saving task", logger, e);
+            }
         }
         return taskEditPath + "&id=" + getTaskIdForPath();
     }
@@ -626,8 +631,10 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return values for wiki field
      */
     public String getWikiField() {
-        return this.currentTask.getProcess().getWikiField();
-
+        if (Objects.nonNull(this.currentTask) && Objects.nonNull(this.currentTask.getProcess())) {
+            return this.currentTask.getProcess().getWikiField();
+        }
+        return "";
     }
 
     /**

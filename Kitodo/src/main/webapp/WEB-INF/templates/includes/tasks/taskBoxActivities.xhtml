@@ -161,9 +161,7 @@
                                     <h:graphicImage value="/pages/images/buttons/view1.gif" alt="read xml"
                                                     style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
                                     <h:outputText value="#{msgs.metadataEdit}"/>
-                                    <f:setPropertyActionListener
-                                            value="#{task.processingTimeNow}"
-                                            target="#{task.processingTimeNow}"/>
+                                    <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}" target="#{Metadaten.referringView}"/>
                                     <f:param name="ProzesseID"
                                              value="#{process.id}"/>
                                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>

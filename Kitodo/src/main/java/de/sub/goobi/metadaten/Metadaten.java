@@ -243,6 +243,7 @@ public class Metadaten {
             "metadataWrapperPanel",
             "commentWrapperPanel",
             "galleryWrapperPanel");
+    private String referringView = "processes";
 
 
 
@@ -4102,6 +4103,14 @@ public class Metadaten {
         } catch (DAOException e) {
             Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
         }
+    }
+
+    public void setReferringView(String referringView) {
+        this.referringView = referringView;
+    }
+
+    public String getReferringView() {
+        return this.referringView;
     }
 
 }

@@ -55,6 +55,7 @@
                     <f:param name="ProzesseID" value="#{item.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
+                    <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
                     <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
                 </h:commandLink>
