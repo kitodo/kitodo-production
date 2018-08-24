@@ -20,7 +20,10 @@
 
         <h:form id="imagePreviewForm" style="height: 100%">
             <span id="imageData" data-image="#{request.contextPath}#{Metadaten.currentImage}"/>
-            <p:panelGrid id="imageControlPanel" columns="3" style="right: 17px; top: 9px; position: absolute;">
+            <p:panelGrid id="imageControlPanel"
+                         columns="3"
+                         rendered="#{Metadaten.imageListExistent}"
+                         style="right: 17px; top: 9px; position: absolute;">
                 <p:column>
                     <p:commandButton id="listViewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
@@ -47,7 +50,7 @@
                 </p:column>
             </p:panelGrid>
 
-            <p:panel>
+            <p:panel rendered="#{not Metadaten.imageListExistent}">
                 <p:outputLabel for="tifFolders" value="#{msgs.currentFolder}" style="vertical-align: top"/>
                 <p:selectOneMenu id="tifFolders" value="#{Metadaten.currentTifFolder}" converter="#{URIConverter}" style="margin: 0 5px">
                     <f:selectItem value="#{null}" itemLabel="Please select a tiff folder!" noSelectionOption="true"/>
