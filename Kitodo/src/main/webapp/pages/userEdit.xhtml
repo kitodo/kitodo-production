@@ -93,12 +93,23 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="active" value="#{msgs.isActive}"/>
-                            <p:selectBooleanCheckbox id="active"
-                                                     styleClass="input"
-                                                     disabled="#{isViewMode}"
-                                                     value="#{BenutzerverwaltungForm.userObject.active}"
-                                                     onchange="toggleSave()"/>
+                            <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
+                            <p:inputText id="ldapLogin"
+                                         class="input"
+                                         disabled="#{isViewMode}"
+                                         placeholder="#{msgs.ldaplogin}"
+                                         onchange="toggleSave()"
+                                         value="#{BenutzerverwaltungForm.userObject.ldapLogin}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
+                            <p:selectOneMenu id="ldapGroup"  value="#{BenutzerverwaltungForm.userObject.ldapGroup}"
+                                             disabled="#{isViewMode}"
+                                             converter="#{ldapGroupConverter}">
+                                <f:selectItems value="#{LdapGruppenForm.ldapGroups}" var="ldapGroup"
+                                               itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
                         </div>
                     </p:row>
                     <p:row>
@@ -113,13 +124,13 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:outputLabel for="password" value="#{msgs.password}"/>
+                            <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
                             <p:password id="password"
                                         class="input"
-                                        disabled="#{isViewMode}"
+                                        rendered="#{isCreateMode}"
                                         placeholder="#{msgs.password}"
                                         value="#{BenutzerverwaltungForm.password}"
-                                        onblur="toggleSave()"
+                                        onchange="toggleSave()"
                                         required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
@@ -141,8 +152,35 @@
                                                      value="#{BenutzerverwaltungForm.userObject.withMassDownload}"
                                                      onchange="toggleSave()"/>
                         </div>
+                        <div>
+                            <p:outputLabel for="active" value="#{msgs.isActive}"/>
+                            <p:selectBooleanCheckbox id="active"
+                                                     styleClass="input"
+                                                     disabled="#{isViewMode}"
+                                                     value="#{BenutzerverwaltungForm.userObject.active}"
+                                                     onchange="toggleSave()"/>
+                        </div>
                     </p:row>
                 </p:panelGrid>
+                <div>
+                    <p:commandButton id="writUserToLdapButton"
+                                     action="#{BenutzerverwaltungForm.writeUserAtLdapServer}"
+                                     value="#{msgs.ldapKonfigurationSchreiben}"
+                                     icon="fa fa-user-plus fa-lg"
+                                     immediate="true"
+                                     disabled="#{isViewMode}"
+                                     rendered="#{AuthenticationController.ldapAuthentication}"
+                                     class="button-filled-green">
+                    </p:commandButton>
+                    <p:commandButton onclick="PF('changePasswordDialog').show()"
+                                     id="changePasswordButton"
+                                     value="#{msgs.passwordChange}"
+                                     icon="fa fa-pencil fa-lg"
+                                     immediate="true"
+                                     rendered="#{isEditMode}"
+                                     class="button-filled-green">
+                    </p:commandButton>
+                </div>
             </p:tab>
             <!-- user groups -->
             <p:tab id="usergroupTab" title="#{msgs.userGroups}">
@@ -251,6 +289,7 @@
     <!-- add user groups dialog -->
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/userEdit/userEditChangePasswordPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditProjectsPopup.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/userEdit/userEditClientsPopup.xhtml"/>
     </ui:define>

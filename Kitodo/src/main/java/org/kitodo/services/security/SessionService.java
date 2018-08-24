@@ -22,8 +22,6 @@ import org.kitodo.security.SecurityUserDetails;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 
 public class SessionService {
 
@@ -54,18 +52,11 @@ public class SessionService {
      * @return The active sessions.
      */
     public List<SecuritySession> getActiveSessions() {
-
         List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
-
         List<SecuritySession> activeSessions = new ArrayList<>();
-
         UserDetails user = null;
 
         for (final Object principal : allPrincipals) {
-
-            if (principal instanceof LdapUserDetails) {
-                user = (LdapUserDetailsImpl) principal;
-            }
             if (principal instanceof SecurityUserDetails) {
                 user = (SecurityUserDetails) principal;
             }
