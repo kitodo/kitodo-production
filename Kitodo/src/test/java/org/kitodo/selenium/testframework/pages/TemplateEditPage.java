@@ -54,14 +54,14 @@ public class TemplateEditPage extends Page<TemplateEditPage> {
     public TemplateEditPage insertTemplateData(Template template) {
         titleInput.sendKeys(template.getTitle());
         Browser.getDriver().findElements(By.className("ui-selectlistbox-item")).get(0).click();
-        workflowSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).click();
-        Browser.getDriver().findElement(By.id(workflowSelect.getAttribute("id") + "_0")).click();
+        clickElement(workflowSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(workflowSelect.getAttribute("id") + "_0")));
 
-        rulesetSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).click();
-        Browser.getDriver().findElement(By.id(rulesetSelect.getAttribute("id") + "_1")).click();
+        clickElement(rulesetSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(rulesetSelect.getAttribute("id") + "_1")));
 
-        docketSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).click();
-        Browser.getDriver().findElement(By.id(docketSelect.getAttribute("id") + "_1")).click();
+        clickElement(docketSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(docketSelect.getAttribute("id") + "_1")));
         return this;
     }
 
