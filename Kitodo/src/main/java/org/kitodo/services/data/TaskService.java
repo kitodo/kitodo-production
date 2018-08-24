@@ -653,6 +653,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 if (commandResult.isSuccessful()) {
                     task.setEditType(TaskEditType.AUTOMATIC.getValue());
                     task.setProcessingStatus(TaskStatus.DONE.getValue());
+                    serviceManager.getWorkflowControllerService().close(task);
                 } else {
                     task.setEditType(TaskEditType.AUTOMATIC.getValue());
                     task.setProcessingStatus(TaskStatus.OPEN.getValue());
