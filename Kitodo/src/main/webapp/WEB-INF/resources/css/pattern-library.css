@@ -792,3 +792,7 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .m-0 {
     margin: 0;
 }
+
+.alignTop {
+    vertical-align: top;
+}

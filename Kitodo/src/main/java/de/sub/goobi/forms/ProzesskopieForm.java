@@ -824,19 +824,10 @@ public class ProzesskopieForm implements Serializable {
 
             startTaskScriptThreads();
 
-            if (Config.getBooleanParameter("createDummyImagesAtProcessCreation", false)) {
-                createDummyImages();
-            }
         } catch (IOException | PreferencesException | WriteException | ReadException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-
-
         return processListPath;
-    }
-
-    private void createDummyImages() throws IOException {
-        serviceManager.getFileService().createDummyImagesForProcess(this.prozessKopie, this.guessedImages);
     }
 
     private void processAdditionalField(AdditionalField field) throws PreferencesException {

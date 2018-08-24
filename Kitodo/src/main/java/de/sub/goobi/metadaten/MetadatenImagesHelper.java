@@ -133,8 +133,8 @@ public class MetadatenImagesHelper {
                         imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
                                 .resolve(page.getImageName());
                     } else {
-                        imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE,
-                            directory + page.getImageName());
+                        imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null)
+                                .resolve(page.getImageName());
                     }
                     if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
@@ -180,7 +180,7 @@ public class MetadatenImagesHelper {
                     logicalStructure.addReferenceTo(dsPage, "logical_physical");
 
                     // image name
-                    dsPage.addContentFile(createContentFile(process, newImage));
+                    dsPage.addContentFile(createContentFile(newImage));
 
                 } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e.getMessage(), e);
@@ -193,7 +193,7 @@ public class MetadatenImagesHelper {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
                     imagesWithoutPageElements.remove(0);
-                    page.addContentFile(createContentFile(process, newImageName));
+                    page.addContentFile(createContentFile(newImageName));
                 } else {
                     // remove page
                     physicalStructure.removeChild(page);
@@ -218,7 +218,7 @@ public class MetadatenImagesHelper {
                         logicalStructure.addReferenceTo(dsPage, "logical_physical");
 
                         // image name
-                        dsPage.addContentFile(createContentFile(process, newImage));
+                        dsPage.addContentFile(createContentFile(newImage));
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -312,16 +312,13 @@ public class MetadatenImagesHelper {
     /**
      * Create ContentFile with set up location.
      *
-     * @param process
-     *            object
      * @param image
      *            URI to image
      * @return ContentFile object
      */
-    private ContentFileInterface createContentFile(Process process, URI image) throws IOException {
+    private ContentFileInterface createContentFile(URI image) {
         ContentFileInterface contentFile = UghImplementation.INSTANCE.createContentFile();
-        URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
-        contentFile.setLocation(path.getPath());
+        contentFile.setLocation(image.getPath());
         return contentFile;
     }
 

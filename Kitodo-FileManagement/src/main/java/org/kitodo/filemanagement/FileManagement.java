@@ -437,7 +437,7 @@ public class FileManagement implements FileManagementInterface {
         try {
             List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.isEmpty()) {
-                sourceFolder = dir.resolve(processTitle + suffix);
+                sourceFolder = dir.resolve(processTitle + suffix + "/");
                 if (Config.getBooleanParameter("createSourceFolder", false)) {
                     if (!fileExist(dir)) {
                         createDirectory(dir.resolve(".."), IMAGES_DIRECTORY_NAME);
@@ -445,7 +445,7 @@ public class FileManagement implements FileManagementInterface {
                     createDirectory(dir, processTitle + suffix);
                 }
             } else {
-                sourceFolder = dir.resolve(directories.get(0));
+                sourceFolder = dir.resolve("/" + directories.get(0));
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

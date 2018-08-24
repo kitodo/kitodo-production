@@ -236,12 +236,14 @@ public class Metadaten {
     private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
     private static final String FULLSIZE_FOLDER_NAME = "fullsize";
     private int numberOfConvertedImages = 0;
+    private int numberOfImagesToAdd = 0;
     private List<String> metadataEditorComponents = Arrays.asList(
             "structureTreeForm:structureWrapperPanel",
             "structureTreeForm:paginationWrapperPanel",
             "metadataWrapperPanel",
             "commentWrapperPanel",
             "galleryWrapperPanel");
+
 
 
     /**
@@ -3475,6 +3477,24 @@ public class Metadaten {
     }
 
     /**
+     * Gets numberOfImagesToAdd.
+     *
+     * @return The numberOfImagesToAdd.
+     */
+    public int getNumberOfImagesToAdd() {
+        return numberOfImagesToAdd;
+    }
+
+    /**
+     * Sets numberOfImagesToAdd.
+     *
+     * @param numberOfImagesToAdd The numberOfImagesToAdd.
+     */
+    public void setNumberOfImagesToAdd(int numberOfImagesToAdd) {
+        this.numberOfImagesToAdd = numberOfImagesToAdd;
+    }
+
+    /**
      * Return index of currently selected page.
      * @return current page index
      */
@@ -3483,6 +3503,18 @@ public class Metadaten {
             return this.getImages().indexOf(this.currentImage) + 1;
         } else {
             return 0;
+        }
+    }
+
+    /**
+     * Creates dummy images for current process and paginates by configured standard setting.
+     */
+    public void addNewImagesAndPaginate() {
+        try {
+            serviceManager.getFileService().createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
+            createPagination();
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

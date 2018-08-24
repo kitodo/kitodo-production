@@ -79,6 +79,11 @@ public class Parameters {
     public static final String DIR_TEMP = "tempfolder";
 
     /**
+     * Absolute path to a image file the application can temporarily use for creating dummy image files.
+     */
+    public static final String DUMMY_IMAGE = "dummyImagePath";
+
+    /**
      * Path to directory in which BPMN diagrams are stored.
      */
     public static final String DIR_DIAGRAMS = "diagramsFolder";
