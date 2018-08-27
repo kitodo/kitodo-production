@@ -274,6 +274,9 @@ public class AktuelleSchritteForm extends BasisForm {
 
     public String sperrungAufheben() {
         MetadatenSperrung.unlockProcess(this.currentTask.getProcess().getId());
+        this.currentTask.getProcess().setBlockedUser(null);
+        this.currentTask.getProcess().setBlockedMinutes(0);
+        this.currentTask.getProcess().setBlockedSeconds(0);
         return null;
     }
 

@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
+import de.sub.goobi.metadaten.MetadatenSperrung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.cli.helper.WikiFieldHelper;
@@ -49,6 +50,7 @@ import org.kitodo.workflow.Solution;
 
 public class WorkflowControllerService {
 
+    private final MetadatenSperrung msp = new MetadatenSperrung();
     private int openTasksWithTheSameOrdering;
     private List<Task> automaticTasks;
     private List<Task> tasksToFinish;
@@ -230,6 +232,10 @@ public class WorkflowControllerService {
                 }
             }
         }
+
+        // unlock the process
+        msp.setFree(task.getProcess().getId());
+
         // if the result of the verification is ok, then continue, otherwise it
         // is not reached
         this.webDav.uploadFromHome(task.getProcess());
@@ -337,6 +343,9 @@ public class WorkflowControllerService {
         }
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
+
+        // unlock the process
+        msp.setFree(task.getProcess().getId());
 
         updateProcessSortHelperStatus(task.getProcess());
 
