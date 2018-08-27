@@ -32,6 +32,7 @@
                              iconPos="right"/>
             <p:commandButton id="linkButton" value="#{msgs.link}"
                              icon="fa fa-link fa-lg"
+                             onclick="PF('dialogEditPages').show();"
                              iconPos="right"/>
             <p:commandButton id="pagingButton" value="#{msgs.pagination}"
                              action="#{Metadaten.setShowPagination(true)}"
@@ -45,7 +46,6 @@
                                   required="true" requiredMessage="#{msgs.paginationNoPagesSelected}"
                                   filter="true" filterMatchMode="contains">
                     <f:selectItems value="#{Metadaten.allPages}"/>
-                    <p:ajax update="paginationSelection"/>
 
                 </p:selectManyMenu>
             </h:panelGroup>

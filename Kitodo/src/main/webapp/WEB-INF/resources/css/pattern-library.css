@@ -796,3 +796,14 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 .alignTop {
     vertical-align: top;
 }
+
+.alignTop45wide {
+     vertical-align: top;
+     width: 45%
+}
+
+.buttonColumn {
+    vertical-align: center;
+    width: 40px;
+    padding: 0;
+}

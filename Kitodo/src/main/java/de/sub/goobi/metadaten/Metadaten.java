@@ -2664,13 +2664,22 @@ public class Metadaten {
     public void onNodeDragDrop(TreeDragDropEvent event) {
 
         int dropIndex = event.getDropIndex();
-
-        DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
-        DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
-
-        if (event.getDropNode().getParent().getData().equals("root")) {
+        if (event.getDropNode().getData().equals("root")) {
             Helper.setErrorMessage("Only one root element allowed");
-        } else {
+        } else  {
+            DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
+            DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
+
+            if (Objects.equals(dragDocStruct.getDocStructType().getName(),"page")) {
+                String pyhsicalPageNumber = String.valueOf(getPhysicalPageNumber(dragDocStruct));
+                this.docStruct = dropDocStruct;
+                this.allPagesSelection = new String[1];
+                this.allPagesSelection[0] = pyhsicalPageNumber;
+                addPages();
+                //TODO We need to implement also the removing of the draged node from the old parent
+                return;
+            }
+
 
             if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getDocStructType())) {
                 this.docStruct = dragDocStruct;
@@ -3514,9 +3523,33 @@ public class Metadaten {
         try {
             serviceManager.getFileService().createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
             createPagination();
-        } catch (IOException e) {
+            this.digitalDocument = this.gdzfile.getDigitalDocument();
+            this.digitalDocument.addAllContentFiles();
+        } catch (IOException | PreferencesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Gets the logical page number from a paginated docstruct.
+     * 
+     * @param docStruct
+     *            The DocStruct opject.
+     * @return The logical page number.
+     */
+    public String getLogicalPageNumber(DocStructInterface docStruct) {
+        for (String page : allPages) {
+            int physicalPageNumber = getPhysicalPageNumber(docStruct);
+            if (page.startsWith(String.valueOf(physicalPageNumber))) {
+                return getLogicalPageNumberOfPaginatedImage(page);
+            }
+        }
+        return "";
+    }
+
+    private String getLogicalPageNumberOfPaginatedImage(String paginationText) {
+        paginationText = paginationText.replace(" ","");
+        return paginationText.split(":")[1];
     }
 
     /**
@@ -3797,15 +3830,18 @@ public class Metadaten {
         List<String> allImages = getImages();
         List<? extends MetadataInterface> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
 
+        int imageIndex;
+
         switch (allMetadata.size()) {
             case 0:
                 logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
                 return "IMAGE_PATH_NOT_FOUND";
             case 1:
-                if (allImages.size() > 0 ) {
-                    return allImages.get(Integer.parseInt(allMetadata.get(0).getValue()) - 1);
+                imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
+                if (allImages.size() > 0 && allImages.size() >= imageIndex) {
+                    return allImages.get(imageIndex);
                 } else {
-                    logger.error("ERROR: empty list of image file paths!");
+                    logger.error("ERROR: empty or broken list of image file paths!");
                     return "IMAGE_PATH_NOT_FOUND";
                 }
             default:
