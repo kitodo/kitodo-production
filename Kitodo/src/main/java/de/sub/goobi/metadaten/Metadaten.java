@@ -62,6 +62,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
@@ -3983,12 +3984,11 @@ public class Metadaten {
             if (comments[0].isEmpty()) {
                 List<String> list = new ArrayList<>(Arrays.asList(comments));
                 list.remove(list.get(0));
-                comments = null;
                 comments = list.toArray(new String[list.size()]);
             }
             return comments;
         }
-        return null;
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     /**
@@ -4103,7 +4103,7 @@ public class Metadaten {
      *
      */
     public void reportProblem() {
-        List<Task> taskList = new  ArrayList<Task>();
+        List<Task> taskList = new  ArrayList<>();
         taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
         BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
         batchStepHelper.setProblem(getProblem());
