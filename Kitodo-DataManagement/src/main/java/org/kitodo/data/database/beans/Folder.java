@@ -225,7 +225,7 @@ public class Folder extends BaseBean {
      * @return the pre-defined entries for the combo box
      */
     public Collection<String> getFileGroups() {
-        Collection<String> result = new TreeSet<String>(DFG_VIEWER_FILEGRPS);
+        Collection<String> result = new TreeSet<>(DFG_VIEWER_FILEGRPS);
         result.add(this.fileGroup);
         return result;
     }
@@ -284,10 +284,9 @@ public class Folder extends BaseBean {
      * Returns the path pattern, containing the path to the folder relative to
      * the process directory, and maybe an extra file name pattern.
      *
-     * @deprecated This getter is here to be used by Hibernate and JSF to access
-     *             the field value, but should not be used for other purpose,
-     *             unless you know what you are doing. Use
-     *             {@link #getRelativePath()}.
+     * @deprecated This getter is here to be used by Hibernate and JSF to access the
+     *             field value, but should not be used for other purpose, unless you
+     *             know what you are doing. Use {@link #getRelativePath()}.
      *
      * @return path with optional filename pattern
      */
@@ -321,14 +320,14 @@ public class Folder extends BaseBean {
     /**
      * Returns the filename suffix with file extension for the UGH library.
      *
-     * @deprecated This is a temporary solution and should no longer be used
-     *             after that the UGH is removed.
+     * @deprecated This is a temporary solution and should no longer be used after
+     *             that the UGH is removed.
      * @param extensionWithoutDot
-     *            filename extension without dot, to be read from the
-     *            configuration. The extension can be retrieved from the
-     *            configuration based on the mimeType, but reading the
-     *            configuration is part of the core module, so it cannot be done
-     *            here and must be returned here from the collar.
+     *            filename extension without dot, to be read from the configuration.
+     *            The extension can be retrieved from the configuration based on the
+     *            mimeType, but reading the configuration is part of the core
+     *            module, so it cannot be done here and must be returned here from
+     *            the collar.
      * @return the filename suffix with file extension
      */
     @Deprecated
@@ -399,7 +398,7 @@ public class Folder extends BaseBean {
     /**
      * Sets whether the folder is created on process creation.
      *
-     * @param copyFolder
+     * @param createFolder
      *            whether the folder is created on process creation
      */
     public void setCreateFolder(boolean createFolder) {
@@ -411,7 +410,8 @@ public class Folder extends BaseBean {
      * form the content of another folder. Can be set to {@code null} to disable
      * the function.
      *
-     * @return the scale factor. A value of 1.0 refers to the original size.
+     * @param derivative
+     *            the scale factor. A value of 1.0 refers to the original size.
      */
     public void setDerivative(Double derivative) {
         this.derivative = derivative;
