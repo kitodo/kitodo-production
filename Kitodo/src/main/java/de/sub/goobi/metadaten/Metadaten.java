@@ -3525,6 +3525,7 @@ public class Metadaten {
             createPagination();
             this.digitalDocument = this.gdzfile.getDigitalDocument();
             this.digitalDocument.addAllContentFiles();
+            readAllTifFolders();
         } catch (IOException | PreferencesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
