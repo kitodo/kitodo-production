@@ -15,10 +15,12 @@ import java.io.IOException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 
+import org.kitodo.dataeditor.entities.DmdSec;
 import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
 import org.kitodo.dataeditor.entities.PhysicalStructMapType;
 import org.kitodo.dataeditor.entities.StructLink;
+import org.kitodo.dataformat.VersionProvider;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
@@ -26,7 +28,13 @@ import org.kitodo.dataformat.metskitodo.MetsType;
 import org.kitodo.dataformat.metskitodo.ObjectFactory;
 import org.kitodo.dataformat.metskitodo.StructMapType;
 
+/**
+ * This class is extending the jaxb generated object factory for creating
+ * mets-kitodo objects by population some objects with application specific
+ * values.
+ */
 public class MetsKitodoObjectFactory extends ObjectFactory {
+    private VersionProvider versionProvider = new VersionProvider();
 
     /**
      * Creates KitodoType object which version indication of used kitodo format.
@@ -35,9 +43,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      */
     public KitodoType createKitodoType() {
         KitodoType kitodoType = super.createKitodoType();
-        // TODO this version value should come from data format module. Think about how
-        // implement this.
-        kitodoType.setVersion("1.0");
+        kitodoType.setVersion(versionProvider.getDataFormatVersion());
         return kitodoType;
     }
 
@@ -148,7 +154,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
     }
 
     /**
-     * Creates a MdSecType object which wraps a KitodoType object.
+     * Creates a DmdSec object which wraps a KitodoType object.
      *
      * @param kitodoMetadata
      *            The KitodoType object which is holding the metadata.
@@ -156,11 +162,11 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      *            The id of this DmdSec element.
      * @return The MdSecType object.
      */
-    public MdSecType createDmdSecByKitodoMetadata(KitodoType kitodoMetadata, String id) {
+    public DmdSec createDmdSecByKitodoMetadata(KitodoType kitodoMetadata, String id) {
         MdSecType mdSec = super.createMdSecType();
         mdSec.setMdWrap(wrapKitodoTypeIntoMdWrap(kitodoMetadata));
         mdSec.setID(id);
-        return mdSec;
+        return new DmdSec(mdSec);
     }
 
     /**
