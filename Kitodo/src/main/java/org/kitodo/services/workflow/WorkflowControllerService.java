@@ -16,6 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
+import de.sub.goobi.metadaten.MetadatenSperrung;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,10 +29,8 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
-import de.sub.goobi.metadaten.MetadatenSperrung;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -434,15 +433,17 @@ public class WorkflowControllerService {
         // tasks which was executed at the moment of correction reporting
         List<Property> properties = currentTask.getProcess().getProperties();
         for (Property property : properties) {
-            if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary")) && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
-                int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ") + 14, property.getValue().indexOf(" CorrectionTask: ")));
+            if ((property.getTitle().equals(Helper.getTranslation("correctionNecessary"))
+                    && (property.getValue().contains(" CorrectionTask: " + currentTask.getId().toString())))) {
+                int id = Integer.parseInt(property.getValue().substring(property.getValue().indexOf("(CurrentTask: ")
+                        + 14, property.getValue().indexOf(" CorrectionTask: ")));
                 Task correctionTask = serviceManager.getTaskService().getById(id);
                 closeTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask, date);
                 openTaskForProcessing(correctionTask);
                 Property processProperty = prepareSolveMessageProperty(property, currentTask);
                 serviceManager.getPropertyService().save(processProperty);
                 updateProcessSortHelperStatus(serviceManager.getProcessService().getById(currentTask.getProcess().getId()));
-                currentTask=correctionTask;
+                currentTask = correctionTask;
             }
         }
 
@@ -523,7 +524,8 @@ public class WorkflowControllerService {
     }
 
     private String prepareProblemWikiField(Process process, Task correctionTask) {
-        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser()) + " " + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
+        String message = "Red K " + serviceManager.getUserService().getFullName(getCurrentUser())
+                + " " + Helper.getTranslation("correctionFor") + " " + correctionTask.getTitle() + ": "
                 + this.problem.getMessage();
 
         serviceManager.getProcessService().addToWikiField(message, process);
