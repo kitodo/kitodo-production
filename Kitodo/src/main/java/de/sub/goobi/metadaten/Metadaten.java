@@ -45,6 +45,7 @@ import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
@@ -3596,10 +3597,9 @@ public class Metadaten {
     private void generateThumbnails() {
         updateImagesFolder();
         if (!thumbnailsExist()) {
-            try {
-                URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
-
-                Thumbnails.of((File[]) Files.list(Paths.get(fullsizeFolderURI))
+            URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
+            try (Stream<Path> ImagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
+                Thumbnails.of((File[]) ImagePaths
                         .filter(path -> path.toFile().isFile())
                         .filter(path -> path.toFile().canRead())
                         .filter(path -> path.toString().endsWith(".png"))
@@ -3862,8 +3862,8 @@ public class Metadaten {
         List<String> imagePaths = new LinkedList<>();
         Path pngDir = Paths.get(fullsizePath);
         ensureDirectoryExists(pngDir);
-        try {
-            imagePaths = Files.list(pngDir)
+        try (Stream<Path> streamPaths = Files.list(pngDir)) {
+            imagePaths = streamPaths
                     .filter(path -> path.toFile().isFile())
                     .filter(path -> path.toFile().canRead())
                     .filter(path -> path.toString().endsWith(".png"))
