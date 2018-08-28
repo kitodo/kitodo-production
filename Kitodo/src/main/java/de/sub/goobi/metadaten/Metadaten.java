@@ -2648,11 +2648,11 @@ public class Metadaten {
             List<DocStructInterface> children = element.getAllChildren();
             List<DocStructInterface> pages = getPageReferencesToDocStruct(element);
             if (children != null) {
-                if (Objects.nonNull(pages) && pages.size() > 0) {
+                if (Objects.nonNull(pages) && !pages.isEmpty()) {
                     children.addAll(pages);
                 }
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
-            } else if (Objects.nonNull(pages) && pages.size() > 0) {
+            } else if (Objects.nonNull(pages) && !pages.isEmpty()) {
                 convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
@@ -3523,7 +3523,7 @@ public class Metadaten {
      * @return current page index
      */
     public int getPageIndex() {
-        if (this.getImages().size() > 0 && this.getImages().contains(this.currentImage)) {
+        if (!this.getImages().isEmpty() && this.getImages().contains(this.currentImage)) {
             return this.getImages().indexOf(this.currentImage) + 1;
         } else {
             return 0;
@@ -3852,7 +3852,7 @@ public class Metadaten {
                 return "IMAGE_PATH_NOT_FOUND";
             case 1:
                 imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
-                if (allImages.size() > 0 && allImages.size() > imageIndex) {
+                if (!allImages.isEmpty() && allImages.size() > imageIndex) {
                     return allImages.get(imageIndex);
                 } else {
                     logger.error("ERROR: empty or broken list of image file paths!");
@@ -3898,7 +3898,7 @@ public class Metadaten {
      * @return boolean being true when the list contains at least one image
      */
     public boolean isImageListExistent() {
-        return getImages().size() > 0;
+        return !getImages().isEmpty();
     }
 
     /**
