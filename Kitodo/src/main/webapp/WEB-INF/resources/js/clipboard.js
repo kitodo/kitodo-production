@@ -9,10 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-function copyToClipboard(inputFieldName) {
+function copyToClipboard(inputFieldName, successMessage, errorMessage) {
+    let inputField = document.getElementById(inputFieldName);
     try {
-        var inputField = document.getElementById(inputFieldName);
-
         // Temporarily activate deactivated inputFields to enable selecting
         if (inputField.getAttribute('disabled') && inputField.getAttribute('disabled').localeCompare('disabled') === 0) {
             inputField.removeAttribute('disabled');
@@ -24,14 +23,16 @@ function copyToClipboard(inputFieldName) {
 
         document.execCommand('copy');
 
+        $(inputField).removeClass('ui-state-focus');
+
         PF('notifications').renderMessage({
-            "summary": "String copied to clipboard:",
+            "summary": successMessage,
             "detail": inputField.value,
             "severity": "info"
         });
     } catch (e) {
         PF('notifications').renderMessage({
-            "summary": "Error copying string to clipboard:",
+            "summary": errorMessage,
             "detail": inputField.value,
             "severity": "error"
         });
