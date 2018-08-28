@@ -3756,12 +3756,12 @@ public class Metadaten {
         int sourceStructureElementIndex;
         int pageIndex;
 
-        int targetStructureElementIndex = Integer.valueOf(dropIDComponents[2]);
+        int targetStructureElementIndex = Integer.parseInt(dropIDComponents[2]);
         DocStructInterface targetDocStruct = getAllStructureElements().get(targetStructureElementIndex);
 
         if (dragIDComponents[1].equals("structuredPages")) {
-            sourceStructureElementIndex = Integer.valueOf(dragIDComponents[2]);
-            pageIndex = Integer.valueOf(dragIDComponents[4]);
+            sourceStructureElementIndex = Integer.parseInt(dragIDComponents[2]);
+            pageIndex = Integer.parseInt(dragIDComponents[4]);
 
             DocStructInterface sourceDocStruct = getAllStructureElements().get(sourceStructureElementIndex);
 
