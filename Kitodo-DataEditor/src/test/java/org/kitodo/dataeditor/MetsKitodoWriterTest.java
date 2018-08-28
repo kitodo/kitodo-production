@@ -123,7 +123,6 @@ public class MetsKitodoWriterTest {
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlFile, xsltFile);
         String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
-        System.out.println(result);
 
         String expectedResult =
             "   <mets:dmdSec ID=\"DMDLOG_0001\">\n" +

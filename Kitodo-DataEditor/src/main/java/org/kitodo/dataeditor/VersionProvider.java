@@ -65,6 +65,11 @@ public class VersionProvider {
         return "Version info is missing";
     }
 
+    /**
+     * Gets the current version of used data format.
+     * 
+     * @return the current version of used data format
+     */
     public static String getDataFormatVersion() {
         return dataFormatVersionProvider.getDataFormatVersion();
     }

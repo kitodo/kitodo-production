@@ -12,14 +12,12 @@
 package org.kitodo.dataformat;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.Objects;
 
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class DataFormatVersionProvider {
 
@@ -32,20 +30,19 @@ public class DataFormatVersionProvider {
      * @return The version of data format.
      */
     public String getDataFormatVersion() {
-        try {
-            URL xsdFile = this.getClass().getClassLoader().getResource("xsd/kitodo.xsd");
-            if (Objects.nonNull(xsdFile)) {
-                String xsdString = FileUtils.readFileToString(Paths.get(new URI(xsdFile.toExternalForm())).toFile(),
-                    StandardCharsets.UTF_8);
+        URL xsdFile = this.getClass().getClassLoader().getResource("xsd/kitodo.xsd");
+        if (Objects.nonNull(xsdFile)) {
+            try (InputStream inputStream = xsdFile.openStream()) {
+                String xsdString = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
                 int index = xsdString.indexOf(XSD_VERSION_IDENTIFIER) + XSD_VERSION_IDENTIFIER.length();
                 int indexOfNextNewLine = xsdString.indexOf("\n", index);
                 return xsdString.substring(index, indexOfNextNewLine).replaceAll("[^0-9?!\\.]", "");
-            } else {
-                return "no version information";
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "error at providing version information";
             }
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
-            return "error at providing version information";
+        } else {
+            return "no version information";
         }
     }
 }

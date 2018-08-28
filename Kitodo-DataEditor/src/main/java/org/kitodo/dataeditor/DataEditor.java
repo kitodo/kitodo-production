@@ -20,6 +20,9 @@ import javax.xml.transform.TransformerException;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
+/**
+ * The main class of this modul which is implementing the main interface.
+ */
 public class DataEditor implements DataEditorInterface {
 
     private MetsKitodoWrapper metsKitodoWrapper;
