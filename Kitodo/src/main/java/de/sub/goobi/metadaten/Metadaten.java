@@ -3839,6 +3839,7 @@ public class Metadaten {
      * @return file path to the png image of the given DocStructInterface 'pageDoctStruct'.
      */
     public String getPageImageFilePath(DocStructInterface pageDocStruct) {
+        final String errorMessage = "IMAGE_PATH_NOT_FOUND";
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
         MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
@@ -3849,19 +3850,19 @@ public class Metadaten {
         switch (allMetadata.size()) {
             case 0:
                 logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
-                return "IMAGE_PATH_NOT_FOUND";
+                return errorMessage;
             case 1:
                 imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
                 if (!allImages.isEmpty() && allImages.size() > imageIndex) {
                     return allImages.get(imageIndex);
                 } else {
                     logger.error("ERROR: empty or broken list of image file paths!");
-                    return "IMAGE_PATH_NOT_FOUND";
+                    return errorMessage;
                 }
             default:
                 logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is "
                         + allMetadata.size() + " (1 expected)!");
-                return "IMAGE_PATH_NOT_FOUND";
+                return errorMessage;
         }
     }
 
