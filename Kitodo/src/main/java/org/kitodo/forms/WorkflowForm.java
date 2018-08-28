@@ -94,17 +94,14 @@ public class WorkflowForm extends BasisForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        try {
-            if (saveFiles()) {
-                saveWorkflow();
-            } else {
-                Helper.setErrorMessage("Files were not save!");
-                return null;
-            }
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage());
+        // FIXME: in this solution workflow is saved but redirect doesn't work
+        boolean filesSaved = saveFiles();
+        if (filesSaved) {
+            saveWorkflow();
+            return workflowListPath;
+        } else {
+            return null;
         }
-        return workflowListPath;
     }
 
     /**
@@ -127,10 +124,6 @@ public class WorkflowForm extends BasisForm {
 
             saveFile(svgDiagramURI, svgDiagram);
             saveFile(xmlDiagramURI, xmlDiagram);
-        } else if (Objects.nonNull(requestParameterMap.get("id"))) {
-            // TODO: find way to send content in first request - now it comes on second
-            // FIXME: it causes problem with redirect!
-            throw new RuntimeException("No diagram parameter was passed in request.");
         }
 
         return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
