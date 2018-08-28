@@ -94,6 +94,7 @@ public class WorkflowForm extends BasisForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
+        // FIXME: in this solution workflow is saved but redirect doesn't work
         boolean filesSaved = saveFiles();
         if (filesSaved) {
             saveWorkflow();
