@@ -52,9 +52,6 @@ import javax.faces.model.SelectItem;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.name.Rename;
-
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
@@ -109,6 +106,9 @@ import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -733,7 +733,6 @@ public class Metadaten {
             throw new ReadException(Helper.getTranslation("metadataError"));
         }
 
-        identifyImage(1);
         retrieveAllImages();
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
@@ -2671,13 +2670,14 @@ public class Metadaten {
             DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
             DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
 
-            if (Objects.equals(dragDocStruct.getDocStructType().getName(),"page")) {
+            if (Objects.equals(dragDocStruct.getDocStructType().getName(), "page")) {
                 String pyhsicalPageNumber = String.valueOf(getPhysicalPageNumber(dragDocStruct));
                 this.docStruct = dropDocStruct;
                 this.allPagesSelection = new String[1];
                 this.allPagesSelection[0] = pyhsicalPageNumber;
                 addPages();
-                //TODO We need to implement also the removing of the draged node from the old parent
+                // TODO We need to implement also the removing of the draged node from the old
+                // parent
                 return;
             }
 
@@ -3839,7 +3839,7 @@ public class Metadaten {
                 return "IMAGE_PATH_NOT_FOUND";
             case 1:
                 imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
-                if (allImages.size() > 0 && allImages.size() >= imageIndex) {
+                if (allImages.size() > 0 && allImages.size() > imageIndex) {
                     return allImages.get(imageIndex);
                 } else {
                     logger.error("ERROR: empty or broken list of image file paths!");
