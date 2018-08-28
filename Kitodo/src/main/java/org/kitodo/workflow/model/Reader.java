@@ -33,6 +33,7 @@ import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -77,6 +78,11 @@ public class Reader {
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
+            if (task.getOrdering().equals(1)) {
+                task.setProcessingStatusEnum(TaskStatus.OPEN);
+            } else {
+                task.setProcessingStatusEnum(TaskStatus.LOCKED);
+            }
             task.setTemplate(template);
             template.getTasks().add(task);
         }
