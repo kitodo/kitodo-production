@@ -95,7 +95,7 @@ class MetsKitodoReader {
         if (MetsKitodoValidator.metsContainsMetadataAtDmdSecIndex(mets, 0)) {
             if (!MetsKitodoValidator.checkMetsKitodoFormatOfMets(mets)) {
                 logger.warn("Not supported metadata format detected. Trying to convert from old goobi format now!");
-                return MetsKitodoConverter.convertToMetsKitodo(xmlFile, xsltFile);
+                return MetsKitodoConverter.convertToMetsKitodoByXslt(xmlFile, xsltFile);
             }
         } else {
             logger.warn("Metadata file does not contain any metadata");

@@ -58,7 +58,7 @@ public class MetsKitodoWriter {
     }
 
     /**
-     * Serializes a given Mets object to xml format and returns as String.
+     * Serializes a given Mets object to xml format and returns as formated String.
      *
      * @param mets
      *            The mets object.

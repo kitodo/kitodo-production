@@ -24,6 +24,9 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.dataeditor.handlers.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
 
+/**
+ * Provides methods to convert mets-mods-goobi xml files to the current used mets-kitodo format.
+ */
 public class MetsKitodoConverter {
 
     private static final Logger logger = LogManager.getLogger(MetsKitodoConverter.class);
@@ -32,7 +35,6 @@ public class MetsKitodoConverter {
      * Private constructor to hide the implicit public one.
      */
     private MetsKitodoConverter() {
-
     }
 
     /**
@@ -45,7 +47,7 @@ public class MetsKitodoConverter {
      *            The xslt file as URI object.
      * @return The Mets object in mets-kitodo format.
      */
-    public static Mets convertToMetsKitodo(URI xmlFile, URI xsltFile) throws IOException, TransformerException, JAXBException {
+    public static Mets convertToMetsKitodoByXslt(URI xmlFile, URI xsltFile) throws IOException, TransformerException, JAXBException {
         if (!Files.exists(Paths.get(xsltFile))) {
             logger.error("Path to xslt file for transformation of goobi format metadata files is not valid: "
                 + xmlFile.getPath());
@@ -67,7 +69,7 @@ public class MetsKitodoConverter {
         String convertedData = JaxbXmlUtils.transformXmlByXslt(xmlFile, xsltFile);
         Mets mets = MetsKitodoReader.readStringToMets(convertedData);
         mets = MetsKitodoHeaderHandler
-            .addNoteToMetsHeader("Converted by " + VersionFinder.findVersionInfo("Kitodo - Data Editor"), mets);
+            .addNoteToMetsHeader("Converted by " + VersionProvider.getModuleVersionInfo(), mets);
         return mets;
     }
 }

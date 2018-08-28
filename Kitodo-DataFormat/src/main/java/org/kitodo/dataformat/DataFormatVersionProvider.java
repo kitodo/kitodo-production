@@ -11,37 +11,41 @@
 
 package org.kitodo.dataformat;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 
-public class VersionProvider {
+public class DataFormatVersionProvider {
 
     private static final String XSD_VERSION_IDENTIFIER = "CURRENT VERSION:";
 
+    /**
+     * Gets the version of current used data format by reading the xsd file at
+     * resources.
+     * 
+     * @return The version of data format.
+     */
     public String getDataFormatVersion() {
         try {
             URL xsdFile = this.getClass().getClassLoader().getResource("xsd/kitodo.xsd");
             if (Objects.nonNull(xsdFile)) {
-                String xsdString = FileUtils.readFileToString(new File(xsdFile.toURI()), StandardCharsets.UTF_8);
+                String xsdString = FileUtils.readFileToString(Paths.get(new URI(xsdFile.toExternalForm())).toFile(),
+                    StandardCharsets.UTF_8);
                 int index = xsdString.indexOf(XSD_VERSION_IDENTIFIER) + XSD_VERSION_IDENTIFIER.length();
                 int indexOfNextNewLine = xsdString.indexOf("\n", index);
-                return xsdString.substring(index, indexOfNextNewLine).replaceAll("[^0-9?!\\.]","");
+                return xsdString.substring(index, indexOfNextNewLine).replaceAll("[^0-9?!\\.]", "");
             } else {
                 return "no version information";
             }
-
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             return "error at providing version information";
         }
-
-
     }
 }

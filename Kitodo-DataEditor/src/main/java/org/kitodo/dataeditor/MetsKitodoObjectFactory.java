@@ -20,7 +20,6 @@ import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
 import org.kitodo.dataeditor.entities.PhysicalStructMapType;
 import org.kitodo.dataeditor.entities.StructLink;
-import org.kitodo.dataformat.VersionProvider;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
@@ -34,7 +33,6 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
  * values.
  */
 public class MetsKitodoObjectFactory extends ObjectFactory {
-    private VersionProvider versionProvider = new VersionProvider();
 
     /**
      * Creates KitodoType object which version indication of used kitodo format.
@@ -43,7 +41,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
      */
     public KitodoType createKitodoType() {
         KitodoType kitodoType = super.createKitodoType();
-        kitodoType.setVersion(versionProvider.getDataFormatVersion());
+        kitodoType.setVersion(VersionProvider.getDataFormatVersion());
         return kitodoType;
     }
 
@@ -57,7 +55,7 @@ public class MetsKitodoObjectFactory extends ObjectFactory {
         metsAgent.setOTHERTYPE("SOFTWARE");
         metsAgent.setROLE("CREATOR");
         metsAgent.setTYPE("OTHER");
-        metsAgent.setName(VersionFinder.findVersionInfo("Kitodo - Data Editor"));
+        metsAgent.setName(VersionProvider.getModuleVersionInfo());
         return metsAgent;
     }
 

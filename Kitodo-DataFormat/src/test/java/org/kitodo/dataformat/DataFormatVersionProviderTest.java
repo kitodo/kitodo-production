@@ -14,12 +14,12 @@ package org.kitodo.dataformat;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class VersionProviderTest {
+public class DataFormatVersionProviderTest {
 
-    private VersionProvider versionProvider = new VersionProvider();
+    private DataFormatVersionProvider versionProvider = new DataFormatVersionProvider();
 
     @Test
     public void getDataFormatVersionTest() {
-        Assert.assertEquals("Data format version was not correct", "1.0",versionProvider.getDataFormatVersion());
+        Assert.assertEquals("Data format version was not correct", "1.0", versionProvider.getDataFormatVersion());
     }
 }
