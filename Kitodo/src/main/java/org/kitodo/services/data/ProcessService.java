@@ -16,7 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
@@ -116,7 +116,7 @@ import org.kitodo.services.file.FileService;
 
 public class ProcessService extends TitleSearchService<Process, ProcessDTO, ProcessDAO> {
 
-    private final MetadatenSperrung msp = new MetadatenSperrung();
+    private final MetadataLock msp = new MetadataLock();
     private final ServiceManager serviceManager = new ServiceManager();
     private final FileService fileService = serviceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
@@ -773,7 +773,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     UserDTO getBlockedUser(ProcessDTO process) {
         UserDTO result = null;
-        if (MetadatenSperrung.isLocked(process.getId())) {
+        if (MetadataLock.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
@@ -791,7 +791,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public User getBlockedUser(Process process) {
         User result = null;
-        if (MetadatenSperrung.isLocked(process.getId())) {
+        if (MetadataLock.isLocked(process.getId())) {
             String userID = this.msp.getLockBenutzer(process.getId());
             try {
                 result = serviceManager.getUserService().getById(Integer.valueOf(userID));

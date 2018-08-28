@@ -18,7 +18,7 @@ import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.IOException;
 import java.net.URI;
@@ -277,7 +277,7 @@ public class AktuelleSchritteForm extends BasisForm {
      * @return null
      */
     public String sperrungAufheben() {
-        MetadatenSperrung.unlockProcess(this.currentTask.getProcess().getId());
+        MetadataLock.unlockProcess(this.currentTask.getProcess().getId());
         this.currentTask.getProcess().setBlockedUser(null);
         this.currentTask.getProcess().setBlockedMinutes(0);
         this.currentTask.getProcess().setBlockedSeconds(0);

@@ -16,7 +16,7 @@ import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
-import de.sub.goobi.metadaten.MetadatenSperrung;
+import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,7 +49,7 @@ import org.kitodo.workflow.Solution;
 
 public class WorkflowControllerService {
 
-    private final MetadatenSperrung msp = new MetadatenSperrung();
+    private final MetadataLock metadataLock = new MetadataLock();
     private int openTasksWithTheSameOrdering;
     private List<Task> automaticTasks;
     private List<Task> tasksToFinish;
@@ -233,7 +233,7 @@ public class WorkflowControllerService {
         }
 
         // unlock the process
-        msp.setFree(task.getProcess().getId());
+        metadataLock.setFree(task.getProcess().getId());
 
         // if the result of the verification is ok, then continue, otherwise it
         // is not reached
@@ -344,7 +344,7 @@ public class WorkflowControllerService {
         task.setProcessingTime(new Date());
 
         // unlock the process
-        msp.setFree(task.getProcess().getId());
+        metadataLock.setFree(task.getProcess().getId());
 
         updateProcessSortHelperStatus(task.getProcess());
 
