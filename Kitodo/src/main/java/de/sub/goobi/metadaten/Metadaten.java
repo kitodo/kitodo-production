@@ -201,7 +201,7 @@ public class Metadaten {
     private String addFirstDocStructType;
     private String addSecondDocStructType;
     private String result = "Main";
-    private final MetadatenSperrung sperrung = new MetadatenSperrung();
+    private final MetadataLock sperrung = new MetadataLock();
     private String neuesElementWohin = "1";
     private String additionalOpacPpns;
     private String opacSearchField = "12";
@@ -1748,7 +1748,7 @@ public class Metadaten {
          * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer
          * gilt, Sperrung aktualisieren
          */
-        if (MetadatenSperrung.isLocked(this.process.getId())
+        if (MetadataLock.isLocked(this.process.getId())
                 && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
             this.sperrung.setLocked(this.process.getId(), this.userId);
             return true;
@@ -1758,7 +1758,7 @@ public class Metadaten {
     }
 
     private void disableReturn() {
-        if (MetadatenSperrung.isLocked(this.process.getId())
+        if (MetadataLock.isLocked(this.process.getId())
                 && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
             this.sperrung.setFree(this.process.getId());
         }
