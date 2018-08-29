@@ -1199,6 +1199,9 @@ public class Metadaten {
             DocStructInterface newDocStruct, int index) throws TypeNotAllowedAsChildException {
 
         if (existingDocStruct.isDocStructTypeAllowedAsChild(newDocStruct.getDocStructType())) {
+            if (existingDocStruct.getAllChildren().size() < index) {
+                index--;
+            }
             existingDocStruct.addChild(index, newDocStruct);
         } else {
             throw new TypeNotAllowedAsChildException(newDocStruct.getDocStructType() + " ot allowed as child of "
@@ -2059,6 +2062,10 @@ public class Metadaten {
         }
     }
 
+    public void setPageStartAndEnd() {
+        setPageStartAndEnd(this.docStruct);
+    }
+
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
      * @param docStruct the doc structure for which the pages are set
@@ -2076,7 +2083,6 @@ public class Metadaten {
             while (zaehler < selectionCount) {
                 docStruct.addReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct(),
                     "logical_physical");
-                this.docStruct.removeReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct());
                 zaehler++;
             }
         } else {
