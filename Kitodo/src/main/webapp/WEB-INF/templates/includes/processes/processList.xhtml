@@ -17,49 +17,40 @@
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
-        <p:dataTable var="item"
-                     id="processesTable"
+        <p:dataTable id="processesTable"
+                     var="process"
                      value="#{ProzessverwaltungForm.lazyDTOModel}"
                      lazy="true"
                      paginator="true"
                      rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
-            <p:column id="titleColumn" headerText="#{msgs.processTitle}" filterBy="#{item.title}">
-                <h:outputText value="#{item.title}"/>
+            <p:column id="titleColumn" headerText="#{msgs.processTitle}" filterBy="#{process.title}">
+                <h:outputText value="#{process.title}"/>
             </p:column>
-            <p:column style="width:120px;" headerText="#{msgs.status}">
-                <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
-                <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
-                                style="width:#{item.progressClosed * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
-                                style="width:#{item.progressInProcessing * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
-                                style="width:#{item.progressOpen * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
-                                style="width:#{item.progressLocked * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+            <p:column id="progressColumn" styleClass="progressColumn" headerText="#{msgs.status}">
+                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
             <p:column headerText="#{msgs.project}">
-                <h:outputText value="#{item.project.title}"/>
+                <h:outputText value="#{process.project.title}"/>
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                 <h:link id="editProcess"
                         outcome="/pages/processEdit"
                         title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:param name="id" value="#{item.id}"/>
+                    <f:param name="id" value="#{process.id}"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                    <f:param name="ProzesseID" value="#{item.id}"/>
+                    <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
                     <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
                     <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
                 </h:commandLink>
-                <h:commandLink action="#{ProzessverwaltungForm.exportMets(item.id)}" id="exportMets" title="#{msgs.exportMets}">
+                <h:commandLink action="#{ProzessverwaltungForm.exportMets(process.id)}" id="exportMets" title="#{msgs.exportMets}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                 </h:commandLink>
                 <p:commandLink id="deleteProcess"
@@ -67,7 +58,7 @@
                                title="#{msgs.delete}"
                                update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteProcess}"
                                icon="ui-icon-alert"/>

@@ -777,6 +777,10 @@ main i.fa {
     width: 90px;
 }
 
+.progressColumn {
+    width: 120px;
+}
+
 .statusColumn,
 .statusColumn div,
 .statusColumn .ui-panel-content {
