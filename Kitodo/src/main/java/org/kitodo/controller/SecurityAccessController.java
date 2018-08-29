@@ -17,6 +17,9 @@ import javax.inject.Named;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.security.SecurityAccessService;
 
+/**
+ * Controller for checking authorities of current user.
+ */
 @Named("SecurityAccessController")
 @RequestScoped
 public class SecurityAccessController {
