@@ -52,6 +52,8 @@ public class TemplateForm extends TemplateBaseForm {
     private boolean showInactiveTemplates = false;
     private String title;
     private transient ServiceManager serviceManager = new ServiceManager();
+    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
+    private static final String TEMPLATE = "template";
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
@@ -233,6 +235,21 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Remove template if there is no assigned processes.
+     */
+    public void delete() {
+        if (!this.template.getProcesses().isEmpty()) {
+            Helper.setErrorMessage("processAssignedError");
+        } else {
+            try {
+                serviceManager.getTemplateService().remove(this.template);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("template") }, logger, e);
+            }
+        }
+    }
+
+    /**
      * New task.
      */
     public String newTask() {
@@ -335,6 +352,20 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Set template by id.
+     *
+     * @param id
+     *            of template to set
+     */
+    public void setTemplateById(int id) {
+        try {
+            setTemplate(serviceManager.getTemplateService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TEMPLATE), id }, logger, e);
+        }
+    }
+
+    /**
      * Method being used as viewAction for template edit form. If the given
      * parameter 'id' is '0', the form for creating a new template will be
      * displayed.
@@ -351,7 +382,7 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("template"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TEMPLATE), id }, logger, e);
         }
     }
 
