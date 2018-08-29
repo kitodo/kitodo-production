@@ -145,10 +145,10 @@
                                                 <h:outputText value="#{msgs.languages}"/>
                                             </td>
                                             <ui:repeat value="#{SpracheForm.supportedLocales}" var="entry">
-                                                <td width="50px">
+                                                <td class="languageButtonCell #{SpracheForm.language eq entry['id'] ? 'selected' : ''}">
                                                     <h:commandButton action="#{SpracheForm.setLanguage(entry['id'])}"
                                                                      image="#{request.contextPath}/#{entry['flag']}"
-                                                                     style="width:40px;height: 30px;"/>
+                                                                     styleClass="languageButton"/>
                                                 </td>
                                             </ui:repeat>
                                         </tr>

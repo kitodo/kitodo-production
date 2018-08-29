@@ -404,6 +404,25 @@ body.first-visit #portal-header {
     padding-bottom: 20px;
     }
 
+#header-nav .languageButtonCell {
+    width: 50px;
+    text-align: center;
+}
+
+#header-nav .languageButtonCell.selected {
+    background-color: var(--disabled-light);
+}
+
+#header-nav .languageButtonCell:hover {
+    background-color: var(--disabled-dark);
+}
+
+#header-nav .languageButton {
+    width: 40px;
+    height: 30px;
+    vertical-align: middle;
+}
+
 #breadcrumb-wrapper {
     padding: 0 16px;
     }
