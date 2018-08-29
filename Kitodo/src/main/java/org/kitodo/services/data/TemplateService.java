@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -235,6 +236,31 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             }
         }
         return query;
+    }
+
+    /**
+     * Duplicate the template with the given ID 'itemId'.
+     *
+     * @return the duplicated Template
+     */
+    public Template duplicateTemplate(Template baseTemplate) {
+        Template duplicatedTemplate = new Template();
+
+        // Template _title_  and _outputName_ should explicitly _not_ be duplicated!
+        duplicatedTemplate.setCreationDate(new Date());
+        duplicatedTemplate.setInChoiceListShown(baseTemplate.getInChoiceListShown());
+        duplicatedTemplate.setDocket(baseTemplate.getDocket());
+        duplicatedTemplate.setRuleset(baseTemplate.getRuleset());
+        // tasks don't need to be duplicated - will be created out of copied workflow
+        duplicatedTemplate.setWorkflow(baseTemplate.getWorkflow());
+
+        //TODO: make sure if copy should be assigned automatically to all projects
+        for (Project project : baseTemplate.getProjects()) {
+            duplicatedTemplate.getProjects().add(project);
+            project.getTemplates().add(duplicatedTemplate);
+        }
+
+        return duplicatedTemplate;
     }
 
     @Override
