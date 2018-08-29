@@ -2314,7 +2314,11 @@ public class Metadaten {
     public String getTempTyp() {
         if (this.selectedMetadatum == null) {
             getAddableMetadataTypes();
-            this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadatumList.isEmpty()) {
+                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            } else {
+                return "";
+            }
         }
         return this.selectedMetadatum.getMd().getMetadataType().getName();
     }
@@ -2346,7 +2350,9 @@ public class Metadaten {
 
         if (this.selectedMetadatum == null) {
             getAddableMetadataTypes();
-            this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadatumList.isEmpty()) {
+                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            }
         }
         return this.selectedMetadatum;
     }
