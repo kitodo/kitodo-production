@@ -69,21 +69,21 @@
                             </li>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllTasks')}">
+                                rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.tasks}" id="linkTasks"
                                                                  outcome="tasks"><i
                                     class="fa fa-bell fa-lg"/></h:link></li>
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProcesses')}">
+                                rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.processes}" id="linkProcesses"
                                                                  outcome="processes"><i
                                     class="fa fa-hourglass-3 fa-lg"/></h:link></li>
                             </h:panelGroup>
 
                             <h:panelGroup
-                                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
+                                rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
                                 <li class="nav-pic-text"><h:link value="#{msgs.projects}" id="linkProjects"
                                                                  outcome="projects"><i
                                     class="fa fa-folder-open fa-lg"/></h:link></li>

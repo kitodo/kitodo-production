@@ -140,6 +140,17 @@ public class SecurityAccessController {
     }
 
     /**
+     * Checks if the current user has any of the specified authorities globally.
+     *
+     * @param authorityTitles
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAnyAuthorityGlobal(String authorityTitles) {
+        return securityAccessService.hasAnyAuthorityGlobal(authorityTitles);
+    }
+
+    /**
      * Checks if the current user has a specified authority globally, for any client
      * or for any project.
      *
@@ -149,6 +160,18 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityForAny(String authorityTitle) {
         return securityAccessService.hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
+    }
+
+    /**
+     * Checks if the current user has one of specified authority globally, for any client
+     * or for any project.
+     *
+     * @param authorityTitle
+     *            The authority title.
+     * @return True if the current user has the specified authority.
+     */
+    public boolean hasAnyAuthorityForAny(String authorityTitle) {
+        return securityAccessService.hasAnyAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle);
     }
 
     /**
