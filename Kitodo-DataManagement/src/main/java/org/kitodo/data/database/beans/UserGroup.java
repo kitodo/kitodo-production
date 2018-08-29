@@ -28,9 +28,6 @@ import javax.persistence.Table;
 public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> {
     private static final long serialVersionUID = -5924845694417474352L;
 
-    private static final String CLIENT_AUTHORITY_SUFFIX = "_clientAssignable";
-    private static final String PROJECT_AUTHORITY_SUFFIX = "_projectAssignable";
-
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
@@ -41,7 +38,10 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
     private List<Task> tasks;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) }, inverseJoinColumns = {@JoinColumn(name = "authority_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
+    @JoinTable(name = "userGroup_x_authority", joinColumns = {@JoinColumn(name = "userGroup_id",
+            foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_userGroup_id")) },
+            inverseJoinColumns = {@JoinColumn(name = "authority_id",
+                    foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<Authority> authorities;
 
     /**
