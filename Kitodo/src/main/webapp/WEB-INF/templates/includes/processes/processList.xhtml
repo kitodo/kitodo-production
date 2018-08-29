@@ -29,16 +29,24 @@
                 <h:outputText value="#{item.title}"/>
             </p:column>
             <p:column style="width:120px;" headerText="#{msgs.status}">
-                <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
-                <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
-                                style="width:#{item.progressClosed * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
-                                style="width:#{item.progressInProcessing * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
-                                style="width:#{item.progressOpen * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
-                                style="width:#{item.progressLocked * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+                <h:panelGroup id="processProgress"
+                              styleClass="processProgress"
+                              title="#{msgs.progress}"
+                              style="
+                                display: block;
+                                width: 110px;
+                                height: 16px;
+                                border-radius: 1px;
+                                background-image: linear-gradient(
+                                    to right,
+                                    var(--progress-closed),
+                                    var(--progress-closed) #{item.progressClosed}%,
+                                    var(--progress-open) #{item.progressClosed}%,
+                                    var(--progress-open) #{item.progressOpen + item.progressClosed}%,
+                                    var(--progress-inwork) #{item.progressOpen + item.progressClosed}%,
+                                    var(--progress-inwork) #{item.progressOpen + item.progressClosed + item.progressInProcessing}%,
+                                    var(--progress-blocked) #{item.progressOpen + item.progressClosed + item.progressInProcessing}%);"
+                />
             </p:column>
             <p:column headerText="#{msgs.project}">
                 <h:outputText value="#{item.project.title}"/>
