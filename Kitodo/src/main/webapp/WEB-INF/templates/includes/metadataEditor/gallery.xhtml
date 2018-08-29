@@ -78,7 +78,7 @@
                                     value="#{Metadaten.getPageReferencesToDocStruct(structureElement)}"
                                     binding="#{structuredThumbnail}">
                             <ui:param name="filePath" value="#{Metadaten.getPageImageFilePath(page)}"/>
-                            <p:panel id="structuredPagePanel" header="#{msgs.page} #{Metadaten.getPhysicalPageNumber(page)}" rendered="#{Metadaten.isAccessGranted(filePath)}">
+                            <p:panel id="structuredPagePanel" header="#{msgs.image} #{Metadaten.getPhysicalPageNumber(page)} , #{msgs.page} #{Metadaten.getLogicalPageNumber(page)}" rendered="#{Metadaten.isAccessGranted(filePath)}">
                                 <p:commandLink update="structureTreeForm, imagePreviewForm">
                                     <img src="#{request.contextPath}#{Metadaten.getThumbnail(filePath)}" class="thumbnail #{Metadaten.currentImage eq filePath ? 'active' : ''}"/>
                                     <f:setPropertyActionListener value="#{filePath}" target="#{Metadaten.currentImage}"/>
