@@ -32,13 +32,15 @@ import org.joda.time.DateTime;
 import org.kitodo.dataformat.metskitodo.KitodoType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 
+/**
+ * Provides methods for handling jaxb generated java objects and xml files.
+ */
 public class JaxbXmlUtils {
 
     /**
      * Private constructor to hide the implicit public one.
      */
     private JaxbXmlUtils() {
-
     }
 
     /**

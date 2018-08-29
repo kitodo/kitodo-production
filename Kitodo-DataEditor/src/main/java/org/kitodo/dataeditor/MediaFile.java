@@ -15,6 +15,9 @@ import java.net.URI;
 
 import org.kitodo.dataeditor.enums.FileLocationType;
 
+/**
+ * Data class to hold the information of media files which added as file group in mets document.
+ */
 public class MediaFile {
     private URI filePath;
     private String mimeType;

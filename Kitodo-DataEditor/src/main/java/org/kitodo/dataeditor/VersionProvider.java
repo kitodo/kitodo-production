@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.dataformat.DataFormatVersionProvider;
 
 /**
- * Provides methodes to get informations about modul or data format.
+ * Provides methods to get information about modul or data format.
  */
 public class VersionProvider {
     private static DataFormatVersionProvider dataFormatVersionProvider = new DataFormatVersionProvider();

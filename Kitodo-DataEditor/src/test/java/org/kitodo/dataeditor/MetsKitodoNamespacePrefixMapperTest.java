@@ -14,8 +14,8 @@ package org.kitodo.dataeditor;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MetsKitodoPrefixMapperTest {
-    MetsKitodoPrefixMapper mapper = new MetsKitodoPrefixMapper();
+public class MetsKitodoNamespacePrefixMapperTest {
+    MetsKitodoNamespacePrefixMapper mapper = new MetsKitodoNamespacePrefixMapper();
 
     @Test
     public void shouldReturnPrefix() {
