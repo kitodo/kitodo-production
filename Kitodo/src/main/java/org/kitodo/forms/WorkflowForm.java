@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -113,6 +114,9 @@ public class WorkflowForm extends BasisForm {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
 
+        if (isWorkflowAlreadyInUse(this.workflow)) {
+            this.workflow.setFileName(decodeXMLDiagramName(this.workflow.getFileName()) + "_" + randomString(3));
+        }
         URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg")
                 .toURI();
         URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
@@ -174,6 +178,17 @@ public class WorkflowForm extends BasisForm {
 
     private boolean isWorkflowAlreadyInUse(Workflow workflow) {
         return !workflow.getTemplates().isEmpty();
+    }
+
+    private static String randomString(int length) {
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 
     /**
