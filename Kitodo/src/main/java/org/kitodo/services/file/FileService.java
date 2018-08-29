@@ -20,11 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -848,10 +851,10 @@ public class FileService {
      * @param numberOfNewImages
      *            The number of images to be created.
      */
-    public void createDummyImagesForProcess(Process process, int numberOfNewImages) throws IOException {
+    public void createDummyImagesForProcess(Process process, int numberOfNewImages) throws IOException, URISyntaxException {
         URI imagesDirectory = getSourceDirectory(process);
         int startValue = serviceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
-        URI dummyImage = Paths.get(ConfigCore.getParameter(Parameters.DUMMY_IMAGE)).toUri();
+        URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames
         String numberOfDigits = extractNumber(Config.getParameter("ImagePrefix"));
@@ -863,5 +866,15 @@ public class FileService {
 
     private String extractNumber(String string) {
         return string.replaceAll("\\D+","");
+    }
+
+    private URI getDummyImagePath() throws URISyntaxException, IOException {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        URL dummyImage = classloader.getResource("images/dummyImage.tif");
+        if (Objects.nonNull(dummyImage)) {
+            return dummyImage.toURI();
+        } else {
+            throw new IOException("No dummy image found in resources!");
+        }
     }
 }
