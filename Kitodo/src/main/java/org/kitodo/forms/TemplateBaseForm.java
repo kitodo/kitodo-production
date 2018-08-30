@@ -70,7 +70,7 @@ public class TemplateBaseForm extends BaseForm {
             task.getUserGroups().add(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
         }
     }
 
@@ -92,7 +92,7 @@ public class TemplateBaseForm extends BaseForm {
             task.getUsers().add(user);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
         }
     }
 
@@ -109,7 +109,7 @@ public class TemplateBaseForm extends BaseForm {
             task.getUsers().remove(user);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
         }
     }
 
@@ -126,7 +126,7 @@ public class TemplateBaseForm extends BaseForm {
             task.getUserGroups().remove(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
         }
     }
 
