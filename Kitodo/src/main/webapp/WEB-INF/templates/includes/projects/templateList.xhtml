@@ -43,6 +43,16 @@
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
+                    <p:commandLink id="deleteTemplate"
+                                   action="#{TemplateForm.delete}"
+                                   title="#{msgs.delete}"
+                                   update="projectsTabView:templateTable">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{TemplateForm.templateById}"/>
+                        <p:confirm header="#{msgs.confirmDelete}"
+                                   message="#{msgs.confirmDeleteTemplate}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
                 </h:form>
             </h:outputText>
         </p:column>
