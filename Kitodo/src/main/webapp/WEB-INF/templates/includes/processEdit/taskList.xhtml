@@ -24,22 +24,6 @@
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
             <h:outputText value="#{item.ordering}"/>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
-                             id="orderUp"
-                             update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-up" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
-            </p:commandButton>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
-                             id="orderDown"
-                             update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-down" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
-            </p:commandButton>
         </p:column>
 
         <!-- title -->

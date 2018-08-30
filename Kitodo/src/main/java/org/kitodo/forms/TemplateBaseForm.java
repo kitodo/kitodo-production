@@ -14,7 +14,6 @@ package org.kitodo.forms;
 import de.sub.goobi.forms.BasisForm;
 import de.sub.goobi.helper.Helper;
 
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
@@ -131,42 +130,6 @@ public class TemplateBaseForm extends BasisForm {
             Helper.setErrorMessage(ERROR_DATABASE_READ,
                     new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
         }
-    }
-
-    /**
-     * Set ordering for task up.
-     *
-     * @param tasks
-     *            list of all task assigned to process/template
-     * @param task
-     *            task for change ordering
-     */
-    public void setOrderingUp(List<Task> tasks, Task task) {
-        Integer ordering = task.getOrdering() - 1;
-        for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(ordering)) {
-                tempTask.setOrdering(ordering + 1);
-            }
-        }
-        task.setOrdering(ordering);
-    }
-
-    /**
-     * Set ordering for task down.
-     *
-     * @param tasks
-     *            list of all task assigned to process/template
-     * @param task
-     *            task for change ordering
-     */
-    public void setOrderingDown(List<Task> tasks, Task task) {
-        Integer ordering = task.getOrdering() + 1;
-        for (Task tempTask : tasks) {
-            if (tempTask.getOrdering().equals(ordering)) {
-                tempTask.setOrdering(ordering - 1);
-            }
-        }
-        task.setOrdering(ordering);
     }
 
     protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
