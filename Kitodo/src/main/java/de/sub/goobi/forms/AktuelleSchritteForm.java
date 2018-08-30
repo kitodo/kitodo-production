@@ -82,10 +82,6 @@ public class AktuelleSchritteForm extends BaseForm {
     private List<Property> properties;
     private Property property;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final String ERROR_LOADING = "errorLoadingOne";
-    private static final String ERROR_SAVING = "errorSaving";
-    private static final String PROCESS = "process";
-    private static final String WORK_TASK = "task";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
@@ -128,7 +124,7 @@ public class AktuelleSchritteForm extends BaseForm {
             try {
                 serviceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
-                Helper.setErrorMessage("Error saving task", logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(TASK) }, logger, e);
             }
         }
         return taskEditPath + "&id=" + getTaskIdForPath();
@@ -213,7 +209,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             this.serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(TASK) }, logger, e);
         }
     }
 
@@ -256,7 +252,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask));
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(TASK) }, logger, e);
         }
         return taskListPath;
     }
@@ -306,7 +302,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(TASK) }, logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
@@ -334,7 +330,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(TASK) }, logger, e);
         }
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
@@ -410,7 +406,7 @@ public class AktuelleSchritteForm extends BaseForm {
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), taskDTO.getId() },
+                Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TASK), taskDTO.getId() },
                     logger, e);
             }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
@@ -509,7 +505,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             return serviceManager.getTaskService().getById(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TASK), id }, logger, e);
             return null;
         }
     }

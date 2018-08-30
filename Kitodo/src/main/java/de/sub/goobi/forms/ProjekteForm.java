@@ -77,7 +77,7 @@ public class ProjekteForm extends BaseForm {
     private boolean lockedMets;
     private boolean lockedTechnical;
     private boolean copyTemplates;
-    private static final String PROJECT = "project";
+
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
@@ -205,7 +205,7 @@ public class ProjekteForm extends BaseForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return projectListPath;
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
                 return null;
             }
         }
@@ -226,7 +226,7 @@ public class ProjekteForm extends BaseForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 Helper.setMessage("Project saved!");
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
             }
         }
         return null;
@@ -242,7 +242,7 @@ public class ProjekteForm extends BaseForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
             }
         }
     }
@@ -314,7 +314,7 @@ public class ProjekteForm extends BaseForm {
         try {
             setMyProjekt(serviceManager.getProjectService().getById(projectID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find project with ID " + projectID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROJECT), projectID }, logger, e);
         }
     }
 
@@ -451,7 +451,7 @@ public class ProjekteForm extends BaseForm {
                 mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
                     λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
             } catch (IOException | JAXBException | RuntimeException e) {
-                Helper.setErrorMessage("errorReading", new Object[] {e.getMessage() }, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
             }
         }
         return mimeTypes;
@@ -532,7 +532,7 @@ public class ProjekteForm extends BaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(PROJECT), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROJECT), id }, logger, e);
         }
 
     }
@@ -546,7 +546,7 @@ public class ProjekteForm extends BaseForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("projects") }, logger, e);
             return new LinkedList<>();
         }
     }

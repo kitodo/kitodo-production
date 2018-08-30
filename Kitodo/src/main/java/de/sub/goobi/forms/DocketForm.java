@@ -99,7 +99,7 @@ public class DocketForm extends BaseForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("docket") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(DOCKET) }, logger, e);
             return null;
         }
     }
@@ -120,7 +120,7 @@ public class DocketForm extends BaseForm {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(DOCKET) }, logger, e);
         }
     }
 
@@ -160,7 +160,7 @@ public class DocketForm extends BaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("docket"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(DOCKET), id }, logger, e);
         }
     }
 
@@ -182,7 +182,7 @@ public class DocketForm extends BaseForm {
         try {
             setMyDocket(serviceManager.getDocketService().getById(docketID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find docket with ID " + docketID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(DOCKET), docketID }, logger, e);
         }
     }
 
@@ -212,7 +212,7 @@ public class DocketForm extends BaseForm {
                     .sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("dockets")}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("dockets")}, logger, e);
             return new ArrayList<>();
         }
     }

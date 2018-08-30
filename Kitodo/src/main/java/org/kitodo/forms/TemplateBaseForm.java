@@ -32,7 +32,6 @@ public class TemplateBaseForm extends BaseForm {
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
     private boolean showInactiveProjects = false;
-    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
@@ -71,7 +70,7 @@ public class TemplateBaseForm extends BaseForm {
             }
             task.getUserGroups().add(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
         }
     }
@@ -93,7 +92,7 @@ public class TemplateBaseForm extends BaseForm {
             }
             task.getUsers().add(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("users"), userId}, logger, e);
         }
     }
@@ -110,7 +109,7 @@ public class TemplateBaseForm extends BaseForm {
             User user = serviceManager.getUserService().getById(userId);
             task.getUsers().remove(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("users"), userId}, logger, e);
         }
     }
@@ -127,7 +126,7 @@ public class TemplateBaseForm extends BaseForm {
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             task.getUserGroups().remove(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
         }
     }
@@ -138,7 +137,7 @@ public class TemplateBaseForm extends BaseForm {
             serviceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("task") }, logger, e);
         }
     }
 
@@ -148,7 +147,7 @@ public class TemplateBaseForm extends BaseForm {
             try {
                 searchDatabaseService.refresh(baseBean);
             } catch (RuntimeException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation(message) }, logger, e);
             }
         }
     }

@@ -39,7 +39,6 @@ public class BenutzergruppenForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
-    private static final String USER_GROUP = "userGroup";
     private transient ServiceManager serviceManager = new ServiceManager();
 
     @Named("UserForm")
@@ -82,7 +81,7 @@ public class BenutzergruppenForm extends BaseForm {
             this.serviceManager.getUserGroupService().save(this.userGroup);
             return usergroupListPath;
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
     }
@@ -112,7 +111,7 @@ public class BenutzergruppenForm extends BaseForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
             return null;
         }
         return usergroupListPath;
@@ -131,7 +130,7 @@ public class BenutzergruppenForm extends BaseForm {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(USER_GROUP), id },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER_GROUP), id },
                 logger, e);
         }
         setSaveDisabled(true);
@@ -157,15 +156,16 @@ public class BenutzergruppenForm extends BaseForm {
     }
 
     /**
-     * Set usergroup by ID.
+     * Set user group by ID.
+     *
      * @param userGroupID
-     *          ID of usergroup to set.
+     *          ID of user group to set.
      */
     public void setUserGroupById(int userGroupID) {
         try {
             setUserGroup(serviceManager.getUserGroupService().getById(userGroupID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find usergroup with ID " + userGroupID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER_GROUP), userGroupID }, logger, e);
         }
     }
 

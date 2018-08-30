@@ -34,9 +34,8 @@ public class LdapGruppenForm extends BaseForm {
     private LdapGroup myLdapGruppe = new LdapGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
-    private static final String LDAP_GROUP = "ldapgruppe";
-    private String ldapgrouopListPath = MessageFormat.format(REDIRECT_PATH, "users");
-    private String ldapgrouopEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
+    private String ldapGroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
+    private String ldapGroupEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
     /**
      * Create new LDAP group.
@@ -45,7 +44,7 @@ public class LdapGruppenForm extends BaseForm {
      */
     public String newLdapGroup() {
         this.myLdapGruppe = new LdapGroup();
-        return ldapgrouopEditPath;
+        return ldapGroupEditPath;
     }
 
     /**
@@ -57,7 +56,7 @@ public class LdapGruppenForm extends BaseForm {
         try {
             return serviceManager.getLdapGroupService().getAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("ldapGroups") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapGroups") }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -70,9 +69,9 @@ public class LdapGruppenForm extends BaseForm {
     public String saveLdapGroup() {
         try {
             this.serviceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
-            return ldapgrouopListPath;
+            return ldapGroupListPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
     }
@@ -86,10 +85,10 @@ public class LdapGruppenForm extends BaseForm {
         try {
             this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
-        return ldapgrouopListPath;
+        return ldapGroupListPath;
     }
 
     /**
@@ -104,7 +103,7 @@ public class LdapGruppenForm extends BaseForm {
                 setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(LDAP_GROUP), id }, logger,
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(LDAP_GROUP), id }, logger,
                 e);
         }
         setSaveDisabled(true);
@@ -125,14 +124,14 @@ public class LdapGruppenForm extends BaseForm {
     /**
      * Set LDAP group by ID.
      *
-     * @param ldapgroupID
+     * @param ldapGroupID
      *          ID of LDAP group to set.
      */
-    public void setLdapGroupById(int ldapgroupID) {
+    public void setLdapGroupById(int ldapGroupID) {
         try {
-            setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(ldapgroupID));
+            setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(ldapGroupID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find ldap group with ID " + ldapgroupID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(LDAP_GROUP), ldapGroupID }, logger, e);
         }
     }
 }

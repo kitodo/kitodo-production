@@ -58,8 +58,6 @@ public class WorkflowForm extends BaseForm {
     private String xmlDiagram;
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
-    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String WORKFLOW = "workflow";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
 
@@ -124,7 +122,7 @@ public class WorkflowForm extends BaseForm {
                 fileService.delete(svgDiagramURI);
                 fileService.delete(xmlDiagramURI);
             } catch (DataException | IOException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(WORKFLOW) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(WORKFLOW) }, logger, e);
             }
         }
     }
