@@ -80,7 +80,7 @@
                                     <h:outputText><i class="fa fa-inbox fa-lg"/></h:outputText>
                                 </h:commandLink>
 
-                                <h:commandLink action="#{MassImportForm.prepare(item.id,item.project.id)}" id="createMassProcess"
+                                <h:commandLink action="#{MassImportForm.prepare(item.id,project.id)}" id="createMassProcess"
                                                title="#{msgs.massImport}: #{item.canBeUsedForProcess?msgs.createProcessFromTemplate:msgs.templateNotAvailableForProcess}">
                                     <h:outputText><i class="fa fa-hourglass fa-lg"/></h:outputText>
                                 </h:commandLink>
