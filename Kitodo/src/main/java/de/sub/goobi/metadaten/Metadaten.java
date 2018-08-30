@@ -63,6 +63,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
@@ -2648,11 +2649,11 @@ public class Metadaten {
             List<DocStructInterface> children = element.getAllChildren();
             List<DocStructInterface> pages = getPageReferencesToDocStruct(element);
             if (children != null) {
-                if (Objects.nonNull(pages) && pages.size() > 0) {
+                if (Objects.nonNull(pages) && !pages.isEmpty()) {
                     children.addAll(pages);
                 }
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
-            } else if (Objects.nonNull(pages) && pages.size() > 0) {
+            } else if (Objects.nonNull(pages) && !pages.isEmpty()) {
                 convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
@@ -3523,7 +3524,7 @@ public class Metadaten {
      * @return current page index
      */
     public int getPageIndex() {
-        if (this.getImages().size() > 0 && this.getImages().contains(this.currentImage)) {
+        if (!this.getImages().isEmpty() && this.getImages().contains(this.currentImage)) {
             return this.getImages().indexOf(this.currentImage) + 1;
         } else {
             return 0;
@@ -3756,12 +3757,12 @@ public class Metadaten {
         int sourceStructureElementIndex;
         int pageIndex;
 
-        int targetStructureElementIndex = Integer.valueOf(dropIDComponents[2]);
+        int targetStructureElementIndex = Integer.parseInt(dropIDComponents[2]);
         DocStructInterface targetDocStruct = getAllStructureElements().get(targetStructureElementIndex);
 
         if (dragIDComponents[1].equals("structuredPages")) {
-            sourceStructureElementIndex = Integer.valueOf(dragIDComponents[2]);
-            pageIndex = Integer.valueOf(dragIDComponents[4]);
+            sourceStructureElementIndex = Integer.parseInt(dragIDComponents[2]);
+            pageIndex = Integer.parseInt(dragIDComponents[4]);
 
             DocStructInterface sourceDocStruct = getAllStructureElements().get(sourceStructureElementIndex);
 
@@ -3839,6 +3840,7 @@ public class Metadaten {
      * @return file path to the png image of the given DocStructInterface 'pageDoctStruct'.
      */
     public String getPageImageFilePath(DocStructInterface pageDocStruct) {
+        final String errorMessage = "IMAGE_PATH_NOT_FOUND";
         PrefsInterface prefsInterface = this.metaHelper.getPrefs();
         MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
         List<String> allImages = getImages();
@@ -3849,19 +3851,19 @@ public class Metadaten {
         switch (allMetadata.size()) {
             case 0:
                 logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
-                return "IMAGE_PATH_NOT_FOUND";
+                return errorMessage;
             case 1:
                 imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
-                if (allImages.size() > 0 && allImages.size() > imageIndex) {
+                if (!allImages.isEmpty() && allImages.size() > imageIndex) {
                     return allImages.get(imageIndex);
                 } else {
                     logger.error("ERROR: empty or broken list of image file paths!");
-                    return "IMAGE_PATH_NOT_FOUND";
+                    return errorMessage;
                 }
             default:
                 logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is "
                         + allMetadata.size() + " (1 expected)!");
-                return "IMAGE_PATH_NOT_FOUND";
+                return errorMessage;
         }
     }
 
@@ -3898,7 +3900,7 @@ public class Metadaten {
      * @return boolean being true when the list contains at least one image
      */
     public boolean isImageListExistent() {
-        return getImages().size() > 0;
+        return !getImages().isEmpty();
     }
 
     /**
@@ -3984,12 +3986,11 @@ public class Metadaten {
             if (comments[0].isEmpty()) {
                 List<String> list = new ArrayList<>(Arrays.asList(comments));
                 list.remove(list.get(0));
-                comments = null;
                 comments = list.toArray(new String[list.size()]);
             }
             return comments;
         }
-        return null;
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     /**
@@ -4104,7 +4105,7 @@ public class Metadaten {
      *
      */
     public void reportProblem() {
-        List<Task> taskList = new  ArrayList<Task>();
+        List<Task> taskList = new  ArrayList<>();
         taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
         BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
         batchStepHelper.setProblem(getProblem());
