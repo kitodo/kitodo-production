@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.model.DualListModel;
@@ -81,7 +82,8 @@ public class BenutzergruppenForm extends BaseForm {
             this.serviceManager.getUserGroupService().save(this.userGroup);
             return usergroupListPath;
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() }, logger,
+                e);
             return null;
         }
     }
@@ -111,7 +113,8 @@ public class BenutzergruppenForm extends BaseForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() },
+                logger, e);
             return null;
         }
         return usergroupListPath;
@@ -130,8 +133,8 @@ public class BenutzergruppenForm extends BaseForm {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER_GROUP), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), id }, logger, e);
         }
         setSaveDisabled(true);
     }
@@ -159,13 +162,14 @@ public class BenutzergruppenForm extends BaseForm {
      * Set user group by ID.
      *
      * @param userGroupID
-     *          ID of user group to set.
+     *            ID of user group to set.
      */
     public void setUserGroupById(int userGroupID) {
         try {
             setUserGroup(serviceManager.getUserGroupService().getById(userGroupID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER_GROUP), userGroupID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupID }, logger, e);
         }
     }
 
@@ -178,7 +182,8 @@ public class BenutzergruppenForm extends BaseForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getGlobalAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableGlobal(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableGlobal(userGroup.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
@@ -217,7 +222,8 @@ public class BenutzergruppenForm extends BaseForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getClientAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToClients(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableToClients(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
@@ -255,7 +261,8 @@ public class BenutzergruppenForm extends BaseForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getProjectAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToProjects(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableToProjects(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects();

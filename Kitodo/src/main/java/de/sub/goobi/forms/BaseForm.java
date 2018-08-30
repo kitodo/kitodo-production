@@ -43,20 +43,6 @@ public class BaseForm implements Serializable {
     protected static final String ERROR_RELOADING = "errorReloading";
     protected static final String ERROR_SAVING = "errorSaving";
 
-    // object names
-    protected static final String BATCH = "batch";
-    protected static final String CLIENT = "client";
-    protected static final String DOCKET = "docket";
-    protected static final String LDAP_GROUP = "ldapGroup";
-    protected static final String PROCESS = "process";
-    protected static final String PROJECT = "project";
-    protected static final String PROPERTY = "property";
-    protected static final String TASK = "task";
-    protected static final String TEMPLATE = "template";
-    protected static final String USER = "user";
-    protected static final String USER_GROUP = "userGroup";
-    protected static final String WORKFLOW = "workflow";
-
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
 
     /**

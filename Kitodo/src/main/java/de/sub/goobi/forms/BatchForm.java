@@ -285,7 +285,7 @@ public class BatchForm extends BaseForm {
             serviceManager.getBatchService().removeAll(ids);
             filterAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(BATCH) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -315,7 +315,7 @@ public class BatchForm extends BaseForm {
                 }
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation(BATCH) }, logger, e);
+            Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
@@ -368,7 +368,7 @@ public class BatchForm extends BaseForm {
                     }
                 }
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation(BATCH) }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
             }
         }
     }

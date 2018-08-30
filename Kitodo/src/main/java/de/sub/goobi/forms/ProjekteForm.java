@@ -44,6 +44,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -205,7 +206,8 @@ public class ProjekteForm extends BaseForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return projectListPath;
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
                 return null;
             }
         }
@@ -226,7 +228,8 @@ public class ProjekteForm extends BaseForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 Helper.setMessage("Project saved!");
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
             }
         }
         return null;
@@ -242,7 +245,8 @@ public class ProjekteForm extends BaseForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -308,13 +312,14 @@ public class ProjekteForm extends BaseForm {
      * Set project by ID.
      *
      * @param projectID
-     *          ID of project to set.
+     *            ID of project to set.
      */
     public void setProjectById(int projectID) {
         try {
             setMyProjekt(serviceManager.getProjectService().getById(projectID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROJECT), projectID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
         }
     }
 
@@ -375,11 +380,11 @@ public class ProjekteForm extends BaseForm {
         this.lockedTechnical = lockedTechnical;
     }
 
-
     /**
      * Set copy templates.
      *
-     * @param copyTemplates as boolean
+     * @param copyTemplates
+     *            as boolean
      */
     public void setCopyTemplates(boolean copyTemplates) {
         this.copyTemplates = copyTemplates;
@@ -532,7 +537,8 @@ public class ProjekteForm extends BaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROJECT), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
+                logger, e);
         }
 
     }
@@ -546,7 +552,8 @@ public class ProjekteForm extends BaseForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
+                logger, e);
             return new LinkedList<>();
         }
     }

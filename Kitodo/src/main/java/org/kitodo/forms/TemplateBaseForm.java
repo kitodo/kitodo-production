@@ -24,6 +24,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
@@ -137,7 +138,7 @@ public class TemplateBaseForm extends BaseForm {
             serviceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("task") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -147,7 +148,7 @@ public class TemplateBaseForm extends BaseForm {
             try {
                 searchDatabaseService.refresh(baseBean);
             } catch (RuntimeException e) {
-                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation(message) }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {message }, logger, e);
             }
         }
     }

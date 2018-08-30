@@ -62,7 +62,7 @@ public class DesktopForm extends BaseForm {
         try {
             return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("tasks") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -76,7 +76,7 @@ public class DesktopForm extends BaseForm {
         try {
             return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("processes") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -90,7 +90,7 @@ public class DesktopForm extends BaseForm {
         try {
             return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -106,7 +106,7 @@ public class DesktopForm extends BaseForm {
         try {
             return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("project") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
             return null;
         }
     }
@@ -147,7 +147,7 @@ public class DesktopForm extends BaseForm {
                     return serviceManager.getPropertyService().count();
                 case TEMPLATE:
                     return serviceManager.getTemplateService().count();
-                case USERGROUP:
+                case USER_GROUP:
                     return serviceManager.getUserGroupService().count();
                 default:
                     return 0L;

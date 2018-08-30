@@ -37,6 +37,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
@@ -98,7 +99,8 @@ public class RulesetForm extends BaseForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
             return null;
         }
     }
@@ -131,7 +133,8 @@ public class RulesetForm extends BaseForm {
                 serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
             return null;
         }
         return rulesetListPath;
@@ -173,8 +176,8 @@ public class RulesetForm extends BaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("regelsatz"), id }, logger,
-                e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -194,13 +197,14 @@ public class RulesetForm extends BaseForm {
      * Set ruleset by ID.
      *
      * @param rulesetID
-     *          ID of the ruleset to set.
+     *            ID of the ruleset to set.
      */
     public void setRulesetById(int rulesetID) {
         try {
             setRuleset(serviceManager.getRulesetService().getById(rulesetID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("regelsatz"), rulesetID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);
         }
     }
 
@@ -220,13 +224,11 @@ public class RulesetForm extends BaseForm {
      */
     public List getRulesetFilenames() {
         try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
-            return rulesetPaths
-                    .filter(f -> f.toString().endsWith(".xml"))
-                    .map(Path::getFileName)
-                    .sorted()
+            return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("rulesets")}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
+                logger, e);
             return new ArrayList();
         }
     }
@@ -242,7 +244,8 @@ public class RulesetForm extends BaseForm {
                 this.serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
         }
     }
 }

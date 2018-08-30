@@ -34,6 +34,7 @@ public class LdapGruppenForm extends BaseForm {
     private LdapGroup myLdapGruppe = new LdapGroup();
     private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
+    private static final String LDAP_GROUP = "ldapGroup";
     private String ldapGroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapGroupEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 

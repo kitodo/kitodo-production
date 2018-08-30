@@ -40,6 +40,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecurityPasswordEncoder;
@@ -112,7 +113,7 @@ public class UserForm extends BaseForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(USER) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             return null;
         }
     }
@@ -138,7 +139,7 @@ public class UserForm extends BaseForm {
         try {
             serviceManager.getUserService().remove(userObject);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(USER) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -158,7 +159,7 @@ public class UserForm extends BaseForm {
             }
             this.userObject.setUserGroups(neu);
         } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return null;
     }
@@ -181,9 +182,9 @@ public class UserForm extends BaseForm {
             this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {Helper.getTranslation(USER_GROUP), userGroupId }, logger, e);
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
         } catch (NumberFormatException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(),logger,e);
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return null;
     }
@@ -200,8 +201,8 @@ public class UserForm extends BaseForm {
             Client client = serviceManager.getClientService().getById(clientId);
             this.userObject.getClients().remove(client);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation(CLIENT), clientId },
-                logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -225,8 +226,8 @@ public class UserForm extends BaseForm {
             }
             this.userObject.getClients().add(client);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation(CLIENT), clientId },
-                logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -245,8 +246,8 @@ public class UserForm extends BaseForm {
             Project project = serviceManager.getProjectService().getById(projectId);
             this.userObject.getProjects().remove(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation(PROJECT), projectId },
-                logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -270,8 +271,8 @@ public class UserForm extends BaseForm {
             }
             this.userObject.getProjects().add(project);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {Helper.getTranslation(PROJECT), projectId },
-                logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -304,13 +305,14 @@ public class UserForm extends BaseForm {
      * Set user by ID.
      *
      * @param userID
-     *      ID of user to set.
+     *            ID of user to set.
      */
     public void setUserById(int userID) {
         try {
             setUserObject(serviceManager.getUserService().getById(userID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER), userID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), userID },
+                logger, e);
         }
     }
 
@@ -350,7 +352,8 @@ public class UserForm extends BaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(USER), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.USER.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -363,7 +366,8 @@ public class UserForm extends BaseForm {
         try {
             return serviceManager.getProjectService().findAll(true);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
+                logger, e);
             return new LinkedList<>();
         }
     }
@@ -377,7 +381,8 @@ public class UserForm extends BaseForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("userGroup") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() },
+                logger, e);
             return new LinkedList<>();
         }
     }
@@ -403,7 +408,9 @@ public class UserForm extends BaseForm {
 
     /**
      * Check and return whether given UserDTO 'user' is logged in.
-     * @param user UserDTO to check
+     * 
+     * @param user
+     *            UserDTO to check
      * @return whether given UserDTO is checked in
      */
     public boolean checkUserLoggedIn(UserDTO user) {
@@ -427,7 +434,7 @@ public class UserForm extends BaseForm {
             serviceManager.getUserService().changeUserPassword(userObject, this.password);
             Helper.setMessage("passwordChanged");
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {USER }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
         } catch (NoSuchAlgorithmException e) {
             Helper.setErrorMessage("ldap error", logger, e);
         }

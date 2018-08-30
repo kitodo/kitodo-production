@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -122,7 +123,8 @@ public class WorkflowForm extends BaseForm {
                 fileService.delete(svgDiagramURI);
                 fileService.delete(xmlDiagramURI);
             } catch (DataException | IOException e) {
-                Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(WORKFLOW) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -253,7 +255,8 @@ public class WorkflowForm extends BaseForm {
         try {
             setWorkflow(serviceManager.getWorkflowService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[]{Helper.getTranslation(WORKFLOW), id}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -275,7 +278,8 @@ public class WorkflowForm extends BaseForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(WORKFLOW), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
         }
     }
 

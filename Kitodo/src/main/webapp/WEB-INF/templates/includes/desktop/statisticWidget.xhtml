@@ -21,10 +21,10 @@
                  scrollable="true"
                  var="objectType">
         <p:column headerText="#{msgs.type}" styleClass="statistic-table-column">
-            <h:outputText rendered="#{not empty objectType.translation}" value="#{objectType.translation}"/>
+            <h:outputText rendered="#{not empty objectType.translationPlural}" value="#{objectType.translationPlural}"/>
         </p:column>
         <p:column headerText="#{msgs.count}" styleClass="statistic-table-column">
-            <h:outputText rendered="#{not empty objectType.translation}" value="#{DesktopForm.getNumberOfElements(objectType)}"/>
+            <h:outputText rendered="#{not empty objectType.translationPlural}" value="#{DesktopForm.getNumberOfElements(objectType)}"/>
         </p:column>
     </p:dataTable>
 </ui:composition>
