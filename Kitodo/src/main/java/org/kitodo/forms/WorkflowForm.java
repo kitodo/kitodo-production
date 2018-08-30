@@ -59,6 +59,7 @@ public class WorkflowForm extends BasisForm {
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private static final String ERROR_LOADING_ONE = "errorLoadingOne";
+    private static final String WORKFLOW = "workflow";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
 
@@ -76,7 +77,7 @@ public class WorkflowForm extends BasisForm {
         URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
 
         try (InputStream inputStream = fileService.read(xmlDiagramURI);
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -102,6 +103,29 @@ public class WorkflowForm extends BasisForm {
             return workflowListPath;
         } else {
             return null;
+        }
+    }
+
+    /**
+     * Remove workflow if no template is assigned to it.
+     */
+    public void delete() {
+        if (!this.workflow.getTemplates().isEmpty()) {
+            Helper.setErrorMessage("templateAssignedError");
+        } else {
+            try {
+                serviceManager.getWorkflowService().remove(this.workflow);
+
+                URI svgDiagramURI = new File(
+                        diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
+                URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName()))
+                        .toURI();
+
+                fileService.delete(svgDiagramURI);
+                fileService.delete(xmlDiagramURI);
+            } catch (DataException | IOException e) {
+                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(WORKFLOW) }, logger, e);
+            }
         }
     }
 
@@ -135,7 +159,7 @@ public class WorkflowForm extends BasisForm {
 
     void saveFile(URI fileURI, String fileContent) {
         try (OutputStream outputStream = fileService.write(fileURI);
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -202,6 +226,20 @@ public class WorkflowForm extends BasisForm {
     }
 
     /**
+     * Set workflow by id.
+     *
+     * @param id
+     *            of workflow to set
+     */
+    public void setWorkflowById(int id) {
+        try {
+            setWorkflow(serviceManager.getWorkflowService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(WORKFLOW), id }, logger, e);
+        }
+    }
+
+    /**
      * Method being used as viewAction for workflow edit form. If the given
      * parameter 'id' is '0', the form for creating a new workflow will be
      * displayed.
@@ -219,7 +257,7 @@ public class WorkflowForm extends BasisForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("workflow"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(WORKFLOW), id }, logger, e);
         }
     }
 
