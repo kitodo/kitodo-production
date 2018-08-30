@@ -33,11 +33,11 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
 import org.primefaces.model.DualListModel;
 
-@Named("BenutzergruppenForm")
+@Named("UserGroupForm")
 @SessionScoped
-public class BenutzergruppenForm extends BaseForm {
+public class UserGroupForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
-    private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
+    private static final Logger logger = LogManager.getLogger(UserGroupForm.class);
     private UserGroup userGroup = new UserGroup();
 
     @Named("UserForm")
@@ -54,7 +54,7 @@ public class BenutzergruppenForm extends BaseForm {
      *            UserForm managed bean
      */
     @Inject
-    public BenutzergruppenForm(UserForm userForm) {
+    public UserGroupForm(UserForm userForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
         this.userForm = userForm;
