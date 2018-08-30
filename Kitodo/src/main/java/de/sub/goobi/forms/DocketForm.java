@@ -34,7 +34,6 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.Parameters;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -88,8 +87,12 @@ public class DocketForm extends BasisForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(Parameters.DIR_XSLT))) {
-                this.serviceManager.getDocketService().save(myDocket);
+            if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(Parameters.DIR_XSLT)) ) {
+                if (existsDocketWithSameName()) {
+                    Helper.setErrorMessage("docketTitleDuplicated");
+                    return null;
+                }
+                serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {
                 Helper.setErrorMessage("docketNotFound");
@@ -118,6 +121,23 @@ public class DocketForm extends BasisForm {
             }
         } catch (DataException e) {
             Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
+        }
+    }
+
+    private boolean existsDocketWithSameName() {
+        List<Docket> dockets = serviceManager.getDocketService().getByTitle(this.myDocket.getTitle());
+        if (dockets.isEmpty()) {
+            return false;
+        } else {
+            if (Objects.nonNull(this.myDocket.getId())) {
+                if (dockets.size() == 1) {
+                    return !dockets.get(0).getId().equals(this.myDocket.getId());
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
         }
     }
 

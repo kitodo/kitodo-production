@@ -13,6 +13,7 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +71,17 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Ruleset");
+    }
+
+    /**
+     * Get list of rulesets for given title.
+     *
+     * @param title
+     *            for get from database
+     * @return list of rulesets
+     */
+    public List<Ruleset> getByTitle(String title) {
+        return dao.getByQuery("FROM Ruleset WHERE title = :title", Collections.singletonMap("title", title));
     }
 
     /**

@@ -87,6 +87,10 @@ public class RulesetForm extends BasisForm {
     public String saveRuleset() {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
+                if (existsRulesetWithSameName()) {
+                    Helper.setErrorMessage("rulesetTitleDuplicated");
+                    return null;
+                }
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
@@ -131,6 +135,23 @@ public class RulesetForm extends BasisForm {
             return null;
         }
         return rulesetListPath;
+    }
+
+    private boolean existsRulesetWithSameName() {
+        List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
+        if (rulesets.isEmpty()) {
+            return false;
+        } else {
+            if (Objects.nonNull(this.ruleset.getId())) {
+                if (rulesets.size() == 1) {
+                    return !rulesets.get(0).getId().equals(this.ruleset.getId());
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
