@@ -20,19 +20,22 @@
 
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{WorkflowForm.loadWorkflow(id)}" />
+        <f:viewAction action="#{WorkflowForm.loadWorkflow(id)}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/save.js" target="body" />
+        <h:outputScript name="js/save.js" target="body"/>
         <script>
-            window.onload = function () {checkForm('editForm')};
+            window.onload = function () {
+                checkForm('editForm')
+            };
         </script>
         <h3>
             <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
                           rendered="#{not empty WorkflowForm.workflow.title}"/>
-            <h:outputText value="#{msgs.createNewWorkflow}"
-                          rendered="#{empty WorkflowForm.workflow.title}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{empty WorkflowForm.workflow.title}"/>
+            <h:outputText value="#{msgs.duplicateWorkflow}"
+                          rendered="#{empty WorkflowForm.workflow.title and not empty WorkflowForm.workflow.fileName}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
