@@ -811,4 +811,22 @@ public class MassImportForm extends BasisForm {
     public String getInclude() {
         return "plugins/" + plugin.getTitle() + ".jsp";
     }
+
+    /**
+     * Get project.
+     *
+     * @return value of project
+     */
+    public Project getProject() {
+        return project;
+    }
+
+    /**
+     * Set project.
+     *
+     * @param project as Project
+     */
+    public void setProject(Project project) {
+        this.project = project;
+    }
 }
