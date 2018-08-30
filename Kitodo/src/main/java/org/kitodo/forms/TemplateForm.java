@@ -38,7 +38,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
@@ -52,7 +51,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Task task;
     private boolean showInactiveTemplates = false;
     private String title;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");

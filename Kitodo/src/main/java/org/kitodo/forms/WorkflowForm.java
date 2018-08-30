@@ -41,7 +41,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -53,7 +52,6 @@ public class WorkflowForm extends BaseForm {
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;

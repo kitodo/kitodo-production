@@ -25,7 +25,6 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
 public class TemplateBaseForm extends BaseForm {
@@ -33,7 +32,6 @@ public class TemplateBaseForm extends BaseForm {
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
     private boolean showInactiveProjects = false;
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Check if inactive projects should be shown.

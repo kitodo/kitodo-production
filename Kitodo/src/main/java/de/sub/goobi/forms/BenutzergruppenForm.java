@@ -31,7 +31,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.primefaces.model.DualListModel;
 
 @Named("BenutzergruppenForm")
@@ -40,7 +39,6 @@ public class BenutzergruppenForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     @Named("UserForm")
     private UserForm userForm;

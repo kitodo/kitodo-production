@@ -45,7 +45,6 @@ import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
-import org.kitodo.services.ServiceManager;
 
 @Named("UserForm")
 @SessionScoped
@@ -53,7 +52,6 @@ public class UserForm extends BaseForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;

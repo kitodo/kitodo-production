@@ -40,14 +40,12 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
 @SessionScoped
 public class RulesetForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Ruleset ruleset;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
 
     private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");

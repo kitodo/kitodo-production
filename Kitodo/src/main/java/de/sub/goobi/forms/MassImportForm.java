@@ -61,7 +61,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.services.ServiceManager;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -85,7 +84,6 @@ public class MassImportForm extends BaseForm {
     private String currentPlugin = "";
     private IImportPlugin plugin;
     private File importFile = null;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
@@ -484,7 +482,7 @@ public class MassImportForm extends BaseForm {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("errorReading", new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
         return allOpacCatalogues;
     }

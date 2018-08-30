@@ -28,14 +28,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.services.ServiceManager;
-
 
 @Named("DesktopForm")
 @ViewScoped
 public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Default constructor.

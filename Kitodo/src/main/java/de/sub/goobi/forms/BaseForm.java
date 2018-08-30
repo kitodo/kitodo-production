@@ -22,7 +22,7 @@ import org.primefaces.event.TabChangeEvent;
 public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
-    private transient ServiceManager serviceManager = new ServiceManager();
+    protected transient ServiceManager serviceManager = new ServiceManager();
     String zurueck = null;
     protected String filter = "";
     protected User user;

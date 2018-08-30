@@ -86,7 +86,6 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -113,7 +112,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private Property property;
     private String addToWikiField = "";
     private List<ProcessDTO> processDTOS = new ArrayList<>();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();

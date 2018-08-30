@@ -27,14 +27,12 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
-import org.kitodo.services.ServiceManager;
 
 @Named("LdapServerForm")
 @SessionScoped
 public class LdapServerForm extends BaseForm {
 
     private static final long serialVersionUID = 2390900243176826176L;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
     private String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");

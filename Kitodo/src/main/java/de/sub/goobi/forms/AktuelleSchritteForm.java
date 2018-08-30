@@ -55,7 +55,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -82,7 +81,6 @@ public class AktuelleSchritteForm extends BaseForm {
     private BatchStepHelper batchHelper;
     private List<Property> properties;
     private Property property;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");

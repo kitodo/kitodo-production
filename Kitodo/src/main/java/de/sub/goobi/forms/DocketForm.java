@@ -40,7 +40,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
 @Named("DocketForm")
@@ -48,7 +47,6 @@ import org.kitodo.services.data.ProcessService;
 public class DocketForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
     private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");

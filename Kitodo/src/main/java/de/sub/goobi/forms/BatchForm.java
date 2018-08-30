@@ -48,7 +48,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
 @SessionScoped
@@ -67,7 +66,6 @@ public class BatchForm extends BaseForm {
     private String batchTitle;
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     // TODO; for what is it needed - right now it is used only in new tests
     public List<Process> getCurrentProcesses() {

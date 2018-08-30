@@ -47,7 +47,6 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
 @SessionScoped
@@ -66,7 +65,6 @@ public class ProjekteForm extends BaseForm {
      */
     private Folder myFolder;
     private Project baseProject;
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting folders
     // it needs the execution of commit folders to make these changes

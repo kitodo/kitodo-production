@@ -25,14 +25,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.services.ServiceManager;
 
 @Named("LdapGruppenForm")
 @SessionScoped
 public class LdapGruppenForm extends BaseForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapGruppenForm.class);
     private static final String LDAP_GROUP = "ldapGroup";
     private String ldapGroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
