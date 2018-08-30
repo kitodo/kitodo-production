@@ -50,7 +50,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
 @SessionScoped
-public class ProjekteForm extends BasisForm {
+public class ProjekteForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
     private Project myProjekt;

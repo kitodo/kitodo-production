@@ -48,7 +48,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("UserForm")
 @SessionScoped
-public class UserForm extends BasisForm {
+public class UserForm extends BaseForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User userObject = new User();
     private boolean hideInactiveUsers = true;

@@ -52,7 +52,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
 @SessionScoped
-public class BatchForm extends BasisForm {
+public class BatchForm extends BaseForm {
 
     private static final long serialVersionUID = 8234897225425856549L;
 

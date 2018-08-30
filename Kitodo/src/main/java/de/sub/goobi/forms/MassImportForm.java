@@ -18,7 +18,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.MessageFormat;
@@ -66,7 +65,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("MassImportForm")
 @SessionScoped
-public class MassImportForm extends BasisForm {
+public class MassImportForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private static final long serialVersionUID = -4225927414279404442L;
     private Template template;

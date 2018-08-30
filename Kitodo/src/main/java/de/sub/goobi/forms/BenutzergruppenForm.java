@@ -35,7 +35,7 @@ import org.primefaces.model.DualListModel;
 
 @Named("BenutzergruppenForm")
 @SessionScoped
-public class BenutzergruppenForm extends BasisForm {
+public class BenutzergruppenForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
     private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
     private UserGroup userGroup = new UserGroup();

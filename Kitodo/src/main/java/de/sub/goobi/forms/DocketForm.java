@@ -44,7 +44,7 @@ import org.kitodo.services.data.ProcessService;
 
 @Named("DocketForm")
 @SessionScoped
-public class DocketForm extends BasisForm {
+public class DocketForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
     private transient ServiceManager serviceManager = new ServiceManager();

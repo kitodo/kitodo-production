@@ -29,7 +29,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("LdapGruppenForm")
 @SessionScoped
-public class LdapGruppenForm extends BasisForm {
+public class LdapGruppenForm extends BaseForm {
     private static final long serialVersionUID = -5644561256582235244L;
     private LdapGroup myLdapGruppe = new LdapGroup();
     private transient ServiceManager serviceManager = new ServiceManager();

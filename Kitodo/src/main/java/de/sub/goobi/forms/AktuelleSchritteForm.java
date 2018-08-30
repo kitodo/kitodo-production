@@ -60,7 +60,7 @@ import org.kitodo.workflow.Solution;
 
 @Named("AktuelleSchritteForm")
 @SessionScoped
-public class AktuelleSchritteForm extends BasisForm {
+public class AktuelleSchritteForm extends BaseForm {
     private static final long serialVersionUID = 5841566727939692509L;
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();

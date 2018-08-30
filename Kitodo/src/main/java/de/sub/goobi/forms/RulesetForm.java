@@ -43,7 +43,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
 @SessionScoped
-public class RulesetForm extends BasisForm {
+public class RulesetForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Ruleset ruleset;
     private transient ServiceManager serviceManager = new ServiceManager();

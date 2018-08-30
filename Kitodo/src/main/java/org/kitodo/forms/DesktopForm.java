@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("DesktopForm")
 @ViewScoped
-public class DesktopForm extends BasisForm {
+public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private transient ServiceManager serviceManager = new ServiceManager();
 

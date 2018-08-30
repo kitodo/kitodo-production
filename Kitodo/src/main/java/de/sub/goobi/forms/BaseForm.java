@@ -19,7 +19,7 @@ import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.event.TabChangeEvent;
 
-public class BasisForm implements Serializable {
+public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
     private transient ServiceManager serviceManager = new ServiceManager();

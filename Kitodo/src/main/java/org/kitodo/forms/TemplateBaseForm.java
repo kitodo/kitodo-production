@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.Objects;
@@ -27,7 +27,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class TemplateBaseForm extends BasisForm {
+public class TemplateBaseForm extends BaseForm {
 
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);

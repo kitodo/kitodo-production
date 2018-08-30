@@ -12,7 +12,7 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
@@ -47,7 +47,7 @@ import org.kitodo.workflow.model.beans.Diagram;
 
 @Named("WorkflowForm")
 @SessionScoped
-public class WorkflowForm extends BasisForm {
+public class WorkflowForm extends BaseForm {
 
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);

@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.text.MessageFormat;
@@ -31,7 +31,7 @@ import org.kitodo.services.ServiceManager;
 
 @Named("LdapServerForm")
 @SessionScoped
-public class LdapServerForm extends BasisForm {
+public class LdapServerForm extends BaseForm {
 
     private static final long serialVersionUID = 2390900243176826176L;
     private transient ServiceManager serviceManager = new ServiceManager();
