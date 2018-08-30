@@ -226,6 +226,26 @@ public class WorkflowForm extends BasisForm {
     }
 
     /**
+     * Duplicate the selected workflow.
+     *
+     * @param itemId
+     *            ID of the workflow to duplicate
+     * @return page address; either redirect to the edit workflow page or return
+     *         'null' if the workflow could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
+     */
+    public String duplicateWorkflow(Integer itemId) {
+        try {
+            Workflow baseWorkflow = serviceManager.getWorkflowService().getById(itemId);
+            this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
+            return workflowEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
+            return null;
+        }
+    }
+
+    /**
      * Set workflow by id.
      *
      * @param id
@@ -235,7 +255,7 @@ public class WorkflowForm extends BasisForm {
         try {
             setWorkflow(serviceManager.getWorkflowService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(WORKFLOW), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[]{Helper.getTranslation(WORKFLOW), id}, logger, e);
         }
     }
 
