@@ -79,7 +79,7 @@ public class RomanNumeral implements Fragment {
      * @throws NumberFormatException
      *             if the string cannot be parsed as an integer
      */
-    public static final int parseInt(String value) {
+    public static int parseInt(String value) {
         int result = 0;
         for (int i = value.length() - 1; i >= 0; i--) {
             switch (value.charAt(i) | 32) {

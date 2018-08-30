@@ -129,7 +129,7 @@ public enum PaginatorType {
      * @param code
      *            code of the enum constant.
      */
-    private PaginatorType(int code) {
+    PaginatorType(int code) {
         this.code = code;
     }
 

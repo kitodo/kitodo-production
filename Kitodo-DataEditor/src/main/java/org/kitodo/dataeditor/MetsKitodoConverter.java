@@ -38,7 +38,7 @@ public class MetsKitodoConverter {
     }
 
     /**
-     * Reads an old mets-mods-goobi formated xml file by transforming it to the
+     * Reads an old mets-mods-goobi formatted xml file by transforming it to the
      * current used mets-kitodo format by xslt.
      *
      * @param xmlFile

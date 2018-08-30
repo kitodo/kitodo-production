@@ -21,7 +21,7 @@ import javax.xml.transform.TransformerException;
 import org.kitodo.api.dataeditor.DataEditorInterface;
 
 /**
- * The main class of this modul which is implementing the main interface.
+ * The main class of this module which is implementing the main interface.
  */
 public class DataEditor implements DataEditorInterface {
 
@@ -32,8 +32,8 @@ public class DataEditor implements DataEditorInterface {
         try {
             this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri, xsltFileUri);
         } catch (JAXBException  | TransformerException | DatatypeConfigurationException e) {
-            // TODO add also message for modul frontend, when it is ready!
-            // For now we wrap exceptions in an IOExecption so that we dont need to
+            // TODO add also message for module frontend, when it is ready!
+            // For now we wrap exceptions in an IOException so that we don't need to
             // implement JAXB to core
             throw new IOException("Unable to read file", e);
         }

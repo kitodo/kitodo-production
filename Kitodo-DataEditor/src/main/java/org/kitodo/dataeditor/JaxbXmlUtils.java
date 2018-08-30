@@ -85,7 +85,7 @@ public class JaxbXmlUtils {
      * @return {@code true} if the list of Jaxb-Object elements contain objects of
      *         given type. {@code false} if not.
      */
-    public static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
+    static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
                 JAXBElement jaxbElement = (JAXBElement) object;
@@ -107,7 +107,7 @@ public class JaxbXmlUtils {
      *            The type of object to return.
      * @return The first object that corresponds to the given type.
      */
-    public static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
+    static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
         if (JaxbXmlUtils.objectListContainsType(objects, type)) {
             for (Object object : objects) {
                 if (object instanceof JAXBElement) {
@@ -137,14 +137,14 @@ public class JaxbXmlUtils {
     }
 
     /**
-     * Gets an optional list of objects which holds the xml data of an mets objets
+     * Gets an optional list of objects which holds the xml data of an mets object
      * mdSec element.
      *
      * @param mdSecType
      *            The mdSec element.
      * @return A list of objects wraped in Optional class.
      */
-    public static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
+    static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
         // Wrapping null-checks at getter-chain into Optional<T>.class
         return Optional.ofNullable(mdSecType).map(MdSecType::getMdWrap).map(MdSecType.MdWrap::getXmlData)
             .map(MdSecType.MdWrap.XmlData::getAny);

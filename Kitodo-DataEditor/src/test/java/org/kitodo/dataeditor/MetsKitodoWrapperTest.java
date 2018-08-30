@@ -285,7 +285,7 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter", PositionOfNewDiv.BEFOR_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter", PositionOfNewDiv.BEFORE_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         Assert.assertEquals("New div was not added", "AddedSubChapter", addedDiv.getTYPE());
     }
@@ -308,7 +308,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedSubSubChapter",
-            PositionOfNewDiv.BEFOR_ELEMENT);
+            PositionOfNewDiv.BEFORE_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
         Assert.assertEquals("New div was not added", "AddedSubSubChapter", addedDiv.getTYPE());
@@ -321,7 +321,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         expectedException.expect(UnsupportedOperationException.class);
         expectedException.expectMessage("Root element can not have a parent!");
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT);
     }
 
     private void fillLogicalStructMap(MetsKitodoWrapper metsKitodoWrapper) {
@@ -400,7 +400,7 @@ public class MetsKitodoWrapperTest {
         fifthSubDiv.setID("notExisting");
         expectedException.expect(NoSuchElementException.class);
         expectedException.expectMessage("Child div element not found");
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFOR_ELEMENT);
+        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT);
     }
 
     @Test
