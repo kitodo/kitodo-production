@@ -44,6 +44,7 @@ public class BaseForm implements Serializable {
     protected static final String ERROR_SAVING = "errorSaving";
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
+    protected static final String DEFAULT_LINK = "desktop";
 
     /**
      * Getter: return lazyDTOModel.

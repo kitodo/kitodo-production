@@ -246,7 +246,7 @@ public class Metadaten {
             "metadataWrapperPanel",
             "commentWrapperPanel",
             "galleryWrapperPanel");
-    private String referringView = "processes";
+    private String referringView = "desktop";
 
 
 

@@ -74,6 +74,7 @@
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
+                <f:param name="referer" value="processEdit?id=#{item.process.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"

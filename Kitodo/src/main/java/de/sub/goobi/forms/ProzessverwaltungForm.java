@@ -125,6 +125,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
+    private String processEditReferer = DEFAULT_LINK;
+    private String taskEditReferer = DEFAULT_LINK;
+
     /**
      * Constructor.
      */
@@ -1694,5 +1697,51 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      */
     public void setSelectedProcesses(List<ProcessDTO> selectedProcesses) {
         this.selectedProcesses = selectedProcesses;
+    }
+
+    /**
+     * Set referring view which will be returned when the user clicks "save" or "cancel" on the task edit page.
+     *
+     * @param referer the referring view
+     */
+    public void setTaskEditReferer(String referer) {
+        if (referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
+            this.taskEditReferer = referer;
+        } else {
+            this.taskEditReferer = DEFAULT_LINK;
+        }
+    }
+
+    /**
+     * Get task edit page referring view.
+     *
+     * @return task eit page referring view
+     */
+    public String getTaskEditReferer() {
+        return this.taskEditReferer;
+    }
+
+    /**
+     * Set referring view which will be returned when the user clicks "save" or "cancel" on the process edit page.
+     *
+     * @param referer the referring view
+     */
+    public void setProcessEditReferer(String referer) {
+        if (!referer.isEmpty()) {
+            if (referer.equals("processes")) {
+                this.processEditReferer = referer;
+            } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
+                this.processEditReferer = DEFAULT_LINK;
+            }
+        }
+    }
+
+    /**
+     * Get process edit page referring view.
+     *
+     * @return process edit page referring view
+     */
+    public String getProcessEditReferer() {
+        return this.processEditReferer;
     }
 }

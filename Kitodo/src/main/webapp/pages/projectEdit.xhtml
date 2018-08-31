@@ -20,6 +20,7 @@
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProjekteForm.loadProject(id)}"/>
+        <f:viewAction action="#{ProjekteForm.setProjectEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -47,7 +48,7 @@
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="projects"
+                  outcome="#{ProjekteForm.projectEditReferer}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>

@@ -80,6 +80,8 @@ public class ProjekteForm extends BaseForm {
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
 
+    private String projectEditReferer = DEFAULT_LINK;
+
     /**
      * Cash for the list of possible MIME types. So that the list does not have
      * to be read from file several times for one page load.
@@ -563,5 +565,28 @@ public class ProjekteForm extends BaseForm {
      */
     public List<SelectItem> getClients() {
         return SelectItemList.getClients();
+    }
+
+    /**
+     * Set referring view which will be returned when the user clicks "save" or "cancel" on the project edit page.
+     *
+     * @param referer the referring view
+     */
+    public void setProjectEditReferer(String referer) {
+        if (!referer.isEmpty()) {
+            if (referer.equals("projects")) {
+                this.projectEditReferer = referer;
+            } else {
+                this.projectEditReferer = DEFAULT_LINK;
+            }
+        }
+    }
+
+    /**
+     * Get project edit page referring view.
+     * @return project edit page referring view
+     */
+    public String getProjectEditReferer() {
+        return this.projectEditReferer;
     }
 }
