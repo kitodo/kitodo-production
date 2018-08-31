@@ -18,6 +18,12 @@ import org.kitodo.dataformat.metskitodo.MdSecType;
 
 public class DmdSec extends MdSecType {
 
+    /**
+     * Constructor to copy the data from parent class.
+     *
+     * @param mdSecType
+     *            The MdSecType object.
+     */
     public DmdSec(MdSecType mdSecType) {
         if (!mdSecType.getADMID().isEmpty()) {
             super.admid = mdSecType.getADMID();
@@ -33,6 +39,4 @@ public class DmdSec extends MdSecType {
     public KitodoType getKitodoType() {
         return JaxbXmlUtils.getKitodoTypeOfDmdSecElement(this);
     }
-
-
 }
