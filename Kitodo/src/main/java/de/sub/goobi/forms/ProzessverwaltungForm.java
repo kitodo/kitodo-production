@@ -531,13 +531,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Export METS.
      */
-    public void exportMets(int id) {
+    public void exportMets() {
         ExportMets export = new ExportMets();
         try {
-            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setMessage(EXPORT_FINISHED);
         } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
                 | PreferencesException | IOException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
@@ -548,13 +546,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Export PDF.
      */
-    public void exportPdf(int id) {
+    public void exportPdf() {
         ExportPdf export = new ExportPdf();
         try {
-            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setMessage(EXPORT_FINISHED);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
@@ -565,17 +561,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Export DMS.
      */
-    public void exportDMS(int id) {
+    public void exportDMS() {
         ExportDms export = new ExportDms();
         try {
-            this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
-            Helper.setErrorMessage(ERROR_EXPORTING, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORTING, new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
     }
 
@@ -590,7 +583,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Export DMS selection.
      */
-    @SuppressWarnings("unchecked")
     public void exportDMSSelection() {
         exportDMSForProcesses(this.getSelectedProcesses());
     }
@@ -636,14 +628,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
 
     /**
      * Upload from home.
-     *
-     * @return empty String
      */
-    public String uploadFromHome() {
+    public void uploadFromHome() {
         WebDav myDav = new WebDav();
         myDav.uploadFromHome(this.process);
         Helper.setMessage("directoryRemoved", this.process.getTitle());
-        return null;
     }
 
     /**
@@ -1160,13 +1149,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * starts generation of xml logfile for current process.
+     * Starts generation of xml logfile for current process.
      */
-
     public void createXML() {
         try {
             ExportXmlLog xmlExport = new ExportXmlLog();
-
             String directory = new File(serviceManager.getUserService().getHomeDirectory(getUser())).getPath();
             String destination = directory + this.process.getTitle() + "_log.xml";
             xmlExport.startExport(this.process, destination);
@@ -1227,13 +1214,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Downloads a docket for myProcess.
-     *
-     * @return The navigation string
+     * Downloads a docket for process.
      */
-    public String downloadDocket() throws IOException {
-        serviceManager.getProcessService().downloadDocket(this.process);
-        return "";
+    public void downloadDocket() {
+        try {
+            serviceManager.getProcessService().downloadDocket(this.process);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**

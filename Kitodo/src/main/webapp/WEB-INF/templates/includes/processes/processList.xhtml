@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:p="http://primefaces.org/ui">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
         <p:dataTable id="processesTable"
                      var="process"
@@ -35,12 +35,11 @@
                 <h:outputText value="#{process.project.title}"/>
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                <h:link id="editProcess"
-                        outcome="/pages/processEdit"
-                        title="#{msgs.processEdit}">
+                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
+
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
@@ -50,17 +49,55 @@
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
                     <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
                 </h:commandLink>
-                <h:commandLink action="#{ProzessverwaltungForm.exportMets(process.id)}" id="exportMets" title="#{msgs.exportMets}">
+
+                <p:commandLink id="download" action="#{ProzessverwaltungForm.downloadToHome}"
+                               title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <!-- TODO: add separate message in case it already exists and alert -->
+                </p:commandLink>
+
+                <p:commandLink id="upload" action="#{ProzessverwaltungForm.uploadFromHome}"
+                               title="#{msgs.deleteLinkHomeDirectory}">
+                    <h:outputText><i class="fa fa-upload"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+
+                <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
+                <p:commandLink id="exportLogXml" action="#{ProzessverwaltungForm.createXML}" title="#{msgs.createXML}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </p:commandLink>
+
+                <p:commandLink id="downloadDocket" action="#{ProzessverwaltungForm.downloadDocket}"
+                               title="#{msgs.docketPrint}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </p:commandLink>
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportMets}" id="exportMets" title="#{msgs.exportMets}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
                 </h:commandLink>
-                <p:commandLink id="deleteProcess"
-                               action="#{ProzessverwaltungForm.delete}"
-                               title="#{msgs.delete}"
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}">
+                    <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </h:commandLink>
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportDMS}" id="exportDms"
+                               title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </h:commandLink>
+
+                <p:commandLink id="deleteProcess" action="#{ProzessverwaltungForm.delete}" title="#{msgs.delete}"
                                update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProcess}"
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </p:column>
