@@ -576,25 +576,25 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Export DMS page.
+     * Export DMS for selected processes.
+     */
+    public void exportDMSForSelection() {
+        exportDMSForProcesses(this.selectedProcesses);
+    }
+
+    /**
+     * Export DMS processes on the page.
      */
     @SuppressWarnings("unchecked")
-    public void exportDMSPage() {
+    public void exportDMSForPage() {
         exportDMSForProcesses(lazyDTOModel.getEntities());
     }
 
     /**
-     * Export DMS selection.
-     */
-    public void exportDMSSelection() {
-        exportDMSForProcesses(this.getSelectedProcesses());
-    }
-
-    /**
-     * Export DMS hits.
+     * Export DMS for all found processes.
      */
     @SuppressWarnings("unchecked")
-    public void exportDMSHits() {
+    public void exportDMSForAll() {
         exportDMSForProcesses(lazyDTOModel.getEntities());
     }
 
@@ -617,20 +617,17 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Upload all from home.
-     *
-     * @return empty String
+     * Upload all processes from home.
      */
-    public String uploadFromHomeAll() {
+    public void uploadFromHomeForAll() {
         WebDav myDav = new WebDav();
         List<URI> folder = myDav.uploadAllFromHome(doneDirectoryName);
         myDav.removeAllFromHome(folder, URI.create(doneDirectoryName));
         Helper.setMessage("directoryRemovedAll", doneDirectoryName);
-        return null;
     }
 
     /**
-     * Upload from home.
+     * Upload from home for single process.
      */
     public void uploadFromHome() {
         WebDav myDav = new WebDav();
@@ -639,7 +636,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home.
+     * Download to home for single process.
      */
     public void downloadToHome() {
         /*
@@ -662,11 +659,24 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home page.
+     * Download to home for selected processes.
+     */
+    public void downloadToHomeForSelection() {
+        WebDav myDav = new WebDav();
+        for (ProcessDTO processDTO : this.selectedProcesses) {
+            download(myDav, processDTO);
+        }
+        // TODO: fix message
+        Helper.setMessage("createdInUserHomeAll");
+    }
+
+    /**
+     * Download to home for all process on the page.
      */
     @SuppressWarnings("unchecked")
-    public void downloadToHomePage() {
+    public void downloadToHomeForPage() {
         WebDav webDav = new WebDav();
+        //TODO: lazyDTOModel.getEntities() - is not a page - how to get exactly this what is on the page?
         for (ProcessDTO process : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
             download(webDav, process);
         }
@@ -674,13 +684,13 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home selection.
+     * Download to home for all found processes.
      */
     @SuppressWarnings("unchecked")
-    public void downloadToHomeSelection() {
-        WebDav myDav = new WebDav();
-        for (ProcessDTO processDTO : this.getSelectedProcesses()) {
-            download(myDav, processDTO);
+    public void downloadToHomeForAll() {
+        WebDav webDav = new WebDav();
+        for (ProcessDTO processDTO : (List<ProcessDTO>) lazyDTOModel.getEntities()) {
+            download(webDav, processDTO);
         }
         Helper.setMessage("createdInUserHomeAll");
     }
@@ -692,36 +702,15 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 webDav.downloadToHome(process, false);
             } else {
                 Helper.setMessage(
-                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
-                            + Helper.getTranslation("isInUse"),
-                    serviceManager.getUserService()
-                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
+                        Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                                + Helper.getTranslation("isInUse"),
+                        serviceManager.getUserService()
+                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /**
-     * Download to home hits.
-     */
-    @SuppressWarnings("unchecked")
-    public void downloadToHomeHits() {
-        WebDav webDav = new WebDav();
-        for (Process process : (List<Process>) lazyDTOModel.getEntities()) {
-            if (!serviceManager.getProcessService().isImageFolderInUse(process)) {
-                webDav.downloadToHome(process, false);
-            } else {
-                Helper.setMessage(
-                    Helper.getTranslation("directory ") + " " + process.getTitle() + " "
-                            + Helper.getTranslation("isInUse"),
-                    serviceManager.getUserService()
-                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
-                webDav.downloadToHome(process, true);
-            }
-        }
-        Helper.setMessage("createdInUserHomeAll");
     }
 
     /**
@@ -736,14 +725,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
-        setTaskStatusUpForProcesses(this.getSelectedProcesses());
+        setTaskStatusUpForProcesses(this.selectedProcesses);
     }
 
     /**
-     * Set up processing status hits.
+     * Set up processing status for all found processes.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusUpForHits() {
+    public void setTaskStatusUpForAll() {
         setTaskStatusUpForProcesses(lazyDTOModel.getEntities());
     }
 
@@ -752,6 +741,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 Process processBean = serviceManager.getProcessService().getById(process.getId());
                 workflowControllerService.setTasksStatusUp(processBean);
+                serviceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("up"), process.getId() }, logger, e);
@@ -771,14 +761,14 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Set down processing status selection.
      */
     public void setTaskStatusDownForSelection() {
-        setTaskStatusDownForProcesses(this.getSelectedProcesses());
+        setTaskStatusDownForProcesses(this.selectedProcesses);
     }
 
     /**
      * Set down processing status hits.
      */
     @SuppressWarnings("unchecked")
-    public void setTaskStatusDownForHits() {
+    public void setTaskStatusDownForAll() {
         setTaskStatusDownForProcesses(lazyDTOModel.getEntities());
     }
 
@@ -787,6 +777,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 Process processBean = serviceManager.getProcessService().getById(process.getId());
                 workflowControllerService.setTasksStatusDown(processBean);
+                serviceManager.getProcessService().save(processBean);
             } catch (DAOException | DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
                     new Object[] {Helper.getTranslation("down"), process.getId() }, logger, e);
@@ -905,7 +896,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Calculate metadata and images selection.
      */
     public void calculateMetadataAndImagesSelection() {
-        calculateMetadataAndImages(this.getSelectedProcesses());
+        calculateMetadataAndImages(this.selectedProcesses);
     }
 
     /**
@@ -1024,7 +1015,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Execute Kitodo script for selected processes.
      */
-    @SuppressWarnings("unchecked")
     public void executeKitodoScriptSelection() {
         executeKitodoScriptForProcesses(this.selectedProcesses);
     }
