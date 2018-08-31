@@ -104,18 +104,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "viewIndex_" + GLOBAL)
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 VIEW_ALL_PROCESSES + GLOBAL,
                 VIEW_ALL_PROCESSES + CLIENT_ANY,
                 VIEW_ALL_PROCESSES + PROJECT_ANY)
             .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_PROCESS + GLOBAL,
                 EDIT_PROCESS + CLIENT_ANY,
                 EDIT_PROCESS + PROJECT_ANY)
 
             .antMatchers("/pages/projects.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
                 VIEW_ALL_TEMPLATES + GLOBAL,
@@ -127,7 +124,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_RULESETS + CLIENT_ANY,
                 VIEW_ALL_WORKFLOWS + GLOBAL)
             .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_PROJECT + GLOBAL,
                 EDIT_PROJECT + CLIENT_ANY,
                 EDIT_PROJECT + PROJECT_ANY,
@@ -136,21 +132,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_PROJECT + PROJECT_ANY)
 
             .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_DOCKET + GLOBAL,
                 EDIT_DOCKET + CLIENT_ANY)
 
             .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_RULESET + GLOBAL,
                 EDIT_RULESET + CLIENT_ANY)
 
             .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 EDIT_WORKFLOW + GLOBAL)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
-                ADMIN_GLOBAL,
                 VIEW_ALL_TASKS + GLOBAL,
                 VIEW_ALL_TASKS + CLIENT_ANY,
                 VIEW_ALL_TASKS + PROJECT_ANY)
