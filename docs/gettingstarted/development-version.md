@@ -160,6 +160,14 @@ http://localhost:8080/kitodo/pages/system.jsf
 
 ## 4. Updates
 
+### Download sources
+
+```
+rm -rf kitodo-production-master
+wget https://github.com/kitodo/kitodo-production/archive/master.zip
+unzip master.zip && rm master.zip
+```
+
 ### Reset database
 
 ```
@@ -172,9 +180,6 @@ wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kito
 ### Rebuild and deploy war file
 
 ```
-rm -rf kitodo-production-master
-wget https://github.com/kitodo/kitodo-production/archive/master.zip
-unzip master.zip && rm master.zip
 (cd kitodo-production-master/ && mvn clean package '-P!development')
 zip -j kitodo-3-modules.zip kitodo-production-master/Kitodo/modules/*.jar
 sudo rm -f /usr/local/kitodo/modules/*
