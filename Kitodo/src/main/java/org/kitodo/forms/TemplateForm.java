@@ -169,35 +169,13 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Set ordering up.
-     *
-     * @return String
-     */
-    public String setOrderingUp() {
-        setOrderingUp(this.template.getTasks(), this.task);
-        return save();
-    }
-
-    /**
-     * Set ordering down.
-     *
-     * @return String
-     */
-    public String setOrderingDown() {
-        setOrderingDown(this.template.getTasks(), this.task);
-        return save();
-    }
-
-    /**
      * Save template.
-     *
-     * @return null
      */
-    public String save() {
+    private void save() {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return;
             }
 
             try {
@@ -207,6 +185,7 @@ public class TemplateForm extends TemplateBaseForm {
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
+                return;
             }
 
             try {
@@ -217,7 +196,6 @@ public class TemplateForm extends TemplateBaseForm {
         } else {
             Helper.setErrorMessage("titleEmpty");
         }
-        return null;
     }
 
     /**

@@ -898,26 +898,6 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     }
 
     /**
-     * Set ordering up.
-     *
-     * @return String
-     */
-    public String setOrderingUp() {
-        setOrderingUp(this.process.getTasks(), this.task);
-        return save();
-    }
-
-    /**
-     * Set ordering down.
-     *
-     * @return String
-     */
-    public String setOrderingDown() {
-        setOrderingUp(this.process.getTasks(), this.task);
-        return save();
-    }
-
-    /**
      * Reload task and process.
      */
     private void reload() {
