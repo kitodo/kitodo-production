@@ -29,7 +29,7 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.processEdit} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.createNewProcess}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -86,7 +86,7 @@
             <li><a href="">#{msgs.processEdit}</a></li>
         </ui:fragment>
         <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+            <li><a href="">#{msgs.createNewProcess}</a></li>
         </ui:fragment>
     </ui:define>
 </ui:composition>

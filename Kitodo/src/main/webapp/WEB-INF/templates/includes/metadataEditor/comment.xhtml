@@ -69,9 +69,8 @@
                     </p:selectBooleanCheckbox>
                 </p:column>
                 <p:column style="width: 100%">
-                    <p:outputLabel value="#{msgs.bemerkung}"/>
-                    <p:inputTextarea id="addToWikiField" value="#{Metadaten.addToWikiField}"
-                                     style="width:100%;"/>
+                    <p:outputLabel value="#{msgs.remark}"/>
+                    <p:inputTextarea id="addToWikiField" value="#{Metadaten.addToWikiField}" style="width:100%;"/>
                 </p:column>
                 <p:column style="width: 100%">
                     <p:commandButton value="#{msgs.cancel}" action="#{Metadaten.setShowNewComment(false)}"
@@ -90,14 +89,13 @@
             </p:panelGrid>
             <p:panelGrid columns="1" rendered="#{(Metadaten.correctionComment) and (Metadaten.showNewComment)}">
                 <p:column style="width: 100%">
-                    <p:outputLabel value="#{msgs.bemerkung}"/>
-                    <p:inputTextarea style="width:100%;"
-                                     value="#{Metadaten.problem.message}">
+                    <p:outputLabel value="#{msgs.remark}"/>
+                    <p:inputTextarea style="width:100%;" value="#{Metadaten.problem.message}">
                         <p:ajax event="change"/>
                     </p:inputTextarea>
                 </p:column>
                 <p:column style="width: 100%">
-                    <p:outputLabel value="#{msgs.zurueckZuArbeitsschritt}"/>
+                    <p:outputLabel value="#{msgs.backToTask}"/>
                     <p:selectOneMenu style="width: 100%"
                                      value="#{Metadaten.problem.id}">
                         <f:selectItems

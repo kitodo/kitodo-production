@@ -30,8 +30,7 @@
         <h3>
             <h:outputText value="#{msgs.rulesetEdit} (#{RulesetForm.ruleset.title})"
                           rendered="#{not empty RulesetForm.ruleset.title}"/>
-            <h:outputText value="#{msgs.neuenRegelsatzAnlegen}"
-                          rendered="#{empty RulesetForm.ruleset.title}"/>
+            <h:outputText value="#{msgs.createNewRuleset}" rendered="#{empty RulesetForm.ruleset.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -102,7 +101,7 @@
         <li>
             <a href="">
                 <h:outputText value="#{msgs.rulesetEdit}" rendered="#{RulesetForm.ruleset.id ne null}"/>
-                <h:outputText value="#{msgs.neuenRegelsatzAnlegen}" rendered="#{RulesetForm.ruleset.id eq null}"/>
+                <h:outputText value="#{msgs.createNewRuleset}" rendered="#{RulesetForm.ruleset.id eq null}"/>
             </a>
         </li>
     </ui:define>

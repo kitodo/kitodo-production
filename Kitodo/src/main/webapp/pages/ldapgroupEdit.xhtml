@@ -37,8 +37,7 @@
         <h3>
             <h:outputText value="#{msgs.ldapGroupEdit} (#{LdapGruppenForm.myLdapGruppe.title})"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
-                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.ldapGroupView}"
                           rendered="#{isViewMode}"/>
         </h3>
@@ -265,7 +264,7 @@
         <li>
             <a href="">
                 <ui:fragment rendered="#{isCreateMode}">
-                    #{msgs.neueLdapgruppeAnlegen}
+                    #{msgs.createNewLdapGroup}
                 </ui:fragment>
                 <ui:fragment rendered="#{isEditMode}">
                     #{msgs.ldapGroupEdit}

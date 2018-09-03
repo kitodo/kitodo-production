@@ -24,7 +24,7 @@
                 <p:dataTable id="personTable" value="#{Metadaten.metaPersonList}" var="person"
                              style="margin-bottom:30px">
                     <f:facet name="header">
-                        #{msgs.personen}
+                        #{msgs.persons}
                     </f:facet>
 
                     <p:column>
@@ -60,13 +60,12 @@
                     <p:column style="width:64px;text-align: center; padding: 8px 0" id="actionButtons">
                         <p:commandButton update="metadata:personTable"
                                          icon="fa fa-clipboard" immediate="true" id="copyPersonBtn"
-                                         title="#{msgs.personendatenKopieren}" action="#{Metadaten.copyPerson}">
+                                         title="#{msgs.personsDataCopy}" action="#{Metadaten.copyPerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                         </p:commandButton>
 
-                        <p:commandButton update="metadata" id="deletePersonBtn"
-                                         icon="fa fa-trash" immediate="true"
-                                         title="#{msgs.personendatenLoeschen}" action="#{Metadaten.deletePerson}">
+                        <p:commandButton update="metadata" id="deletePersonBtn" icon="fa fa-trash" immediate="true"
+                                         title="#{msgs.personsDataDelete}" action="#{Metadaten.deletePerson}">
                             <f:setPropertyActionListener value="#{person}" target="#{Metadaten.curPerson}"/>
                         </p:commandButton>
                     </p:column>

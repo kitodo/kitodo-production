@@ -130,10 +130,10 @@
                                 <h:commandLink id="action8"
                                                rendered="#{0==1 and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.downloadTiffHeader}"
-                                               title="#{msgs.dateiMitTiffHeaderSpeichern}">
+                                               title="#{msgs.saveTifHeaderFile}">
                                     <h:graphicImage value="/pages/images/buttons/tif.gif" alt="download tiff header"
                                                     style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.dateiMitTiffHeaderSpeichern}"/>
+                                    <h:outputText value="#{msgs.saveTifHeaderFile}"/>
                                 </h:commandLink>
 
                                 <!-- Import DMS-button -->
@@ -192,7 +192,7 @@
                                         <h:panelGrid columns="2" style="margin-left:40px;" id="grid3"
                                                      rowClasses="top"
                                                      columnClasses="standardTable_Column,standardTable_ColumnRight">
-                                            <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
+                                            <h:outputText value="#{msgs.backToTask}"/>
                                             <h:selectOneMenu style="width:350px"
                                                              value="#{AktuelleSchritteForm.problem.id}">
                                                 <f:selectItems
@@ -200,7 +200,7 @@
                                                         var="step1" itemLabel="#{step1.titleWithUserName}"
                                                         itemValue="#{step1.id}"/>
                                             </h:selectOneMenu>
-                                            <h:outputText value="#{msgs.bemerkung}"/>
+                                            <h:outputText value="#{msgs.remark}"/>
                                             <h:inputTextarea style="width:350px;height:80px"
                                                              value="#{AktuelleSchritteForm.problem.message}"/>
                                             <!-- Statistical evaluation button for the entire hit set -->
@@ -237,7 +237,7 @@
                                                         var="step2" itemLabel="#{step2.titleWithUserName}"
                                                         itemValue="#{step2.id}"/>
                                             </h:selectOneMenu>
-                                            <h:outputText value="#{msgs.bemerkung}"/>
+                                            <h:outputText value="#{msgs.remark}"/>
                                             <h:inputTextarea style="width:350px;height:80px" id="input1"
                                                              value="#{AktuelleSchritteForm.solution.message}"/>
                                             <!-- Statistical evaluation button for the entire hit set -->

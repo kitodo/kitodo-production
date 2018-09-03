@@ -56,8 +56,7 @@
             </h:panelGroup>
             <h:graphicImage id="currentImage" alt="" value="#{Metadaten.bild}" />
             <h:panelGroup>
-                <h:outputText value="#{msgs.bildVerlinken}: "
-                              title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
+                <h:outputText value="#{msgs.linkImage}: " title="#{msgs.verlinkungDesBildesMitStrukturelement}"/>
                 <p:selectBooleanCheckbox id="CheckImageToStructuralElement" value="#{Metadaten.imageToStructuralElement}" partialSubmit="true"/>
             </h:panelGroup>
         </h:panelGrid>
