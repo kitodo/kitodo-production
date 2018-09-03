@@ -493,6 +493,10 @@
                     <artifactId>itext</artifactId>
                 </exclusion>
                 <exclusion>
+                    <groupId>poi</groupId>
+                    <artifactId>poi</artifactId>
+                </exclusion>
+                <exclusion>
                     <artifactId>spring</artifactId>
                     <groupId>org.springframework</groupId>
                 </exclusion>
