@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Contants for the pagination modes selectable by image buttons.
+ * Constants for the pagination modes selectable by image buttons.
  */
 public enum PaginatorMode {
     /**
@@ -148,7 +148,7 @@ public enum PaginatorMode {
      * @param code
      *            code of the enum constant.
      */
-    private PaginatorMode(int code) {
+    PaginatorMode(int code) {
         this.code = code;
     }
 

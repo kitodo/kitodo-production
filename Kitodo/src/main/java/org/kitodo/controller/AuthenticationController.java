@@ -16,6 +16,9 @@ import javax.inject.Named;
 
 import org.kitodo.security.DynamicAuthenticationProvider;
 
+/**
+ * Controller for setting the type of authentication (against ldap or database).
+ */
 @Named("AuthenticationController")
 @RequestScoped
 public class AuthenticationController {

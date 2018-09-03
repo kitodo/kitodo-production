@@ -16,7 +16,7 @@ package org.kitodo.dataeditor.enums;
  */
 public enum PositionOfNewDiv {
     AFTER_ELEMENT,
-    BEFOR_ELEMENT,
+    BEFORE_ELEMENT,
     FIRST_CHILD_OF_ELEMENT,
     LAST_CHILD_OF_ELEMENT
 }

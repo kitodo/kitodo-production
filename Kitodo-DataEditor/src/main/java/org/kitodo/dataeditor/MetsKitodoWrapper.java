@@ -22,11 +22,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.transform.TransformerException;
 
+import org.kitodo.dataeditor.entities.DmdSec;
 import org.kitodo.dataeditor.entities.FileSec;
 import org.kitodo.dataeditor.entities.LogicalStructMapType;
 import org.kitodo.dataeditor.entities.PhysicalStructMapType;
 import org.kitodo.dataeditor.entities.StructLink;
-import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 import org.kitodo.dataeditor.handlers.MetsKitodoStructMapHandler;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.KitodoType;
@@ -135,15 +135,23 @@ public class MetsKitodoWrapper {
             this.logicalStructMapType = new LogicalStructMapType(logicalStructMap);
             this.mets.getStructMap().add(this.logicalStructMapType);
         }
+        if (!mets.getDmdSec().isEmpty()) {
+            List<DmdSec> newDmdSecElements = new ArrayList<>();
+            for (MdSecType mdSecType : mets.getDmdSec()) {
+                newDmdSecElements.add(new DmdSec(mdSecType));
+            }
+            this.mets.getDmdSec().clear();
+            this.mets.getDmdSec().addAll(newDmdSecElements);
+        }
     }
 
     /**
-     * Gets all dmdSec elements.
+     * Gets a list of MdSecType elements.
      *
-     * @return All dmdSec elements as list of MdSecType objects.
+     * @return The list if MdSecType objects.
      */
-    public List<MdSecType> getDmdSecs() {
-        return this.mets.getDmdSec();
+    public List<DmdSec> getDmdSecs() {
+        return (List<DmdSec>)(List<?>) this.mets.getDmdSec();
     }
 
     /**
@@ -207,7 +215,7 @@ public class MetsKitodoWrapper {
         List<Object> objects = div.getDMDID();
         if (!objects.isEmpty()) {
             MdSecType mdSecType = (MdSecType) div.getDMDID().get(0);
-            return MetsKitodoMdSecHandler.getKitodoTypeOfDmdSecElement(mdSecType);
+            return JaxbXmlUtils.getKitodoTypeOfDmdSecElement(mdSecType);
         }
         throw new NoSuchElementException("Div element with id: " + div.getID() + " does not have metadata!");
     }

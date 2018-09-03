@@ -23,6 +23,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsMapper;
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 
+/**
+ * This class is used for mapping a UserDetails object from an ldap authentication context.
+ */
 public class LdapUserDetailsContextMapper extends LdapUserDetailsMapper implements UserDetailsContextMapper {
 
     private ServiceManager serviceManager = new ServiceManager();

@@ -28,6 +28,10 @@ import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 
+/**
+ * A custom authentication provider which supports the change of authentication
+ * type (database or ldap) and details (e.g. ldap server url) during runtime.
+ */
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     private ServiceManager serviceManager = new ServiceManager();
