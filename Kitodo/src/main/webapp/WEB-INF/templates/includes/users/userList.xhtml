@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="usersTable"
-                 value="#{BenutzerverwaltungForm.lazyDTOModel}"
+                 value="#{UserForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
@@ -50,7 +50,7 @@
         </p:column>
         <p:column headerText="#{msgs.active}" styleClass="checkboxColumn">
             <h:outputText>
-                <ui:fragment rendered="#{BenutzerverwaltungForm.checkUserLoggedIn(item)}">
+                <ui:fragment rendered="#{UserForm.checkUserLoggedIn(item)}">
                     <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
                 </ui:fragment>
             </h:outputText>
@@ -63,10 +63,10 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteUser"
-                               action="#{BenutzerverwaltungForm.delete}"
+                               action="#{UserForm.delete}"
                                update="usersTabView:usersTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{BenutzerverwaltungForm.userById}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{UserForm.userById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteUser}"
                                icon="ui-icon-alert"/>

@@ -42,8 +42,8 @@ public class BenutzergruppenForm extends BasisForm {
     private static final String USER_GROUP = "userGroup";
     private transient ServiceManager serviceManager = new ServiceManager();
 
-    @Named("BenutzerverwaltungForm")
-    private BenutzerverwaltungForm userForm;
+    @Named("UserForm")
+    private UserForm userForm;
 
     private String usergroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String usergroupEditPath = MessageFormat.format(REDIRECT_PATH, "usergroupEdit");
@@ -53,10 +53,10 @@ public class BenutzergruppenForm extends BasisForm {
      * instance of this bean.
      * 
      * @param userForm
-     *            BenutzerverwaltungForm managed bean
+     *            UserForm managed bean
      */
     @Inject
-    public BenutzergruppenForm(BenutzerverwaltungForm userForm) {
+    public BenutzergruppenForm(UserForm userForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
         this.userForm = userForm;

@@ -46,14 +46,14 @@ import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
 import org.kitodo.services.ServiceManager;
 
-@Named("BenutzerverwaltungForm")
+@Named("UserForm")
 @SessionScoped
-public class BenutzerverwaltungForm extends BasisForm {
+public class UserForm extends BasisForm {
     private static final long serialVersionUID = -3635859455444639614L;
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final Logger logger = LogManager.getLogger(BenutzerverwaltungForm.class);
+    private static final Logger logger = LogManager.getLogger(UserForm.class);
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private String password;
     private static final String ERROR_DATABASE_READING = "errorDatabaseReading";
@@ -65,7 +65,7 @@ public class BenutzerverwaltungForm extends BasisForm {
      * Empty default constructor that also sets the LazyDTOModel instance of
      * this bean.
      */
-    public BenutzerverwaltungForm() {
+    public UserForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserService()));
     }
