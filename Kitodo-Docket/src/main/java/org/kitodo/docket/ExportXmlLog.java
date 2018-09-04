@@ -48,7 +48,7 @@ public class ExportXmlLog {
      * This method exports the production metadata as xml to a given stream.
      *
      * @param docketData
-     *            the docketdata to export
+     *            the docket data to export
      * @param os
      *            the OutputStream to write the contents to
      * @throws IOException
@@ -75,9 +75,9 @@ public class ExportXmlLog {
      * single file to a given stream.
      *
      * @param docketDataList
-     *            a list of Docketdata
+     *            a list of Docket data
      * @param outputStream
-     *            The outputstream, to write the docket to.
+     *            The output stream, to write the docket to.
      */
 
     void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream) {
