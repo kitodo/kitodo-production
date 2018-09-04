@@ -121,6 +121,9 @@ public class Reader {
         task.setEditType(kitodoTask.getEditType());
         task.setBatchStep(kitodoTask.getBatchStep());
         task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
+        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
+        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
+        task.setTypeImportFileUpload(kitodoTask.getTypeImportFileUpload());
         task.setTypeExportDMS(kitodoTask.getTypeExportDms());
         task.setTypeExportRussian(kitodoTask.getTypeExportRussian());
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
