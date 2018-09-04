@@ -34,6 +34,7 @@
                 <h:link outcome="taskEdit" id="editTask"
                         rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',task.process.project.client.id, task.process.project.id)}"
                         title="#{msgs.detailsDesSchritts}">
+                    <f:param name="referer" value="desktop"/>
                     <f:param name="id" value="#{task.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>

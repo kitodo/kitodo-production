@@ -36,6 +36,7 @@
                         title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>
+                    <f:param name="referer" value="desktop"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                     <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>

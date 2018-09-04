@@ -32,6 +32,7 @@
                         onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
                         title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{project.id}" />
+                    <f:param name="referer" value="desktop"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject', project.client.id)}"

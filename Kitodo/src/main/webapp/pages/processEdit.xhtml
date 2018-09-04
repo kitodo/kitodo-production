@@ -20,6 +20,7 @@
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
+        <f:viewAction action="#{ProzessverwaltungForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -46,7 +47,7 @@
                          style="display:none;"/>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
-                  outcome="#{'processes'}"
+                  outcome="#{ProzessverwaltungForm.processEditReferer}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"

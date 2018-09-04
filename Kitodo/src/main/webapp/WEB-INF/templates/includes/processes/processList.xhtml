@@ -39,6 +39,7 @@
                         outcome="/pages/processEdit"
                         title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:param name="referer" value="processes"/>
                     <f:param name="id" value="#{process.id}"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
