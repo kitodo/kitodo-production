@@ -324,7 +324,7 @@ public class Metadaten {
         calculateMetadataAndImages();
         cleanupMetadata();
         if (storeMetadata()) {
-            return "/pages/processes?faces-redirect=true";
+            return referringView;
         } else {
             Helper.setMessage("XML could not be saved");
             return "";
