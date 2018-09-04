@@ -166,6 +166,27 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Duplicate the selected template.
+     *
+     * @param itemId
+     *            ID of the template to duplicate
+     * @return page address; either redirect to the edit template page or return
+     *         'null' if the template could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
+     */
+    public String duplicateTemplate(Integer itemId) {
+        try {
+            Template baseTemplate = serviceManager.getTemplateService().getById(itemId);
+            this.template = serviceManager.getTemplateService().duplicateTemplate(baseTemplate);
+            return templateEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage("unableToDuplicateTemplate", logger, e);
+            return null;
+        }
+    }
+
+    /**
+>>>>>>> Add backend functionality for copy template
      * Save template.
      */
     private void save() {
