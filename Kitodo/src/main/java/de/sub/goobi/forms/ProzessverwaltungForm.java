@@ -32,6 +32,7 @@ import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -44,12 +45,10 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
@@ -1162,8 +1161,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void transformXml() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = prepareHeaderInformation(facesContext, "export.xml");
-            try (ServletOutputStream out = response.getOutputStream()) {
+            ExternalContext response = prepareHeaderInformation(facesContext, "export.xml");
+            try (OutputStream out = response.getResponseOutputStream()) {
                 ExportXmlLog export = new ExportXmlLog();
                 export.startTransformation(out, this.process, this.selectedXslt);
                 out.flush();
@@ -1223,8 +1222,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void generateResultAsPdf() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = prepareHeaderInformation(facesContext, "search.pdf");
-            try (ServletOutputStream out = response.getOutputStream()) {
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.pdf");
+            try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
                         this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
@@ -1275,8 +1274,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     public void generateResult() {
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            HttpServletResponse response = prepareHeaderInformation(facesContext, "search.xls");
-            try (ServletOutputStream out = response.getOutputStream()) {
+            ExternalContext response = prepareHeaderInformation(facesContext, "search.xls");
+            try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(this.filter, this.showClosedProcesses,
                         this.showInactiveProjects);
                 HSSFWorkbook wb = sr.getResult();
@@ -1289,15 +1288,15 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         }
     }
 
-    private HttpServletResponse prepareHeaderInformation(FacesContext facesContext, String outputFileName) {
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
+    private ExternalContext prepareHeaderInformation(FacesContext facesContext, String outputFileName) {
+        ExternalContext externalContext = facesContext.getExternalContext();
+        externalContext.responseReset();
 
-        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-        String contentType = servletContext.getMimeType(outputFileName);
-        response.setContentType(contentType);
-        response.setHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
+        String contentType = externalContext.getMimeType(outputFileName);
+        externalContext.setResponseContentType(contentType);
+        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + outputFileName + "\"");
 
-        return response;
+        return externalContext;
     }
 
 

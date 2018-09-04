@@ -71,7 +71,7 @@
                 </p:commandLink>
 
                 <p:commandLink id="downloadDocket" action="#{ProzessverwaltungForm.downloadDocket}"
-                               title="#{msgs.docketPrint}">
+                               title="#{msgs.docketPrint}" ajax="false">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
                 </p:commandLink>
@@ -179,11 +179,13 @@
             <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
         </h:commandLink>
         <br/>
-        <p:commandLink id="createExcel" action="#{ProzessverwaltungForm.generateResult}" title="#{msgs.createExcel}">
+        <p:commandLink id="createExcel" action="#{ProzessverwaltungForm.generateResult}" title="#{msgs.createExcel}"
+                       ajax="false">
             <h:outputText><i class="fa fa-file-excel-o"/> #{msgs.createExcel}</h:outputText>
         </p:commandLink>
         <br/>
-        <p:commandLink id="createPdf" action="#{ProzessverwaltungForm.generateResultAsPdf}" title="#{msgs.createPdf}">
+        <p:commandLink id="createPdf" action="#{ProzessverwaltungForm.generateResultAsPdf}" title="#{msgs.createPdf}"
+                       ajax="false">
             <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
         </p:commandLink>
     </h:form>
