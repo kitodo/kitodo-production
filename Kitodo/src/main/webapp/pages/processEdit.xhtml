@@ -58,7 +58,7 @@
             <p:tab title="#{msgs.processDetails}" id="details">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.taskList}" id="taskOrder">
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProzessverwaltungForm.process.title}">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templateProperties}" id="processTemplates">
