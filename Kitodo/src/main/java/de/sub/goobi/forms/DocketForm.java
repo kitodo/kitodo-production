@@ -37,17 +37,16 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 
 @Named("DocketForm")
 @SessionScoped
-public class DocketForm extends BasisForm {
+public class DocketForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Docket myDocket = new Docket();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(DocketForm.class);
 
     private String docketListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -99,7 +98,7 @@ public class DocketForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("docket") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger, e);
             return null;
         }
     }
@@ -120,7 +119,8 @@ public class DocketForm extends BasisForm {
                 this.serviceManager.getDocketService().remove(this.myDocket);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("docket") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger,
+                e);
         }
     }
 
@@ -160,14 +160,16 @@ public class DocketForm extends BasisForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("docket"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.DOCKET.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
-    /*
-     * Getter und Setter
+    /**
+     * Getter docket.
+     *
+     * @return Docket object
      */
-
     public Docket getMyDocket() {
         return this.myDocket;
     }
@@ -176,13 +178,14 @@ public class DocketForm extends BasisForm {
      * Set docket by ID.
      *
      * @param docketID
-     *          ID of docket to set.
+     *            ID of docket to set.
      */
     public void setDocketById(int docketID) {
         try {
             setMyDocket(serviceManager.getDocketService().getById(docketID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find docket with ID " + docketID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.DOCKET.getTranslationSingular(), docketID }, logger, e);
         }
     }
 
@@ -206,13 +209,11 @@ public class DocketForm extends BasisForm {
      */
     public List getDocketFiles() {
         try (Stream<Path> docketPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_XSLT)))) {
-            return docketPaths
-                    .filter(s -> s.toString().endsWith(".xsl"))
-                    .map(Path::getFileName)
-                    .sorted()
+            return docketPaths.filter(s -> s.toString().endsWith(".xsl")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("dockets")}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.DOCKET.getTranslationPlural() }, logger,
+                e);
             return new ArrayList<>();
         }
     }

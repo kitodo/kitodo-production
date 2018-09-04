@@ -82,10 +82,10 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
@@ -112,15 +112,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     private Property property;
     private String addToWikiField = "";
     private List<ProcessDTO> processDTOS = new ArrayList<>();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();
     private String doneDirectoryName;
-    private static final String ERROR_DELETING = "errorDeleting";
-    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String EXPORT_FINISHED = "exportFinished";
-    private static final String PROCESS = "process";
     private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
     private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
@@ -181,7 +177,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 serviceManager.getProcessService().save(this.process);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
@@ -218,7 +214,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -444,7 +440,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, PROCESS, serviceManager.getTaskService());
+        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getTaskService());
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -466,7 +462,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             deleteSymlinksFromUserHomes();
             serviceManager.getTaskService().remove(this.task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("arbeitschritt") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -541,7 +537,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         } catch (ReadException | ExportFileException | MetadataTypeNotAllowedException | WriteException
                 | PreferencesException | IOException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for: " + this.process.getTitle(),
@@ -558,7 +554,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             this.process = serviceManager.getProcessService().getById(id);
             export.startExport(this.process);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
             Helper.setErrorMessage("An error occurred while trying to export PDF file for: " + this.process.getTitle(),
@@ -576,10 +572,10 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             export.startExport(this.process);
             Helper.setMessage(EXPORT_FINISHED);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
-            Helper.setErrorMessage("errorExporting", new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORTING, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -616,11 +612,11 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 Helper.setMessage(EXPORT_FINISHED);
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
             } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException
                     | IOException | ExportFileException | RuntimeException | JAXBException e) {
-                Helper.setErrorMessage("errorExporting",
-                    new Object[] {Helper.getTranslation(PROCESS), process.getId() }, logger, e);
+                Helper.setErrorMessage(ERROR_EXPORTING,
+                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
             }
         }
     }
@@ -843,7 +839,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             setProcess(serviceManager.getProcessService().getById(processID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find process with ID " + processID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID }, logger, e);
         }
     }
 
@@ -901,8 +897,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
      * Reload task and process.
      */
     private void reload() {
-        reload(this.task, "task", serviceManager.getTaskService());
-        reload(this.process, PROCESS, serviceManager.getProcessService());
+        reload(this.task, ObjectType.TASK.getTranslationSingular(), serviceManager.getTaskService());
+        reload(this.process, ObjectType.PROCESS.getTranslationSingular(), serviceManager.getProcessService());
     }
 
     /**
@@ -1287,7 +1283,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (IOException | DocumentException | RuntimeException e) {
-                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
+                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultPDF") }, logger, e);
             }
         }
     }
@@ -1307,7 +1303,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 out.flush();
                 facesContext.responseComplete();
             } catch (IOException e) {
-                Helper.setErrorMessage("errorCreating", new Object[] {Helper.getTranslation("resultSet") }, logger, e);
+                Helper.setErrorMessage(ERROR_CREATING, new Object[] {Helper.getTranslation("resultSet") }, logger, e);
             }
         }
     }
@@ -1409,7 +1405,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             try {
                 serviceManager.getProcessService().save(process);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("wikiField") }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {Helper.getTranslation("wikiField") }, logger, e);
             }
         }
     }
@@ -1564,7 +1560,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("property") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -1579,7 +1575,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {"property" }, logger, e);
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
                 }
             }
         }
@@ -1635,7 +1631,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(PROCESS), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -1649,7 +1645,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("task"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -1662,7 +1658,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserService().findAllActiveUsers();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("users") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER.getTranslationPlural() }, logger, e);
             return new LinkedList<>();
         }
     }
@@ -1676,7 +1672,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("userGroups") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() }, logger, e);
             return new LinkedList<>();
         }
     }

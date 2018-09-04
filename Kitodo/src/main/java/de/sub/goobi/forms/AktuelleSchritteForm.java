@@ -53,14 +53,14 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
 @Named("AktuelleSchritteForm")
 @SessionScoped
-public class AktuelleSchritteForm extends BasisForm {
+public class AktuelleSchritteForm extends BaseForm {
     private static final long serialVersionUID = 5841566727939692509L;
     private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
     private Process myProcess = new Process();
@@ -81,11 +81,6 @@ public class AktuelleSchritteForm extends BasisForm {
     private BatchStepHelper batchHelper;
     private List<Property> properties;
     private Property property;
-    private transient ServiceManager serviceManager = new ServiceManager();
-    private static final String ERROR_LOADING = "errorLoadingOne";
-    private static final String ERROR_SAVING = "errorSaving";
-    private static final String PROCESS = "process";
-    private static final String WORK_TASK = "task";
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
@@ -128,7 +123,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 serviceManager.getTaskService().save(this.currentTask);
             } catch (DataException e) {
-                Helper.setErrorMessage("Error saving task", logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
+                    e);
             }
         }
         return taskEditPath + "&id=" + getTaskIdForPath();
@@ -213,7 +209,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             this.serviceManager.getTaskService().save(task);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -256,7 +252,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().unassignTaskFromUser(this.currentTask));
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
         return taskListPath;
     }
@@ -274,6 +270,7 @@ public class AktuelleSchritteForm extends BasisForm {
 
     /**
      * Unlock the current task's process.
+     * 
      * @return null
      */
     public String sperrungAufheben() {
@@ -306,7 +303,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().reportProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
         setProblem(serviceManager.getWorkflowControllerService().getProblem());
         return taskListPath;
@@ -334,7 +331,7 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             setCurrentTask(serviceManager.getWorkflowControllerService().solveProblem(this.currentTask));
         } catch (DAOException | DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(WORK_TASK) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
         setSolution(serviceManager.getWorkflowControllerService().getSolution());
         return taskListPath;
@@ -410,8 +407,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 task = serviceManager.getTaskService().getById(taskDTO.getId());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), taskDTO.getId() },
-                    logger, e);
+                Helper.setErrorMessage(ERROR_LOADING_ONE,
+                    new Object[] {ObjectType.TASK.getTranslationSingular(), taskDTO.getId() }, logger, e);
             }
             if (task.getProcessingStatusEnum() == TaskStatus.OPEN) {
                 task.setProcessingStatusEnum(TaskStatus.INWORK);
@@ -424,7 +421,8 @@ public class AktuelleSchritteForm extends BasisForm {
                 try {
                     this.serviceManager.getProcessService().save(process);
                 } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(PROCESS) }, logger, e);
+                    Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                        logger, e);
                 }
                 this.myDav.downloadToHome(process, false);
             }
@@ -509,7 +507,8 @@ public class AktuelleSchritteForm extends BasisForm {
         try {
             return serviceManager.getTaskService().getById(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING, new Object[] {Helper.getTranslation(WORK_TASK), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
             return null;
         }
     }
@@ -673,7 +672,8 @@ public class AktuelleSchritteForm extends BasisForm {
             try {
                 this.serviceManager.getProcessService().save(this.currentTask.getProcess());
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {PROCESS }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
         }
     }

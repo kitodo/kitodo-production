@@ -557,7 +557,7 @@ public class IndexingForm {
                 case USER:
                     searchServices.put(objectType, serviceManager.getUserService());
                     break;
-                case USERGROUP:
+                case USER_GROUP:
                     searchServices.put(objectType, serviceManager.getUserGroupService());
                     break;
                 case WORKFLOW:

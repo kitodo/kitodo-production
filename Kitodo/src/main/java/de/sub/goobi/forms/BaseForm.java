@@ -19,10 +19,10 @@ import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.event.TabChangeEvent;
 
-public class BasisForm implements Serializable {
+public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
-    private transient ServiceManager serviceManager = new ServiceManager();
+    protected transient ServiceManager serviceManager = new ServiceManager();
     String zurueck = null;
     protected String filter = "";
     protected User user;
@@ -31,6 +31,17 @@ public class BasisForm implements Serializable {
     private static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabId = 0;
     private boolean saveDisabled = true;
+
+    // error messages
+    protected static final String ERROR_CREATING = "errorCreating";
+    protected static final String ERROR_DATABASE_READING = "errorDatabaseReading";
+    protected static final String ERROR_EXPORTING = "errorExporting";
+    protected static final String ERROR_LOADING_MANY = "errorLoadingMany";
+    protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
+    protected static final String ERROR_DELETING = "errorDeleting";
+    protected static final String ERROR_READING = "errorReading";
+    protected static final String ERROR_RELOADING = "errorReloading";
+    protected static final String ERROR_SAVING = "errorSaving";
 
     protected static final String REDIRECT_PATH = TEMPLATE_ROOT + "{0}?" + REDIRECT_PARAMETER;
 

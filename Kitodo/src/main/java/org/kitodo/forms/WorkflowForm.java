@@ -12,7 +12,7 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
@@ -39,27 +39,24 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
 
 @Named("WorkflowForm")
 @SessionScoped
-public class WorkflowForm extends BasisForm {
+public class WorkflowForm extends BaseForm {
 
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
-    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String WORKFLOW = "workflow";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
 
@@ -124,7 +121,8 @@ public class WorkflowForm extends BasisForm {
                 fileService.delete(svgDiagramURI);
                 fileService.delete(xmlDiagramURI);
             } catch (DataException | IOException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(WORKFLOW) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -255,7 +253,8 @@ public class WorkflowForm extends BasisForm {
         try {
             setWorkflow(serviceManager.getWorkflowService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[]{Helper.getTranslation(WORKFLOW), id}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -277,7 +276,8 @@ public class WorkflowForm extends BasisForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(WORKFLOW), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
         }
     }
 

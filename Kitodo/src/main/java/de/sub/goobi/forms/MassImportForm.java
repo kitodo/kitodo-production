@@ -18,7 +18,6 @@ import de.unigoettingen.sub.search.opac.ConfigOpac;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.MessageFormat;
@@ -62,11 +61,10 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.services.ServiceManager;
 
 @Named("MassImportForm")
 @SessionScoped
-public class MassImportForm extends BasisForm {
+public class MassImportForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(MassImportForm.class);
     private static final long serialVersionUID = -4225927414279404442L;
     private Template template;
@@ -86,7 +84,6 @@ public class MassImportForm extends BasisForm {
     private String currentPlugin = "";
     private IImportPlugin plugin;
     private File importFile = null;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
     private static final String GET_CURRENT_DOC_STRUCTS = "getCurrentDocStructs";
@@ -485,7 +482,7 @@ public class MassImportForm extends BasisForm {
         try {
             allOpacCatalogues = ConfigOpac.getAllCatalogueTitles();
         } catch (RuntimeException e) {
-            Helper.setErrorMessage("errorReading", new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {Helper.getTranslation(OPAC_CONFIG) }, logger, e);
         }
         return allOpacCatalogues;
     }

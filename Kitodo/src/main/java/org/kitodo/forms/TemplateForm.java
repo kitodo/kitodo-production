@@ -35,9 +35,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
@@ -51,9 +51,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Task task;
     private boolean showInactiveTemplates = false;
     private String title;
-    private transient ServiceManager serviceManager = new ServiceManager();
-    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
-    private static final String TEMPLATE = "template";
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
@@ -191,7 +188,8 @@ public class TemplateForm extends TemplateBaseForm {
             try {
                 serviceManager.getTemplateService().save(this.template);
             } catch (DataException | RuntimeException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
@@ -222,7 +220,8 @@ public class TemplateForm extends TemplateBaseForm {
             try {
                 serviceManager.getTemplateService().remove(this.template);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("template") }, logger, e);
+                Helper.setErrorMessage("errorDeleting", new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -265,7 +264,8 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.template, "template", serviceManager.getTemplateService());
+        saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
+            serviceManager.getTemplateService());
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -339,7 +339,8 @@ public class TemplateForm extends TemplateBaseForm {
         try {
             setTemplate(serviceManager.getTemplateService().getById(id));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TEMPLATE), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -360,7 +361,8 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation(TEMPLATE), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -377,7 +379,8 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("task"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
         }
     }
 

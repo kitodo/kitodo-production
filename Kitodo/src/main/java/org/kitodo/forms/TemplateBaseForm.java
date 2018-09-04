@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.Objects;
@@ -24,16 +24,14 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.services.ServiceManager;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.services.data.base.SearchDatabaseService;
 
-public class TemplateBaseForm extends BasisForm {
+public class TemplateBaseForm extends BaseForm {
 
     private static final long serialVersionUID = 6566567843176821176L;
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
     private boolean showInactiveProjects = false;
-    private static final String ERROR_DATABASE_READ = "errorDatabaseReading";
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Check if inactive projects should be shown.
@@ -71,8 +69,8 @@ public class TemplateBaseForm extends BasisForm {
             }
             task.getUserGroups().add(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
-                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
         }
     }
 
@@ -93,8 +91,8 @@ public class TemplateBaseForm extends BasisForm {
             }
             task.getUsers().add(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
-                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
         }
     }
 
@@ -110,8 +108,8 @@ public class TemplateBaseForm extends BasisForm {
             User user = serviceManager.getUserService().getById(userId);
             task.getUsers().remove(user);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
-                    new Object[]{Helper.getTranslation("users"), userId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
         }
     }
 
@@ -127,8 +125,8 @@ public class TemplateBaseForm extends BasisForm {
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
             task.getUserGroups().remove(userGroup);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READ,
-                    new Object[]{Helper.getTranslation("benutzergruppe"), userGroupId}, logger, e);
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
         }
     }
 
@@ -138,7 +136,7 @@ public class TemplateBaseForm extends BasisForm {
             serviceManager.getTaskService().evict(task);
             reload(baseBean, message, searchDatabaseService);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -148,7 +146,7 @@ public class TemplateBaseForm extends BasisForm {
             try {
                 searchDatabaseService.refresh(baseBean);
             } catch (RuntimeException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation(message) }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {message }, logger, e);
             }
         }
     }

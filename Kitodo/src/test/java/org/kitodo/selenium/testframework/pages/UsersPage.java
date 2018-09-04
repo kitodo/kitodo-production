@@ -324,7 +324,7 @@ public class UsersPage extends Page<UsersPage> {
      */
     public void deleteRemovableUserGroup() throws Exception {
         deleteElement("Usergroup",
-                MockDatabase.getRemovableObjectIDs().get(ObjectType.USERGROUP.name()),
+                MockDatabase.getRemovableObjectIDs().get(ObjectType.USER_GROUP.name()),
                 TabIndex.USER_GROUPS.getIndex(),
                 usersTabView);
     }

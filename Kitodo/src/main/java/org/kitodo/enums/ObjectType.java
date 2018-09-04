@@ -14,41 +14,53 @@ package org.kitodo.enums;
 import de.sub.goobi.helper.Helper;
 
 public enum ObjectType {
-    AUTHORITY("authorities"),
-    CLIENT("clients"),
-    BATCH("batches"),
-    DOCKET("dockets"),
-    PROCESS("processes"),
-    PROJECT("projects"),
-    PROPERTY("properties"),
-    RULESET("rulesets"),
-    TASK("tasks"),
-    TEMPLATE("template"),
-    USER("users"),
-    USERGROUP("userGroups"),
-    WORKFLOW("workflow"),
-    FILTER("filter"),
-    NONE("");
+    AUTHORITY("authority", "authorities"),
+    CLIENT("client", "clients"),
+    BATCH("batch", "batches"),
+    DOCKET("docket", "dockets"),
+    PROCESS("process", "processes"),
+    PROJECT("project", "projects"),
+    PROPERTY("property", "properties"),
+    RULESET("ruleset", "rulesets"),
+    TASK("task", "tasks"),
+    TEMPLATE("template", "template"),
+    USER("user", "users"),
+    USER_GROUP("userGroup", "userGroups"),
+    WORKFLOW("workflow", "workflows"),
+    FILTER("filter", "filters"),
+    NONE("", "");
 
-    private String messageKey;
+    private String messageKeySingular;
+
+    private String messageKeyPlural;
 
     /**
      * Constructor setting the message key of the object type, used to retrieve it's
      * translation from the messages resource bundle.
      *
-     * @param messageKey
+     * @param messageKeySingular
      *            used for translating the object types name
      */
-    ObjectType(String messageKey) {
-        this.messageKey = messageKey;
+    ObjectType(String messageKeySingular, String messageKeyPlural) {
+        this.messageKeySingular = messageKeySingular;
+        this.messageKeyPlural = messageKeyPlural;
     }
 
     /**
-     * Retrieve and return the translation of the object type.
+     * Retrieve and return the translation of the object type for singular object.
      *
-     * @return translation of this object type
+     * @return singular translation of this object type
      */
-    public String getTranslation() {
-        return Helper.getTranslation(messageKey);
+    public String getTranslationSingular() {
+        return Helper.getTranslation(messageKeySingular);
+    }
+
+    /**
+     * Retrieve and return the translation of the object type for plural object.
+     *
+     * @return plural translation of this object type
+     */
+    public String getTranslationPlural() {
+        return Helper.getTranslation(messageKeyPlural);
     }
 }

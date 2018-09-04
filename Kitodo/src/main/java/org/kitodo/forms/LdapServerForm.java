@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.text.MessageFormat;
@@ -27,14 +27,12 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
-import org.kitodo.services.ServiceManager;
 
 @Named("LdapServerForm")
 @SessionScoped
-public class LdapServerForm extends BasisForm {
+public class LdapServerForm extends BaseForm {
 
     private static final long serialVersionUID = 2390900243176826176L;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
     private String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
@@ -61,7 +59,7 @@ public class LdapServerForm extends BasisForm {
         try {
             return serviceManager.getLdapServerService().getAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {Helper.getTranslation("ldapServers") }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -76,7 +74,7 @@ public class LdapServerForm extends BasisForm {
             this.serviceManager.getLdapServerService().saveToDatabase(this.ldapServer);
             return ldapServerListPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
             return null;
         }
     }
@@ -89,7 +87,7 @@ public class LdapServerForm extends BasisForm {
         try {
             this.serviceManager.getLdapServerService().removeFromDatabase(this.ldapServer);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
         }
     }
 
@@ -105,7 +103,7 @@ public class LdapServerForm extends BasisForm {
                 this.ldapServer = this.serviceManager.getLdapServerService().getById(id);
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("ldapServer"), id }, logger,
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("ldapServer"), id }, logger,
                 e);
         }
         setSaveDisabled(true);
@@ -121,7 +119,7 @@ public class LdapServerForm extends BasisForm {
         try {
             this.ldapServer = this.serviceManager.getLdapServerService().getById(ldapServerID);
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find ldap server with ID " + ldapServerID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("ldapServer"), ldapServerID }, logger, e);
         }
     }
 
