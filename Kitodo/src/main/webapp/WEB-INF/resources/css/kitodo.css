@@ -1262,7 +1262,7 @@ footer {
 
 .ui-datatable tr th.actionsColumn,
 .ui-datatable tr td.actionsColumn {
-    width: 150px;
+    width: 280px;
 }
 
 .ui-datatable tr td.actionsColumn > a,

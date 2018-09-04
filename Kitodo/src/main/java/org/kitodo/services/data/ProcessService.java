@@ -15,8 +15,8 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.MetadataLock;
+import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 
