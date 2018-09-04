@@ -58,6 +58,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.export.ExportXmlLog;
@@ -1241,6 +1242,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     rowList.add(row);
                 }
                 Document document = new Document();
+                // create formatter for cells with default locale
+                DataFormatter formatter = new DataFormatter();
                 Rectangle rectangle = new Rectangle(PageSize.A3.getHeight(), PageSize.A3.getWidth());
                 PdfWriter.getInstance(document, out);
                 document.setPageSize(rectangle);
@@ -1252,7 +1255,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                     table.setSpacingBefore(20);
                     for (List<HSSFCell> row : rowList) {
                         for (HSSFCell hssfCell : row) {
-                            String stringCellValue = hssfCell.getStringCellValue();
+                            String stringCellValue = formatter.formatCellValue(hssfCell);
                             table.addCell(stringCellValue);
                         }
                     }
