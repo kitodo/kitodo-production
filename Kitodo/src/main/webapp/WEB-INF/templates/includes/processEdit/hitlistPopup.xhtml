@@ -28,7 +28,7 @@
                          var="hit"
                          rows="#{LoginForm.myBenutzer.tableSize}"
                          paginator="true">
-                <p:column headerText="#{msgs.treffer}">
+                <p:column headerText="#{msgs.hits}">
                     <p:commandLink value="#{hit.bibliographicCitation}"
                                    action="#{hit.selectClick}"
                                    onclick="PF('notifications').renderMessage({'summary':'#{msgs.importingData}','detail':'','severity':'info'})"
