@@ -73,14 +73,20 @@
                 </p:selectBooleanCheckbox>
             </div>
             <div>
-                <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
-                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}" class="input">
+                <p:outputLabel for="typeExportRussian" value="#{msgs.exportRus}"/>
+                <p:selectBooleanCheckbox id="typeExportRussian" value="#{ProzessverwaltungForm.task.typeExportRussian}" class="input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="typeExportDMS" value="#{msgs.exportDMS}"/>
                 <p:selectBooleanCheckbox id="typeExportDMS" value="#{ProzessverwaltungForm.task.typeExportDMS}" class="input">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+            </div>
+            <div>
+                <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
+                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}" class="input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
