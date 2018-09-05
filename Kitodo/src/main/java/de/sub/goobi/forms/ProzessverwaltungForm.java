@@ -117,9 +117,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             .getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String EXPORT_FINISHED = "exportFinished";
-    private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
-    private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
+    private static final String PROPERTY_SAVED = "propertySaved";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -347,7 +346,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.templateProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadTemplateProperties();
     }
@@ -362,7 +361,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.workpieceProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -405,7 +404,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadTemplateProperties();
     }
@@ -422,7 +421,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -1507,9 +1506,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 this.process.getProperties().add(this.property);
             }
             serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
+            Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -1524,7 +1523,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.property);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }
 
         List<Property> properties = this.process.getProperties();
@@ -1541,7 +1540,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             newProperty.getProcesses().add(this.process);
             this.process.getProperties().add(newProperty);
             serviceManager.getPropertyService().save(newProperty);
-            Helper.setMessage("propertySaved");
+            Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }

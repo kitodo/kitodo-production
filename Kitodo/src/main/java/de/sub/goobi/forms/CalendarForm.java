@@ -798,7 +798,7 @@ public class CalendarForm implements Serializable {
             byte[] data = XMLUtils.documentToByteArray(course.toXML(), 4);
             FacesUtils.sendDownload(data, "course.xml");
         } catch (TransformerException e) {
-            Helper.setErrorMessage("granularity.download.error", "error.TransformerException", logger, e);
+            Helper.setErrorMessage("granularity.download.error", "errorTransformerException", logger, e);
         } catch (IOException e) {
             Helper.setErrorMessage("granularity.download.error", e.getLocalizedMessage(), logger, e);
         } finally {
@@ -1339,7 +1339,7 @@ public class CalendarForm implements Serializable {
             Helper.removeManagedBean("GranularityForm");
             navigate();
         } catch (SAXException e) {
-            Helper.setErrorMessage(UPLOAD_ERROR, "error.SAXException", logger, e);
+            Helper.setErrorMessage(UPLOAD_ERROR, "errorSAXException", logger, e);
             neglectEmptyBlock();
         } catch (IOException e) {
             Helper.setErrorMessage(UPLOAD_ERROR, e.getLocalizedMessage(), logger, e);

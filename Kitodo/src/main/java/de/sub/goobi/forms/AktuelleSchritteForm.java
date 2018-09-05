@@ -742,7 +742,7 @@ public class AktuelleSchritteForm extends BaseForm {
             serviceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("propertiesNotSaved", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -758,7 +758,7 @@ public class AktuelleSchritteForm extends BaseForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("propertiesNotSaved", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
     }

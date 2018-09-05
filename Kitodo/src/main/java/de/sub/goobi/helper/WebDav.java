@@ -136,7 +136,7 @@ public class WebDav implements Serializable {
                 if (!fileService.fileExist(destination)
                         && !fileService.isDirectory(fileService.createResource(destination.toString()))) {
                     String param = new File(destination).getPath().replaceAll(" ", "__");
-                    Helper.setErrorMessage("MassDownloadProjectCreationError", new Object[] {param });
+                    Helper.setErrorMessage("errorMassDownloadProjectCreation", new Object[] {param });
                     logger.error("Can not create project directory "
                             + Paths.get(new File(destination).getPath().replaceAll(" ", "__")).toUri());
                     return;

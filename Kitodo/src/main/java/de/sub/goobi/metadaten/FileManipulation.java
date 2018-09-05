@@ -301,7 +301,7 @@ public class FileManipulation {
         }
 
         if (downloadFile == null || !fileService.fileExist(downloadFile)) {
-            Helper.setErrorMessage("MetsEditorMissingFile", new Object[] {filenamePrefix, this.currentFolder });
+            Helper.setErrorMessage("errorMetsEditorMissingFile", new Object[] {filenamePrefix, this.currentFolder });
             return;
         }
 
