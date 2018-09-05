@@ -23,10 +23,10 @@
     --error-border: #b94a48;
     --error-background: #f2dede;
 
-    --progress-closed: #6fbf58;
+    --progress-closed: #42ba37;
     --progress-open: #f4ffa1;
-    --progress-inwork: #c6d344;
-    --progress-blocked: #ed6a2c;
+    --progress-inwork: #c1d800;
+    --progress-blocked: #f94a15;
 
     --input-height: 36px;
     --input-padding: 10px;

@@ -1290,6 +1290,13 @@ footer {
     width: 100px;
 }
 
+.ui-datatable tr td span.process-progress {
+    display: block;
+    width: 110px;
+    height: 16px;
+    border-radius: 2px;
+}
+
 
 .ui-row-toggler {
     display: inline;
