@@ -1427,6 +1427,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, process.getTitle() + ".pdf");
+            file.delete();
         }
     }
 
@@ -1449,6 +1450,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
+            file.delete();
         }
     }
 
