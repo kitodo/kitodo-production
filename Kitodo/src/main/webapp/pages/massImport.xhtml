@@ -28,7 +28,7 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.massImport} (#{msgs.prozessvorlage}: '#{MassImportForm.template.title}')"/>
+            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.template.title}')"/>
         </h3>
         <h:commandButton id="next" value="#{msgs.next}"
                          action="#{MassImportForm.nextPage}"

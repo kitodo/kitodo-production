@@ -70,13 +70,13 @@
 
                                     <h:panelGrid columns="2" style="margin-left:40px;" id="grid3" rowClasses="top"
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
-                                        <h:outputText value="#{msgs.zurueckZuArbeitsschritt}"/>
+                                        <h:outputText value="#{msgs.backToTask}"/>
                                         <h:selectOneMenu style="width:350px"
                                                          value="#{AktuelleSchritteForm.batchHelper.problemTask}">
                                             <f:selectItems
                                                     value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}"/>
                                         </h:selectOneMenu>
-                                        <h:outputText value="#{msgs.bemerkung}"/>
+                                        <h:outputText value="#{msgs.remark}"/>
                                         <h:inputTextarea style="width:350px;height:80px"
                                                          value="#{AktuelleSchritteForm.batchHelper.problem.message}"/>
                                         <h:outputText value=""/>
@@ -121,7 +121,7 @@
                                             <f:selectItems
                                                     value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}"/>
                                         </h:selectOneMenu>
-                                        <h:outputText value="#{msgs.bemerkung}"/>
+                                        <h:outputText value="#{msgs.remark}"/>
                                         <h:inputTextarea style="width:350px;height:80px" id="input1"
                                                          value="#{AktuelleSchritteForm.batchHelper.solution.message}"/>
                                         <h:outputText value=""/>

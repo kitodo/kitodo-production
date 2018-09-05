@@ -16,8 +16,6 @@ import de.sub.goobi.config.ConfigCore;
 import java.util.Objects;
 
 import org.kitodo.config.Parameters;
-import org.kitodo.data.database.beans.LdapGroup;
-import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -30,38 +28,57 @@ import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
 
+/**
+ * A custom authentication provider which supports the change of authentication
+ * type (database or ldap) and details (e.g. ldap server url) during runtime.
+ */
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
-    private static DynamicAuthenticationProvider instance = null;
-    private AuthenticationProvider authenticationProvider;
-    private boolean ldapAuthentication = false;
     private ServiceManager serviceManager = new ServiceManager();
 
+    private static DynamicAuthenticationProvider instance = null;
+    private AuthenticationProvider authenticationProvider = null;
+
+    private boolean ldapAuthentication;
+    private DefaultSpringSecurityContextSource ldapContextSource = null;
+    private BindAuthenticator bindAuthenticator = null;
+    private LdapUserDetailsContextMapper ldapUserDetailsContextMapper = new LdapUserDetailsContextMapper();
+
     /**
-     * Package-private Constructor for DynamicAuthenticationProvider which also
-     * sets instance variable for singleton usage.
+     * The private Constructor which initially reads the local config.
      */
-    DynamicAuthenticationProvider() {
+    private DynamicAuthenticationProvider() {
+        readLocalConfig();
+    }
+
+    /**
+     * Return singleton variable of type DynamicAuthenticationProvider.
+     *
+     * @return unique instance of DynamicAuthenticationProvider
+     */
+    public static DynamicAuthenticationProvider getInstance() {
         if (Objects.equals(instance, null)) {
             synchronized (DynamicAuthenticationProvider.class) {
                 if (Objects.equals(instance, null)) {
-                    instance = this;
+                    instance = new DynamicAuthenticationProvider();
                 }
             }
         }
+        return instance;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) {
         if (ldapAuthentication) {
             try {
-                User user = serviceManager.getUserService().getByLogin(authentication.getName());
-                configureAndActivateLdapAuthentication(user.getLdapGroup());
+                User user = serviceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
+                configureAuthenticationProvider(user.getLdapGroup().getLdapServer().getUrl(),
+                    user.getLdapGroup().getUserDN());
             } catch (DAOException e) {
                 // getByLogin() throws DAOExeption, it must be converted in
                 // UsernameNotFoundException
                 // in order to match interface method signature
-                throw new UsernameNotFoundException("Could not read Username from database!");
+                throw new UsernameNotFoundException("Error on reading user from database!");
             }
         }
         return authenticationProvider.authenticate(authentication);
@@ -73,36 +90,40 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     /**
-     * This method activates ldap authentication and configures ldap url and
-     * userDn pattern.
+     * This method activates ldap authentication and configures ldap url and userDn
+     * pattern.
      *
-     * @param ldapGroup
-     *            The ldapGroup Object.
+     * @param url
+     *            The url to ldap server.
+     * @param userDn
+     *            The user dn pattern.
      */
-    public void configureAndActivateLdapAuthentication(LdapGroup ldapGroup) {
+    private void configureAuthenticationProvider(String url, String userDn) {
 
-        LdapServer ldapServer = ldapGroup.getLdapServer();
+        if (Objects.nonNull(url) && Objects.nonNull(userDn)) {
 
-        if (ldapServer != null) {
-            DefaultSpringSecurityContextSource ldapContextSource = new DefaultSpringSecurityContextSource(
-                    ldapServer.getUrl());
-            ldapContextSource.afterPropertiesSet();
+            if (Objects.isNull(this.ldapContextSource)) {
+                this.ldapContextSource = new DefaultSpringSecurityContextSource(url);
+            } else {
+                this.ldapContextSource.setUrl(url);
+            }
+            this.ldapContextSource.afterPropertiesSet();
 
-            BindAuthenticator authenticator = new BindAuthenticator(ldapContextSource);
-            String userDn = convertKitodoLdapUserDnToSpringSecurityPattern(ldapGroup.getUserDN());
-            authenticator.setUserDnPatterns(new String[] {userDn });
+            if (Objects.isNull(this.bindAuthenticator)) {
+                this.bindAuthenticator = new BindAuthenticator(ldapContextSource);
+            }
+            bindAuthenticator.setUserDnPatterns(convertUserDn(userDn));
 
-            this.authenticationProvider = new LdapAuthenticationProvider(authenticator,
-                    new CustomLdapAuthoritiesPopulator());
+            LdapAuthenticationProvider ldapAuthenticationProvider = new LdapAuthenticationProvider(bindAuthenticator);
+            ldapAuthenticationProvider.setUserDetailsContextMapper(this.ldapUserDetailsContextMapper);
+
+            this.authenticationProvider = ldapAuthenticationProvider;
         } else {
             throw new AuthenticationServiceException("No ldap-server specified on users ldap-group");
         }
     }
 
-    /**
-     * This method activates database authentication.
-     */
-    public void activateDatabaseAuthentication() {
+    private void activateDatabaseAuthentication() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(serviceManager.getUserService());
         daoAuthenticationProvider.setPasswordEncoder(new SecurityPasswordEncoder());
@@ -110,31 +131,20 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     /**
-     * Return singleton variable of type DynamicAuthenticationProvider.
-     *
-     * @return unique instance of DynamicAuthenticationProvider
+     * This activates the Ldap authentication with initial url and userDn. These
+     * values are later replace by the user information when authentication is
+     * performed.
      */
-    public static DynamicAuthenticationProvider getInstance() {
-        return instance;
+    private void activateLdapAuthentication() {
+        configureAuthenticationProvider("ldap://0.0.0.0", "no userDn");
     }
 
-    /**
-     * This method reads local config and sets authentication flag.
-     */
-    public void readLocalConfig() {
-        ldapAuthentication = ConfigCore.getBooleanParameter(Parameters.LDAP_USE);
+    private void readLocalConfig() {
+        setLdapAuthentication(ConfigCore.getBooleanParameter(Parameters.LDAP_USE));
     }
 
-    /**
-     * This method initializes the authentication provider with database
-     * authentication.
-     */
-    public void initializeAuthenticationProvider() {
-        activateDatabaseAuthentication();
-    }
-
-    private String convertKitodoLdapUserDnToSpringSecurityPattern(String userDn) {
-        return userDn.replaceFirst("\\{login}", "{0}");
+    private String[] convertUserDn(String userDn) {
+        return new String[] {userDn.replaceFirst("\\{login}", "{0}") };
     }
 
     /**
@@ -154,5 +164,10 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
      */
     public void setLdapAuthentication(boolean ldapAuthentication) {
         this.ldapAuthentication = ldapAuthentication;
+        if (ldapAuthentication) {
+            activateLdapAuthentication();
+        } else {
+            activateDatabaseAuthentication();
+        }
     }
 }

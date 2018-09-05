@@ -58,21 +58,21 @@ public class MetsKitodoWriter {
     }
 
     /**
-     * Serializes a given Mets object to xml format and returns as String.
+     * Serializes a given Mets object to xml format and returns as formatted String.
      *
      * @param mets
      *            The mets object.
      */
     public String writeSerializedToString(Mets mets) throws JAXBException {
         jaxbMetsMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoPrefixMapper());
+        jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoNamespacePrefixMapper());
         StringWriter stringWriter = new StringWriter();
         jaxbMetsMarshaller.marshal(mets, stringWriter);
         return stringWriter.toString();
     }
 
     private void writeMetsData(Mets mets, URI file) throws JAXBException {
-        jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoPrefixMapper());
+        jaxbMetsMarshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper", new MetsKitodoNamespacePrefixMapper());
         jaxbMetsMarshaller.marshal(mets, new File(file));
     }
 

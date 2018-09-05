@@ -23,15 +23,14 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 
 @Named("ClientForm")
 @SessionScoped
-public class ClientForm extends BasisForm {
+public class ClientForm extends BaseForm {
     private static final long serialVersionUID = -445707351975817243L;
     private Client client;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
     private int clientId;
 
@@ -54,7 +53,7 @@ public class ClientForm extends BasisForm {
             this.serviceManager.getClientService().save(this.client);
             return "/pages/users?" + REDIRECT_PARAMETER;
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("client") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
             return null;
         }
     }
@@ -70,7 +69,7 @@ public class ClientForm extends BasisForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("client"), this.clientId },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.CLIENT.getTranslationSingular(), this.clientId },
                 logger, e);
         }
     }
@@ -134,7 +133,7 @@ public class ClientForm extends BasisForm {
         try {
             setClient(this.serviceManager.getClientService().getById(clientID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find client with ID " + clientID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientID }, logger, e);
         }
     }
 
@@ -145,7 +144,7 @@ public class ClientForm extends BasisForm {
         try {
             this.serviceManager.getClientService().remove(this.client);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("client") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }
     }
 }

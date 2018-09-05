@@ -24,6 +24,9 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.context.RequestContext;
 
+/**
+ * Controller for getting and setting the client of users current session.
+ */
 @Named("SessionClientController")
 @RequestScoped
 public class SessionClientController {

@@ -57,7 +57,7 @@
         <myfaces.version>2.2.12</myfaces.version>
         <mysql.version>5.1.38</mysql.version>
         <poi.version>3.6</poi.version>
-        <primefaces.version>6.1.1</primefaces.version>
+        <primefaces.version>6.2</primefaces.version>
         <saxon.version>9.0.0.4</saxon.version>
         <log4j.version>2.6.2</log4j.version>
         <junit.version>4.12</junit.version>
@@ -164,7 +164,7 @@
                                     <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
-                                    <logViolationsToConsole>false</logViolationsToConsole>
+                                    <logViolationsToConsole>true</logViolationsToConsole>
                                     <maxAllowedViolations>${maxAllowedViolations}</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>

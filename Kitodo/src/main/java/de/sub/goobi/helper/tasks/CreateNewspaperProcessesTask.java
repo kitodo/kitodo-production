@@ -36,10 +36,8 @@ import org.kitodo.api.ugh.MetsModsImportExportInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -233,8 +231,7 @@ public class CreateNewspaperProcessesTask extends EmptyTask {
             setProgress(((100 * nextProcessToCreate) + 1) / (numberOfProcesses + 2));
             saveFullBatch(currentTitle);
             setProgress(100);
-        } catch (IOException | ReadException | PreferencesException | WriteException | DataException
-                | RuntimeException e) {
+        } catch (IOException | DataException | RuntimeException e) {
             String message = currentTitle != null
                     ? Helper.getTranslation("createNewspaperProcessesTask.MetadataNotAllowedException",
                         currentTitle)

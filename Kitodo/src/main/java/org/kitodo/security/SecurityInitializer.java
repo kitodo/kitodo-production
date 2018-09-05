@@ -13,6 +13,9 @@ package org.kitodo.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
+/**
+ * Class for initializing the applications web security with the configuration at SecurityConfig class.
+ */
 public class SecurityInitializer extends AbstractSecurityWebApplicationInitializer {
 
     public SecurityInitializer() {

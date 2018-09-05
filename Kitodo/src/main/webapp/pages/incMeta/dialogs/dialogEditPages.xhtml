@@ -18,8 +18,8 @@
     xmlns:p="http://primefaces.org/ui"
 >
 
-    <p:dialog id="dialogEditPagesId" header="#{msgs.pageAllocation}" resizable="false"
-              widgetVar="dialogEditPages" width="400">
+    <p:dialog id="dialogEditPages" header="#{msgs.pageAllocation}" resizable="false"
+              widgetVar="dialogEditPages">
         <h:form id="dialogEditPagesForm">
 
             <p:messages id="messagesSetFirstAndLastPage" closable="true"/>
@@ -39,41 +39,39 @@
 
                 <p:commandButton id="takePagesFromChildrenBtn" value="#{msgs.seitenVonUnterelementenZuweisen}"
                                  action="#{Metadaten.takePagesFromChildren}"
-                                 update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
+                                 update="structureTreeForm,paginationSubSelection"/>
                 <p:commandButton id="setPageStartAndEndBtn" value="#{msgs.pageAssign}"
                                  action="#{Metadaten.setPageStartAndEnd}"
-                                 update="paginationSubSelection,messagesSetFirstAndLastPage,tabView:structureData:structureDataTable"/>
+                                 update="structureTreeForm,paginationSubSelection"/>
             </h:panelGrid>
 
 
-            <h:panelGrid columns="3" columnClasses="top,centered,top">
-                <h:panelGroup style="margin-left:0px">
+            <p:panelGrid columns="3" columnClasses="alignTop45wide,buttonColumn,alignTop45wide">
+                <h:panelGroup>
                     <h:outputText value="#{msgs.allPages}"/>
-                    <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}"
-                                      style="height:200px">
+                    <p:selectManyMenu id="paginationSelection" value="#{Metadaten.allPagesSelection}">
                         <f:selectItems value="#{Metadaten.allPages}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
                 <h:panelGroup>
                     <h:panelGrid columns="1">
-                        <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="ui-icon-arrowthick-1-e"
-                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
+                        <p:commandButton id="addPageBtn" action="#{Metadaten.addPages}" icon="fa fa-arrow-right"
+                                         update="structureTreeForm,paginationSubSelection"/>
                         <p:commandButton id="removePageBtn" action="#{Metadaten.removePages}"
-                                         icon="ui-icon-arrowthick-1-w"
-                                         update="paginationSubSelection,tabView:structureData:structureDataTable"/>
+                                         icon="fa fa-arrow-left"
+                                         update="structureTreeForm,paginationSubSelection"/>
                     </h:panelGrid>
                 </h:panelGroup>
 
                 <h:panelGroup>
                     <h:outputText value="#{msgs.relatedPages}"/>
-                    <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}"
-                                      style="height:200px">
+                    <p:selectManyMenu id="paginationSubSelection" value="#{Metadaten.structSeitenAuswahl}">
                         <f:selectItems value="#{Metadaten.structSeiten}"/>
-                        <p:ajax update="paginationSubSelection"/>
+                        <p:ajax update="structureTreeForm"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
-            </h:panelGrid>
+            </p:panelGrid>
         </h:form>
     </p:dialog>
 

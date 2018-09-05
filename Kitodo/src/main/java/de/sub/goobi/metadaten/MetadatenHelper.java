@@ -597,4 +597,7 @@ public class MetadatenHelper {
         return myList;
     }
 
+    public PrefsInterface getPrefs() {
+        return this.prefs;
+    }
 }

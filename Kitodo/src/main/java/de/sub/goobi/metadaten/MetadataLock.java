@@ -22,7 +22,7 @@ import org.kitodo.config.Parameters;
 /**
  * Bean für die Sperrung der Metadaten.
  */
-public class MetadatenSperrung implements Serializable {
+public class MetadataLock implements Serializable {
     private static final long serialVersionUID = -8248209179063050307L;
     private static HashMap<Integer, HashMap<String, String>> sperrungen = new HashMap<>();
     private static final String USER = "Benutzer";

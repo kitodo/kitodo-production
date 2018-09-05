@@ -1392,7 +1392,7 @@ public class MockDatabase {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("Removable user group");
         serviceManager.getUserGroupService().save(userGroup);
-        removableObjectIDs.put(ObjectType.USERGROUP.name(), userGroup.getId());
+        removableObjectIDs.put(ObjectType.USER_GROUP.name(), userGroup.getId());
 
     }
 

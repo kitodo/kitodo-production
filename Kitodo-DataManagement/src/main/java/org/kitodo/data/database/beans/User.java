@@ -95,7 +95,9 @@ public class User extends BaseIndexedBean {
     private List<Project> projects;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "client_x_user", joinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_client_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_client_x_user_client_id")) })
+    @JoinTable(name = "client_x_user", joinColumns = {@JoinColumn(name = "user_id",
+            foreignKey = @ForeignKey(name = "FK_client_x_user_user_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_client_x_user_client_id")) })
     private List<Client> clients;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)

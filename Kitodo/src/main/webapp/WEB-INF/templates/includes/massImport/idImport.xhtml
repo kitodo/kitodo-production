@@ -21,7 +21,7 @@
         <p:row>
             <div>
                 <h:outputText value="#{msgs.project}:"/>
-                <h:outputText value="#{MassImportForm.template.project.title}"/>
+                <h:outputText value="#{MassImportForm.project.title}"/>
             </div>
 
             <div>
@@ -35,7 +35,7 @@
 
         <p:row>
             <div>
-                <p:outputLabel for="idImportPlugins" value="#{msgs.importplugin}:"/>
+                <p:outputLabel for="idImportPlugins" value="#{msgs.importPlugin}:"/>
                 <p:selectOneMenu id="idImportPlugins" value="#{MassImportForm.currentPlugin}">
                     <!-- TODO: find other way to include it -->
                     <!--<f:ajax event="change" render="formupload"/>-->

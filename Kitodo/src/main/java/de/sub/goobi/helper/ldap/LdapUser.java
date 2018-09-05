@@ -18,6 +18,7 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 import javax.crypto.BadPaddingException;
@@ -56,14 +57,14 @@ import org.kitodo.data.database.beans.User;
  */
 public class LdapUser implements DirContext {
     private static final Logger logger = LogManager.getLogger(LdapUser.class);
-    String type;
-    Attributes myAttrs;
+    private String ldapLogin;
+    private Attributes attributes;
 
     /**
      * Constructor of LdapUser.
      */
     public LdapUser() {
-        this.myAttrs = new BasicAttributes(true);
+        this.attributes = new BasicAttributes(true);
     }
 
     /**
@@ -81,7 +82,13 @@ public class LdapUser implements DirContext {
         MD4 digester = new MD4();
         if (!user.getLdapGroup().getLdapServer().isReadOnly()) {
 
-            this.type = user.getLogin();
+            if (Objects.nonNull(user.getLdapLogin())) {
+                this.ldapLogin = user.getLdapLogin();
+
+            } else {
+                this.ldapLogin = user.getLogin();
+            }
+
             LdapGroup ldapGroup = user.getLdapGroup();
             if (ldapGroup.getObjectClasses() == null) {
                 throw new NamingException("no objectclass defined");
@@ -93,40 +100,40 @@ public class LdapUser implements DirContext {
             while (tokenizer.hasMoreTokens()) {
                 oc.add(tokenizer.nextToken());
             }
-            this.myAttrs.put(oc);
+            this.attributes.put(oc);
 
-            this.myAttrs.put("uid", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
-            this.myAttrs.put("cn", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
-            this.myAttrs.put("displayName", replaceVariables(ldapGroup.getDisplayName(), user, inUidNumber));
-            this.myAttrs.put("description", replaceVariables(ldapGroup.getDescription(), user, inUidNumber));
-            this.myAttrs.put("gecos", replaceVariables(ldapGroup.getGecos(), user, inUidNumber));
-            this.myAttrs.put("loginShell", replaceVariables(ldapGroup.getLoginShell(), user, inUidNumber));
-            this.myAttrs.put("sn", replaceVariables(ldapGroup.getSn(), user, inUidNumber));
-            this.myAttrs.put("homeDirectory", replaceVariables(ldapGroup.getHomeDirectory(), user, inUidNumber));
+            this.attributes.put("uid", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+            this.attributes.put("cn", replaceVariables(ldapGroup.getUid(), user, inUidNumber));
+            this.attributes.put("displayName", replaceVariables(ldapGroup.getDisplayName(), user, inUidNumber));
+            this.attributes.put("description", replaceVariables(ldapGroup.getDescription(), user, inUidNumber));
+            this.attributes.put("gecos", replaceVariables(ldapGroup.getGecos(), user, inUidNumber));
+            this.attributes.put("loginShell", replaceVariables(ldapGroup.getLoginShell(), user, inUidNumber));
+            this.attributes.put("sn", replaceVariables(ldapGroup.getSn(), user, inUidNumber));
+            this.attributes.put("homeDirectory", replaceVariables(ldapGroup.getHomeDirectory(), user, inUidNumber));
 
-            this.myAttrs.put("sambaAcctFlags", replaceVariables(ldapGroup.getSambaAcctFlags(), user, inUidNumber));
-            this.myAttrs.put("sambaLogonScript", replaceVariables(ldapGroup.getSambaLogonScript(), user, inUidNumber));
-            this.myAttrs.put("sambaPrimaryGroupSID",
+            this.attributes.put("sambaAcctFlags", replaceVariables(ldapGroup.getSambaAcctFlags(), user, inUidNumber));
+            this.attributes.put("sambaLogonScript", replaceVariables(ldapGroup.getSambaLogonScript(), user, inUidNumber));
+            this.attributes.put("sambaPrimaryGroupSID",
                 replaceVariables(ldapGroup.getSambaPrimaryGroupSID(), user, inUidNumber));
-            this.myAttrs.put("sambaSID", replaceVariables(ldapGroup.getSambaSID(), user, inUidNumber));
+            this.attributes.put("sambaSID", replaceVariables(ldapGroup.getSambaSID(), user, inUidNumber));
 
-            this.myAttrs.put("sambaPwdMustChange",
+            this.attributes.put("sambaPwdMustChange",
                 replaceVariables(ldapGroup.getSambaPwdMustChange(), user, inUidNumber));
-            this.myAttrs.put("sambaPasswordHistory",
+            this.attributes.put("sambaPasswordHistory",
                 replaceVariables(ldapGroup.getSambaPasswordHistory(), user, inUidNumber));
-            this.myAttrs.put("sambaLogonHours", replaceVariables(ldapGroup.getSambaLogonHours(), user, inUidNumber));
-            this.myAttrs.put("sambaKickoffTime", replaceVariables(ldapGroup.getSambaKickoffTime(), user, inUidNumber));
-            this.myAttrs.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
+            this.attributes.put("sambaLogonHours", replaceVariables(ldapGroup.getSambaLogonHours(), user, inUidNumber));
+            this.attributes.put("sambaKickoffTime", replaceVariables(ldapGroup.getSambaKickoffTime(), user, inUidNumber));
+            this.attributes.put("sambaPwdLastSet", String.valueOf(System.currentTimeMillis() / 1000L));
 
-            this.myAttrs.put("uidNumber", inUidNumber);
-            this.myAttrs.put("gidNumber", replaceVariables(ldapGroup.getGidNumber(), user, inUidNumber));
+            this.attributes.put("uidNumber", inUidNumber);
+            this.attributes.put("gidNumber", replaceVariables(ldapGroup.getGidNumber(), user, inUidNumber));
 
             /*
              * Samba passwords
              */
             /* LanMgr */
             try {
-                this.myAttrs.put("sambaLMPassword", toHexString(lmHash(inPassword)));
+                this.attributes.put("sambaLMPassword", toHexString(lmHash(inPassword)));
             } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchPaddingException
                     | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
                 logger.error(e.getMessage(), e);
@@ -134,7 +141,7 @@ public class LdapUser implements DirContext {
             /* NTLM */
             try {
                 byte[] hmm = digester.digest(inPassword.getBytes("UnicodeLittleUnmarked"));
-                this.myAttrs.put("sambaNTPassword", toHexString(hmm));
+                this.attributes.put("sambaNTPassword", toHexString(hmm));
             } catch (UnsupportedEncodingException e) {
                 logger.error(e.getMessage(), e);
             }
@@ -148,7 +155,7 @@ public class LdapUser implements DirContext {
             MessageDigest md = MessageDigest.getInstance(passwordEncrytion);
             md.update(inPassword.getBytes(StandardCharsets.UTF_8));
             String digestBase64 = new String(Base64.encodeBase64(md.digest()), StandardCharsets.UTF_8);
-            this.myAttrs.put("userPassword", "{" + passwordEncrytion + "}" + digestBase64);
+            this.attributes.put("userPassword", "{" + passwordEncrytion + "}" + digestBase64);
         }
     }
 
@@ -273,7 +280,7 @@ public class LdapUser implements DirContext {
         if (!name.equals("")) {
             throw new NameNotFoundException();
         }
-        return (Attributes) this.myAttrs.clone();
+        return (Attributes) this.attributes.clone();
     }
 
     @Override
@@ -290,7 +297,7 @@ public class LdapUser implements DirContext {
         Attributes answer = new BasicAttributes(true);
         Attribute target;
         for (String id : ids) {
-            target = this.myAttrs.get(id);
+            target = this.attributes.get(id);
             if (target != null) {
                 answer.put(target);
             }
@@ -305,7 +312,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public String toString() {
-        return this.type;
+        return this.ldapLogin;
     }
 
     // not used for this example

@@ -44,13 +44,13 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProjectDTO;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 
 @Named("ProjekteForm")
 @SessionScoped
-public class ProjekteForm extends BasisForm {
+public class ProjekteForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
     private Project myProjekt;
@@ -65,7 +65,6 @@ public class ProjekteForm extends BasisForm {
      */
     private Folder myFolder;
     private Project baseProject;
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     // lists accepting the preliminary actions of adding and delting folders
     // it needs the execution of commit folders to make these changes
@@ -77,9 +76,11 @@ public class ProjekteForm extends BasisForm {
     private boolean lockedMets;
     private boolean lockedTechnical;
     private boolean copyTemplates;
-    private static final String PROJECT = "project";
+
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String projectEditPath = MessageFormat.format(REDIRECT_PATH, "projectEdit");
+
+    private String projectEditReferer = DEFAULT_LINK;
 
     /**
      * Cash for the list of possible MIME types. So that the list does not have
@@ -205,7 +206,8 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 return projectListPath;
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
                 return null;
             }
         }
@@ -226,7 +228,8 @@ public class ProjekteForm extends BasisForm {
                 serviceManager.getProjectService().save(this.myProjekt);
                 Helper.setMessage("Project saved!");
             } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
             }
         }
         return null;
@@ -242,7 +245,8 @@ public class ProjekteForm extends BasisForm {
             try {
                 serviceManager.getProjectService().remove(this.myProjekt);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(PROJECT) }, logger, e);
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -308,13 +312,14 @@ public class ProjekteForm extends BasisForm {
      * Set project by ID.
      *
      * @param projectID
-     *          ID of project to set.
+     *            ID of project to set.
      */
     public void setProjectById(int projectID) {
         try {
             setMyProjekt(serviceManager.getProjectService().getById(projectID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find project with ID " + projectID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
         }
     }
 
@@ -375,11 +380,11 @@ public class ProjekteForm extends BasisForm {
         this.lockedTechnical = lockedTechnical;
     }
 
-
     /**
      * Set copy templates.
      *
-     * @param copyTemplates as boolean
+     * @param copyTemplates
+     *            as boolean
      */
     public void setCopyTemplates(boolean copyTemplates) {
         this.copyTemplates = copyTemplates;
@@ -451,7 +456,7 @@ public class ProjekteForm extends BasisForm {
                 mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
                     λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
             } catch (IOException | JAXBException | RuntimeException e) {
-                Helper.setErrorMessage("errorReading", new Object[] {e.getMessage() }, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
             }
         }
         return mimeTypes;
@@ -532,7 +537,8 @@ public class ProjekteForm extends BasisForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(PROJECT), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular(), id },
+                logger, e);
         }
 
     }
@@ -546,7 +552,8 @@ public class ProjekteForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
+                logger, e);
             return new LinkedList<>();
         }
     }
@@ -558,5 +565,28 @@ public class ProjekteForm extends BasisForm {
      */
     public List<SelectItem> getClients() {
         return SelectItemList.getClients();
+    }
+
+    /**
+     * Set referring view which will be returned when the user clicks "save" or "cancel" on the project edit page.
+     *
+     * @param referer the referring view
+     */
+    public void setProjectEditReferer(String referer) {
+        if (!referer.isEmpty()) {
+            if (referer.equals("projects")) {
+                this.projectEditReferer = referer;
+            } else {
+                this.projectEditReferer = DEFAULT_LINK;
+            }
+        }
+    }
+
+    /**
+     * Get project edit page referring view.
+     * @return project edit page referring view
+     */
+    public String getProjectEditReferer() {
+        return this.projectEditReferer;
     }
 }

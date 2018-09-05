@@ -13,6 +13,9 @@ package org.kitodo.security;
 
 import org.joda.time.LocalDateTime;
 
+/**
+ * Class for storing informations of user sessions.
+ */
 public class SecuritySession {
     private String sessionId;
     private String userName;

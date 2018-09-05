@@ -67,6 +67,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.RelatedProperty;
+import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
@@ -80,6 +81,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static UserService instance = null;
     private static final String AUTHORITY_TITLE_VIEW_ALL = "viewAllUsers";
+    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -214,6 +216,28 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
                 serviceManager.getUserGroupService().saveToIndex(userGroup, false);
             }
         }
+    }
+
+    /**
+     * Gets user by ldap login and in case that no user can be found the normal
+     * login is used as fallback.
+     *
+     * @param login
+     *            The login of the user.
+     * @return The user object.
+     * @throws DAOException
+     *             if there is an error at connection or reading database
+     * @throws UsernameNotFoundException
+     *             if no user can be found by ldaplogin and normal login
+     */
+    public User getByLdapLoginWithFallback(String login) throws DAOException, UsernameNotFoundException {
+        User user;
+        try {
+            user = serviceManager.getUserService().getByLdapLogin(login);
+        } catch (UsernameNotFoundException e) {
+            user = serviceManager.getUserService().getByLogin(login);
+        }
+        return user;
     }
 
     /**
@@ -921,5 +945,24 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     public List<User> getAllActiveUsersByClientIds(List<Integer> clientIdList) {
         return dao.getAllActiveUsersByClientIds(clientIdList);
+    }
+
+    /**
+     * Changes the password for given User object.
+     * 
+     * @param user
+     *            The User object.
+     * @param newPassword
+     *            The new password.
+     */
+    public void changeUserPassword(User user, String newPassword) throws DataException {
+        User userWithNewPassword;
+        if (user instanceof SecurityUserDetails) {
+            userWithNewPassword = new User(user);
+        } else {
+            userWithNewPassword = user;
+        }
+        userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
+        serviceManager.getUserService().save(userWithNewPassword);
     }
 }

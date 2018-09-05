@@ -104,7 +104,8 @@ public class MetadatenImagesHelper {
                 serviceManager.getProcessService().getImagesTifDirectory(true, process));
         } else {
             checkIfImagesValid(process.getTitle(),
-                fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
+                    directory);
+            // fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null).resolve(directory));
         }
 
         // retrieve existing pages/images
@@ -132,8 +133,8 @@ public class MetadatenImagesHelper {
                         imageFile = serviceManager.getProcessService().getImagesTifDirectory(true, process)
                                 .resolve(page.getImageName());
                     } else {
-                        imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE,
-                            directory + page.getImageName());
+                        imageFile = fileService.getProcessSubTypeURI(process, ProcessSubType.IMAGE, null)
+                                .resolve(page.getImageName());
                     }
                     if (fileService.fileExist(imageFile)) {
                         assignedImages.put(page.getImageName(), page);
@@ -179,7 +180,7 @@ public class MetadatenImagesHelper {
                     logicalStructure.addReferenceTo(dsPage, "logical_physical");
 
                     // image name
-                    dsPage.addContentFile(createContentFile(process, newImage));
+                    dsPage.addContentFile(createContentFile(newImage));
 
                 } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                     logger.error(e.getMessage(), e);
@@ -192,7 +193,7 @@ public class MetadatenImagesHelper {
                     // assign new image name to page
                     URI newImageName = imagesWithoutPageElements.get(0);
                     imagesWithoutPageElements.remove(0);
-                    page.addContentFile(createContentFile(process, newImageName));
+                    page.addContentFile(createContentFile(newImageName));
                 } else {
                     // remove page
                     physicalStructure.removeChild(page);
@@ -217,7 +218,7 @@ public class MetadatenImagesHelper {
                         logicalStructure.addReferenceTo(dsPage, "logical_physical");
 
                         // image name
-                        dsPage.addContentFile(createContentFile(process, newImage));
+                        dsPage.addContentFile(createContentFile(newImage));
                     } catch (TypeNotAllowedAsChildException | MetadataTypeNotAllowedException e) {
                         logger.error(e.getMessage(), e);
                     }
@@ -311,16 +312,13 @@ public class MetadatenImagesHelper {
     /**
      * Create ContentFile with set up location.
      *
-     * @param process
-     *            object
      * @param image
      *            URI to image
      * @return ContentFile object
      */
-    private ContentFileInterface createContentFile(Process process, URI image) throws IOException {
+    private ContentFileInterface createContentFile(URI image) {
         ContentFileInterface contentFile = UghImplementation.INSTANCE.createContentFile();
-        URI path = serviceManager.getProcessService().getImagesTifDirectory(false, process).resolve(image);
-        contentFile.setLocation(path.getPath());
+        contentFile.setLocation(image.getPath());
         return contentFile;
     }
 
@@ -357,61 +355,63 @@ public class MetadatenImagesHelper {
         }
         logger.trace("tmpSize: {}", tmpSize);
         Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(Parameters.KITODO_CONTENT_SERVER_URL);
-        if (!kitodoContentServerUrl.isPresent()) {
-            logger.trace("api");
-            // TODO source image files are locked under windows forever after
-            // converting to png begins.
-            ImageManager imageManager = new ImageManager(inFileName.toURL());
-            logger.trace("im");
-            RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize,
-                ImageManager.SCALE_BY_PERCENT, intRotation);
-            logger.trace("ri");
-            JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
-            logger.trace("pi");
-            FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
-            logger.trace("output");
-            jpegInterpreter.writeToStream(null, outputFileStream);
-            logger.trace("write stream");
-            outputFileStream.flush();
-            outputFileStream.close();
-            logger.trace("close stream");
-        } else {
-            String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
+        if (kitodoContentServerUrl.isPresent()) {
+            if (kitodoContentServerUrl.get().isEmpty()) {
+                logger.trace("api");
+                // TODO source image files are locked under windows forever after
+                // converting to png begins.
+                ImageManager imageManager = new ImageManager(inFileName.toURL());
+                logger.trace("im");
+                RenderedImage renderedImage = imageManager.scaleImageByPixel(tmpSize, tmpSize,
+                    ImageManager.SCALE_BY_PERCENT, intRotation);
+                logger.trace("ri");
+                JpegInterpreter jpegInterpreter = new JpegInterpreter(renderedImage);
+                logger.trace("pi");
+                FileOutputStream outputFileStream = (FileOutputStream) fileService.write(outFileName);
+                logger.trace("output");
+                jpegInterpreter.writeToStream(null, outputFileStream);
+                logger.trace("write stream");
+                outputFileStream.flush();
+                outputFileStream.close();
+                logger.trace("close stream");
+            } else {
+                String cs = kitodoContentServerUrl.get() + inFileName + "&scale=" + tmpSize + "&rotate=" + intRotation
                     + "&format=jpg";
-            cs = cs.replace("\\", "/");
-            logger.trace("url: {}", cs);
-            URL csUrl = new URL(cs);
-            HttpClient httpclient = new HttpClient();
-            GetMethod method = new GetMethod(csUrl.toString());
-            logger.trace("get");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
-                DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
-            method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
-            int statusCode = httpclient.executeMethod(method);
-            if (statusCode != HttpStatus.SC_OK) {
-                return;
-            }
-            logger.trace("statusCode: {}", statusCode);
-            InputStream inStream = method.getResponseBodyAsStream();
-            logger.trace("inStream");
-            try (BufferedInputStream bis = new BufferedInputStream(inStream);
-                    OutputStream fos = fileService.write(outFileName)) {
-                logger.trace("BufferedInputStream");
-                logger.trace("FileOutputStream");
-                byte[] bytes = new byte[8192];
-                int count = bis.read(bytes);
-                while (count != -1 && count <= 8192) {
-                    fos.write(bytes, 0, count);
-                    count = bis.read(bytes);
+                cs = cs.replace("\\", "/");
+                logger.trace("url: {}", cs);
+                URL csUrl = new URL(cs);
+                HttpClient httpclient = new HttpClient();
+                GetMethod method = new GetMethod(csUrl.toString());
+                logger.trace("get");
+                Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                    DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
+                int statusCode = httpclient.executeMethod(method);
+                if (statusCode != HttpStatus.SC_OK) {
+                    return;
                 }
-                if (count != -1) {
-                    fos.write(bytes, 0, count);
+                logger.trace("statusCode: {}", statusCode);
+                InputStream inStream = method.getResponseBodyAsStream();
+                logger.trace("inStream");
+                try (BufferedInputStream bis = new BufferedInputStream(inStream);
+                     OutputStream fos = fileService.write(outFileName)) {
+                    logger.trace("BufferedInputStream");
+                    logger.trace("FileOutputStream");
+                    byte[] bytes = new byte[8192];
+                    int count = bis.read(bytes);
+                    while (count != -1 && count <= 8192) {
+                        fos.write(bytes, 0, count);
+                        count = bis.read(bytes);
+                    }
+                    if (count != -1) {
+                        fos.write(bytes, 0, count);
+                    }
                 }
+                logger.trace("write");
+                inStream.close();
             }
-            logger.trace("write");
-            inStream.close();
+            logger.trace("end scaleFile");
         }
-        logger.trace("end scaleFile");
     }
 
     // Add a method to validate the image files
@@ -496,25 +496,6 @@ public class MetadatenImagesHelper {
         }
     }
 
-    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
-        List<URI> orderedFileNameList = new ArrayList<>();
-        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
-        if (pagesList != null) {
-            for (DocStructInterface page : pagesList) {
-                String fileName = page.getImageName();
-                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
-                for (URI currentImage : dataList) {
-                    String currentFileName = fileService.getFileName(currentImage);
-                    if (currentFileName.equals(fileNamePrefix)) {
-                        orderedFileNameList.add(currentImage);
-                        break;
-                    }
-                }
-            }
-        }
-        return orderedFileNameList;
-    }
-
     /**
      * Get image files.
      *
@@ -532,6 +513,25 @@ public class MetadatenImagesHelper {
             }
         }
         return orderedFileList;
+    }
+
+    private List<URI> prepareOrderedFileNameList(List<URI> dataList) {
+        List<URI> orderedFileNameList = new ArrayList<>();
+        List<DocStructInterface> pagesList = mydocument.getPhysicalDocStruct().getAllChildren();
+        if (pagesList != null) {
+            for (DocStructInterface page : pagesList) {
+                String fileName = page.getImageName();
+                String fileNamePrefix = fileName.replace("." + Metadaten.getFileExtension(fileName), "");
+                for (URI currentImage : dataList) {
+                    String currentFileName = fileService.getFileName(currentImage);
+                    if (currentFileName.equals(fileNamePrefix)) {
+                        orderedFileNameList.add(currentImage);
+                        break;
+                    }
+                }
+            }
+        }
+        return orderedFileNameList;
     }
 
     /**

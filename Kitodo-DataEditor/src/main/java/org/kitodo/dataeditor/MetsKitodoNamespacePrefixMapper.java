@@ -13,7 +13,12 @@ package org.kitodo.dataeditor;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
 
-public class MetsKitodoPrefixMapper extends NamespacePrefixMapper {
+/**
+ * Extension of NamespacePrefixMapper which holds the used namespaces and
+ * corresponding prefixes of mets-kitodo format. This can be used as a property in
+ * a jaxb context marshaller object at serialization of mets objects to xml files.
+ */
+public class MetsKitodoNamespacePrefixMapper extends NamespacePrefixMapper {
 
     private static final String METS_PREFIX = "mets";
     private static final String METS_URI = "http://www.loc.gov/METS/";

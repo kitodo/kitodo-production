@@ -29,7 +29,7 @@
                 <h:form id="userGroupForm">
                     <p:dataTable var="item"
                                  id="selectUserGroupTable"
-                                 value="#{BenutzergruppenForm.lazyDTOModel}"
+                                 value="#{UserGroupForm.lazyDTOModel}"
                                  lazy="true"
                                  paginator="true"
                                  rows="#{LoginForm.myBenutzer.tableSize}"
@@ -39,7 +39,7 @@
                         </p:column>
                         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
                             <p:commandLink id="addUserGroup"
-                                           action="#{BenutzerverwaltungForm.addToGroup}"
+                                           action="#{UserForm.addToGroup}"
                                            title="add to user group"
                                            update="editForm:userTabView:usergroupDatatable"
                                            oncomplete="toggleSave()">

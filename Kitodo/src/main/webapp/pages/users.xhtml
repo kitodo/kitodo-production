@@ -21,27 +21,33 @@
         <h3>#{msgs.users}</h3>
         <h:form id="newElementForm"
                 rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addUser, addUserGroup')}">
-            <p:menuButton value="#{msgs.newElement}" id="newElementButton" icon="fa fa-plus-circle fa-lg"
-                          iconPos="right" styleClass="button-filled-green">
+            <p:menuButton value="#{msgs.newElement}"
+                          id="newElementButton"
+                          icon="fa fa-plus-circle fa-lg"
+                          iconPos="right"
+                          styleClass="callto">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUser')}"
-                            action="#{BenutzerverwaltungForm.newUser}" icon="ui-icon-plusthick"/>
+                            action="#{UserForm.newUser}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
-                            action="#{BenutzergruppenForm.newUserGroup}" icon="ui-icon-plusthick"/>
+                            action="#{UserGroupForm.newUserGroup}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
                             action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
+                <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapServer')}"
+                            icon="ui-icon-plusthick"/>
             </p:menuButton>
         </h:form>
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{BenutzerverwaltungForm.activeTabIndex}" id="usersTabView">
-            <p:ajax event="tabChange" listener="#{BenutzerverwaltungForm.onTabChange}"/>
+        <p:tabView activeIndex="#{UserForm.activeTabIndex}" id="usersTabView">
+            <p:ajax event="tabChange" listener="#{UserForm.onTabChange}"/>
             <p:tab title="#{msgs.users}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllUsers')}">
                 <ui:include src="/WEB-INF/templates/includes/users/userList.xhtml"/>
@@ -57,6 +63,10 @@
             <p:tab title="#{msgs.ldapGroups}"
                    rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapGroups')}">
                 <ui:include src="/WEB-INF/templates/includes/users/ldapgroupList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs.ldapServers}"
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllLdapServers')}">
+                <ui:include src="/WEB-INF/templates/includes/users/ldapserverList.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>

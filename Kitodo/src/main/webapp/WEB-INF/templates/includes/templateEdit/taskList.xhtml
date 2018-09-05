@@ -25,20 +25,6 @@
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
             <h:outputText value="#{item.ordering}"/>
-            <p:commandButton action="#{TemplateForm.setOrderingUp}"
-                             id="orderUp"
-                             update="editForm:templateTabView:taskTable"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-up" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
-            </p:commandButton>
-            <p:commandButton action="#{TemplateForm.setOrderingDown}"
-                             id="orderDown"
-                             update="editForm:templateTabView:taskTable"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-down" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
-            </p:commandButton>
         </p:column>
 
         <!-- title -->
@@ -50,8 +36,7 @@
         <!-- actions -->
         <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
                   headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
-            <h:link outcome="taskTemplateEdit" id="editTask"
-                    title="#{msgs.detailsDesSchritts}">
+            <h:link outcome="taskTemplateEdit" id="editTask" title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
@@ -62,9 +47,7 @@
                            oncomplete="toggleSave()"
                            update="taskTable">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                <f:setPropertyActionListener
-                        target="#{TemplateForm.task}"
-                        value="#{item}"/>
+                <f:setPropertyActionListener target="#{TemplateForm.task}" value="#{item}"/>
                 <p:confirm header="#{msgs.deleteTask}?"
                            message="#{msgs.sollDieserEintragWirklichGeloeschtWerden}"
                            icon="ui-icon-alert"/>
@@ -109,6 +92,6 @@
                      value="#{msgs.taskAdd}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
-                     styleClass="button-filled-green"
+                     styleClass="callto"
                      id="addStepButton"/>
 </ui:composition>

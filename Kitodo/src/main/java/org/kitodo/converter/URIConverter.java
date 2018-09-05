@@ -23,7 +23,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Named
+@Named("URIConverter")
 public class URIConverter implements Converter {
     private static final Logger logger = LogManager.getLogger(URIConverter.class);
 
