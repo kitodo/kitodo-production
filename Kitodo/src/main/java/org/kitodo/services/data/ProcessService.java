@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URL;
@@ -40,13 +41,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.configuration.ConfigurationException;
@@ -1402,10 +1401,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Download docket.
+     * Download docket for given process.
      *
      * @param process
      *            object
+     * @throws IOException
+     *             when xslt file could not be loaded, or write to output failed
      */
     public void downloadDocket(Process process) throws IOException {
         logger.debug("generate docket for process with id {}", process.getId());
@@ -1421,7 +1422,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-
             // write run note to servlet output stream
             DocketInterface module = initialiseDocketModule();
 
@@ -1431,13 +1431,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
-     * Writes a multipage docket for a list of processes to an outpustream.
+     * Writes a multi page docket for a list of processes to an output stream.
      *
      * @param processes
      *            The list of processes
      * @throws IOException
-     *             when xslt file could not be loaded, or write to output
-     *             failed.
+     *             when xslt file could not be loaded, or write to output failed
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         logger.debug("generate docket for processes {}", processes);
@@ -1445,7 +1444,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-
             DocketInterface module = initialiseDocketModule();
             File file = module.generateMultipleDockets(serviceManager.getProcessService().getDocketData(processes),
                 xsltFile);
@@ -1454,19 +1452,31 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
     }
 
+    /**
+     * Good explanation how it should be implemented:
+     * https://stackoverflow.com/a/9394237/2701807.
+     * 
+     * @param facesContext
+     *            context
+     * @param file
+     *            temporal file which contains content to save
+     * @param fileName
+     *            name of the new docket file
+     */
     private void writeToOutputStream(FacesContext facesContext, File file, String fileName) throws IOException {
-        HttpServletResponse response = (HttpServletResponse) facesContext.getExternalContext().getResponse();
-        ServletContext servletContext = (ServletContext) facesContext.getExternalContext().getContext();
-        String contentType = servletContext.getMimeType(fileName);
-        response.setContentType(contentType);
-        response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+        ExternalContext externalContext = facesContext.getExternalContext();
+        externalContext.responseReset();
 
-        ServletOutputStream outputStream = response.getOutputStream();
-        FileInputStream fileInputStream = new FileInputStream(file);
-        byte[] bytes = IOUtils.toByteArray(fileInputStream);
-        fileInputStream.close();
-        outputStream.write(bytes);
-        outputStream.flush();
+        String contentType = externalContext.getMimeType(fileName);
+        externalContext.setResponseContentType(contentType);
+        externalContext.setResponseHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+
+        try (OutputStream outputStream = externalContext.getResponseOutputStream();
+                FileInputStream fileInputStream = new FileInputStream(file)) {
+            byte[] bytes = IOUtils.toByteArray(fileInputStream);
+            outputStream.write(bytes);
+            outputStream.flush();
+        }
         facesContext.responseComplete();
     }
 
@@ -2192,7 +2202,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         virtualFileGroup.setMimetype(folder.getMimeType());
         if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
             virtualFileGroup.setFileSuffix(
-                    folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
+                folder.getUGHTail(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false)));
         }
         return virtualFileGroup;
     }
