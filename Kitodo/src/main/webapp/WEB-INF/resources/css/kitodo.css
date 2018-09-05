@@ -1271,6 +1271,20 @@ footer {
     margin-right: 10px;
 }
 
+/* TODO: style needs to be adjusted */
+.ui-datatable tr th.checkboxListColumn {
+    padding-left: 7px;
+    height: 35px;
+    padding-top: 3px;
+    margin-top: -5px;
+    vertical-align: top;
+}
+
+.ui-datatable tr th.checkboxListColumn,
+.ui-datatable tr td.checkboxListColumn {
+    width: 35px;
+}
+
 .ui-datatable tr th.checkboxColumn,
 .ui-datatable tr td.checkboxColumn {
     width: 100px;
