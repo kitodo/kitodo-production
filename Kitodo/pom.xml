@@ -34,6 +34,7 @@
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>
+        <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
     </properties>
 
     <dependencies>
@@ -698,7 +699,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <webResources>
                         <resource>
@@ -733,7 +734,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.19.1</version>
+                        <version>${maven-failsafe-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -756,7 +757,7 @@
                 <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
-                    <version>1.4.193</version>
+                    <version>${com.h2database.h2.version}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -764,7 +765,7 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -872,7 +873,7 @@
                 <dependency>
                     <groupId>com.h2database</groupId>
                     <artifactId>h2</artifactId>
-                    <version>1.4.193</version>
+                    <version>${com.h2database.h2.version}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -880,7 +881,7 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -962,7 +963,7 @@
                         <!-- Run tests -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.19.1</version>
+                        <version>${maven-failsafe-plugin.version}</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*IT.java</exclude>
