@@ -31,7 +31,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.forms.Generator;
+import org.kitodo.util.Generator;
 
 @Entity
 @Table(name = "task")

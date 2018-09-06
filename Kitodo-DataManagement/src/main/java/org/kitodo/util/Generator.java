@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.util;
 
 import java.util.List;
 
