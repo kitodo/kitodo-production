@@ -1,0 +1,36 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:panelGroup
+            id="processProgress"
+            title="#{msgs.progress}"
+            style="
+                display: block;
+                width: 110px;
+                height: 16px;
+                border-radius: 1px;
+                background-image: linear-gradient(
+                    to right,
+                    var(--progress-closed),
+                    var(--progress-closed) #{process.progressClosed}%,
+                    var(--progress-open) #{process.progressClosed}%,
+                    var(--progress-open) #{process.progressOpen + process.progressClosed}%,
+                    var(--progress-inwork) #{process.progressOpen + process.progressClosed}%,
+                    var(--progress-inwork) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%,
+                    var(--progress-blocked) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%);"
+    />
+</ui:composition>

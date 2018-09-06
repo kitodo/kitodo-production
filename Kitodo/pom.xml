@@ -30,7 +30,7 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>67</maxAllowedViolations>
+        <maxAllowedViolations>45</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>
@@ -182,14 +182,8 @@
         </dependency>
         <dependency>
             <groupId>net.sf.barcode4j</groupId>
-            <artifactId>barcode4j-fop-ext-complete</artifactId>
-            <version>2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>barcode4j-fop-ext</artifactId>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.camunda.bpm.model</groupId>
@@ -383,6 +377,32 @@
             <version>2.4.0</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+            <version>2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>xmlgraphics-commons</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>xmlgraphics-commons</artifactId>
+            <version>2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.56</version>
@@ -397,6 +417,11 @@
                     <artifactId>joda-time</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom2</artifactId>
+            <version>2.0.6</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -501,6 +526,10 @@
             <version>1.1.10-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
+                    <groupId>batik</groupId>
+                    <artifactId>batik-awt-util</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>commons-codec</groupId>
                     <artifactId>commons-codec</artifactId>
                 </exclusion>
@@ -523,6 +552,10 @@
                 <exclusion>
                     <groupId>com.lowagie</groupId>
                     <artifactId>itext</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>poi</groupId>
+                    <artifactId>poi</artifactId>
                 </exclusion>
                 <exclusion>
                     <artifactId>spring</artifactId>
@@ -575,11 +608,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- additional functionality for original primefaces-extensions -->
+        <!-- Primefaces extension for a frontend code editor -->
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
             <artifactId>resources-codemirror</artifactId>
-            <version>${primefaces.version}</version>
+            <version>6.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.omnifaces</groupId>
@@ -656,6 +689,16 @@
             <groupId>org.jvnet.jaxb2_commons</groupId>
             <artifactId>jaxb2-basics-runtime</artifactId>
             <version>${jaxb2-basics-runtime.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>openlayers</artifactId>
+            <version>4.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
         </dependency>
     </dependencies>
 

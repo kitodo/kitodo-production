@@ -49,8 +49,16 @@
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:link><i class="fa fa-clipboard fa-lg"/></h:link>
-                    <h:link><i class="fa fa-clone fa-lg"/></h:link>
+                    <h:commandLink action="#{WorkflowForm.duplicateWorkflow(item.id)}" immediate="true"
+                                   title="#{msgs.duplicateWorkflow}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+
+                    <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}"
+                                   title="#{msgs.delete}" update="projectsTabView:workflowTable">
+                        <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                        <f:setPropertyActionListener value="#{item.id}" target="#{WorkflowForm.workflowById}"/>
+                        <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteWorkflow}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
                 </h:form>
             </h:outputText>
         </p:column>

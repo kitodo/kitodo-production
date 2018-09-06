@@ -105,7 +105,7 @@ public class LogicalStructMapType extends StructMapType {
             case FIRST_CHILD_OF_ELEMENT:
                 addDivToDivAsFirstChild(existingDiv, newDiv);
                 break;
-            case BEFOR_ELEMENT:
+            case BEFORE_ELEMENT:
                 addDivBeforeExistingDiv(existingDiv, newDiv);
                 break;
             case AFTER_ELEMENT:

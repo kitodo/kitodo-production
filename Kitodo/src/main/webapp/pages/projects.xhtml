@@ -21,7 +21,7 @@
         <h3>#{msgs.projects}</h3>
         <h:form id="projectForm"
                 rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
-            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+            <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                 <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>

@@ -37,8 +37,7 @@
         <h3>
             <h:outputText value="#{msgs.ldapGroupEdit} (#{LdapGruppenForm.myLdapGruppe.title})"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.neueLdapgruppeAnlegen}"
-                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.ldapGroupView}"
                           rendered="#{isViewMode}"/>
         </h3>
@@ -49,7 +48,6 @@
                          action="#{LdapGruppenForm.saveLdapGroup}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         styleClass="button-filled-blue"
                          disabled="#{LdapGruppenForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapGroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
@@ -57,9 +55,13 @@
                          actionListener="#{LdapGruppenForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="users.jsf?id=#{BenutzerverwaltungForm.activeTabIndex}" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  outcome="users.jsf?id=#{UserForm.activeTabIndex}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -149,6 +151,16 @@
                         </div>
                     </p:row>
                     <p:row>
+                        <div>
+                            <p:outputLabel for="ldapServer" value="#{msgs.ldapServer}"/>
+                            <p:selectOneMenu id="ldapServer" converter="#{ldapServerConverter}" value="#{LdapGruppenForm.myLdapGruppe.ldapServer}">
+                                <f:selectItems value="#{LdapServerForm.ldapServers}"
+                                               var="ldapServer"
+                                               itemValue="#{ldapServer}"
+                                               itemLabel="#{ldapServer.title}"/>
+                                <p:ajax event="change" oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                        </div>
                         <div>
                             <p:outputLabel for="gecos" value="gecos"/>
                             <p:inputText id="gecos"
@@ -252,7 +264,7 @@
         <li>
             <a href="">
                 <ui:fragment rendered="#{isCreateMode}">
-                    #{msgs.neueLdapgruppeAnlegen}
+                    #{msgs.createNewLdapGroup}
                 </ui:fragment>
                 <ui:fragment rendered="#{isEditMode}">
                     #{msgs.ldapGroupEdit}

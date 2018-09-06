@@ -49,14 +49,13 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{ClientForm.saveDisabled}"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         styleClass="button-filled-blue"/>
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{ClientForm.setSaveDisabled(false)}"
                          update="saveButton"
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

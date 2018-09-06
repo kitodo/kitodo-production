@@ -29,21 +29,19 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.primefaces.model.DualListModel;
 
-@Named("BenutzergruppenForm")
+@Named("UserGroupForm")
 @SessionScoped
-public class BenutzergruppenForm extends BasisForm {
+public class UserGroupForm extends BaseForm {
     private static final long serialVersionUID = 8051160917458068675L;
-    private static final Logger logger = LogManager.getLogger(BenutzergruppenForm.class);
+    private static final Logger logger = LogManager.getLogger(UserGroupForm.class);
     private UserGroup userGroup = new UserGroup();
-    private static final String USER_GROUP = "userGroup";
-    private transient ServiceManager serviceManager = new ServiceManager();
 
-    @Named("BenutzerverwaltungForm")
-    private BenutzerverwaltungForm userForm;
+    @Named("UserForm")
+    private UserForm userForm;
 
     private String usergroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String usergroupEditPath = MessageFormat.format(REDIRECT_PATH, "usergroupEdit");
@@ -53,10 +51,10 @@ public class BenutzergruppenForm extends BasisForm {
      * instance of this bean.
      * 
      * @param userForm
-     *            BenutzerverwaltungForm managed bean
+     *            UserForm managed bean
      */
     @Inject
-    public BenutzergruppenForm(BenutzerverwaltungForm userForm) {
+    public UserGroupForm(UserForm userForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getUserGroupService()));
         this.userForm = userForm;
@@ -82,7 +80,8 @@ public class BenutzergruppenForm extends BasisForm {
             this.serviceManager.getUserGroupService().save(this.userGroup);
             return usergroupListPath;
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() }, logger,
+                e);
             return null;
         }
     }
@@ -112,7 +111,8 @@ public class BenutzergruppenForm extends BasisForm {
             }
             this.serviceManager.getUserGroupService().remove(this.userGroup);
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation(USER_GROUP) }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() },
+                logger, e);
             return null;
         }
         return usergroupListPath;
@@ -131,8 +131,8 @@ public class BenutzergruppenForm extends BasisForm {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation(USER_GROUP), id },
-                logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), id }, logger, e);
         }
         setSaveDisabled(true);
     }
@@ -157,15 +157,17 @@ public class BenutzergruppenForm extends BasisForm {
     }
 
     /**
-     * Set usergroup by ID.
+     * Set user group by ID.
+     *
      * @param userGroupID
-     *          ID of usergroup to set.
+     *            ID of user group to set.
      */
     public void setUserGroupById(int userGroupID) {
         try {
             setUserGroup(serviceManager.getUserGroupService().getById(userGroupID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find usergroup with ID " + userGroupID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupID }, logger, e);
         }
     }
 
@@ -178,7 +180,8 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getGlobalAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableGlobal(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableGlobal(userGroup.getAuthorities());
         List<Authority> availableAuthorities = new ArrayList<>();
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal();
@@ -217,7 +220,8 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getClientAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToClients(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableToClients(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients();
@@ -255,7 +259,8 @@ public class BenutzergruppenForm extends BasisForm {
      * @return DualListModel of available and assigned authority levels
      */
     public DualListModel<Authority> getProjectAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService().filterAssignableToProjects(userGroup.getAuthorities());
+        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
+                .filterAssignableToProjects(userGroup.getAuthorities());
         List<Authority> availableAuthorities = null;
         try {
             availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects();

@@ -23,6 +23,10 @@ import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
+/**
+ * The main security configuration class for the application. The configure
+ * method is called once during start of the application.
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -202,7 +206,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Reads local config and configures the dynamic authentication provider
+     * Sets the DynamicAuthenticationProvider as AuthenticationProvider.
      * (authentication against ldap or database).
      * 
      * @param authenticationManagerBuilder
@@ -210,10 +214,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) {
-        DynamicAuthenticationProvider authenticationProvider = new DynamicAuthenticationProvider();
-        authenticationProvider.readLocalConfig();
-        authenticationProvider.initializeAuthenticationProvider();
-        authenticationManagerBuilder.authenticationProvider(authenticationProvider);
+        authenticationManagerBuilder.authenticationProvider(DynamicAuthenticationProvider.getInstance());
     }
 
     /**

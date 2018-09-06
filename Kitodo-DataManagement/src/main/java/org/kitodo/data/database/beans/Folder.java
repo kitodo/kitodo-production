@@ -264,7 +264,7 @@ public class Folder extends BaseBean {
      * @return the pre-defined entries for the combo box
      */
     public Collection<String> getFileGroups() {
-        Collection<String> result = new TreeSet<String>(DFG_VIEWER_FILEGRPS);
+        Collection<String> result = new TreeSet<>(DFG_VIEWER_FILEGRPS);
         result.add(this.fileGroup);
         return result;
     }
@@ -363,8 +363,8 @@ public class Folder extends BaseBean {
     /**
      * Returns the filename suffix with file extension for the UGH library.
      *
-     * @deprecated This is a temporary solution and should no longer be used
-     *             after that the UGH is removed.
+     * @deprecated This is a temporary solution and should no longer be used after
+     *             that the UGH is removed.
      * @param extensionWithoutDot
      *            filename extension without dot, to be read from the
      *            configuration. The extension can be retrieved from the

@@ -12,7 +12,7 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.io.BufferedReader;
@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -38,26 +39,24 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
 import org.kitodo.workflow.model.beans.Diagram;
 
 @Named("WorkflowForm")
 @SessionScoped
-public class WorkflowForm extends BasisForm {
+public class WorkflowForm extends BaseForm {
 
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
-    private transient ServiceManager serviceManager = new ServiceManager();
     private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
     private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
-    private static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
 
@@ -75,7 +74,7 @@ public class WorkflowForm extends BasisForm {
         URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
 
         try (InputStream inputStream = fileService.read(xmlDiagramURI);
-             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder sb = new StringBuilder();
             String line = bufferedReader.readLine();
             while (line != null) {
@@ -94,17 +93,38 @@ public class WorkflowForm extends BasisForm {
      * @return url to list view
      */
     public String saveAndRedirect() {
-        try {
-            if (saveFiles()) {
-                saveWorkflow();
-            } else {
-                Helper.setErrorMessage("Files were not save!");
-                return null;
-            }
-        } catch (RuntimeException e) {
-            logger.error(e.getMessage());
+        // FIXME: in this solution workflow is saved but redirect doesn't work
+        boolean filesSaved = saveFiles();
+        if (filesSaved) {
+            saveWorkflow();
+            return workflowListPath;
+        } else {
+            return null;
         }
-        return workflowListPath;
+    }
+
+    /**
+     * Remove workflow if no template is assigned to it.
+     */
+    public void delete() {
+        if (!this.workflow.getTemplates().isEmpty()) {
+            Helper.setErrorMessage("templateAssignedError");
+        } else {
+            try {
+                serviceManager.getWorkflowService().remove(this.workflow);
+
+                URI svgDiagramURI = new File(
+                        diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
+                URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName()))
+                        .toURI();
+
+                fileService.delete(svgDiagramURI);
+                fileService.delete(xmlDiagramURI);
+            } catch (DataException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
+                    logger, e);
+            }
+        }
     }
 
     /**
@@ -116,6 +136,9 @@ public class WorkflowForm extends BasisForm {
         Map<String, String> requestParameterMap = FacesContext.getCurrentInstance().getExternalContext()
                 .getRequestParameterMap();
 
+        if (isWorkflowAlreadyInUse(this.workflow)) {
+            this.workflow.setFileName(decodeXMLDiagramName(this.workflow.getFileName()) + "_" + randomString(3));
+        }
         URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg")
                 .toURI();
         URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
@@ -127,10 +150,6 @@ public class WorkflowForm extends BasisForm {
 
             saveFile(svgDiagramURI, svgDiagram);
             saveFile(xmlDiagramURI, xmlDiagram);
-        } else if (Objects.nonNull(requestParameterMap.get("id"))) {
-            // TODO: find way to send content in first request - now it comes on second
-            // FIXME: it causes problem with redirect!
-            throw new RuntimeException("No diagram parameter was passed in request.");
         }
 
         return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
@@ -138,7 +157,7 @@ public class WorkflowForm extends BasisForm {
 
     void saveFile(URI fileURI, String fileContent) {
         try (OutputStream outputStream = fileService.write(fileURI);
-             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
+                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             bufferedWriter.write(fileContent);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -183,6 +202,17 @@ public class WorkflowForm extends BasisForm {
         return !workflow.getTemplates().isEmpty();
     }
 
+    private static String randomString(int length) {
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom rnd = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(AB.charAt(rnd.nextInt(AB.length())));
+        }
+        return sb.toString();
+    }
+
     /**
      * Create new workflow.
      *
@@ -191,6 +221,41 @@ public class WorkflowForm extends BasisForm {
     public String newWorkflow() {
         this.workflow = new Workflow();
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
+    }
+
+    /**
+     * Duplicate the selected workflow.
+     *
+     * @param itemId
+     *            ID of the workflow to duplicate
+     * @return page address; either redirect to the edit workflow page or return
+     *         'null' if the workflow could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
+     */
+    public String duplicateWorkflow(Integer itemId) {
+        try {
+            Workflow baseWorkflow = serviceManager.getWorkflowService().getById(itemId);
+            this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
+            return workflowEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
+            return null;
+        }
+    }
+
+    /**
+     * Set workflow by id.
+     *
+     * @param id
+     *            of workflow to set
+     */
+    public void setWorkflowById(int id) {
+        try {
+            setWorkflow(serviceManager.getWorkflowService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
+        }
     }
 
     /**
@@ -211,7 +276,8 @@ public class WorkflowForm extends BasisForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("workflow"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
+                logger, e);
         }
     }
 

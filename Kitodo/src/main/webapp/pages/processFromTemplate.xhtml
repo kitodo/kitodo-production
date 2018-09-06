@@ -24,7 +24,7 @@
 
     <ui:define name="contentHeader">
         <h3>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen} (#{msgs.prozessvorlage}: '#{ProzesskopieForm.template.title}')"/>
+            <h:outputText value="#{msgs.createNewProcess} (#{msgs.template}: '#{ProzesskopieForm.template.title}')"/>
         </h3>
         <p:commandButton id="saveButton"
                          value="#{msgs.save}"
@@ -38,7 +38,7 @@
                   outcome="projects"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
-                  styleClass="secondary-button"/>
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

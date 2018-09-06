@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -126,9 +127,7 @@ public class Task extends BaseIndexedBean {
      * this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
+    @JoinTable(name = "task_x_user", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
@@ -136,9 +135,7 @@ public class Task extends BaseIndexedBean {
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     /**
@@ -146,10 +143,7 @@ public class Task extends BaseIndexedBean {
      * be generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "typeGenerate_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
-    )
+    @JoinTable(name = "typeGenerate_task_x_folder", joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")), inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")))
     private List<Folder> typeGenerate;
 
     @Transient
@@ -453,15 +447,34 @@ public class Task extends BaseIndexedBean {
         if (this.typeGenerate == null) {
             this.typeGenerate = new ArrayList<>();
         }
-        List<Project> projects = template.getProjects();
+        Stream<Project> projects = template.getProjects().stream();
+
+        // Ignore all projects that do not have a source folder configured. It
+        // isn’t possible to generate anything without a data source.
+        Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
+
+        // Drop all folders to generate if they are their own source folder. The
+        // user may have configured a generation rule on a folder that it later
+        // has set as source folder. This would cause the file to be overwritten
+        // by itself in the generation process, leading to data loss, which must
+        // be avoided.
+        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
+                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
+        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
+                .map(λ -> λ.getLeft());
+
+        // Remove all folders to generate which do not have anything to generate
+        // configured.
+        Stream<Folder> generatableFolders = allowedFolders.filter(λ -> λ.getDerivative().isPresent()
+                || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent());
+
+        // For all remaining folders, create an encapsulation to access the
+        // generator properties of the folder.
+        Stream<TaskGenerator> taskGenerators = generatableFolders.map(λ -> new TaskGenerator(λ, typeGenerate));
+
         return new ArrayList<TaskGenerator>() {
             {
-                projects.stream().filter(λ -> Objects.nonNull(λ.getGeneratorSource()))
-                        .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())))
-                        .filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft())
-                        .filter(λ -> λ.getDerivative().isPresent() || λ.getDpi().isPresent()
-                                || λ.getImageScale().isPresent() || λ.getImageSize().isPresent())
-                        .map(λ -> new TaskGenerator(λ, typeGenerate)).forEach(this::add);
+                taskGenerators.forEach(this::add);
             }
         };
     }

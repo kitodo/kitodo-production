@@ -61,13 +61,12 @@
             </p:row>
             <p:commandButton id="submit"
                              value="#{msgs.save}"
-                             action="#{LoginForm.saveUserConfiguration}"
+                             action="#{LoginForm.saveUser}"
                              update="sticky-notifications"
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
                              validateClient="true"
-                             onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.configurationSaving}','severity':'info'});"
-                             styleClass="button-filled-blue">
+                             onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.configurationSaving}','severity':'info'});">
                 <f:ajax execute="@form" render="@all"/>
             </p:commandButton>
         </p:panelGrid>

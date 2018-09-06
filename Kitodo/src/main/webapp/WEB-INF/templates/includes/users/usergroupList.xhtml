@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="userGroupsTable"
-                 value="#{BenutzergruppenForm.lazyDTOModel}"
+                 value="#{UserGroupForm.lazyDTOModel}"
                  lazy="true"
                  paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
@@ -35,13 +35,12 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteUsergroup"
-                               action="#{BenutzergruppenForm.delete}"
+                               action="#{UserGroupForm.delete}"
                                title="#{msgs.delete}"
                                update="usersTabView:userGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{BenutzergruppenForm.userGroupById}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteUsergroup}"
+                    <f:setPropertyActionListener value="#{item.id}" target="#{UserGroupForm.userGroupById}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteUsergroup}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

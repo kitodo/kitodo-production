@@ -27,7 +27,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.dataeditor.handlers.MetsKitodoMdSecHandler;
 
 public class MetsKitodoWriterTest {
 
@@ -75,10 +74,8 @@ public class MetsKitodoWriterTest {
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
-        String loadedMetadata = MetsKitodoMdSecHandler
-                .getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0).getValue();
-        String savedMetadata = MetsKitodoMdSecHandler
-                .getKitodoTypeOfDmdSecElement(savedMetsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0)
+        String loadedMetadata = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0).getValue();
+        String savedMetadata = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0)
                 .getValue();
 
         Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
@@ -107,11 +104,8 @@ public class MetsKitodoWriterTest {
         MetsKitodoWrapper savedMetsKitodoWrapper = new MetsKitodoWrapper(xmlTestFile, xsltFile);
         Files.deleteIfExists(Paths.get(xmlTestFile));
 
-        String loadedMetadata = MetsKitodoMdSecHandler
-                .getKitodoTypeOfDmdSecElement(metsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0).getValue();
-        String savedMetadata = MetsKitodoMdSecHandler
-                .getKitodoTypeOfDmdSecElement(savedMetsKitodoWrapper.getDmdSecs().get(0)).getMetadata().get(0)
-                .getValue();
+        String loadedMetadata = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0).getValue();
+        String savedMetadata = savedMetsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0).getValue();
 
         Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
             savedMetadata);

@@ -24,16 +24,7 @@
             <h:outputText value="#{process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.status}" styleClass="process-table-column">
-            <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
-            <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
-                            style="width:#{process.progressClosed * 0.8}px;height:10px"/>
-            <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
-                            style="width:#{process.progressInProcessing * 0.8}px;height:10px"/>
-            <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
-                            style="width:#{process.progressOpen * 0.8}px;height:10px"/>
-            <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
-                            style="width:#{process.progressLocked * 0.8}px;height:10px"/>
-            <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+            <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
         <p:column headerText="#{msgs.project}" styleClass="process-table-column">
             <h:outputText value="#{DesktopForm.getProject(process).title}"/>
@@ -45,8 +36,10 @@
                         title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:param name="id" value="#{process.id}"/>
+                    <f:param name="referer" value="desktop"/>
                 </h:link>
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                    <f:setPropertyActionListener value="desktop" target="#{Metadaten.referringView}"/>
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>

@@ -56,7 +56,7 @@
                         </font>
                         <div>
                             <label for="username">#{msgs.username}</label>
-                            <input id="username" name="username"/>
+                            <input id="username" name="username" autocomplete="username"/>
                         </div>
                         <div>
                             <label for="password">#{msgs.password}</label>
@@ -71,7 +71,7 @@
                     </div>
 
                     <h:panelGroup rendered="#{LoginForm.myBenutzer == null and LoginForm.alreadyLoggedIn}">
-                        <h:outputText value="#{msgs.sieSindBereitsEingeloggt}"/>
+                        <h:outputText value="#{msgs.alreadyLoggedIn}"/>
                         <br/>
                     </h:panelGroup>
                 </sec:authorize>

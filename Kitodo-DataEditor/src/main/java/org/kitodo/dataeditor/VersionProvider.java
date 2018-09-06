@@ -20,30 +20,32 @@ import java.util.jar.Manifest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.dataformat.DataFormatVersionProvider;
 
-public class VersionFinder {
-
-    private static final Logger logger = LogManager.getLogger(VersionFinder.class);
+/**
+ * Provides methods to get information about modul or data format.
+ */
+public class VersionProvider {
+    private static DataFormatVersionProvider dataFormatVersionProvider = new DataFormatVersionProvider();
+    private static final Logger logger = LogManager.getLogger(VersionProvider.class);
 
     /**
      * Private constructor to hide the implicit public one.
      */
-    private VersionFinder() {
+    private VersionProvider() {
 
     }
 
     /**
      * Reading version info out of the manifest file of current jar.
      *
-     * @param applicationName
-     *            The name of the application or module.
      * @return The version info as String. (module or application name - version -
      *         build time)
      * @throws IOException
      *             IOException is thrown if an error occurs while reading the
      *             MANIFEST.MF file.
      */
-    public static String findVersionInfo(String applicationName) throws IOException {
+    public static String getModuleVersionInfo() throws IOException {
         Enumeration<URL> resources = Thread.currentThread().getContextClassLoader()
                 .getResources("META-INF/MANIFEST.MF");
         while (resources.hasMoreElements()) {
@@ -52,7 +54,7 @@ public class VersionFinder {
                 Manifest manifest = new Manifest(inputStream);
                 Attributes mainAttributes = manifest.getMainAttributes();
                 String implementationTitle = mainAttributes.getValue("Implementation-Title");
-                if (implementationTitle != null && implementationTitle.equals(applicationName)) {
+                if (implementationTitle != null && implementationTitle.equals("Kitodo - Data Editor")) {
                     String implementationVersion = mainAttributes.getValue("Implementation-Version");
                     String buildTime = mainAttributes.getValue("Implementation-Build-Date");
                     return implementationTitle + " - " + implementationVersion + " (" + buildTime + ")";
@@ -61,5 +63,14 @@ public class VersionFinder {
         }
         logger.error("Could not read application version info for writing in header of mets file!");
         return "Version info is missing";
+    }
+
+    /**
+     * Gets the current version of used data format.
+     * 
+     * @return the current version of used data format
+     */
+    public static String getDataFormatVersion() {
+        return dataFormatVersionProvider.getDataFormatVersion();
     }
 }

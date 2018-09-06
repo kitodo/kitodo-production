@@ -22,14 +22,15 @@ import org.kitodo.security.SecurityUserDetails;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsImpl;
 
 public class SessionService {
 
     private static SessionService instance = null;
     private SessionRegistry sessionRegistry;
 
+    /**
+     * Private constructor which is getting the SessionRegistry from the main SecurityConfig class.
+     */
     private SessionService() {
         SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
@@ -54,18 +55,11 @@ public class SessionService {
      * @return The active sessions.
      */
     public List<SecuritySession> getActiveSessions() {
-
         List<Object> allPrincipals = sessionRegistry.getAllPrincipals();
-
         List<SecuritySession> activeSessions = new ArrayList<>();
-
         UserDetails user = null;
 
         for (final Object principal : allPrincipals) {
-
-            if (principal instanceof LdapUserDetails) {
-                user = (LdapUserDetailsImpl) principal;
-            }
             if (principal instanceof SecurityUserDetails) {
                 user = (SecurityUserDetails) principal;
             }

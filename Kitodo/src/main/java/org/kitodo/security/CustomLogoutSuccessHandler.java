@@ -24,6 +24,10 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
+/**
+ * This class was made to perform an expiration of users session on logout. The session of the user
+ * is than not listed anymore as active immediately after logout.
+ */
 public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler implements LogoutSuccessHandler {
 
     private final ServiceManager serviceManager = new ServiceManager();

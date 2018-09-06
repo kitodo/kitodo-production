@@ -17,28 +17,150 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
-        <p:panel id="listWrapper">
-            <p:panel style="height:700px;">
-                <p:layout fullPage="false">
-                    <p:layoutUnit position="north" size="80">
-                        <ui:include src="/pages/incMeta/metadataEditorHeader.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="west" resizable="true" size="200" minSize="100" maxSize="600">
-                        <ui:include src="/pages/incMeta/metadataStructureView.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="center">
-                        <ui:include src="/pages/incMeta/metadataCenter.xhtml" />
-                    </p:layoutUnit>
-                    <p:layoutUnit position="east" size="300" resizable="true" header="#{msgs.metadataShowImage}" collapsible="true">
-                        <ui:include src="/pages/incMeta/imageContol.xhtml" />
-                    </p:layoutUnit>
-                </p:layout>
+
+        <!-- JavaScript -->
+        <h:outputScript name="js/resize.js" target="body"/>
+
+        <p:panel id="metadataEditor">
+            <!-- Header -->
+            <p:panel id="metadataEditorHeader">
+                <ui:include src="/WEB-INF/templates/includes/metadataEditor/header.xhtml" />
             </p:panel>
+
+            <p:messages id="error-messages">
+                <p:autoUpdate/>
+            </p:messages>
+
+            <!-- Content -->
+            <div id="metadataEditorWrapper">
+
+                <!-- First Column -->
+                <div class="collapsibleWrapper" id="firstColumnWrapper" data-min-width="200">
+                    <button type="button"
+                            onclick="toggleFirstColumn()"
+                            class="columnExpandButton">
+                        <i class="fa fa-angle-double-left fa-lg"/>
+                    </button>
+                    <div class="columnHeadingWrapper">
+                        <h:outputText styleClass="columnHeading" value="#{msgs.pageStructure}"/>
+                    </div>
+                    <p:panel id="firstColumnPanel">
+                        <h:form id="structureTreeForm">
+                            <p:panel id="structurePanel">
+                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml" />
+                            </p:panel>
+                            <p:panel id="paginationPanel">
+                                <ui:include src="/WEB-INF/templates/includes/metadataEditor/pagination.xhtml" />
+                            </p:panel>
+                        </h:form>
+                        <ui:include src="/pages/incMeta/dialogs/dialogAddDocStrucType.xhtml"/>
+                        <ui:include src="/pages/incMeta/dialogs/dialogEditPages.xhtml"/>
+                    </p:panel>
+                </div>
+
+                <!-- Element for resizing first and second column -->
+                <div class="resizer" id="firstResizer"/>
+
+                <!-- Second Column -->
+                <div class="collapsibleWrapper" id="secondColumnWrapper" data-min-width="200">
+                    <button type="button"
+                            onclick="toggleSecondColumn()"
+                            class="columnExpandButton">
+                        <i class="fa fa-angle-double-left fa-lg"/>
+                    </button>
+
+                    <div class="columnHeadingWrapper">
+                        <h:outputText styleClass="columnHeading" value="#{msgs.metadata}"/>
+                        <button id="firstSectionToggler" onclick="toggleFirstSection()">
+                            <i class="fa fa-chevron-down fa-lg"/>
+                        </button>
+                    </div>
+                    <p:panel id="secondColumnPanel">
+                        <div id="metadataPanel" data-min-height="100">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/metadata.xhtml" />
+                        </div>
+
+                        <!-- Vertical resizer -->
+                        <div id="verticalResizer"/>
+
+                        <div class="columnHeadingWrapper">
+                            <h:outputText value="#{msgs.comments}"/>
+                            <button id="secondSectionToggler" onclick="toggleSecondSection()">
+                                <i class="fa fa-chevron-down fa-lg"/>
+                            </button>
+                        </div>
+                        <div id="commentPanel" data-min-height="100">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/comment.xhtml" />
+                        </div>
+                    </p:panel>
+                </div>
+
+                <!-- Element for resizing second and third column -->
+                <div class="resizer" id="secondResizer"/>
+
+                <!-- Third Column -->
+                <div class="collapsibleWrapper" id="thirdColumnWrapper" data-min-width="400">
+                    <button type="button"
+                            onclick="toggleThirdColumn()"
+                            class="columnExpandButton">
+                        <i class="fa fa-angle-double-left fa-lg"/>
+                    </button>
+
+                    <div class="columnHeadingWrapper">
+                        <h:panelGroup id="galleryHeadingWrapper">
+                            <ui:fragment rendered="#{Metadaten.viewMode eq 'list' or Metadaten.viewMode eq 'grid'}">
+                                <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{Metadaten.viewMode eq 'preview'}">
+                                <h:outputText styleClass="columnHeading" value="#{msgs.page} #{Metadaten.pageIndex}"/>
+                            </ui:fragment>
+                        </h:panelGroup>
+                    </div>
+
+                    <p:panel id="thirdColumnPanel" style="height: calc(100% - 40px);">
+                        <div id="galleryPanel">
+                            <ui:include src="/WEB-INF/templates/includes/metadataEditor/gallery.xhtml" />
+                        </div>
+                    </p:panel>
+                </div>
+            </div>
         </p:panel>
+
+
+    </ui:define>
+    <ui:define name="dialog">
+        <h:form>
+            <p:confirmDialog header="#{msgs.generatePNGs}"
+                             message="#{msgs.confirm}"
+                             icon="ui-icon-alert"
+                             showEffect="fade"
+                             hideEffect="fade"
+                             styleClass="confirm-delete"
+                             widgetVar="generatePNGsConfirmDialog">
+                <p:commandButton value="Yes"
+                                 styleClass="ui-confirmdialog-yes"
+                                 icon="ui-icon-check"
+                                 onclick="PF('convertTIFFDialog').show();PF('generatePNGsConfirmDialog').hide()"
+                                 action="#{Metadaten.generatePNGs()}"
+                                 immediate="true"/>
+                <p:commandButton value="No"
+                                 type="button"
+                                 styleClass="ui-confirmdialog-no"
+                                 icon="ui-icon-close"
+                                 onclick="PF('generatePNGsConfirmDialog').hide()"/>
+            </p:confirmDialog>
+        </h:form>
+        <p:dialog header="Generating PNGs"
+                  global="true"
+                  modal="true"
+                  id="convertTIFFDialog"
+                  widgetVar="convertTIFFDialog">
+            <h:outputText value="#{Metadaten.numberOfConvertedImages} / #{Metadaten.numberOfImagesInCurrentTifFolder}"/>
+        </p:dialog>
     </ui:define>
     <ui:define name="breadcrumbs">
-            <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+            <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
             <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
-            <li><a href="">#{msgs.metadataEdit}</a></li>
+            <li><a href="">#{msgs.metadataEdit} (#{Metadaten.process.title})</a></li>
     </ui:define>
 </ui:composition>

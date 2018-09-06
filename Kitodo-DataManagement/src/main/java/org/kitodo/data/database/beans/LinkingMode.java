@@ -8,6 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
+
 package org.kitodo.data.database.beans;
 
 /**
@@ -34,5 +35,5 @@ public enum LinkingMode {
     /**
      * Only the selected preview image will be linked in the fileGrp.
      */
-    PREVIEW_IMAGE;
+    PREVIEW_IMAGE
 }

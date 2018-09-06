@@ -60,7 +60,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
-    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException  {
+    public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject workflowJSONObject = jsonObject.getJsonObject("_source");
@@ -69,6 +69,24 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         workflowDTO.setReady(WorkflowTypeField.READY.getBooleanValue(workflowJSONObject));
         workflowDTO.setActive(WorkflowTypeField.ACTIVE.getBooleanValue(workflowJSONObject));
         return workflowDTO;
+    }
+
+    /**
+     * Duplicate the given workflow.
+     *
+     * @param baseWorkflow
+     *            to copy
+     * @return the duplicated Workflow
+     */
+    public Workflow duplicateWorkflow(Workflow baseWorkflow) {
+        Workflow duplicatedWorkflow = new Workflow();
+
+        // Workflow _title_ should explicitly _not_ be duplicated!
+        duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_Copy");
+        duplicatedWorkflow.setActive(baseWorkflow.isActive());
+        duplicatedWorkflow.setReady(false);
+
+        return duplicatedWorkflow;
     }
 
     /**

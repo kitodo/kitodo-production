@@ -19,9 +19,13 @@
     <h:outputScript name="js/clipboard.js" target="body" />
     <p:panel>
         <p:selectBooleanButton
-                onLabel="#{msgs.locked}" offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg" offIcon="fa fa-unlock fa-lg" styleClass="locked-button"
-                id="specificationLockedButton" value="#{ProjekteForm.lockedTechnical}">
+                onLabel="#{msgs.locked}"
+                offLabel="#{msgs.unlocked}"
+                onIcon="fa fa-lock fa-lg"
+                offIcon="fa fa-unlock fa-lg"
+                styleClass="callto"
+                id="specificationLockedButton"
+                value="#{ProjekteForm.lockedTechnical}">
             <p:ajax event="change" update="technischeDatenForm" />
         </p:selectBooleanButton>
     </p:panel>
@@ -35,16 +39,16 @@
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPfad}" />
-                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportImagesPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportImagesPath}" disabled="#{ProjekteForm.lockedTechnical}">
+                <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPath}" />
+                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportImagesPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportImagesPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportImageDirButton"/>
                 </p:inputText>
                 <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir');" disabled="#{empty ProjekteForm.myProjekt.dmsImportImagesPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPfad}" />
-                <p:inputText id="dmsExportErrorDir" placeholder="#{msgs.dmsImportErrorPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportErrorPath}" disabled="#{ProjekteForm.lockedTechnical}">
+                <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPath}" />
+                <p:inputText id="dmsExportErrorDir" placeholder="#{msgs.dmsImportErrorPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportErrorPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportErrorDirButton"/>
                 </p:inputText>
@@ -65,23 +69,23 @@
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="DmsFormat" value="#{msgs.dmsExportformat}" />
+                <p:outputLabel for="DmsFormat" value="#{msgs.dmsExportFormat}" />
                 <p:selectOneMenu id="DmsFormat" value="#{ProjekteForm.myProjekt.fileFormatDmsExport}" disabled="#{ProjekteForm.lockedTechnical}">
                     <f:selectItems value="#{HelperForm.fileFormats}" />
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPfadXmlDatei}" />
-                <p:inputText id="dmsExportDir" placeholder="#{msgs.dmsImportPfadXmlDatei}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportRootPath}" disabled="#{ProjekteForm.lockedTechnical}">
+                <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPathXmlFile}" />
+                <p:inputText id="dmsExportDir" placeholder="#{msgs.dmsImportPathXmlFile}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportRootPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportDirButton"/>
                 </p:inputText>
                 <p:commandButton id="copyDmsExportDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportDir');" disabled="#{empty ProjekteForm.myProjekt.dmsImportRootPath}"/>
             </div>
             <div>
-                <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPfad}" />
-                <p:inputText id="dmsExportSuccessDir" placeholder="#{msgs.dmsImportSuccessPfad}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}" disabled="#{ProjekteForm.lockedTechnical}">
+                <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPath}" />
+                <p:inputText id="dmsExportSuccessDir" placeholder="#{msgs.dmsImportSuccessPath}" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.dmsImportSuccessPath}" disabled="#{ProjekteForm.lockedTechnical}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportSuccessDirButton"/>
                 </p:inputText>

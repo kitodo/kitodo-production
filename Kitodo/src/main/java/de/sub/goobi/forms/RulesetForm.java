@@ -37,16 +37,15 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 
 @Named("RulesetForm")
 @SessionScoped
-public class RulesetForm extends BasisForm {
+public class RulesetForm extends BaseForm {
     private static final long serialVersionUID = -445707928042517243L;
     private Ruleset ruleset;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private static final Logger logger = LogManager.getLogger(RulesetForm.class);
 
     private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -87,6 +86,10 @@ public class RulesetForm extends BasisForm {
     public String saveRuleset() {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
+                if (existsRulesetWithSameName()) {
+                    Helper.setErrorMessage("rulesetTitleDuplicated");
+                    return null;
+                }
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
@@ -94,7 +97,8 @@ public class RulesetForm extends BasisForm {
                 return null;
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
             return null;
         }
     }
@@ -127,10 +131,28 @@ public class RulesetForm extends BasisForm {
                 serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
             return null;
         }
         return rulesetListPath;
+    }
+
+    private boolean existsRulesetWithSameName() {
+        List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
+        if (rulesets.isEmpty()) {
+            return false;
+        } else {
+            if (Objects.nonNull(this.ruleset.getId())) {
+                if (rulesets.size() == 1) {
+                    return !rulesets.get(0).getId().equals(this.ruleset.getId());
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        }
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
@@ -152,8 +174,8 @@ public class RulesetForm extends BasisForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("regelsatz"), id }, logger,
-                e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.RULESET.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -173,13 +195,14 @@ public class RulesetForm extends BasisForm {
      * Set ruleset by ID.
      *
      * @param rulesetID
-     *          ID of the ruleset to set.
+     *            ID of the ruleset to set.
      */
     public void setRulesetById(int rulesetID) {
         try {
             setRuleset(serviceManager.getRulesetService().getById(rulesetID));
         } catch (DAOException e) {
-            Helper.setErrorMessage("Unable to find ruleset with ID " + rulesetID, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.RULESET.getTranslationSingular(), rulesetID }, logger, e);
         }
     }
 
@@ -199,13 +222,11 @@ public class RulesetForm extends BasisForm {
      */
     public List getRulesetFilenames() {
         try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
-            return rulesetPaths
-                    .filter(f -> f.toString().endsWith(".xml"))
-                    .map(Path::getFileName)
-                    .sorted()
+            return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("rulesets")}, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.RULESET.getTranslationPlural() },
+                logger, e);
             return new ArrayList();
         }
     }
@@ -221,7 +242,8 @@ public class RulesetForm extends BasisForm {
                 this.serviceManager.getRulesetService().remove(this.ruleset);
             }
         } catch (DataException e) {
-            Helper.setErrorMessage("errorDeleting", new Object[] {Helper.getTranslation("ruleset") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
+                e);
         }
     }
 }

@@ -32,7 +32,7 @@ public class MetsKitodoConverterTest {
 
     @Test
     public void shouldReadKitodoMetadataFormOldFormatFile() throws JAXBException, TransformerException, IOException {
-        Mets mets = MetsKitodoConverter.convertToMetsKitodo(xmlfile, xsltFile);
+        Mets mets = MetsKitodoConverter.convertToMetsKitodoByXslt(xmlfile, xsltFile);
         JAXBElement jaxbElement = (JAXBElement) mets.getDmdSec().get(0).getMdWrap().getXmlData().getAny().get(0);
         KitodoType kitodoType = (KitodoType) jaxbElement.getValue();
 

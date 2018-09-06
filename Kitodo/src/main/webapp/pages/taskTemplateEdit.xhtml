@@ -43,8 +43,13 @@
                          actionListener="#{TemplateForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}" outcome="templateEdit?id=#{TemplateForm.template.id}"
-                  onclick="setConfirmUnload(false);" icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  outcome="templateEdit?id=#{TemplateForm.template.id}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -68,7 +73,7 @@
 
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
-        <li><h:link value="#{msgs.prozessvorlage}" outcome="projects"/></li>
+        <li><h:link value="#{msgs.template}" outcome="projects"/></li>
         <li><h:link value="#{msgs.editTemplate}" outcome="templateEdit?id=#{TemplateForm.template.id}"/></li>
         <li><a href="">#{msgs.taskDetails}</a></li>
     </ui:define>

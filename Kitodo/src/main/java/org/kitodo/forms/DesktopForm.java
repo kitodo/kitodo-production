@@ -11,7 +11,7 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.forms.BasisForm;
+import de.sub.goobi.forms.BaseForm;
 import de.sub.goobi.helper.Helper;
 
 import java.util.ArrayList;
@@ -28,14 +28,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.ProjectDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.services.ServiceManager;
-
 
 @Named("DesktopForm")
 @ViewScoped
-public class DesktopForm extends BasisForm {
+public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     /**
      * Default constructor.
@@ -62,7 +59,7 @@ public class DesktopForm extends BasisForm {
         try {
             return serviceManager.getTaskService().findAll("{\"title\":\"asc\" }", 0, 10, new HashMap());
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("tasks") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -76,7 +73,7 @@ public class DesktopForm extends BasisForm {
         try {
             return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("processes") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -90,7 +87,7 @@ public class DesktopForm extends BasisForm {
         try {
             return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("projects") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
             return new ArrayList();
         }
     }
@@ -106,7 +103,7 @@ public class DesktopForm extends BasisForm {
         try {
             return serviceManager.getProcessService().findById(processDTO.getId()).getProject();
         } catch (DataException | JsonException e) {
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("project") }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
             return null;
         }
     }
@@ -147,7 +144,7 @@ public class DesktopForm extends BasisForm {
                     return serviceManager.getPropertyService().count();
                 case TEMPLATE:
                     return serviceManager.getTemplateService().count();
-                case USERGROUP:
+                case USER_GROUP:
                     return serviceManager.getUserGroupService().count();
                 default:
                     return 0L;
