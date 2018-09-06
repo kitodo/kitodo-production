@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.util;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 /**
  * An encapsulation to access the generator properties of the folder.
  */
-public class FolderGenerator {
+public class Service {
     /**
      * Generator method that changes the DPI of an image.
      */
@@ -81,7 +81,7 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
+    public Service(Folder folder) {
         this.folder = folder;
     }
 
@@ -105,33 +105,33 @@ public class FolderGenerator {
      */
     public void generate(URI source, String canonical, String extensionWithoutDot, Optional<ImageFileFormat> fileFormat,
             Optional<String> formatName, Map<String, String> vars) throws IOException {
-        KitodoServiceLoader<ImageManagementInterface> imageManagementInterface = new KitodoServiceLoader<>(
+        KitodoServiceLoader<ImageManagementInterface> imageManagementSuffixModule = new KitodoServiceLoader<>(
                 ImageManagementInterface.class);
-        KitodoServiceLoader<FileManagementInterface> fileManagementInterface = new KitodoServiceLoader<>(
+        KitodoServiceLoader<FileManagementInterface> fileManagementSuffixModule = new KitodoServiceLoader<>(
                 FileManagementInterface.class);
         URI destination = folder.getURI(vars, canonical, extensionWithoutDot);
 
         switch (this.getMethod()) {
             case CHANGE_DPI:
-                try (OutputStream outputStream = fileManagementInterface.loadModule().write(destination)) {
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
                     ImageIO.write(
-                        (RenderedImage) imageManagementInterface.loadModule().changeDpi(source, folder.getDpi().get()),
+                        (RenderedImage) imageManagementSuffixModule.loadModule().changeDpi(source, folder.getDpi().get()),
                         formatName.get(), outputStream);
                 }
                 break;
             case CREATE_DERIVATIVE:
-                imageManagementInterface.loadModule().createDerivative(source, folder.getDerivative().get(),
+                imageManagementSuffixModule.loadModule().createDerivative(source, folder.getDerivative().get(),
                     destination, fileFormat.get());
                 break;
             case GET_SCALED_WEB_IMAGE:
-                try (OutputStream outputStream = fileManagementInterface.loadModule().write(destination)) {
-                    ImageIO.write((RenderedImage) imageManagementInterface.loadModule().getScaledWebImage(source,
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
+                    ImageIO.write((RenderedImage) imageManagementSuffixModule.loadModule().getScaledWebImage(source,
                         folder.getImageScale().get()), formatName.get(), outputStream);
                 }
                 break;
             case GET_SIZED_WEB_IMAGE:
-                try (OutputStream outputStream = fileManagementInterface.loadModule().write(destination)) {
-                    ImageIO.write((RenderedImage) imageManagementInterface.loadModule().getSizedWebImage(source,
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
+                    ImageIO.write((RenderedImage) imageManagementSuffixModule.loadModule().getSizedWebImage(source,
                         folder.getImageSize().get()), formatName.get(), outputStream);
                 }
                 break;

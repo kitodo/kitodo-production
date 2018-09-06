@@ -150,89 +150,19 @@ public class ImageGeneratorTask extends EmptyTask {
             do {
                 switch (state) {
                     case LIST_SOURCE_FOLDER:
-                        super.setWorkDetail(Helper.getTranslation("listSourceFolder"));
-                        sources = sourceFolder
-                                .listContents(vars,
-                                    FileFormatsConfig.getFileFormat(sourceFolder.getMimeType()).get()
-                                            .getExtension(false))
-                                .entrySet().stream().map(λ -> Pair.of(λ.getKey(), λ.getValue()))
-                                .collect(Collectors.toList());
-                        state = DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED;
-                        position = -1;
+                        listSourceFolder();
                         break;
-
                     case DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED:
-                        Pair<String, URI> source = sources.get(position);
-                        if (!variant.equals(ALL_IMAGES)) {
-                            super.setWorkDetail(Helper.getTranslation("determineWhichImagesNeedToBeGenerated",
-                                Arrays.asList(source.getKey())));
-                        }
-
-                        /*
-                         * The generation variant MISSING_OR_DAMAGED_IMAGES uses
-                         * the image validation module to check whether image
-                         * files are damaged. For reasons unknown, the
-                         * ModuleLoader does not work when invoked from a
-                         * parallelStream(). That's why we use a classic loop
-                         * here. This could be parallelized after the underlying
-                         * problem has been resolved.
-                         */
-                        List<Folder> generations = new ArrayList<Folder>(outputs.size());
-                        Predicate<? super Folder> requiresGeneration = variant.getFilter(vars, source.getKey());
-                        for (Folder folder : outputs) {
-                            if (requiresGeneration.test(folder)) {
-                                generations.add(folder);
-                            }
-                        }
-
-                        if (!generations.isEmpty()) {
-                            toBeGenerated.add(Pair.of(source, generations));
-                        }
-
-                        if (position == sources.size() - 1) {
-                            state = GENERATE_IMAGES;
-                            position = -1;
-                        }
+                        determineWhichImagesNeedToBeGenerated();
                         break;
-
                     case GENERATE_IMAGES:
-                        Pair<Pair<String, URI>, List<Folder>> generation = toBeGenerated.get(position);
-                        super.setWorkDetail(
-                            Helper.getTranslation("generateImages", Arrays.asList(generation.getKey().getKey())));
-                        logger.info("Generating ".concat(generation.toString()));
-
-                        /*
-                         * The image generation uses the image management module
-                         * to generate the images. For reasons unknown, the
-                         * ModuleLoader does not work when invoked from a
-                         * parallelStream(). That's why we use a classic loop
-                         * here. This could be parallelized after the underlying
-                         * problem has been resolved.
-                         */
-                        for (Folder folder : generation.getRight()) {
-                            FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
-                            Pair<String, URI> dataSource = generation.getLeft();
-                            folder.getGenerator().generate(dataSource.getValue(), dataSource.getKey(),
-                                fileFormat.getExtension(false), fileFormat.getImageFileFormat(),
-                                fileFormat.getFormatName(), vars);
-                        }
-
-                        if (position == toBeGenerated.size() - 1) {
-                            super.setProgress(100);
-                            return;
-                        }
+                        generateImages();
                         break;
-
                     default:
                         throw new UnknownCaseException(ImageGeneratorStep.class, state);
                 }
                 position++;
-                super.setProgress(100d
-                        * ((state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
-                                + (variant.equals(ALL_IMAGES)
-                                        && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0 : position)
-                                + 1)
-                        / (sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1));
+                setProgress();
                 if (isInterrupted()) {
                     return;
                 }
@@ -241,6 +171,81 @@ public class ImageGeneratorTask extends EmptyTask {
         } catch (RuntimeException | IOException | JAXBException e) {
             logger.error(e.getMessage(), e);
             setException(e);
+        }
+    }
+
+    private void setProgress() {
+        int before = (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
+                + (variant.equals(ALL_IMAGES) && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0
+                        : position);
+        int all = sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1;
+        super.setProgress(100d * (before + 1) / all);
+    }
+
+    private void listSourceFolder() throws IOException, JAXBException {
+        super.setWorkDetail(Helper.getTranslation("listSourceFolder"));
+        sources = sourceFolder
+                .listContents(vars,
+                    FileFormatsConfig.getFileFormat(sourceFolder.getMimeType()).get().getExtension(false))
+                .entrySet().stream().map(λ -> Pair.of(λ.getKey(), λ.getValue())).collect(Collectors.toList());
+        state = DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED;
+        position = -1;
+    }
+
+    private void determineWhichImagesNeedToBeGenerated() {
+        Pair<String, URI> source = sources.get(position);
+        if (!variant.equals(ALL_IMAGES)) {
+            super.setWorkDetail(
+                Helper.getTranslation("determineWhichImagesNeedToBeGenerated", Arrays.asList(source.getKey())));
+        }
+
+        /*
+         * The generation variant MISSING_OR_DAMAGED_IMAGES uses the image
+         * validation module to check whether image files are damaged. For
+         * reasons unknown, the ModuleLoader does not work when invoked from a
+         * parallelStream(). That's why we use a classic loop here. This could
+         * be parallelized after the underlying problem has been resolved.
+         */
+        List<Folder> generations = new ArrayList<Folder>(outputs.size());
+        Predicate<? super Folder> requiresGeneration = variant.getFilter(vars, source.getKey());
+        for (Folder folder : outputs) {
+            if (requiresGeneration.test(folder)) {
+                generations.add(folder);
+            }
+        }
+
+        if (!generations.isEmpty()) {
+            toBeGenerated.add(Pair.of(source, generations));
+        }
+
+        if (position == sources.size() - 1) {
+            state = GENERATE_IMAGES;
+            position = -1;
+        }
+    }
+
+    private void generateImages() throws IOException, JAXBException {
+        Pair<Pair<String, URI>, List<Folder>> generation = toBeGenerated.get(position);
+        super.setWorkDetail(Helper.getTranslation("generateImages", Arrays.asList(generation.getKey().getKey())));
+        logger.info("Generating ".concat(generation.toString()));
+
+        /*
+         * The image generation uses the image management module to generate the
+         * images. For reasons unknown, the ModuleLoader does not work when
+         * invoked from a parallelStream(). That's why we use a classic loop
+         * here. This could be parallelized after the underlying problem has
+         * been resolved.
+         */
+        for (Folder folder : generation.getRight()) {
+            FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
+            Pair<String, URI> dataSource = generation.getLeft();
+            folder.getGenerator().generate(dataSource.getValue(), dataSource.getKey(), fileFormat.getExtension(false),
+                fileFormat.getImageFileFormat(), fileFormat.getFormatName(), vars);
+        }
+
+        if (position == toBeGenerated.size() - 1) {
+            super.setProgress(100);
+            return;
         }
     }
 
