@@ -43,8 +43,7 @@
                                 </h:commandLink>
                             </t:dataList>
 
-                            <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                          rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS }"
+                            <h:outputText rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
                                           value="#{msgs.timeoutWarningDMS}"/>
 
                             <h:commandLink id="action9"
@@ -144,7 +143,7 @@
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
                             <h:commandLink id="action11"
-                                           action="#{CurrentTaskForm.batchHelper.setBatchTasksToOpen}"
+                                           action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
                                            title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
                                            onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
@@ -152,7 +151,8 @@
                                 <h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}"/>
                             </h:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
-                            <h:commandLink id="action15" action="#{CurrentTaskForm.batchHelper.closeBatchTasks}"
+                            <h:commandLink id="action15"
+                                           action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
                                            title="#{msgs.diesenSchrittAbschliessen}"
                                            onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
