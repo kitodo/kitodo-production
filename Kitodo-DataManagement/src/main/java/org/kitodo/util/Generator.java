@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.util;
 
 import java.util.List;
 
@@ -17,16 +17,16 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Task;
 
 /**
- * An encapsulation to access the generator properties of the task.
+ * An encapsulation to access the generator properties of the folder.
  */
-public class TaskGenerator {
+public class Generator {
     /**
      * Folder represented by this generator switch.
      */
     private Folder folder;
 
     /**
-     * Modifiable list containing enabled generators. This list is member of the
+     * Modifyable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
     private List<Folder> typeGenerate;
@@ -39,7 +39,7 @@ public class TaskGenerator {
      * @param typeGenerate
      *            modifyable list of enabled toggle switches
      */
-    public TaskGenerator(Folder folder, List<Folder> typeGenerate) {
+    public Generator(Folder folder, List<Folder> typeGenerate) {
         this.folder = folder;
         this.typeGenerate = typeGenerate;
     }
