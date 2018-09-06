@@ -72,7 +72,7 @@
 
                 <p:commandLink id="downloadDocket" action="#{ProzessverwaltungForm.downloadDocket}"
                                title="#{msgs.docketPrint}" ajax="false">
-                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <h:outputText><i class="fa fa-print"/></h:outputText>
                     <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
                 </p:commandLink>
 
