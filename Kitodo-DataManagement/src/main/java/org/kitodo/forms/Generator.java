@@ -19,7 +19,7 @@ import org.kitodo.data.database.beans.Task;
 /**
  * An encapsulation to access the generator properties of the folder.
  */
-public class TaskGenerator {
+public class Generator {
     /**
      * Folder represented by this generator switch.
      */
@@ -39,7 +39,7 @@ public class TaskGenerator {
      * @param typeGenerate
      *            modifyable list of enabled toggle switches
      */
-    public TaskGenerator(Folder folder, List<Folder> typeGenerate) {
+    public Generator(Folder folder, List<Folder> typeGenerate) {
         this.folder = folder;
         this.typeGenerate = typeGenerate;
     }
