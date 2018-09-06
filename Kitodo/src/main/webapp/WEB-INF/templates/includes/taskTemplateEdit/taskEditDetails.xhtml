@@ -18,23 +18,13 @@
     <p:panelGrid columns="2" layout="grid">
         <p:row>
             <div>
-                <p:outputLabel for="title" value="#{msgs.title}"/>
-                <p:inputText id="title" value="#{TemplateForm.task.title}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
-                    <p:ajax event="blur"/>
-                </p:inputText>
-            </div>
-            <div>
-                <p:outputLabel for="ordering" value="#{msgs.order}"/>
-                <p:inputText id="ordering" value="#{TemplateForm.task.ordering}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
-                    <p:ajax event="blur"/>
-                </p:inputText>
-            </div>
-            <div>
                 <p:outputLabel for="priority" value="#{msgs.priority}"/>
                 <p:inputText id="priority" value="#{TemplateForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
+        </p:row>
+        <p:row>
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
                 <p:selectOneMenu id="status" value="#{TemplateForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
@@ -45,68 +35,6 @@
                     <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-            </div>
-            <div>
-                <p:outputLabel for="typeMetaData" value="#{msgs.metadata}"/>
-                <p:selectBooleanCheckbox id="typeMetaData" value="#{TemplateForm.task.typeMetadata}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeImportFileUpload" value="#{msgs.importMittelsFileUpload}"/>
-                <p:selectBooleanCheckbox id="typeImportFileUpload" value="#{TemplateForm.task.typeImportFileUpload}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeImagesRead" value="#{msgs.imagesRead}"/>
-                <p:selectBooleanCheckbox id="typeImagesRead" value="#{TemplateForm.task.typeImagesRead}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-        </p:row>
-        <p:row>
-            <div>
-                <p:outputLabel for="typeImagesWrite" value="#{msgs.imagesWrite}"/>
-                <p:selectBooleanCheckbox id="typeImagesWrite" value="#{TemplateForm.task.typeImagesWrite}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeExportRussian" value="#{msgs.exportRus}"/>
-                <p:selectBooleanCheckbox id="typeExportRussian" value="#{ProzessverwaltungForm.task.typeExportRussian}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeExportDMS" value="#{msgs.exportDMS}"/>
-                <p:selectBooleanCheckbox id="typeExportDMS" value="#{ProzessverwaltungForm.task.typeExportDMS}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeCloseVerify" value="#{msgs.beimAbschliessenVerifizieren}"/>
-                <p:selectBooleanCheckbox id="typeCloseVerify" value="#{ProzessverwaltungForm.task.typeCloseVerify}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeAcceptClose" value="#{msgs.taskCloseByAccept}"/>
-                <p:selectBooleanCheckbox id="typeAcceptClose" value="#{TemplateForm.task.typeAcceptClose}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="typeAutomatic" value="#{msgs.automaticTask}"/>
-                <p:selectBooleanCheckbox id="typeAutomatic" value="#{TemplateForm.task.typeAutomatic}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
-            </div>
-            <div>
-                <p:outputLabel for="batchStep" value="#{msgs.batchStep}"/>
-                <p:selectBooleanCheckbox id="batchStep" value="#{TemplateForm.task.batchStep}" class="input">
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
             </div>
         </p:row>
     </p:panelGrid>
