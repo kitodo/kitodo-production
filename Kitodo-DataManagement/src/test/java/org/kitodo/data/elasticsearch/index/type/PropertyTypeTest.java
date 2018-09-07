@@ -17,6 +17,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -75,7 +76,6 @@ public class PropertyTypeTest {
     @Test
     public void shouldCreateFirstDocument() throws Exception {
         PropertyType propertyType = new PropertyType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Property property = prepareData().get(0);
         HttpEntity document = propertyType.createDocument(property);
@@ -88,7 +88,7 @@ public class PropertyTypeTest {
             PropertyTypeField.VALUE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "process",
             PropertyTypeField.TYPE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(property.getCreationDate()),
             PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
         JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
@@ -110,7 +110,6 @@ public class PropertyTypeTest {
     @Test
     public void shouldCreateDocument() throws Exception {
         PropertyType propertyType = new PropertyType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Property property = prepareData().get(1);
         HttpEntity document = propertyType.createDocument(property);
@@ -123,7 +122,7 @@ public class PropertyTypeTest {
             PropertyTypeField.VALUE.getStringValue(actual));
         assertEquals("Key type doesn't match to given value!", "template",
             PropertyTypeField.TYPE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(property.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(property.getCreationDate()),
             PropertyTypeField.CREATION_DATE.getStringValue(actual));
 
         JsonArray processes = PropertyTypeField.PROCESSES.getJsonArray(actual);
@@ -162,5 +161,10 @@ public class PropertyTypeTest {
         List<Property> properties = prepareData();
         Map<Integer, HttpEntity> documents = propertyType.createDocuments(properties);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }
