@@ -273,7 +273,7 @@ public class AktuelleSchritteForm extends BaseForm {
 
     /**
      * Unlock the current task's process.
-     * 
+     *
      * @return null
      */
     public String sperrungAufheben() {
@@ -455,7 +455,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getTypeGenerate()));
+                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getGenerateContents()));
             Helper.setMessage("regenerateAllImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -469,7 +469,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getTypeGenerate()));
+                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getGenerateContents()));
             Helper.setMessage("regenerateMissingAndDamagedImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -483,7 +483,7 @@ public class AktuelleSchritteForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getTypeGenerate()));
+                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getGenerateContents()));
             Helper.setMessage("regenerateMissingImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -683,9 +683,9 @@ public class AktuelleSchritteForm extends BaseForm {
      */
     public String getWikiField() {
         if (Objects.nonNull(this.currentTask) && Objects.nonNull(this.currentTask.getProcess())) {
-        return this.currentTask.getProcess().getWikiField();
+            return this.currentTask.getProcess().getWikiField();
 
-    }
+        }
         return "";
     }
 
