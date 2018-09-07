@@ -173,9 +173,7 @@
                                                rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.regenerateAllImagesButtonClick}"
                                                title="#{msgs.regenerateAllImages}">
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
-                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.regenerateAllImages}"/>
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
                                 </h:commandLink>
 
                                 <!-- Re-generate missing and damaged images button -->
@@ -183,9 +181,7 @@
                                                rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.regenerateMissingImagesDamagedButtonClick}"
                                                title="#{msgs.regenerateMissingAndDamagedImages}">
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
-                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.regenerateMissingAndDamagedImages}"/>
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
                                 </h:commandLink>
 
                                 <!-- Re-generate missing images button -->
@@ -193,9 +189,7 @@
                                                rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
                                                action="#{AktuelleSchritteForm.generateMissingImagesButtonClick}"
                                                title="#{msgs.generateMissingImages}">
-                                    <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="#{msgs.threeCogwheels}"
-                                                    style="margin-left:7px;margin-right:10px;vertical-align:middle"/>
-                                    <h:outputText value="#{msgs.generateMissingImages}"/>
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
                                 </h:commandLink>
 
                                 <!-- Edit Cancel-buttons -->
