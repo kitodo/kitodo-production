@@ -463,9 +463,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
 
         /*
-         * We read the list of the process, but not the list of templates, because only process tasks
-         * are displayed in the task list and reading the template list would result in
-         * never-ending loops as the list of templates reads the list of tasks.
+         * We read the list of the process, but not the list of templates,
+         * because only process tasks are displayed in the task list and reading
+         * the template list would result in never-ending loops as the list of
+         * templates reads the list of tasks.
          */
         Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
@@ -697,7 +698,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     /**
      * Performs creating images when this happens automatically in a task.
-     * 
+     *
      * @param executingThread
      *            Executing thread (displayed in the taskmanager)
      * @param task
@@ -710,7 +711,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
         Process process = task.getProcess();
         ImageGenerator generator = new ImageGenerator(process.getTitle(), process.getProject().getGeneratorSource(),
-                ImageGeneratorTaskVariant.ALL_IMAGES, task.getTypeGenerate());
+                ImageGeneratorTaskVariant.ALL_IMAGES, task.getGenerateContents());
         generator.setWorker(executingThread);
         if (automatic) {
             if (executingThread.getException() == null) {

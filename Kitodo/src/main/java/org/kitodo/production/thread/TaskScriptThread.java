@@ -60,7 +60,7 @@ public class TaskScriptThread extends EmptyTask {
             }
         }
 
-        if (!this.task.getTypeGenerate().isEmpty()) {
+        if (!this.task.getGenerateContents().isEmpty()) {
             try {
                 this.taskService.generateImages(this, task, automatic);
             } catch (DataException e) {
