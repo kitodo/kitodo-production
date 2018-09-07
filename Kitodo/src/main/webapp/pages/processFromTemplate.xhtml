@@ -19,7 +19,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
+        <f:viewAction action="#{ProcessForm.loadProcess(id)}" />
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -62,10 +62,10 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
-        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+        <ui:fragment rendered="#{not empty ProcessForm.process.title}">
             <li><a href="">#{msgs.processEdit}</a></li>
         </ui:fragment>
-        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+        <ui:fragment rendered="#{empty ProcessForm.process.title}">
             <li><a href="">#{msgs.createNewProcessFromTemplate}</a></li>
         </ui:fragment>
     </ui:define>

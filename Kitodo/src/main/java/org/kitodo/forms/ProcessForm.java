@@ -83,17 +83,16 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
-@Named("ProzessverwaltungForm")
+@Named("ProcessForm")
 @SessionScoped
-public class ProzessverwaltungForm extends TemplateBaseForm {
+public class ProcessForm extends TemplateBaseForm {
     private static final long serialVersionUID = 2838270843176821134L;
-    private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
+    private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();
     private List<ProcessCounterObject> processCounterObjects;
@@ -130,7 +129,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Constructor.
      */
-    public ProzessverwaltungForm() {
+    public ProcessForm() {
         super();
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);

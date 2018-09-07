@@ -31,18 +31,18 @@
                       outcome="searchProcess"/>
             <h:form id="filterMenu">
                 <div class="ui-inputgroup">
-                    <p:inputText forceId="true" id="filterfield" value="#{ProzessverwaltungForm.filter}" placeholder="#{msgs.filter}"/>
+                    <p:inputText forceId="true" id="filterfield" value="#{ProcessForm.filter}" placeholder="#{msgs.filter}"/>
                     <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="plain"/>
                     <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                     <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                         <ul>
                             <li>
                                 <p:commandButton id="addFilter"
-                                                 action="#{ProzessverwaltungForm.addFilterToUser}"
+                                                 action="#{ProcessForm.addFilterToUser}"
                                                  icon="fa fa-floppy-o fa-lg"
                                                  value="#{msgs.addFilter}" update="@form"/>
                             </li>
-                            <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
+                            <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
                                 <li>
                                     <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
                                     <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
@@ -57,8 +57,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processesTabView" activeIndex="#{ProzessverwaltungForm.activeTabIndex}">
-            <p:ajax event="tabChange" listener="#{ProzessverwaltungForm.onTabChange}"/>
+        <p:tabView id="processesTabView" activeIndex="#{ProcessForm.activeTabIndex}">
+            <p:ajax event="tabChange" listener="#{ProcessForm.onTabChange}"/>
             <p:tab title="#{msgs.processList}">
                 <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
             </p:tab>
