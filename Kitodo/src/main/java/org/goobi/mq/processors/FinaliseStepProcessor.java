@@ -12,7 +12,6 @@
 package org.goobi.mq.processors;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.forms.AktuelleSchritteForm;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.forms.AktuelleSchritteForm;
 import org.kitodo.services.ServiceManager;
 
 /**

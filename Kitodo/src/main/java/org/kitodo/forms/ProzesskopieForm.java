@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
@@ -82,6 +82,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.helper.AdditionalField;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
