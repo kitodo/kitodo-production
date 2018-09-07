@@ -127,7 +127,9 @@ public class Task extends BaseIndexedBean {
      * this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
+    @JoinTable(name = "task_x_user", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
@@ -135,16 +137,21 @@ public class Task extends BaseIndexedBean {
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {
+            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
+                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about typeGenerate, whose contents are to
-     * be generated in this task.
+     * This field contains information about folders whose contents are to be
+     * generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "typeGenerate_task_x_folder", joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")), inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")))
-    private List<Folder> typeGenerate;
+    @JoinTable(name = "generateContents_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_generateContents_task_x_folder_task_id")),
+        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
+    )
+    private List<Folder> generateContents;
 
     @Transient
     private String localizedTitle;
@@ -420,32 +427,32 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getTypeGenerate() {
-        if (this.typeGenerate == null) {
-            this.typeGenerate = new ArrayList<>();
+    public List<Folder> getGenerateContents() {
+        if (this.generateContents == null) {
+            this.generateContents = new ArrayList<>();
         }
-        return typeGenerate;
+        return generateContents;
     }
 
     /**
-     * Set list of type generate.
+     * Set list of folders whose contents are to be generated.
      *
-     * @param typeGenerate
+     * @param generateContents
      *            as list
      */
-    public void setTypeGenerate(List<Folder> typeGenerate) {
-        this.typeGenerate = typeGenerate;
+    public void setGenerateContents(List<Folder> generateContents) {
+        this.generateContents = generateContents;
     }
 
     /**
-     * Get list of folders to generate.
+     * Get list of folders whose contents are to be generated.
      *
      * @return list of Folder objects or empty list
      */
     @SuppressWarnings("serial")
     public List<Generator> getGenerators() {
-        if (this.typeGenerate == null) {
-            this.typeGenerate = new ArrayList<>();
+        if (this.generateContents == null) {
+            this.generateContents = new ArrayList<>();
         }
         Stream<Project> projects = template.getProjects().stream();
 
@@ -470,7 +477,7 @@ public class Task extends BaseIndexedBean {
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<Generator> taskGenerators = generatableFolders.map(λ -> new Generator(λ, typeGenerate));
+        Stream<Generator> taskGenerators = generatableFolders.map(λ -> new Generator(λ, generateContents));
 
         return new ArrayList<Generator>() {
             {
