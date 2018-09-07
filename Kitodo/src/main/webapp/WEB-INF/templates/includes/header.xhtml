@@ -40,7 +40,7 @@
                 <ul id="menu">
                     <li>
                         <!-- List: my tasks -->
-                        <c:set var="tasks" value="#{AktuelleSchritteForm.tasksInProgress}"/>
+                        <c:set var="tasks" value="#{CurrentTaskForm.tasksInProgress}"/>
                         <a href="#"><i class="fa fa-bell-o fa-lg"/>
                             <h:panelGroup rendered="#{tasks.size() gt 0}"
                                           styleClass="batch-count bc-alert">#{tasks.size()}</h:panelGroup>

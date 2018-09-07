@@ -58,11 +58,11 @@ import org.kitodo.model.LazyDTOModel;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
-@Named("AktuelleSchritteForm")
+@Named("CurrentTaskForm")
 @SessionScoped
-public class AktuelleSchritteForm extends BaseForm {
+public class CurrentTaskForm extends BaseForm {
     private static final long serialVersionUID = 5841566727939692509L;
-    private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
+    private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
     private Problem problem = new Problem();
@@ -88,7 +88,7 @@ public class AktuelleSchritteForm extends BaseForm {
     /**
      * Constructor.
      */
-    public AktuelleSchritteForm() {
+    public CurrentTaskForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getTaskService()));
         this.anzeigeAnpassen = new HashMap<>();
@@ -801,7 +801,7 @@ public class AktuelleSchritteForm extends BaseForm {
     }
 
     /**
-     * Method being used as viewAction for AktuelleSchritteForm.
+     * Method being used as viewAction for CurrenTaskForm.
      *
      * @param id
      *            ID of the step to load

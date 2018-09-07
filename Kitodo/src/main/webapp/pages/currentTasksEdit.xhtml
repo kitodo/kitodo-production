@@ -31,13 +31,13 @@
                 <h:form id="addToWikiForm">
                     <p:panel style="width:800px">
                         <div style="border: 1px solid lightgray;min-height: 100px;">
-                            <h:outputText escape="false" value="#{AktuelleSchritteForm.wikiField}" />
+                            <h:outputText escape="false" value="#{CurrentTaskForm.wikiField}" />
                         </div>
                         <br/>
-                        <p:inputText id="addToTextArea" value="#{AktuelleSchritteForm.addToWikiField}" class="input" />
+                        <p:inputText id="addToTextArea" value="#{CurrentTaskForm.addToWikiField}" class="input" />
                         <p:panel styleClass="content-header">
                             <p:commandButton id="addMessage" value="#{msgs.messageAdd}"
-                                             action="#{AktuelleSchritteForm.addToWikiField}" ajax="false"
+                                             action="#{CurrentTaskForm.addToWikiField}" ajax="false"
                                              styleClass="callto"/>
                         </p:panel>
                     </p:panel>

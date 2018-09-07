@@ -284,7 +284,7 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Taken from AktuelleSchritteForm.
+     * Taken from CurrentTaskForm.
      *
      * @param task
      *            object

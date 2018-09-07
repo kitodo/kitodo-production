@@ -18,8 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:t="http://myfaces.apache.org/tomahawk"
 >
-    <h:panelGroup
-            rendered="#{AktuelleSchritteForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
+    <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
 
         <h:form id="actionform">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
@@ -32,11 +31,11 @@
                     <td class="eingabeBoxen_row2">
                         <h:panelGrid columns="1">
 
-                            <t:dataList var="script" value="#{AktuelleSchritteForm.batchHelper.script}"
+                            <t:dataList var="script" value="#{CurrentTaskForm.batchHelper.script}"
                                         layout="unorderedList">
-                                <h:commandLink id="action3" action="#{AktuelleSchritteForm.batchHelper.executeScript}"
+                                <h:commandLink id="action3" action="#{CurrentTaskForm.batchHelper.executeScript}"
                                                title="#{script}">
-                                    <t:updateActionListener property="#{AktuelleSchritteForm.batchHelper.script}"
+                                    <t:updateActionListener property="#{CurrentTaskForm.batchHelper.script}"
                                                             value="#{script}"/>
                                     <h:graphicImage value="/pages/images/buttons/admin4b.gif" alt="execute action"
                                                     style="margin-right:3px;vertical-align:middle"/>
@@ -45,13 +44,12 @@
                             </t:dataList>
 
                             <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                          rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS }"
+                                          rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS }"
                                           value="#{msgs.timeoutWarningDMS}"/>
 
                             <h:commandLink id="action9"
-                                           rendered="#{AktuelleSchritteForm.batchHelper.currentStep.typeExportDMS}"
-                                           action="#{AktuelleSchritteForm.batchHelper.exportDMS}"
-                                           title="#{msgs.importDms}">
+                                           rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
+                                           action="#{CurrentTaskForm.batchHelper.exportDMS}" title="#{msgs.importDms}">
                                 <h:graphicImage value="/pages/images/buttons/dms.png" alt="export to dms"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.importDms}"/>
@@ -72,24 +70,24 @@
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
                                         <h:outputText value="#{msgs.backToTask}"/>
                                         <h:selectOneMenu style="width:350px"
-                                                         value="#{AktuelleSchritteForm.batchHelper.problemTask}">
+                                                         value="#{CurrentTaskForm.batchHelper.problemTask}">
                                             <f:selectItems
-                                                    value="#{AktuelleSchritteForm.batchHelper.previousStepsForProblemReporting}"/>
+                                                    value="#{CurrentTaskForm.batchHelper.previousStepsForProblemReporting}"/>
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.remark}"/>
                                         <h:inputTextarea style="width:350px;height:80px"
-                                                         value="#{AktuelleSchritteForm.batchHelper.problem.message}"/>
+                                                         value="#{CurrentTaskForm.batchHelper.problem.message}"/>
                                         <h:outputText value=""/>
                                         <h:panelGroup>
                                             <h:commandLink id="action130"
-                                                           action="#{AktuelleSchritteForm.batchHelper.reportProblemForSingle}"
+                                                           action="#{CurrentTaskForm.batchHelper.reportProblemForSingle}"
                                                            title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSend}"/>
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action131"
-                                                           action="#{AktuelleSchritteForm.batchHelper.reportProblemForAll}"
+                                                           action="#{CurrentTaskForm.batchHelper.reportProblemForAll}"
                                                            title="#{msgs.correctionMessageSend}"
                                                            onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSendAllTasks}"/>
@@ -101,7 +99,7 @@
                             </h:panelGroup>
 
                             <!-- Schritt weitergeben an nachfolgende Station für KorrekturBehobenZwecke -->
-                            <h:panelGroup rendered="#{AktuelleSchritteForm.batchHelper.currentStep.priority>9}">
+                            <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.priority>9}">
 
                                 <span class="toggle" data-for="toggle-2">
 
@@ -117,24 +115,24 @@
                                                  columnClasses="standardTable_Column,standardTable_ColumnRight">
                                         <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
                                         <h:selectOneMenu style="width:350px" id="select1"
-                                                         value="#{AktuelleSchritteForm.batchHelper.solutionTask}">
+                                                         value="#{CurrentTaskForm.batchHelper.solutionTask}">
                                             <f:selectItems
-                                                    value="#{AktuelleSchritteForm.batchHelper.nextStepsForProblemSolution}"/>
+                                                    value="#{CurrentTaskForm.batchHelper.nextStepsForProblemSolution}"/>
                                         </h:selectOneMenu>
                                         <h:outputText value="#{msgs.remark}"/>
                                         <h:inputTextarea style="width:350px;height:80px" id="input1"
-                                                         value="#{AktuelleSchritteForm.batchHelper.solution.message}"/>
+                                                         value="#{CurrentTaskForm.batchHelper.solution.message}"/>
                                         <h:outputText value=""/>
                                         <h:panelGroup>
                                             <h:commandLink id="action140"
-                                                           action="#{AktuelleSchritteForm.batchHelper.solveProblemForSingle}"
+                                                           action="#{CurrentTaskForm.batchHelper.solveProblemForSingle}"
                                                            title="#{msgs.meldungUeberProblemloesungSenden}"
                                                            onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                                 <h:outputText value="#{msgs.meldungUeberProblemloesungSendenSingle}"/>
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action141"
-                                                           action="#{AktuelleSchritteForm.batchHelper.solveProblemForAll}"
+                                                           action="#{CurrentTaskForm.batchHelper.solveProblemForAll}"
                                                            title="#{msgs.meldungUeberProblemloesungSenden}"
                                                            onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
                                                 <h:outputText value="#{msgs.meldungUeberProblemloesungSendenForAll}"/>
@@ -146,7 +144,7 @@
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
                             <h:commandLink id="action11"
-                                           action="#{AktuelleSchritteForm.batchHelper.setBatchTasksToOpen}"
+                                           action="#{CurrentTaskForm.batchHelper.setBatchTasksToOpen}"
                                            title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
                                            onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
@@ -154,8 +152,7 @@
                                 <h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}"/>
                             </h:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
-                            <h:commandLink id="action15"
-                                           action="#{AktuelleSchritteForm.batchHelper.closeBatchTasks}"
+                            <h:commandLink id="action15" action="#{CurrentTaskForm.batchHelper.closeBatchTasks}"
                                            title="#{msgs.diesenSchrittAbschliessen}"
                                            onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
