@@ -29,19 +29,19 @@ public class Generator {
      * Modifyable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
-    private List<Folder> typeGenerate;
+    private List<Folder> generateContents;
 
     /**
      * Creates a new generator for this task.
      *
      * @param folder
      *            folder represented by this toggle switch
-     * @param typeGenerate
+     * @param generateContents
      *            modifyable list of enabled toggle switches
      */
-    public Generator(Folder folder, List<Folder> typeGenerate) {
+    public Generator(Folder folder, List<Folder> generateContents) {
         this.folder = folder;
-        this.typeGenerate = typeGenerate;
+        this.generateContents = generateContents;
     }
 
     /**
@@ -60,7 +60,7 @@ public class Generator {
      * @returns the value for the toggle switch
      */
     public boolean isValue() {
-        return typeGenerate.contains(folder);
+        return generateContents.contains(folder);
     }
 
     /**
@@ -71,9 +71,9 @@ public class Generator {
      */
     public void setValue(boolean value) {
         if (!value) {
-            typeGenerate.remove(folder);
-        } else if (!typeGenerate.contains(folder)) {
-            typeGenerate.add(folder);
+            generateContents.remove(folder);
+        } else if (!generateContents.contains(folder)) {
+            generateContents.add(folder);
         }
     }
 }

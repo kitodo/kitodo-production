@@ -10,11 +10,11 @@
 --
 
 --
--- Migration: Create table typeGenerate_task_x_folder
+-- Migration: Create table generateContents_task_x_folder
 
--- 1. Create table typeGenerate_task_x_folder
+-- 1. Create table generateContents_task_x_folder
 
-CREATE TABLE typeGenerate_task_x_folder (
+CREATE TABLE generateContents_task_x_folder (
   task_id   int(11) NOT NULL
      COMMENT 'Task that triggers the generation of the contents of the folder',
   folder_id int(11) NOT NULL
@@ -22,8 +22,8 @@ CREATE TABLE typeGenerate_task_x_folder (
   PRIMARY KEY ( task_id, folder_id ),
   KEY FK_task_id   ( task_id ),
   KEY FK_folder_id ( folder_id ),
-  CONSTRAINT FK_typeGenerate_task_x_folder_task_id
+  CONSTRAINT FK_generateContents_task_x_folder_task_id
     FOREIGN KEY ( task_id ) REFERENCES task ( id ),
-  CONSTRAINT FK_typeGenerate_task_x_folder_folder_id
+  CONSTRAINT FK_generateContents_task_x_folder_folder_id
     FOREIGN KEY ( folder_id ) REFERENCES folder ( id )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
