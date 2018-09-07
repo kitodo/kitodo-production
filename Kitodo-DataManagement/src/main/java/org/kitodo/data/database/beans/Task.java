@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -30,7 +31,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.forms.TaskGenerator;
+import org.kitodo.util.Generator;
 
 @Entity
 @Table(name = "task")
@@ -142,15 +143,15 @@ public class Task extends BaseIndexedBean {
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about typeGenerate, whose contents are to
-     * be generated in this task.
+     * This field contains information about folders whose contents are to be
+     * generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "typeGenerate_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_typeGenerate_task_x_folder_task_id")),
+    @JoinTable(name = "generateContents_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_generateContents_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
-    private List<Folder> typeGenerate;
+    private List<Folder> generateContents;
 
     @Transient
     private String localizedTitle;
@@ -426,42 +427,61 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getTypeGenerate() {
-        if (this.typeGenerate == null) {
-            this.typeGenerate = new ArrayList<>();
+    public List<Folder> getGenerateContents() {
+        if (this.generateContents == null) {
+            this.generateContents = new ArrayList<>();
         }
-        return typeGenerate;
+        return generateContents;
     }
 
     /**
-     * Set list of type generate.
+     * Set list of folders whose contents are to be generated.
      *
-     * @param typeGenerate
+     * @param generateContents
      *            as list
      */
-    public void setTypeGenerate(List<Folder> typeGenerate) {
-        this.typeGenerate = typeGenerate;
+    public void setGenerateContents(List<Folder> generateContents) {
+        this.generateContents = generateContents;
     }
 
     /**
-     * Get list of folders to generate.
+     * Get list of folders whose contents are to be generated.
      *
      * @return list of Folder objects or empty list
      */
     @SuppressWarnings("serial")
-    public List<TaskGenerator> getGenerators() {
-        if (this.typeGenerate == null) {
-            this.typeGenerate = new ArrayList<>();
+    public List<Generator> getGenerators() {
+        if (this.generateContents == null) {
+            this.generateContents = new ArrayList<>();
         }
-        List<Project> projects = template.getProjects();
-        return new ArrayList<TaskGenerator>() {
+        Stream<Project> projects = template.getProjects().stream();
+
+        // Ignore all projects that do not have a source folder configured. It
+        // isn’t possible to generate anything without a data source.
+        Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
+
+        // Drop all folders to generate if they are their own source folder. The
+        // user may have configured a generation rule on a folder that it later
+        // has set as source folder. This would cause the file to be overwritten
+        // by itself in the generation process, leading to data loss, which must
+        // be avoided.
+        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
+                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
+        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
+                .map(λ -> λ.getLeft());
+
+        // Remove all folders to generate which do not have anything to generate
+        // configured.
+        Stream<Folder> generatableFolders = allowedFolders.filter(λ -> λ.getDerivative().isPresent()
+                || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent());
+
+        // For all remaining folders, create an encapsulation to access the
+        // generator properties of the folder.
+        Stream<Generator> taskGenerators = generatableFolders.map(λ -> new Generator(λ, generateContents));
+
+        return new ArrayList<Generator>() {
             {
-                projects.stream().filter(λ -> Objects.nonNull(λ.getGeneratorSource()))
-                        .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())))
-                        .filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft())
-                        .filter(λ -> λ.getDerivative().isPresent() || λ.getDpi().isPresent()
-                                || λ.getImageScale().isPresent() || λ.getImageSize().isPresent())
-                        .map(λ -> new TaskGenerator(λ, typeGenerate)).forEach(this::add);
+                taskGenerators.forEach(this::add);
             }
         };
     }

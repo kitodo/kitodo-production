@@ -26,8 +26,15 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+/**
+ * The implementation of Spring Security's UserDetails interface which is used
+ * to population the current authentication with security information
+ * (e.g. authorities, account expired or locked, ...).
+ */
 @Service
 public class SecurityUserDetails extends User implements UserDetails {
+
+    private static final long serialVersionUID = 2950419497162715796L;
 
     /**
      * The client which was selected by user after login.
@@ -67,7 +74,7 @@ public class SecurityUserDetails extends User implements UserDetails {
 
     private void insertGlobalAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority) {
         String authorityTitle = authority.getTitle()
-            .replace(serviceManager.getAuthorityService().getGlobalAuthoritySuffix(), "");
+                .replace(serviceManager.getAuthorityService().getGlobalAuthoritySuffix(), "");
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_GLOBAL");
         if (!userAuthorities.contains(simpleGrantedAuthority)) {
             userAuthorities.add(simpleGrantedAuthority);
@@ -92,8 +99,8 @@ public class SecurityUserDetails extends User implements UserDetails {
         }
     }
 
-    private void insertProjectAuthorities(List<SimpleGrantedAuthority> userAuthorities,
-                                          Authority authority, List<Project> projects) {
+    private void insertProjectAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
+            List<Project> projects) {
         for (Project project : projects) {
             String authorityTitle = authority.getTitle()
                     .replace(serviceManager.getAuthorityService().getProjectAuthoritySuffix(), "");

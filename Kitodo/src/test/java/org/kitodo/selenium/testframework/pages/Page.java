@@ -103,7 +103,7 @@ public abstract class Page<T> {
     /**
      * Find row matching to give table, click toggle row and return index of found
      * row.
-     * 
+     *
      * @param dataTable
      *            table for search
      * @param objectTitle
@@ -164,6 +164,11 @@ public abstract class Page<T> {
             }
         }
         throw new TimeoutException("Could not access save button!" + button.getAttribute("id"));
+    }
+
+    protected void clickElement(WebElement element) {
+        await("Wait for element clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
+                                        .ignoreExceptions().until(() -> isButtonClicked.matches(element));
     }
 
     Predicate<WebElement> isButtonClicked = (webElement) -> {

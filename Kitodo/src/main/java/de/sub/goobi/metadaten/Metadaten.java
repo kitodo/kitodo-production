@@ -12,6 +12,7 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
+import de.sub.goobi.helper.BatchStepHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.HelperComparator;
 import de.sub.goobi.helper.Transliteration;
@@ -21,11 +22,17 @@ import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,10 +45,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
+
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.name.Rename;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpClient;
@@ -50,6 +63,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.api.display.Modes;
@@ -81,6 +95,8 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
@@ -88,6 +104,9 @@ import org.kitodo.enums.SortType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
+import org.kitodo.workflow.Problem;
+import org.primefaces.PrimeFaces;
+import org.primefaces.event.DragDropEvent;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.TreeDragDropEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -95,13 +114,23 @@ import org.primefaces.model.TreeNode;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
- * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
+ * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 17.01.2005
  */
 public class Metadaten {
     private static final Logger logger = LogManager.getLogger(Metadaten.class);
+
+    /**
+     * Get imageHelper.
+     *
+     * @return value of imageHelper
+     */
+    public MetadatenImagesHelper getImageHelper() {
+        return imageHelper;
+    }
+
     private MetadatenImagesHelper imageHelper;
     private MetadatenHelper metaHelper;
     private boolean treeReloaded = false;
@@ -135,6 +164,18 @@ public class Metadaten {
     private ArrayList<MetadatumImpl> tempMetadatumList = new ArrayList<>();
     private MetadatumImpl selectedMetadatum;
     private String currentRepresentativePage = "";
+    private boolean showPagination = false;
+
+    private boolean showNewComment = false;
+    private boolean correctionComment = false;
+    private String addToWikiField;
+    private String[] wikiField;
+    protected User user;
+    private Problem problem = new Problem();
+
+    private String viewMode = "list";
+    private String currentImage = "";
+
     private String paginationValue;
     private int paginationFromPageOrMark;
     private String paginationType;
@@ -163,7 +204,7 @@ public class Metadaten {
     private String addFirstDocStructType;
     private String addSecondDocStructType;
     private String result = "Main";
-    private final MetadatenSperrung sperrung = new MetadatenSperrung();
+    private final MetadataLock sperrung = new MetadataLock();
     private String neuesElementWohin = "1";
     private String additionalOpacPpns;
     private String opacSearchField = "12";
@@ -187,6 +228,27 @@ public class Metadaten {
     private String addMetaDataValue;
     private boolean addServeralStructuralElementsMode = false;
     private static final String BLOCK_EXPIRED = "SperrungAbgelaufen";
+
+    private URI imagesFolderURI = ConfigCore.getTempImagesPathAsCompleteDirectory();
+    private Path imageFolderPath = Paths.get(imagesFolderURI);
+    private File imageFolderFile = imageFolderPath.toFile();
+    private String imagesFolder = imageFolderFile.toString().replace("pages", "images").replace("imagesTemp", "");
+    private String fullsizePath = "";
+    private String thumbnailPath = "";
+    private String subfolderName = "";
+    private static final String THUMBNAIL_FOLDER_NAME = "thumbnails";
+    private static final String FULLSIZE_FOLDER_NAME = "fullsize";
+    private int numberOfConvertedImages = 0;
+    private int numberOfImagesToAdd = 0;
+    private List<String> metadataEditorComponents = Arrays.asList(
+            "structureTreeForm:structureWrapperPanel",
+            "structureTreeForm:paginationWrapperPanel",
+            "metadataWrapperPanel",
+            "commentWrapperPanel",
+            "galleryWrapperPanel");
+    private String referringView = "desktop";
+
+
 
     /**
      * Konstruktor.
@@ -262,7 +324,7 @@ public class Metadaten {
         calculateMetadataAndImages();
         cleanupMetadata();
         if (storeMetadata()) {
-            return "/pages/processes?faces-redirect=true";
+            return referringView;
         } else {
             Helper.setMessage("XML could not be saved");
             return "";
@@ -488,20 +550,8 @@ public class Metadaten {
         return getAddableMetadataTypes(docStruct, tempMetadatumList);
     }
 
-    /**
-     * Gets addable metadata types from tempTyp.
-     *
-     * @return The addable metadata types from tempTyp.
-     */
-    public List<SelectItem> getAddableMetadataTypesFromTempType() {
-        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
-        DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
-
-        return getAddableMetadataTypes(ds, this.tempMetadatumList);
-    }
-
     private ArrayList<SelectItem> getAddableMetadataTypes(DocStructInterface myDocStruct,
-            ArrayList<MetadatumImpl> tempMetadatumList) {
+                                                          ArrayList<MetadatumImpl> tempMetadatumList) {
         ArrayList<SelectItem> selectItems = new ArrayList<>();
 
         // determine all addable metadata types
@@ -540,6 +590,18 @@ public class Metadaten {
             }
         }
         return selectItems;
+    }
+
+    /**
+     * Gets addable metadata types from tempTyp.
+     *
+     * @return The addable metadata types from tempTyp.
+     */
+    public List<SelectItem> getAddableMetadataTypesFromTempType() {
+        DocStructTypeInterface dst = this.myPrefs.getDocStrctTypeByName(this.tempTyp);
+        DocStructInterface ds = this.digitalDocument.createDocStruct(dst);
+
+        return getAddableMetadataTypes(ds, this.tempMetadatumList);
     }
 
     /**
@@ -673,7 +735,6 @@ public class Metadaten {
             throw new ReadException(Helper.getTranslation("metadataError"));
         }
 
-        identifyImage(1);
         retrieveAllImages();
         if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
@@ -1110,12 +1171,11 @@ public class Metadaten {
         }
 
         if (!this.pagesStart.equals("") && !this.pagesEnd.equals("")) {
-            DocStructInterface temp = this.docStruct;
-            this.docStruct = docStruct;
+
             this.ajaxPageStart = this.pagesStart;
             this.ajaxPageEnd = this.pagesEnd;
-            ajaxSeitenStartUndEndeSetzen();
-            this.docStruct = temp;
+            ajaxSeitenStartUndEndeSetzen(docStruct);
+
         }
         readMetadataAsFirstTree();
     }
@@ -1141,6 +1201,9 @@ public class Metadaten {
             DocStructInterface newDocStruct, int index) throws TypeNotAllowedAsChildException {
 
         if (existingDocStruct.isDocStructTypeAllowedAsChild(newDocStruct.getDocStructType())) {
+            if (existingDocStruct.getAllChildren().size() < index) {
+                index--;
+            }
             existingDocStruct.addChild(index, newDocStruct);
         } else {
             throw new TypeNotAllowedAsChildException(newDocStruct.getDocStructType() + " ot allowed as child of "
@@ -1251,7 +1314,7 @@ public class Metadaten {
     /**
      * Markus baut eine Seitenstruktur aus den vorhandenen Images.
      */
-    public String createPagination() throws IOException {
+    public void createPagination() throws IOException {
         this.imageHelper.createPagination(this.process, this.currentTifFolder);
         retrieveAllImages();
 
@@ -1262,7 +1325,7 @@ public class Metadaten {
             log = log.getAllChildren().get(0);
         }
         if (log.getDocStructType().getAnchorClass() != null) {
-            return "";
+            return;
         }
 
         if (log.getAllChildren() != null) {
@@ -1283,7 +1346,6 @@ public class Metadaten {
                 }
             }
         }
-        return "";
     }
 
     /**
@@ -1691,7 +1753,7 @@ public class Metadaten {
          * wenn die Sperrung noch aktiv ist und auch für den aktuellen Nutzer
          * gilt, Sperrung aktualisieren
          */
-        if (MetadatenSperrung.isLocked(this.process.getId())
+        if (MetadataLock.isLocked(this.process.getId())
                 && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
             this.sperrung.setLocked(this.process.getId(), this.userId);
             return true;
@@ -1701,7 +1763,7 @@ public class Metadaten {
     }
 
     private void disableReturn() {
-        if (MetadatenSperrung.isLocked(this.process.getId())
+        if (MetadataLock.isLocked(this.process.getId())
                 && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
             this.sperrung.setFree(this.process.getId());
         }
@@ -1976,8 +2038,9 @@ public class Metadaten {
 
     /**
      * die Seiten über die Ajax-Felder festlegen.
+     * @param docStruct the doc structure for which the pages are set
      */
-    public void ajaxSeitenStartUndEndeSetzen() {
+    public void ajaxSeitenStartUndEndeSetzen(DocStructInterface docStruct) {
         boolean startPageOk = false;
         boolean endPageOk = false;
 
@@ -1995,33 +2058,39 @@ public class Metadaten {
 
         // if pages are ok
         if (startPageOk && endPageOk) {
-            setPageStartAndEnd();
+            setPageStartAndEnd(docStruct);
         } else {
             Helper.setErrorMessage("Selected image(s) unavailable");
         }
     }
 
+    public void setPageStartAndEnd() {
+        setPageStartAndEnd(this.docStruct);
+    }
+
     /**
      * die erste und die letzte Seite festlegen und alle dazwischen zuweisen.
+     * @param docStruct the doc structure for which the pages are set
      */
-    public void setPageStartAndEnd() {
+    public void setPageStartAndEnd(DocStructInterface docStruct) {
         int startPage = Integer.parseInt(this.allPagesSelectionFirstPage.split(":")[0]) - 1;
         int lastPage = Integer.parseInt(this.allPagesSelectionLastPage.split(":")[0]) - 1;
 
         int selectionCount = lastPage - startPage + 1;
         if (selectionCount > 0) {
+
             /* alle bisher zugewiesenen Seiten entfernen */
-            this.docStruct.getAllToReferences().clear();
+            docStruct.getAllToReferences().clear();
             int zaehler = 0;
             while (zaehler < selectionCount) {
-                this.docStruct.addReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct(),
+                docStruct.addReferenceTo(this.allPagesNew[startPage + zaehler].getMd().getDocStruct(),
                     "logical_physical");
                 zaehler++;
             }
         } else {
             Helper.setErrorMessage("Last page before first page is not allowed");
         }
-        determinePagesStructure(this.docStruct);
+        determinePagesStructure(docStruct);
 
     }
 
@@ -2247,7 +2316,11 @@ public class Metadaten {
     public String getTempTyp() {
         if (this.selectedMetadatum == null) {
             getAddableMetadataTypes();
-            this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadatumList.isEmpty()) {
+                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            } else {
+                return "";
+            }
         }
         return this.selectedMetadatum.getMd().getMetadataType().getName();
     }
@@ -2279,7 +2352,9 @@ public class Metadaten {
 
         if (this.selectedMetadatum == null) {
             getAddableMetadataTypes();
-            this.selectedMetadatum = this.tempMetadatumList.get(0);
+            if (!this.tempMetadatumList.isEmpty()) {
+                this.selectedMetadatum = this.tempMetadatumList.get(0);
+            }
         }
         return this.selectedMetadatum;
     }
@@ -2510,19 +2585,6 @@ public class Metadaten {
     }
 
     /**
-     * Get structure tree 3.
-     *
-     * @return list of HashMaps
-     */
-    public List<HashMap<String, Object>> getStrukturBaum3() {
-        if (this.treeNodeStruct != null) {
-            return this.treeNodeStruct.getChildrenAsList();
-        } else {
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Returns the current selected TreeNode.
      *
      * @return The TreeNode.
@@ -2585,8 +2647,14 @@ public class Metadaten {
                 treeNode.setSelected(true);
             }
             List<DocStructInterface> children = element.getAllChildren();
+            List<DocStructInterface> pages = getPageReferencesToDocStruct(element);
             if (children != null) {
+                if (Objects.nonNull(pages) && !pages.isEmpty()) {
+                    children.addAll(pages);
+                }
                 convertDocstructToPrimeFacesTreeNode(children, treeNode);
+            } else if (Objects.nonNull(pages) && !pages.isEmpty()) {
+                convertDocstructToPrimeFacesTreeNode(pages, treeNode);
             }
         }
         return treeNode;
@@ -2610,13 +2678,23 @@ public class Metadaten {
     public void onNodeDragDrop(TreeDragDropEvent event) {
 
         int dropIndex = event.getDropIndex();
-
-        DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
-        DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
-
-        if (event.getDropNode().getParent().getData().equals("root")) {
+        if (event.getDropNode().getData().equals("root")) {
             Helper.setErrorMessage("Only one root element allowed");
-        } else {
+        } else  {
+            DocStructInterface dropDocStruct = (DocStructInterface) event.getDropNode().getData();
+            DocStructInterface dragDocStruct = (DocStructInterface) event.getDragNode().getData();
+
+            if (Objects.equals(dragDocStruct.getDocStructType().getName(), "page")) {
+                String pyhsicalPageNumber = String.valueOf(getPhysicalPageNumber(dragDocStruct));
+                this.docStruct = dropDocStruct;
+                this.allPagesSelection = new String[1];
+                this.allPagesSelection[0] = pyhsicalPageNumber;
+                addPages();
+                // TODO We need to implement also the removing of the draged node from the old
+                // parent
+                return;
+            }
+
 
             if (dropDocStruct.isDocStructTypeAllowedAsChild(dragDocStruct.getDocStructType())) {
                 this.docStruct = dragDocStruct;
@@ -2631,19 +2709,6 @@ public class Metadaten {
                 Helper.setErrorMessage(
                     dragDocStruct.getDocStructType() + " not allowed as child of " + dropDocStruct.getDocStructType());
             }
-        }
-    }
-
-    /**
-     * Get all structure trees 3.
-     *
-     * @return list of HashMaps
-     */
-    public List<HashMap<String, Object>> getStrukturBaum3Alle() {
-        if (this.treeNodeStruct != null) {
-            return this.treeNodeStruct.getChildrenAsListAlle();
-        } else {
-            return Collections.emptyList();
         }
     }
 
@@ -2903,9 +2968,8 @@ public class Metadaten {
     /**
      * Delete selected pages.
      */
-    public void deleteSelectedPages() throws IOException {
+    void deleteSelectedPages() throws IOException {
         List<Integer> selectedPages = new ArrayList<>();
-        List<DocStructInterface> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
         List<String> pagesList = Arrays.asList(allPagesSelection);
         Collections.reverse(pagesList);
         for (String order : pagesList) {
@@ -2916,6 +2980,8 @@ public class Metadaten {
         if (selectedPages.isEmpty()) {
             return;
         }
+
+        List<DocStructInterface> allPages = digitalDocument.getPhysicalDocStruct().getAllChildren();
 
         removeReferenceToSelectedPages(selectedPages, allPages);
 
@@ -3219,7 +3285,7 @@ public class Metadaten {
     }
 
     /**
-     * Deletes the metadata group
+     * Deletes the metadata group.
      *
      * @param metadataGroup
      *            metadata group to delete.
@@ -3392,4 +3458,710 @@ public class Metadaten {
     public void setAddServeralStructuralElementsMode(boolean addServeralStructuralElementsMode) {
         this.addServeralStructuralElementsMode = addServeralStructuralElementsMode;
     }
+
+    /**
+     * Get showPagination.
+     *
+     * @return value of showPagination
+     */
+    public boolean isShowPagination() {
+        return showPagination;
+    }
+
+    /**
+     * Set showPagination.
+     *
+     * @param showPagination as boolean
+     */
+    public void setShowPagination(boolean showPagination) {
+        this.showPagination = showPagination;
+    }
+
+    public boolean isShowNewComment() {
+        return showNewComment;
+    }
+
+    public void setShowNewComment(boolean showNewComment) {
+        this.showNewComment = showNewComment;
+    }
+
+    public String getViewMode() {
+        return viewMode;
+    }
+
+    public void setViewMode(String viewMode) {
+        this.viewMode = viewMode;
+    }
+
+    public String getCurrentImage() {
+        return currentImage;
+    }
+
+    public void setCurrentImage(String currentImage) {
+        this.currentImage = currentImage;
+    }
+
+    /**
+     * Gets numberOfImagesToAdd.
+     *
+     * @return The numberOfImagesToAdd.
+     */
+    public int getNumberOfImagesToAdd() {
+        return numberOfImagesToAdd;
+    }
+
+    /**
+     * Sets numberOfImagesToAdd.
+     *
+     * @param numberOfImagesToAdd The numberOfImagesToAdd.
+     */
+    public void setNumberOfImagesToAdd(int numberOfImagesToAdd) {
+        this.numberOfImagesToAdd = numberOfImagesToAdd;
+    }
+
+    /**
+     * Return index of currently selected page.
+     * @return current page index
+     */
+    public int getPageIndex() {
+        if (!this.getImages().isEmpty() && this.getImages().contains(this.currentImage)) {
+            return this.getImages().indexOf(this.currentImage) + 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Creates dummy images for current process and paginates by configured standard setting.
+     */
+    public void addNewImagesAndPaginate() {
+        try {
+            serviceManager.getFileService().createDummyImagesForProcess(this.process, this.numberOfImagesToAdd);
+            createPagination();
+            this.digitalDocument = this.gdzfile.getDigitalDocument();
+            this.digitalDocument.addAllContentFiles();
+            readAllTifFolders();
+        } catch (IOException | PreferencesException | URISyntaxException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Gets the logical page number from a paginated docstruct.
+     * 
+     * @param docStruct
+     *            The DocStruct opject.
+     * @return The logical page number.
+     */
+    public String getLogicalPageNumber(DocStructInterface docStruct) {
+        for (String page : allPages) {
+            int physicalPageNumber = getPhysicalPageNumber(docStruct);
+            if (page.startsWith(String.valueOf(physicalPageNumber))) {
+                return getLogicalPageNumberOfPaginatedImage(page);
+            }
+        }
+        return "";
+    }
+
+    private String getLogicalPageNumberOfPaginatedImage(String paginationText) {
+        paginationText = paginationText.replace(" ","");
+        return paginationText.split(":")[1];
+    }
+
+    /**
+     * Convert the TIFF images of the current process to PNG images for the metadata web frontend and
+     * copy them to them to the webapps/images/[processID]/fullsize/ folder.
+     */
+    private void convertImages() {
+        if (Objects.nonNull(this.currentTifFolder)) {
+            try {
+                ensureDirectoryExists(Paths.get(fullsizePath));
+
+                // first, convert tiff images to pngs
+                for (URI tiffPath : this.imageHelper.getImageFiles(this.currentTifFolder)) {
+                    String targetPath = fullsizePath + FilenameUtils.removeExtension(tiffPath.toString()) + ".png";
+
+                    File fullsizeFile = new File(targetPath);
+                    if (fullsizeFile.exists()) {
+                        continue;
+                    }
+
+                    URI tiffURI = Paths.get(ConfigCore.getKitodoDataDirectory() + this.currentTifFolder + tiffPath.toString()).toUri();
+
+                    BufferedImage inputImage = ImageIO.read(tiffURI.toURL());
+
+                    ImageIO.write(inputImage, "png", new File(targetPath));
+                    numberOfConvertedImages++;
+                    // FIXME: this call to the update function does not work!
+                    updateComponent(metadataEditorComponents);
+                }
+
+                // then, create thumbnails from the converted images
+                generateThumbnails();
+
+                updateComponent(metadataEditorComponents);
+            } catch (MalformedURLException e) {
+                Helper.setErrorMessage("ERROR: URL malformed!", logger, e);
+            } catch (IOException e) {
+                Helper.setErrorMessage("ERROR: IOException!", logger, e);
+            }
+        }
+    }
+
+    private void generateThumbnails() {
+        updateImagesFolder();
+        if (!thumbnailsExist()) {
+            URI fullsizeFolderURI = Paths.get(fullsizePath).toUri();
+            try (Stream<Path> ImagePaths = Files.list(Paths.get(fullsizeFolderURI))) {
+                Thumbnails.of((File[]) ImagePaths
+                        .filter(path -> path.toFile().isFile())
+                        .filter(path -> path.toFile().canRead())
+                        .filter(path -> path.toString().endsWith(".png"))
+                        .map(Path::toFile).toArray(File[]::new))
+                        .size(60, 100)
+                        .outputFormat("png")
+                        .toFiles(new File(thumbnailPath), Rename.PREFIX_DOT_THUMBNAIL);
+            } catch (IOException e) {
+                logger.error("ERROR: IOException thrown while creating thumbnails: " + e.getLocalizedMessage());
+            } catch (IllegalArgumentException e) {
+                logger.error("ERROR: IllegalArgumentException thrown while creating thumbnails: " + e.getMessage());
+            }
+        }
+    }
+
+    private boolean thumbnailsExist() {
+        Path thumbnailDirectory = Paths.get(thumbnailPath);
+        ensureDirectoryExists(thumbnailDirectory);
+        File thumbnailFile;
+        File imageFile;
+        for (String image : getImages()) {
+            imageFile = new File(image);
+            String thumbnailFilepath = thumbnailPath + File.separator + imageFile.getName();
+            thumbnailFile = new File(thumbnailFilepath);
+            if (!thumbnailFile.exists()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void ensureDirectoryExists(Path directory) {
+        if (!directory.toFile().exists() || !directory.toFile().isDirectory()) {
+            try {
+                Files.createDirectories(directory);
+            } catch (IOException e) {
+                logger.error("ERROR: IOException thrown while trying to create directory '" + directory + ": " + e.getLocalizedMessage());
+            }
+        }
+    }
+
+    /**
+     * Return the path to the thumbnail for the page with the given path 'image'.
+     * @param image path to image file whose thumbnail is returned
+     * @return thumbnail for given image
+     */
+    public String getThumbnail(String image) {
+        File imageFile = new File(image);
+        String filename = imageFile.getName();
+        return image
+                .replace(FULLSIZE_FOLDER_NAME, THUMBNAIL_FOLDER_NAME)
+                .replace(filename, "thumbnail." + filename);
+    }
+
+    private void resetTemporaryFolders() {
+
+        try {
+            FileUtils.deleteDirectory(new File(fullsizePath));
+        } catch (IOException e) {
+            logger.error("ERROR: unable to delete directory '"
+                    + fullsizePath
+                    + "' containing fullsize PNG copies of TIFF images ("
+                    + "reason: " + e.getLocalizedMessage() + ")");
+        }
+
+        try {
+            FileUtils.deleteDirectory(new File(thumbnailPath));
+        } catch (IOException e) {
+            logger.error("ERROR: unable to delete directory '"
+                    + thumbnailPath
+                    + "' containing PNG thumbnails of TIFF images ("
+                    + "reason: " + e.getLocalizedMessage() + ")");
+        }
+    }
+
+    /**
+     * Generate PNG copies and thumbnails of all images in currently selected TIF folder.
+     */
+    public void generatePNGs() {
+        this.numberOfConvertedImages = 0;
+        //resetTemporaryFolders();
+        updateComponent(Collections.singletonList("convertTIFFDialog"));
+        convertImages();
+    }
+
+    /**
+     * Get number of TIFF images converted to PNG.
+     * @return number of converted TIFF images
+     */
+    public int getNumberOfConvertedImages() {
+        return numberOfConvertedImages;
+    }
+
+    /**
+     * Get number of all images in current TIFF folder.
+     * @return number of images in current TIFF folder
+     */
+    public int getNumberOfImagesInCurrentTifFolder() {
+        return this.imageHelper.getImageFiles(this.currentTifFolder).size();
+    }
+
+    /**
+     * Return all structure elements.
+     * @return list of all structure elements
+     */
+    public List<DocStructInterface> getAllStructureElements() {
+        return getStructureElements(this.logicalTopstruct);
+    }
+
+    private List<DocStructInterface> getStructureElements(DocStructInterface docStruct) {
+        List<DocStructInterface> docStructElements = new LinkedList<>();
+        if (Objects.nonNull(docStruct)) {
+            docStructElements.add(docStruct);
+            if (Objects.nonNull(docStruct.getAllChildren())) {
+                for (DocStructInterface element : docStruct.getAllChildren()) {
+                    if (Objects.nonNull(element)) {
+                        if (Objects.isNull(element.getAllChildren()) || element.getAllChildren().isEmpty()) {
+                            docStructElements.add(element);
+                        } else {
+                            docStructElements.addAll(getStructureElements(element));
+                        }
+                    }
+                }
+            }
+        }
+        return docStructElements;
+    }
+
+    /**
+     * Event listener for drag drop event.
+     * @param dragDropEvent the event that triggers this listener
+     */
+    public void onPageDrop(DragDropEvent dragDropEvent) {
+
+        String dragId = dragDropEvent.getDragId();
+        String dropId = dragDropEvent.getDropId();
+
+        String[] dragIDComponents = dragId.split(":");
+        String[] dropIDComponents = dropId.split(":");
+
+        int sourceStructureElementIndex;
+        int pageIndex;
+
+        int targetStructureElementIndex = Integer.parseInt(dropIDComponents[2]);
+        DocStructInterface targetDocStruct = getAllStructureElements().get(targetStructureElementIndex);
+
+        if (dragIDComponents[1].equals("structuredPages")) {
+            sourceStructureElementIndex = Integer.parseInt(dragIDComponents[2]);
+            pageIndex = Integer.parseInt(dragIDComponents[4]);
+
+            DocStructInterface sourceDocStruct = getAllStructureElements().get(sourceStructureElementIndex);
+
+            List<String> docStructPages = getPagesAssignedToDocStruct(sourceDocStruct);
+
+            String pagePath = docStructPages.get(pageIndex);
+
+            if (Objects.nonNull(sourceDocStruct.getAllToReferences("logical_physical"))) {
+                for (ReferenceInterface reference : sourceDocStruct.getAllToReferences("logical_physical")) {
+
+                    if (FilenameUtils.getBaseName(pagePath).equals(FilenameUtils.removeExtension(reference.getTarget().getImageName()))) {
+                        // Remove page reference from source doc struct
+                        sourceDocStruct.removeReferenceTo(reference.getTarget());
+
+                        // Add page reference to target doc struct
+                        targetDocStruct.addReferenceTo(reference.getTarget(), "logical_physical");
+
+                        determinePagesStructure(sourceDocStruct);
+                        determinePagesStructure(targetDocStruct);
+
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Retrieve and return list of all DocStructInferface instances
+     * referencing the given DocStructInterfaces 'docStruct'.
+     * @param docStruct the DocStructInterface for which the references are determined
+     * @return list of DocStructInterface instances referencing the given DocStructInterface docStruct
+     */
+    public List<DocStructInterface> getPageReferencesToDocStruct(DocStructInterface docStruct) {
+        List<DocStructInterface> pageReferenceDocStructs = new LinkedList<>();
+        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+
+        for (ReferenceInterface pageReferenceInterface : pageReferences) {
+            pageReferenceDocStructs.add(pageReferenceInterface.getTarget());
+        }
+
+        return pageReferenceDocStructs;
+    }
+
+    /**
+     * Retrieve and return list of file paths for pages assigned to given DocStructInterface 'docStruct'.
+     * @param docStruct DocStructInterfaces for which page file paths are returned.
+     * @return list of file paths of pages assigned to given DocStructInterface 'docStruct'.
+     */
+    private List<String> getPagesAssignedToDocStruct(DocStructInterface docStruct) {
+        List<String> assignedPages = new LinkedList<>();
+        List<ReferenceInterface> pageReferences = docStruct.getAllReferences("to");
+        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
+        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+
+        List<String> allImages = getImages();
+
+        if (!allImages.isEmpty()) {
+            for (ReferenceInterface pageReferenceInterface : pageReferences) {
+                DocStructInterface docStructInterface = pageReferenceInterface.getTarget();
+                List<MetadataInterface> allMetadata = (List<MetadataInterface>) docStructInterface.getAllMetadataByType(mdt);
+                for (MetadataInterface metadataInterface : allMetadata) {
+                    assignedPages.add(allImages.get(Integer.parseInt(metadataInterface.getValue()) - 1));
+                }
+            }
+        } else {
+            logger.error("ERROR: empty list of image file paths!");
+        }
+        return assignedPages;
+    }
+
+    /**
+     * Retrieve file path to png image for given DocStructInterface 'pageDocStruct' representing a single scanned page image.
+     * @param pageDocStruct DocStructInterface for which the corresponding file path to the png copy is returned.
+     * @return file path to the png image of the given DocStructInterface 'pageDoctStruct'.
+     */
+    public String getPageImageFilePath(DocStructInterface pageDocStruct) {
+        final String errorMessage = "IMAGE_PATH_NOT_FOUND";
+        PrefsInterface prefsInterface = this.metaHelper.getPrefs();
+        MetadataTypeInterface mdt = prefsInterface.getMetadataTypeByName("physPageNumber");
+        List<String> allImages = getImages();
+        List<? extends MetadataInterface> allMetadata = pageDocStruct.getAllMetadataByType(mdt);
+
+        int imageIndex;
+
+        switch (allMetadata.size()) {
+            case 0:
+                logger.error("ERROR: metadata of type 'physPageNumber' not found in given page doc struct!");
+                return errorMessage;
+            case 1:
+                imageIndex = Integer.parseInt(allMetadata.get(0).getValue()) - 1;
+                if (!allImages.isEmpty() && allImages.size() > imageIndex) {
+                    return allImages.get(imageIndex);
+                } else {
+                    logger.error("ERROR: empty or broken list of image file paths!");
+                    return errorMessage;
+                }
+            default:
+                logger.error("WARNING: number of 'physPageNumber' metadata values in given page doc struct is "
+                        + allMetadata.size() + " (1 expected)!");
+                return errorMessage;
+        }
+    }
+
+    /**
+     * Get list of image file paths for current process.
+     *
+     * @return List of images.
+     */
+    public List<String> getImages() {
+        updateImagesFolder();
+        List<String> imagePaths = new LinkedList<>();
+        Path pngDir = Paths.get(fullsizePath);
+        ensureDirectoryExists(pngDir);
+        try (Stream<Path> streamPaths = Files.list(pngDir)) {
+            imagePaths = streamPaths
+                    .filter(path -> path.toFile().isFile())
+                    .filter(path -> path.toFile().canRead())
+                    .filter(path -> path.toString().endsWith(".png"))
+                    .sorted()
+                    .map(Path::getFileName)
+                    .map(Path::toString)
+                    .map(filename -> "/images/" + this.process.getId() + "/" + this.subfolderName + "/"
+                            + FULLSIZE_FOLDER_NAME + "/" + filename)
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return imagePaths;
+    }
+
+    /**
+     * Determines whether the list of images exists.
+     *
+     * @return boolean being true when the list contains at least one image
+     */
+    public boolean isImageListExistent() {
+        return !getImages().isEmpty();
+    }
+
+    /**
+     * Retrieve and return physical page number of given DocStructInterface 'pageDocStruct'.
+     * @param pageDocStruct DocStructInterface whose physical page number is returned.
+     * @return physical page number of given DocStructInterface pageDocStruct
+     */
+    public int getPhysicalPageNumber(DocStructInterface pageDocStruct) {
+        try {
+            return Integer.parseInt(determineMetadata(pageDocStruct, "physPageNumber"));
+        } catch (NullPointerException e) {
+            return -1;
+        }
+    }
+
+    /**
+     * Checks and returns whether access is granted to the image with the given filepath "imagePath".
+     * @param imagePath the filepath of the image for which access rights are checked
+     * @return true if access is granted and false otherwise
+     */
+    public boolean isAccessGranted(String imagePath) {
+        String imageName = FilenameUtils.getName(imagePath);
+        String filePath;
+        if (FilenameUtils.getPath(imagePath).endsWith(FULLSIZE_FOLDER_NAME + "/")) {
+            filePath = fullsizePath + imageName;
+        } else if (FilenameUtils.getPath(imagePath).endsWith(THUMBNAIL_FOLDER_NAME + "/")) {
+            filePath = thumbnailPath + imageName;
+        } else {
+            logger.error("ERROR: Image path '" + imagePath + "' is invalid!");
+            return false;
+        }
+        File image = new File(filePath);
+        return image.canRead();
+    }
+
+    /**
+     * Update the image folder.
+     */
+    public void updateImagesFolder() {
+        String uriSeparator = "/";
+        String[] pathParts = this.currentTifFolder.toString().split(uriSeparator);
+        if (pathParts.length > 0) {
+            subfolderName = pathParts[pathParts.length - 1];
+            fullsizePath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
+                    + FULLSIZE_FOLDER_NAME + File.separator;
+            thumbnailPath = imagesFolder + this.process.getId() + File.separator + subfolderName + File.separator
+                    + THUMBNAIL_FOLDER_NAME + File.separator;
+        } else {
+            logger.error("ERROR: splitting '" + this.currentTifFolder + "' at '" + File.separator + "' resulted in an empty array!");
+        }
+    }
+
+    private void updateComponent(List<String> componentIDs) {
+        PrimeFaces primeFaces = PrimeFaces.current();
+        if (primeFaces.isAjaxRequest()) {
+            primeFaces.ajax().update(componentIDs);
+        }
+    }
+
+    /**
+     * Get current user.
+     *
+     * @return User
+     */
+    public User getCurrentUser() {
+        if (this.user == null) {
+            this.user = serviceManager.getUserService().getAuthenticatedUser();
+        }
+        return this.user;
+    }
+
+    /**
+     * Get wiki field.
+     *
+     * @return values for wiki field
+     */
+    public String[] getWikiField() {
+        refreshProcess(this.process);
+        String wiki = getProcess().getWikiField();
+        if (!wiki.isEmpty()) {
+            wiki = wiki.replace("</p>", "");
+            String[] comments = wiki.split("<p>");
+            if (comments[0].isEmpty()) {
+                List<String> list = new ArrayList<>(Arrays.asList(comments));
+                list.remove(list.get(0));
+                comments = list.toArray(new String[list.size()]);
+            }
+            return comments;
+        }
+        return ArrayUtils.EMPTY_STRING_ARRAY;
+    }
+
+    /**
+     * Sets new value for wiki field.
+     *
+     * @param inString
+     *            input String
+     */
+    public void setWikiField(String[] inString) {
+        this.wikiField = inString;
+    }
+
+
+    /**
+     * Get add to wiki field.
+     *
+     * @return values for add to wiki field
+     */
+    public String getAddToWikiField() {
+        return this.addToWikiField;
+    }
+
+    /**
+     * Set add to wiki field.
+     *
+     * @param addToWikiField
+     *            String
+     */
+    public void setAddToWikiField(String addToWikiField) {
+        this.addToWikiField = addToWikiField;
+    }
+
+    /**
+     * Add to wiki field.
+     */
+    public void addToWikiField() {
+
+        if (addToWikiField != null && addToWikiField.length() > 0) {
+            String comment =  serviceManager.getUserService().getFullName(getCurrentUser()) + ": " + this.addToWikiField;
+            serviceManager.getProcessService().addToWikiField(comment, this.process);
+            this.addToWikiField = "";
+            try {
+                serviceManager.getProcessService().save(process);
+                refreshProcess(process);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorReloading", new Object[]{Helper.getTranslation("wikiField")}, logger, e);
+            }
+        }
+        setShowNewComment(false);
+        setWikiField(getWikiField());
+    }
+
+    /**
+     * Get correction comment.
+     *
+     * @return value of correction comment
+     */
+    public boolean isCorrectionComment() {
+        return correctionComment;
+    }
+
+    public void setProcess(Process process) {
+        this.process = process;
+    }
+
+    /**
+     * Set correction comment.
+     *
+     * @param correctionComment
+     *            as boolean
+     */
+    public void setCorrectionComment(boolean correctionComment) {
+        this.correctionComment = correctionComment;
+    }
+
+    /**
+     * Get problem.
+     *
+     * @return Problem object
+     */
+    public Problem getProblem() {
+        return problem;
+    }
+
+    /**
+     * Set problem.
+     *
+     * @param problem
+     *            object
+     */
+    public void setProblem(Problem problem) {
+        this.problem = problem;
+    }
+
+    /**
+     * Correction message to previous Tasks.
+     */
+    public List<Task> getPreviousStepsForProblemReporting() {
+        refreshProcess(this.process);
+        return serviceManager.getTaskService().getPreviousTasksForProblemReporting(
+                serviceManager.getProcessService().getCurrentTask(this.process).getOrdering(),
+                this.process.getId());
+    }
+
+    public int getSizeOfPreviousStepsForProblemReporting() {
+        return getPreviousStepsForProblemReporting().size();
+    }
+
+    /**
+     * Report the problem.
+     *
+     *
+     */
+    public void reportProblem() {
+        List<Task> taskList = new  ArrayList<>();
+        taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
+        BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
+        batchStepHelper.setProblem(getProblem());
+        batchStepHelper.reportProblemForSingle();
+        refreshProcess(this.process);
+        setShowNewComment(false);
+        setCorrectionComment(false);
+        setProblem(null);
+    }
+
+    /**
+     * solve the problem.
+     *
+     *
+     */
+    public void solveProblem(String comment) {
+        BatchStepHelper batchStepHelper = new BatchStepHelper();
+        batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
+        refreshProcess(this.process);
+        String wikiField = getProcess().getWikiField();
+        wikiField = wikiField.replace(comment.trim(), comment.trim().replace("Red K", "Orange K "));
+        serviceManager.getProcessService().setWikiField(wikiField, this.process);
+        try {
+            serviceManager.getProcessService().save(process);
+        } catch (DataException e) {
+            e.printStackTrace();
+        }
+        refreshProcess(this.process);
+    }
+
+    /**
+     * refresh the process in the session.
+     *
+     * @param process Object
+     *            process to refresh
+     */
+    public void refreshProcess(Process process) {
+        try {
+            if (process.getId() != 0) {
+                serviceManager.getProcessService().refresh(process);
+
+                setProcess(this.serviceManager.getProcessService().getById(process.getId()));
+
+            }
+
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Unable to find process with ID " + process.getId(), logger, e);
+        }
+    }
+
+    public void setReferringView(String referringView) {
+        this.referringView = referringView;
+    }
+
+    public String getReferringView() {
+        return this.referringView;
+    }
+
 }

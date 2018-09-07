@@ -35,9 +35,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
@@ -51,7 +51,6 @@ public class TemplateForm extends TemplateBaseForm {
     private Task task;
     private boolean showInactiveTemplates = false;
     private String title;
-    private transient ServiceManager serviceManager = new ServiceManager();
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
     private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
@@ -167,35 +166,34 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Set ordering up.
+     * Duplicate the selected template.
      *
-     * @return String
+     * @param itemId
+     *            ID of the template to duplicate
+     * @return page address; either redirect to the edit template page or return
+     *         'null' if the template could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
      */
-    public String setOrderingUp() {
-        setOrderingUp(this.template.getTasks(), this.task);
-        return save();
+    public String duplicateTemplate(Integer itemId) {
+        try {
+            Template baseTemplate = serviceManager.getTemplateService().getById(itemId);
+            this.template = serviceManager.getTemplateService().duplicateTemplate(baseTemplate);
+            return templateEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage("unableToDuplicateTemplate", logger, e);
+            return null;
+        }
     }
 
     /**
-     * Set ordering down.
-     *
-     * @return String
-     */
-    public String setOrderingDown() {
-        setOrderingDown(this.template.getTasks(), this.task);
-        return save();
-    }
-
-    /**
+>>>>>>> Add backend functionality for copy template
      * Save template.
-     *
-     * @return null
      */
-    public String save() {
+    private void save() {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return;
             }
 
             try {
@@ -205,17 +203,18 @@ public class TemplateForm extends TemplateBaseForm {
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
+                return;
             }
 
             try {
                 serviceManager.getTemplateService().save(this.template);
             } catch (DataException | RuntimeException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("template") }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
         }
-        return null;
     }
 
     /**
@@ -230,6 +229,22 @@ public class TemplateForm extends TemplateBaseForm {
             logger.error(e.getMessage(), e);
         }
         return templateListPath;
+    }
+
+    /**
+     * Remove template if there is no assigned processes.
+     */
+    public void delete() {
+        if (!this.template.getProcesses().isEmpty()) {
+            Helper.setErrorMessage("processAssignedError");
+        } else {
+            try {
+                serviceManager.getTemplateService().remove(this.template);
+            } catch (DataException e) {
+                Helper.setErrorMessage("errorDeleting", new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                    logger, e);
+            }
+        }
     }
 
     /**
@@ -270,7 +285,8 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.template, "template", serviceManager.getTemplateService());
+        saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
+            serviceManager.getTemplateService());
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -335,6 +351,21 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Set template by id.
+     *
+     * @param id
+     *            of template to set
+     */
+    public void setTemplateById(int id) {
+        try {
+            setTemplate(serviceManager.getTemplateService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
+                logger, e);
+        }
+    }
+
+    /**
      * Method being used as viewAction for template edit form. If the given
      * parameter 'id' is '0', the form for creating a new template will be
      * displayed.
@@ -351,7 +382,8 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("template"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -368,7 +400,8 @@ public class TemplateForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorLoadingOne", new Object[] {Helper.getTranslation("task"), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
         }
     }
 

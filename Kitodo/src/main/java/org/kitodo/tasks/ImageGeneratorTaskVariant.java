@@ -51,7 +51,7 @@ public enum ImageGeneratorTaskVariant {
     MISSING_IMAGES {
         @Override
         public Predicate<? super Folder> getFilter(Map<String, String> vars, String canonical) {
-            return λ -> {
+            Predicate<? super Folder> result = λ -> {
                 Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
                     boolean present = λ.getURIIfExists(vars, canonical,
@@ -67,6 +67,7 @@ public enum ImageGeneratorTaskVariant {
                     throw new UndeclaredThrowableException(e);
                 }
             };
+            return result;
         }
     },
 
@@ -77,7 +78,7 @@ public enum ImageGeneratorTaskVariant {
     MISSING_OR_DAMAGED_IMAGES {
         @Override
         public Predicate<? super Folder> getFilter(Map<String, String> vars, String canonical) {
-            return λ -> {
+            Predicate<? super Folder> result = λ -> {
                 Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
                     FileFormat fileFormat = FileFormatsConfig.getFileFormat(λ.getMimeType()).get();
@@ -88,18 +89,18 @@ public enum ImageGeneratorTaskVariant {
                     } else {
                         Optional<FileType> fileType = fileFormat.getFileType();
                         if (fileType.isPresent()) {
-                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader
-                                    = new KitodoServiceLoader<>(LongTimePreservationValidationInterface.class);
-                            ValidationResult result = longTimePreservationValidationInterfaceLoader.loadModule()
+                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader = new KitodoServiceLoader<>(
+                                    LongTimePreservationValidationInterface.class);
+                            ValidationResult validated = longTimePreservationValidationInterfaceLoader.loadModule()
                                     .validate(imageURI.get(), fileType.get());
-                            if (result.getState().equals(State.SUCCESS)) {
+                            if (validated.getState().equals(State.SUCCESS)) {
                                 logger.info("Image {0} in folder {1} was validated {2}.", canonical, λ,
-                                    result.getState());
+                                    validated.getState());
                                 return false;
                             } else {
                                 logger.info("Image {0} in folder {1} was validated {2}. Image marked for regeneration.",
-                                    canonical, λ, result.getState());
-                                result.getResultMessages().forEach(logger::debug);
+                                    canonical, λ, validated.getState());
+                                validated.getResultMessages().forEach(logger::debug);
                                 return true;
                             }
                         } else {
@@ -113,6 +114,7 @@ public enum ImageGeneratorTaskVariant {
                     throw new UndeclaredThrowableException(e);
                 }
             };
+            return result;
         }
     };
 

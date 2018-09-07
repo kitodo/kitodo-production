@@ -48,11 +48,10 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.services.ServiceManager;
 
 @Named("BatchForm")
 @SessionScoped
-public class BatchForm extends BasisForm {
+public class BatchForm extends BaseForm {
 
     private static final long serialVersionUID = 8234897225425856549L;
 
@@ -65,10 +64,8 @@ public class BatchForm extends BasisForm {
     private String batchfilter;
     private String processfilter;
     private String batchTitle;
-    private static final String ERROR_READ = "errorReading";
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     // TODO; for what is it needed - right now it is used only in new tests
     public List<Process> getCurrentProcesses() {
@@ -87,7 +84,7 @@ public class BatchForm extends BasisForm {
             try {
                 this.currentBatches = serviceManager.getBatchService().getAll();
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("batches") }, logger, e);
+                Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.BATCH.getTranslationPlural() }, logger, e);
             }
         } else {
             selectedBatches = new ArrayList<>();
@@ -112,7 +109,7 @@ public class BatchForm extends BasisForm {
             }
             currentProcesses = new ArrayList<>(processes);
         } catch (NumberFormatException | DAOException e) {
-            Helper.setErrorMessage(ERROR_READ, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -262,7 +259,7 @@ public class BatchForm extends BasisForm {
                 serviceManager.getProcessService().downloadDocket(
                     serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_READ, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
@@ -286,7 +283,7 @@ public class BatchForm extends BasisForm {
             serviceManager.getBatchService().removeAll(ids);
             filterAll();
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("batch") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
 
@@ -316,7 +313,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("batch") }, logger, e);
+            Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
@@ -369,7 +366,7 @@ public class BatchForm extends BasisForm {
                     }
                 }
             } catch (DataException e) {
-                Helper.setErrorMessage("errorReloading", new Object[] {Helper.getTranslation("batch") }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
             }
         }
     }
@@ -423,7 +420,7 @@ public class BatchForm extends BasisForm {
                     this.batchHelper = new BatchProcessHelper(batch);
                     return "/pages/BatchProperties";
                 } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_READ, logger, e);
+                    Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
                     return null;
                 }
             } else {
@@ -478,7 +475,7 @@ public class BatchForm extends BasisForm {
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
-                Helper.setErrorMessage(ERROR_READ, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
                 return null;
             }
         }
@@ -523,7 +520,7 @@ public class BatchForm extends BasisForm {
                 }
             }
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_READ, logger, e);
+            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
 }

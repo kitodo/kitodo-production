@@ -12,64 +12,181 @@
 -->
 
 <ui:composition
-    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-    xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:p="http://primefaces.org/ui">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
     <h:form id="processesForm">
-        <p:dataTable var="item"
-                     id="processesTable"
-                     value="#{ProzessverwaltungForm.lazyDTOModel}"
-                     lazy="true"
-                     paginator="true"
-                     rows="#{LoginForm.myBenutzer.tableSize}"
+        <p:dataTable id="processesTable" var="process"
+                     value="#{ProzessverwaltungForm.lazyDTOModel}" selection="#{ProzessverwaltungForm.selectedProcesses}"
+                     lazy="true" paginator="true" rows="#{LoginForm.myBenutzer.tableSize}"
                      paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                      paginatorPosition="bottom">
-            <p:column id="titleColumn" headerText="#{msgs.processTitle}" filterBy="#{item.title}">
-                <h:outputText value="#{item.title}"/>
+            <p:column styleClass="checkboxListColumn" selectionMode="multiple"/>
+            <p:column id="titleColumn" headerText="#{msgs.processTitle}" filterBy="#{process.title}">
+                <h:outputText value="#{process.title}"/>
             </p:column>
-            <p:column style="width:120px;" headerText="#{msgs.status}">
-                <h:graphicImage value="/pages/images/fortschritt/ende_links.gif" alt="" rendered="true"/>
-                <h:graphicImage value="/pages/images/fortschritt/gr.gif" alt="closed"
-                                style="width:#{item.progressClosed * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ge.gif" alt="in process"
-                                style="width:#{item.progressInProcessing * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/go.gif" alt="open"
-                                style="width:#{item.progressOpen * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/rt.gif" alt="locked"
-                                style="width:#{item.progressLocked * 0.8}px;height:10px"/>
-                <h:graphicImage value="/pages/images/fortschritt/ende_rechts.gif" rendered="true" alt=""/>
+            <p:column id="progressColumn" styleClass="progressColumn" headerText="#{msgs.status}">
+                <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
             <p:column headerText="#{msgs.project}">
-                <h:outputText value="#{item.project.title}"/>
+                <h:outputText value="#{process.project.title}"/>
             </p:column>
             <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
-                <h:link id="editProcess"
-                        outcome="/pages/processEdit"
-                        title="#{msgs.processEdit}">
+                <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}">
                     <i class="fa fa-pencil-square-o fa-lg"/>
-                    <f:param name="id" value="#{item.id}"/>
+                    <f:param name="referer" value="processes"/>
+                    <f:param name="id" value="#{process.id}"/>
                 </h:link>
+
                 <h:commandLink id="readXML" action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
-                    <f:param name="ProzesseID" value="#{item.id}"/>
+                    <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
+                    <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
+                    <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
+                    <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>
                 </h:commandLink>
-                <h:commandLink action="#{ProzessverwaltungForm.exportMets(item.id)}" id="exportMets" title="#{msgs.exportMets}">
+
+                <p:commandLink id="download" action="#{ProzessverwaltungForm.downloadToHome}"
+                               title="#{msgs.linkHomeDirectory}">
+                    <h:outputText><i class="fa fa-download"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <!-- TODO: add separate message in case it already exists and alert -->
+                </p:commandLink>
+
+                <p:commandLink id="upload" action="#{ProzessverwaltungForm.uploadFromHome}"
+                               title="#{msgs.deleteLinkHomeDirectory}">
+                    <h:outputText><i class="fa fa-upload"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+
+                <!-- TODO: could be used for adding text: http://blog.fontawesome.io/2014/05/19/stacking-text-and-icons/ -->
+                <p:commandLink id="exportLogXml" action="#{ProzessverwaltungForm.createXML}" title="#{msgs.createXML}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </p:commandLink>
+
+                <p:commandLink id="downloadDocket" action="#{ProzessverwaltungForm.downloadDocket}"
+                               title="#{msgs.docketPrint}" ajax="false">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </p:commandLink>
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportMets}" id="exportMets" title="#{msgs.exportMets}">
+                    <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
                 </h:commandLink>
-                <p:commandLink id="deleteProcess"
-                               action="#{ProzessverwaltungForm.delete}"
-                               title="#{msgs.delete}"
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportPdf}" id="exportPdf" title="#{msgs.exportPdf}">
+                    <h:outputText><i class="fa fa-file-pdf-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </h:commandLink>
+
+                <h:commandLink action="#{ProzessverwaltungForm.exportDMS}" id="exportDms"
+                               title="#{msgs.exportDMS}">
+                    <h:outputText><i class="fa fa-file-archive-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                </h:commandLink>
+
+                <p:commandLink id="deleteProcess" action="#{ProzessverwaltungForm.delete}" title="#{msgs.delete}"
                                update="processesTabView:processesForm:processesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ProzessverwaltungForm.processByID}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteProcess}"
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteProcess}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </p:column>
         </p:dataTable>
+
+        <br/><br/>
+        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForSelected}</h4>
+        <br/>
+        <p:commandLink id="processingStatusUpSelection" action="#{ProzessverwaltungForm.setTaskStatusUpForSelection}"
+                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="processingStatusDownSelection" action="#{ProzessverwaltungForm.setTaskStatusDownForSelection}"
+                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="downloadSelection" action="#{ProzessverwaltungForm.downloadToHomeForSelection}"
+                       title="#{msgs.linkHomeDirectory}">
+            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <h:commandLink action="#{ProzessverwaltungForm.exportDMSForSelection}" id="exportDmsSelection"
+                       title="#{msgs.exportDMS}">
+            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+        </h:commandLink>
+
+        <br/><br/>
+        <!--TODO: at the moment it does it for all -->
+        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForPage}</h4>
+        <br/>
+        <p:commandLink id="processingStatusUpPage" action="#{ProzessverwaltungForm.setTaskStatusUpForPage}"
+                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="processingStatusDownPage" action="#{ProzessverwaltungForm.setTaskStatusDownForPage}"
+                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="downloadPage" action="#{ProzessverwaltungForm.downloadToHomeForPage}"
+                       title="#{msgs.linkHomeDirectory}">
+            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <h:commandLink action="#{ProzessverwaltungForm.exportDMSForPage}" id="exportDmsPage" title="#{msgs.exportDMS}">
+            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+        </h:commandLink>
+
+        <br/><br/>
+        <h4>#{msgs.possibleActions} #{msgs.possibleActionsForAll}</h4>
+        <br/>
+        <p:commandLink id="processingStatusUpAll" action="#{ProzessverwaltungForm.setTaskStatusUpForAll}"
+                       title="#{msgs.processingStatusUp}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-up"/> #{msgs.processingStatusUp}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="processingStatusDownAll" action="#{ProzessverwaltungForm.setTaskStatusDownForAll}"
+                       title="#{msgs.processingStatusDown}" update="processesTabView:processesForm:processesTable">
+            <h:outputText><i class="fa fa-arrow-circle-o-down"/> #{msgs.processingStatusDown}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="downloadAll" action="#{ProzessverwaltungForm.downloadToHomeForAll}"
+                       title="#{msgs.linkHomeDirectory}">
+            <h:outputText><i class="fa fa-download"/> #{msgs.linkHomeDirectory}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="uploadAll" action="#{ProzessverwaltungForm.uploadFromHomeForAll}"
+                       title="#{msgs.deleteLinkHomeDirectory}">
+            <h:outputText><i class="fa fa-upload"/> #{msgs.deleteLinkHomeDirectory}</h:outputText>
+            <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+            <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.deleteLinkHomeDirectory}?"
+                       icon="ui-icon-alert"/>
+        </p:commandLink>
+        <br/>
+        <h:commandLink action="#{ProzessverwaltungForm.exportDMSForAll}" id="exportDmsAll"
+                       title="#{msgs.exportDMS}">
+            <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.exportDMS}</h:outputText>
+        </h:commandLink>
+        <br/>
+        <p:commandLink id="createExcel" action="#{ProzessverwaltungForm.generateResult}" title="#{msgs.createExcel}"
+                       ajax="false">
+            <h:outputText><i class="fa fa-file-excel-o"/> #{msgs.createExcel}</h:outputText>
+        </p:commandLink>
+        <br/>
+        <p:commandLink id="createPdf" action="#{ProzessverwaltungForm.generateResultAsPdf}" title="#{msgs.createPdf}"
+                       ajax="false">
+            <h:outputText><i class="fa fa-file-pdf-o"/> #{msgs.createPdf}</h:outputText>
+        </p:commandLink>
     </h:form>
 </ui:composition>

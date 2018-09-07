@@ -27,12 +27,13 @@ sudo debconf-set-selections <<< "mysql-community-server mysql-community-server/r
 sudo apt update && sudo apt install -y openjdk-8-jdk maven mysql-community-server zip
 ```
 
-### Build development version
+### Build development version and modules
 
 ```
 wget https://github.com/kitodo/kitodo-production/archive/master.zip
 unzip master.zip && rm master.zip
 (cd kitodo-production-master/ && mvn clean package '-P!development')
+zip -j kitodo-3-modules.zip kitodo-production-master/Kitodo/modules/*.jar
 mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
 ```
 
@@ -41,7 +42,7 @@ Note: If you want to build a release version, you may want to set the version in
 ### Create MySQL database and user
 
 ```
-sudo mysql -e 'create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by "kitodo";flush privileges;'
+sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by 'kitodo';flush privileges;"
 ```
 
 ### Generate SQL dump (flyway migration)
@@ -52,7 +53,7 @@ wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kito
 mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 ```
 
-### Create zip archive "kitodo-3-config.zip" with directories and config files
+### Create zip archive with directories and config files
 
 ```
 mkdir zip zip/config zip/debug zip/import zip/logs zip/messages zip/metadata zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/swap zip/temp zip/users zip/xslt zip/diagrams
@@ -65,33 +66,12 @@ chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/
 (cd zip && zip -r ../kitodo-3-config.zip *)
 ```
 
-### Create zip archive "kitodo-3-modules.zip" with jar files
-
-```
-chmod 444 kitodo-production-master/Kitodo/modules/*
-(cd kitodo-production-master/Kitodo/modules && zip ../../../kitodo-3-modules.zip *)
-```
-
 ### Results
 
 * war file: `kitodo-3.war`
+* modules: `kitodo-3-modules.zip`
 * sql dump: `kitodo-3.sql`
-* config zip: `kitodo-3-config.zip`
-* modules zip: `kitodo-3-modules.zip`
-
-### Cleanup MySQL
-
-```
-sudo mysql
-DROP DATABASE kitodo;
-exit;
-```
-
-### Uninstall Maven
-
-```
-sudo apt remove -y maven && sudo apt autoremove -y
-```
+* zip file: `kitodo-3-config.zip`
 
 ## 3. Deployment
 
@@ -119,8 +99,6 @@ sudo sed -i 's/JAVA_OPTS="-Djava.awt.headless=true/JAVA_OPTS="-Djava.awt.headles
 ```
 sudo sh -c "echo '[mysqld] innodb_file_per_table' >> /etc/mysql/my.cnf"
 sudo service mysql restart
-sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by 'kitodo';flush privileges;"
-cat kitodo-3.sql | mysql -u kitodo -D kitodo --password=kitodo
 ```
 
 ### Configure Elasticsearch
@@ -169,15 +147,55 @@ sudo ln -s /var/lib/tomcat8/webapps/kitodo/plugins/opac/OpacPica-Plugin-1.0-SNAP
 
 ### Login
 
-http://localhost:8080/kitodo/
+<http://localhost:8080/kitodo/>
 
 * user: testAdmin
 * pass: test
 
 ### Index example data
 
-After logging in you can access the indexing page (via menu or directly at <http://localhost:8080/kitodo/pages/system.jsf>). Start indexing the provided example data by clicking on the button "Start indexing" (at whole index).
+http://localhost:8080/kitodo/pages/system.jsf
 
-## 4. Configuration
+* Whole index / Start indexing
 
-see <https://github.com/kitodo/kitodo-production/wiki/Installationsanleitung-f%C3%BCr-Kitodo.Production-3.x>
+## 4. Updates
+
+### Download sources
+
+```
+rm -rf kitodo-production-master
+wget https://github.com/kitodo/kitodo-production/archive/master.zip
+unzip master.zip && rm master.zip
+```
+
+### Reset database
+
+```
+sudo mysql -e "drop database kitodo;"
+sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by 'kitodo';flush privileges;"
+wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/schema.sql https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
+(cd kitodo-production-master/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
+```
+
+### Rebuild and deploy war file
+
+```
+(cd kitodo-production-master/ && mvn clean package '-P!development')
+zip -j kitodo-3-modules.zip kitodo-production-master/Kitodo/modules/*.jar
+sudo rm -f /usr/local/kitodo/modules/*
+sudo unzip kitodo-3-modules.zip -d /usr/local/kitodo/modules
+sudo chown -R tomcat8:tomcat8 /usr/local/kitodo/modules
+mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
+sudo chown tomcat8:tomcat8 kitodo-3.war
+sudo mv kitodo-3.war /var/lib/tomcat8/webapps/kitodo.war
+sleep 5
+until curl -s GET "localhost:8080/kitodo/pages/login.jsf" | grep -q -o "KITODO.PRODUCTION" ; do sleep 1; done
+```
+
+### Reset index
+
+http://localhost:8080/kitodo/pages/system.jsf
+
+* Delete ElasticSearch index
+* Create ElasticSearch mapping
+* Whole Index / Start indexing

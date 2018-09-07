@@ -24,22 +24,6 @@
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
             <h:outputText value="#{item.ordering}"/>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingUp}"
-                             id="orderUp"
-                             update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-up" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
-            </p:commandButton>
-            <p:commandButton action="#{ProzessverwaltungForm.setOrderingDown}"
-                             id="orderDown"
-                             update="editForm:tabs:taskTable"
-                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
-                             oncomplete="toggleSave()"
-                             icon="fa fa-long-arrow-down" styleClass="ui-button-small">
-                <f:setPropertyActionListener target="#{ProzessverwaltungForm.task}" value="#{item}"/>
-            </p:commandButton>
         </p:column>
 
         <!-- title -->
@@ -90,6 +74,7 @@
                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}"
                     title="#{msgs.detailsDesSchritts}">
                 <f:param name="id" value="#{item.id}"/>
+                <f:param name="referer" value="processEdit?id=#{item.process.id}"/>
                 <i class="fa fa-pencil-square-o fa-lg"/>
             </h:link>
             <p:commandLink id="deleteTask"
@@ -147,6 +132,6 @@
                      rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
                      icon="fa fa-plus-circle fa-lg"
                      iconPos="right"
-                     styleClass="button-filled-green"
+                     styleClass="callto m-1em"
                      id="addStepButton"/>
 </ui:composition>

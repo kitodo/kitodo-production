@@ -33,11 +33,11 @@
             </p:commandLink>
         </p:column>
     </p:dataTable>
-    <button id="addUser"
-            onclick="PF('addUserDialog').show()"
-            type="button"
-            class="ui-button ui-widget ui-corner-all button-filled-green"
-            style="padding:.7em;border:none;">
-        #{msgs.userAdd}
-    </button>
+    <p:commandButton id="addUser"
+                     onclick="PF('addUserDialog').show()"
+                     value="#{msgs.userAdd}"
+                     type="button"
+                     icon="fa fa-plus-circle fa-lg"
+                     iconPos="right"
+                     class="callto m-1em"/>
 </ui:composition>

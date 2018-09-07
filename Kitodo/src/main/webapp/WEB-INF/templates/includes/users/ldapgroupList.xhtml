@@ -12,10 +12,10 @@
 -->
 
 <ui:composition
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:p="http://primefaces.org/ui">
+    xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+    xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
                  id="ldapGroupsTable"
                  value="#{LdapGruppenForm.ldapGroups}"
@@ -36,7 +36,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="actionForm">
                 <h:link outcome="ldapgroupEdit">
-                    <f:param name="id" value="#{item.id}" />
+                    <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteLdapgroup"
@@ -52,4 +52,21 @@
             </h:form>
         </p:column>
     </p:dataTable>
+
+    <!--TODO Find a better place for this ... e.g. separate page in system area-->
+    <h:form>
+        <p:panelGrid id="actions-grid" columns="2" layout="grid">
+            <p:row>
+                <div>
+                    <p:outputLabel for="useLdap" value="#{msgs.ldapActiveNote}"/>
+                    <p:selectBooleanCheckbox id="useLdap"
+                                             styleClass="input"
+                                             value="#{AuthenticationController.ldapAuthentication}">
+                        <p:ajax event="change"/>
+                    </p:selectBooleanCheckbox>
+                </div>
+            </p:row>
+        </p:panelGrid>
+    </h:form>
+
 </ui:composition>

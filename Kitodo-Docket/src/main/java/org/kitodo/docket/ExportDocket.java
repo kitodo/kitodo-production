@@ -27,6 +27,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;
 import org.apache.fop.apps.FopFactory;
+import org.apache.fop.apps.FopFactoryBuilder;
 import org.apache.fop.apps.MimeConstants;
 import org.kitodo.api.docket.DocketData;
 
@@ -47,7 +48,6 @@ public class ExportDocket {
      *             Throws IOException, when pdfGeneration fails
      */
     void startExport(DocketData docketData, OutputStream os, File xsltFile) throws IOException {
-
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exl.startExport(docketData, out);
@@ -69,7 +69,6 @@ public class ExportDocket {
      *             Throws IOException, when pdfGeneration fails.
      */
     void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
-
         ExportXmlLog exl = new ExportXmlLog();
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         exl.startMultipleExport(docketDataList, out);
@@ -83,14 +82,16 @@ public class ExportDocket {
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
         StreamSource transformSource = new StreamSource(xsltFile);
-        FopFactory fopFactory = FopFactory.newInstance();
+        FopFactoryBuilder builder = new FopFactoryBuilder(new File(".").toURI());
+        builder.setStrictFOValidation(false);
+        FopFactory fopFactory = builder.build();
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         // transform xml
         try {
-            Transformer xslfoTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
+            Transformer xslTransformer = TransformerFactory.newInstance().newTransformer(transformSource);
             Fop fop = fopFactory.newFop(MimeConstants.MIME_PDF, outStream);
             Result res = new SAXResult(fop.getDefaultHandler());
-            xslfoTransformer.transform(source, res);
+            xslTransformer.transform(source, res);
         } catch (FOPException e) {
             throw new IOException("FOPException occurred", e);
         } catch (TransformerException e) {

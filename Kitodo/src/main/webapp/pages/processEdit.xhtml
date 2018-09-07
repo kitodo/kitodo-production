@@ -20,6 +20,7 @@
     <f:metadata>
         <f:viewParam name="id"/>
         <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
+        <f:viewAction action="#{ProzessverwaltungForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -29,7 +30,7 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.processEdit} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
-            <h:outputText value="#{msgs.einenNeuenProzessAnlegen}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.createNewProcess}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -44,9 +45,13 @@
                          actionListener="#{ProzessverwaltungForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="#{'processes'}" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary-button"/>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  outcome="#{ProzessverwaltungForm.processEditReferer}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
@@ -54,7 +59,7 @@
             <p:tab title="#{msgs.processDetails}" id="details">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.taskList}" id="taskOrder">
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProzessverwaltungForm.process.title}">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templateProperties}" id="processTemplates">
@@ -82,7 +87,7 @@
             <li><a href="">#{msgs.processEdit}</a></li>
         </ui:fragment>
         <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
-            <li><a href="">#{msgs.einenNeuenProzessAnlegen}</a></li>
+            <li><a href="">#{msgs.createNewProcess}</a></li>
         </ui:fragment>
     </ui:define>
 </ui:composition>

@@ -11,6 +11,7 @@
 
 package org.kitodo.services.data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,6 +61,17 @@ public class DocketService extends TitleSearchService<Docket, DocketDTO, DocketD
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Docket");
+    }
+
+    /**
+     * Get list of dockets for given title.
+     * 
+     * @param title
+     *            for get from database
+     * @return list of dockets
+     */
+    public List<Docket> getByTitle(String title) {
+        return dao.getByQuery("FROM Docket WHERE title = :title", Collections.singletonMap("title", title));
     }
 
     /**

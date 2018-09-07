@@ -19,21 +19,21 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/filter.js" target="body" />
-            <h3>#{msgs.processManagement}</h3>
+            <h3>#{msgs.processes}</h3>
             <h:form id="addForm">
-                <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="button-filled-green">
+                <p:menuButton value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
                     <p:menuitem value="#{msgs.newBatch}" icon="ui-icon-plusthick" />
                 </p:menuButton>
             </h:form>
             <!-- filters -->
             <p:button id="search" value="#{msgs.extendedSearch}"
                       icon="fa fa-search" iconPos="right"
-                      styleClass="button-filled-blue" outcome="searchProcess"/>
+                      outcome="searchProcess"/>
             <h:form id="filterMenu">
                 <div class="ui-inputgroup">
                     <p:inputText forceId="true" id="filterfield" value="#{ProzessverwaltungForm.filter}" placeholder="#{msgs.filter}"/>
-                    <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="button-blue"/>
-                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down" styleClass="button-filled-blue"/>
+                    <p:commandButton id="applyFilter" onclick="applyFilter(document.getElementById('filterMenu:filterfield').value)" icon="fa fa-refresh fa-lg" styleClass="plain"/>
+                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                     <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
                         <ul>
                             <li>
@@ -45,7 +45,7 @@
                             <ui:repeat value="#{ProzessverwaltungForm.userFilters}" var="filter">
                                 <li>
                                     <p:commandLink value="#{filter}" onclick="setFilter('#{filter}')"/>
-                                    <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete button-blue">
+                                    <p:commandLink title="#{msgs.removeFilter}" styleClass="filter-delete plain">
                                         <i class="fa fa-trash-o fa-lg"/>
                                     </p:commandLink>
                                 </li>

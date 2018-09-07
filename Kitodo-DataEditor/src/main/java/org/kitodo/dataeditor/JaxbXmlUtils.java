@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -27,14 +29,18 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.joda.time.DateTime;
+import org.kitodo.dataformat.metskitodo.KitodoType;
+import org.kitodo.dataformat.metskitodo.MdSecType;
 
+/**
+ * Provides methods for handling jaxb generated java objects and xml files.
+ */
 public class JaxbXmlUtils {
 
     /**
      * Private constructor to hide the implicit public one.
      */
     private JaxbXmlUtils() {
-
     }
 
     /**
@@ -79,7 +85,7 @@ public class JaxbXmlUtils {
      * @return {@code true} if the list of Jaxb-Object elements contain objects of
      *         given type. {@code false} if not.
      */
-    public static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
+    static <T> boolean objectListContainsType(List<Object> objects, Class<T> type) {
         for (Object object : objects) {
             if (object instanceof JAXBElement) {
                 JAXBElement jaxbElement = (JAXBElement) object;
@@ -89,5 +95,58 @@ public class JaxbXmlUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets the first object of the specified type from a given object list of JAXB
+     * elements.
+     *
+     * @param objects
+     *            The list of objects.
+     * @param type
+     *            The type of object to return.
+     * @return The first object that corresponds to the given type.
+     */
+    static <T> T getFirstGenericTypeFromJaxbObjectList(List<Object> objects, Class<T> type) {
+        if (JaxbXmlUtils.objectListContainsType(objects, type)) {
+            for (Object object : objects) {
+                if (object instanceof JAXBElement) {
+                    JAXBElement jaxbElement = (JAXBElement) object;
+                    if (type.isInstance(jaxbElement.getValue())) {
+                        return (type.cast(jaxbElement.getValue()));
+                    }
+                }
+            }
+        }
+        throw new NoSuchElementException("No " + type.getName() + " objects found");
+    }
+
+    /**
+     * Returns the KitodoType object of an MdSecType object.
+     *
+     * @param dmdSecElement
+     *            The DmdSecElement as MdSecType object.
+     * @return The KitodoType object.
+     */
+    public static KitodoType getKitodoTypeOfDmdSecElement(MdSecType dmdSecElement) {
+        Optional<List<Object>> xmlDataOfMdSec = getXmlDataOfMdSec(dmdSecElement);
+        if (xmlDataOfMdSec.isPresent()) {
+            return JaxbXmlUtils.getFirstGenericTypeFromJaxbObjectList(xmlDataOfMdSec.get(), KitodoType.class);
+        }
+        throw new NoSuchElementException("DmdSec element with id " + dmdSecElement.getID() + " does not have xml data");
+    }
+
+    /**
+     * Gets an optional list of objects which holds the xml data of an mets object
+     * mdSec element.
+     *
+     * @param mdSecType
+     *            The mdSec element.
+     * @return A list of objects wraped in Optional class.
+     */
+    static Optional<List<Object>> getXmlDataOfMdSec(MdSecType mdSecType) {
+        // Wrapping null-checks at getter-chain into Optional<T>.class
+        return Optional.ofNullable(mdSecType).map(MdSecType::getMdWrap).map(MdSecType.MdWrap::getXmlData)
+            .map(MdSecType.MdWrap.XmlData::getAny);
     }
 }
