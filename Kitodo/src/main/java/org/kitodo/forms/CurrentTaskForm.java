@@ -113,8 +113,6 @@ public class CurrentTaskForm extends BaseForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        serviceManager.getTaskService().refresh(this.currentTask);
-
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return null;
@@ -497,20 +495,13 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Get task with specific id.
+     * Set task for given id.
      *
      * @param id
      *            passed as int
-     * @return task
      */
-    public Task getTaskById(int id) {
-        try {
-            return serviceManager.getTaskService().getById(id);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                logger, e);
-            return null;
-        }
+    public void setTaskById(int id) {
+        loadTaskById(id);
     }
 
     /**
@@ -801,13 +792,18 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Method being used as viewAction for CurrenTaskForm.
+     * Method being used as viewAction for CurrentTaskForm.
      *
      * @param id
-     *            ID of the step to load
+     *            ID of the task to load
      */
     public void loadTaskById(int id) {
-        setCurrentTask(getTaskById(id));
+        try {
+            setCurrentTask(serviceManager.getTaskService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                    logger, e);
+        }
     }
 
     /**

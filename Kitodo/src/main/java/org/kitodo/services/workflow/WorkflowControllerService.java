@@ -341,6 +341,8 @@ public class WorkflowControllerService {
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
 
+        serviceManager.getTaskService().save(task);
+
         // unlock the process
         metadataLock.setFree(task.getProcess().getId());
 
