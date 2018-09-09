@@ -162,7 +162,7 @@ public class RequestControlFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (LazyInitializationException e) {
-            Helper.setErrorMessage(Helper.getTranslation("aLazyInitializationErrorOcurred"), logger, e);
+            Helper.setErrorMessage(Helper.getTranslation("errorLazyInitialization"), logger, e);
         } finally {
             releaseQueuedRequest(httpRequest);
         }

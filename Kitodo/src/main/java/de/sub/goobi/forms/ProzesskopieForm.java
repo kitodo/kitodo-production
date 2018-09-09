@@ -69,7 +69,6 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Config;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -712,7 +711,7 @@ public class ProzesskopieForm implements Serializable {
 
         if (process.getTitle() == null || process.getTitle().equals("")) {
             valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorTitleEmpty");
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
         }
 
         String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
@@ -746,7 +745,7 @@ public class ProzesskopieForm implements Serializable {
         }
         if (amount > 0) {
             Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA)
-                    + Helper.getTranslation("processCreationErrorTitleAlreadyInUse"));
+                    + Helper.getTranslation("processTitleAlreadyInUse"));
             return false;
         }
         return true;
