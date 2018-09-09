@@ -62,7 +62,6 @@ public class ReaderTest {
 
         Diagram workflow = reader.getWorkflow();
         assertEquals("Process definition - workflow was read incorrectly!", "say-hello", workflow.getTitle());
-        assertEquals("Process definition - workflow was read incorrectly!", "Say Hello", workflow.getOutputName());
     }
 
     @Test

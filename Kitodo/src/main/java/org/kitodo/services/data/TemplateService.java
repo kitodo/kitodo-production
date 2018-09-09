@@ -246,7 +246,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     public Template duplicateTemplate(Template baseTemplate) {
         Template duplicatedTemplate = new Template();
 
-        // Template _title_  and _outputName_ should explicitly _not_ be duplicated!
+        // Template _title_ should explicitly _not_ be duplicated!
         duplicatedTemplate.setCreationDate(new Date());
         duplicatedTemplate.setInChoiceListShown(baseTemplate.getInChoiceListShown());
         duplicatedTemplate.setDocket(baseTemplate.getDocket());
@@ -269,7 +269,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         templateDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject templateJSONObject = jsonObject.getJsonObject("_source");
         templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(templateJSONObject));
-        templateDTO.setOutputName(TemplateTypeField.OUTPUT_NAME.getStringValue(templateJSONObject));
         templateDTO.setWikiField(TemplateTypeField.WIKI_FIELD.getStringValue(templateJSONObject));
         templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(templateJSONObject));
         templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(templateJSONObject));

@@ -17,8 +17,6 @@ public class Diagram {
 
     private String id;
     private String title;
-    private String outputName;
-    private static final String NAMESPACE = "http://www.kitodo.org/template";
 
     /**
      * Constructor.
@@ -28,7 +26,6 @@ public class Diagram {
     public Diagram(Process process) {
         this.id = process.getId();
         this.title = process.getName();
-        this.outputName = process.getAttributeValueNs(NAMESPACE, "outputName");
     }
 
     /**
@@ -65,23 +62,5 @@ public class Diagram {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get outputName.
-     *
-     * @return value of outputName
-     */
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
-     * Set outputName.
-     *
-     * @param outputName as String
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
     }
 }

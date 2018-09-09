@@ -517,20 +517,6 @@
                     },
                     "fielddata": true
                 },
-                "outputName": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                },
                 "wikiField": {
                     "type": "text",
                     "fields": {
@@ -623,20 +609,6 @@
                     }
                 },
                 "title": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                },
-                "outputName": {
                     "type": "text",
                     "fields": {
                         "keyword": {

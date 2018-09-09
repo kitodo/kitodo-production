@@ -91,7 +91,6 @@ public class ProcessTypeTest {
         Process firstProcess = new Process();
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
-        firstProcess.setOutputName("Test");
         LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setSortHelperImages(20);
@@ -105,7 +104,6 @@ public class ProcessTypeTest {
         Process secondProcess = new Process();
         secondProcess.setId(2);
         secondProcess.setTitle("Rendering");
-        secondProcess.setOutputName("Render");
         secondProcess.setWikiField("Field");
         secondProcess.setSortHelperImages(30);
         secondProcess.setProject(project);
@@ -132,8 +130,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Test",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -205,8 +201,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Render",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Field",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -271,8 +265,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -326,7 +318,7 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
 
         JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         JsonObject batch = batches.getJsonObject(0);

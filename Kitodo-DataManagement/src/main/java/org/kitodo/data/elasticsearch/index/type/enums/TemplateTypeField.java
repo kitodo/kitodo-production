@@ -15,7 +15,6 @@ public enum TemplateTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    OUTPUT_NAME("outputName"),
     CREATION_DATE("creationDate"),
     ACTIVE("active"),
     WIKI_FIELD("wikiField"),
