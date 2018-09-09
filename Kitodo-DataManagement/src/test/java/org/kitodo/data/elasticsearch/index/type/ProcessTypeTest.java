@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -141,7 +142,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -196,7 +197,6 @@ public class ProcessTypeTest {
     @Test
     public void shouldCreateSecondDocument() throws Exception {
         ProcessType processType = new ProcessType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(1);
         HttpEntity document = processType.createDocument(process);
@@ -215,7 +215,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(process.getCreationDate()),
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -263,7 +263,6 @@ public class ProcessTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         ProcessType processType = new ProcessType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(2);
         HttpEntity document = processType.createDocument(process);
@@ -282,7 +281,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(process.getCreationDate()),
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -345,5 +344,10 @@ public class ProcessTypeTest {
         List<Process> processes = prepareData();
         Map<Integer, HttpEntity> documents = processType.createDocuments(processes);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }

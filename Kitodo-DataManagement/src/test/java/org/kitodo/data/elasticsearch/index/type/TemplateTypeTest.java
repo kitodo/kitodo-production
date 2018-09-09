@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -112,7 +113,7 @@ public class TemplateTypeTest {
             TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -146,7 +147,6 @@ public class TemplateTypeTest {
     @Test
     public void shouldCreateSecondDocument() throws Exception {
         TemplateType templateType = new TemplateType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Template template = prepareData().get(1);
         HttpEntity document = templateType.createDocument(template);
@@ -159,7 +159,7 @@ public class TemplateTypeTest {
             TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Field",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -183,7 +183,6 @@ public class TemplateTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         TemplateType templateType = new TemplateType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Template template = prepareData().get(2);
         HttpEntity document = templateType.createDocument(template);
@@ -196,7 +195,7 @@ public class TemplateTypeTest {
             TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -237,5 +236,10 @@ public class TemplateTypeTest {
         List<Template> templates = prepareData();
         Map<Integer, HttpEntity> documents = templateType.createDocuments(templates);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }

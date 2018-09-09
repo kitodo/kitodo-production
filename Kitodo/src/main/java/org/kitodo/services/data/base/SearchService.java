@@ -19,9 +19,9 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
+import de.sub.goobi.helper.Helper;
+
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -747,19 +747,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         QueryBuilder query = null;
         switch (searchCondition) {
             case EQUAL:
-                query = matchQuery(key, formatDate(date));
+                query = matchQuery(key, Helper.getDateAsFormattedString(date));
                 break;
             case EQUAL_OR_BIGGER:
-                query = rangeQuery(key).gte(formatDate(date));
+                query = rangeQuery(key).gte(Helper.getDateAsFormattedString(date));
                 break;
             case EQUAL_OR_SMALLER:
-                query = rangeQuery(key).lte(formatDate(date));
+                query = rangeQuery(key).lte(Helper.getDateAsFormattedString(date));
                 break;
             case BIGGER:
-                query = rangeQuery(key).gt(formatDate(date));
+                query = rangeQuery(key).gt(Helper.getDateAsFormattedString(date));
                 break;
             case SMALLER:
-                query = rangeQuery(key).lt(formatDate(date));
+                query = rangeQuery(key).lt(Helper.getDateAsFormattedString(date));
                 break;
             default:
                 assert false : searchCondition;
@@ -856,18 +856,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     private String createTermAggregation(String field, boolean sort) {
         return XContentHelper
                 .toString(AggregationBuilders.terms(field).field(field).order(Terms.Order.aggregation("_term", sort)));
-    }
-
-    /**
-     * Format date according to format used during the indexing of documents.
-     *
-     * @param date
-     *            as Date
-     * @return formatted date
-     */
-    protected String formatDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return dateFormat.format(date);
     }
 
     /**
