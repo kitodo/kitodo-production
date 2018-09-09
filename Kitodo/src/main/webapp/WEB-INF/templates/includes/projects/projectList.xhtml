@@ -17,7 +17,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
     <p:dataTable var="item"
-                 value="#{ProjekteForm.lazyDTOModel}"
+                 value="#{ProjectForm.lazyDTOModel}"
                  lazy="true"
                  id="projectsTable"
                  paginator="true"
@@ -53,23 +53,23 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',item.client.id,item.id)}"
-                        onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
+                        onclick="#{ProjectForm.setLockedDetail(true)} #{ProjectForm.setLockedMets(true)} #{ProjectForm.setLockedTechnical(true)}" outcome="projectEdit"
                         title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject',item.client.id)}"
-                               action="#{ProjekteForm.duplicateProject(item.id)}" immediate="true"
+                               action="#{ProjectForm.duplicateProject(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
                 <p:commandLink id="deleteProject"
-                               action="#{ProjekteForm.delete}"
+                               action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
                                update="projectsTabView:projectsTable"
                                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteProject', item.client.id, item.id)}">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{ProjekteForm.projectById}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteProject}"
                                icon="ui-icon-alert"/>

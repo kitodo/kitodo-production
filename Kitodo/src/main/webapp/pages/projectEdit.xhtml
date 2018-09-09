@@ -19,8 +19,8 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProjekteForm.loadProject(id)}"/>
-        <f:viewAction action="#{ProjekteForm.setProjectEditReferer(request.getParameter('referer'))}"/>
+        <f:viewAction action="#{ProjectForm.loadProject(id)}"/>
+        <f:viewAction action="#{ProjectForm.setProjectEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -29,26 +29,26 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.projectEdit} (#{ProjekteForm.myProjekt.title})" rendered="#{not empty ProjekteForm.myProjekt.title}"/>
-            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjekteForm.myProjekt.folders}"/>
-            <h:outputText value="#{msgs.duplicateProject}" rendered="#{empty ProjekteForm.myProjekt.title and not empty ProjekteForm.myProjekt.folders}"/>
+            <h:outputText value="#{msgs.projectEdit} (#{ProjectForm.myProjekt.title})" rendered="#{not empty ProjectForm.myProjekt.title}"/>
+            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjectForm.myProjekt.folders}"/>
+            <h:outputText value="#{msgs.duplicateProject}" rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ProjekteForm.save()}"
+                         action="#{ProjectForm.save()}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{ProjekteForm.saveDisabled}"
+                         disabled="#{ProjectForm.saveDisabled}"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProjekteForm.setSaveDisabled(false)}"
+                         actionListener="#{ProjectForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
-                  outcome="#{ProjekteForm.projectEditReferer}"
+                  outcome="#{ProjectForm.projectEditReferer}"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
@@ -73,13 +73,13 @@
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{not empty ProjekteForm.myProjekt.title}">
+                <ui:fragment rendered="#{not empty ProjectForm.myProjekt.title}">
                     #{msgs.projectEdit}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.folders}">
+                <ui:fragment rendered="#{empty ProjectForm.myProjekt.folders}">
                     #{msgs.newProject}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty ProjekteForm.myProjekt.title and not empty ProjekteForm.myProjekt.folders}">
+                <ui:fragment rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}">
                     #{msgs.duplicateProject}
                 </ui:fragment>
             </a>
