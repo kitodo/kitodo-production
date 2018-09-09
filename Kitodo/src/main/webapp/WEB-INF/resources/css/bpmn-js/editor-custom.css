@@ -74,3 +74,9 @@
 .bpmn-icon-parallel-mi-marker {display: none !important;}
 .bpmn-icon-sequential-mi-marker {display: none !important;}
 .bpmn-icon-loop-marker {display: none !important;}
+
+#editForm\:workflowTabView\:btnReadXmlDiagram {
+    width: 1px !important;
+    height: 1px !important;
+    visibility: hidden;
+}
