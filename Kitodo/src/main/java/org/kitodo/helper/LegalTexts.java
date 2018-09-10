@@ -33,26 +33,59 @@ public class LegalTexts implements Serializable {
 
     private static final String DEFAULT_LANGUAGE = Locale.GERMAN.getLanguage();
 
+    /**
+     * Get terms of use text.
+     *
+     * @return terms of use text
+     */
     public String getTermsOfUseText() {
         return termsOfUseText;
     }
 
+    /**
+     * Set terms of use texts.
+     *
+     * @param newText
+     *            new terms of use text
+     */
     public void setTermsOfUseText(String newText) {
         termsOfUseText = newText;
     }
 
+    /**
+     * Get data privacy text.
+     *
+     * @return data privacy text
+     */
     public String getDataPrivacyText() {
         return dataPrivacyText;
     }
 
+    /**
+     * Set data privacy text.
+     *
+     * @param newText
+     *            new data privacy text
+     */
     public void setDataPrivacyText(String newText) {
         dataPrivacyText = newText;
     }
 
+    /**
+     * Get imprint text.
+     *
+     * @return imprint text
+     */
     public String getImprintText() {
         return imprintText;
     }
 
+    /**
+     * Set imprint text.
+     *
+     * @param newText
+     *            new imprint text
+     */
     public void setImprintText(String newText) {
         imprintText = newText;
     }
