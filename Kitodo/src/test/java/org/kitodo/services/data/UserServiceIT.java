@@ -325,17 +325,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetCss() throws Exception {
-        User user = userService.getById(1);
-        boolean condition = userService.getCss(user).equals("old/userStyles/classic.css");
-        assertTrue("Css file is incorrect!", condition);
-
-        user = userService.getById(2);
-        condition = userService.getCss(user).equals("old/userStyles/default.css");
-        assertTrue("Css file is incorrect!", condition);
-    }
-
-    @Test
     public void shouldGetUserGroupSize() {
         await().untilAsserted(
             () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getUserGroupSize()));

@@ -70,9 +70,6 @@ public class User extends BaseIndexedBean {
     @Column(name = "withMassDownload")
     private boolean withMassDownload = false;
 
-    @Column(name = "css")
-    private String css;
-
     @ManyToOne
     @JoinColumn(name = "ldapGroup_id", foreignKey = @ForeignKey(name = "FK_user_ldapGroup_id"))
     private LdapGroup ldapGroup;
@@ -128,7 +125,6 @@ public class User extends BaseIndexedBean {
         this.setLanguage(user.getLanguage());
         this.active = user.active;
         this.configProductionDateShow = user.configProductionDateShow;
-        this.css = user.css;
         this.deleted = user.deleted;
         this.ldapGroup = user.ldapGroup;
         this.ldapLogin = user.ldapLogin;
@@ -365,17 +361,6 @@ public class User extends BaseIndexedBean {
 
     public void setLdapLogin(String ldapLogin) {
         this.ldapLogin = ldapLogin;
-    }
-
-    public String getCss() {
-        if (this.css == null || this.css.length() == 0) {
-            this.css = "old/userStyles/default.css";
-        }
-        return this.css;
-    }
-
-    public void setCss(String css) {
-        this.css = css;
     }
 
     /**
