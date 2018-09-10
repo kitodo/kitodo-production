@@ -28,14 +28,14 @@
     <!-- Bean für Metadaten-Sperrung -->
     <managed-bean>
         <managed-bean-name>MetadatenSperrung</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.metadaten.MetadatenSperrung</managed-bean-class>
+        <managed-bean-class>de.sub.goobi.metadaten.MetadataLock</managed-bean-class>
         <managed-bean-scope>application</managed-bean-scope>
     </managed-bean>
 
     <!-- Bean für lang laufende (administrative) Aufgaben -->
     <managed-bean>
         <managed-bean-name>LongRunningTasksForm</managed-bean-name>
-        <managed-bean-class>de.sub.goobi.forms.LongRunningTasksForm</managed-bean-class>
+        <managed-bean-class>org.kitodo.forms.LongRunningTasksForm</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 

@@ -14,8 +14,6 @@ package org.goobi.production.cli.helper;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.forms.AdditionalField;
-import de.sub.goobi.forms.ProzesskopieForm;
 import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.UghHelper;
@@ -55,6 +53,8 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.forms.ProzesskopieForm;
+import org.kitodo.helper.AdditionalField;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
