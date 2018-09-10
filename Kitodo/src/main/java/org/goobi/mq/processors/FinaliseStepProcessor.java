@@ -25,7 +25,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.forms.AktuelleSchritteForm;
+import org.kitodo.forms.CurrentTaskForm;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -50,7 +50,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
 
     /**
      * This is the main routine processing incoming tickets. It gets an
-     * AktuelleSchritteForm object, sets it to the appropriate step which is
+     * CurrentTaskForm object, sets it to the appropriate step which is
      * retrieved from the database, appends the message − if any − to the wiki
      * field, and executes the form’s the step close function.
      *
@@ -62,7 +62,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
     @Override
     protected void process(MapMessageObjectReader ticket)
             throws DAOException, DataException, IOException, JMSException {
-        AktuelleSchritteForm dialog = new AktuelleSchritteForm();
+        CurrentTaskForm dialog = new CurrentTaskForm();
         Integer stepID = ticket.getMandatoryInteger("id");
         dialog.setCurrentTask(serviceManager.getTaskService().getById(stepID));
         if (ticket.hasField("properties")) {
@@ -80,11 +80,11 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * Goobi’s data model.
      *
      * @param dialog
-     *            The AktuelleSchritteForm that we work with
+     *            The CurrentTaskForm that we work with
      * @param propertiesToSet
      *            A Map with the properties to set
      */
-    private void updateProperties(AktuelleSchritteForm dialog, Map<String, String> propertiesToSet) {
+    private void updateProperties(CurrentTaskForm dialog, Map<String, String> propertiesToSet) {
         List<Property> availableProperties = dialog.getProperties();
         for (Property property : availableProperties) {
             String key = property.getTitle();
