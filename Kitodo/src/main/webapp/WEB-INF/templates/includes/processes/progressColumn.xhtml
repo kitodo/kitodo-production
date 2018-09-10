@@ -23,10 +23,10 @@
                     to right,
                     var(--progress-closed),
                     var(--progress-closed) #{process.progressClosed}%,
-                    var(--progress-open) #{process.progressClosed}%,
-                    var(--progress-open) #{process.progressOpen + process.progressClosed}%,
-                    var(--progress-inwork) #{process.progressOpen + process.progressClosed}%,
-                    var(--progress-inwork) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%,
+                    var(--progress-inwork) #{process.progressClosed}%,
+                    var(--progress-inwork) #{process.progressInProcessing + process.progressClosed}%,
+                    var(--progress-open) #{process.progressInProcessing + process.progressClosed}%,
+                    var(--progress-open) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%,
                     var(--progress-blocked) #{process.progressOpen + process.progressClosed + process.progressInProcessing}%);"
     />
 </ui:composition>
