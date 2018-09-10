@@ -113,13 +113,13 @@ public class BatchProcessHelper extends BatchHelper {
                     process.getProperties().add(this.property);
                 }
             }
-            try {
-                serviceManager.getProcessService().save(this.currentProcess);
-                Helper.setMessage("propertySaved");
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
+        }
+        try {
+            serviceManager.getProcessService().save(this.currentProcess);
+            Helper.setMessage("propertySaved");
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
                     logger, e);
-            }
         }
     }
 
@@ -128,6 +128,7 @@ public class BatchProcessHelper extends BatchHelper {
      */
     public void saveCurrentPropertyForAll() {
         List<Property> ppList = getProperties();
+        List<Process> processesToUpdate = new ArrayList<>();
 
         for (Property pp : ppList) {
             this.property = pp;
@@ -152,15 +153,19 @@ public class BatchProcessHelper extends BatchHelper {
                     }
                 }
 
-                try {
-                    serviceManager.getProcessService().save(process);
-                    Helper.setMessage("propertiesSaved");
-                } catch (DataException e) {
-                    List<String> param = new ArrayList<>();
-                    param.add(process.getTitle());
-                    String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
-                    Helper.setErrorMessage(value, logger, e);
-                }
+                processesToUpdate.add(process);
+            }
+        }
+
+        for (Process process : processesToUpdate) {
+            try {
+                serviceManager.getProcessService().save(process);
+                Helper.setMessage("propertiesSaved");
+            } catch (DataException e) {
+                List<String> param = new ArrayList<>();
+                param.add(process.getTitle());
+                String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+                Helper.setErrorMessage(value, logger, e);
             }
         }
     }
