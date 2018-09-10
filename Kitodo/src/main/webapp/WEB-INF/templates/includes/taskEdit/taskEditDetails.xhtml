@@ -19,7 +19,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="priority" value="#{msgs.priority}"/>
-                <p:inputText id="priority" value="#{ProzessverwaltungForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                <p:inputText id="priority" value="#{ProcessForm.task.priority}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
@@ -27,7 +27,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="status" value="#{msgs.status}"/>
-                <p:selectOneMenu id="status" value="#{ProzessverwaltungForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
+                <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
                     <f:selectItem itemValue="0" itemLabel="#{msgs.locked}"/>
                     <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
