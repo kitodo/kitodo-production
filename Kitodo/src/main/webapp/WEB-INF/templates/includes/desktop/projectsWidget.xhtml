@@ -29,7 +29,7 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',project.client.id, project.id)}"
-                        onclick="#{ProjectForm.setLockedDetail(true)} #{ProjectForm.setLockedMets(true)} #{ProjectForm.setLockedTechnical(true)}" outcome="projectEdit"
+                        outcome="projectEdit"
                         title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
