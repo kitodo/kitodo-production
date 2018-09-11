@@ -11,8 +11,6 @@
 
 package org.goobi.mq;
 
-import de.sub.goobi.helper.enums.ReportLevel;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +26,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ReportLevel;
 import org.kitodo.helper.Helper;
 
 /**

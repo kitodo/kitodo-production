@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.enums;
+package org.kitodo.enums;
 
 /**
  * These are the possible states for output to “activeMQ.results.topic”.

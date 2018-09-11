@@ -12,7 +12,6 @@
 package org.kitodo.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.enums.ReportLevel;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -48,6 +47,7 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
+import org.kitodo.enums.ReportLevel;
 
 /**
  * Extends Helper from Kitodo Data Management module.

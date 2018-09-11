@@ -11,8 +11,6 @@
 
 package org.goobi.mq;
 
-import de.sub.goobi.helper.enums.ReportLevel;
-
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
@@ -22,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.kitodo.enums.ReportLevel;
 
 public class WebServiceResult {
     private static final Logger logger = LogManager.getLogger(WebServiceResult.class);
