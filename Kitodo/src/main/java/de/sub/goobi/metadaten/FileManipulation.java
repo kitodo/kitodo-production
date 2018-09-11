@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -41,6 +39,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;

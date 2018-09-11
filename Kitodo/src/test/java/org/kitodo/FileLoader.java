@@ -11,8 +11,6 @@
 
 package org.kitodo;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 
 public class FileLoader {
 

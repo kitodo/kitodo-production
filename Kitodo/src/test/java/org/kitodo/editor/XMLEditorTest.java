@@ -11,8 +11,6 @@
 
 package org.kitodo.editor;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +24,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.config.ConfigCore;
 
 /**
  * Test class for class 'XMLEditorTest'.

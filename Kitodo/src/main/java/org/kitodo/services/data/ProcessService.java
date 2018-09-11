@@ -11,7 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
@@ -72,6 +71,7 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;

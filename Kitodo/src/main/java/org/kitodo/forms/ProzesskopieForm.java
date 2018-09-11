@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
@@ -65,7 +62,10 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
+import org.kitodo.config.DigitalCollections;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;

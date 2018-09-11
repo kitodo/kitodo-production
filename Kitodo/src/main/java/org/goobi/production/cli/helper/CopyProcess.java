@@ -11,9 +11,6 @@
 
 package org.goobi.production.cli.helper;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
@@ -41,6 +38,9 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.DigitalCollections;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;

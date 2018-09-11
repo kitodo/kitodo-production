@@ -11,8 +11,6 @@
 
 package de.sub.goobi.importer;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +34,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.WrongImportFileException;
 import org.kitodo.helper.Helper;

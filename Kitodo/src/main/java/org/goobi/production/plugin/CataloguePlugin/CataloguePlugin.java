@@ -11,8 +11,6 @@
 
 package org.goobi.production.plugin.CataloguePlugin;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +20,7 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 

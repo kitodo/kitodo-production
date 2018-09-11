@@ -11,7 +11,6 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.helper.tasks.EmptyTask;
 import de.sub.goobi.helper.tasks.ExportDmsTask;
@@ -39,6 +38,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;

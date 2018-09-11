@@ -11,7 +11,6 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 
 import java.io.IOException;
@@ -32,6 +31,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;

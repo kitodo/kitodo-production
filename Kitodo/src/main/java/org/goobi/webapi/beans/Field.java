@@ -11,8 +11,6 @@
 
 package org.goobi.webapi.beans;
 
-import de.sub.goobi.config.ConfigProjects;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.goobi.webapi.beans.Label.KeyAttribute;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.data.database.beans.Project;
 
 @XmlType(propOrder = {"required", "from", "option", "ughbinding", "docstruct" })

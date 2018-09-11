@@ -11,8 +11,6 @@
 
 package de.unigoettingen.sub.search.opac;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -34,6 +32,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")

@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +39,7 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.helper.DateUtils;

@@ -11,7 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.BufferedWriter;
@@ -31,7 +30,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
-import org.kitodo.config.Config;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -217,7 +216,7 @@ public class WebDav implements Serializable {
     private void saveTiffHeader(Process inProcess) {
         try {
             URI imagesDirectory = serviceManager.getFileService().getImagesDirectory(inProcess);
-            String path = Config.getKitodoDataDirectory() + imagesDirectory;
+            String path = ConfigCore.getKitodoDataDirectory() + imagesDirectory;
             URI tiffWriterURI = Paths.get(new File(path).getAbsolutePath(), "tiffwriter.conf").toUri();
             if (new File(tiffWriterURI).exists()) {
                 return;

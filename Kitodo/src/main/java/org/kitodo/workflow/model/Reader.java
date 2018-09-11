@@ -11,8 +11,6 @@
 
 package org.kitodo.workflow.model;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ import org.camunda.bpm.model.bpmn.instance.ScriptTask;
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;

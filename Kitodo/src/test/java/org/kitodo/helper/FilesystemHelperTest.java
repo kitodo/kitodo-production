@@ -13,8 +13,6 @@ package org.kitodo.helper;
 
 import static junit.framework.Assert.fail;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,6 +22,7 @@ import java.nio.file.Paths;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.services.file.FileService;
 
 public class FilesystemHelperTest {

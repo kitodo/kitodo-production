@@ -11,11 +11,10 @@
 
 package org.kitodo.metadata.comparator;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.net.URI;
 import java.util.Comparator;
 
+import org.kitodo.config.ConfigCore;
 import org.kitodo.exceptions.NotImplementedException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;

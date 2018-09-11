@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -21,6 +19,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 
 /**

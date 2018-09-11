@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +29,7 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;

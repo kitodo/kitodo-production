@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +32,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;

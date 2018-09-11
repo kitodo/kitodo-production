@@ -11,11 +11,10 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.ArrayList;
 
 import org.kitodo.api.ugh.DocStructInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.helper.TreeNode;
 

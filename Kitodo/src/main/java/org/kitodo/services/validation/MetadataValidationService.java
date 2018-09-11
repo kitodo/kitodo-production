@@ -11,8 +11,6 @@
 
 package org.kitodo.services.validation;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
@@ -39,6 +37,8 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;

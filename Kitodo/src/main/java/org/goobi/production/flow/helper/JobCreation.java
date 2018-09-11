@@ -11,8 +11,6 @@
 
 package org.goobi.production.flow.helper;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,6 +25,7 @@ import org.goobi.production.importer.ImportObject;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
