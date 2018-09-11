@@ -12,7 +12,6 @@
 package de.sub.goobi.metadaten;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
@@ -59,6 +58,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;

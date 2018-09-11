@@ -12,7 +12,6 @@
 package de.unigoettingen.sub.search.opac;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,10 +31,10 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
 public class ConfigOpac {

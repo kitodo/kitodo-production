@@ -12,7 +12,6 @@
 package org.kitodo.services.file;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -46,6 +45,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;

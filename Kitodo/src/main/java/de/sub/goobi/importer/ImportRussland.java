@@ -11,7 +11,6 @@
 
 package de.sub.goobi.importer;
 
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.WrongImportFileException;
 
 import java.io.BufferedReader;
@@ -37,6 +36,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 

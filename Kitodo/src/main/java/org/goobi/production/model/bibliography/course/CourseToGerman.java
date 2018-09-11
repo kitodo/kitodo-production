@@ -11,8 +11,6 @@
 
 package org.goobi.production.model.bibliography.course;
 
-import de.sub.goobi.helper.DateUtils;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +20,7 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.kitodo.helper.DateUtils;
 
 /**
  * The static class CourseToGerman provides a toString() method to convert a

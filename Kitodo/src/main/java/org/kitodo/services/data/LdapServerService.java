@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ldap.LdapUser;
 
 import java.io.File;
@@ -62,6 +61,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
+import org.kitodo.helper.Helper;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;

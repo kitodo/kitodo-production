@@ -12,7 +12,6 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +37,7 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.data.ProcessService;

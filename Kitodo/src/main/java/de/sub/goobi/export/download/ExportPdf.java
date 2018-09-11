@@ -12,7 +12,6 @@
 package de.sub.goobi.export.download;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 
 import java.io.BufferedWriter;
@@ -42,6 +41,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;

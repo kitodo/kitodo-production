@@ -12,10 +12,6 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.DateUtils;
-import de.sub.goobi.helper.FacesUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.XMLUtils;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -47,6 +43,10 @@ import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.DateUtils;
+import org.kitodo.helper.FacesUtils;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.XMLUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

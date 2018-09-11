@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper;
+package org.kitodo.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.exceptions.UghHelperException;

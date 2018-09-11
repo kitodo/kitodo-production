@@ -13,8 +13,6 @@ package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.BatchProcessHelper;
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
 import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
@@ -48,6 +46,8 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.helper.BatchProcessHelper;
+import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("BatchForm")

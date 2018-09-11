@@ -11,7 +11,6 @@
 
 package de.sub.goobi.export.dms;
 
-import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import org.kitodo.api.ugh.DigitalDocumentInterface;
@@ -20,6 +19,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.BeanHelper;
 import org.kitodo.services.ServiceManager;
 
 public class ExportDmsCorrectRusdml {

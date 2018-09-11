@@ -12,8 +12,6 @@
 package org.kitodo.services.workflow;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
@@ -41,6 +39,8 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;

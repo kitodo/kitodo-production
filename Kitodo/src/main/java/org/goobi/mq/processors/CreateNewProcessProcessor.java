@@ -12,7 +12,6 @@
 package org.goobi.mq.processors;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
 import java.io.IOException;
@@ -38,6 +37,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 /**

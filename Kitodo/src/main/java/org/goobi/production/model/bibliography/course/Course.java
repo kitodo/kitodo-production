@@ -11,8 +11,6 @@
 
 package org.goobi.production.model.bibliography.course;
 
-import de.sub.goobi.helper.XMLUtils;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,6 +24,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
+import org.kitodo.helper.XMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

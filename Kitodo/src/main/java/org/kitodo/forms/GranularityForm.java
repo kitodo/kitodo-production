@@ -12,9 +12,6 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FacesUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.XMLUtils;
 import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
 import de.sub.goobi.helper.tasks.TaskManager;
 
@@ -34,6 +31,9 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.FacesUtils;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.XMLUtils;
 import org.w3c.dom.Document;
 
 /**

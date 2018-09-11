@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +27,6 @@ import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;

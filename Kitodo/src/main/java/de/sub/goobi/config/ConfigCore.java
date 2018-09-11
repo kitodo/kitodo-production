@@ -11,8 +11,6 @@
 
 package de.sub.goobi.config;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -27,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.Config;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 public class ConfigCore extends Config {

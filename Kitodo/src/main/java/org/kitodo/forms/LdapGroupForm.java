@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.Helper;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.helper.Helper;
 
 @Named("LdapGroupForm")
 @SessionScoped

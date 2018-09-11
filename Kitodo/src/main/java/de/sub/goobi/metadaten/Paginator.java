@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +19,7 @@ import java.util.Objects;
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
 import org.kitodo.api.ugh.RomanNumeralInterface;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 
 /**

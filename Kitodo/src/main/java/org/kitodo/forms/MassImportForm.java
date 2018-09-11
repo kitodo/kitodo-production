@@ -12,7 +12,6 @@
 package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
@@ -61,6 +60,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
 
 @Named("MassImportForm")
 @SessionScoped
