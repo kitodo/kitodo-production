@@ -163,7 +163,7 @@ public class Task extends BaseIndexedBean {
         this.title = "";
         this.users = new ArrayList<>();
         this.userGroups = new ArrayList<>();
-        this.typeGenerate = new ArrayList<>();
+        this.generateContents = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
     }
@@ -202,7 +202,7 @@ public class Task extends BaseIndexedBean {
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
 
         // necessary to create new ArrayList in other case session problem!
-        this.typeGenerate = new ArrayList<>(templateTask.getTypeGenerate());
+        this.generateContents = new ArrayList<>(templateTask.getGenerateContents());
     }
 
     public String getTitle() {
