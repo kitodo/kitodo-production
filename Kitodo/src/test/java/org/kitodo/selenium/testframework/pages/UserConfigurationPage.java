@@ -59,7 +59,7 @@ public class UserConfigurationPage extends Page<UserConfigurationPage> {
         tableSizeInput.sendKeys("50");
         metadataLanguageInput.clear();
         metadataLanguageInput.sendKeys("en");
-        Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(1).click();
+        Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(0).click();
         Browser.getDriver().findElement(By.id("userConfigurationTabView:userConfigForm:languages_1")).click();
         saveConfigurationButton.click();
     }
