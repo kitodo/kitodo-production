@@ -56,7 +56,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.tasks.ImageGeneratorTask;
+import org.kitodo.production.thread.ImageGeneratorTask;
 import org.kitodo.tasks.ImageGeneratorTaskVariant;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
@@ -445,6 +445,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
+
     /**
      * Regenerate missing and damaged images.
      */
@@ -458,6 +459,7 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
+
     /**
      * Generate missing images.
      */
