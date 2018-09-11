@@ -25,7 +25,6 @@ import de.sub.goobi.export.download.ExportMets;
 import de.sub.goobi.export.download.ExportPdf;
 import de.sub.goobi.export.download.Multipage;
 import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +79,7 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;

@@ -13,7 +13,6 @@ package org.kitodo.helper;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
@@ -40,6 +39,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 

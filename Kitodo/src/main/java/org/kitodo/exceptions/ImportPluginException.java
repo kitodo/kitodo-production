@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.exceptions;
+package org.kitodo.exceptions;
 
 public class ImportPluginException extends Exception {
     private static final long serialVersionUID = -6443010347859488741L;

@@ -13,8 +13,6 @@ package org.kitodo.services.validation;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
@@ -44,6 +42,8 @@ import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.UghHelper;
 import org.kitodo.legacy.UghImplementation;

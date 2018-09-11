@@ -9,12 +9,12 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.exceptions;
+package org.kitodo.exceptions;
 
-public class ExportFileException extends Exception {
-    private static final long serialVersionUID = 8440137060804389036L;
+public class InvalidImagesException extends Exception {
+    private static final long serialVersionUID = -2677207359216957351L;
 
-    public ExportFileException(String s) {
-        super(s);
+    public InvalidImagesException(Exception e) {
+        super(e);
     }
 }

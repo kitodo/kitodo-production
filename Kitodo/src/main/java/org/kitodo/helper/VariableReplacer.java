@@ -12,7 +12,6 @@
 package org.kitodo.helper;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +35,7 @@ import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.ProcessService;
 import org.kitodo.services.file.FileService;

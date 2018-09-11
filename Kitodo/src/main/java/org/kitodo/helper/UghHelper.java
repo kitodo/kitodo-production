@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.helper.exceptions.UghHelperException;
-
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +21,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 

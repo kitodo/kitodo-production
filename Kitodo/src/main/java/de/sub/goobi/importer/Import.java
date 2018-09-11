@@ -11,8 +11,6 @@
 
 package de.sub.goobi.importer;
 
-import de.sub.goobi.helper.exceptions.WrongImportFileException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -27,6 +25,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.exceptions.WrongImportFileException;
 
 /**
  * Import von Metadaten aus upgeloadeten Dateien

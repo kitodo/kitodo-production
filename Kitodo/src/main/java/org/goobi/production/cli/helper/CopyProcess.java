@@ -14,7 +14,6 @@ package org.goobi.production.cli.helper;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
 import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
@@ -50,6 +49,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
 import org.kitodo.helper.BeanHelper;

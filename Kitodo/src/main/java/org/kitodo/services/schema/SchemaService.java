@@ -14,8 +14,6 @@ package org.kitodo.services.schema;
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
@@ -47,6 +45,8 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.BeanHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;

@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.MetadatenHelper;
 import de.sub.goobi.metadaten.copier.CopierData;
@@ -105,6 +104,7 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.legacy.UghImplementation;
