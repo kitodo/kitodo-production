@@ -68,6 +68,7 @@ public class BatchForm extends BaseForm {
     private String batchTitle;
     private BatchProcessHelper batchHelper;
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
+    private static final String NO_PROCESS_SELECTED = "noProcessSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
 
     /**
@@ -201,12 +202,23 @@ public class BatchForm extends BaseForm {
         this.batchfilter = batchfilter;
     }
 
-    public String getBatchName() {
+    /**
+     * Get batch title.
+     * 
+     * @return batch title as String
+     */
+    public String getBatchTitle() {
         return batchTitle;
     }
 
-    public void setBatchName(String batchName) {
-        batchTitle = batchName;
+    /**
+     * Set batch title.
+     * 
+     * @param batchTitle
+     *            as String
+     */
+    public void setBatchTitle(String batchTitle) {
+        this.batchTitle = batchTitle;
     }
 
     public String getProcessfilter() {
@@ -301,7 +313,7 @@ public class BatchForm extends BaseForm {
             return;
         }
         if (this.selectedProcesses.isEmpty()) {
-            Helper.setErrorMessage("noProcessSelected");
+            Helper.setErrorMessage(NO_PROCESS_SELECTED);
             return;
         }
         try {
@@ -334,7 +346,7 @@ public class BatchForm extends BaseForm {
             return;
         }
         if (this.selectedProcesses.isEmpty()) {
-            Helper.setErrorMessage("noProcessSelected");
+            Helper.setErrorMessage(NO_PROCESS_SELECTED);
             return;
         }
 
@@ -368,6 +380,7 @@ public class BatchForm extends BaseForm {
                     if (selected.equals(batch.getId())) {
                         batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
                         serviceManager.getBatchService().save(batch);
+                        batchTitle = "";
                         return;
                     }
                 }
@@ -382,7 +395,9 @@ public class BatchForm extends BaseForm {
      * Create new Batch.
      */
     public void createNewBatch() throws DAOException, DataException {
-        if (!selectedProcesses.isEmpty()) {
+        if (selectedProcesses.isEmpty()) {
+            Helper.setErrorMessage(NO_PROCESS_SELECTED);
+        } else {
             Batch batch;
             if (batchTitle != null && batchTitle.trim().length() > 0) {
                 batch = new Batch(batchTitle.trim(), Type.LOGISTIC, selectedProcesses);
@@ -399,6 +414,7 @@ public class BatchForm extends BaseForm {
                 this.serviceManager.getProcessService().saveList(selectedProcesses);
             }
         }
+        batchTitle = "";
         filterAll();
     }
 
@@ -412,7 +428,7 @@ public class BatchForm extends BaseForm {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
-                this.setBatchHelper(new BatchProcessHelper(serviceManager.getBatchService().getById(id)));
+                setBatchHelper(new BatchProcessHelper(serviceManager.getBatchService().getById(id)));
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
