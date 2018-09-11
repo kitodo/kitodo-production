@@ -18,22 +18,20 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:panel>
-        <p:selectBooleanButton
-                onLabel="#{msgs.locked}"
-                offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg"
-                offIcon="fa fa-unlock fa-lg"
+        <p:commandButton
+                value="#{msgs.locked}"
+                icon="fa fa-lock fa-lg"
+                iconPos="right"
                 styleClass="callto"
-                id="metsLockedButton"
-                value="#{ProjectForm.lockedMets}">
-            <p:ajax event="change" update="metsParamaterForm mets-file-groups" />
-        </p:selectBooleanButton>
+                id="metsParamLockedButton"
+                onclick="enableOrDisable(this,'#{msgs.locked}','#{msgs.unlocked}')">
+        </p:commandButton>
     </p:panel>
     <p:panelGrid id="metsParamaterForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwner" value="#{msgs.metsRightsOwner}" />
-                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwner}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsRightsOwner" placeholder="#{msgs.metsRightsOwner}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwner}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerButton"/>
                 </p:inputText>
@@ -41,7 +39,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerUrl" value="#{msgs.metsRightsOwnerSite}" />
-                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerSite}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsRightsOwnerUrl" placeholder="#{msgs.metsRightsOwnerSite}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerSite}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerUrlButton"/>
                 </p:inputText>
@@ -49,7 +47,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReference" value="#{msgs.metsDigiprovReference}" />
-                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovReference}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsDigiprovReference" placeholder="#{msgs.metsDigiprovReference}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovReference}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovReferenceButton"/>
                 </p:inputText>
@@ -57,7 +55,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovReferenceAnchor" value="#{msgs.metsDigiprovReferenceAnchor}" />
-                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovReferenceAnchor}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsDigiprovReferenceAnchor" placeholder="#{msgs.metsDigiprovReferenceAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovReferenceAnchor}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovReferenceAnchorButton"/>
                 </p:inputText>
@@ -65,7 +63,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsPointerPath" value="#{msgs.metsPointerPath}" />
-                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPointerPath}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsPointerPath" placeholder="#{msgs.metsPointerPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPointerPath}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPointerPathButton"/>
                 </p:inputText>
@@ -73,7 +71,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsPurl" value="#{msgs.metsPurl}" />
-                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPurl}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsPurl" placeholder="#{msgs.metsPurl}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPurl}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPurlButton"/>
                 </p:inputText>
@@ -83,7 +81,7 @@
         <p:row>
             <div>
                 <p:outputLabel for="metsRightsOwnerLogo" value="#{msgs.metsRightsOwnerLogo}" />
-                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerLogo}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsRightsOwnerLogo" placeholder="#{msgs.metsRightsOwnerLogo}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerLogo}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerLogoButton"/>
                 </p:inputText>
@@ -91,7 +89,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsRightsOwnerContact" value="#{msgs.metsRightsOwnerMail}" />
-                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerMail}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsRightsOwnerContact" placeholder="#{msgs.metsRightsOwnerMail}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsRightsOwnerMail}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsRightsOwnerContactButton"/>
                 </p:inputText>
@@ -99,7 +97,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsDigiprovPresentation" value="#{msgs.metsDigiprovPresentation}" />
-                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovPresentation}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsDigiprovPresentation" placeholder="#{msgs.metsDigiprovPresentation}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovPresentation}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsDigiprovPresentationButton"/>
                 </p:inputText>
@@ -107,7 +105,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsPresentationAnchor" value="#{msgs.metsDigiprovPresentationAnchor}" />
-                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovPresentationAnchor}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsPresentationAnchor" placeholder="#{msgs.metsDigiprovPresentationAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsDigiprovPresentationAnchor}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPresentationAnchorButton"/>
                 </p:inputText>
@@ -115,7 +113,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsPointerPathAnchor" value="#{msgs.metsPointerPathAnchor}" />
-                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPointerPathAnchor}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsPointerPathAnchor" placeholder="#{msgs.metsPointerPathAnchor}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsPointerPathAnchor}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsPointerPathAnchorButton"/>
                 </p:inputText>
@@ -123,7 +121,7 @@
             </div>
             <div>
                 <p:outputLabel for="metsContentId" value="#{msgs.metsContentIDs}" />
-                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsContentIDs}" disabled="#{ProjectForm.lockedMets}">
+                <p:inputText id="metsContentId" placeholder="#{msgs.metsContentIDs}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.metsContentIDs}" disabled="true">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyMetsContentIdButton"/>
                 </p:inputText>
@@ -140,9 +138,10 @@
             <p:column>
                 <!-- edit button -->
                 <p:commandLink oncomplete="PF('editFileGroupDialog').show()"
+                               id="edit"
                                styleClass="buttonset plain"
                                update="@(.editDialog)"
-                               disabled="#{ProjectForm.lockedMets}"
+                               disabled="true"
                                immediate="true">
                     <i class="fa fa-pencil-square-o fa-lg"/>
                     <f:setPropertyActionListener target="#{ProjectForm.myFolder}" value="#{folder}"/>
@@ -154,7 +153,7 @@
                                onclick="if (!confirm('#{msgs.shouldItemBeRemoved}')) return"
                                oncomplete="toggleSave()"
                                styleClass="buttonset plain"
-                               disabled="#{ProjectForm.lockedMets}"
+                               disabled="true"
                                immediate="true">
                     <h:outputText><i class="fa fa-trash fa-lg"/></h:outputText>
                     <f:setPropertyActionListener target="#{ProjectForm.myFolder}" value="#{folder}"/>
@@ -169,7 +168,7 @@
                          styleClass="callto"
                          icon="fa fa-plus-circle fa-lg"
                          iconPos="right"
-                         disabled="#{ProjectForm.lockedMets}"
+                         disabled="true"
                          immediate="true">
             <f:setPropertyActionListener target="#{ProjectForm.zurueck}" value="/pages/projectEditMetsPopup"/>
         </p:commandButton>
@@ -182,14 +181,14 @@
 
     <!-- folder for preview -->
     <p:outputLabel for="preview" value="#{msgs['folderUse.preview']}" styleClass="la-folder-use"/>
-    <p:selectOneMenu id="preview" value="#{ProjectForm.preview}" styleClass="so-folder-use" disabled="#{ProjectForm.lockedMets}">
+    <p:selectOneMenu id="preview" value="#{ProjectForm.preview}" styleClass="so-folder-use" disabled="true">
         <f:selectItem itemLabel="#{msgs['folderUse.preview.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
     </p:selectOneMenu>
 
     <!-- folder for media view -->
     <p:outputLabel for="mediaView" value="#{msgs['folderUse.mediaView']}" styleClass="la-folder-use"/>
-    <p:selectOneMenu id="mediaView" value="#{ProjectForm.mediaView}" styleClass="so-folder-use" disabled="#{ProjectForm.lockedMets}">
+    <p:selectOneMenu id="mediaView" value="#{ProjectForm.mediaView}" styleClass="so-folder-use" disabled="true">
         <f:selectItem itemLabel="#{msgs['folderUse.mediaView.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
     </p:selectOneMenu>
@@ -197,7 +196,7 @@
     <!-- source folder for content generation -->
     <p:outputLabel for="generatorSource" value="#{msgs['folderUse.generatorSource']}" styleClass="la-folder-use"/>
     <p:selectOneMenu id="generatorSource" value="#{ProjectForm.generatorSource}" styleClass="so-folder-use"
-        disabled="#{ProjectForm.lockedMets}">
+        disabled="true">
         <f:selectItem itemLabel="#{msgs['folderUse.generatorSource.disabled']}" itemValue="#{null}" noSelectionOption="true" />
         <f:selectItems value="#{ProjectForm.folderList}" />
     </p:selectOneMenu>
