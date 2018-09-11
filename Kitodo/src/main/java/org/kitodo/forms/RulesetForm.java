@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
@@ -51,8 +51,8 @@ public class RulesetForm extends BaseForm {
     private String rulesetListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String rulesetEditPath = MessageFormat.format(REDIRECT_PATH, "rulesetEdit");
 
-    @Named("ProjekteForm")
-    private ProjekteForm projectForm;
+    @Named("ProjectForm")
+    private ProjectForm projectForm;
 
     /**
      * Default constructor with inject project form that also sets the LazyDTOModel
@@ -62,7 +62,7 @@ public class RulesetForm extends BaseForm {
      *            managed bean
      */
     @Inject
-    public RulesetForm(ProjekteForm projectForm) {
+    public RulesetForm(ProjectForm projectForm) {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getRulesetService()));
         this.projectForm = projectForm;

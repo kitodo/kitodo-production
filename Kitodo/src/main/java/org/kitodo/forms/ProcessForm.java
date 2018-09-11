@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -83,17 +83,16 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
-import org.kitodo.forms.TemplateBaseForm;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
 
-@Named("ProzessverwaltungForm")
+@Named("ProcessForm")
 @SessionScoped
-public class ProzessverwaltungForm extends TemplateBaseForm {
+public class ProcessForm extends TemplateBaseForm {
     private static final long serialVersionUID = 2838270843176821134L;
-    private static final Logger logger = LogManager.getLogger(ProzessverwaltungForm.class);
+    private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();
     private List<ProcessCounterObject> processCounterObjects;
@@ -117,9 +116,8 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             .getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String EXPORT_FINISHED = "exportFinished";
-    private static final String PROPERTIES_NOT_DELETED = "propertiesNotDeleted";
-    private static final String PROPERTIES_NOT_SAVED = "propertiesNotSaved";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
+    private static final String PROPERTY_SAVED = "propertySaved";
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -131,7 +129,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
     /**
      * Constructor.
      */
-    public ProzessverwaltungForm() {
+    public ProcessForm() {
         super();
         this.anzeigeAnpassen = new HashMap<>();
         this.anzeigeAnpassen.put("lockings", false);
@@ -347,7 +345,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.templateProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadTemplateProperties();
     }
@@ -362,7 +360,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.workpieceProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -405,7 +403,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadTemplateProperties();
     }
@@ -422,7 +420,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMessage(PROPERTIES_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
     }
@@ -1507,9 +1505,9 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
                 this.process.getProperties().add(this.property);
             }
             serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
+            Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_SAVED, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -1524,7 +1522,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.property);
         } catch (DataException e) {
-            Helper.setErrorMessage(PROPERTIES_NOT_DELETED, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }
 
         List<Property> properties = this.process.getProperties();
@@ -1541,7 +1539,7 @@ public class ProzessverwaltungForm extends TemplateBaseForm {
             newProperty.getProcesses().add(this.process);
             this.process.getProperties().add(newProperty);
             serviceManager.getPropertyService().save(newProperty);
-            Helper.setMessage("propertySaved");
+            Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
         }

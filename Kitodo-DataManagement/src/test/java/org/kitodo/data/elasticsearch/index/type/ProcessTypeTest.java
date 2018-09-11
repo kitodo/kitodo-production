@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +91,6 @@ public class ProcessTypeTest {
         Process firstProcess = new Process();
         firstProcess.setId(1);
         firstProcess.setTitle("Testing");
-        firstProcess.setOutputName("Test");
         LocalDate localDate = new LocalDate(2017, 1, 1);
         firstProcess.setCreationDate(localDate.toDate());
         firstProcess.setSortHelperImages(20);
@@ -104,7 +104,6 @@ public class ProcessTypeTest {
         Process secondProcess = new Process();
         secondProcess.setId(2);
         secondProcess.setTitle("Rendering");
-        secondProcess.setOutputName("Render");
         secondProcess.setWikiField("Field");
         secondProcess.setSortHelperImages(30);
         secondProcess.setProject(project);
@@ -131,8 +130,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Test",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -141,7 +138,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -196,7 +193,6 @@ public class ProcessTypeTest {
     @Test
     public void shouldCreateSecondDocument() throws Exception {
         ProcessType processType = new ProcessType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(1);
         HttpEntity document = processType.createDocument(process);
@@ -205,8 +201,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Render",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Field",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -215,7 +209,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(process.getCreationDate()),
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -263,7 +257,6 @@ public class ProcessTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         ProcessType processType = new ProcessType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Process process = prepareData().get(2);
         HttpEntity document = processType.createDocument(process);
@@ -272,8 +265,6 @@ public class ProcessTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             ProcessTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "",
-            ProcessTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "",
             ProcessTypeField.WIKI_FIELD.getStringValue(actual));
         assertEquals("Key processBaseUri doesn't match to given value!", "",
@@ -282,7 +273,7 @@ public class ProcessTypeTest {
             ProcessTypeField.TEMPLATE_ID.getIntValue(actual));
         assertEquals("Key template.title doesn't match to given value!", "",
             ProcessTypeField.TEMPLATE_TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(process.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(process.getCreationDate()),
             ProcessTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             ProcessTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -327,7 +318,7 @@ public class ProcessTypeTest {
         HttpEntity document = processType.createDocument(process);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 22, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
 
         JsonArray batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         JsonObject batch = batches.getJsonObject(0);
@@ -345,5 +336,10 @@ public class ProcessTypeTest {
         List<Process> processes = prepareData();
         Map<Integer, HttpEntity> documents = processType.createDocuments(processes);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }

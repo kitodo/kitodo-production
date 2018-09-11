@@ -16,10 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable id="taskTable"
-                 var="item"
-                 value="#{ProzessverwaltungForm.process.tasks}"
-                 sortBy="#{item.ordering}">
+    <p:dataTable id="taskTable" var="item" value="#{ProcessForm.process.tasks}" sortBy="#{item.ordering}">
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">
@@ -40,28 +37,24 @@
                                 alt="status"/>
                 <p:panel rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editTask',item.process.project.client.id,item.process.project.id)}">
                     <!-- Set workflow state to previous step -->
-                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusDown}"
+                    <p:commandButton action="#{ProcessForm.setTaskStatusDown}"
                                      id="taskStatusDown"
                                      title="#{msgs.statusRunterSetzen}"
                                      oncomplete="toggleSave()"
                                      update="statusColumn"
                                      icon="fa fa-long-arrow-left"
                                      styleClass="ui-button-small">
-                        <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.task}"
-                                value="#{item}"/>
+                        <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                     <!-- Set workflow state to next step -->
-                    <p:commandButton action="#{ProzessverwaltungForm.setTaskStatusUp}"
+                    <p:commandButton action="#{ProcessForm.setTaskStatusUp}"
                                      id="taskStatusUp"
                                      title="#{msgs.statusHoeherSetzen}"
                                      oncomplete="toggleSave()"
                                      update="statusColumn"
                                      icon="fa fa-long-arrow-right"
                                      styleClass="ui-button-small">
-                        <f:setPropertyActionListener
-                                target="#{ProzessverwaltungForm.task}"
-                                value="#{item}"/>
+                        <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                     </p:commandButton>
                 </p:panel>
             </p:panel>
@@ -80,14 +73,12 @@
             <p:commandLink id="deleteTask"
                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteTask',item.process.project.client.id,item.process.project.id)}"
                            title="#{msgs.delete}"
-                           action="#{ProzessverwaltungForm.removeTask}"
+                           action="#{ProcessForm.removeTask}"
                            immediate="true"
                            oncomplete="toggleSave()"
                            update="taskTable">
                 <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
-                <f:setPropertyActionListener
-                        target="#{ProzessverwaltungForm.task}"
-                        value="#{item}"/>
+                <f:setPropertyActionListener target="#{ProcessForm.task}" value="#{item}"/>
                 <p:confirm header="#{msgs.deleteTask}?"
                            message="#{msgs.sollDieserEintragWirklichGeloeschtWerden}"
                            icon="ui-icon-alert"/>
@@ -127,7 +118,7 @@
 
     </p:dataTable>
 
-    <p:commandButton action="#{ProzessverwaltungForm.newTask}"
+    <p:commandButton action="#{ProcessForm.newTask}"
                      value="#{msgs.taskAdd}"
                      rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('addTask',item.process.project.client.id,item.process.project.id)}"
                      icon="fa fa-plus-circle fa-lg"

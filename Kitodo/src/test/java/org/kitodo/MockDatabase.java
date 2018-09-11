@@ -500,7 +500,6 @@ public class MockDatabase {
 
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
-        firstProcess.setOutputName("Testowy");
         firstProcess.setWikiField("field");
         LocalDate localDate = new LocalDate(2017, 1, 20);
         firstProcess.setCreationDate(localDate.toDate());
@@ -515,7 +514,6 @@ public class MockDatabase {
 
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
-        secondProcess.setOutputName("Single task");
         secondProcess.setWikiField("problem");
         localDate = new LocalDate(2017, 2, 10);
         secondProcess.setCreationDate(localDate.toDate());
@@ -527,7 +525,6 @@ public class MockDatabase {
 
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
-        thirdProcess.setOutputName("Unreachable");
         serviceManager.getProcessService().save(thirdProcess);
     }
 
@@ -536,7 +533,6 @@ public class MockDatabase {
 
         Template firstTemplate = new Template();
         firstTemplate.setTitle("First template");
-        firstTemplate.setOutputName("Test");
         firstTemplate.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         firstTemplate.setCreationDate(localDate.toDate());
@@ -549,7 +545,6 @@ public class MockDatabase {
         Project thirdProject = serviceManager.getProjectService().getById(3);
         Template secondTemplate = new Template();
         secondTemplate.setTitle("Second template");
-        secondTemplate.setOutputName("Reachable");
         secondTemplate.setWikiField("works");
         localDate = new LocalDate(2017, 2, 10);
         secondTemplate.setCreationDate(localDate.toDate());
@@ -563,7 +558,6 @@ public class MockDatabase {
         thirdProject = serviceManager.getProjectService().getById(3);
         Template thirdTemplate = new Template();
         thirdTemplate.setTitle("Third template");
-        thirdTemplate.setOutputName("Unreachable");
         thirdTemplate.setWikiField("problem");
         localDate = new LocalDate(2018, 2, 10);
         thirdTemplate.setCreationDate(localDate.toDate());
@@ -580,7 +574,6 @@ public class MockDatabase {
 
         Process firstProcess = new Process();
         firstProcess.setTitle("First process");
-        firstProcess.setOutputName("Testowy");
         firstProcess.setWikiField("field");
         LocalDate localDate = new LocalDate(2017, 1, 20);
         firstProcess.setCreationDate(localDate.toDate());
@@ -593,7 +586,6 @@ public class MockDatabase {
 
         Process secondProcess = new Process();
         secondProcess.setTitle("Second process");
-        secondProcess.setOutputName("Testowy");
         secondProcess.setWikiField("field");
         secondProcess.setCreationDate(localDate.toDate());
         secondProcess.setSortHelperImages(30);
@@ -609,7 +601,6 @@ public class MockDatabase {
 
         Template template = new Template();
         template.setTitle("First process");
-        template.setOutputName("Test");
         template.setWikiField("wiki");
         LocalDate localDate = new LocalDate(2016, 10, 20);
         template.setCreationDate(localDate.toDate());

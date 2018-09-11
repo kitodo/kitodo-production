@@ -19,7 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <!-- edit dialog -->
     <p:dialog widgetVar="editWorkpieceDialog"
-              header="#{empty ProzessverwaltungForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.propertyEdit}"
+              header="#{empty ProcessForm.workpieceProperty.title ? msgs.addWorkpieceProperty : msgs.propertyEdit}"
               width="700px"
               modal="true"
               dynamic="true"
@@ -30,16 +30,16 @@
                     <div>
                         <!-- title -->
                         <p:outputLabel for="workpiecePropertyTitle" value="#{msgs.title}" />
-                        <p:inputText id="workpiecePropertyTitle" value="#{ProzessverwaltungForm.workpieceProperty.title}"
+                        <p:inputText id="workpiecePropertyTitle" value="#{ProcessForm.workpieceProperty.title}"
                                      placeholder="#{msgs.title}" required="true" styleClass="input editDialog"/>
                     </div>
                     <div>
                         <!-- value: text -->
                         <p:outputLabel for="workpiecePropertyValue" value="#{msgs.value}" />
-                        <p:inputText id="workpiecePropertyValue" value="#{ProzessverwaltungForm.workpieceProperty.value}"
+                        <p:inputText id="workpiecePropertyValue" value="#{ProcessForm.workpieceProperty.value}"
                                      styleClass="input editDialog"/>
                     </div>
-                    <p:commandButton action="#{ProzessverwaltungForm.saveWorkpieceProperty}"
+                    <p:commandButton action="#{ProcessForm.saveWorkpieceProperty}"
                                      id="save"
                                      update="editForm"
                                      oncomplete="PF('editWorkpieceDialog').hide();toggleSave()"

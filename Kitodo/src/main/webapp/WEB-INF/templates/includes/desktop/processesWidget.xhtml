@@ -45,15 +45,16 @@
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                     <f:param name="zurueck" value="processList"/>
                 </h:commandLink>
-                <h:commandLink action="#{ProzessverwaltungForm.exportMets(process.id)}" id="exportMets" title="#{msgs.exportMets}">
+                <h:commandLink action="#{ProcessForm.exportMets()}" id="exportMets" title="#{msgs.exportMets}">
                     <h:outputText><i class="fa fa-file-code-o"/></h:outputText>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                 </h:commandLink>
                 <p:commandLink id="deleteProcess"
-                               action="#{ProzessverwaltungForm.delete}"
+                               action="#{ProcessForm.delete}"
                                title="#{msgs.delete}"
                                update="processTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{process.id}" target="#{ProzessverwaltungForm.processByID}"/>
+                    <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteProcess}"
                                icon="ui-icon-alert"/>

@@ -29,23 +29,23 @@
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn project-table-column">
             <h:form id="projectActionForm">
                 <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',project.client.id, project.id)}"
-                        onclick="#{ProjekteForm.setLockedDetail(true)} #{ProjekteForm.setLockedMets(true)} #{ProjekteForm.setLockedTechnical(true)}" outcome="projectEdit"
+                        onclick="#{ProjectForm.setLockedDetail(true)} #{ProjectForm.setLockedMets(true)} #{ProjectForm.setLockedTechnical(true)}" outcome="projectEdit"
                         title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{project.id}" />
                     <f:param name="referer" value="desktop"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject', project.client.id)}"
-                               action="#{ProjekteForm.duplicateProject(project.id)}" immediate="true"
+                               action="#{ProjectForm.duplicateProject(project.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
                 <p:commandLink id="deleteProject"
-                               action="#{ProjekteForm.delete}"
+                               action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
                                update="projectTable"
                                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteProject', project.client.id, project.id)}">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{project.id}" target="#{ProjekteForm.projectById}"/>
+                    <f:setPropertyActionListener value="#{project.id}" target="#{ProjectForm.projectById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteProject}"
                                icon="ui-icon-alert"/>

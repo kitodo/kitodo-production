@@ -189,9 +189,9 @@ public class ProjectTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             ProjectTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-01",
+        assertEquals("Key startDate doesn't match to given value!", "2017-01-01 00:00:00",
             ProjectTypeField.START_DATE.getStringValue(actual));
-        assertEquals("Key endDate doesn't match to given value!", "2017-03-01",
+        assertEquals("Key endDate doesn't match to given value!", "2017-03-01 00:00:00",
             ProjectTypeField.END_DATE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key metsRightsOwner doesn't match to given value!", "",
@@ -314,9 +314,9 @@ public class ProjectTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             ProjectTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-10",
+        assertEquals("Key startDate doesn't match to given value!", "2017-01-10 00:00:00",
             ProjectTypeField.START_DATE.getStringValue(actual));
-        assertEquals("Key endDate doesn't match to given value!", "2017-09-10",
+        assertEquals("Key endDate doesn't match to given value!", "2017-09-10 00:00:00",
             ProjectTypeField.END_DATE.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key metsRightsOwner doesn't match to given value!", "",
@@ -431,7 +431,7 @@ public class ProjectTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         ProjectType processType = new ProjectType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         Project project = prepareData().get(2);
         HttpEntity document = processType.createDocument(project);

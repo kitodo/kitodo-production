@@ -134,11 +134,11 @@ public class TaskTypeTest {
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 1,
             TaskTypeField.PROCESSING_USER.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01",
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01 00:00:00",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
-        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17",
+        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17 00:00:00",
             TaskTypeField.PROCESSING_END.getStringValue(actual));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17",
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17 00:00:00",
             TaskTypeField.PROCESSING_TIME.getStringValue(actual));
         assertEquals("Key homeDirectory doesn't match to given value!", "1",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
@@ -197,11 +197,11 @@ public class TaskTypeTest {
             TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
         assertEquals("Key processingUser doesn't match to given value!", 2,
             TaskTypeField.PROCESSING_USER.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10",
+        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10 00:00:00",
             TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
         assertEquals("Key processingEnd doesn't match to given value!", JsonValue.NULL,
             actual.get(TaskTypeField.PROCESSING_END.getKey()));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17",
+        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17 00:00:00",
             TaskTypeField.PROCESSING_TIME.getStringValue(actual));
         assertEquals("Key homeDirectory doesn't match to given value!", "0",
             TaskTypeField.HOME_DIRECTORY.getStringValue(actual));

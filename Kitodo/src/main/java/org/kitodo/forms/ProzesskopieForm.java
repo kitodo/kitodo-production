@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.config.ConfigProjects;
@@ -69,7 +69,6 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Config;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -83,6 +82,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.helper.AdditionalField;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
@@ -712,7 +712,7 @@ public class ProzesskopieForm implements Serializable {
 
         if (process.getTitle() == null || process.getTitle().equals("")) {
             valid = false;
-            Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorTitleEmpty");
+            Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
         }
 
         String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
@@ -746,7 +746,7 @@ public class ProzesskopieForm implements Serializable {
         }
         if (amount > 0) {
             Helper.setErrorMessage(Helper.getTranslation(INCOMPLETE_DATA)
-                    + Helper.getTranslation("processCreationErrorTitleAlreadyInUse"));
+                    + Helper.getTranslation("processTitleAlreadyInUse"));
             return false;
         }
         return true;

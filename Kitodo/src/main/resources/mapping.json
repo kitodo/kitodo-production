@@ -206,7 +206,8 @@
                     }
                 },
                 "endDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "fileFormatDmsExport": {
                     "type": "text",
@@ -314,7 +315,8 @@
                     }
                 },
                 "startDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "title": {
                     "type": "text",
@@ -395,7 +397,8 @@
                     }
                 },
                 "creationDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "docket": {
                     "type": "long"
@@ -514,20 +517,6 @@
                     },
                     "fielddata": true
                 },
-                "outputName": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                },
                 "wikiField": {
                     "type": "text",
                     "fields": {
@@ -559,7 +548,8 @@
                     }
                 },
                 "creationDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "docket": {
                     "type": "long"
@@ -619,20 +609,6 @@
                     }
                 },
                 "title": {
-                    "type": "text",
-                    "fields": {
-                        "keyword": {
-                            "type": "keyword",
-                            "ignore_above": 256
-                        },
-                        "raw": {
-                            "type": "text",
-                            "index": false
-                        }
-                    },
-                    "fielddata": true
-                },
-                "outputName": {
                     "type": "text",
                     "fields": {
                         "keyword": {
@@ -741,13 +717,16 @@
                     "type": "long"
                 },
                 "processingTime": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "processingBegin": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "processingEnd": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "processingUser": {
                     "type": "long"
@@ -878,7 +857,8 @@
             "dynamic": "strict",
             "properties": {
                 "creationDate": {
-                    "type": "date"
+                    "type": "date",
+                    "format":"yyyy-MM-dd HH:mm:ss"
                 },
                 "processes": {
                     "properties": {

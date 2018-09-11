@@ -36,7 +36,6 @@ public class ProcessType extends BaseType<Process> {
 
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
         jsonObjectBuilder.add(ProcessTypeField.TITLE.getKey(), preventNull(process.getTitle()));
-        jsonObjectBuilder.add(ProcessTypeField.OUTPUT_NAME.getKey(), preventNull(process.getOutputName()));
         jsonObjectBuilder.add(ProcessTypeField.CREATION_DATE.getKey(), getFormattedDate(process.getCreationDate()));
         jsonObjectBuilder.add(ProcessTypeField.WIKI_FIELD.getKey(), preventNull(process.getWikiField()));
         jsonObjectBuilder.add(ProcessTypeField.SORT_HELPER_ARTICLES.getKey(), process.getSortHelperArticles());

@@ -15,7 +15,6 @@ public enum ProcessTypeField implements TypeInterface {
 
     ID("id"),
     TITLE("title"),
-    OUTPUT_NAME("outputName"),
     CREATION_DATE("creationDate"),
     WIKI_FIELD("wikiField"),
     SORT_HELPER_ARTICLES("sortHelperArticles"),
