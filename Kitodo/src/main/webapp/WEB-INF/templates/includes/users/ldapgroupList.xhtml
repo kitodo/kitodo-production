@@ -35,9 +35,9 @@
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteLdapgroup"
-                               action="#{LdapGroupForm.deleteLdapGroup}"
-                               title="#{msgs.delete}"
+                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" immediate="true"
+                               title="#{msgs.duplicateLdapGroup}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                <p:commandLink id="deleteLdapgroup" action="#{LdapGroupForm.deleteLdapGroup}" title="#{msgs.delete}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>
