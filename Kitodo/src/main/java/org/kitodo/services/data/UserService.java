@@ -727,18 +727,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Table size.
-     *
-     * @return table size
-     */
-    public Integer getTableSize(User user) {
-        if (user.getTableSize() == null) {
-            return 10;
-        }
-        return user.getTableSize();
-    }
-
-    /**
      * CSS style.
      *
      * @return CSS style

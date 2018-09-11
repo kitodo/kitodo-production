@@ -1,0 +1,82 @@
+/**
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+/**
+* Hide unused elements from Workflow Editor
+*/
+
+/*
+* Events
+*/
+
+.bpmn-icon-intermediate-event-none { display:none!important; }
+.bpmn-icon-start-event-message { display:none!important; }
+.bpmn-icon-start-event-timer { display:none!important; }
+.bpmn-icon-start-event-condition { display:none!important; }
+.bpmn-icon-start-event-signal { display:none!important; }
+
+.bpmn-icon-end-event-message { display:none!important; }
+.bpmn-icon-end-event-escalation { display:none!important; }
+.bpmn-icon-end-event-error { display:none!important; }
+.bpmn-icon-end-event-compensation { display:none!important; }
+.bpmn-icon-end-event-signal { display:none!important; }
+.bpmn-icon-end-event-terminate { display:none!important; }
+
+/**
+* Tools
+*/
+.bpmn-icon-lasso-tool {display: none !important;}
+.bpmn-icon-space-tool {display: none !important;}
+
+/**
+* Objects
+*/
+.bpmn-icon-intermediate-event-none {display: none !important;}
+.bpmn-icon-participant {display: none !important;}
+.bpmn-icon-data-object {display: none !important;}
+.bpmn-icon-data-store {display: none !important;}
+.bpmn-icon-subprocess-expanded {display: none !important;}
+
+/**
+* Text Annotation
+*/
+.bpmn-icon-text-annotation {display: none !important;}
+
+/**
+* Gateways
+*/
+.bpmn-icon-gateway-none {display: none !important;}
+.bpmn-icon-gateway-parallel {display: none !important;}
+.bpmn-icon-gateway-or {display: none !important;}
+.bpmn-icon-gateway-complex {display: none !important;}
+.bpmn-icon-gateway-eventbased {display: none !important;}
+
+/**
+* Tasks
+*/
+.bpmn-icon-send {display: none !important;}
+.bpmn-icon-receive {display: none !important;}
+.bpmn-icon-user {display: none !important;}
+.bpmn-icon-manual {display: none !important;}
+.bpmn-icon-business-rule {display: none !important;}
+.bpmn-icon-service {display: none !important;}
+.bpmn-icon-call-activity {display: none !important;}
+.bpmn-icon-subprocess-collapsed {display: none !important;}
+
+.bpmn-icon-parallel-mi-marker {display: none !important;}
+.bpmn-icon-sequential-mi-marker {display: none !important;}
+.bpmn-icon-loop-marker {display: none !important;}
+
+#editForm\:workflowTabView\:btnReadXmlDiagram {
+    width: 1px !important;
+    height: 1px !important;
+    visibility: hidden;
+}

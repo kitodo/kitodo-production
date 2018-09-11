@@ -16,10 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable id="taskTable"
-                 value="#{DesktopForm.tasks}"
-                 scrollable="true"
-                 var="task">
+    <p:dataTable id="taskTable" value="#{DesktopForm.tasks}" scrollable="true" var="task">
         <p:column headerText="#{msgs.title}" id="taskTitle" styleClass="task-table-column">
             <h:outputText value="#{task.title}"/>
         </p:column>
@@ -39,11 +36,11 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <!-- assign task -->
-                <h:commandLink id="take" action="#{AktuelleSchritteForm.schrittDurchBenutzerUebernehmen}"
+                <h:commandLink id="take" action="#{CurrentTaskForm.schrittDurchBenutzerUebernehmen}"
                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
-                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.currentTask}" value="#{AktuelleSchritteForm.getTaskById(task.id)}"/>
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(task.id)}"/>
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
                 <h:link outcome="/pages/currentTasksEdit"
@@ -53,35 +50,35 @@
                     <f:param name="id" value="#{task.id}"/>
                 </h:link>
                 <!-- already assigned task (different user) -->
-                <h:commandLink action="#{AktuelleSchritteForm.editStep}" id="view2"
+                <h:commandLink action="#{CurrentTaskForm.editStep}" id="view2"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.myBenutzer.id and (!task.batchStep || !task.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
-                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.currentTask}" value="#{AktuelleSchritteForm.getTaskById(task.id)}"/>
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(task.id)}"/>
                 </h:commandLink>
 
                 <!-- take over batch -->
-                <h:commandLink id="batch" action="#{AktuelleSchritteForm.takeOverBatchTasks}"
+                <h:commandLink id="batch" action="#{CurrentTaskForm.takeOverBatchTasks}"
                                rendered="#{task.processingStatus == 'OPEN' and task.batchStep and task.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.currentTask}" value="#{AktuelleSchritteForm.getTaskById(task.id)}"/>
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(task.id)}"/>
                 </h:commandLink>
 
                 <!-- edit batch step (this user) -->
-                <h:commandLink id="batchInWork" action="#{AktuelleSchritteForm.editBatchTasks}"
+                <h:commandLink id="batchInWork" action="#{CurrentTaskForm.editBatchTasks}"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.myBenutzer.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.currentTask}" value="#{AktuelleSchritteForm.getTaskById(task.id)}"/>
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(task.id)}"/>
                 </h:commandLink>
 
                 <!-- edit batch step (different user) -->
-                <h:commandLink id="batchInWorkOther" action="#{AktuelleSchritteForm.editBatchTasks}"
+                <h:commandLink id="batchInWorkOther" action="#{CurrentTaskForm.editBatchTasks}"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.myBenutzer.id and task.batchStep and task.batchAvailable}"
                                title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{AktuelleSchritteForm.currentTask}" value="#{AktuelleSchritteForm.getTaskById(task.id)}"/>
+                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(task.id)}"/>
                 </h:commandLink>
             </h:form>
         </p:column>

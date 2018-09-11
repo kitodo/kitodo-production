@@ -15,6 +15,7 @@
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:p="http://primefaces.org/ui">
+
     <p:panel>
         <p:selectBooleanButton
                 onLabel="#{msgs.locked}"
@@ -23,7 +24,7 @@
                 offIcon="fa fa-unlock fa-lg"
                 styleClass="callto"
                 id="detailLockedButton"
-                value="#{ProjekteForm.lockedDetail}">
+                value="#{ProjectForm.lockedDetail}">
             <p:ajax event="change" update="editDetailForm"/>
         </p:selectBooleanButton>
     </p:panel>
@@ -31,26 +32,25 @@
         <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
-                <p:inputText id="title" placeholder="#{msgs.title}" class="input" value="#{ProjekteForm.myProjekt.title}" disabled="#{ProjekteForm.lockedDetail}" required="#{empty param['editForm:saveButtonToggler']}"/>
+                <p:inputText id="title" placeholder="#{msgs.title}" class="input" value="#{ProjectForm.myProjekt.title}" disabled="#{ProjectForm.lockedDetail}" required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
-                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjekteForm.myProjekt.numberOfPages}" disabled="#{ProjekteForm.lockedDetail}">
+                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectForm.myProjekt.numberOfPages}" disabled="#{ProjectForm.lockedDetail}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
-                <p:inputText id="band" placeholder="1" class="input" value="#{ProjekteForm.myProjekt.numberOfVolumes}" disabled="#{ProjekteForm.lockedDetail}">
+                <p:inputText id="band" placeholder="1" class="input" value="#{ProjectForm.myProjekt.numberOfVolumes}" disabled="#{ProjectForm.lockedDetail}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="client" value="#{msgs.client}"/>
-                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjekteForm.myProjekt.client}"
-                                 disabled="#{ProjekteForm.lockedDetail}"
-                                 required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{ProjekteForm.clients}"/>
+                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjectForm.myProjekt.client}"
+                                 disabled="#{ProjectForm.lockedDetail}" required="#{not empty param['editForm:save']}">
+                    <f:selectItems value="#{ProjectForm.clients}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -58,29 +58,29 @@
         <p:row>
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
-                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.startDate}" showOn="button" disabled="#{ProjekteForm.lockedDetail}">
+                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.myProjekt.startDate}" showOn="button" disabled="#{ProjectForm.lockedDetail}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                     <p:ajax event="blur" oncomplete="toggleSave()"/>
                 </p:calendar>
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.endDate}" />
-                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjekteForm.myProjekt.endDate}" showOn="button" disabled="#{ProjekteForm.lockedDetail}">
+                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjectForm.myProjekt.endDate}" showOn="button" disabled="#{ProjectForm.lockedDetail}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                     <p:ajax event="blur" oncomplete="toggleSave()"/>
                 </p:calendar>
             </div>
             <div>
                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-               <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjekteForm.myProjekt.active}" disabled="#{ProjekteForm.lockedDetail}">
+               <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjectForm.myProjekt.active}" disabled="#{ProjectForm.lockedDetail}">
                    <p:ajax event="change" oncomplete="toggleSave()" />
                </p:selectBooleanCheckbox>
             </div>
 
-            <ui:fragment rendered="#{ProjekteForm.copyTemplates}">
+            <ui:fragment rendered="#{ProjectForm.copyTemplates}">
                 <div>
                     <p:outputLabel for="copyTemplates" value="#{msgs.copyTemplates}" />
-                    <p:selectBooleanCheckbox id="copyTemplates" class="input" value="#{ProjekteForm.copyTemplates}">
+                    <p:selectBooleanCheckbox id="copyTemplates" class="input" value="#{ProjectForm.copyTemplates}">
                         <p:ajax event="change" oncomplete="toggleSave()" />
                     </p:selectBooleanCheckbox>
                 </div>

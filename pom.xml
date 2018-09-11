@@ -62,6 +62,11 @@
         <log4j.version>2.6.2</log4j.version>
         <junit.version>4.12</junit.version>
         <elasticsearch.version>5.6.5</elasticsearch.version>
+        <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
+        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <flyway-maven-plugin.version>5.1.4</flyway-maven-plugin.version>
     </properties>
 
     <repositories>
@@ -135,7 +140,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.19.1</version>
+                        <version>${maven-failsafe-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -184,7 +189,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
-                        <version>3.0.4</version>
+                        <version>3.0.5</version>
                         <configuration>
                             <xmlOutput>true</xmlOutput>
                             <xmlOutputDirectory>target/findbugsreports</xmlOutputDirectory>
@@ -223,7 +228,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>4.0.3</version>
+                        <version>${flyway-maven-plugin.version}</version>
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
@@ -258,7 +263,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.4</version>
+                        <version>3.0.1</version>
                         <configuration>
                             <reportOutputDirectory>${doctarget}</reportOutputDirectory>
                             <destDir>${docdir}</destDir>

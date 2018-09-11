@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
@@ -58,11 +58,11 @@ import org.kitodo.model.LazyDTOModel;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
-@Named("AktuelleSchritteForm")
+@Named("CurrentTaskForm")
 @SessionScoped
-public class AktuelleSchritteForm extends BaseForm {
+public class CurrentTaskForm extends BaseForm {
     private static final long serialVersionUID = 5841566727939692509L;
-    private static final Logger logger = LogManager.getLogger(AktuelleSchritteForm.class);
+    private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
     private Problem problem = new Problem();
@@ -88,7 +88,7 @@ public class AktuelleSchritteForm extends BaseForm {
     /**
      * Constructor.
      */
-    public AktuelleSchritteForm() {
+    public CurrentTaskForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getTaskService()));
         this.anzeigeAnpassen = new HashMap<>();
@@ -742,7 +742,7 @@ public class AktuelleSchritteForm extends BaseForm {
             serviceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("propertiesNotSaved", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -758,7 +758,7 @@ public class AktuelleSchritteForm extends BaseForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DataException e) {
-            Helper.setErrorMessage("propertiesNotSaved", logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
     }
@@ -801,7 +801,7 @@ public class AktuelleSchritteForm extends BaseForm {
     }
 
     /**
-     * Method being used as viewAction for AktuelleSchritteForm.
+     * Method being used as viewAction for CurrenTaskForm.
      *
      * @param id
      *            ID of the step to load

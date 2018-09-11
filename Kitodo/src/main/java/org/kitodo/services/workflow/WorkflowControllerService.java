@@ -15,12 +15,11 @@ import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 import de.sub.goobi.metadaten.MetadataLock;
+import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -57,7 +56,6 @@ public class WorkflowControllerService {
     private Solution solution = new Solution();
     private Boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
-    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private static WorkflowControllerService instance = null;
@@ -286,7 +284,7 @@ public class WorkflowControllerService {
     }
 
     /**
-     * Taken from AktuelleSchritteForm.
+     * Taken from CurrentTaskForm.
      *
      * @param task
      *            object
@@ -507,7 +505,7 @@ public class WorkflowControllerService {
     private Property prepareProblemMessageProperty(Date date, Task currentTask, Task correctionTask) {
         Property processProperty = new Property();
         processProperty.setTitle(Helper.getTranslation("correctionNecessary"));
-        processProperty.setValue("[" + this.formatter.format(date) + ", "
+        processProperty.setValue("[" + Helper.getDateAsFormattedString(date) + ", "
                 + serviceManager.getUserService().getFullName(getCurrentUser()) + "] " + "(CurrentTask: " + currentTask.getId().toString()
                 + " CorrectionTask: " + correctionTask.getId().toString() + ") " + this.problem.getMessage());
         processProperty.setType(PropertyType.MESSAGE_ERROR);
@@ -517,7 +515,7 @@ public class WorkflowControllerService {
     private Property prepareSolveMessageProperty(Property property, Task correctionTask) {
         property.setTitle(Helper.getTranslation("correctionPerformed"));
         property.setValue(
-                "[" + this.formatter.format(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
+                "[" + Helper.getDateAsFormattedString(new Date()) + ", " + serviceManager.getUserService().getFullName(getCurrentUser())
                         + "] " + Helper.getTranslation("correctionSolutionFor") + " " + correctionTask.getTitle());
         property.setType(PropertyType.MESSAGE_IMPORTANT);
         return property;

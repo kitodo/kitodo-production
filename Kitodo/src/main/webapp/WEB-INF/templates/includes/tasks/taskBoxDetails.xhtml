@@ -15,9 +15,9 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable var="item" value="#{AktuelleSchritteForm.currentTask}">
+    <p:dataTable var="item" value="#{CurrentTaskForm.currentTask}">
         <p:column headerText="#{msgs.title}">
-            <h:outputText value="#{AktuelleSchritteForm.currentTask.localizedTitle}"/>
+            <h:outputText value="#{CurrentTaskForm.currentTask.localizedTitle}"/>
         </p:column>
         <p:column headerText="#{msgs.processTitle}">
             <h:outputText value="#{item.process.title}"/>
@@ -26,10 +26,8 @@
             <h:outputText value="#{item.ordering}"/>
         </p:column>
         <p:column headerText="#{msgs.priority}">
-            <h:outputText value="#{item.priority}"
-                          rendered="#{item.priority!=10}"/>
-            <h:outputText value="#{msgs.correction}"
-                          rendered="#{item.priority==10}"/>
+            <h:outputText value="#{item.priority}" rendered="#{item.priority!=10}"/>
+            <h:outputText value="#{msgs.correction}" rendered="#{item.priority==10}"/>
         </p:column>
         <p:column headerText="#{msgs.status}">
             <h:outputText value="#{item.processingStatusEnum.title}"/>

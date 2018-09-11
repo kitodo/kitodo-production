@@ -26,7 +26,6 @@ public class TemplateType extends BaseType<Template> {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
 
         jsonObjectBuilder.add(TemplateTypeField.TITLE.getKey(), template.getTitle());
-        jsonObjectBuilder.add(TemplateTypeField.OUTPUT_NAME.getKey(), preventNull(template.getOutputName()));
         jsonObjectBuilder.add(TemplateTypeField.CREATION_DATE.getKey(), getFormattedDate(template.getCreationDate()));
         jsonObjectBuilder.add(TemplateTypeField.ACTIVE.getKey(), template.isActive());
         jsonObjectBuilder.add(TemplateTypeField.WIKI_FIELD.getKey(), preventNull(template.getWikiField()));

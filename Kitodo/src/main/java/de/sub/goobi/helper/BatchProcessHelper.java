@@ -20,6 +20,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.enums.ObjectType;
 
 public class BatchProcessHelper extends BatchHelper {
     private final List<Process> processes;
@@ -113,7 +114,7 @@ public class BatchProcessHelper extends BatchHelper {
                 serviceManager.getProcessService().save(this.currentProcess);
                 Helper.setMessage("propertySaved");
             } catch (DataException e) {
-                Helper.setErrorMessage("propertyNotSaved", logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
             }
         }
     }

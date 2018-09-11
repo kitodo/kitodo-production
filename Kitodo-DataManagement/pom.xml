@@ -224,7 +224,7 @@
                     <plugin>
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
-                        <version>4.0.3</version>
+                        <version>${flyway-maven-plugin.version}</version>
                         <configuration>
                             <!-- local configuration file -->
                             <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->

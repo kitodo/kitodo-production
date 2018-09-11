@@ -9,13 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.helper;
 
 import java.util.List;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.kitodo.forms.ProzesskopieForm;
 
 public class AdditionalField {
     private String title;

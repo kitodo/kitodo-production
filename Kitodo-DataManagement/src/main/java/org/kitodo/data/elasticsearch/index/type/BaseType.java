@@ -139,7 +139,7 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
      */
     JsonValue getFormattedDate(Date date) {
         if (Objects.nonNull(date)) {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return Json.createValue(dateFormat.format(date));
         }
         return JsonValue.NULL;

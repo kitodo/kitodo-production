@@ -423,7 +423,6 @@ public class Process extends BaseTemplateBean {
         }
         Process process = (Process) o;
         return Objects.equals(getTitle(), process.getTitle()) && Objects.equals(getId(), process.getId())
-                && Objects.equals(getOutputName(), process.getOutputName())
                 && Objects.equals(getCreationDate(), process.getCreationDate());
     }
 

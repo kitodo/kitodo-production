@@ -31,7 +31,7 @@
     <ui:define name="pageTabView">
         <p:tabView id="searchTabView">
             <p:tab id="searchTab" title="#{msgs.details}">
-                <p:panelGrid id="processSearch-grid" rendered="#{ProzessverwaltungForm.initialize}">
+                <p:panelGrid id="processSearch-grid" rendered="#{ProcessForm.initialize}">
                     <!-- process title -->
                     <p:row>
                         <p:column><p:outputLabel for="processtitle" value="#{msgs.processTitle}"/></p:column>
@@ -125,17 +125,14 @@
                         </p:column>
                         <p:column>
                             <p:selectOneMenu value="#{SearchForm.status}">
-                                <f:selectItems value="#{SearchForm.stepstatus}"
-                                               var="stepstatus"
-                                               itemLabel="#{stepstatus.title}"
-                                               itemValue="#{stepstatus.searchString}"/>
+                                <f:selectItems value="#{SearchForm.stepstatus}" var="stepstatus"
+                                               itemLabel="#{stepstatus.title}" itemValue="#{stepstatus.searchString}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
                             <p:selectOneMenu value="#{SearchForm.stepname}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{SearchForm.stepTitles}"
-                                               var="stepTitles" itemLabel="#{stepTitles}"
+                                <f:selectItems value="#{SearchForm.stepTitles}" var="stepTitles" itemLabel="#{stepTitles}"
                                                itemValue="#{stepTitles}"/>
                             </p:selectOneMenu>
                         </p:column>
@@ -165,8 +162,7 @@
                         <p:column><p:outputLabel value="#{msgs.showInactiveProjects}"
                                                  rendered="#{SecurityAccessController.isAdmin()}"/></p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox
-                                value="#{ProzessverwaltungForm.showInactiveProjects}"
+                            <p:selectBooleanCheckbox value="#{ProcessForm.showInactiveProjects}"
                                 rendered="#{SecurityAccessController.isAdmin()}"/>
                         </p:column>
                     </p:row>
@@ -175,7 +171,7 @@
                             <h:outputLabel value="#{msgs.showClosedProcesses}"/>
                         </p:column>
                         <p:column>
-                            <p:selectBooleanCheckbox value="#{ProzessverwaltungForm.showClosedProcesses}"/>
+                            <p:selectBooleanCheckbox value="#{ProcessForm.showClosedProcesses}"/>
                         </p:column>
                     </p:row>
                 </p:panelGrid>

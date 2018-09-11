@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.helper.Helper;
 
@@ -48,11 +48,11 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
-@Named("ProjekteForm")
+@Named("ProjectForm")
 @SessionScoped
-public class ProjekteForm extends BaseForm {
+public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
-    private static final Logger logger = LogManager.getLogger(ProjekteForm.class);
+    private static final Logger logger = LogManager.getLogger(ProjectForm.class);
     private Project myProjekt;
 
     /**
@@ -92,7 +92,7 @@ public class ProjekteForm extends BaseForm {
      * Empty default constructor that also sets the LazyDTOModel instance of
      * this bean.
      */
-    public ProjekteForm() {
+    public ProjectForm() {
         super();
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getProjectService()));
     }

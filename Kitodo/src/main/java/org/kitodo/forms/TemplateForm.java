@@ -241,7 +241,7 @@ public class TemplateForm extends TemplateBaseForm {
             try {
                 serviceManager.getTemplateService().remove(this.template);
             } catch (DataException e) {
-                Helper.setErrorMessage("errorDeleting", new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
             }
         }

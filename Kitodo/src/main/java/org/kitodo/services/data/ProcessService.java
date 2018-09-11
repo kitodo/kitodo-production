@@ -668,7 +668,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         processDTO.setId(getIdFromJSONObject(jsonObject));
         JsonObject processJSONObject = jsonObject.getJsonObject("_source");
         processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(processJSONObject));
-        processDTO.setOutputName(ProcessTypeField.OUTPUT_NAME.getStringValue(processJSONObject));
         processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(processJSONObject));
         processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(processJSONObject));
         processDTO.setProperties(convertRelatedJSONObjectToDTO(processJSONObject, ProcessTypeField.PROPERTIES.getKey(),
@@ -1427,6 +1426,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, process.getTitle() + ".pdf");
+            file.delete();
         }
     }
 
@@ -1449,6 +1449,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
                 xsltFile);
 
             writeToOutputStream(facesContext, file, "batch_docket.pdf");
+            file.delete();
         }
     }
 

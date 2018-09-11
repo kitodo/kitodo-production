@@ -17,24 +17,23 @@
         xmlns:p="http://primefaces.org/ui">
 
     <h:outputScript library="js" name="modeler.js" target="body"/>
+    <h:outputScript library="js" name="modeler-custom.js" target="body"/>
 
     <p:panelGrid columns="2" layout="grid">
         <p:row>
-            <div>
-                <!-- this is needed to load diagram for edit -->
-                <!-- TODO: find better way -->
-                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
-                                 action="#{WorkflowForm.readXMLDiagram}"
-                                 rendered="#{WorkflowForm.workflow.id ne null}"
-                                 immediate="true"/>
-            </div>
-
             <div>
                 <p:outputLabel for="xmlDiagramName" value="#{msgs.filename}"/>
                 <p:inputText id="xmlDiagramName" placeholder="#{msgs.filename}" class="input"
                              value="#{WorkflowForm.workflow.fileName}"
                              required="true"/>
                 <h:inputHidden value="#{WorkflowForm.xmlDiagram}" id="xmlDiagram"/>
+            </div>
+
+            <div>
+                <p:commandButton id="btnReadXmlDiagram" value="Read XML diagram"
+                                 action="#{WorkflowForm.readXMLDiagram}"
+                                 rendered="#{WorkflowForm.workflow.id ne null}"
+                                 immediate="true"/>
             </div>
 
             <div>

@@ -316,11 +316,11 @@ public class UserServiceIT {
     @Test
     public void shouldGetTableSize() throws Exception {
         User user = userService.getById(1);
-        int actual = userService.getTableSize(user);
+        int actual = user.getTableSize();
         assertEquals("Table size is incorrect!", 20, actual);
 
         user = userService.getById(2);
-        actual = userService.getTableSize(user);
+        actual = user.getTableSize();
         assertEquals("Table size is incorrect!", 10, actual);
     }
 
