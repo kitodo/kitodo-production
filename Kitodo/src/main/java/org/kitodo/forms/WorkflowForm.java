@@ -237,7 +237,7 @@ public class WorkflowForm extends BaseForm {
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             return workflowEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger, e);
             return null;
         }
     }

@@ -176,7 +176,7 @@ public class ProjectForm extends BaseForm {
             this.myProjekt = serviceManager.getProjectService().duplicateProject(baseProject);
             return projectEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateProject", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
             return null;
         }
     }

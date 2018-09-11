@@ -90,7 +90,7 @@ public class LdapGroupForm extends BaseForm {
             this.myLdapGruppe = serviceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
             return ldapGroupEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateLdapGroup", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
     }

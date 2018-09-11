@@ -35,6 +35,7 @@ public class BaseForm implements Serializable {
     // error messages
     protected static final String ERROR_CREATING = "errorCreating";
     protected static final String ERROR_DATABASE_READING = "errorDatabaseReading";
+    protected static final String ERROR_DUPLICATE = "errorDuplicate";
     protected static final String ERROR_EXPORTING = "errorExporting";
     protected static final String ERROR_LOADING_MANY = "errorLoadingMany";
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
