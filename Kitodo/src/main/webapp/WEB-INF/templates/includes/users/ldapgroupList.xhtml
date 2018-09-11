@@ -16,11 +16,7 @@
     xmlns:f="http://xmlns.jcp.org/jsf/core"
     xmlns:h="http://xmlns.jcp.org/jsf/html"
     xmlns:p="http://primefaces.org/ui">
-    <p:dataTable var="item"
-                 id="ldapGroupsTable"
-                 value="#{LdapGruppenForm.ldapGroups}"
-                 lazy="true"
-                 paginator="true"
+    <p:dataTable var="item" id="ldapGroupsTable" value="#{LdapGroupForm.ldapGroups}" lazy="true" paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
@@ -40,11 +36,11 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <p:commandLink id="deleteLdapgroup"
-                               action="#{LdapGruppenForm.deleteLdapGroup}"
+                               action="#{LdapGroupForm.deleteLdapGroup}"
                                title="#{msgs.delete}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
-                    <f:setPropertyActionListener value="#{item.id}" target="#{LdapGruppenForm.ldapGroupById}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{msgs.confirmDeleteLdapgroup}"
                                icon="ui-icon-alert"/>
@@ -59,8 +55,7 @@
             <p:row>
                 <div>
                     <p:outputLabel for="useLdap" value="#{msgs.ldapActiveNote}"/>
-                    <p:selectBooleanCheckbox id="useLdap"
-                                             styleClass="input"
+                    <p:selectBooleanCheckbox id="useLdap" styleClass="input"
                                              value="#{AuthenticationController.ldapAuthentication}">
                         <p:ajax event="change"/>
                     </p:selectBooleanCheckbox>

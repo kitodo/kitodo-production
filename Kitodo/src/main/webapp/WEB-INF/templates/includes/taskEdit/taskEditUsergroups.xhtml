@@ -16,13 +16,12 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable var="usergroup" id="usergroupTable"
-                 value="#{ProzessverwaltungForm.task.userGroups}">
+    <p:dataTable var="usergroup" id="usergroupTable" value="#{ProcessForm.task.userGroups}">
         <p:column headerText="#{msgs.title}">
             <h:outputText value="#{usergroup.title}"/>
         </p:column>
         <p:column headerText="#{msgs.delete}">
-            <p:commandLink action="#{ProzessverwaltungForm.deleteUserGroup}"
+            <p:commandLink action="#{ProcessForm.deleteUserGroup}"
                            id="deleteUsergroup"
                            immediate="true"
                            oncomplete="toggleSave()"

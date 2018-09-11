@@ -28,9 +28,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
     @Column(name = "title")
     protected String title;
 
-    @Column(name = "outputName")
-    private String outputName;
-
     @Column(name = "creationDate")
     protected Date creationDate;
 
@@ -60,24 +57,6 @@ public abstract class BaseTemplateBean extends BaseIndexedBean {
      */
     public void setTitle(String title) {
         this.title = title.trim();
-    }
-
-    /**
-     * Get outputName.
-     *
-     * @return value of outputName
-     */
-    public String getOutputName() {
-        return this.outputName;
-    }
-
-    /**
-     * Set outputName.
-     *
-     * @param outputName as java.lang.String
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
     }
 
     /**

@@ -15,6 +15,7 @@ import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +70,6 @@ public class TemplateTypeTest {
         Template firstTemplate = new Template();
         firstTemplate.setId(1);
         firstTemplate.setTitle("Testing");
-        firstTemplate.setOutputName("Test");
         LocalDate localDate = new LocalDate(2017, 1, 1);
         firstTemplate.setCreationDate(localDate.toDate());
         firstTemplate.setActive(false);
@@ -82,7 +82,6 @@ public class TemplateTypeTest {
         Template secondTemplate = new Template();
         secondTemplate.setId(2);
         secondTemplate.setTitle("Rendering");
-        secondTemplate.setOutputName("Render");
         secondTemplate.setWikiField("Field");
         secondTemplate.setActive(true);
         secondTemplate.getProjects().add(project);
@@ -108,11 +107,9 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Testing",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Test",
-            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Wiki",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01",
+        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -146,7 +143,6 @@ public class TemplateTypeTest {
     @Test
     public void shouldCreateSecondDocument() throws Exception {
         TemplateType templateType = new TemplateType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Template template = prepareData().get(1);
         HttpEntity document = templateType.createDocument(template);
@@ -155,11 +151,9 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Rendering",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "Render",
-            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "Field",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -183,7 +177,6 @@ public class TemplateTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         TemplateType templateType = new TemplateType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         Template template = prepareData().get(2);
         HttpEntity document = templateType.createDocument(template);
@@ -192,11 +185,9 @@ public class TemplateTypeTest {
 
         assertEquals("Key title doesn't match to given value!", "Incomplete",
             TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key outputName doesn't match to given value!", "",
-            TemplateTypeField.OUTPUT_NAME.getStringValue(actual));
         assertEquals("Key wikiField doesn't match to given value!", "",
             TemplateTypeField.WIKI_FIELD.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", dateFormat.format(template.getCreationDate()),
+        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
             TemplateTypeField.CREATION_DATE.getStringValue(actual));
         assertEquals("Key sortHelperStatus doesn't match to given value!", "",
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
@@ -219,7 +210,7 @@ public class TemplateTypeTest {
         HttpEntity document = templateType.createDocument(template);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 12, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
 
         JsonArray projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         JsonObject project = projects.getJsonObject(0);
@@ -237,5 +228,10 @@ public class TemplateTypeTest {
         List<Template> templates = prepareData();
         Map<Integer, HttpEntity> documents = templateType.createDocuments(templates);
         assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+    }
+
+    private String formatDate(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(date);
     }
 }

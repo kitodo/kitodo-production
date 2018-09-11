@@ -27,6 +27,7 @@
                     <p:inputText id="table-size" value="#{LoginForm.myBenutzer.tableSize}" label="'#{msgs.tableSize}'"
                                  class="input">
                         <f:convertNumber integerOnly="true"/>
+                        <f:validateLongRange maximum="100" minimum="10" />
                     </p:inputText>
                 </div>
                 <div>

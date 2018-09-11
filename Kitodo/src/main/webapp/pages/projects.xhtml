@@ -22,7 +22,7 @@
         <h:form id="projectForm"
                 rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addProject, addTemplate, addDocket, addRuleset')}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus-circle fa-lg" iconPos="right" styleClass="callto">
-                <p:menuitem value="#{msgs.newProject}" action="#{ProjekteForm.newProject}" icon="ui-icon-plusthick"
+                <p:menuitem value="#{msgs.newProject}" action="#{ProjectForm.newProject}" icon="ui-icon-plusthick"
                             id="newProjectButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addProject')}"/>
                 <p:menuitem value="#{msgs.newTemplate}" action="#{TemplateForm.newTemplate}"
@@ -44,8 +44,8 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView activeIndex="#{ProjekteForm.activeTabIndex}" id="projectsTabView">
-            <p:ajax event="tabChange" listener="#{ProjekteForm.onTabChange}"/>
+        <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" id="projectsTabView">
+            <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
             <p:tab title="#{msgs.projectList}" id="projectTab">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
             </p:tab>

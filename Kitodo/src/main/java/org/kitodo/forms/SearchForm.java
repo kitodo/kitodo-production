@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.Helper;
@@ -78,7 +78,7 @@ public class SearchForm {
 
     private ServiceManager serviceManager = new ServiceManager();
 
-    private ProzessverwaltungForm processForm;
+    private ProcessForm processForm;
 
     /**
      * Constructor with inject process form.
@@ -87,7 +87,7 @@ public class SearchForm {
      *            managed bean
      */
     @Inject
-    public SearchForm(ProzessverwaltungForm processForm) {
+    public SearchForm(ProcessForm processForm) {
         initStepStatus();
         initProjects();
         initMasterpiecePropertyTitles();

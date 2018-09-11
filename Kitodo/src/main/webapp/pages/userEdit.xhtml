@@ -93,7 +93,7 @@
                             <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
                             <p:selectOneMenu id="ldapGroup"  value="#{UserForm.userObject.ldapGroup}"
                                              disabled="#{isViewMode}" converter="#{ldapGroupConverter}">
-                                <f:selectItems value="#{LdapGruppenForm.ldapGroups}" var="ldapGroup"
+                                <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
                                                itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>

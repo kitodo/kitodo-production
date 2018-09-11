@@ -20,7 +20,7 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.processTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.processTitle}"
-                             value="#{ProzessverwaltungForm.newProcessTitle}"
+                             value="#{ProcessForm.newProcessTitle}"
                              class="input"
                              required="#{empty param['editForm:saveButtonToggler'] and
                                          empty param['editForm:tabs:addTemplateProperty'] and
@@ -32,12 +32,12 @@
 
             <div>
                 <p:outputLabel for="project" value="#{msgs.project}"/>
-                <p:selectOneMenu id="project" value="#{ProzessverwaltungForm.process.project}" converter="#{projectConverter}"
+                <p:selectOneMenu id="project" value="#{ProcessForm.process.project}" converter="#{projectConverter}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProzessverwaltungForm.projects}"/>
+                    <f:selectItems value="#{ProcessForm.projects}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
@@ -46,24 +46,24 @@
         <p:row>
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
-                <p:selectOneMenu id="ruleset" value="#{ProzessverwaltungForm.process.ruleset}" converter="#{rulesetConverter}"
+                <p:selectOneMenu id="ruleset" value="#{ProcessForm.process.ruleset}" converter="#{rulesetConverter}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProzessverwaltungForm.rulesets}"/>
+                    <f:selectItems value="#{ProcessForm.rulesets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
 
             <div>
                 <p:outputLabel for="docket" value="#{msgs.docket}"/>
-                <p:selectOneMenu id="docket" value="#{ProzessverwaltungForm.process.docket}" converter="#{docketConverter}"
+                <p:selectOneMenu id="docket" value="#{ProcessForm.process.docket}" converter="#{docketConverter}"
                                  required="#{empty param['editForm:saveButtonToggler'] and
                                              empty param['editForm:tabs:addTemplateProperty'] and
                                              empty param['editForm:tabs:addWorkpieceProperty'] and
                                              empty param['editForm:tabs:createNewProperty']}">
-                    <f:selectItems value="#{ProzessverwaltungForm.dockets}"/>
+                    <f:selectItems value="#{ProcessForm.dockets}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

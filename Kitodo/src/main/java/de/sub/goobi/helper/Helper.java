@@ -58,6 +58,7 @@ public class Helper implements Observer, Serializable {
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static final long serialVersionUID = -7449236652821237059L;
     private static Map<Locale, ResourceBundle> commonMessages = null;
+    private static Map<Locale, ResourceBundle> errorMessages = null;
     private static Map<Locale, ResourceBundle> localMessages = null;
     private static String compoundMessage;
 
@@ -154,8 +155,8 @@ public class Helper implements Observer, Serializable {
      * Set error message to message tag with given name 'title'.
      *
      * <p>
-     * This method also accepts logger and exception instances to automatically
-     * log the exceptions message or stackTrace values to the given logger.
+     * This method also accepts logger and exception instances to automatically log
+     * the exceptions message or stackTrace values to the given logger.
      * </p>
      *
      * @param title
@@ -179,8 +180,8 @@ public class Helper implements Observer, Serializable {
      * placeholders in message tag with elements of given array 'parameters'.
      *
      * <p>
-     * This method also accepts logger and exception instances to automatically
-     * log the exceptions message or stackTrace values to the given logger.
+     * This method also accepts logger and exception instances to automatically log
+     * the exceptions message or stackTrace values to the given logger.
      * </p>
      *
      * @param title
@@ -202,8 +203,8 @@ public class Helper implements Observer, Serializable {
      *
      * <p>
      * This method also accepts a description text and logger and exception
-     * instances to automatically log the exceptions message or stackTrace
-     * values to the given logger.
+     * instances to automatically log the exceptions message or stackTrace values to
+     * the given logger.
      * </p>
      *
      * @param title
@@ -297,8 +298,8 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * Returns a Map holding all translations that are configured in the front
-     * end of a given resource key.
+     * Returns a Map holding all translations that are configured in the front end
+     * of a given resource key.
      *
      * @param key
      *            resource key to get translations for
@@ -325,7 +326,8 @@ public class Helper implements Observer, Serializable {
      * @return String
      */
     public static String getString(Locale language, String key) {
-        if (commonMessages == null || commonMessages.size() <= 1) {
+        if ((Objects.isNull(commonMessages) || commonMessages.isEmpty())
+                && (Objects.isNull(errorMessages) || errorMessages.isEmpty())) {
             loadMsgs();
         }
 
@@ -340,7 +342,11 @@ public class Helper implements Observer, Serializable {
             }
         }
         try {
-            return commonMessages.get(language).getString(key);
+            ResourceBundle messages = commonMessages.get(language);
+            if (messages.containsKey(key)) {
+                return messages.getString(key);
+            }
+            return errorMessages.get(language).getString(key);
         } catch (RuntimeException irrelevant) {
             return key;
         }
@@ -381,6 +387,7 @@ public class Helper implements Observer, Serializable {
 
     private static void loadMsgs() {
         commonMessages = new HashMap<>();
+        errorMessages = new HashMap<>();
         localMessages = new HashMap<>();
         if (FacesContext.getCurrentInstance() != null) {
             @SuppressWarnings("unchecked")
@@ -388,14 +395,14 @@ public class Helper implements Observer, Serializable {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
+                errorMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
                 File file = new File(
                         ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
-                    // Load local message bundle from file system only if file
-                    // exists;
-                    // if value not exists in bundle, use default bundle from
-                    // classpath
-
+                    /*
+                     * Load local message bundle from file system only if file exists,if value not
+                     * exists in bundle, use default bundle from classpath
+                     */
                     try {
                         final URL resourceURL = file.toURI().toURL();
                         URLClassLoader urlLoader = AccessController.doPrivileged(
@@ -413,6 +420,7 @@ public class Helper implements Observer, Serializable {
         } else {
             Locale defaultLocale = new Locale("EN");
             commonMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
+            errorMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
         }
     }
 
@@ -551,9 +559,9 @@ public class Helper implements Observer, Serializable {
     }
 
     /**
-     * The function getLastMessage() returns the last message processed to be
-     * shown to the user. This is a last resort only to show the user why
-     * perhaps something didn’t work if no error message is available otherwise.
+     * The function getLastMessage() returns the last message processed to be shown
+     * to the user. This is a last resort only to show the user why perhaps
+     * something didn’t work if no error message is available otherwise.
      *
      * @return the most recent message created to be shown to the user
      */

@@ -585,8 +585,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can
-     * identify change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can identify
+     * change done to task.
      *
      * @return workflow id as String
      */
@@ -598,8 +598,8 @@ public class Task extends BaseIndexedBean {
      * Set workflow id.
      *
      * @param workflowId
-     *            id of task object in diagram - by this id we can identify
-     *            change done to task
+     *            id of task object in diagram - by this id we can identify change
+     *            done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;

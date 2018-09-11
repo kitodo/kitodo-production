@@ -17,7 +17,6 @@ import java.util.List;
 public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
-    private String outputName;
     private String wikiField;
     private String creationDate;
     private DocketDTO docket;
@@ -41,25 +40,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Get output name.
-     *
-     * @return output name as String
-     */
-    public String getOutputName() {
-        return outputName;
-    }
-
-    /**
-     * Set output name.
-     *
-     * @param outputName
-     *            as String
-     */
-    public void setOutputName(String outputName) {
-        this.outputName = outputName;
     }
 
     /**

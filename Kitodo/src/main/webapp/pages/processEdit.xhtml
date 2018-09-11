@@ -19,8 +19,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProzessverwaltungForm.loadProcess(id)}" />
-        <f:viewAction action="#{ProzessverwaltungForm.setProcessEditReferer(request.getParameter('referer'))}"/>
+        <f:viewAction action="#{ProcessForm.loadProcess(id)}" />
+        <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
     <ui:define name="contentHeader">
@@ -29,25 +29,25 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3>
-            <h:outputText value="#{msgs.processEdit} (#{ProzessverwaltungForm.process.title})" rendered="#{not empty ProzessverwaltungForm.process.title}"/>
-            <h:outputText value="#{msgs.createNewProcess}" rendered="#{empty ProzessverwaltungForm.process.title}"/>
+            <h:outputText value="#{msgs.processEdit} (#{ProcessForm.process.title})" rendered="#{not empty ProcessForm.process.title}"/>
+            <h:outputText value="#{msgs.createNewProcess}" rendered="#{empty ProcessForm.process.title}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ProzessverwaltungForm.saveAndRedirect}"
+                         action="#{ProcessForm.saveAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
-                         disabled="#{ProzessverwaltungForm.saveDisabled}"
+                         disabled="#{ProcessForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProzessverwaltungForm.setSaveDisabled(false)}"
+                         actionListener="#{ProcessForm.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
-                  outcome="#{ProzessverwaltungForm.processEditReferer}"
+                  outcome="#{ProcessForm.processEditReferer}"
                   onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
@@ -59,7 +59,7 @@
             <p:tab title="#{msgs.processDetails}" id="details">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/details.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProzessverwaltungForm.process.title}">
+            <p:tab title="#{msgs.taskList}" id="taskOrder" rendered="#{not empty ProcessForm.process.title}">
                 <ui:include src="/WEB-INF/templates/includes/processEdit/taskList.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.templateProperties}" id="processTemplates">
@@ -83,10 +83,10 @@
     <ui:define name="breadcrumbs">
         <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.processes}" outcome="processes"/></li>
-        <ui:fragment rendered="#{not empty ProzessverwaltungForm.process.title}">
+        <ui:fragment rendered="#{not empty ProcessForm.process.title}">
             <li><a href="">#{msgs.processEdit}</a></li>
         </ui:fragment>
-        <ui:fragment rendered="#{empty ProzessverwaltungForm.process.title}">
+        <ui:fragment rendered="#{empty ProcessForm.process.title}">
             <li><a href="">#{msgs.createNewProcess}</a></li>
         </ui:fragment>
     </ui:define>

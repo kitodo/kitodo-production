@@ -9,13 +9,13 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.forms;
+package org.kitodo.forms;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import de.sub.goobi.helper.Helper;
+
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -58,18 +58,13 @@ public class BatchFormIT {
         processes = batchForm.getCurrentProcesses();
         assertEquals("Size of filtered processes is incorrect!", 3, processes.size());
 
-        assertEquals("First sorted date is incorrect!", new DateTime().toString("YYYY-MM-dd"), formatDate(processes.get(0).getCreationDate()));
-        assertEquals("Second sorted date is incorrect!", "2017-02-10", formatDate(processes.get(1).getCreationDate()));
-        assertEquals("Second sorted date is incorrect!", "2017-01-20", formatDate(processes.get(2).getCreationDate()));
+        assertTrue("First sorted date is incorrect!", Helper.getDateAsFormattedString(processes.get(0).getCreationDate()).contains(new DateTime().toString("YYYY-MM-dd")));
+        assertEquals("Second sorted date is incorrect!", "2017-02-10 00:00:00", Helper.getDateAsFormattedString(processes.get(1).getCreationDate()));
+        assertEquals("Second sorted date is incorrect!", "2017-01-20 00:00:00", Helper.getDateAsFormattedString(processes.get(2).getCreationDate()));
 
         batchForm.setProcessfilter(null);
         batchForm.filterProcesses();
         processes = batchForm.getCurrentProcesses();
         assertEquals("Size of filtered processes is incorrect!", 3, processes.size());
-    }
-
-    private String formatDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return dateFormat.format(date);
     }
 }

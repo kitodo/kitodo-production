@@ -35,7 +35,7 @@
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
                             action="#{ClientForm.newClient}" icon="ui-icon-plusthick"/>
-                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGruppenForm.newLdapGroup}"
+                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupForm.newLdapGroup}"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addLdapGroup')}"
                             icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
