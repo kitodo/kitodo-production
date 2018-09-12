@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang.text.StrTokenizer;
@@ -39,6 +40,8 @@ import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.helper.tasks.ProcessSwapInTask;
 import de.sub.goobi.helper.tasks.ProcessSwapOutTask;
 import de.sub.goobi.helper.tasks.TaskManager;
+import de.sub.goobi.metadaten.copier.CopierData;
+import de.sub.goobi.metadaten.copier.DataCopier;
 import de.sub.goobi.persistence.BenutzerDAO;
 import de.sub.goobi.persistence.BenutzergruppenDAO;
 import de.sub.goobi.persistence.ProzessDAO;
@@ -70,6 +73,12 @@ public class GoobiScript {
      * Starten des Scripts ================================================================
      */
     public void execute(List<Prozess> inProzesse, String inScript) {
+
+        if (inScript.contains("action:copyData")) {
+            copyData(inProzesse, inScript);
+            return;
+        }
+
         this.myParameters = new HashMap<String, String>();
         /*
          * -------------------------------- alle Suchparameter zerlegen und erfassen --------------------------------
@@ -214,6 +223,33 @@ public class GoobiScript {
                     Helper.setFehlerMeldung("could not delete process " + p.getTitel(), e);
                 }
             }
+        }
+    }
+
+    private void copyData(List<Prozess> processes, String inScript) {
+        String currentProcessTitele = null;
+        try {
+            String rules = inScript.replaceFirst("\\s*action:copyData\\s+(.*?)[\r\n\\s]*", "$1");
+            DataCopier dataCopier = new DataCopier(rules);
+            for (Prozess process : processes) {
+                currentProcessTitele = process.getTitel();
+                Fileformat gdzfile = process.readMetadataFile();
+                dataCopier.process(new CopierData(gdzfile, process));
+                process.writeMetadataFile(gdzfile);
+                Helper.setMeldung("copyDataOk", currentProcessTitele);
+            }
+        } catch (Exception e) {
+            StringBuilder message = new StringBuilder(127);
+            if (currentProcessTitele != null) {
+                message.append(currentProcessTitele);
+                message.append(": ");
+            }
+            message.append(e.getClass().getSimpleName());
+            if (e.getMessage() != null) {
+                message.append(": ");
+                message.append(e.getMessage());
+            }
+            Helper.setFehlerMeldung("copyDataError", message.toString());
         }
     }
 

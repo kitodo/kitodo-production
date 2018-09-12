@@ -219,6 +219,8 @@
                                             onclick="document.getElementById('goobiScriptfield').value='action:tiffWriter'" />
                                          <h:outputText styleClass="goobiScriptLink" value="exportDms"
                                             onclick="document.getElementById('goobiScriptfield').value='action:exportDms exportImages:false'" />
+                                        <h:outputText styleClass="goobiScriptLink" value="copyData"
+                                            onclick="document.getElementById('goobiScriptfield').value='action:copyData <rule(s)>'" />
                                     </htm:td>
                                 </htm:tr>
                                 <htm:tr>
