@@ -19,28 +19,28 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view locale="#{SpracheForm.locale}">
         <!-- edit dialog -->
-        <p:dialog widgetVar="addUsergroupDialog"
-                  header="#{msgs.userGroupsAdd}"
+        <p:dialog widgetVar="addUserDialog"
+                  header="#{msgs.userAdd}"
                   width="700px"
                   modal="true"
                   dynamic="true">
-            <h:form id="usergroupForm">
-                <p:dataTable id="usergroupTable"
-                             var="usergroup"
-                             value="#{UserGroupForm.lazyDTOModel}"
+            <h:form id="userForm">
+                <p:dataTable id="userTable"
+                             var="user"
+                             value="#{UserForm.lazyDTOModel}"
                              lazy="true"
                              rows="#{LoginForm.myBenutzer.tableSize}"
                              paginator="true">
-                    <p:column headerText="#{msgs.userGroup}">
-                        <h:outputText value="#{usergroup.title}"/>
+                    <p:column headerText="#{msgs.user}">
+                        <h:outputText value="#{user.surname}, #{user.name}"/>
                     </p:column>
                     <p:column headerText="#{msgs.actions}">
-                        <p:commandLink id="addUsergroup"
-                                       action="#{TemplateForm.addUserGroup}"
+                        <p:commandLink id="addUser"
+                                       action="#{WorkflowForm.addUser}"
                                        oncomplete="toggleSave()"
-                                       update="editForm:tabs:usergroupTable">
-                            <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
-                            <f:param name="ID" value="#{usergroup.id}"/>
+                                       update="editForm:tabs:userTable">
+                            <h:graphicImage alt="add task to user" value="/pages/images/buttons/addUser.gif"/>
+                            <f:param name="ID" value="#{user.id}"/>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>

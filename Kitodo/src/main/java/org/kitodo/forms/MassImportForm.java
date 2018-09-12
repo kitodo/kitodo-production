@@ -120,8 +120,8 @@ public class MassImportForm extends BaseForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+        if (!serviceManager.getWorkflowService().hasCompleteTasks(this.template.getWorkflow().getTasks())) {
+            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getWorkflow().getTasks());
             return null;
         }
         initializePossibleDigitalCollections();

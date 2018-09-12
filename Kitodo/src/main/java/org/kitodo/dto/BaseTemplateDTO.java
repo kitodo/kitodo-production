@@ -11,9 +11,6 @@
 
 package org.kitodo.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
@@ -21,7 +18,6 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     private String creationDate;
     private DocketDTO docket;
     private RulesetDTO ruleset;
-    private List<TaskDTO> tasks = new ArrayList<>();
 
     /**
      * Get title.
@@ -116,24 +112,5 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setRuleset(RulesetDTO ruleset) {
         this.ruleset = ruleset;
-    }
-
-    /**
-     * Get list of tasks.
-     *
-     * @return list of tasks as TaskDTO
-     */
-    public List<TaskDTO> getTasks() {
-        return tasks;
-    }
-
-    /**
-     * Set list of tasks.
-     *
-     * @param tasks
-     *            list of tasks as TaskDTO
-     */
-    public void setTasks(List<TaskDTO> tasks) {
-        this.tasks = tasks;
     }
 }

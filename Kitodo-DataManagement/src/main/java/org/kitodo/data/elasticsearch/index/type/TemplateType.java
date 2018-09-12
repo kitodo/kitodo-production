@@ -40,7 +40,6 @@ public class TemplateType extends BaseType<Template> {
         Integer docket = template.getDocket() != null ? template.getDocket().getId() : 0;
         jsonObjectBuilder.add(TemplateTypeField.DOCKET.getKey(), docket);
         jsonObjectBuilder.add(TemplateTypeField.PROJECTS.getKey(), addObjectRelation(template.getProjects(), true));
-        jsonObjectBuilder.add(TemplateTypeField.TASKS.getKey(), addObjectRelation(template.getTasks(), true));
 
         return jsonObjectBuilder.build();
     }

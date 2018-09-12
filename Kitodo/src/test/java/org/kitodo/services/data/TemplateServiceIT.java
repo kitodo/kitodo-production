@@ -67,7 +67,6 @@ public class TemplateServiceIT {
         assertTrue("Template was not found in database!", condition);
 
         assertEquals("Template was found but processes were not inserted!", 2, template.getProcesses().size());
-        assertEquals("Template was found but tasks were not inserted!", 1, template.getTasks().size());
     }
 
     @Test
@@ -88,27 +87,5 @@ public class TemplateServiceIT {
         projects.add(1);
         List<Template> templates = templateService.getProcessTemplatesForUser(projects);
         assertEquals("Incorrect size of templates for given projects", 1, templates.size());
-    }
-
-    @Test
-    public void shouldGetContainsUnreachableTasks() throws Exception {
-        Template template = templateService.getById(1);
-        boolean condition = templateService.containsUnreachableTasks(template.getTasks());
-        assertFalse("Process contains unreachable tasks!", condition);
-
-        template = templateService.getById(3);
-        condition = templateService.containsUnreachableTasks(template.getTasks());
-        assertTrue("Process doesn't contain unreachable tasks!", condition);
-    }
-
-    @Test
-    public void shouldHasCompleteTasks() throws Exception {
-        TemplateDTO templateDTO = templateService.findById(1);
-        boolean condition = templateService.hasCompleteTasks(templateDTO.getTasks());
-        assertTrue("Process DTO doesn't have complete tasks!", condition);
-
-        templateDTO = templateService.findById(3);
-        condition = templateService.hasCompleteTasks(templateDTO.getTasks());
-        assertFalse("Process DTO has complete tasks!", condition);
     }
 }

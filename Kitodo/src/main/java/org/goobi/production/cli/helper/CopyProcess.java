@@ -94,7 +94,7 @@ public class CopyProcess extends ProzesskopieForm {
      */
     // TODO: why this not used ImportObject here?
     public String prepare(ImportObject io) {
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
+        if (!serviceManager.getWorkflowService().hasCompleteTasks(this.template.getWorkflow().getTasks())) {
             return "";
         }
 
@@ -127,11 +127,11 @@ public class CopyProcess extends ProzesskopieForm {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return null;
         }
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            for (Task s : this.template.getTasks()) {
-                if (serviceManager.getTaskService().getUserGroupsSize(s) == 0
-                        && serviceManager.getTaskService().getUsersSize(s) == 0) {
-                    Helper.setErrorMessage("Kein Benutzer festgelegt für: ", s.getTitle());
+        if (!serviceManager.getWorkflowService().hasCompleteTasks(this.template.getWorkflow().getTasks())) {
+            for (Task task : this.template.getWorkflow().getTasks()) {
+                if (serviceManager.getTaskService().getUserGroupsSize(task) == 0
+                        && serviceManager.getTaskService().getUsersSize(task) == 0) {
+                    Helper.setErrorMessage("Kein Benutzer festgelegt für: ", task.getTitle());
                 }
             }
             return "";

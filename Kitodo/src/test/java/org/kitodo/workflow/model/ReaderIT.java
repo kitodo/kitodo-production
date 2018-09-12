@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
@@ -53,15 +53,15 @@ public class ReaderIT {
     }
 
     @Test
-    public void shouldConvertConditionalWorkflowToTemplate() throws Exception {
+    public void shouldConvertConditionalWorkflowToTasks() throws Exception {
         Reader reader = new Reader("gateway");
 
-        Template template = new Template();
-        template.setTitle("Title");
-        template = reader.convertWorkflowToTemplate(template);
-        assertEquals("Process definition - workflow was read incorrectly!", 5, template.getTasks().size());
+        Workflow workflow = new Workflow();
+        workflow.setTitle("Title");
+        workflow = reader.convertTasks(workflow);
+        assertEquals("Process definition - workflow was read incorrectly!", 5, workflow.getTasks().size());
 
-        List<Task> tasks = template.getTasks();
+        List<Task> tasks = workflow.getTasks();
         tasks.sort(Comparator.comparing(Task::getOrdering, Comparator.nullsFirst(Comparator.naturalOrder())));
 
         for (Task task : tasks) {

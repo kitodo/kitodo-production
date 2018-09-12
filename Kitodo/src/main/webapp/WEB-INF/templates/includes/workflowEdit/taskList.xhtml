@@ -1,0 +1,98 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:o="http://omnifaces.org/ui"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:dataTable id="taskTable"
+                 var="item"
+                 value="#{WorkflowForm.workflow.tasks}"
+                 sortBy="#{item.ordering}">
+
+        <!-- ordering -->
+        <p:column headerText="#{msgs.nr}" id="taskOrder">
+            <h:outputText value="#{item.ordering}"/>
+            <p:commandButton action="#{WorkflowForm.setOrderingUp}" id="orderUp"
+                             update="editForm:workflowTabView:taskTable"
+                             oncomplete="toggleSave()" icon="fa fa-long-arrow-up" styleClass="ui-button-small">
+                <f:setPropertyActionListener target="#{WorkflowForm.task}" value="#{item}"/>
+            </p:commandButton>
+            <p:commandButton action="#{WorkflowForm.setOrderingDown}" id="orderDown"
+                             update="editForm:workflowTabView:taskTable"
+                             oncomplete="toggleSave()" icon="fa fa-long-arrow-down" styleClass="ui-button-small">
+                <f:setPropertyActionListener target="#{WorkflowForm.task}" value="#{item}"/>
+            </p:commandButton>
+        </p:column>
+
+        <!-- title -->
+        <p:column headerText="#{msgs.task}" id="taskTitle">
+            <p:rowToggler/>
+            <h:outputText value="#{item.title}"/>
+        </p:column>
+
+        <!-- actions -->
+        <p:column rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('editTask, deleteTask')}"
+                  headerText="#{msgs.actions}" id="taskAction" styleClass="actionsColumn">
+            <h:link outcome="taskWorkflowEdit" id="editTask" title="#{msgs.taskDetails}">
+                <f:param name="id" value="#{item.id}"/>
+                <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+        </p:column>
+
+        <p:rowExpansion>
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="2" columnClasses="label,value" headerText="#{msgs.properties}">
+                    <h:outputText value="#{msgs.title}: "/>
+                    <h:outputText value="#{item.workflow.title}"/>
+
+                    <h:outputText value="#{msgs.priority}: "/>
+                    <h:outputText value="#{item.priority}"/>
+
+                    <h:outputText value="#{msgs.processingBegin}: "
+                                  rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingBeginAsFormattedString}"
+                                  rendered="#{item.processingBegin ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.lastEdited}: "
+                                  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingTimeAsFormattedString}"
+                                  rendered="#{item.processingTime ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.processingEnd}: "
+                                  rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.getProcessingEndAsFormattedString(item)}"
+                                  rendered="#{item.processingEnd ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.lastUpdatedBy}: "
+                                  rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+                    <h:outputText value="#{item.processingUser.fullName}"
+                                  rendered="#{item.processingUser ne null and item.processingUser.id ne null and !HelperForm.anonymized}"/>
+
+                    <h:outputText value="#{msgs.editType}: " rendered="#{item.editTypeEnum ne null}"/>
+                    <h:outputText value="#{item.editTypeEnum.title}" rendered="#{item.editTypeEnum ne null}"/>
+
+                    <h:outputText value="#{msgs.automaticTask}: "
+                                  rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                    <h:outputText value="#{item.scriptPath}"
+                                  rendered="#{item.scriptPath ne null and item.scriptPath ne ''}"/>
+                </p:panelGrid>
+            </div>
+        </p:rowExpansion>
+
+    </p:dataTable>
+
+    <o:graphicImage rendered="#{item.workflow ne null}" value="#{WorkflowForm.tasksDiagram}" dataURI="true"/>
+</ui:composition>

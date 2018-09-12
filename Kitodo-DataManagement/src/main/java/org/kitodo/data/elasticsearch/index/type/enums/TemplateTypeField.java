@@ -23,8 +23,7 @@ public enum TemplateTypeField implements TypeInterface {
     WORKFLOW_FILE_NAME("workflow.fileName"),
     DOCKET("docket"),
     RULESET("ruleset"),
-    PROJECTS("projects"),
-    TASKS("tasks");
+    PROJECTS("projects");
 
     private String name;
 

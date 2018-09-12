@@ -25,6 +25,7 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,6 +36,9 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -51,6 +55,7 @@ public class WorkflowForm extends BaseForm {
     private static final long serialVersionUID = 2865600843136821176L;
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
+    private Task task;
     private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
@@ -58,12 +63,131 @@ public class WorkflowForm extends BaseForm {
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
+    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskWorkflowEdit");
 
     /**
      * Constructor.
      */
     public WorkflowForm() {
         super.setLazyDTOModel(new LazyDTOModel(serviceManager.getWorkflowService()));
+    }
+
+    /**
+     * Add user group to task.
+     */
+    public void addUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            for (UserGroup taskUserGroup : this.task.getUserGroups()) {
+                if (taskUserGroup.equals(userGroup)) {
+                    return;
+                }
+            }
+            this.task.getUserGroups().add(userGroup);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
+        }
+    }
+
+    /**
+     * Add user to task.
+     */
+    public void addUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            for (User taskUser : this.task.getUsers()) {
+                if (taskUser.equals(user)) {
+                    return;
+                }
+            }
+            this.task.getUsers().add(user);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {ObjectType.USER.getTranslationSingular(), userId }, logger,
+                e);
+        }
+    }
+
+    /**
+     * Remove user from task.
+     */
+    public void deleteUser() {
+        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            User user = serviceManager.getUserService().getById(userId);
+            this.task.getUsers().remove(user);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING, new Object[] {ObjectType.USER.getTranslationSingular(), userId }, logger,
+                e);
+        }
+    }
+
+    /**
+     * Remove user group from task.
+     */
+    public void deleteUserGroup() {
+        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
+        try {
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+            this.task.getUserGroups().remove(userGroup);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
+        }
+    }
+
+    /**
+     * Set ordering up.
+     *
+     * @return String
+     */
+    public String setOrderingUp() {
+        Integer ordering = this.task.getOrdering() - 1;
+        for (Task tempTask : this.workflow.getTasks()) {
+            if (tempTask.getOrdering().equals(ordering)) {
+                tempTask.setOrdering(ordering + 1);
+            }
+        }
+        task.setOrdering(ordering);
+        return saveAndRedirect();
+    }
+
+    /**
+     * Set ordering down.
+     *
+     * @return String
+     */
+    public String setOrderingDown() {
+        Integer ordering = this.task.getOrdering() + 1;
+        for (Task tempTask : this.workflow.getTasks()) {
+            if (tempTask.getOrdering().equals(ordering)) {
+                tempTask.setOrdering(ordering - 1);
+            }
+        }
+        task.setOrdering(ordering);
+        return saveAndRedirect();
+    }
+
+    /**
+     * Save task and redirect to processEdit view.
+     *
+     * @return url to templateEdit view
+     */
+    public String saveTaskAndRedirect() {
+        saveTask();
+        return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
+    }
+
+    private void saveTask() {
+        try {
+            serviceManager.getTaskService().save(this.task);
+            serviceManager.getTaskService().evict(this.task);
+            reload(this.workflow, "workflow", serviceManager.getTemplateService());
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {Helper.getTranslation("task") }, logger, e);
+        }
     }
 
     /**
@@ -184,11 +308,15 @@ public class WorkflowForm extends BaseForm {
             Reader reader = new Reader(decodedXMLDiagramName);
             Diagram diagram = reader.getWorkflow();
             this.workflow.setTitle(diagram.getId());
+            if (this.workflow.isReady()) {
+                this.workflow = reader.convertTasks(this.workflow);
+            }
             if (isWorkflowAlreadyInUse(this.workflow)) {
                 this.workflow.setActive(false);
                 Workflow newWorkflow = new Workflow(diagram.getId(), decodedXMLDiagramName);
                 newWorkflow.setActive(this.workflow.isActive());
                 newWorkflow.setReady(this.workflow.isReady());
+                newWorkflow.setTasks(new ArrayList<>(this.workflow.getTasks()));
                 serviceManager.getWorkflowService().save(newWorkflow);
             }
             serviceManager.getWorkflowService().save(this.workflow);
@@ -210,6 +338,19 @@ public class WorkflowForm extends BaseForm {
             sb.append(AB.charAt(rnd.nextInt(AB.length())));
         }
         return sb.toString();
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        if (Objects.nonNull(this.workflow)) {
+            return serviceManager.getWorkflowService().getTasksDiagram(this.workflow.getFileName());
+        }
+        return serviceManager.getWorkflowService().getTasksDiagram("");
+
     }
 
     /**
@@ -281,6 +422,20 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
+     * Method being used as viewAction for task form.
+     */
+    public void loadTask(int id) {
+        try {
+            if (id != 0) {
+                setTask(this.serviceManager.getTaskService().getById(id));
+            }
+            setSaveDisabled(true);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("task"), id }, logger, e);
+        }
+    }
+
+    /**
      * Get workflow.
      *
      * @return value of workflow
@@ -297,6 +452,25 @@ public class WorkflowForm extends BaseForm {
      */
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    /**
+     * Get task.
+     *
+     * @return value of task
+     */
+    public Task getTask() {
+        return task;
+    }
+
+    /**
+     * Set task.
+     *
+     * @param task
+     *            as org.kitodo.data.database.beans.Task
+     */
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     /**

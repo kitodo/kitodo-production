@@ -11,14 +11,7 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,12 +19,9 @@ import java.util.Objects;
 
 import javax.json.JsonObject;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.IndexAction;
@@ -43,7 +33,6 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.TemplateDTO;
 import org.kitodo.dto.WorkflowDTO;
 import org.kitodo.enums.ObjectType;
@@ -52,7 +41,6 @@ import org.kitodo.services.data.base.TitleSearchService;
 
 public class TemplateService extends TitleSearchService<Template, TemplateDTO, TemplateDAO> {
 
-    private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TemplateService instance = null;
     private boolean showInactiveTemplates = false;
@@ -93,10 +81,8 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
      *            object
      */
     @Override
-    protected void manageDependenciesForIndex(Template template)
-            throws CustomResponseException, DAOException, DataException, IOException {
+    protected void manageDependenciesForIndex(Template template) throws CustomResponseException, IOException {
         manageProjectDependenciesForIndex(template);
-        manageTaskDependenciesForIndex(template);
     }
 
     /**
@@ -114,72 +100,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
                 serviceManager.getProjectService().saveToIndex(project, false);
             }
         }
-    }
-
-    /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks from
-     * index, if other call saveOrRemoveTaskInIndex() method.
-     *
-     * @param template
-     *            object
-     */
-    private void manageTaskDependenciesForIndex(Template template)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        if (template.getIndexAction().equals(IndexAction.DELETE)) {
-            for (Task task : template.getTasks()) {
-                serviceManager.getTaskService().removeFromIndex(task, false);
-            }
-        } else {
-            saveOrRemoveTasksInIndex(template);
-        }
-    }
-
-    /**
-     * Compare index and database, according to comparisons results save or remove
-     * tasks.
-     *
-     * @param template
-     *            object
-     */
-    private void saveOrRemoveTasksInIndex(Template template)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        List<Integer> database = new ArrayList<>();
-        List<Integer> index = new ArrayList<>();
-
-        for (Task task : template.getTasks()) {
-            database.add(task.getId());
-            serviceManager.getTaskService().saveToIndex(task, false);
-        }
-
-        List<JsonObject> searchResults = serviceManager.getTaskService().findByProcessId(template.getId());
-        for (JsonObject object : searchResults) {
-            index.add(getIdFromJSONObject(object));
-        }
-
-        List<Integer> missingInIndex = findMissingValues(database, index);
-        List<Integer> notNeededInIndex = findMissingValues(index, database);
-        for (Integer missing : missingInIndex) {
-            serviceManager.getTaskService().saveToIndex(serviceManager.getTaskService().getById(missing), false);
-        }
-
-        for (Integer notNeeded : notNeededInIndex) {
-            serviceManager.getTaskService().removeFromIndex(notNeeded, false);
-        }
-    }
-
-    /**
-     * Compare two list and return difference between them.
-     *
-     * @param firstList
-     *            list from which records can be remove
-     * @param secondList
-     *            records stored here will be removed from firstList
-     * @return difference between two lists
-     */
-    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
-        List<Integer> newList = new ArrayList<>(firstList);
-        newList.removeAll(secondList);
-        return newList;
     }
 
     @Override
@@ -280,9 +200,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         workflowDTO.setTitle(templateJSONObject.getString(TemplateTypeField.WORKFLOW_TITLE.getKey()));
         workflowDTO.setFileName(templateJSONObject.getString(TemplateTypeField.WORKFLOW_FILE_NAME.getKey()));
         templateDTO.setWorkflow(workflowDTO);
-        templateDTO.setTasks(convertRelatedJSONObjectToDTO(templateJSONObject, TemplateTypeField.TASKS.getKey(),
-                serviceManager.getTaskService()));
-        templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
 
         if (!related) {
             convertRelatedJSONObjects(templateJSONObject, templateDTO);
@@ -302,74 +219,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         query.must(serviceManager.getProcessService().getQuerySortHelperStatus(closed));
         query.must(getQueryProjectActive(active));
         return searcher.findDocuments(query.toString(), sort, offset, size);
-    }
-
-    /**
-     * Get diagram image for current template.
-     *
-     * @return diagram image file
-     */
-    public InputStream getTasksDiagram(String fileName) {
-        if (Objects.nonNull(fileName) && !fileName.equals("")) {
-            File tasksDiagram = new File(ConfigCore.getKitodoDiagramDirectory(), fileName + ".svg");
-            try {
-                return new FileInputStream(tasksDiagram);
-            } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
-                return getEmptyInputStream();
-            }
-        }
-        return getEmptyInputStream();
-    }
-
-    private InputStream getEmptyInputStream() {
-        return new InputStream() {
-            @Override
-            public int read() {
-                return -1;
-            }
-        };
-    }
-
-    /**
-     * Check whether the template contains tasks that are not assigned to a user or
-     * user group.
-     *
-     * @param tasks
-     *            list of tasks for testing
-     * @return true or false
-     */
-    public boolean containsUnreachableTasks(List<Task> tasks) {
-        TaskService taskService = serviceManager.getTaskService();
-        if (tasks.isEmpty()) {
-            return true;
-        }
-        for (Task task : tasks) {
-            if (taskService.getUserGroupsSize(task) == 0 && taskService.getUsersSize(task) == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check whether the tasks assigned to template are complete. If it contains
-     * tasks that are not assigned to a user or user group - tasks are not complete.
-     *
-     * @param tasks
-     *            list of tasks for testing
-     * @return true or false
-     */
-    boolean hasCompleteTasks(List<TaskDTO> tasks) {
-        if (tasks.isEmpty()) {
-            return false;
-        }
-        for (TaskDTO task : tasks) {
-            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**

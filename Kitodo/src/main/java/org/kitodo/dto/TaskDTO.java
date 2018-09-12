@@ -35,7 +35,7 @@ public class TaskDTO extends BaseDTO {
     private String processingBegin;
     private String processingEnd;
     private ProcessDTO process;
-    private TemplateDTO template;
+    private WorkflowDTO workflow;
     private List<UserDTO> users = new ArrayList<>();
     private int usersSize;
     private List<UserGroupDTO> userGroups = new ArrayList<>();
@@ -298,22 +298,22 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get template as TemplateDTO.
+     * Get workflow as WorkflowDTO.
      *
-     * @return template as TemplateDTO
+     * @return workflow as WorkflowDTO
      */
-    public TemplateDTO getTemplate() {
-        return template;
+    public WorkflowDTO getWorkflow() {
+        return workflow;
     }
 
     /**
-     * Set template as TemplateDTO.
+     * Set template as WorkflowDTO.
      *
-     * @param template
-     *            as TemplateDTO
+     * @param workflow
+     *            as WorkflowDTO
      */
-    public void setTemplate(TemplateDTO template) {
-        this.template = template;
+    public void setWorkflow(WorkflowDTO workflow) {
+        this.workflow = workflow;
     }
 
     /**

@@ -112,8 +112,8 @@ public class Task extends BaseIndexedBean {
     private User processingUser;
 
     @ManyToOne
-    @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
-    private Template template;
+    @JoinColumn(name = "workflow_id", foreignKey = @ForeignKey(name = "FK_task_workflow_id"))
+    private Workflow workflow;
 
     @ManyToOne
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
@@ -342,22 +342,22 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get template.
+     * Get workflow.
      *
-     * @return value of template
+     * @return value of workflow
      */
-    public Template getTemplate() {
-        return this.template;
+    public Workflow getWorkflow() {
+        return this.workflow;
     }
 
     /**
-     * Set template.
+     * Set workflow.
      *
-     * @param template
-     *            as Template
+     * @param workflow
+     *            as Workflow object
      */
-    public void setTemplate(Template template) {
-        this.template = template;
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
     }
 
     /**
@@ -663,6 +663,6 @@ public class Task extends BaseIndexedBean {
         return Objects.hash(title, priority, ordering, processingStatus, processingTime, processingBegin, processingEnd,
             editType, homeDirectory, typeMetadata, typeAutomatic, typeImportFileUpload, typeExportRussian,
             typeImagesRead, typeImagesWrite, typeExportDMS, typeAcceptClose, scriptName, scriptPath, typeCloseVerify,
-            batchStep, workflowId, workflowCondition, processingUser, template, localizedTitle);
+            batchStep, workflowId, workflowCondition, processingUser, workflow, localizedTitle);
     }
 }

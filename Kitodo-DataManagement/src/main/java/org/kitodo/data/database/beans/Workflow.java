@@ -18,6 +18,9 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -39,12 +42,20 @@ public class Workflow extends BaseIndexedBean {
     private Boolean ready = false;
 
     @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks;
+
+    @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Template> templates;
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_workflow_client_id"))
+    private Client client;
 
     /**
      * Empty constructor.
      */
     public Workflow() {
+        this.tasks = new ArrayList<>();
     }
 
     /**
@@ -58,6 +69,7 @@ public class Workflow extends BaseIndexedBean {
     public Workflow(String title, String fileName) {
         this.title = title;
         this.fileName = fileName;
+        this.tasks = new ArrayList<>();
     }
 
     /**
@@ -138,6 +150,46 @@ public class Workflow extends BaseIndexedBean {
      */
     public void setReady(boolean ready) {
         this.ready = ready;
+    }
+
+    /**
+     * Get client.
+     *
+     * @return Client object
+     */
+    public Client getClient() {
+        return this.client;
+    }
+
+    /**
+     * Set client.
+     *
+     * @param client
+     *            as Client object
+     */
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    /**
+     * Get list of task.
+     *
+     * @return list of Task objects or empty list
+     */
+    public List<Task> getTasks() {
+        if (this.tasks == null) {
+            this.tasks = new ArrayList<>();
+        }
+        return this.tasks;
+    }
+
+    /**
+     * Set list of tasks.
+     *
+     * @param tasks as list of Task objects
+     */
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     /**

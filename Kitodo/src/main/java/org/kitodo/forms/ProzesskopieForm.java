@@ -297,9 +297,17 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage("Template with id " + templateId + " or project with id " + projectId + " not found.", logger, e);
             return null;
         }
-
-        if (serviceManager.getTemplateService().containsUnreachableTasks(this.template.getTasks())) {
-            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getTasks());
+        if (Objects.nonNull(this.template.getWorkflow())) {
+            if (!serviceManager.getWorkflowService().hasCompleteTasks(this.template.getWorkflow().getTasks())) {
+                serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getWorkflow().getTasks());
+                return null;
+            }
+        } else {
+            Helper.setErrorMessage("errorMissingWorkflow", new Object[] {templateId});
+            return null;
+        }
+        if (!serviceManager.getWorkflowService().hasCompleteTasks(this.template.getWorkflow().getTasks())) {
+            serviceManager.getTaskService().setUpErrorMessagesForUnreachableTasks(this.template.getWorkflow().getTasks());
             return null;
         }
 

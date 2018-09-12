@@ -32,8 +32,8 @@ import org.camunda.bpm.model.bpmn.instance.ScriptTask;
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -66,11 +66,11 @@ public class Reader {
     }
 
     /**
-     * Convert BPMN process (workflow) to template stored in database.
+     * Convert BPMN process tasks to workflow's tasks stored in database.
      *
-     * @return Template bean
+     * @return Workflow bean with assigned tasks
      */
-    public Template convertWorkflowToTemplate(Template template) {
+    public Workflow convertTasks(Workflow workflow) {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
@@ -83,11 +83,11 @@ public class Reader {
             } else {
                 task.setProcessingStatusEnum(TaskStatus.LOCKED);
             }
-            task.setTemplate(template);
-            template.getTasks().add(task);
+            task.setWorkflow(workflow);
+            workflow.getTasks().add(task);
         }
 
-        return template;
+        return workflow;
     }
 
     /**
