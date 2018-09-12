@@ -11,8 +11,6 @@
 
 package org.kitodo.editor;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -28,6 +26,7 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
 import org.kitodo.config.Config;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.LegalTexts;
 
 @Named("LegalTextEditor")
