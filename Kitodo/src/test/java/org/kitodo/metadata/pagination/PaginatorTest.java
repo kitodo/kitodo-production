@@ -9,13 +9,18 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.pagination;
+
+import de.sub.goobi.metadaten.Metadatum;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.internal.ArrayComparisonFailure;
+import org.kitodo.metadata.pagination.enums.Mode;
+import org.kitodo.metadata.pagination.enums.Scope;
+import org.kitodo.metadata.pagination.enums.Type;
 
 public class PaginatorTest {
 
@@ -29,7 +34,7 @@ public class PaginatorTest {
     public void throwsExceptionWhenCalledWithInvalidStartValue() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {1, 2 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("II");
         paginator.run();
     }
@@ -38,9 +43,9 @@ public class PaginatorTest {
     public void setsSelectedPagesToUncounted() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0, 1, 2 });
-        paginator.setPaginationType(Paginator.Type.UNCOUNTED);
-        paginator.setPaginationScope(Paginator.Scope.SELECTED);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationType(Type.UNCOUNTED);
+        paginator.setPaginationScope(Scope.SELECTED);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertAllPagenumbersSetToValue(paginator, "uncounted");
     }
@@ -49,10 +54,10 @@ public class PaginatorTest {
     public void setsSelectedPagesToUncountedNoMatterWhatStartValueIsGiven() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0, 1, 2 });
-        paginator.setPaginationType(Paginator.Type.UNCOUNTED);
-        paginator.setPaginationScope(Paginator.Scope.SELECTED);
+        paginator.setPaginationType(Type.UNCOUNTED);
+        paginator.setPaginationScope(Scope.SELECTED);
         paginator.setPaginationStartValue("Foo");
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertAllPagenumbersSetToValue(paginator, "uncounted");
     }
@@ -61,9 +66,9 @@ public class PaginatorTest {
     public void setsAllPagesToUncounted() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.UNCOUNTED);
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationType(Type.UNCOUNTED);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertAllPagenumbersSetToValue(paginator, "uncounted");
     }
@@ -72,11 +77,11 @@ public class PaginatorTest {
     public void setsPagesToSequenceOfArabicNumbers() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("50");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.PAGES);
-        paginator .setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.PAGES);
+        paginator .setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"50", "51", "52" });
     }
@@ -85,11 +90,11 @@ public class PaginatorTest {
     public void setsPagesToSequenceOfRomanNumbers() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ROMAN);
+        paginator.setPaginationType(Type.ROMAN);
         paginator.setPaginationStartValue("II");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.PAGES);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.PAGES);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"II", "III", "IV" });
     }
@@ -98,11 +103,11 @@ public class PaginatorTest {
     public void paginateCountingColumns() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.COLUMNS);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.COLUMNS);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"1", "3", "5" });
     }
@@ -111,12 +116,12 @@ public class PaginatorTest {
     public void paginateUsingFoliation() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.FOLIATION);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(),
-                        new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.FOLIATION);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(),
+                        new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"1", "1", "2", "2" });
     }
@@ -125,12 +130,12 @@ public class PaginatorTest {
     public void paginateRectoVersoFoliation() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0, 1, 2, 3 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.SELECTED);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum(),
-                        new MockMetadatum() });
+        paginator.setPaginationScope(Scope.SELECTED);
+        paginator.setPaginationMode(Mode.RECTOVERSO);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata(),
+                        new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"1r", "1v", "2r", "2v" });
     }
@@ -139,11 +144,11 @@ public class PaginatorTest {
     public void paginateRectoVersoFoliationOnSinglePage() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO_FOLIATION);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata() });
         paginator.setPaginationSeparator(" ");
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"1v 2r" });
@@ -153,11 +158,11 @@ public class PaginatorTest {
     public void setsAllToUncountedWhenRectoVersoFoliationModeAndTypeUncounted() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.UNCOUNTED);
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(),
-                        new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationType(Type.UNCOUNTED);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(),
+                        new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertAllPagenumbersSetToValue(paginator, "uncounted");
     }
@@ -166,12 +171,12 @@ public class PaginatorTest {
     public void rectoVersoPaginationShouldStartWithRectoOnSkippedPages() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {1, 2, 3 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
-        paginator.setPaginationScope(Paginator.Scope.SELECTED);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO);
+        paginator.setPaginationType(Type.ARABIC);
+        paginator.setPaginationScope(Scope.SELECTED);
+        paginator.setPaginationMode(Mode.RECTOVERSO);
         paginator.setPaginationStartValue("1");
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum("uncounted"), new MockMetadatum(),
-                new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata("uncounted"), new MockMetadata(),
+                new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"uncounted", "1r", "1v", "2r" });
     }
@@ -180,12 +185,12 @@ public class PaginatorTest {
     public void fictitiousArabicPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("50");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.PAGES);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.PAGES);
         paginator.setFictitious(true);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[50]", "[51]", "[52]" });
     }
@@ -194,13 +199,13 @@ public class PaginatorTest {
     public void fictitiousArabicRectoVersoPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("4711");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO);
         paginator.setFictitious(true);
         paginator.setPagesToPaginate(new Metadatum[] {
-                        new MockMetadatum(), new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+                        new MockMetadata(), new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[4711]r", "[4711]v", "[4712]r", "[4712]v" });
     }
@@ -209,12 +214,12 @@ public class PaginatorTest {
     public void fictitiousRomanNumberPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ROMAN);
+        paginator.setPaginationType(Type.ROMAN);
         paginator.setPaginationStartValue("III");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.PAGES);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.PAGES);
         paginator.setFictitious(true);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[III]", "[IV]", "[V]" });
     }
@@ -223,13 +228,13 @@ public class PaginatorTest {
     public void fictitiousPaginationUsingFoliation() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.FOLIATION);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.FOLIATION);
         paginator.setFictitious(true);
         paginator.setPagesToPaginate(new Metadatum[] {
-                        new MockMetadatum(), new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+                        new MockMetadata(), new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[1]", "[1]", "[2]", "[2]" });
     }
@@ -238,11 +243,11 @@ public class PaginatorTest {
     public void rectoVersoPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO_FOLIATION);
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.setPaginationSeparator(" ");
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"1v 2r", "2v 3r", "3v 4r" });
@@ -252,12 +257,12 @@ public class PaginatorTest {
     public void fictitiousRectoVersoPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ARABIC);
+        paginator.setPaginationType(Type.ARABIC);
         paginator.setPaginationStartValue("1");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO_FOLIATION);
         paginator.setFictitious(true);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.setPaginationSeparator(" ");
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[1]v [2]r", "[2]v [3]r", "[3]v [4]r" });
@@ -267,12 +272,12 @@ public class PaginatorTest {
     public void fictitiousRomanRectoVersoPagination() {
         Paginator paginator = new Paginator();
         paginator.setPageSelection(new int[] {0 });
-        paginator.setPaginationType(Paginator.Type.ROMAN);
+        paginator.setPaginationType(Type.ROMAN);
         paginator.setPaginationStartValue("XX");
-        paginator.setPaginationScope(Paginator.Scope.FROMFIRST);
-        paginator.setPaginationMode(Paginator.Mode.RECTOVERSO_FOLIATION);
+        paginator.setPaginationScope(Scope.FROMFIRST);
+        paginator.setPaginationMode(Mode.RECTOVERSO_FOLIATION);
         paginator.setFictitious(true);
-        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadatum(), new MockMetadatum(), new MockMetadatum() });
+        paginator.setPagesToPaginate(new Metadatum[] {new MockMetadata(), new MockMetadata(), new MockMetadata() });
         paginator.setPaginationSeparator(" ");
         paginator.run();
         assertPagenumberSequence(paginator, new String[] {"[XX]v [XXI]r", "[XXI]v [XXII]r", "[XXII]v [XXIII]r" });

@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.pagination;
+
+import de.sub.goobi.metadaten.Metadatum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,14 +21,14 @@ import javax.faces.model.SelectItem;
 import org.goobi.api.display.Item;
 import org.kitodo.api.ugh.MetadataInterface;
 
-class MockMetadatum implements Metadatum {
+class MockMetadata implements Metadatum {
 
     private String value;
 
-    public MockMetadatum() {
+    public MockMetadata() {
     }
 
-    public MockMetadatum(String value) {
+    public MockMetadata(String value) {
         this.value = value;
     }
 

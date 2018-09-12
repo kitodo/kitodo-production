@@ -107,6 +107,7 @@ import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
 import org.kitodo.metadata.elements.selectable.SelectOne;
 import org.kitodo.metadata.elements.selectable.Separator;
+import org.kitodo.metadata.pagination.Paginator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;

@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.pagination;
+
+import de.sub.goobi.metadaten.Metadatum;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,102 +21,27 @@ import java.util.Objects;
 import org.goobi.pagination.IntegerSequence;
 import org.goobi.pagination.RomanNumberSequence;
 import org.kitodo.api.ugh.RomanNumeralInterface;
-import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.pagination.enums.Mode;
+import org.kitodo.metadata.pagination.enums.Scope;
+import org.kitodo.metadata.pagination.enums.Type;
 
 /**
  * Sets new labels to a given set of pages.
  */
 public class Paginator {
 
-    public enum Mode {
-        PAGES(Helper.getTranslation("pageCount"), "paginierung_seite.svg"),
-        COLUMNS(Helper.getTranslation("columnCount"), "paginierung_spalte.svg"),
-        FOLIATION(Helper.getTranslation("blattzaehlung"), "paginierung_blatt.svg"),
-        RECTOVERSO_FOLIATION(Helper.getTranslation("blattzaehlungrectoverso"), "paginierung_blatt_rectoverso.svg"),
-        RECTOVERSO(Helper.getTranslation("pageCountRectoVerso"), "paginierung_seite_rectoverso.svg"),
-        DOUBLE_PAGES(Helper.getTranslation("pageCountDouble"), "paginierung_doppelseite.svg");
-
-        private String label;
-        private String image;
-
-        Mode(String label, String image) {
-            this.label = label;
-            this.image = image;
-        }
-
-        /**
-         * Gets label of paginator mode.
-         *
-         * @return The label of paginator mode.
-         */
-        public String getLabel() {
-            return label;
-        }
-
-        /**
-         * Gets image of paginator mode for displaying at frontend.
-         *
-         * @return The label of paginator mode.
-         */
-        public String getImage() {
-            return image;
-        }
-    }
-
-    public enum Type {
-        ARABIC(Helper.getTranslation("arabic")),
-        ROMAN(Helper.getTranslation("roman")),
-        UNCOUNTED(Helper.getTranslation("uncounted")),
-        FREETEXT(Helper.getTranslation("paginationFreetext"));
-
-        private String label;
-
-        Type(String label) {
-            this.label = label;
-        }
-
-        /**
-         * Gets label of paginator type.
-         *
-         * @return The label of paginator type.
-         */
-        public String getLabel() {
-            return label;
-        }
-    }
-
-    public enum Scope {
-        FROMFIRST(Helper.getTranslation("abDerErstenMarkiertenSeite")),
-        SELECTED(Helper.getTranslation("nurDieMarkiertenSeiten"));
-
-        private String label;
-
-        Scope(String label) {
-            this.label = label;
-        }
-
-        /**
-         * Gets label of paginator scope.
-         *
-         * @return The label of paginator scope.
-         */
-        public String getLabel() {
-            return label;
-        }
-    }
-
     private int[] selectedPages;
 
     private Metadatum[] pagesToPaginate;
 
-    private Mode paginationMode = Paginator.Mode.PAGES;
+    private Mode paginationMode = Mode.PAGES;
 
-    private Scope paginationScope = Paginator.Scope.FROMFIRST;
+    private Scope paginationScope = Scope.FROMFIRST;
 
     private String paginationStartValue = "uncounted";
 
-    private Type paginationType = Paginator.Type.UNCOUNTED;
+    private Type paginationType = Type.UNCOUNTED;
 
     private boolean fictitiousPagination = false;
 
@@ -160,7 +87,7 @@ public class Paginator {
      */
     private void assertValidPaginationStartValue() {
         // arabic numbers
-        if (paginationType == Paginator.Type.ARABIC) {
+        if (paginationType == Type.ARABIC) {
             /*
              * coverity[USELESS_CALL] Integer.parseInt() throws
              * NumberFormatException if paginationStartValue cannot be parsed to
@@ -169,7 +96,7 @@ public class Paginator {
             Integer.parseInt(paginationStartValue);
         }
         // roman numbers
-        if (paginationType == Paginator.Type.ROMAN) {
+        if (paginationType == Type.ROMAN) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(paginationStartValue);
         }
@@ -188,7 +115,7 @@ public class Paginator {
             sequence = addSquareBracketsToEachInSequence(sequence);
         }
 
-        if ((paginationMode == Paginator.Mode.PAGES) || (paginationMode == Paginator.Mode.COLUMNS)) {
+        if ((paginationMode == Mode.PAGES) || (paginationMode == Mode.COLUMNS)) {
             return sequence;
         }
 
@@ -201,15 +128,15 @@ public class Paginator {
 
         sequence = cloneEachInSequence(sequence);
 
-        if (paginationType == Paginator.Type.UNCOUNTED || paginationType == Paginator.Type.FREETEXT) {
+        if (paginationType == Type.UNCOUNTED || paginationType == Type.FREETEXT) {
             return sequence;
         }
 
-        if ((paginationMode == Paginator.Mode.RECTOVERSO) || (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION)) {
+        if ((paginationMode == Mode.RECTOVERSO) || (paginationMode == Mode.RECTOVERSO_FOLIATION)) {
             sequence = addAlternatingRectoVersoSuffixToEachInSequence(sequence);
         }
 
-        if (paginationMode == Paginator.Mode.RECTOVERSO_FOLIATION) {
+        if (paginationMode == Mode.RECTOVERSO_FOLIATION) {
             sequence.remove(0);
             sequence = scrunchSequence(sequence);
         }
@@ -292,7 +219,7 @@ public class Paginator {
     private int determinePaginationEndValue(int start) {
         int increment = paginationMode.equals(Mode.COLUMNS) || paginationMode.equals(Mode.DOUBLE_PAGES) ? 2 : 1;
         int numSelectedPages = selectedPages.length;
-        if (paginationScope == Paginator.Scope.FROMFIRST) {
+        if (paginationScope == Scope.FROMFIRST) {
             int first = selectedPages[0];
             numSelectedPages = pagesToPaginate.length - first;
         }
@@ -324,9 +251,9 @@ public class Paginator {
 
         int paginationBaseValue = 1;
 
-        if (paginationType == Paginator.Type.ARABIC) {
+        if (paginationType == Type.ARABIC) {
             paginationBaseValue = Integer.parseInt(paginationStartValue);
-        } else if (paginationType == Paginator.Type.ROMAN) {
+        } else if (paginationType == Type.ROMAN) {
             RomanNumeralInterface r = UghImplementation.INSTANCE.createRomanNumeral();
             r.setValue(paginationStartValue);
             paginationBaseValue = r.intValue();
@@ -478,8 +405,8 @@ public class Paginator {
      *
      * @return The pagination modes.
      */
-    public Paginator.Mode[] getPaginationModes() {
-        return Paginator.Mode.values();
+    public Mode[] getPaginationModes() {
+        return Mode.values();
     }
 
     /**
@@ -487,8 +414,8 @@ public class Paginator {
      *
      * @return The pagination types.
      */
-    public Paginator.Type[] getPaginationTypes() {
-        return Paginator.Type.values();
+    public Type[] getPaginationTypes() {
+        return Type.values();
     }
 
     /**
@@ -496,7 +423,7 @@ public class Paginator {
      *
      * @return The pagination scopes.
      */
-    public Paginator.Scope[] getPaginationScopes() {
-        return Paginator.Scope.values();
+    public Scope[] getPaginationScopes() {
+        return Scope.values();
     }
 }
