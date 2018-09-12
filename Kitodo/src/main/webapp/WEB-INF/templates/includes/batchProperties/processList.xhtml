@@ -1,0 +1,60 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <ui:fragment rendered="#{BatchForm.batchHelper != null}">
+        <p:dataTable id="processesTable" var="process" value="#{BatchForm.batchHelper.processes}"
+                     lazy="true" paginator="true" rows="#{LoginForm.myBenutzer.tableSize}"
+                     paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                     paginatorPosition="bottom">
+            <p:column id="titleColumn" headerText="#{msgs.processes}" filterBy="#{process.title}">
+                <h:outputText value="#{process.title}"/>
+            </p:column>
+            <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
+                <h:commandLink action="#{BatchForm.batchHelper.updatePropertyList(process.id)}"
+                               update="editForm:batchPropertiesTabView:propertyTable"
+                               title="#{msgs.showDataForProcess}">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:commandLink>
+            </p:column>
+        </p:dataTable>
+
+        <br/><br/>
+        <h3><h:outputText value="#{msgs.process} - #{BatchForm.batchHelper.currentProcess.title}"/></h3>
+        <br/>
+
+        <p:dataTable var="property" id="propertyTable" value="#{BatchForm.batchHelper.properties}">
+            <p:column headerText="#{msgs.property}">
+                <h:outputText value="#{property.title}"/>
+            </p:column>
+            <p:column headerText="#{msgs.value}">
+                <h:outputText value="#{property.value}" rendered="#{property.type.name ne 'link'}"/>
+                <h:outputLink title="#{property.value}" value="#{property.value}"
+                              rendered="#{property.type.name eq 'link'}"/>
+            </p:column>
+            <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
+                <p:commandLink id="editProperty" title="#{msgs.edit}"
+                               oncomplete="PF('editPropertyDialog').show()"
+                               update="@(.editDialog)">
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                    <f:setPropertyActionListener target="#{BatchForm.batchHelper.property}" value="#{property}"/>
+                </p:commandLink>
+            </p:column>
+        </p:dataTable>
+    </ui:fragment>
+</ui:composition>

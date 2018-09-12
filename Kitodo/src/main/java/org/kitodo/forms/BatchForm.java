@@ -24,8 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 import javax.inject.Named;
 import javax.xml.bind.JAXBException;
@@ -48,6 +48,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.model.LazyDTOModel;
 
 @Named("BatchForm")
 @SessionScoped
@@ -60,12 +61,23 @@ public class BatchForm extends BaseForm {
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses = new ArrayList<>();
     private List<Batch> currentBatches;
-    private List<Integer> selectedBatches;
+    private List<Integer> selectedBatches = new ArrayList<>();
+    private int selectedBatchId;
     private String batchfilter;
     private String processfilter;
     private String batchTitle;
+    private BatchProcessHelper batchHelper;
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";
+
+    /**
+     * Constructor.
+     */
+    public BatchForm() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(serviceManager.getBatchService()));
+        filterAll();
+    }
 
     // TODO; for what is it needed - right now it is used only in new tests
     public List<Process> getCurrentProcesses() {
@@ -84,7 +96,8 @@ public class BatchForm extends BaseForm {
             try {
                 this.currentBatches = serviceManager.getBatchService().getAll();
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.BATCH.getTranslationPlural() }, logger, e);
+                Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.BATCH.getTranslationPlural() },
+                    logger, e);
             }
         } else {
             selectedBatches = new ArrayList<>();
@@ -237,15 +250,6 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * This method initializes the batch list without any filter whenever the
-     * bean is constructed.
-     */
-    @PostConstruct
-    public void initializeBatchList() {
-        filterAll();
-    }
-
-    /**
      * Download docket.
      *
      * @return String
@@ -259,7 +263,8 @@ public class BatchForm extends BaseForm {
                 serviceManager.getProcessService().downloadDocket(
                     serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
             } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                    e);
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
@@ -313,7 +318,8 @@ public class BatchForm extends BaseForm {
                 }
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                e);
         } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
@@ -366,7 +372,8 @@ public class BatchForm extends BaseForm {
                     }
                 }
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() },
+                    logger, e);
             }
         }
     }
@@ -395,37 +402,20 @@ public class BatchForm extends BaseForm {
         filterAll();
     }
 
-    /*
-     * properties
-     */
-    private BatchProcessHelper batchHelper;
-
     /**
      * Edit properties.
-     *
-     * @return page
      */
-    public String editProperties() {
+    public void editProperties(int id) {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
-            return null;
         } else if (this.selectedBatches.size() > 1) {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
-            return null;
         } else {
-            if (this.selectedBatches.get(0) != null && !this.selectedBatches.get(0).equals(0)) {
-                Batch batch;
-                try {
-                    batch = serviceManager.getBatchService().getById(selectedBatches.get(0));
-                    this.batchHelper = new BatchProcessHelper(batch);
-                    return "/pages/BatchProperties";
-                } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
-                    return null;
-                }
-            } else {
-                Helper.setErrorMessage(NO_BATCH_SELECTED);
-                return null;
+            try {
+                this.setBatchHelper(new BatchProcessHelper(serviceManager.getBatchService().getById(id)));
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                    e);
             }
         }
     }
@@ -475,7 +465,8 @@ public class BatchForm extends BaseForm {
                 }
             } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
-                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                    e);
                 return null;
             }
         }
@@ -522,5 +513,41 @@ public class BatchForm extends BaseForm {
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * Change id of selected batch to first selected batch. Needed for edit batch
+     * properties.
+     *
+     * @param vcEvent
+     *            change event
+     */
+    @SuppressWarnings("unchecked")
+    public void changeSelectedBatchId(ValueChangeEvent vcEvent) {
+        this.selectedBatches = (List<Integer>) vcEvent.getNewValue();
+        if (this.selectedBatches.size() == 1) {
+            this.selectedBatchId = this.selectedBatches.get(0);
+        } else {
+            this.selectedBatchId = 0;
+        }
+    }
+
+    /**
+     * Get selectedBatchId.
+     *
+     * @return value of selectedBatchId
+     */
+    public int getSelectedBatchId() {
+        return selectedBatchId;
+    }
+
+    /**
+     * Set selectedBatchId.
+     *
+     * @param selectedBatchId
+     *            as int
+     */
+    public void setSelectedBatchId(int selectedBatchId) {
+        this.selectedBatchId = selectedBatchId;
     }
 }

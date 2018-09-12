@@ -62,16 +62,7 @@ public class BatchHelper {
         this.properties = properties;
     }
 
-    /**
-     * Get size of properties' list.
-     *
-     * @return size of properties' list
-     */
-    public int getPropertiesSize() {
-        return this.properties.size();
-    }
-
-    protected Process prepareProcessWithProperty(Process process, Property processProperty) {
+    Process prepareProcessWithProperty(Process process, Property processProperty) {
         if (processProperty.getTitle() != null) {
             boolean match = false;
             for (Property processPe : process.getProperties()) {

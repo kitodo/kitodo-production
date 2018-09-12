@@ -391,8 +391,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String setBatchTasksToOpen() {
-
+    public String openBatchTasksByUser() {
         for (Task task : this.steps) {
             this.myDav.uploadFromHome(task.getProcess());
             task.setProcessingStatusEnum(TaskStatus.OPEN);
@@ -418,7 +417,7 @@ public class BatchStepHelper extends BatchHelper {
      *
      * @return String
      */
-    public String closeBatchTasks() {
+    public String closeBatchTasksByUser() {
         for (Task task : this.steps) {
 
             try {

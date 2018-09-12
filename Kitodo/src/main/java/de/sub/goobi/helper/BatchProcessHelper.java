@@ -24,10 +24,9 @@ import org.kitodo.enums.ObjectType;
 
 public class BatchProcessHelper extends BatchHelper {
     private final List<Process> processes;
+    private final Batch batch;
     private static final Logger logger = LogManager.getLogger(BatchProcessHelper.class);
     private Process currentProcess;
-    private String processName;
-    private List<String> processNameList = new ArrayList<>();
 
     /**
      * Constructor.
@@ -36,56 +35,60 @@ public class BatchProcessHelper extends BatchHelper {
      *            object
      */
     public BatchProcessHelper(Batch batch) {
+        this.batch = batch;
         this.processes = batch.getProcesses();
-        for (Process p : processes) {
-            this.processNameList.add(p.getTitle());
-        }
         this.currentProcess = processes.iterator().next();
-        this.processName = this.currentProcess.getTitle();
         loadProcessProperties();
     }
 
     /**
-     * Get list of process' names.
+     * Get batch.
      *
-     * @return list of process' names as list of String objects
+     * @return value of batch
      */
-    public List<String> getProcessNameList() {
-        return this.processNameList;
+    public Batch getBatch() {
+        return batch;
     }
 
     /**
-     * Set list of process' names.
+     * Get current process.
      *
-     * @param processNameList
-     *            as list of String objects
+     * @return value of currentProcess
      */
-    public void setProcessNameList(List<String> processNameList) {
-        this.processNameList = processNameList;
+    public Process getCurrentProcess() {
+        return currentProcess;
     }
 
     /**
-     * Get process name.
+     * Set current process.
      *
-     * @return process name as String
+     * @param currentProcess
+     *            as Process
      */
-    public String getProcessName() {
-        return this.processName;
+    public void setCurrentProcess(Process currentProcess) {
+        this.currentProcess = currentProcess;
     }
 
     /**
-     * Set process name.
+     * Get list of processes.
      *
-     * @param processName
-     *            String
+     * @return list of processes
      */
-    public void setProcessName(String processName) {
-        this.processName = processName;
-        for (Process s : this.processes) {
-            if (s.getTitle().equals(processName)) {
-                this.currentProcess = s;
+    public List<Process> getProcesses() {
+        return this.processes;
+    }
+
+    /**
+     * Update list of properties for chosen process.
+     *
+     * @param processId
+     *            id of chosen process
+     */
+    public void updatePropertyList(int processId) {
+        for (Process process : this.processes) {
+            if (process.getId().equals(processId)) {
+                this.currentProcess = process;
                 loadProcessProperties();
-                break;
             }
         }
     }
@@ -110,12 +113,13 @@ public class BatchProcessHelper extends BatchHelper {
                     process.getProperties().add(this.property);
                 }
             }
-            try {
-                serviceManager.getProcessService().save(this.currentProcess);
-                Helper.setMessage("propertySaved");
-            } catch (DataException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
-            }
+        }
+        try {
+            serviceManager.getProcessService().save(this.currentProcess);
+            Helper.setMessage("propertySaved");
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
+                    logger, e);
         }
     }
 
@@ -124,6 +128,7 @@ public class BatchProcessHelper extends BatchHelper {
      */
     public void saveCurrentPropertyForAll() {
         List<Property> ppList = getProperties();
+        List<Process> processesToUpdate = new ArrayList<>();
 
         for (Property pp : ppList) {
             this.property = pp;
@@ -148,15 +153,19 @@ public class BatchProcessHelper extends BatchHelper {
                     }
                 }
 
-                try {
-                    serviceManager.getProcessService().save(process);
-                    Helper.setMessage("propertiesSaved");
-                } catch (DataException e) {
-                    List<String> param = new ArrayList<>();
-                    param.add(process.getTitle());
-                    String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
-                    Helper.setErrorMessage(value, logger, e);
-                }
+                processesToUpdate.add(process);
+            }
+        }
+
+        for (Process process : processesToUpdate) {
+            try {
+                serviceManager.getProcessService().save(process);
+                Helper.setMessage("propertiesSaved");
+            } catch (DataException e) {
+                List<String> param = new ArrayList<>();
+                param.add(process.getTitle());
+                String value = Helper.getTranslation("propertiesForProcessNotSaved", param);
+                Helper.setErrorMessage(value, logger, e);
             }
         }
     }
