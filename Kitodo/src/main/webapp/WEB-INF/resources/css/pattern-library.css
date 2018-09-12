@@ -777,8 +777,30 @@ tr.ui-expanded-row-content .ui-panelgrid .ui-panelgrid-cell,
 }
 
 .ui-growl-item {
-    background: #004f81;
+    background: var(--disabled-light);
     text-shadow: 0 0 0 transparent;
+    border-radius: 3px;
+}
+
+.ui-growl-item-container {
+    opacity: 1;
+    color: #1b2b36;
+    border-color: #d8d8d8;
+    box-shadow: 0 10px 20px 0 rgba(0,0,0,0.5);
+}
+
+.ui-growl-item > span {
+    background: none;
+    text-indent: 0 !important;
+    text-rendering: auto;
+    widows: inherit;
+    height: inherit;
+    display: inline;
+    font: normal normal normal x-large/1 FontAwesome;
+}
+
+.ui-growl-item > span::before {
+    content: "\f05a";
 }
 
 .ui-grid .ui-grid-row {
