@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.servletfilter;
+package org.kitodo.servletfilter;
 
 import java.io.IOException;
 

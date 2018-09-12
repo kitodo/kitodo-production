@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/artistic-license.php
  */
 
-package de.sub.goobi.helper.servletfilter;
+package org.kitodo.servletfilter;
 
 import java.io.IOException;
 import java.util.Enumeration;
