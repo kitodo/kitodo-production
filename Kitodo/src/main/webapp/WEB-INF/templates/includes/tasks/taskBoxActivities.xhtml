@@ -145,7 +145,7 @@
                                     <h:outputText value="#{msgs.importDms}"/>
                                 </h:commandLink>
 
-                                <!-- Metadaten-button -->
+                                <!-- Edit meta-data button -->
                                 <h:commandLink id="action10"
                                                rendered="#{task.typeMetadata and process.blockedUser == null}"
                                                action="#{Metadaten.readXml}"
@@ -157,6 +157,30 @@
                                     <f:param name="ProzesseID" value="#{process.id}"/>
                                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
                                     <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
+                                </h:commandLink>
+
+                                <!-- Re-generate all images button -->
+                                <h:commandLink id="action12"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.regenerateAllImagesButtonClick}"
+                                               title="#{msgs.regenerateAllImages}">
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
+                                </h:commandLink>
+
+                                <!-- Re-generate missing and damaged images button -->
+                                <h:commandLink id="action16"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.regenerateMissingImagesDamagedButtonClick}"
+                                               title="#{msgs.regenerateMissingAndDamagedImages}">
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
+                                </h:commandLink>
+
+                                <!-- Re-generate missing images button -->
+                                <h:commandLink id="action17"
+                                               rendered="#{not empty task.typeGenerate and process.blockedUser == null}"
+                                               action="#{AktuelleSchritteForm.generateMissingImagesButtonClick}"
+                                               title="#{msgs.generateMissingImages}">
+                                    <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
                                 </h:commandLink>
 
                                 <!-- Edit Cancel-buttons -->

@@ -1571,7 +1571,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * <dd>orange</dd>
      * <dt><i>any other value</i></dt>
      * <dd>blue</dd>
-     * <dt>
+     * </dl>
      *
      * @param level
      *            message colour, one of: "debug", "error", "info", "user" or
@@ -2056,7 +2056,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     protected boolean writeMetsFile(Process process, String targetFileName, FileformatInterface gdzfile,
             boolean writeLocalFilegroup) throws PreferencesException, IOException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        Project project = process.getProject();
         MetsModsImportExportInterface mm = UghImplementation.INSTANCE.createMetsModsImportExport(preferences);
         mm.setWriteLocal(writeLocalFilegroup);
         URI imageFolderPath = fileService.getImagesDirectory(process);
@@ -2124,11 +2123,12 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         // Replace all paths with the given VariableReplacer, also the file
         // group paths!
         VariableReplacer variables = new VariableReplacer(mm.getDigitalDocument(), preferences, process, null);
+        Project project = process.getProject();
         List<Folder> folders = project.getFolders();
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getRelativePath()).toURI();
+                URI folderUri = new File(folder.getRelativePath(variables.mapOfVariables())).toURI();
                 if (fileService.fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()

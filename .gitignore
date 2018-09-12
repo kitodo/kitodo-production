@@ -8,3 +8,4 @@
 /javadoc
 # local build of docs with mkdocs
 /site
+/bin/
