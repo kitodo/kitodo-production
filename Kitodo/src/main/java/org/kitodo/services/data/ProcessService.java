@@ -13,8 +13,6 @@ package org.kitodo.services.data;
 
 import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.copier.CopierData;
-import de.sub.goobi.metadaten.copier.DataCopier;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -108,6 +106,8 @@ import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.copier.CopierData;
+import org.kitodo.metadata.copier.DataCopier;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten.copier;
+package org.kitodo.metadata.copier;
 
 import java.util.ArrayList;
 import java.util.List;
