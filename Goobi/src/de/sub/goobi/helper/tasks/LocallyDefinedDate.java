@@ -11,8 +11,11 @@
 
 package de.sub.goobi.helper.tasks;
 
+import static de.sub.goobi.helper.tasks.DateFormatType.NEW;
+import static de.sub.goobi.helper.tasks.DateFormatType.OLD;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
-import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * A local date represents a date, specified as locally defined.
@@ -32,6 +35,11 @@ class LocallyDefinedDate {
     private org.joda.time.LocalDate date;
 
     /**
+     * The date format to use.
+     */
+    private DateFormatType type;
+
+    /**
      * Creates a new local date.
      *
      * @param calendarYear
@@ -44,9 +52,11 @@ class LocallyDefinedDate {
      * @param dayOfMonth
      *            day component of the date
      */
-    public LocallyDefinedDate(int calendarYear, String compoundYear, int monthOfYear, int dayOfMonth) {
+    public LocallyDefinedDate(int calendarYear, String compoundYear, Pair<Boolean, Integer> monthOfYear,
+            int dayOfMonth) {
         this.compoundYear = compoundYear;
-        this.date = new org.joda.time.LocalDate(calendarYear, monthOfYear, dayOfMonth);
+        this.date = new LocalDate(calendarYear, monthOfYear.getRight(), dayOfMonth);
+        this.type = monthOfYear.getLeft() ? OLD : NEW;
     }
 
     /**
@@ -91,7 +101,7 @@ class LocallyDefinedDate {
      * @return the year and month fragment
      */
     public String getYearMonth() {
-        return ISODateTimeFormat.yearMonth().print(date);
+        return type.formatMonthLevel(date);
     }
 
     /**
@@ -100,12 +110,12 @@ class LocallyDefinedDate {
      * @return the year, month and day fragment
      */
     public String getYearMonthDay() {
-        return ISODateTimeFormat.yearMonthDay().print(date);
+        return type.formatDayLevel(date);
     }
 
     @Override
     public String toString() {
         return compoundYear + ':' + getYearMonthDay();
     }
-    
+
 }
