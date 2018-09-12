@@ -186,7 +186,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
->>>>>>> Add backend functionality for copy template
      * Save template.
      */
     private void save() {

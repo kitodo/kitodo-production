@@ -52,7 +52,7 @@ public class KitodoTask {
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
         this.typeImportFileUpload = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImportFileUpload"));
-        this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDms"));
+        this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
         this.typeExportRussian = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportRussian"));
         this.typeImagesRead = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesRead"));
         this.typeImagesWrite = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesWrite"));
