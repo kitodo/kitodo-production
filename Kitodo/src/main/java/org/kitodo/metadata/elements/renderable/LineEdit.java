@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,13 +21,13 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 
 /**
- * Backing bean for a (multi-line) text input element to edit metadatum
+ * Backing bean for a (multi-line) text input element to edit metadata
  * renderable by JSF.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableLineEdit extends RenderableMetadatum
-        implements RenderableGroupableMetadatum, SingleValueRenderableMetadatum {
+public class LineEdit extends RenderableMetadata
+        implements RenderableGroupableMetadata, SingleValueRenderableMetadata {
     /**
      * Line separator used in web front-end I/O.
      */
@@ -54,8 +54,8 @@ public class RenderableLineEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableLineEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container) {
+    public LineEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                    RenderableMetadataGroup container) {
 
         super(metadataType, binding, container);
         if (binding != null) {
@@ -85,7 +85,7 @@ public class RenderableLineEdit extends RenderableMetadatum
     /**
      * Returns the edit field value.
      *
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
+     * @see org.kitodo.metadata.elements.renderable.SingleValueRenderableMetadata#getValue()
      */
     @Override
     public String getValue() {
@@ -99,7 +99,7 @@ public class RenderableLineEdit extends RenderableMetadatum
     /**
      * Saves the value entered by the user.
      *
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
+     * @see org.kitodo.metadata.elements.renderable.SingleValueRenderableMetadata#setValue(java.lang.String)
      */
     @Override
     public void setValue(String value) {
@@ -111,7 +111,7 @@ public class RenderableLineEdit extends RenderableMetadatum
      * Returns the value of this edit component as metadata element
      *
      * @return a list with one metadata element with the value of this component
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<MetadataInterface> toMetadata() {

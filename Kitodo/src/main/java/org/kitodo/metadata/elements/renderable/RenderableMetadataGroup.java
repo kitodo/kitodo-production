@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
+
+import de.sub.goobi.metadaten.Metadaten;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,14 +42,14 @@ import org.kitodo.legacy.UghImplementation;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableMetadataGroup extends RenderableMetadatum {
+public class RenderableMetadataGroup extends RenderableMetadata {
 
     /**
      * Holds backing beans for the metadata types that are part of the currently
      * selected metadata type. The backing beans are held as values in this map
      * with their respective metadata type names as keys.
      */
-    protected Map<String, RenderableGroupableMetadatum> members = Collections.emptyMap();
+    protected Map<String, RenderableGroupableMetadata> members = Collections.emptyMap();
 
     /**
      * Holds all metadata group types that still can be added to the logical
@@ -224,7 +226,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     /**
      * Creates the members for the metadata group. In update mode, the members
      * will be bound tho the metadata group they have been formed from and will
-     * automatically intialise themselves from it and update it on every change.
+     * automatically initialise themselves from it and update it on every change.
      * If update is false, they need to be initialised explicitly so that they
      * carry a copy of the value. They will not be bound the data object and
      * thus can be used to create a copy of the data.
@@ -242,11 +244,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
         List<MetadataTypeInterface> requiredFields = data.getMetadataGroupType().getMetadataTypeList();
         members = new LinkedHashMap<>(hashCapacityFor(requiredFields));
         for (MetadataTypeInterface field : requiredFields) {
-            RenderableGroupableMetadatum member;
-            if (!(this instanceof RenderablePersonMetadataGroup)) {
-                member = RenderableMetadatum.create(field, autoUpdate ? binding : null, this, projectName);
+            RenderableGroupableMetadata member;
+            if (!(this instanceof PersonMetadataGroup)) {
+                member = RenderableMetadata.create(field, autoUpdate ? binding : null, this, projectName);
             } else {
-                member = new RenderableEdit(field, autoUpdate ? binding : null, this);
+                member = new Edit(field, autoUpdate ? binding : null, this);
             }
             members.put(field.getName(), member);
         }
@@ -296,7 +298,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      *
      * @return the input elements of this group
      */
-    public Collection<RenderableGroupableMetadatum> getMembers() {
+    public Collection<RenderableGroupableMetadata> getMembers() {
         return members.values();
     }
 
@@ -308,7 +310,7 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     public String getRowspan() {
         int result = 0;
-        for (RenderableGroupableMetadatum member : members.values()) {
+        for (RenderableGroupableMetadata member : members.values()) {
             if (member instanceof RenderableMetadataGroup) {
                 result += Integer.parseInt(((RenderableMetadataGroup) member).getRowspan());
             } else {
@@ -371,17 +373,17 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
 
     /**
      * The procedure setLanguage() extends the setter function from
-     * RenderableMetadatum because if setLanguage() is called for a metadata
+     * RenderableMetadata because if setLanguage() is called for a metadata
      * group, both the label display language for the group and for all of its
      * members must be set.
      *
-     * @see de.sub.goobi.metadaten.RenderableMetadatum#setLanguage(java.lang.String)
+     * @see RenderableMetadata#setLanguage(java.lang.String)
      */
     @Override
-    void setLanguage(String language) {
+    public void setLanguage(String language) {
         super.setLanguage(language);
-        for (RenderableGroupableMetadatum member : members.values()) {
-            ((RenderableMetadatum) member).setLanguage(language);
+        for (RenderableGroupableMetadata member : members.values()) {
+            ((RenderableMetadata) member).setLanguage(language);
         }
     }
 
@@ -409,11 +411,11 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
     }
 
     /**
-     * Returs the currently showing metadata group as a
+     * Returns the currently showing metadata group as a
      * {@link ugh.dl.MetadataGroup} so that it can be added to some structural
      * element.
      *
-     * @return the showing metatdata group as ugh.dl.MetadataGroup
+     * @return the showing metadata group as ugh.dl.MetadataGroup
      */
     public MetadataGroupInterface toMetadataGroup() {
         MetadataGroupInterface result;
@@ -425,9 +427,9 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
         result.getMetadataList().clear();
         result.getPersonList().clear();
 
-        for (RenderableGroupableMetadatum member : members.values()) {
+        for (RenderableGroupableMetadata member : members.values()) {
             for (MetadataInterface element : member.toMetadata()) {
-                if (member instanceof RenderablePersonMetadataGroup) {
+                if (member instanceof PersonMetadataGroup) {
                     result.addPerson(((PersonInterface) element));
                 } else {
                     result.addMetadata(element);
@@ -453,15 +455,15 @@ public class RenderableMetadataGroup extends RenderableMetadatum {
      */
     private void updateMembers(MetadataGroupTypeInterface newGroupType) throws ConfigurationException {
         List<MetadataTypeInterface> requiredMetadataTypes = newGroupType.getMetadataTypeList();
-        Map<String, RenderableGroupableMetadatum> newMembers = new LinkedHashMap<>(
+        Map<String, RenderableGroupableMetadata> newMembers = new LinkedHashMap<>(
                 hashCapacityFor(requiredMetadataTypes));
         for (MetadataTypeInterface type : requiredMetadataTypes) {
-            RenderableGroupableMetadatum member = members.get(type.getName());
+            RenderableGroupableMetadata member = members.get(type.getName());
             if (member == null) {
-                if (!(this instanceof RenderablePersonMetadataGroup)) {
-                    member = RenderableMetadatum.create(type, binding, this, projectName);
+                if (!(this instanceof PersonMetadataGroup)) {
+                    member = RenderableMetadata.create(type, binding, this, projectName);
                 } else {
-                    member = new RenderableEdit(type, binding, this);
+                    member = new Edit(type, binding, this);
                 }
             }
             newMembers.put(type.getName(), member);

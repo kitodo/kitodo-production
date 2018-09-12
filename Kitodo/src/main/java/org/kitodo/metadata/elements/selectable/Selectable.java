@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.selectable;
 
 /**
  * The interface indicates elements that can be selected in select lists in the
@@ -30,7 +30,7 @@ public interface Selectable {
     /**
      * Return the human readable text in the HTML {@code <OPTION>} element.
      * 
-     * @return the label of the elment in the web browser
+     * @return the label of the element in the web browser
      */
     String getLabel();
 }

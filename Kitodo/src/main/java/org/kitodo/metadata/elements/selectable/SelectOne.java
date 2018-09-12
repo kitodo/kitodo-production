@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.selectable;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;

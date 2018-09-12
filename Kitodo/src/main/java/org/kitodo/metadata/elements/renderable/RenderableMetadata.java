@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +30,8 @@ import org.kitodo.legacy.UghImplementation;
 
 /**
  * Abstract base class for all kinds of backing beans usable to render input
- * elements in JSF to edit a metadatum. This may be a RenderableMetadataGroup or
- * a class implementing RenderableGroupableMetadatum, where the latter can—but
+ * elements in JSF to edit a metadata. This may be a RenderableMetadataGroup or
+ * a class implementing RenderableGroupableMetadata, where the latter can—but
  * doesn’t have to be—a member of a RenderableMetadataGroup. A
  * RenderableMetadataGroup cannot be a member of a RenderableMetadataGroup
  * itself, whereas a RenderablePersonMetadataGroup, which is a special case of a
@@ -39,7 +39,7 @@ import org.kitodo.legacy.UghImplementation;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public abstract class RenderableMetadatum {
+public abstract class RenderableMetadata {
 
     /**
      * Holds a reference to the renderable metadata group that this metadata
@@ -77,9 +77,9 @@ public abstract class RenderableMetadatum {
     protected final MetadataGroupInterface binding;
 
     /**
-     * Creates a renderable metadatum which is not held in a renderable metadata
+     * Creates a renderable metadata which is not held in a renderable metadata
      * group. A label isn’t needed in this case. This constructor must be used
-     * by all successors that do not implement RenderableGroupableMetadatum.
+     * by all successors that do not implement RenderableGroupableMetadata.
      *
      * @param labels
      *            available labels for this input element
@@ -87,16 +87,16 @@ public abstract class RenderableMetadatum {
      *            a metadata group whose value(s) shall be updated if as the
      *            setters for the bean are called
      */
-    protected RenderableMetadatum(Map<String, String> labels, MetadataGroupInterface binding) {
+    protected RenderableMetadata(Map<String, String> labels, MetadataGroupInterface binding) {
         this.metadataType = null;
         this.labels = labels;
         this.binding = binding;
     }
 
     /**
-     * Creates a renderable metadatum which held in a renderable metadata group.
+     * Creates a renderable metadata which held in a renderable metadata group.
      * This constructor must be used by all successors that implement
-     * RenderableGroupableMetadatum.
+     * RenderableGroupableMetadata.
      *
      * @param metadataType
      *            metadata type represented by this input element
@@ -104,10 +104,10 @@ public abstract class RenderableMetadatum {
      *            a metadata group whose value(s) shall be read and updated if
      *            as the getters and setters for the bean are called
      * @param container
-     *            group that the renderable metadatum is in
+     *            group that the renderable metadata is in
      */
-    protected RenderableMetadatum(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container) {
+    protected RenderableMetadata(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                                 RenderableMetadataGroup container) {
 
         this.metadataType = metadataType;
         this.labels = metadataType.getAllLanguages();
@@ -116,65 +116,65 @@ public abstract class RenderableMetadatum {
     }
 
     /**
-     * Factory method to create a backing bean to render a metadatum. Depending
+     * Factory method to create a backing bean to render a metadata. Depending
      * on the configuration, different input component beans will be created.
      *
      * @param metadataType
-     *            type of metadatum to create a bean for
+     *            type of metadata to create a bean for
      * @param binding
      *            a metadata group whose value(s) shall be read and updated if
      *            as the getters and setters for the bean are called
      * @param container
-     *            container that the metadatum is in, may be null if it isn’t in
+     *            container that the metadata is in, may be null if it isn’t in
      *            a container
      * @param projectName
      *            name of the project the document under edit does belong to
-     * @return a backing bean to render the metadatum
+     * @return a backing bean to render the metadata
      * @throws ConfigurationException
      *             if a metadata field designed for a single value is
      *             misconfigured to show a multi-value input element
      */
-    public static RenderableGroupableMetadatum create(MetadataTypeInterface metadataType,
-            MetadataGroupInterface binding, RenderableMetadataGroup container, String projectName)
+    public static RenderableGroupableMetadata create(MetadataTypeInterface metadataType,
+                                                     MetadataGroupInterface binding, RenderableMetadataGroup container, String projectName)
             throws ConfigurationException {
 
         if (metadataType.isPerson()) {
-            return new RenderablePersonMetadataGroup(metadataType, binding, container, projectName);
+            return new PersonMetadataGroup(metadataType, binding, container, projectName);
         }
         switch (ConfigDisplayRules.getInstance().getElementTypeByName(projectName, getBindState(binding),
             metadataType.getName())) {
             case INPUT:
-                return new RenderableEdit(metadataType, binding, container);
+                return new Edit(metadataType, binding, container);
             case READONLY:
-                return new RenderableEdit(metadataType, binding, container).setReadonly(true);
+                return new Edit(metadataType, binding, container).setReadonly(true);
             case SELECT:
-                return new RenderableListBox(metadataType, binding, container, projectName);
+                return new ListBox(metadataType, binding, container, projectName);
             case SELECT1:
-                return new RenderableDropDownList(metadataType, binding, container, projectName);
+                return new DropDownList(metadataType, binding, container, projectName);
             case TEXTAREA:
-                return new RenderableLineEdit(metadataType, binding, container);
+                return new LineEdit(metadataType, binding, container);
             default:
                 throw new UnreachableCodeException("Complete switch statement");
         }
     }
 
     /**
-     * Returns whether the metadatum represented by this instance is about to be
+     * Returns whether the metadata represented by this instance is about to be
      * created or under edit.
      *
-     * @return whether this metadatum is created or edited
+     * @return whether this metadata is created or edited
      */
     protected String getBindState() {
         return getBindState(binding);
     }
 
     /**
-     * Returns whether the metadatum whose binding is passed is about to be
+     * Returns whether the metadata whose binding is passed is about to be
      * created or under edit.
      *
      * @param binding
      *            an object to bind to, or null
-     * @return whether the metadatum is created or edited
+     * @return whether the metadata is created or edited
      */
     protected static String getBindState(Object binding) {
         if (binding == null) {
@@ -185,24 +185,24 @@ public abstract class RenderableMetadatum {
     }
 
     /**
-     * Returns the label of the metadatum in the language previously set. This
+     * Returns the label of the metadata in the language previously set. This
      * is a getter method which is automatically called by Faces to resolve the
      * read-only property “label”, thus we cannot pass the language as a
      * parameter here. It must have been set beforehand.
      *
-     * @return the translated label of the metadatum
+     * @return the translated label of the metadata
      */
     public String getLabel() {
         return labels.get(language);
     }
 
     /**
-     * Creates and returns a metadatum of the internal type with the value
+     * Creates and returns a metadata of the internal type with the value
      * passed in.
      *
      * @param value
-     *            value to set the metadatum to
-     * @return a metadatum with the value
+     *            value to set the metadata to
+     * @return a metadata with the value
      */
     protected MetadataInterface getMetadata(String value) {
         MetadataInterface result;
@@ -216,21 +216,21 @@ public abstract class RenderableMetadatum {
     }
 
     /**
-     * Returns true if the metadatum is contained in a metadata group and is the
+     * Returns true if the metadata is contained in a metadata group and is the
      * first element in that group. This is to overcome a shortcoming of
      * Tomahawk’s dataList which doesn’t provide a boolean “first” variable to
      * tell whether we are in the first iteration of the loop or not.
      *
-     * @return if the metadatum is the first element in its group
+     * @return if the metadata is the first element in its group
      */
     public boolean isFirst() {
         return container != null && container.getMembers().iterator().next().equals(this);
     }
 
     /**
-     * Returns whether the metadatum may not be changed by the user.
+     * Returns whether the metadata may not be changed by the user.
      *
-     * @return whether the metadatum is read-only
+     * @return whether the metadata is read-only
      */
     public boolean isReadonly() {
         return readonly;
@@ -238,7 +238,7 @@ public abstract class RenderableMetadatum {
 
     /**
      * Setter method to set the language to return labels in. This will affect
-     * both the label for the metadatum and the labels of items in select and
+     * both the label for the metadata and the labels of items in select and
      * listbox elements. Metadata groups have to overload this method to also
      * set the language of their respective members.
      *
@@ -250,16 +250,16 @@ public abstract class RenderableMetadatum {
     }
 
     /**
-     * Can be used do set whether the metadatum may not be changed by the user.
+     * Can be used do set whether the metadata may not be changed by the user.
      *
      * @param readolny
-     *            whether the metadatum is read-only
+     *            whether the metadata is read-only
      * @return the object itself, to be able to call the setter in line with the
      *         constructor
      */
-    protected RenderableGroupableMetadatum setReadonly(boolean readolny) {
+    protected RenderableGroupableMetadata setReadonly(boolean readolny) {
         this.readonly = readolny;
-        return (RenderableGroupableMetadatum) this;
+        return (RenderableGroupableMetadata) this;
     }
 
     /**
@@ -270,7 +270,7 @@ public abstract class RenderableMetadatum {
         if (binding != null) {
             List<MetadataInterface> bound = binding.getMetadataList();
             bound.removeAll(binding.getMetadataByType(metadataType.getName()));
-            bound.addAll(((RenderableGroupableMetadatum) this).toMetadata());
+            bound.addAll(((RenderableGroupableMetadata) this).toMetadata());
         }
     }
 
@@ -280,13 +280,13 @@ public abstract class RenderableMetadatum {
      * about to be created or is under edit, the metadata type and the type of
      * the input element.
      * <p/>
-     * Since the items hold their selected state and ConfigDispayRules does
+     * Since the items hold their selected state and ConfigDisplayRules does
      * return the same item instances again if called several times, we need to
      * create a deep copy of the retrieved list here, so that several select
      * lists lists of the same type can hold their individual selected state.
      *
      * @param projectName
-     *            project of the process owning this metadatum
+     *            project of the process owning this metadata
      * @param type
      *            type of input element to get the items for
      * @return the collection of available items for the input element

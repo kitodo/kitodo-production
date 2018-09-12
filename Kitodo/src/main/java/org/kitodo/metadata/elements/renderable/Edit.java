@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
+
+import de.sub.goobi.metadaten.Metadaten;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,13 +25,13 @@ import org.kitodo.config.Parameters;
 import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
- * Backing bean for a single line input box element to edit a metadatum
+ * Backing bean for a single line input box element to edit a metadata
  * renderable by JSF.
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableEdit extends RenderableMetadatum
-        implements RenderableGroupableMetadatum, SingleValueRenderableMetadatum {
+public class Edit extends RenderableMetadata
+        implements RenderableGroupableMetadata, SingleValueRenderableMetadata {
 
     /**
      * Holds the content of the input box.
@@ -47,8 +49,8 @@ public class RenderableEdit extends RenderableMetadatum
      * @param container
      *            metadata group this drop-down list is showing in
      */
-    public RenderableEdit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container) {
+    public Edit(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                RenderableMetadataGroup container) {
 
         super(metadataType, binding, container);
         if (binding != null) {
@@ -80,7 +82,7 @@ public class RenderableEdit extends RenderableMetadatum
      *
      * @return the value from or for the edit field
      *
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
+     * @see SingleValueRenderableMetadata#getValue()
      */
     @Override
     public String getValue() {
@@ -93,7 +95,7 @@ public class RenderableEdit extends RenderableMetadatum
      * @param value
      *            value to set
      *
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
+     * @see SingleValueRenderableMetadata#setValue(java.lang.String)
      */
     @Override
     public void setValue(String value) {
@@ -105,7 +107,7 @@ public class RenderableEdit extends RenderableMetadatum
      * Returns the value of this edit component as metadata element
      *
      * @return a list with one metadata element with the value of this component
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+     * @see RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<MetadataInterface> toMetadata() {
@@ -119,18 +121,18 @@ public class RenderableEdit extends RenderableMetadatum
      * metadata type of kind “person” if the input box is part of a
      * RenderablePersonMetadataGroup.
      *
-     * @see de.sub.goobi.metadaten.RenderableMetadatum#updateBinding()
+     * @see RenderableMetadata#updateBinding()
      */
     @Override
     protected void updateBinding() {
         if (binding != null) {
             String typeName = metadataType.getName();
-            String personType = RenderablePersonMetadataGroup.getPersonType(typeName);
+            String personType = PersonMetadataGroup.getPersonType(typeName);
             if (personType == null) {
                 super.updateBinding();
             } else {
                 for (PersonInterface found : binding.getPersonByType(personType)) {
-                    switch (RenderablePersonMetadataGroup.getPersonField(typeName)) {
+                    switch (PersonMetadataGroup.getPersonField(typeName)) {
                         case FIRSTNAME:
                             found.setFirstName(value);
                             break;

@@ -102,6 +102,9 @@ import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.XmlArtikelZaehlen;
 import org.kitodo.helper.XmlArtikelZaehlen.CountType;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
+import org.kitodo.metadata.elements.selectable.SelectOne;
+import org.kitodo.metadata.elements.selectable.Separator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;
@@ -459,7 +462,7 @@ public class Metadaten {
      *            URI in an authority file
      * @return a String[] with authority, authorityURI and valueURI
      */
-    static String[] parseAuthorityFileArgs(String valueURI) {
+    public static String[] parseAuthorityFileArgs(String valueURI) {
         String authority = null;
         String authorityURI = null;
         if (valueURI != null && !valueURI.isEmpty()) {
@@ -3221,7 +3224,7 @@ public class Metadaten {
      *            meta-data group type to look for
      * @return whether the type is available to add
      */
-    boolean canCreate(MetadataGroupTypeInterface type) {
+    public boolean canCreate(MetadataGroupTypeInterface type) {
         List<MetadataGroupTypeInterface> addableTypes = docStruct.getAddableMetadataGroupTypes();
         if (addableTypes == null) {
             addableTypes = Collections.emptyList();
@@ -3290,7 +3293,7 @@ public class Metadaten {
      * @param metadataGroup
      *            metadata group to delete.
      */
-    void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
+    public void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
         docStruct.removeMetadataGroup(metadataGroup);
     }
 
@@ -3303,7 +3306,7 @@ public class Metadaten {
      *         "SperrungAbgelaufen" to make JSF show the message that the lock
      *         time is up and the user must leave the editor and open it anew
      */
-    String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+    public String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
         newMetadataGroup = new RenderableMetadataGroup(master, docStruct.getAddableMetadataGroupTypes());
         modeAdd = false;
         modeAddPerson = false;

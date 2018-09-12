@@ -9,7 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
+
+import de.sub.goobi.metadaten.Metadaten;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,7 @@ import org.kitodo.legacy.UghImplementation;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderablePersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadatum {
+public class PersonMetadataGroup extends RenderableMetadataGroup implements RenderableGroupableMetadata {
 
     /**
      * Holds the fields to show in a RenderablePersonMetadataGroup.
@@ -107,8 +109,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *             if one of the sub-fields was configured to display a
      *             multi-select metadata
      */
-    public RenderablePersonMetadataGroup(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container, String projectName) throws ConfigurationException {
+    public PersonMetadataGroup(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                               RenderableMetadataGroup container, String projectName) throws ConfigurationException {
 
         super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
         checkConfiguration();
@@ -174,8 +176,8 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *             multi-select metadata
      */
     private void checkConfiguration() throws ConfigurationException {
-        for (Entry<String, RenderableGroupableMetadatum> entry : members.entrySet()) {
-            if (!(entry.getValue() instanceof SingleValueRenderableMetadatum)) {
+        for (Entry<String, RenderableGroupableMetadata> entry : members.entrySet()) {
+            if (!(entry.getValue() instanceof SingleValueRenderableMetadata)) {
                 throw new ConfigurationException(
                         entry.getKey() + " is configured to display a multi-select input element,"
                                 + " but the field cannot take multiple values.");
@@ -189,7 +191,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *
      * @param data
      *            data to add
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
+     * @see RenderableGroupableMetadata#addContent(ugh.dl.Metadata)
      */
     @Override
     public void addContent(MetadataInterface data) {
@@ -220,9 +222,9 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      *            field to return
      * @return the field selected
      */
-    private SingleValueRenderableMetadatum getField(Field field) {
+    private SingleValueRenderableMetadata getField(Field field) {
         String key = metadataType.getName() + '.' + field.toString();
-        return (SingleValueRenderableMetadatum) members.get(key);
+        return (SingleValueRenderableMetadata) members.get(key);
     }
 
     /**
@@ -259,7 +261,7 @@ public class RenderablePersonMetadataGroup extends RenderableMetadataGroup imple
      * Returns the value of this person as metadata element
      *
      * @return a list with one person element with the value of this component
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+     * @see RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<PersonInterface> toMetadata() {

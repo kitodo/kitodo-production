@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableListBox extends RenderableMetadatum implements RenderableGroupableMetadatum {
+public class ListBox extends RenderableMetadata implements RenderableGroupableMetadata {
 
     /**
      * Holds the options to show in the select list, including their selection
@@ -48,10 +48,10 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      * @param container
      *            metadata group this list is showing in
      * @param projectName
-     *            project of the process owning this metadatum
+     *            project of the process owning this metadata
      */
-    public RenderableListBox(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container, String projectName) {
+    public ListBox(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                   RenderableMetadataGroup container, String projectName) {
 
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.SELECT);
@@ -113,7 +113,7 @@ public class RenderableListBox extends RenderableMetadatum implements Renderable
      *
      * @return a list of metadata elements with the selected values of this
      *         input
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<MetadataInterface> toMetadata() {

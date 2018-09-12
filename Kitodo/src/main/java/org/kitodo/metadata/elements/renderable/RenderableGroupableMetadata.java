@@ -9,26 +9,26 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 import java.util.List;
 
 import org.kitodo.api.ugh.MetadataInterface;
 
 /**
- * A RenderableGroupableMetadatum is a metadatum which can—but doesn’t have to
- * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadatum can
+ * A RenderableGroupableMetadatum is a metadata which can—but doesn’t have to
+ * be—a member of a RenderableMetadataGroup. A RenderableGroupableMetadata can
  * be a RenderablePersonMetadataGroup—which is a special case of a
  * RenderableMetadataGroup—but must not be a RenderableMetadataGroup.
  * <p/>
  * Java interfaces are always public and this interface holds the public methods
  * that are accessed by JSF during rendering. Other methods with a more
  * restricted visibility cannot be defined here. They will be defined in the
- * abstract class {@link RenderableGroupableMetadatum}.
+ * abstract class {@link RenderableGroupableMetadata}.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-interface RenderableGroupableMetadatum {
+interface RenderableGroupableMetadata {
 
     /**
      * Shall add the data passed from the metadata element as content to the

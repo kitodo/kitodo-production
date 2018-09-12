@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,8 +29,8 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
  *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-public class RenderableDropDownList extends RenderableMetadatum
-        implements RenderableGroupableMetadatum, SingleValueRenderableMetadatum {
+public class DropDownList extends RenderableMetadata
+        implements RenderableGroupableMetadata, SingleValueRenderableMetadata {
 
     /**
      * A list holding the items to display in the drop-down list.
@@ -52,8 +52,8 @@ public class RenderableDropDownList extends RenderableMetadatum
      * @param projectName
      *            project of the process owning this metadatum
      */
-    public RenderableDropDownList(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
-            RenderableMetadataGroup container, String projectName) {
+    public DropDownList(MetadataTypeInterface metadataType, MetadataGroupInterface binding,
+                        RenderableMetadataGroup container, String projectName) {
 
         super(metadataType, binding, container);
         items = getItems(projectName, DisplayType.SELECT1);
@@ -70,7 +70,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      *
      * @param data
      *            data to add
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#addContent(ugh.dl.Metadata)
+     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#addContent(ugh.dl.Metadata)
      */
     @Override
     public void addContent(MetadataInterface data) {
@@ -99,7 +99,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      * yet the first available item will be selected.
      *
      * @return the identifier of the selected item
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#getValue()
+     * @see org.kitodo.metadata.elements.renderable.SingleValueRenderableMetadata#getValue()
      */
     @Override
     public String getValue() {
@@ -118,7 +118,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      *
      * @param value
      *            identifier of the item to be marked as selected
-     * @see de.sub.goobi.metadaten.SingleValueRenderableMetadatum#setValue(java.lang.String)
+     * @see org.kitodo.metadata.elements.renderable.SingleValueRenderableMetadata#setValue(java.lang.String)
      */
     @Override
     public void setValue(String value) {
@@ -139,7 +139,7 @@ public class RenderableDropDownList extends RenderableMetadatum
      * drop-down list.
      *
      * @return the selected value as metadata element
-     * @see de.sub.goobi.metadaten.RenderableGroupableMetadatum#toMetadata()
+     * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<MetadataInterface> toMetadata() {

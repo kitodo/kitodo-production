@@ -9,16 +9,16 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.metadata.elements.renderable;
 
 /**
- * A single value renderable metadatum may reference any renderable metadataum
+ * A single value renderable metadata may reference any renderable metadata
  * which does only hold one single value. It provides a setValue() and
  * getValue() method.
  * 
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  */
-interface SingleValueRenderableMetadatum {
+interface SingleValueRenderableMetadata {
     /**
      * Sets the value of this editing component.
      * 
