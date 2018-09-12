@@ -9,8 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.helper.metadata;
 
+import de.sub.goobi.metadaten.Metadaten;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 import de.unigoettingen.sub.commons.contentlib.imagelib.ImageManager;
@@ -64,15 +65,15 @@ import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 
-public class MetadatenImagesHelper {
-    private static final Logger logger = LogManager.getLogger(MetadatenImagesHelper.class);
+public class ImagesHelper {
+    private static final Logger logger = LogManager.getLogger(ImagesHelper.class);
     private final PrefsInterface myPrefs;
     private final DigitalDocumentInterface mydocument;
     private int myLastImage = 0;
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
 
-    public MetadatenImagesHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public ImagesHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
         this.myPrefs = inPrefs;
         this.mydocument = inDocument;
     }

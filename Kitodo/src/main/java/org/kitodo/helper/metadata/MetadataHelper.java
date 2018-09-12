@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.metadaten;
+package org.kitodo.helper.metadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,8 +48,8 @@ import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.comparator.MetadataComparator;
 import org.kitodo.services.ServiceManager;
 
-public class MetadatenHelper {
-    private static final Logger logger = LogManager.getLogger(MetadatenHelper.class);
+public class MetadataHelper {
+    private static final Logger logger = LogManager.getLogger(MetadataHelper.class);
     private static final int PAGENUMBER_FIRST = 0;
     private static final int PAGENUMBER_LAST = 1;
     private static final String METADATA_NOT_ALLOWED = "metadataNotAllowed";
@@ -57,7 +57,7 @@ public class MetadatenHelper {
     private PrefsInterface prefs;
     private DigitalDocumentInterface digitalDocument;
 
-    public MetadatenHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
+    public MetadataHelper(PrefsInterface inPrefs, DigitalDocumentInterface inDocument) {
         this.prefs = inPrefs;
         this.digitalDocument = inDocument;
     }
@@ -391,7 +391,7 @@ public class MetadatenHelper {
             references.sort((firstObject, secondObject) -> {
                 Integer firstPage = 0;
                 Integer secondPage = 0;
-                final MetadataTypeInterface mdt = MetadatenHelper.this.prefs
+                final MetadataTypeInterface mdt = MetadataHelper.this.prefs
                         .getMetadataTypeByName("physPageNumber");
                 List<? extends MetadataInterface> listMetadata = firstObject.getTarget().getAllMetadataByType(mdt);
                 if (Objects.nonNull(listMetadata) && !listMetadata.isEmpty()) {

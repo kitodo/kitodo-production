@@ -101,6 +101,8 @@ import org.kitodo.helper.Transliteration;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.XmlArtikelZaehlen;
 import org.kitodo.helper.XmlArtikelZaehlen.CountType;
+import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
 import org.kitodo.metadata.elements.selectable.SelectOne;
@@ -130,12 +132,12 @@ public class Metadaten {
      *
      * @return value of imageHelper
      */
-    public MetadatenImagesHelper getImageHelper() {
+    public ImagesHelper getImageHelper() {
         return imageHelper;
     }
 
-    private MetadatenImagesHelper imageHelper;
-    private MetadatenHelper metaHelper;
+    private ImagesHelper imageHelper;
+    private MetadataHelper metaHelper;
     private boolean treeReloaded = false;
     private String ocrResult = "";
     private FileformatInterface gdzfile;
@@ -722,8 +724,8 @@ public class Metadaten {
         this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
-        this.metaHelper = new MetadatenHelper(this.myPrefs, this.digitalDocument);
-        this.imageHelper = new MetadatenImagesHelper(this.myPrefs, this.digitalDocument);
+        this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
+        this.imageHelper = new ImagesHelper(this.myPrefs, this.digitalDocument);
 
         /*
          * Das Hauptelement ermitteln
@@ -970,8 +972,8 @@ public class Metadaten {
         upperNode.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
         upperNode.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
         upperNode
-                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst()));
-        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast()));
+                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberFirst()));
+        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberLast()));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getDocStructType().getName().equals("PeriodicalIssue")) {
             upperNode.setDescription(
@@ -1044,8 +1046,8 @@ public class Metadaten {
      * @return The image range (image number - page namber)
      */
     public String getImageRangeByElement(DocStructInterface docStructElement) {
-        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberFirst());
-        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberLast());
+        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberLast());
 
         return firstImage + " - " + lastImage;
     }

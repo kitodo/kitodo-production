@@ -21,6 +21,7 @@ import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.metadata.MetadataHelper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -34,7 +35,7 @@ public class MetaPerson {
     private int identifier;
     private final PrefsInterface myPrefs;
     private final DocStructInterface myDocStruct;
-    private final MetadatenHelper mdh;
+    private final MetadataHelper mdh;
 
     /**
      * Allgemeiner Konstruktor().
@@ -44,7 +45,7 @@ public class MetaPerson {
         this.p = p;
         this.identifier = inID;
         this.myDocStruct = inStruct;
-        this.mdh = new MetadatenHelper(inPrefs, null);
+        this.mdh = new MetadataHelper(inPrefs, null);
     }
 
     public int getIdentifier() {

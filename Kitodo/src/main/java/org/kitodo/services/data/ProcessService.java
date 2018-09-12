@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import de.sub.goobi.metadaten.MetadataLock;
-import de.sub.goobi.metadaten.MetadatenHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -105,6 +104,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
@@ -1286,7 +1286,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         // check the format of the metadata - METS, XStream or RDF
-        String type = MetadatenHelper.getMetaFileType(metadataFileUri);
+        String type = MetadataHelper.getMetaFileType(metadataFileUri);
         logger.debug("current meta.xml file type for id {}: {}", process.getId(), type);
 
         FileformatInterface ff = determineFileFormat(type, process);
@@ -1342,7 +1342,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
-            String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
+            String type = MetadataHelper.getMetaFileType(processSubTypeURI);
             logger.debug("current template.xml file type: {}", type);
             FileformatInterface ff = determineFileFormat(type, process);
             String processSubTypePath = fileService.getFile(processSubTypeURI).getAbsolutePath();
@@ -1707,7 +1707,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadatenHelper.getMetaFileType(metadataFile);
+        String type = MetadataHelper.getMetaFileType(metadataFile);
         FileformatInterface ff;
         switch (type) {
             case "metsmods":
