@@ -726,18 +726,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
         return true;
     }
 
-    /**
-     * CSS style.
-     *
-     * @return CSS style
-     */
-    public String getCss(User user) {
-        if (user.getCss() == null || user.getCss().length() == 0) {
-            user.setCss("userStyles/default.css");
-        }
-        return user.getCss();
-    }
-
     public String getFullName(User user) {
         return user.getSurname() + ", " + user.getName();
     }
