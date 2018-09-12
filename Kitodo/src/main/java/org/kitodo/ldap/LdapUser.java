@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.ldap;
+package org.kitodo.ldap;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
