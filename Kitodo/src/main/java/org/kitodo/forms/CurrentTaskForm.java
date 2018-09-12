@@ -806,7 +806,7 @@ public class CurrentTaskForm extends BaseForm {
      * @param id
      *            ID of the step to load
      */
-    public void loadMyStep(int id) {
+    public void loadTaskById(int id) {
         setCurrentTask(getTaskById(id));
     }
 
