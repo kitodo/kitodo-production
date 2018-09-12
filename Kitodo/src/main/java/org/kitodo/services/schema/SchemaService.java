@@ -205,7 +205,8 @@ public class SchemaService {
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
+                URI folderUri = serviceManager.getProcessService()
+                        .getMethodFromName(folder.getRelativePath(variableReplacer.mapOfVariables()), process);
                 if (serviceManager.getFileService().fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
@@ -227,7 +228,8 @@ public class SchemaService {
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
         virtualFileGroup.setMimetype(folder.getMimeType());
         if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
-            virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+            virtualFileGroup
+                    .setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
         }
         virtualFileGroup.setOrdinary(!folder.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
 

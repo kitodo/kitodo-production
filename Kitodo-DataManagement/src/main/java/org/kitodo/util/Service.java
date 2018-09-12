@@ -9,14 +9,27 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.forms;
+package org.kitodo.util;
 
+import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.imageio.ImageIO;
+
+import org.kitodo.api.filemanagement.FileManagementInterface;
+import org.kitodo.api.imagemanagement.ImageFileFormat;
+import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
  * An encapsulation to access the generator properties of the folder.
  */
-public class FolderGenerator {
+public class Service {
     /**
      * Generator method that changes the DPI of an image.
      */
@@ -68,8 +81,63 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
+    public Service(Folder folder) {
         this.folder = folder;
+    }
+
+    /**
+     * Generate a different image from an image.
+     *
+     * @param source
+     *            image data source to read
+     * @param canonical
+     *            canonincal part of the image file name
+     * @param fileFormat
+     *            output file format to be used when generating derivatives,
+     *            else may be empty
+     * @param formatName
+     *            name of output format to be used in other cases, may be empty
+     *            when derivatives is generated
+     * @param vars
+     *            variables to be replaced in the file path
+     * @throws IOException
+     *             if I/O fails
+     */
+    public void generate(URI source, String canonical, String extensionWithoutDot, Optional<ImageFileFormat> fileFormat,
+            Optional<String> formatName, Map<String, String> vars) throws IOException {
+        KitodoServiceLoader<ImageManagementInterface> imageManagementSuffixModule = new KitodoServiceLoader<>(
+                ImageManagementInterface.class);
+        KitodoServiceLoader<FileManagementInterface> fileManagementSuffixModule = new KitodoServiceLoader<>(
+                FileManagementInterface.class);
+        URI destination = folder.getURI(vars, canonical, extensionWithoutDot);
+
+        switch (this.getMethod()) {
+            case CHANGE_DPI:
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
+                    ImageIO.write(
+                        (RenderedImage) imageManagementSuffixModule.loadModule().changeDpi(source, folder.getDpi().get()),
+                        formatName.get(), outputStream);
+                }
+                break;
+            case CREATE_DERIVATIVE:
+                imageManagementSuffixModule.loadModule().createDerivative(source, folder.getDerivative().get(),
+                    destination, fileFormat.get());
+                break;
+            case GET_SCALED_WEB_IMAGE:
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
+                    ImageIO.write((RenderedImage) imageManagementSuffixModule.loadModule().getScaledWebImage(source,
+                        folder.getImageScale().get()), formatName.get(), outputStream);
+                }
+                break;
+            case GET_SIZED_WEB_IMAGE:
+                try (OutputStream outputStream = fileManagementSuffixModule.loadModule().write(destination)) {
+                    ImageIO.write((RenderedImage) imageManagementSuffixModule.loadModule().getSizedWebImage(source,
+                        folder.getImageSize().get()), formatName.get(), outputStream);
+                }
+                break;
+            default:
+                throw new IllegalStateException("Illegal String value to switch: " + this.getMethod());
+        }
     }
 
     /**
