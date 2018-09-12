@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+    <p:panel id="legalTextWrapper">
+        <h:form id="legalTextForm">
+            <p:selectOneMenu id="legalTexts"
+                             immediate="true"
+                             styleClass="legal-texts-select-menu"
+                             value="#{LegalTextEditor.currentLegalTextTitle}">
+                <f:selectItems value="#{LegalTextEditor.legalTextTitles}"
+                               var="currentLegalText"
+                               itemLabel="#{msgs[currentLegalText]}"/>
+                <p:ajax event="change"
+                        update="systemTabView:legalTextForm:legalTextEditor"/>
+            </p:selectOneMenu>
+            <p:selectOneMenu id="languageMenu"
+                             styleClass="legal-texts-select-menu"
+                             value="#{LegalTextEditor.currentLanguage}"
+                             immediate="true">
+                <f:selectItems value="#{LegalTextEditor.availableLocales}" var="entry"
+                               itemLabel="#{entry.displayLanguage}"
+                               itemValue="#{entry.language}"/>
+                <p:ajax event="change"
+                        update="systemTabView:legalTextForm:legalTextEditor"/>
+            </p:selectOneMenu>
+            <p:commandButton id="saveButton"
+                             widgetVar="saveButton"
+                             value="#{msgs.save}"
+                             action="#{LegalTextEditor.saveText()}"/>
+            <pe:codeMirror id="legalTextEditor"
+                           theme="blackboard"
+                           matchBrackets="true"
+                           widgetVar="legalTextEditor"
+                           indentUnit="4"
+                           lineNumbers="true"
+                           lineWrapping="true"
+                           mode="htmlembedded"
+                           keyMap="default"
+                           value="#{LegalTextEditor.currentLegalTextContent}"/>
+        </h:form>
+    </p:panel>
+</ui:composition>
