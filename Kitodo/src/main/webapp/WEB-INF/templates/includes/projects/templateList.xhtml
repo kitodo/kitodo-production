@@ -43,7 +43,7 @@
                         <i class="fa fa-pencil-square-o fa-lg"/>
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
-                    <h:commandLink action="#{TemplateForm.duplicateTemplate(item.id)}" immediate="true"
+                    <h:commandLink action="#{TemplateForm.duplicate(item.id)}" immediate="true"
                                    title="#{msgs.duplicateTemplate}">
                         <h:outputText><i class="fa fa-clone fa-lg"/></h:outputText>
                     </h:commandLink>
