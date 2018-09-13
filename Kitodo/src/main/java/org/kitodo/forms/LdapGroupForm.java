@@ -75,6 +75,26 @@ public class LdapGroupForm extends BaseForm {
     }
 
     /**
+     * Duplicate the selected LDAP group.
+     *
+     * @param itemId
+     *            ID of the LDAP group to duplicate
+     * @return page address; either redirect to the edit LDAP group page or return
+     *         'null' if the LDAP group could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
+     */
+    public String duplicateLdapGroup(Integer itemId) {
+        try {
+            LdapGroup baseLdapGroup = serviceManager.getLdapGroupService().getById(itemId);
+            this.myLdapGruppe = serviceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
+            return ldapGroupEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            return null;
+        }
+    }
+
+    /**
      * Remove LDAP Group.
      *
      * @return page or null

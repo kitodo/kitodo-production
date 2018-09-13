@@ -179,7 +179,7 @@ public class TemplateForm extends TemplateBaseForm {
             this.template = serviceManager.getTemplateService().duplicateTemplate(baseTemplate);
             return templateEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateTemplate", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
             return null;
         }
     }
