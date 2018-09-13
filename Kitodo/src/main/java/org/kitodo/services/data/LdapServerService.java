@@ -61,7 +61,7 @@ import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
 import org.kitodo.helper.Helper;
 import org.kitodo.ldap.LdapUser;
-import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;
 

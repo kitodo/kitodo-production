@@ -66,7 +66,7 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.RelatedProperty;
-import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;

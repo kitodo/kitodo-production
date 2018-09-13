@@ -78,7 +78,7 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
-import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.password.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
 /**
