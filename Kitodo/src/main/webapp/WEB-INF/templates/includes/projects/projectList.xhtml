@@ -60,7 +60,7 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
                 <h:commandLink rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('addProject',item.client.id)}"
-                               action="#{ProjectForm.duplicateProject(item.id)}" immediate="true"
+                               action="#{ProjectForm.duplicate(item.id)}" immediate="true"
                                title="#{msgs.duplicateProject}"><i class="fa fa-clone fa-lg"/></h:commandLink>
                 <h:link><i class="fa fa-bar-chart fa-lg"/></h:link>
                 <p:commandLink id="deleteProject"

@@ -165,7 +165,7 @@ public class ProjectForm extends BaseForm {
      *         'null' if the project could not be retrieved, which will prompt
      *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicateProject(Integer itemId) {
+    public String duplicate(Integer itemId) {
         setLockedDetail(false);
         setLockedTechnical(false);
         setLockedMets(false);
