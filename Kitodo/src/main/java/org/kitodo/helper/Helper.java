@@ -330,33 +330,32 @@ public class Helper implements Observer, Serializable {
             loadMsgs();
         }
 
-        if (localMessages.containsKey(language)) {
-            ResourceBundle languageLocal = localMessages.get(language);
-            if (languageLocal.containsKey(key)) {
-                return languageLocal.getString(key);
-            }
-            String lowKey = key.toLowerCase();
-            if (languageLocal.containsKey(lowKey)) {
-                return languageLocal.getString(lowKey);
-            }
-        }
-        try {
-            if (commonMessages.containsKey(language)) {
-                ResourceBundle messages = commonMessages.get(language);
-                if (messages.containsKey(key)) {
-                    return messages.getString(key);
+        List<Map<Locale, ResourceBundle>> messages = new ArrayList<>();
+        messages.add(localMessages);
+        messages.add(commonMessages);
+        messages.add(errorMessages);
+
+        for (Map<Locale, ResourceBundle> message : messages) {
+            if (message.containsKey(language)) {
+                String foundMessage = getTranslatedMessage(message, language, key);
+                if (!Objects.equals(foundMessage, "")) {
+                    return foundMessage;
                 }
             }
-            if (errorMessages.containsKey(language)) {
-                ResourceBundle messages = errorMessages.get(language);
-                if (messages.containsKey(key)) {
-                    return messages.getString(key);
-                }
-            }
-            return key;
-        } catch (RuntimeException irrelevant) {
-            return key;
         }
+        return key;
+    }
+
+    private static String getTranslatedMessage(Map<Locale, ResourceBundle> messages, Locale language, String key) {
+        ResourceBundle languageLocal = messages.get(language);
+        if (languageLocal.containsKey(key)) {
+            return languageLocal.getString(key);
+        }
+        String lowKey = key.toLowerCase();
+        if (languageLocal.containsKey(lowKey)) {
+            return languageLocal.getString(lowKey);
+        }
+        return "";
     }
 
     /**
