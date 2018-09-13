@@ -21,6 +21,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -583,5 +584,23 @@ public class Helper implements Observer, Serializable {
      */
     public static void setActiveMQReporting(Map<String, String> activeMQReporting) {
         Helper.activeMQReporting = activeMQReporting;
+    }
+
+    /**
+     * Generate random string.
+     * 
+     * @param length
+     *            of random string to be created
+     * @return random string
+     */
+    public static String generateRandomString(int length) {
+        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        SecureRandom random = new SecureRandom();
+
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(AB.charAt(random.nextInt(AB.length())));
+        }
+        return sb.toString();
     }
 }

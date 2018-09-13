@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.security.SecureRandom;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -78,6 +77,7 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 
@@ -113,7 +113,7 @@ public class MockDatabase {
 
     @SuppressWarnings("unchecked")
     public static void startNodeWithoutMapping() throws Exception {
-        String nodeName = randomString(6);
+        String nodeName = Helper.generateRandomString(6);
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
 
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
@@ -205,17 +205,6 @@ public class MockDatabase {
         public ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins) {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, null), classpathPlugins);
         }
-    }
-
-    private static String randomString(int lenght) {
-        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(lenght);
-        for (int i = 0; i < lenght; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        }
-        return sb.toString();
     }
 
     private static IndexRestClient initializeIndexRestClient() {

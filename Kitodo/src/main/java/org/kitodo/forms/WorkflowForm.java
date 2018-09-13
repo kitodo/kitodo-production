@@ -20,7 +20,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
-import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Objects;
@@ -135,7 +134,7 @@ public class WorkflowForm extends BaseForm {
                 .getRequestParameterMap();
 
         if (isWorkflowAlreadyInUse(this.workflow)) {
-            this.workflow.setFileName(decodeXMLDiagramName(this.workflow.getFileName()) + "_" + randomString(3));
+            this.workflow.setFileName(decodeXMLDiagramName(this.workflow.getFileName()) + "_" + Helper.generateRandomString(3));
         }
         URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg")
                 .toURI();
@@ -152,6 +151,7 @@ public class WorkflowForm extends BaseForm {
 
         return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
     }
+
 
     void saveFile(URI fileURI, String fileContent) {
         try (OutputStream outputStream = fileService.write(fileURI);
@@ -198,17 +198,6 @@ public class WorkflowForm extends BaseForm {
 
     private boolean isWorkflowAlreadyInUse(Workflow workflow) {
         return !workflow.getTemplates().isEmpty();
-    }
-
-    private static String randomString(int length) {
-        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom rnd = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(rnd.nextInt(AB.length())));
-        }
-        return sb.toString();
     }
 
     /**

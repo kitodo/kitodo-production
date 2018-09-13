@@ -25,6 +25,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.WorkflowDTO;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.data.base.SearchService;
 
 public class WorkflowService extends SearchService<Workflow, WorkflowDTO, WorkflowDAO> {
@@ -82,7 +83,7 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
         Workflow duplicatedWorkflow = new Workflow();
 
         // Workflow _title_ should explicitly _not_ be duplicated!
-        duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_Copy");
+        duplicatedWorkflow.setFileName(baseWorkflow.getFileName() + "_" + Helper.generateRandomString(3));
         duplicatedWorkflow.setActive(baseWorkflow.isActive());
         duplicatedWorkflow.setReady(false);
 
