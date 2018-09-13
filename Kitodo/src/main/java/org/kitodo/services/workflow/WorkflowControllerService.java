@@ -13,7 +13,6 @@ package org.kitodo.services.workflow;
 
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -41,6 +40,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
+import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
@@ -221,7 +221,7 @@ public class WorkflowControllerService {
 
             // image validation
             if (task.isTypeImagesWrite()) {
-                MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
+                ImagesHelper mih = new ImagesHelper(null, null);
                 URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");
