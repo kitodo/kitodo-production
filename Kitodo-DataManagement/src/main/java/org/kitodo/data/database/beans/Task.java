@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,10 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.util.Generator;
 
 @Entity
 @Table(name = "task")
@@ -445,45 +445,28 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of folders whose contents are to be generated.
+     * Returns a list of objects representing switches to enable or disable
+     * content generation for all folders whose contents can be generated. The
+     * switches are either on or off, depending on whether the folder is listed
+     * in the field {@link #generateContents} or not. They are accessed from
+     * JSF.
      *
-     * @return list of Folder objects or empty list
+     * @return list of {@link org.kitodo.forms.GeneratorSwitch} objects or empty
+     *         list
      */
-    @SuppressWarnings("serial")
-    public List<Generator> getGenerators() {
+    @SuppressWarnings({"unchecked" })
+    public List<Object> getGenerators() {
         if (this.generateContents == null) {
             this.generateContents = new ArrayList<>();
         }
-        Stream<Project> projects = template.getProjects().stream();
-
-        // Ignore all projects that do not have a source folder configured. It
-        // isn’t possible to generate anything without a data source.
-        Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
-
-        // Drop all folders to generate if they are their own source folder. The
-        // user may have configured a generation rule on a folder that it later
-        // has set as source folder. This would cause the file to be overwritten
-        // by itself in the generation process, leading to data loss, which must
-        // be avoided.
-        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
-                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
-        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
-                .map(λ -> λ.getLeft());
-
-        // Remove all folders to generate which do not have anything to generate
-        // configured.
-        Stream<Folder> generatableFolders = allowedFolders.filter(λ -> λ.getDerivative().isPresent()
-                || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent());
-
-        // For all remaining folders, create an encapsulation to access the
-        // generator properties of the folder.
-        Stream<Generator> taskGenerators = generatableFolders.map(λ -> new Generator(λ, generateContents));
-
-        return new ArrayList<Generator>() {
-            {
-                taskGenerators.forEach(this::add);
-            }
-        };
+        try {
+            return (List<Object>) Class.forName("org.kitodo.forms.GeneratorSwitch")
+                    .getMethod("getGeneratorSwitches", Stream.class, List.class)
+                    .invoke(null, this.template.getProjects().stream(), this.generateContents);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                | ClassNotFoundException e) {
+            throw new UndeclaredThrowableException(e);
+        }
     }
 
     public boolean isTypeExportRussian() {
@@ -585,8 +568,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can identify
-     * change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can
+     * identify change done to task.
      *
      * @return workflow id as String
      */
@@ -598,8 +581,8 @@ public class Task extends BaseIndexedBean {
      * Set workflow id.
      *
      * @param workflowId
-     *            id of task object in diagram - by this id we can identify change
-     *            done to task
+     *            id of task object in diagram - by this id we can identify
+     *            change done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
