@@ -11,13 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.sub.goobi.metadaten.copier.CopierData;
 import de.sub.goobi.metadaten.copier.DataCopier;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
@@ -69,7 +62,10 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
+import org.kitodo.config.DigitalCollections;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -82,8 +78,12 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.BeanHelper;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
+import org.kitodo.helper.UghHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;

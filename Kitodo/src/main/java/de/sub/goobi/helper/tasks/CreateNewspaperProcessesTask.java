@@ -11,8 +11,6 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +41,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.forms.ProzesskopieForm;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 /**

@@ -11,13 +11,8 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.IOException;
@@ -40,6 +35,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
@@ -54,6 +50,10 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;

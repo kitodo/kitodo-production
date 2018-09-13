@@ -11,8 +11,6 @@
 
 package org.kitodo.production.plugin.importer.massimport;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -27,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 
 public class UghUtils {
     private static final Logger logger = LogManager.getLogger(UghUtils.class);

@@ -11,9 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -27,7 +24,9 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 
 /**

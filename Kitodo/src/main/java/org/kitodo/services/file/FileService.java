@@ -11,9 +11,6 @@
 
 package org.kitodo.services.file;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -39,13 +36,14 @@ import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Config;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -775,7 +773,7 @@ public class FileService {
      * @return the URI to the temporal directory.
      */
     public URI getTemporaryDirectory() {
-        return Config.getUri(Parameters.DIR_TEMP);
+        return ConfigCore.getUri(Parameters.DIR_TEMP);
     }
 
     /**
@@ -784,7 +782,7 @@ public class FileService {
      * @return the URI to the users directory.
      */
     public URI getUsersDirectory() {
-        return Config.getUri(Parameters.DIR_USERS);
+        return ConfigCore.getUri(Parameters.DIR_USERS);
     }
 
     public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
@@ -857,7 +855,7 @@ public class FileService {
         URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames
-        String numberOfDigits = extractNumber(Config.getParameter("ImagePrefix"));
+        String numberOfDigits = extractNumber(ConfigCore.getParameter("ImagePrefix"));
 
         for (int i = startValue; i < startValue + numberOfNewImages; i++) {
             copyFile(dummyImage, imagesDirectory.resolve(String.format("%0" + numberOfDigits + "d", i) + ".tif"));

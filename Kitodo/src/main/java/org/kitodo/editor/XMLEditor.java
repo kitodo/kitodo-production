@@ -11,8 +11,6 @@
 
 package org.kitodo.editor;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -44,6 +42,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

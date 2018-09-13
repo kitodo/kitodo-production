@@ -11,9 +11,6 @@
 
 package org.kitodo.services.workflow;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
 import de.sub.goobi.metadaten.MetadatenImagesHelper;
@@ -30,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -41,6 +39,8 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;

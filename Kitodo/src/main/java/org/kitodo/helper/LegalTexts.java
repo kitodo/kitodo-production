@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;

@@ -11,14 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
@@ -92,6 +84,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -101,6 +94,13 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
+import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.HelperComparator;
+import org.kitodo.helper.Transliteration;
+import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.XmlArtikelZaehlen;
+import org.kitodo.helper.XmlArtikelZaehlen.CountType;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -2750,7 +2750,7 @@ public class Metadaten {
             }
         }
 
-        for (de.sub.goobi.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
+        for (org.kitodo.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }

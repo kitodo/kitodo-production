@@ -11,8 +11,6 @@
 
 package org.goobi.api.display.helper;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +22,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 
 public final class ConfigDisplayRules {
 

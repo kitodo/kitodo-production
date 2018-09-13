@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,6 +25,7 @@ import javax.json.JsonValue;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;

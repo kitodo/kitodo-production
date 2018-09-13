@@ -11,10 +11,9 @@
 
 package org.kitodo.security;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.Objects;
 
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;

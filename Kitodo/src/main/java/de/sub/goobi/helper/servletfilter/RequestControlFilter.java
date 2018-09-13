@@ -8,8 +8,6 @@
 
 package de.sub.goobi.helper.servletfilter;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -32,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.LazyInitializationException;
+import org.kitodo.helper.Helper;
 
 /**
  * Use this filter to synchronize requests to your web application and reduce
