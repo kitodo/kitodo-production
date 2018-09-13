@@ -288,7 +288,7 @@ public class BatchForm extends BaseForm {
      * The method deleteBatch() is called if the user clicks the action link to
      * delete batches. It runs the deletion of the batches.
      */
-    public void deleteBatch() {
+    public void delete() {
         int selectedBatchesSize = this.selectedBatches.size();
         if (selectedBatchesSize == 0) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
@@ -368,7 +368,7 @@ public class BatchForm extends BaseForm {
     /**
      * Rename Batch.
      */
-    public void renameBatch() {
+    public void rename() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() > 1) {
@@ -394,7 +394,7 @@ public class BatchForm extends BaseForm {
     /**
      * Create new Batch.
      */
-    public void createNewBatch() throws DAOException, DataException {
+    public void createNew() throws DAOException, DataException {
         if (selectedProcesses.isEmpty()) {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {
@@ -453,7 +453,7 @@ public class BatchForm extends BaseForm {
      * @return the next page to show as named in a &lt;from-outcome&gt; element
      *         in faces_config.xml
      */
-    public String exportBatch() {
+    public String export() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
             return null;
