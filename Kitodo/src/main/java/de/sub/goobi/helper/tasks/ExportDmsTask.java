@@ -11,11 +11,10 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.export.dms.ExportDms;
-
 import java.net.URI;
 
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 
 /**

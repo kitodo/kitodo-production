@@ -11,9 +11,6 @@
 
 package org.kitodo.services.schema;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.ExportMets;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -46,6 +43,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.helper.BeanHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;

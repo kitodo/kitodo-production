@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.export.download;
+package org.kitodo.exporter.download;
 
 import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
 

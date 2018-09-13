@@ -11,8 +11,6 @@
 
 package org.goobi.export;
 
-import de.sub.goobi.export.download.ExportMets;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -33,6 +31,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 

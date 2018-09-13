@@ -11,8 +11,6 @@
 
 package org.kitodo.helper.batch;
 
-import de.sub.goobi.export.dms.ExportDms;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,6 +37,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.metadata.ImagesHelper;
