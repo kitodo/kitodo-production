@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.importer;
+package org.kitodo.importer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,8 +46,8 @@ import org.kitodo.services.ServiceManager;
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
-public class ImportRussland {
-    private static final Logger logger = LogManager.getLogger(ImportRussland.class);
+public class ImportRussian {
+    private static final Logger logger = LogManager.getLogger(ImportRussian.class);
     private DocStructInterface logicalTopstruct;
     private Process process;
     private final ServiceManager serviceManager = new ServiceManager();
