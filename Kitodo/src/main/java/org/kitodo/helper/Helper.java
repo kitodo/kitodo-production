@@ -325,30 +325,37 @@ public class Helper implements Observer, Serializable {
      * @return String
      */
     public static String getString(Locale language, String key) {
-        if ((Objects.isNull(commonMessages) || commonMessages.isEmpty())
-                && (Objects.isNull(errorMessages) || errorMessages.isEmpty())) {
+        if ((Objects.isNull(commonMessages) || commonMessages.size() <= 1)
+                && (Objects.isNull(errorMessages) || errorMessages.size() <= 1)) {
             loadMsgs();
         }
 
-        if (localMessages.containsKey(language)) {
-            ResourceBundle languageLocal = localMessages.get(language);
-            if (languageLocal.containsKey(key)) {
-                return languageLocal.getString(key);
-            }
-            String lowKey = key.toLowerCase();
-            if (languageLocal.containsKey(lowKey)) {
-                return languageLocal.getString(lowKey);
+        List<Map<Locale, ResourceBundle>> messages = new ArrayList<>();
+        messages.add(localMessages);
+        messages.add(commonMessages);
+        messages.add(errorMessages);
+
+        for (Map<Locale, ResourceBundle> message : messages) {
+            if (message.containsKey(language)) {
+                String foundMessage = getTranslatedMessage(message, language, key);
+                if (!Objects.equals(foundMessage, "")) {
+                    return foundMessage;
+                }
             }
         }
-        try {
-            ResourceBundle messages = commonMessages.get(language);
-            if (messages.containsKey(key)) {
-                return messages.getString(key);
-            }
-            return errorMessages.get(language).getString(key);
-        } catch (RuntimeException irrelevant) {
-            return key;
+        return key;
+    }
+
+    private static String getTranslatedMessage(Map<Locale, ResourceBundle> messages, Locale language, String key) {
+        ResourceBundle languageLocal = messages.get(language);
+        if (languageLocal.containsKey(key)) {
+            return languageLocal.getString(key);
         }
+        String lowKey = key.toLowerCase();
+        if (languageLocal.containsKey(lowKey)) {
+            return languageLocal.getString(lowKey);
+        }
+        return "";
     }
 
     /**
@@ -394,7 +401,7 @@ public class Helper implements Observer, Serializable {
             while (polyglot.hasNext()) {
                 Locale language = polyglot.next();
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
-                errorMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
+                errorMessages.put(language, ResourceBundle.getBundle("messages.errors", language));
                 File file = new File(
                         ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
@@ -419,7 +426,7 @@ public class Helper implements Observer, Serializable {
         } else {
             Locale defaultLocale = new Locale("EN");
             commonMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
-            errorMessages.put(defaultLocale, ResourceBundle.getBundle("messages.messages", defaultLocale));
+            errorMessages.put(defaultLocale, ResourceBundle.getBundle("messages.errors", defaultLocale));
         }
     }
 
