@@ -20,7 +20,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -28,6 +30,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -134,11 +137,14 @@ public class WorkflowForm extends BaseForm {
                 .getRequestParameterMap();
 
         if (isWorkflowAlreadyInUse(this.workflow)) {
-            this.workflow.setFileName(decodeXMLDiagramName(this.workflow.getFileName()) + "_" + Helper.generateRandomString(3));
+            this.workflow.setFileName(
+                decodeXMLDiagramName(this.workflow.getFileName()) + "_" + Helper.generateRandomString(3));
         }
-        URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg")
-                .toURI();
-        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
+
+        Map<String, URI> diagramsUris = getDiagramUris();
+
+        URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
+        URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
 
         xmlDiagram = requestParameterMap.get("diagram");
         if (Objects.nonNull(xmlDiagram)) {
@@ -152,6 +158,19 @@ public class WorkflowForm extends BaseForm {
         return fileService.fileExist(xmlDiagramURI) && fileService.fileExist(svgDiagramURI);
     }
 
+    private Map<String, URI> getDiagramUris() {
+        return getDiagramUris(this.workflow);
+    }
+
+    private Map<String, URI> getDiagramUris(Workflow workflow) {
+        URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(workflow.getFileName()) + ".svg").toURI();
+        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(workflow.getFileName())).toURI();
+
+        Map<String, URI> diagramUris = new HashMap<>();
+        diagramUris.put("svgDiagramURI", svgDiagramURI);
+        diagramUris.put("xmlDiagramURI", xmlDiagramURI);
+        return diagramUris;
+    }
 
     void saveFile(URI fileURI, String fileContent) {
         try (OutputStream outputStream = fileService.write(fileURI);
@@ -216,13 +235,33 @@ public class WorkflowForm extends BaseForm {
      * @param itemId
      *            ID of the workflow to duplicate
      * @return page address; either redirect to the edit workflow page or return
-     *         'null' if the workflow could not be retrieved, which will prompt
-     *         JSF to remain on the same page and reuse the bean.
+     *         'null' if the workflow could not be retrieved, which will prompt JSF
+     *         to remain on the same page and reuse the bean.
      */
     public String duplicate(Integer itemId) {
         try {
             Workflow baseWorkflow = serviceManager.getWorkflowService().getById(itemId);
+
+            Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow);
+
+            URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
+            URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
+
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
+            Map<String, URI> diagramsCopyUris = getDiagramUris();
+
+            URI svgDiagramCopyURI = diagramsCopyUris.get("svgDiagramURI");
+            URI xmlDiagramCopyURI = diagramsCopyUris.get("xmlDiagramURI");
+
+            try (InputStream svgInputStream = serviceManager.getFileService().read(svgDiagramURI);
+                    InputStream xmlInputStream = serviceManager.getFileService().read(xmlDiagramURI)) {
+                saveFile(svgDiagramCopyURI, IOUtils.toString(svgInputStream, StandardCharsets.UTF_8));
+                this.xmlDiagram = IOUtils.toString(xmlInputStream, StandardCharsets.UTF_8);
+                saveFile(xmlDiagramCopyURI, this.xmlDiagram);
+            } catch (IOException e) {
+                Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
+                return null;
+            }
             return workflowEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger, e);
@@ -255,11 +294,9 @@ public class WorkflowForm extends BaseForm {
      */
     public void load(int id) {
         try {
-            if (id != 0) {
+            if (!Objects.equals(id, 0)) {
                 setWorkflow(this.serviceManager.getWorkflowService().getById(id));
                 readXMLDiagram();
-            } else {
-                newWorkflow();
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
