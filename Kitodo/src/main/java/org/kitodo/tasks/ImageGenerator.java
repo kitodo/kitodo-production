@@ -16,30 +16,19 @@ import static org.kitodo.tasks.ImageGeneratorStep.GENERATE_IMAGES;
 import static org.kitodo.tasks.ImageGeneratorStep.LIST_SOURCE_FOLDER;
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
-import java.io.IOException;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.xml.fileformats.FileFormat;
-import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.exceptions.UnknownCaseException;
 import org.kitodo.production.thread.ImageGeneratorTask;
 import org.kitodo.production.thread.TaskScriptThread;
 
@@ -55,44 +44,44 @@ public class ImageGenerator implements Runnable {
     /**
      * Folder with source images.
      */
-    private Folder sourceFolder;
+    Folder sourceFolder;
 
     /**
      * List of possible source images.
      */
-    private List<Pair<String, URI>> sources;
+    List<Pair<String, URI>> sources;
 
     /**
      * Current step of the generation process.
      */
-    private ImageGeneratorStep state;
+    ImageGeneratorStep state;
 
     /**
      * List of elements to be generated.
      */
-    private List<Pair<Pair<String, URI>, List<Folder>>> toBeGenerated;
+    List<Pair<Pair<String, URI>, List<Folder>>> toBeGenerated;
 
     /**
      * Output folders.
      */
-    private List<Folder> outputs;
+    List<Folder> outputs;
 
     /**
      * Current position in list.
      */
-    private int position;
+    int position;
 
     /**
      * Variant of image generation, see there.
      */
-    private ImageGeneratorTaskVariant variant;
+    ImageGeneratorTaskVariant variant;
 
     /**
      * Variables to be replaced in the path.
      */
-    private Map<String, String> vars;
+    Map<String, String> vars;
 
-    private EmptyTask worker;
+    EmptyTask worker;
 
     /**
      * Creates a new process title.
@@ -127,105 +116,40 @@ public class ImageGenerator implements Runnable {
      */
     @Override
     public void run() {
-        try {
-            do {
-                switch (state) {
-                    case LIST_SOURCE_FOLDER:
-                        worker.setWorkDetail(Helper.getTranslation("listSourceFolder"));
-                        sources = sourceFolder
-                                .listContents(vars,
-                                    FileFormatsConfig.getFileFormat(sourceFolder.getMimeType()).get()
-                                            .getExtension(false))
-                                .entrySet().stream().map(λ -> Pair.of(λ.getKey(), λ.getValue()))
-                                .collect(Collectors.toList());
-                        state = DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED;
-                        position = -1;
-                        break;
+        do {
+            state.accept(this);
+            position++;
+            setProgress();
+            if (worker.isInterrupted()) {
+                return;
+            }
+        } while (!(state.equals(GENERATE_IMAGES) && position == toBeGenerated.size()));
+        logger.info("Completed");
+    }
 
-                    case DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED:
-                        Pair<String, URI> source = sources.get(position);
-                        if (!variant.equals(ALL_IMAGES)) {
-                            worker.setWorkDetail(Helper.getTranslation("determineWhichImagesNeedToBeGenerated",
-                                Arrays.asList(source.getKey())));
-                        }
-
-                        /*
-                         * The generation variant MISSING_OR_DAMAGED_IMAGES uses
-                         * the image validation module to check whether image
-                         * files are damaged. For reasons unknown, the
-                         * ModuleLoader does not work when invoked from a
-                         * parallelStream(). That's why we use a classic loop
-                         * here. This could be parallelized after the underlying
-                         * problem has been resolved.
-                         */
-                        List<Folder> generations = new ArrayList<Folder>(outputs.size());
-                        Predicate<? super Folder> requiresGeneration = variant.getFilter(vars, source.getKey());
-                        for (Folder folder : outputs) {
-                            if (requiresGeneration.test(folder)) {
-                                generations.add(folder);
-                            }
-                        }
-
-                        if (!generations.isEmpty()) {
-                            toBeGenerated.add(Pair.of(source, generations));
-                        }
-
-                        if (position == sources.size() - 1) {
-                            state = GENERATE_IMAGES;
-                            position = -1;
-                        }
-                        break;
-
-                    case GENERATE_IMAGES:
-                        Pair<Pair<String, URI>, List<Folder>> generation = toBeGenerated.get(position);
-                        worker.setWorkDetail(
-                            Helper.getTranslation("generateImages", Arrays.asList(generation.getKey().getKey())));
-                        logger.info("Generating ".concat(generation.toString()));
-
-                        /*
-                         * The image generation uses the image management module
-                         * to generate the images. For reasons unknown, the
-                         * ModuleLoader does not work when invoked from a
-                         * parallelStream(). That's why we use a classic loop
-                         * here. This could be parallelized after the underlying
-                         * problem has been resolved.
-                         */
-                        for (Folder folder : generation.getRight()) {
-                            FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
-                            Pair<String, URI> dataSource = generation.getLeft();
-                            folder.getGenerator().generate(dataSource.getValue(), dataSource.getKey(),
-                                fileFormat.getExtension(false), fileFormat.getImageFileFormat(),
-                                fileFormat.getFormatName(), vars);
-                        }
-
-                        if (position == toBeGenerated.size() - 1) {
-                            worker.setProgress(100);
-                            return;
-                        }
-                        break;
-
-                    default:
-                        throw new UnknownCaseException(ImageGeneratorStep.class, state);
-                }
-                position++;
-                worker.setProgress(100d
-                        * ((state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
-                                + (variant.equals(ALL_IMAGES)
-                                        && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0 : position)
-                                + 1)
-                        / (sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1));
-                if (worker.isInterrupted()) {
-                    return;
-                }
-            } while (!(state.equals(GENERATE_IMAGES) && position == toBeGenerated.size()));
-            logger.info("Completed");
-        } catch (IOException | JAXBException e) {
-            logger.error(e.getMessage(), e);
-            worker.setException(e);
+    private void setProgress() {
+        int before = (state.equals(GENERATE_IMAGES) ? variant.equals(ALL_IMAGES) ? 1 : sources.size() : 0)
+                + (variant.equals(ALL_IMAGES) && state.equals(DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED) ? 0
+                        : position);
+        int all = sources.size() + (variant.equals(ALL_IMAGES) ? 1 : toBeGenerated.size()) + 1;
+        if (worker != null) {
+            worker.setProgress(100d * (before + 1) / all);
         }
     }
 
     public void setWorker(EmptyTask worker) {
         this.worker = worker;
+    }
+
+    public void setWorkDetail(String translation) {
+        if (worker != null) {
+            worker.setWorkDetail(translation);
+        }
+    }
+
+    public void setProgress(int i) {
+        if (worker != null) {
+            worker.setProgress(i);
+        }
     }
 }

@@ -74,7 +74,6 @@
             <artifactId>jersey-json</artifactId>
             <version>${jersey.version}</version>
             <exclusions>
-                <!-- See https://stackoverflow.com/a/42513439/1503237 -->
                 <exclusion>
                     <groupId>com.sun.xml.bind</groupId>
                     <artifactId>jaxb-impl</artifactId>
