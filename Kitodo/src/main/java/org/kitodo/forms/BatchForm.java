@@ -46,7 +46,7 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.helper.BatchProcessHelper;
+import org.kitodo.helper.batch.BatchProcessHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 
