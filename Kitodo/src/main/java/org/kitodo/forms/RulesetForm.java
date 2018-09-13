@@ -82,7 +82,7 @@ public class RulesetForm extends BaseForm {
      *
      * @return page or empty String
      */
-    public String saveRuleset() {
+    public String save() {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
@@ -166,7 +166,7 @@ public class RulesetForm extends BaseForm {
      * @param id
      *            ID of the ruleset to load
      */
-    public void loadRuleset(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setRuleset(this.serviceManager.getRulesetService().getById(id));
@@ -233,7 +233,7 @@ public class RulesetForm extends BaseForm {
     /**
      * Delete ruleset.
      */
-    public void deleteRuleset() {
+    public void delete() {
         try {
             if (hasAssignedProcesses(ruleset)) {
                 Helper.setErrorMessage("rulesetInUse");
