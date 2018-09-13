@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.util;
+package org.kitodo.services;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 /**
  * An encapsulation to access the generator properties of the folder.
  */
-public class Service {
+public class FolderGeneratorService {
     /**
      * Generator method that changes the DPI of an image.
      */
@@ -81,7 +81,7 @@ public class Service {
      * @param folder
      *            {@code Folder.this}
      */
-    public Service(Folder folder) {
+    public FolderGeneratorService(Folder folder) {
         this.folder = folder;
     }
 
@@ -103,7 +103,7 @@ public class Service {
      * @throws IOException
      *             if I/O fails
      */
-    public void generate(URI source, String canonical, String extensionWithoutDot, Optional<ImageFileFormat> fileFormat,
+    public void generateDerivedFile(URI source, String canonical, String extensionWithoutDot, Optional<ImageFileFormat> fileFormat,
             Optional<String> formatName, Map<String, String> vars) throws IOException {
         KitodoServiceLoader<ImageManagementInterface> imageManagementSuffixModule = new KitodoServiceLoader<>(
                 ImageManagementInterface.class);

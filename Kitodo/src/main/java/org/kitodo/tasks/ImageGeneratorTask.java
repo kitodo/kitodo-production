@@ -239,7 +239,7 @@ public class ImageGeneratorTask extends EmptyTask {
         for (Folder folder : generation.getRight()) {
             FileFormat fileFormat = FileFormatsConfig.getFileFormat(folder.getMimeType()).get();
             Pair<String, URI> dataSource = generation.getLeft();
-            folder.getGenerator().generate(dataSource.getValue(), dataSource.getKey(), fileFormat.getExtension(false),
+            folder.getGenerator().generateDerivedFile(dataSource.getValue(), dataSource.getKey(), fileFormat.getExtension(false),
                 fileFormat.getImageFileFormat(), fileFormat.getFormatName(), vars);
         }
 

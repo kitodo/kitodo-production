@@ -17,7 +17,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Task;
 
 /**
- * An encapsulation to access the generator properties of the folder.
+ * An encapsulation to access the generator properties of the task.
  */
 public class Generator {
     /**
