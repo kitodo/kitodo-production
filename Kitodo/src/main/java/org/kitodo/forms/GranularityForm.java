@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;

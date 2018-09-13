@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.tasks;
+package org.kitodo.helper.tasks;
 
 /**
  * A task implementing this interface provides its readable name by a method
