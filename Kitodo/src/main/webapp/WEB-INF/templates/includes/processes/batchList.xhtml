@@ -35,9 +35,9 @@
                 <div>
                     <p:outputLabel for="selectBatches" value="#{msgs.selectPlease}"/>
                     <h:selectManyListbox value="#{BatchForm.selectedBatches}" class="input" size="20" id="selectBatches"
-                                         onchange="submit()" valueChangeListener="#{BatchForm.changeSelectedBatchId}">
-                        <f:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch}"
-                                       itemValue="#{batch.id}"/>
+                                         converter="#{batchConverter}" onchange="submit()"
+                                         valueChangeListener="#{BatchForm.changeSelectedBatch}">
+                        <f:selectItems value="#{BatchForm.batchesSelectItems}"/>
                     </h:selectManyListbox>
                 </div>
 
@@ -102,7 +102,7 @@
                     <p:outputLabel for="selectProcesses" value="#{msgs.selectPlease}"/>
                     <h:selectManyListbox value="#{BatchForm.selectedProcesses}" converter="#{processConverter}"
                                          class="input" size="20" id="selectProcesses">
-                        <f:selectItems value="#{BatchForm.currentProcessesAsSelectItems}"/>
+                        <f:selectItems value="#{BatchForm.processesSelectItems}"/>
                     </h:selectManyListbox>
                 </div>
 
