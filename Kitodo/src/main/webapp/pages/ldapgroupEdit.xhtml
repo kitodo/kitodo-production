@@ -211,7 +211,7 @@
                          rendered="#{not isViewMode}">
                     <p:commandButton id="delete"
                                      value="#{msgs.delete}"
-                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
+                                     onclick="return confirm('#{msgs.shouldItemBeRemoved}')"
                                      action="#{LdapGroupForm.delete}"
                                      rendered="#{isEditMode and SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
@@ -224,7 +224,7 @@
                                      iconPos="right"
                                      update="editForm"
                                      immediate="true"
-                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
+                                     onclick="return confirm('#{msgs.shouldContentBeRemoved}')"/>
                 </p:panel>
             </p:tab>
         </p:tabView>
