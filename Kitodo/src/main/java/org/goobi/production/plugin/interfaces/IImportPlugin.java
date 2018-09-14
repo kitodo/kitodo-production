@@ -11,8 +11,6 @@
 
 package org.goobi.production.plugin.interfaces;
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import java.io.File;
 import java.util.List;
 
@@ -23,6 +21,7 @@ import org.goobi.production.importer.Record;
 import org.goobi.production.properties.ImportProperty;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.exceptions.ImportPluginException;
 
 public interface IImportPlugin extends IPlugin {
 

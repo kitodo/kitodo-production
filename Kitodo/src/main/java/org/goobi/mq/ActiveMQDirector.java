@@ -11,8 +11,6 @@
 
 package org.goobi.mq;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.Optional;
 
 import javax.jms.Connection;
@@ -32,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.FinaliseStepProcessor;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 

@@ -26,4 +26,37 @@ public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroup
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM LdapGroup");
     }
+
+    /**
+     * Duplicate the LDAP group with the given ID 'itemId'.
+     *
+     * @return the duplicated LdapGroup
+     */
+    public LdapGroup duplicateLdapGroup(LdapGroup baseLdapGroup) {
+        LdapGroup duplicatedLdapGroup = new LdapGroup();
+
+        // LDAP group _title_ and _displayName_ should explicitly _not_ be duplicated!
+        duplicatedLdapGroup.setHomeDirectory(baseLdapGroup.getHomeDirectory());
+        duplicatedLdapGroup.setGidNumber(baseLdapGroup.getGidNumber());
+        duplicatedLdapGroup.setUserDN(baseLdapGroup.getUserDN());
+        duplicatedLdapGroup.setObjectClasses(baseLdapGroup.getObjectClasses());
+        duplicatedLdapGroup.setSn(baseLdapGroup.getSn());
+        duplicatedLdapGroup.setUid(baseLdapGroup.getUid());
+        duplicatedLdapGroup.setDescription(baseLdapGroup.getDescription());
+        duplicatedLdapGroup.setGecos(baseLdapGroup.getGecos());
+        duplicatedLdapGroup.setLoginShell(baseLdapGroup.getLoginShell());
+
+        duplicatedLdapGroup.setSambaSID(baseLdapGroup.getSambaSID());
+        duplicatedLdapGroup.setSambaAcctFlags(baseLdapGroup.getSambaAcctFlags());
+        duplicatedLdapGroup.setSambaKickoffTime(baseLdapGroup.getSambaKickoffTime());
+        duplicatedLdapGroup.setSambaLogonHours(baseLdapGroup.getSambaLogonHours());
+        duplicatedLdapGroup.setSambaLogonScript(baseLdapGroup.getSambaLogonScript());
+        duplicatedLdapGroup.setSambaPasswordHistory(baseLdapGroup.getSambaPasswordHistory());
+        duplicatedLdapGroup.setSambaPrimaryGroupSID(baseLdapGroup.getSambaPrimaryGroupSID());
+        duplicatedLdapGroup.setSambaPwdMustChange(baseLdapGroup.getSambaPwdMustChange());
+
+        duplicatedLdapGroup.setLdapServer(baseLdapGroup.getLdapServer());
+
+        return duplicatedLdapGroup;
+    }
 }

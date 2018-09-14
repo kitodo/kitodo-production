@@ -13,9 +13,6 @@ package org.kitodo.forms;
 
 import static java.lang.Math.toIntExact;
 
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.IndexWorker;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -42,6 +39,8 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.IndexWorker;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchService;
 import org.omnifaces.cdi.Push;

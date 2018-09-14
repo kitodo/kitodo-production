@@ -27,6 +27,7 @@ import org.kitodo.serviceloader.KitodoServiceLoader;
 public class CommandService {
 
     private ArrayList<CommandResult> finishedCommandResults = new ArrayList<>();
+    private Random random = new Random(1000000);
 
     /**
      * Method executes a script string.
@@ -47,7 +48,7 @@ public class CommandService {
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
         CommandInterface command = serviceLoader.loadModule();
 
-        CommandResult commandResult = command.runCommand(generateId(), script);
+        CommandResult commandResult = command.runCommand(random.nextInt(), script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (!commandResultMessages.isEmpty() && commandResultMessages.get(0).contains("IOException")) {
             throw new IOException(commandResultMessages.get(1));
@@ -106,7 +107,7 @@ public class CommandService {
             CommandInterface commandInterface = serviceLoader.loadModule();
 
             Flowable<CommandResult> source = Flowable.fromCallable(() ->
-                commandInterface.runCommand(generateId(), script)
+                commandInterface.runCommand(random.nextInt(), script)
             );
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());
@@ -172,16 +173,6 @@ public class CommandService {
             scriptString = scriptString + " " + String.join(" ", parameter);
         }
         return scriptString;
-    }
-
-    /**
-     * Generates a random integer in the range of 0-1000000.
-     *
-     * @return The integer value.
-     */
-    private int generateId() {
-        Random random = new Random();
-        return random.nextInt(1000000);
     }
 
     /**

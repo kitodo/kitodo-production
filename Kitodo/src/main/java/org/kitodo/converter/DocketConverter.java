@@ -11,8 +11,6 @@
 
 package org.kitodo.converter;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -27,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
+import org.kitodo.helper.Helper;
 
 @Named
 public class DocketConverter implements Converter {

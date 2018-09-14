@@ -18,8 +18,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Collections;
@@ -37,6 +35,7 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
@@ -322,17 +321,6 @@ public class UserServiceIT {
         user = userService.getById(2);
         actual = user.getTableSize();
         assertEquals("Table size is incorrect!", 10, actual);
-    }
-
-    @Test
-    public void shouldGetCss() throws Exception {
-        User user = userService.getById(1);
-        boolean condition = userService.getCss(user).equals("old/userStyles/classic.css");
-        assertTrue("Css file is incorrect!", condition);
-
-        user = userService.getById(2);
-        condition = userService.getCss(user).equals("old/userStyles/default.css");
-        assertTrue("Css file is incorrect!", condition);
     }
 
     @Test

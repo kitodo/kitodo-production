@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormatSymbols;
@@ -25,6 +22,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
@@ -34,11 +32,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.LocaleUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.LegalTexts;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -59,6 +60,11 @@ public class SpracheForm implements Serializable {
      */
     public SpracheForm() {
         setSessionLocaleFieldId();
+    }
+
+    @PostConstruct
+    private void updateLegalTexts() {
+        LegalTexts.updateTexts(getLanguage());
     }
 
     /**
@@ -236,6 +242,7 @@ public class SpracheForm implements Serializable {
     public void setLanguage(String language) {
         try {
             switchLanguage(language);
+            LegalTexts.updateTexts(language);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

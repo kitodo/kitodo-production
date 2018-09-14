@@ -14,8 +14,6 @@ package org.kitodo.forms;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -25,6 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 public class BatchFormIT {

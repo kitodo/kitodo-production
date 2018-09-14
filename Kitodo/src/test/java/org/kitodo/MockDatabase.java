@@ -1191,7 +1191,6 @@ public class MockDatabase {
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
-        firstUser.setCss("old/userStyles/classic.css");
         firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(firstUser);
 
@@ -1225,7 +1224,6 @@ public class MockDatabase {
         fourthUser.setLocation("Dresden");
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
-        fourthUser.setCss("old/userStyles/classic.css");
         fourthUser.getUserGroups().add(serviceManager.getUserGroupService().getById(3));
         serviceManager.getUserService().save(fourthUser);
     }

@@ -11,7 +11,6 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 

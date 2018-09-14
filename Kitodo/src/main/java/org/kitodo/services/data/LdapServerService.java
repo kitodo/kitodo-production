@@ -11,10 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.ldap.LdapUser;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -56,12 +52,15 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.JDKMessageDigest;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PasswordEncryption;
 import org.kitodo.data.database.persistence.LdapServerDAO;
+import org.kitodo.helper.Helper;
+import org.kitodo.ldap.LdapUser;
 import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.SearchDatabaseService;

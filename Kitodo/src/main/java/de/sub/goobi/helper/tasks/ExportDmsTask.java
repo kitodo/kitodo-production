@@ -12,11 +12,11 @@
 package de.sub.goobi.helper.tasks;
 
 import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.Helper;
 
 import java.net.URI;
 
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 
 /**
  * The class ExportDmsTask accepts an {@link de.sub.goobi.export.dms.ExportDms}

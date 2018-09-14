@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.Helper;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.helper.Helper;
 
 @Named("LdapGroupForm")
 @SessionScoped
@@ -71,6 +70,26 @@ public class LdapGroupForm extends BaseForm {
             return ldapGroupListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
+            return null;
+        }
+    }
+
+    /**
+     * Duplicate the selected LDAP group.
+     *
+     * @param itemId
+     *            ID of the LDAP group to duplicate
+     * @return page address; either redirect to the edit LDAP group page or return
+     *         'null' if the LDAP group could not be retrieved, which will prompt
+     *         JSF to remain on the same page and reuse the bean.
+     */
+    public String duplicateLdapGroup(Integer itemId) {
+        try {
+            LdapGroup baseLdapGroup = serviceManager.getLdapGroupService().getById(itemId);
+            this.myLdapGruppe = serviceManager.getLdapGroupService().duplicateLdapGroup(baseLdapGroup);
+            return ldapGroupEditPath;
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
             return null;
         }
     }

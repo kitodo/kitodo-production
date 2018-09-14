@@ -45,7 +45,7 @@
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportImageDirButton"/>
                 </p:inputText>
-                <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir');" disabled="#{empty ProjectForm.myProjekt.dmsImportImagesPath}"/>
+                <p:commandButton id="copyDmsExportImageDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportImageDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.myProjekt.dmsImportImagesPath}"/>
             </div>
             <div>
                 <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPath}" />
@@ -53,7 +53,7 @@
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportErrorDirButton"/>
                 </p:inputText>
-                <p:commandButton id="copyDmsExportErrorDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportErrorDir')" disabled="#{empty ProjectForm.myProjekt.dmsImportErrorPath}"/>
+                <p:commandButton id="copyDmsExportErrorDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportErrorDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}')" disabled="#{empty ProjectForm.myProjekt.dmsImportErrorPath}"/>
             </div>
             <div>
                 <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
@@ -82,7 +82,7 @@
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportDirButton"/>
                 </p:inputText>
-                <p:commandButton id="copyDmsExportDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportDir');" disabled="#{empty ProjectForm.myProjekt.dmsImportRootPath}"/>
+                <p:commandButton id="copyDmsExportDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.myProjekt.dmsImportRootPath}"/>
             </div>
             <div>
                 <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPath}" />
@@ -90,7 +90,7 @@
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportSuccessDirButton"/>
                 </p:inputText>
-                <p:commandButton id="copyDmsExportSuccessDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportSuccessDir');" disabled="#{empty ProjectForm.myProjekt.dmsImportSuccessPath}"/>
+                <p:commandButton id="copyDmsExportSuccessDirButton" type="button" icon="fa fa-copy" onclick="copyToClipboard('editForm:projectTabView:dmsExportSuccessDir', '#{msgs.stringCopiedSuccess}', '#{msgs.stringCopiedError}');" disabled="#{empty ProjectForm.myProjekt.dmsImportSuccessPath}"/>
             </div>
             <div>
                 <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />

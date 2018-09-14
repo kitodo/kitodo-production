@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +39,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecurityPasswordEncoder;
