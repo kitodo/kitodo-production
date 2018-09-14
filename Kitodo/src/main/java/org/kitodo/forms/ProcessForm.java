@@ -27,6 +27,7 @@ import de.sub.goobi.export.download.TiffHeader;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -72,6 +73,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
@@ -216,6 +218,19 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        Workflow workflow = this.process.getTemplate().getWorkflow();
+        if (Objects.nonNull(workflow)) {
+            return serviceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
+        }
+        return serviceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**
