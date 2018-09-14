@@ -199,7 +199,7 @@ public class SchemaService {
 
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer)
-            throws PreferencesException, IOException, JAXBException {
+            throws PreferencesException, JAXBException {
         List<Folder> folders = process.getProject().getFolders();
         for (Folder folder : folders) {
             // check if source files exists
@@ -219,7 +219,7 @@ public class SchemaService {
     }
 
     private VirtualFileGroupInterface setVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
-            throws IOException, JAXBException {
+            throws JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
 
         virtualFileGroup.setName(folder.getFileGroup());
