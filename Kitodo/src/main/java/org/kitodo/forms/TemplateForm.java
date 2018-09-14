@@ -52,7 +52,6 @@ public class TemplateForm extends TemplateBaseForm {
     private String title;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
 
     /**
      * Constructor.
@@ -243,16 +242,6 @@ public class TemplateForm extends TemplateBaseForm {
                     logger, e);
             }
         }
-    }
-
-    /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setTemplate(this.template);
-        this.template.getTasks().add(this.task);
-        return taskEditPath;
     }
 
     /**

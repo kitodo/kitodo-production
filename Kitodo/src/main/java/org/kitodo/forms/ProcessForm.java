@@ -121,7 +121,6 @@ public class ProcessForm extends TemplateBaseForm {
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -423,16 +422,6 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
-    }
-
-    /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setProcess(this.process);
-        this.process.getTasks().add(this.task);
-        return taskEditPath + "&id=" + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
 
     /**
