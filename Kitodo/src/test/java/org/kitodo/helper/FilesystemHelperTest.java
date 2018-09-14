@@ -27,10 +27,6 @@ import org.kitodo.services.file.FileService;
 
 public class FilesystemHelperTest {
 
-    @Before
-    public void setUp() {
-    }
-
     @After
     public void tearDown() throws Exception {
         FileService fileService = new FileService();
