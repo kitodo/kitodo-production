@@ -159,9 +159,11 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Save process.
+     * Save process and redirect to list view.
+     *
+     * @return url to list view
      */
-    public void save() {
+    public String save() {
         /*
          * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
@@ -169,11 +171,12 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.process != null && this.process.getTitle() != null) {
             if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
                     && !renameAfterProcessTitleChanged()) {
-                return;
+                return null;
             }
 
             try {
                 serviceManager.getProcessService().save(this.process);
+                return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
             }
@@ -181,16 +184,7 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("titleEmpty");
         }
         reload();
-    }
-
-    /**
-     * Save process and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String saveAndRedirect() {
-        save();
-        return processListPath;
+        return null;
     }
 
     /**
