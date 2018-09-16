@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.importer;
+package org.kitodo.importer;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public class Import {
         if (this.task.isTypeImportFileUpload() && this.task.isTypeExportRussian()) {
             String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.UTF_16LE);
             try (BufferedReader reader = new BufferedReader(new StringReader(fileContent))) {
-                ImportRussland importRussland = new ImportRussland();
+                ImportRussian importRussland = new ImportRussian();
                 importRussland.parse(reader, this.task.getProcess());
                 this.importMessage = "Der russische Import wurde erfolgreich abgeschlossen";
             }
@@ -78,7 +78,7 @@ public class Import {
         if (this.task.isTypeImportFileUpload() && !this.task.isTypeExportRussian()) {
             String fileContent = new String(this.uploadedFile.getBytes(), StandardCharsets.ISO_8859_1);
             try (BufferedReader reader = new BufferedReader(new StringReader(fileContent))) {
-                ImportZentralblatt importZentralblatt = new ImportZentralblatt();
+                ImportCentral importZentralblatt = new ImportCentral();
                 importZentralblatt.parse(reader, this.task.getProcess());
                 this.importMessage = "Der Zentralblatt-Import wurde erfolgreich abgeschlossen";
             }

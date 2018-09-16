@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.tasks;
-
-import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
+package org.kitodo.helper.tasks;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * The class TaskManager serves to handle the execution of threads. It can be

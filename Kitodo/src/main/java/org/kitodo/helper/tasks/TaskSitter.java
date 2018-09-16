@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.tasks;
-
-import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
+package org.kitodo.helper.tasks;
 
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
@@ -25,6 +23,7 @@ import javax.servlet.annotation.WebListener;
 import org.joda.time.Duration;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * The class TaskSitter takes care of the tasks in the task manager. While the

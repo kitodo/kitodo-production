@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.export.download;
-
-import de.sub.goobi.export.dms.ExportDmsCorrectRusdml;
+package org.kitodo.exporter.download;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +29,7 @@ import org.kitodo.config.ConfigProjects;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDmsCorrectRusdml;
 import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;

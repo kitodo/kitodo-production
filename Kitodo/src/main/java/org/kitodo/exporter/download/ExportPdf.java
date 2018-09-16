@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.export.download;
-
-import de.sub.goobi.helper.tasks.CreatePdfFromServletThread;
+package org.kitodo.exporter.download;
 
 import java.io.BufferedWriter;
 import java.io.FilenameFilter;
@@ -42,6 +40,7 @@ import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.tasks.CreatePdfFromServletThread;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;

@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.helper;
-
-import de.sub.goobi.export.dms.ExportDms;
+package org.kitodo.helper.batch;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,13 +37,16 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
-public class BatchStepHelper extends BatchHelper {
+public class BatchTaskHelper extends BatchHelper {
     private List<Task> steps;
-    private static final Logger logger = LogManager.getLogger(BatchStepHelper.class);
+    private static final Logger logger = LogManager.getLogger(BatchTaskHelper.class);
     private Task currentStep;
     private Problem problem = new Problem();
     private Solution solution = new Solution();
@@ -61,7 +62,7 @@ public class BatchStepHelper extends BatchHelper {
      * @param steps
      *            list of tasks
      */
-    public BatchStepHelper(List<Task> steps) {
+    public BatchTaskHelper(List<Task> steps) {
         this.steps = steps;
         for (Task s : steps) {
             this.processNameList.add(s.getProcess().getTitle());
@@ -73,7 +74,7 @@ public class BatchStepHelper extends BatchHelper {
         }
     }
 
-    public BatchStepHelper() {
+    public BatchTaskHelper() {
     }
 
     public List<Task> getSteps() {

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.importer;
+package org.kitodo.importer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -48,8 +48,8 @@ import org.kitodo.services.ServiceManager;
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005
  */
-public class ImportZentralblatt {
-    private static final Logger logger = LogManager.getLogger(ImportZentralblatt.class);
+public class ImportCentral {
+    private static final Logger logger = LogManager.getLogger(ImportCentral.class);
     private PrefsInterface myPrefs;
     private final ServiceManager serviceManager = new ServiceManager();
 

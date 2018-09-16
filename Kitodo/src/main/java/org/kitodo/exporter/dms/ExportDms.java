@@ -9,13 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.export.dms;
-
-import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.ExportDmsTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.helper.tasks.TaskSitter;
+package org.kitodo.exporter.dms;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +36,12 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
+import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.tasks.EmptyTask;
+import org.kitodo.helper.tasks.ExportDmsTask;
+import org.kitodo.helper.tasks.TaskManager;
+import org.kitodo.helper.tasks.TaskSitter;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;

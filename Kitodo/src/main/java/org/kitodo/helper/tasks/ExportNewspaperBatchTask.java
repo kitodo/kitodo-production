@@ -9,9 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.tasks;
-
-import de.sub.goobi.export.dms.ExportDms;
+package org.kitodo.helper.tasks;
 
 import java.io.IOException;
 import java.net.URI;
@@ -49,6 +47,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.ArrayListMap;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;

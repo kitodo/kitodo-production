@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.export.download.TiffHeader;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -35,6 +33,7 @@ import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 

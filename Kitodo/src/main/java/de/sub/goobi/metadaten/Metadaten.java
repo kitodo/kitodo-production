@@ -94,7 +94,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
-import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.batch.BatchTaskHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.HelperComparator;
 import org.kitodo.helper.Transliteration;
@@ -4113,7 +4113,7 @@ public class Metadaten {
     public void reportProblem() {
         List<Task> taskList = new  ArrayList<>();
         taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
-        BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
         batchStepHelper.setProblem(getProblem());
         batchStepHelper.reportProblemForSingle();
         refreshProcess(this.process);
@@ -4128,7 +4128,7 @@ public class Metadaten {
      *
      */
     public void solveProblem(String comment) {
-        BatchStepHelper batchStepHelper = new BatchStepHelper();
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper();
         batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();

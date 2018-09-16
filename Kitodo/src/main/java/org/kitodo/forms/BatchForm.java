@@ -11,11 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
-import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +41,12 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.helper.BatchProcessHelper;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.batch.BatchProcessHelper;
+import org.kitodo.helper.tasks.ExportNewspaperBatchTask;
+import org.kitodo.helper.tasks.ExportSerialBatchTask;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("BatchForm")

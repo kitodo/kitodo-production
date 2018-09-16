@@ -19,12 +19,6 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.export.download.ExportPdf;
-import de.sub.goobi.export.download.Multipage;
-import de.sub.goobi.export.download.TiffHeader;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -80,6 +74,11 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.ExportMets;
+import org.kitodo.exporter.download.ExportPdf;
+import org.kitodo.exporter.download.Multipage;
+import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;

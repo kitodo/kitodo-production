@@ -9,9 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package de.sub.goobi.helper.tasks;
+package org.kitodo.helper.tasks;
 
-import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
+import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * TaskState defines a set of states that a task can be in. Their meanings are
