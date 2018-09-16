@@ -4123,9 +4123,7 @@ public class Metadaten {
     }
 
     /**
-     * solve the problem.
-     *
-     *
+     * Solve the problem.
      */
     public void solveProblem(String comment) {
         BatchTaskHelper batchStepHelper = new BatchTaskHelper();
@@ -4137,7 +4135,7 @@ public class Metadaten {
         try {
             serviceManager.getProcessService().save(process);
         } catch (DataException e) {
-            e.printStackTrace();
+            Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
         refreshProcess(this.process);
     }
