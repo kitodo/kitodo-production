@@ -95,13 +95,13 @@ public class UserForm extends BaseForm {
             return null;
         }
 
-        String id = null;
-        if (this.userObject.getId() != null) {
-            id = this.userObject.getId().toString();
+        if (isMissingClient()) {
+            Helper.setErrorMessage("errorMissingClient");
+            return null;
         }
 
         try {
-            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
+            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
@@ -122,6 +122,17 @@ public class UserForm extends BaseForm {
                 + File.separator + "kitodo_loginBlacklist.txt";
 
         return serviceManager.getUserService().isLoginValid(inLogin, filename);
+    }
+
+    private boolean isMissingClient() {
+        return this.userObject.getClients().isEmpty();
+    }
+
+    private String getUserId() {
+        if (this.userObject.getId() != null) {
+            return this.userObject.getId().toString();
+        }
+        return null;
     }
 
     /**
