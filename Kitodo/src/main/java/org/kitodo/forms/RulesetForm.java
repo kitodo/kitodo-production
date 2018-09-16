@@ -116,27 +116,6 @@ public class RulesetForm extends BaseForm {
         return rulesetFile.exists();
     }
 
-    /**
-     * Remove.
-     *
-     * @return redirect link or empty String
-     */
-    public String removeRuleset() {
-        try {
-            if (hasAssignedProcesses(this.ruleset)) {
-                Helper.setErrorMessage("rulesetInUse");
-                return null;
-            } else {
-                serviceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
-            return null;
-        }
-        return rulesetListPath;
-    }
-
     private boolean existsRulesetWithSameName() {
         List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
         if (rulesets.isEmpty()) {
