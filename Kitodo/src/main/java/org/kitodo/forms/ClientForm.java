@@ -31,7 +31,6 @@ public class ClientForm extends BaseForm {
     private static final long serialVersionUID = -445707351975817243L;
     private Client client;
     private static final Logger logger = LogManager.getLogger(ClientForm.class);
-    private int clientId;
 
     /**
      * Empty default constructor that also sets the LazyDTOModel instance of this
@@ -61,14 +60,14 @@ public class ClientForm extends BaseForm {
      * Method being used as viewAction for client edit form. If 'clientId' is '0',
      * the form for creating a new client will be displayed.
      */
-    public void loadClient() {
+    public void load(int id) {
         try {
-            if (!Objects.equals(this.clientId, 0)) {
-                this.client = this.serviceManager.getClientService().getById(this.clientId);
+            if (!Objects.equals(id, 0)) {
+                this.client = this.serviceManager.getClientService().getById(id);
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.CLIENT.getTranslationSingular(), this.clientId },
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.CLIENT.getTranslationSingular(), id },
                 logger, e);
         }
     }
@@ -80,27 +79,7 @@ public class ClientForm extends BaseForm {
      */
     public String newClient() {
         this.client = new Client();
-        this.clientId = 0;
         return "/pages/clientEdit?" + REDIRECT_PARAMETER;
-    }
-
-    /**
-     * Gets clientId.
-     *
-     * @return The clientId.
-     */
-    public int getClientId() {
-        return clientId;
-    }
-
-    /**
-     * Sets clientId.
-     *
-     * @param clientId
-     *            The clientId.
-     */
-    public void setClientId(int clientId) {
-        this.clientId = clientId;
     }
 
     /**
@@ -139,7 +118,7 @@ public class ClientForm extends BaseForm {
     /**
      * Delete client.
      */
-    public void deleteClient() {
+    public void delete() {
         try {
             this.serviceManager.getClientService().remove(this.client);
         } catch (DataException e) {

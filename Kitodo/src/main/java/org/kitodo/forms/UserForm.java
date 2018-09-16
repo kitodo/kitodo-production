@@ -353,7 +353,7 @@ public class UserForm extends BaseForm {
      * @param id
      *            ID of the user to load
      */
-    public void loadUserObject(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setUserObject(this.serviceManager.getUserService().getById(id));

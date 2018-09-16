@@ -230,7 +230,7 @@ public class WorkflowForm extends BaseForm {
      *         'null' if the workflow could not be retrieved, which will prompt
      *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicateWorkflow(Integer itemId) {
+    public String duplicate(Integer itemId) {
         try {
             Workflow baseWorkflow = serviceManager.getWorkflowService().getById(itemId);
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
@@ -264,7 +264,7 @@ public class WorkflowForm extends BaseForm {
      * @param id
      *            of the workflow to load
      */
-    public void loadWorkflow(int id) {
+    public void load(int id) {
         try {
             if (id != 0) {
                 setWorkflow(this.serviceManager.getWorkflowService().getById(id));

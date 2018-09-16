@@ -160,10 +160,8 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Save process.
-     *
-     * @return null
      */
-    public String save() {
+    public void save() {
         /*
          * wenn der Vorgangstitel geändert wurde, wird dieser geprüft und bei
          * erfolgreicher Prüfung an allen relevanten Stellen mitgeändert
@@ -171,7 +169,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.process != null && this.process.getTitle() != null) {
             if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return;
             }
 
             try {
@@ -183,7 +181,6 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("titleEmpty");
         }
         reload();
-        return null;
     }
 
     /**
@@ -1604,7 +1601,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param id
      *            ID of the process to load
      */
-    public void loadProcess(int id) {
+    public void load(int id) {
         try {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));

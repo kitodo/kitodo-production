@@ -173,7 +173,7 @@ public class TemplateForm extends TemplateBaseForm {
      *         'null' if the template could not be retrieved, which will prompt
      *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicateTemplate(Integer itemId) {
+    public String duplicate(Integer itemId) {
         try {
             Template baseTemplate = serviceManager.getTemplateService().getById(itemId);
             this.template = serviceManager.getTemplateService().duplicateTemplate(baseTemplate);
@@ -185,13 +185,15 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Save template.
+     * Save template and redirect to list view.
+     *
+     * @return url to list view
      */
-    private void save() {
+    public String save() {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return;
+                return null;
             }
 
             try {
@@ -201,7 +203,7 @@ public class TemplateForm extends TemplateBaseForm {
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
-                return;
+                return null;
             }
 
             try {
@@ -209,22 +211,11 @@ public class TemplateForm extends TemplateBaseForm {
             } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
+                return null;
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
-        }
-    }
-
-    /**
-     * Save template and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String saveAndRedirect() {
-        try {
-            save();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            return null;
         }
         return templateListPath;
     }

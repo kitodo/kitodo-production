@@ -120,7 +120,7 @@ public class UserGroupForm extends BaseForm {
      * @param id
      *            ID of the user group to load
      */
-    public void loadUserGroup(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setUserGroup(this.serviceManager.getUserGroupService().getById(id));

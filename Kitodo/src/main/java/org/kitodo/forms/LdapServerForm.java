@@ -95,7 +95,7 @@ public class LdapServerForm extends BaseForm {
      * @param id
      *            ID of the ldap server to load
      */
-    public void loadLdapServer(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 this.ldapServer = this.serviceManager.getLdapServerService().getById(id);

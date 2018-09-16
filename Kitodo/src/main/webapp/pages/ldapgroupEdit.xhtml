@@ -19,7 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{LdapGroupForm.loadLdapGroup(id)}"/>
+        <f:viewAction action="#{LdapGroupForm.load(id)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
@@ -45,7 +45,7 @@
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{LdapGroupForm.saveLdapGroup}"
+                         action="#{LdapGroupForm.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{LdapGroupForm.saveDisabled}"
@@ -212,7 +212,7 @@
                     <p:commandButton id="delete"
                                      value="#{msgs.delete}"
                                      onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
-                                     action="#{LdapGroupForm.deleteLdapGroup}"
+                                     action="#{LdapGroupForm.delete}"
                                      rendered="#{isEditMode and SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
                                      iconPos="right"/>
