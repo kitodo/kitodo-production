@@ -36,6 +36,7 @@ import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.Config;
+import org.kitodo.config.enums.Parameter;
 
 public class FileManagement implements FileManagementInterface {
 
@@ -430,7 +431,7 @@ public class FileManagement implements FileManagementInterface {
      * @return the source directory as a string
      */
     private URI getSourceDirectory(String processId, String processTitle) {
-        final String suffix = "_" + Config.getParameter("DIRECTORY_SUFFIX", "tif");
+        final String suffix = "_" + Config.getParameter(Parameter.DIRECTORY_SUFFIX, "tif");
         URI dir = URI.create(getProcessSubType(processId, processTitle, ProcessSubType.IMAGE, null));
         FilenameFilter filterDirectory = new FileNameEndsWithFilter(suffix);
         URI sourceFolder = URI.create("");
@@ -438,7 +439,7 @@ public class FileManagement implements FileManagementInterface {
             List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.isEmpty()) {
                 sourceFolder = dir.resolve(processTitle + suffix + "/");
-                if (Config.getBooleanParameter("createSourceFolder", false)) {
+                if (Config.getBooleanParameter(Parameter.CREATE_SOURCE_FOLDER, false)) {
                     if (!fileExist(dir)) {
                         createDirectory(dir.resolve(".."), IMAGES_DIRECTORY_NAME);
                     }
