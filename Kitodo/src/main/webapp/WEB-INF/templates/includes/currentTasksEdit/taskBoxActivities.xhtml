@@ -1,0 +1,210 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:c="http://java.sun.com/jsp/jstl/core"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <c:set var="task" value="#{CurrentTaskForm.currentTask}" scope="request"/>
+    <c:set var="process" value="#{CurrentTaskForm.currentTask.process}" scope="request"/>
+
+    <h:panelGroup
+            rendered="#{task.processingUser.id == LoginForm.myBenutzer.id}">
+        <!-- Import -->
+        <ui:fragment rendered="#{process.blockedUser == null and task.typeImportFileUpload}">
+
+            <h:outputText value="#{msgs.metadataImport}"/>
+
+            <h:panelGrid columns="1">
+                <!-- Import-Upload -->
+                <h:panelGroup>
+                    <h:panelGroup rendered="#{Import.importMessage !=''}">
+                        <h:outputText value="#{Import.importMessage}" style="color: blue;"/>
+                        <br/>
+                        <br/>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{Import.importError !=''}">
+                        <h:outputText value="#{Import.importError}" style="color: red;" escape="false"/>
+                        <br/>
+                        <br/>
+                    </h:panelGroup>
+                    <h:form enctype="multipart/form-data" id="formupload">
+                        <h:inputFile id="fileupload" accept="image/*" value="#{Import.uploadedFile}" storage="file"
+                                     styleClass="fileUploadInput" required="false"/>
+                        <h:commandButton value="#{msgs.metadataImport}" id="button1" action="#{Import.start}">
+                            <f:setPropertyActionListener target="#{Import.task}" value="#{task}"/>
+                        </h:commandButton>
+                    </h:form>
+                </h:panelGroup>
+            </h:panelGrid>
+        </ui:fragment>
+
+        <!--  Import -->
+        <h:form id="actionform">
+            <!-- Action -->
+            <ui:fragment>
+
+                <h4>#{msgs.possibleActions}</h4>
+
+                <h:panelGrid columns="1">
+
+                    <!-- Show Metadata Block -->
+                    <h:panelGroup style="color: red;margin-top:5px;margin-bottom:15px;display:block"
+                                  rendered="#{process.blockedUser != null}">
+                        <h:outputText value="#{msgs.blocked}"/>
+                        <br/>
+                        <h:panelGrid columns="2" style="color: red;margin-left:30px" cellpadding="3">
+                            <h:outputText value="#{msgs.user}: "/>
+                            <h:outputText value="#{process.blockedUser.fullName}"/>
+                            <h:outputText value="#{msgs.location}: "/>
+                            <h:outputText value="#{process.blockedUser.location}"/>
+                            <h:outputText value="#{msgs.lastActionBefore} "/>
+                            <h:outputText value="#{process.blockedMinutes} min #{process.blockedSeconds} sec"/>
+                        </h:panelGrid>
+                        <h:outputText value="#{msgs.later}"/>
+
+                        <!-- If blocked by yourself: you can unblocked -->
+                        <h:commandLink id="action1"
+                                       rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.myBenutzer.id)}"
+                                       action="#{CurrentTaskForm.sperrungAufheben}"
+                                       title="#{msgs.oderSperrungAufheben}">
+                            <h:outputText><i class="fa fa-lock"/> #{msgs.oderSperrungAufheben}</h:outputText>
+                        </h:commandLink>
+                    </h:panelGroup>
+
+                    <!-- Script-button -->
+                    <h:commandLink id="action3"
+                                   rendered="#{task.scriptPath != null and task.scriptPath != '' and task.process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.executeScript}" title="#{task.scriptName}">
+                        <f:setPropertyActionListener target="#{CurrentTaskForm.scriptPath}" value="#{task.scriptPath}"/>
+                        <h:outputText><i class="fa fa-cogs"/> #{msgs.scriptExecute}: #{task.scriptName}</h:outputText>
+                    </h:commandLink>
+
+                    <!-- tiffHeaderDownload-button -->
+                    <h:commandLink id="action8" rendered="#{0==1 and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.downloadTiffHeader}" title="#{msgs.saveTifHeaderFile}">
+                        <h:outputText><i class="fa fa-file-o"/> #{msgs.saveTifHeaderFile}</h:outputText>
+                    </h:commandLink>
+
+                    <!-- Import DMS-button -->
+
+                    <!-- TODO: delete this warning once the root cause of the timeout problem is solved  -->
+                    <h:outputText style="back-color:blue; color: red; font-weight: bold;"
+                                  rendered="#{task.typeExportDMS and process.blockedUser == null}"
+                                  value="#{msgs.timeoutWarningDMS}"/>
+
+                    <!-- Upload-button -->
+                    <h:commandLink id="action9" rendered="#{task.typeExportDMS and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.exportDMS}" title="#{msgs.importDms}">
+                        <h:outputText><i class="fa fa-file-archive-o"/> #{msgs.importDms}</h:outputText>
+                    </h:commandLink>
+
+                    <!-- Metadaten-button -->
+                    <h:commandLink id="action10" rendered="#{task.typeMetadata and process.blockedUser == null}"
+                                   action="#{Metadaten.readXml}" title="#{msgs.metadataEdit}">
+                        <h:outputText><i class="fa fa-file-o"/> #{msgs.metadataEdit}</h:outputText>
+                        <f:setPropertyActionListener value="currentTasksEdit.jsf?id=#{task.id}"
+                                                     target="#{Metadaten.referringView}"/>
+                        <f:param name="ProzesseID" value="#{process.id}"/>
+                        <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
+                        <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
+                    </h:commandLink>
+
+                    <!-- Edit Cancel-buttons -->
+                    <h:commandLink id="action11" action="#{CurrentTaskForm.schrittDurchBenutzerZurueckgeben}"
+                                   title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
+                                   onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
+                        <h:outputText><i class="fa fa-ban"/> #{msgs.bearbeitungDiesesSchrittesAbgeben}</h:outputText>
+                    </h:commandLink>
+
+                    <!-- Return to previous station for correction purposes-->
+                    <h:panelGroup rendered="#{CurrentTaskForm.sizeOfPreviousStepsForProblemReporting > 0}">
+                        <span class="toggle" data-for="toggle-1">
+                            <h:outputText>
+                                <i class="fa fa-arrow-left"/> #{msgs.correctionMessageSendPreviousTask}
+                            </h:outputText>
+                        </span>
+
+                        <div class="toggle-1" style="display: none;">
+                            <h:panelGrid columns="2" style="margin-left:40px;" id="grid3" rowClasses="top"
+                                         columnClasses="standardTable_Column,standardTable_ColumnRight">
+                                <h:outputText value="#{msgs.backToTask}"/>
+                                <h:selectOneMenu style="width:350px" value="#{CurrentTaskForm.problem.id}">
+                                    <f:selectItems value="#{CurrentTaskForm.previousStepsForProblemReporting}"
+                                                   var="step1" itemLabel="#{step1.titleWithUserName}"
+                                                   itemValue="#{step1.id}"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="#{msgs.remark}"/>
+                                <h:inputTextarea style="width:350px;height:80px"
+                                                 value="#{CurrentTaskForm.problem.message}"/>
+                                <!-- Statistical evaluation button for the entire hit set -->
+                                <h:outputText value=""/>
+                                <h:commandLink id="action13" action="#{CurrentTaskForm.reportProblem}"
+                                               title="#{msgs.correctionMessageSend}"
+                                               onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                    <h:outputText value="#{msgs.correctionMessageSend}"/>
+                                </h:commandLink>
+                            </h:panelGrid>
+                        </div>
+                    </h:panelGroup>
+
+                    <!-- Pass to next station for corrective purpose-->
+                    <h:panelGroup
+                            rendered="#{task.priority>9 and CurrentTaskForm.sizeOfNextStepsForProblemSolution > 0}">
+                        <span class="toggle" data-for="toggle-2">
+                            <h:outputText>
+                                <i class="fa fa-arrow-left"/> #{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}
+                            </h:outputText>
+                        </span>
+                        <div class="toggle-2" style="display: none;">
+                            <h:panelGrid columns="2" style="margin-left:40px;" rowClasses="top" id="grid1"
+                                         columnClasses="standardTable_Column,standardTable_ColumnRight">
+                                <h:outputText value="#{msgs.weiterZuArbeitsschritt}"/>
+                                <h:selectOneMenu style="width:350px" id="select1"
+                                                 value="#{CurrentTaskForm.solution.id}">
+                                    <f:selectItems value="#{CurrentTaskForm.nextStepsForProblemSolution}"
+                                                   var="step2" itemLabel="#{step2.titleWithUserName}"
+                                                   itemValue="#{step2.id}"/>
+                                </h:selectOneMenu>
+                                <h:outputText value="#{msgs.remark}"/>
+                                <h:inputTextarea style="width:350px;height:80px" id="input1"
+                                                 value="#{CurrentTaskForm.solution.message}"/>
+                                <!-- Statistical evaluation button for the entire hit set -->
+                                <h:outputText value=""/>
+                                <h:commandLink id="action14" action="#{CurrentTaskForm.solveProblem}"
+                                               title="#{msgs.meldungUeberProblemloesungSenden}"
+                                               onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                    <h:outputText value="#{msgs.meldungUeberProblemloesungSenden}"/>
+                                </h:commandLink>
+                            </h:panelGrid>
+                        </div>
+
+                    </h:panelGroup>
+
+                    <!-- Lock button -->
+                    <h:commandLink id="action15"
+                                   action="#{CurrentTaskForm.schrittDurchBenutzerAbschliessen}"
+                                   title="#{msgs.diesenSchrittAbschliessen}"
+                                   onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
+                        <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
+                                        style="margin-right:3px;vertical-align:middle"/>
+                        <h:outputText value="#{msgs.diesenSchrittAbschliessen}"/>
+                    </h:commandLink>
+                </h:panelGrid>
+            </ui:fragment>
+        </h:form>
+    </h:panelGroup>
+</ui:composition>
