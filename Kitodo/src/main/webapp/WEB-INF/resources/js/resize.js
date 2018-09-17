@@ -98,6 +98,7 @@ function resizeFirstAndThird(e) {
         thirdColumn.width(wrapperPositionX + wrapper.width() - 2 * SEPARATOR_WIDTH - secondColumn.width() - e.pageX);
         firstColumnWidth = firstColumn.width();
         thirdColumnWidth = thirdColumn.width();
+        thirdColumn[0].dispatchEvent(new Event('resize'));
     }
 }
 
@@ -108,6 +109,7 @@ function resizeSecondAndThird(e) {
         thirdColumn.width(wrapperPositionX + wrapper.width() - SEPARATOR_WIDTH - e.pageX);
         secondColumnWidth = secondColumn.width();
         thirdColumnWidth = thirdColumn.width();
+        thirdColumn[0].dispatchEvent(new Event('resize'));
     }
 }
 
@@ -141,6 +143,7 @@ function setSizes() {
     thirdColumn.width(wrapper.width() - firstColumn.data('min-width') - secondColumn.data('min-width') - 2 * SEPARATOR_WIDTH);
     firstSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2));
     secondSection.height(wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT);
+    thirdColumn[0].dispatchEvent(new Event('resize'));
 }
 
 function toggleResizers() {

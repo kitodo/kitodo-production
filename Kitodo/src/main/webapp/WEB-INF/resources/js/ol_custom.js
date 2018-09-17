@@ -135,3 +135,8 @@ function initializeMap(imageDimensions) {
         })
     });
 }
+
+// reload map if container was resized
+$('#thirdColumnWrapper').on('resize', function () {
+    map.updateSize();
+});
