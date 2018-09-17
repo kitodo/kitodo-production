@@ -527,7 +527,7 @@ public class Helper implements Observer, Serializable {
     };
 
     private static List<String> getImageNameRegexList() {
-        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter(Parameter.IMAGE_PREFIX, "\\d{8}");
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");

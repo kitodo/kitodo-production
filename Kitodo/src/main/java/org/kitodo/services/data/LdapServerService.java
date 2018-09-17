@@ -240,7 +240,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             }
         } else {
             logger.debug("don't use TLS for auth");
-            if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
+            if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_SIMPLE_AUTH, false)) {
                 env.put(Context.SECURITY_AUTHENTICATION, "none");
                 // TODO auf passwort testen
             } else {
@@ -347,7 +347,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 }
             }
         }
-        if (ConfigCore.getBooleanParameter("useSimpleAuthentification", false)) {
+        if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_SIMPLE_AUTH, false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
         }
         DirContext ctx;

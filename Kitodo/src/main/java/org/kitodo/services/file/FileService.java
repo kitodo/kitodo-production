@@ -855,7 +855,7 @@ public class FileService {
         URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames
-        String numberOfDigits = extractNumber(ConfigCore.getParameter("ImagePrefix"));
+        String numberOfDigits = extractNumber(ConfigCore.getParameter(Parameter.IMAGE_PREFIX));
 
         for (int i = startValue; i < startValue + numberOfNewImages; i++) {
             copyFile(dummyImage, imagesDirectory.resolve(String.format("%0" + numberOfDigits + "d", i) + ".tif"));

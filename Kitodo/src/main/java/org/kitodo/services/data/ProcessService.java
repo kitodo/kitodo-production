@@ -122,9 +122,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static ProcessService instance = null;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
-    private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
-    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
-    private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
+    private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(Parameter.DIRECTORY_PREFIX, "orig");
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(Parameter.DIRECTORY_SUFFIX, "tif");
+    private static final String SUFFIX = ConfigCore.getParameter(Parameter.METS_EDITOR_DEFAULT_SUFFIX, "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
     private static final String CLOSED = "closed";
@@ -1409,7 +1409,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void downloadDocket(Process process) throws IOException {
         logger.debug("generate docket for process with id {}", process.getId());
-        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI rootPath = Paths.get(ConfigCore.getParameter(Parameter.DIR_XSLT)).toUri();
         URI xsltFile;
         if (process.getDocket() != null) {
             xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
@@ -1440,7 +1440,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         logger.debug("generate docket for processes {}", processes);
-        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI rootPath = Paths.get(ConfigCore.getParameter(Parameter.DIR_XSLT)).toUri();
         URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
@@ -1811,7 +1811,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit") && project.isDmsImportCreateProcessFolder()) {
+            if (!ConfigCore.getBooleanParameter(Parameter.EXPORT_WITHOUT_TIME_LIMIT) && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
                 File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
                 fileService.delete(successFile.toURI());

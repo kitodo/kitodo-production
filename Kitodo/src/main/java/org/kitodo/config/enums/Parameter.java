@@ -33,7 +33,7 @@ public enum Parameter implements ParameterInterface {
      * files in the future:
      */
 
-    // DIR_XML_CONFIG = "KonfigurationVerzeichnis" → org.kitodo.config.Config
+    DIR_XML_CONFIG("KonfigurationVerzeichnis"),
 
     /**
      * Absolute path to the directory that the rule set definition files will be
@@ -59,7 +59,7 @@ public enum Parameter implements ParameterInterface {
      * files in the future:
      */
 
-    // DIR_PROCESSES = "MetadatenVerzeichnis" → org.kitodo.config.Config
+    DIR_PROCESSES("MetadatenVerzeichnis"),
 
     /**
      * Absolute path to the base directory of the users' home directories,
@@ -91,7 +91,7 @@ public enum Parameter implements ParameterInterface {
      * constant is if someone compares the two files in the future:
      */
 
-    // DIR_MODULES = "moduleFolder" → org.kitodo.config.Config
+    DIR_MODULES("moduleFolder"),
 
     /**
      * Points to a folder on the file system that contains <b>legacy</b>
@@ -126,8 +126,7 @@ public enum Parameter implements ParameterInterface {
      * but there is no constant for it here. This comment is to explain where
      * the constant is if someone compares the two files in the future:
      */
-
-    // "createSourceFolder" → org.kitodo.filemanagement.FileManagement
+    CREATE_SOURCE_FOLDER("createSourceFolder"),
 
     /**
      * Prefix of image directory name created on process creation.
@@ -594,6 +593,8 @@ public enum Parameter implements ParameterInterface {
      * Boolean, defaults to {@code false}.
      */
     LDAP_USE_TLS("ldap_useTLS"),
+
+    LDAP_USE_SIMPLE_AUTH("useSimpleAuthentification"),
 
     /*
      * Authority control configuration

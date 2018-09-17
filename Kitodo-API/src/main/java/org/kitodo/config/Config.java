@@ -87,8 +87,23 @@ public class Config {
      *             if parameter taken from config file is null or exception occurred
      */
     public static String getParameter(ParameterInterface key) {
+        return getParameter(key.getName());
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file. Throws a
+     * {@code NoSuchElementException} if no such parameter exists.
+     *
+     * @param key
+     *            whose value is to be returned
+     * @return value for the requested key
+     * @throws NoSuchElementException
+     *             if parameter taken from config file is null or exception occurred
+     */
+    //TODO: there is still ImageManagementModule where it is needed
+    public static String getParameter(String key) {
         try {
-            return getConfig().getString(key.getName());
+            return getConfig().getString(key);
         } catch (NoSuchElementException e) {
             try {
                 FIELD_DETAIL_MESSAGE.set(e, "No configuration found in kitodo_config.properties for key " + key + "!");
@@ -114,6 +129,27 @@ public class Config {
     public static String getParameter(ParameterInterface key, String defaultValue) {
         try {
             return getConfig().getString(key.getName(), defaultValue);
+        } catch (ConversionException e) {
+            logConversionException(key.getName(), String.class, e, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file. If no such
+     * parameter exists, returns the given default value.
+     *
+     * @param key
+     *            whose value is to be returned
+     * @param defaultValue
+     *            default value in case parameter taken from config file does not
+     *            exist or exception occurred
+     * @return value for the requested key, or {@code defaultIfNull} if not found
+     */
+    //TODO: there is still one place when it is needed
+    public static String getParameter(String key, String defaultValue) {
+        try {
+            return getConfig().getString(key, defaultValue);
         } catch (ConversionException e) {
             logConversionException(key, String.class, e, defaultValue);
             return defaultValue;
@@ -153,7 +189,7 @@ public class Config {
         try {
             return getConfig().getBoolean(key.getName(), defaultValue);
         } catch (ConversionException e) {
-            logConversionException(key, boolean.class, e, defaultValue);
+            logConversionException(key.getName(), boolean.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -191,7 +227,7 @@ public class Config {
         try {
             return getConfig().getInt(key.getName(), defaultValue);
         } catch (ConversionException e) {
-            logConversionException(key, int.class, e, defaultValue);
+            logConversionException(key.getName(), int.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -277,8 +313,7 @@ public class Config {
      * Logs a conversion exception with a helpful error message.
      *
      * @param key
-     *            as ParameterInterface enum implementation whose value could not be
-     *            converted
+     *            whose value could not be converted
      * @param failedClass
      *            class to convert the value to
      * @param occurred
@@ -286,11 +321,11 @@ public class Config {
      * @param usedValue
      *            default value being used
      */
-    private static <T> void logConversionException(ParameterInterface key, Class<T> failedClass,
+    private static <T> void logConversionException(String key, Class<T> failedClass,
             ConversionException occurred, T usedValue) {
         logger.catching(Level.DEBUG, occurred);
         final String message = "Configuration found in kitodo_config.properties for key {} is defined as \"{}\", but "
                 .concat("cannot be converted to {}! Using the default value of \"{}\".");
-        logger.warn(message, key, getParameter(key), failedClass.getSimpleName(), usedValue);
+        logger.warn(message, key, failedClass.getSimpleName(), usedValue);
     }
 }

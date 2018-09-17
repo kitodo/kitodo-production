@@ -23,6 +23,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -43,8 +44,8 @@ public class BaseTestSelenium {
         FileLoader.createDigitalCollectionsFile();
 
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
@@ -57,8 +58,8 @@ public class BaseTestSelenium {
         Browser.close();
 
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }
