@@ -13,14 +13,14 @@ package org.kitodo.config.enums;
 
 public enum ParameterAPI implements ParameterInterface {
 
-    DIR_MODULES("moduleFolder"),
+    DIR_MODULES("directory.modules"),
 
     /**
      * Absolute path to the directory that process directories will be created
      * in, terminated by a directory separator ("/"). The servlet container must
      * have write permission to that directory.
      */
-    DIR_PROCESSES("MetadatenVerzeichnis"),
+    DIR_PROCESSES("directory.metadata"),
 
     /**
      * Absolute path to the directory that the configuration files are stored
@@ -32,7 +32,7 @@ public enum ParameterAPI implements ParameterInterface {
      * where the servlet container will extract the configuration files to (like
      * webapps/kitodo/WEB-INF/classes) in order to make sure they are found.
      */
-    DIR_XML_CONFIG("KonfigurationVerzeichnis");
+    DIR_XML_CONFIG("directory.config");
 
     private String name;
 

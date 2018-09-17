@@ -45,7 +45,7 @@ They are directly mapped from task columns in Task table.
 Diagrams are stored in user local directory, which is defined in kitodo_config.properties:
 
 ```
-diagramsFolder = path/to/diagram/directory
+directory.diagrams = path/to/diagram/directory
 ```
 
-Additionaly there was added Workflow table which has two columns - title and file. Title is id of Process defined in this diagram and file is a file name of this diagram.
+Additionally there was added Workflow table which has two columns - title and file. Title is id of Process defined in this diagram and file is a file name of this diagram.

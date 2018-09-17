@@ -57,20 +57,20 @@ In the source directory that you just cloned, create a folder named `local-confi
 * `flyway.properties`
 
 Edit the following parameters your copy of `kitodo_config.properties` to point to the data directories you created. Use forward slashes as separators, and end the path entries with a forward slash. You need to edit the following parameters:
-* `KonfigurationVerzeichnis=D:/path to/config/`
-* `RegelsaetzeVerzeichnis=D:/path to/rulesets/`
-* `xsltFolder=D:/path to/xslt/`
-* `MetadatenVerzeichnis=D:/path to/metadata/`
-* `dir_Users=D:/path to/users/`
-* `tempfolder=D:/path to/temp/`
+* `directory.config=D:/path to/config/`
+* `directory.rulesets=D:/path to/rulesets/`
+* `directory.xslt=D:/path to/xslt/`
+* `directory.metadata=D:/path to/metadata/`
+* `directory.users=D:/path to/users/`
+* `directory.temp=D:/path to/temp/`
 * `script_createDirUserHome=D:/path to/scripts/script_createDirUserHome.bat`
 * `script_createDirMeta=D:/path to/scripts/script_createDirMeta.bat`
 * `script_createSymLink=D:/path to/scripts/script_createSymLink.bat`
 * `script_deleteSymLink=D:/path to/scripts/script_deleteSymLink.bat`
-* `localMessages=D:/path to/messages/`
-* `debugFolder=D:/path to/debug/`
-* `moduleFolder=D:/path to/modules/`
-* `pluginFolder=D:/path to/plugins/`
+* `directory.messages=D:/path to/messages/`
+* `directory.debug=D:/path to/debug/`
+* `directory.modules=D:/path to/modules/`
+* `directory.plugins=D:/path to/plugins/`
 
 Edit `Kitodo\src\main\resources\log4j.xml` so that `<Property name="filename">` points to your `D:/path to/logs`.
 
