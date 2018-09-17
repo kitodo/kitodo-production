@@ -27,6 +27,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.config.enums.ParameterInterface;
 
 public class Config {
@@ -47,34 +48,13 @@ public class Config {
     private static final String CONFIG_FILE = "kitodo_config.properties";
     public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
 
-    private static final String DIR_MODULES = "moduleFolder";
-
-    /**
-     * Absolute path to the directory that process directories will be created
-     * in, terminated by a directory separator ("/"). The servlet container must
-     * have write permission to that directory.
-     */
-    private static final String DIR_PROCESSES = "MetadatenVerzeichnis";
-
-    /**
-     * Absolute path to the directory that the configuration files are stored
-     * in, terminated by a directory separator ("/").
-     *
-     * <p>
-     * Note: Several, but not all configuration files are read from that
-     * directory. You may want to decide to point this path to the directory
-     * where the servlet container will extract the configuration files to (like
-     * webapps/kitodo/WEB-INF/classes) in order to make sure they are found.
-     */
-    private static final String DIR_XML_CONFIG = "KonfigurationVerzeichnis";
-
     /**
      * Returns the directory that contains the modules.
      *
      * @return the directory for the process directories
      */
     public static String getKitodoModulesDirectory() {
-        return getParameter(DIR_MODULES);
+        return getParameter(Parameter.DIR_MODULES);
     }
 
     /**
@@ -83,7 +63,7 @@ public class Config {
      * @return the directory for the process directories
      */
     public static String getKitodoDataDirectory() {
-        return getParameter(DIR_PROCESSES);
+        return getParameter(Parameter.DIR_PROCESSES);
     }
 
     /**
@@ -92,7 +72,7 @@ public class Config {
      * @return the directory for XML configuration files
      */
     public static String getKitodoConfigDirectory() {
-        return getParameter(DIR_XML_CONFIG);
+        return getParameter(Parameter.DIR_XML_CONFIG);
     }
 
     /**
