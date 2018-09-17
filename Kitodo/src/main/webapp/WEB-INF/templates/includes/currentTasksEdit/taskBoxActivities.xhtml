@@ -125,9 +125,9 @@
 
                     <!-- Edit Cancel-buttons -->
                     <h:commandLink id="action11" action="#{CurrentTaskForm.schrittDurchBenutzerZurueckgeben}"
-                                   title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
-                                   onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
-                        <h:outputText><i class="fa fa-ban"/> #{msgs.bearbeitungDiesesSchrittesAbgeben}</h:outputText>
+                                   title="#{msgs.releaseTask}"
+                                   onclick="if (!confirm('#{msgs.reallyReleaseTask}')) return">
+                        <h:outputText><i class="fa fa-ban"/> #{msgs.releaseTask}</h:outputText>
                     </h:commandLink>
 
                     <!-- Return to previous station for correction purposes-->
@@ -154,7 +154,7 @@
                                 <h:outputText value=""/>
                                 <h:commandLink id="action13" action="#{CurrentTaskForm.reportProblem}"
                                                title="#{msgs.correctionMessageSend}"
-                                               onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                               onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                     <h:outputText value="#{msgs.correctionMessageSend}"/>
                                 </h:commandLink>
                             </h:panelGrid>
@@ -166,7 +166,7 @@
                             rendered="#{task.priority>9 and CurrentTaskForm.sizeOfNextStepsForProblemSolution > 0}">
                         <span class="toggle" data-for="toggle-2">
                             <h:outputText>
-                                <i class="fa fa-arrow-left"/> #{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}
+                                <i class="fa fa-arrow-left"/> #{msgs.sendSolutionMessageNextTask}
                             </h:outputText>
                         </span>
                         <div class="toggle-2" style="display: none;">
@@ -185,9 +185,9 @@
                                 <!-- Statistical evaluation button for the entire hit set -->
                                 <h:outputText value=""/>
                                 <h:commandLink id="action14" action="#{CurrentTaskForm.solveProblem}"
-                                               title="#{msgs.meldungUeberProblemloesungSenden}"
-                                               onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                    <h:outputText value="#{msgs.meldungUeberProblemloesungSenden}"/>
+                                               title="#{msgs.sendSolutionMessage}"
+                                               onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
+                                    <h:outputText value="#{msgs.sendSolutionMessage}"/>
                                 </h:commandLink>
                             </h:panelGrid>
                         </div>
@@ -195,13 +195,11 @@
                     </h:panelGroup>
 
                     <!-- Lock button -->
-                    <h:commandLink id="action15"
-                                   action="#{CurrentTaskForm.schrittDurchBenutzerAbschliessen}"
-                                   title="#{msgs.diesenSchrittAbschliessen}"
-                                   onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
+                    <h:commandLink id="action15" action="#{CurrentTaskForm.schrittDurchBenutzerAbschliessen}"
+                                   title="#{msgs.closeTask}" onclick="if (!confirm('#{msgs.closeTask}?')) return">
                         <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                         style="margin-right:3px;vertical-align:middle"/>
-                        <h:outputText value="#{msgs.diesenSchrittAbschliessen}"/>
+                        <h:outputText value="#{msgs.closeTask}"/>
                     </h:commandLink>
                 </h:panelGrid>
             </ui:fragment>
