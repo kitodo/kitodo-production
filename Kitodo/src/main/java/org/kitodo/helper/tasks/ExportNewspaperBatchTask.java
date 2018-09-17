@@ -42,7 +42,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -254,7 +254,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             MetsModsInterface extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
-            new ExportDms(ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true)).startExport(process,
+            new ExportDms(ConfigCore.getBooleanParameter(Parameter.EXPORT_WITH_IMAGES, true)).startExport(process,
                 serviceManager.getUserService().getHomeDirectory(
                     serviceManager.getUserService().getAuthenticatedUser()),
                 extendedData.getDigitalDocument());

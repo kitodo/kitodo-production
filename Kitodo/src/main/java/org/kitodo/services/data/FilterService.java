@@ -27,7 +27,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -169,7 +169,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONEUSER, null)
-                    && ConfigCore.getBooleanParameter(Parameters.WITH_USER_STEP_DONE_SEARCH)) {
+                    && ConfigCore.getBooleanParameter(Parameter.WITH_USER_STEP_DONE_SEARCH)) {
                 query.must(filterTaskDoneUser(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKAUTOMATIC, null)) {
                 query.must(filterAutomaticTasks(tokenizedFilter, objectType));

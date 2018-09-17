@@ -30,7 +30,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -114,7 +114,7 @@ public class VariableReplacer {
             String ocrPlaintextPath = replaceSlashAndSeparator(fileService.getTxtDirectory(this.process));
             String sourcePath = replaceSlashAndSeparator(fileService.getSourceDirectory(this.process));
             String importPath = replaceSlashAndSeparator(fileService.getImportDirectory(this.process));
-            String prefs = ConfigCore.getParameter(Parameters.DIR_RULESETS) + this.process.getRuleset().getFile();
+            String prefs = ConfigCore.getParameter(Parameter.DIR_RULESETS) + this.process.getRuleset().getFile();
 
             inString = replaceStringAccordingToOS(inString, "(tifurl)", tifPath);
             inString = replaceStringAccordingToOS(inString, "(origurl)", origPath);

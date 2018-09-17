@@ -45,7 +45,7 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.mq.WebServiceResult;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.enums.ReportLevel;
 
 /**
@@ -403,7 +403,7 @@ public class Helper implements Observer, Serializable {
                 commonMessages.put(language, ResourceBundle.getBundle("messages.messages", language));
                 errorMessages.put(language, ResourceBundle.getBundle("messages.errors", language));
                 File file = new File(
-                        ConfigCore.getParameter(Parameters.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
+                        ConfigCore.getParameter(Parameter.DIR_LOCAL_MESSAGES, DefaultValues.LOCAL_MESSAGES));
                 if (file.exists()) {
                     /*
                      * Load local message bundle from file system only if file exists,if value not
@@ -527,7 +527,7 @@ public class Helper implements Observer, Serializable {
     };
 
     private static List<String> getImageNameRegexList() {
-        String prefix = ConfigCore.getParameter("ImagePrefix", "\\d{8}");
+        String prefix = ConfigCore.getParameter(Parameter.IMAGE_PREFIX, "\\d{8}");
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");
@@ -539,7 +539,7 @@ public class Helper implements Observer, Serializable {
     }
 
     private static List<String> getDataRegexList() {
-        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
+        String prefix = ConfigCore.getParameter(Parameter.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         List<String> regexList = new ArrayList<>();
         regexList.add(prefix + "\\.[Tt][Ii][Ff][Ff]?");

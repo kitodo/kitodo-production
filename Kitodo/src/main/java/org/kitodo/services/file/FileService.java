@@ -37,7 +37,7 @@ import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
@@ -74,7 +74,7 @@ public class FileService {
                     .getPath(ConfigCore.getKitodoDataDirectory(), parentFolderUri.getRawPath(), directoryName)
                     .normalize().toAbsolutePath().toString();
             List<String> commandParameter = Collections.singletonList(path);
-            File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
+            File script = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_META));
             CommandResult commandResult = commandService.runCommand(script, commandParameter);
             return commandResult.isSuccessful();
         } else {
@@ -117,7 +117,7 @@ public class FileService {
 
             CommandService commandService = serviceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getPath());
-            commandService.runCommand(new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME)),
+            commandService.runCommand(new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_USER_HOME)),
                 commandParameter);
         }
     }
@@ -499,7 +499,7 @@ public class FileService {
     void createBackupFile(Process process) throws IOException {
         int numberOfBackups;
 
-        numberOfBackups = ConfigCore.getIntParameter(Parameters.NUMBER_OF_META_BACKUPS);
+        numberOfBackups = ConfigCore.getIntParameter(Parameter.NUMBER_OF_META_BACKUPS);
 
         if (numberOfBackups != ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS) {
             BackupFileRotation bfr = new BackupFileRotation();
@@ -773,7 +773,7 @@ public class FileService {
      * @return the URI to the temporal directory.
      */
     public URI getTemporaryDirectory() {
-        return ConfigCore.getUri(Parameters.DIR_TEMP);
+        return ConfigCore.getUriParameter(Parameter.DIR_TEMP);
     }
 
     /**
@@ -782,7 +782,7 @@ public class FileService {
      * @return the URI to the users directory.
      */
     public URI getUsersDirectory() {
-        return ConfigCore.getUri(Parameters.DIR_USERS);
+        return ConfigCore.getUriParameter(Parameter.DIR_USERS);
     }
 
     public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)
@@ -855,7 +855,7 @@ public class FileService {
         URI dummyImage = getDummyImagePath();
 
         // Load number of digits to create valid filenames
-        String numberOfDigits = extractNumber(ConfigCore.getParameter("ImagePrefix"));
+        String numberOfDigits = extractNumber(ConfigCore.getParameter(Parameter.IMAGE_PREFIX));
 
         for (int i = startValue; i < startValue + numberOfNewImages; i++) {
             copyFile(dummyImage, imagesDirectory.resolve(String.format("%0" + numberOfDigits + "d", i) + ".tif"));

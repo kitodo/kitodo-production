@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
@@ -47,7 +47,7 @@ public class IndexWorker implements Runnable {
     @SuppressWarnings("unchecked")
     public void run() {
         this.indexedObjects = 0;
-        int batchSize = ConfigCore.getIntParameter(Parameters.ELASTICSEARCH_BATCH,
+        int batchSize = ConfigCore.getIntParameter(Parameter.ELASTICSEARCH_BATCH,
             DefaultValues.ELASTICSEARCH_BATCH);
         try {
             int amountToIndex = searchService.countDatabaseRows().intValue();

@@ -29,6 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.im4java.core.IMOperation;
 import org.kitodo.config.Config;
+import org.kitodo.config.enums.Parameter;
 
 /**
  * Executes the {@code convert} command.
@@ -71,12 +72,12 @@ class ConvertRunner {
         OutputStream outAndErr = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(outAndErr));
 
-        long timeoutMillis = 1000 * Config.getIntParameter("ImageManagementModule.timeoutSec", DEFAULT_TIMEOUT_MINS);
+        long timeoutMillis = 1000 * Config.getIntParameter(Parameter.TIMEOUT_SEC, DEFAULT_TIMEOUT_MINS);
         executor.setWatchdog(new ExecuteWatchdog(timeoutMillis));
 
         CommandLine command;
         try {
-            String sshHosts = Config.getParameter("ImageManagementModule.sshHosts");
+            String sshHosts = Config.getParameter(Parameter.SSH_HOST);
             command = new CommandLine("ssh");
             String[] hosts = sshHosts.split(",");
             String host = hosts[RANDOMNESS_GENERATOR.nextInt(hosts.length)];
