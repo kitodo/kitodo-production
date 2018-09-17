@@ -773,7 +773,7 @@ public class FileService {
      * @return the URI to the temporal directory.
      */
     public URI getTemporaryDirectory() {
-        return ConfigCore.getUri(Parameter.DIR_TEMP);
+        return ConfigCore.getUriParameter(Parameter.DIR_TEMP);
     }
 
     /**
@@ -782,7 +782,7 @@ public class FileService {
      * @return the URI to the users directory.
      */
     public URI getUsersDirectory() {
-        return ConfigCore.getUri(Parameter.DIR_USERS);
+        return ConfigCore.getUriParameter(Parameter.DIR_USERS);
     }
 
     public void writeMetadataAsTemplateFile(FileformatInterface inFile, Process process)

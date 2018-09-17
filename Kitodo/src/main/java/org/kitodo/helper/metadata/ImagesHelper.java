@@ -122,7 +122,7 @@ public class ImagesHelper {
         }
 
         String defaultPagination = ConfigCore.getParameter(Parameter.METS_EDITOR_DEFAULT_PAGINATION,
-            Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED);
+            Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName());
         Map<String, DocStructInterface> assignedImages = new HashMap<>();
         List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
 
@@ -333,14 +333,14 @@ public class ImagesHelper {
      * @return pagination value as String
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
-        if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC)) {
+        if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC.getName())) {
             return String.valueOf(currentPhysicalOrder);
-        } else if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN)) {
+        } else if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN.getName())) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
-            return Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED;
+            return Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName();
         }
     }
 

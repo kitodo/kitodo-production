@@ -479,7 +479,7 @@ public class Metadaten {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
                     authority = ConfigCore
-                            .getParameter(Parameter.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+                            .getParameter(Parameter.AUTHORITY_ID_FROM_URI.getName().replaceFirst("\\{0\\}", authorityURI), null);
                 }
             }
         }
