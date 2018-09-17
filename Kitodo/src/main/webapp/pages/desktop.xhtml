@@ -19,7 +19,8 @@
     <ui:define name="content">
         <h:outputScript name="desktop.js" target="body" library="js"/>
         <p:panelGrid columns="2" layout="grid" id="desktopGrid">
-            <p:panel styleClass="desktop-widget">
+            <p:panel styleClass="desktop-widget"
+                     rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
                 <div class="content-header">
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.tasks}</h3>
@@ -35,7 +36,7 @@
                 <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
             </p:panel>
             <p:panel styleClass="desktop-widget"
-                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllProcesses')}">
+                     rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
                 <div class="content-header">
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.processes}</h3>
@@ -52,7 +53,7 @@
                 <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
             </p:panel>
             <p:panel styleClass="desktop-widget"
-                     rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('viewAllProjects')}">
+                     rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
                 <div class="content-header">
                     <div class="ui-panel-content ui-widget-content">
                         <h3>#{msgs.projects}</h3>
