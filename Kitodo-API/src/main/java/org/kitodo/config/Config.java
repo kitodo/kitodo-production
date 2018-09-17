@@ -232,9 +232,9 @@ public class Config {
      *            returned
      * @return Optional holding the value for the requested key, else empty.
      */
-    public static Optional<String> getOptionalString(String key) {
+    public static Optional<String> getOptionalString(ParameterInterface key) {
         try {
-            return Optional.of(getConfig().getString(key));
+            return Optional.of(getConfig().getString(key.getName()));
         } catch (NoSuchElementException e) {
             logger.catching(Level.TRACE, e);
             return Optional.empty();
