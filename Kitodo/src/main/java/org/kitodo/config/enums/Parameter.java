@@ -27,19 +27,19 @@ public enum Parameter implements ParameterInterface {
     /*
      * Parameters.java has been sorted to corresponding to
      * kitodo_config.properties, including the section headers as you see.
-     * However there is an entry KonfigurationVerzeichnis in
+     * However there is an entry directory.config in
      * kitodo_config.properties, but there is no constant for it here. This
      * comment is to explain where the constant is if someone compares the two
      * files in the future:
      */
 
-    DIR_XML_CONFIG("KonfigurationVerzeichnis"),
+    DIR_XML_CONFIG("directory.config"),
 
     /**
      * Absolute path to the directory that the rule set definition files will be
      * read from. It must be terminated by a directory separator ("/").
      */
-    DIR_RULESETS("RegelsaetzeVerzeichnis"),
+    DIR_RULESETS("directory.rulesets"),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are
@@ -48,18 +48,18 @@ public enum Parameter implements ParameterInterface {
      * the physical binding units to digitise. The path must be terminated by a
      * directory separator ("/").
      */
-    DIR_XSLT("xsltFolder"),
+    DIR_XSLT("directory.xslt"),
 
     /*
      * Parameters.java has been sorted to corresponding to
      * kitodo_config.properties, including the section headers as you see.
-     * However there is an entry MetadatenVerzeichnis in
+     * However there is an entry directory.metadata in
      * kitodo_config.properties, but there is no constant for it here. This
      * comment is to explain where the constant is if someone compares the two
      * files in the future:
      */
 
-    DIR_PROCESSES("MetadatenVerzeichnis"),
+    DIR_PROCESSES("directory.metadata"),
 
     /**
      * Absolute path to the base directory of the users' home directories,
@@ -70,13 +70,13 @@ public enum Parameter implements ParameterInterface {
      * after finishing the task. Note: If LDAP is used, the users' home dirs
      * will instead be read from LDAP
      */
-    DIR_USERS("dir_Users"),
+    DIR_USERS("directory.users"),
 
     /**
      * Absolute path to a folder the application can temporarily create files
      * in, terminated by a directory separator ("/").
      */
-    DIR_TEMP("tempfolder"),
+    DIR_TEMP("directory.temp"),
 
     /**
      * Path to directory in which BPMN diagrams are stored.
@@ -86,12 +86,12 @@ public enum Parameter implements ParameterInterface {
     /*
      * Parameters.java has been sorted to corresponding to
      * kitodo_config.properties, including the section headers as you see.
-     * However there is an entry moduleFolder in kitodo_config.properties, but
+     * However there is an entry directory.modules in kitodo_config.properties, but
      * there is no constant for it here. This comment is to explain where the
      * constant is if someone compares the two files in the future:
      */
 
-    DIR_MODULES("moduleFolder"),
+    DIR_MODULES("directory.modules"),
 
     /**
      * Points to a folder on the file system that contains <b>legacy</b>
@@ -102,13 +102,13 @@ public enum Parameter implements ParameterInterface {
      * <p>
      * Must be terminated by the file separator.
      */
-    DIR_PLUGINS("pluginFolder"),
+    DIR_PLUGINS("directory.plugins"),
 
     /**
      * Points to a folder on the file system that <b>legacy</b> plug-ins may use
      * to write temporary files.
      */
-    DIR_PLUGINS_TEMP("debugFolder"),
+    DIR_PLUGINS_TEMP("directory.debug"),
 
     /*
      * Directory management
@@ -244,7 +244,7 @@ public enum Parameter implements ParameterInterface {
      * be used. If this directory exists BUT DOES NOT CONTAIN suitable
      * resources, the screens will not work as expected.
      */
-    DIR_LOCAL_MESSAGES("localMessages"),
+    DIR_LOCAL_MESSAGES("directory.messages"),
 
     /**
      * Start-up language: If not set, Kitodo.Production will start up with the

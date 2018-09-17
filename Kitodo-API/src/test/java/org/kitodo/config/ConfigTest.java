@@ -43,7 +43,7 @@ public class ConfigTest {
     @Test
     public void shouldGetStringParameterForNonexistentWithoutDefault() {
         expectedEx.expect(NoSuchElementException.class);
-        expectedEx.expectMessage("No configuration found in kitodo_config.properties for key MetadatenVerzeichnis!");
+        expectedEx.expectMessage("No configuration found in kitodo_config.properties for key directory.metadata!");
         Config.getParameter(Parameter.DIR_PROCESSES);
     }
 
