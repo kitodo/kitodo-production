@@ -86,7 +86,7 @@ import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -298,7 +298,7 @@ public class Metadaten {
     public void addPerson() {
         this.modeAddPerson = true;
         this.tempPersonNachname = "";
-        this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+        this.tempPersonRecord = ConfigCore.getParameter(Parameter.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
     }
 
@@ -479,7 +479,7 @@ public class Metadaten {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
                     authority = ConfigCore
-                            .getParameter(Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+                            .getParameter(Parameter.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
                 }
             }
         }
@@ -708,7 +708,7 @@ public class Metadaten {
         }
 
         retrieveAllImages();
-        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(Parameter.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren().isEmpty())) {
@@ -736,7 +736,7 @@ public class Metadaten {
     }
 
     private void createDefaultValues(DocStructInterface element) {
-        if (ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
+        if (ConfigCore.getBooleanParameter(Parameter.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
             saveMetadataAsBean(element);
             List allChildren = element.getAllChildren();
             if (Objects.nonNull(allChildren)) {
@@ -1582,7 +1582,7 @@ public class Metadaten {
         List<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE, "");
         this.allTifFolders.addAll(subUris);
 
-        Optional<String> suffix = ConfigCore.getOptionalString(Parameters.METS_EDITOR_DEFAULT_SUFFIX);
+        Optional<String> suffix = ConfigCore.getOptionalString(Parameter.METS_EDITOR_DEFAULT_SUFFIX);
         if (suffix.isPresent()) {
             for (URI directoryUri : this.allTifFolders) {
                 if (directoryUri.toString().endsWith(suffix.get())
@@ -1620,7 +1620,7 @@ public class Metadaten {
         logger.trace("dataList");
         List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
-        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(Parameter.WITH_AUTOMATIC_PAGINATION, true)
                 && (dataList == null || dataList.isEmpty())) {
             try {
                 createPagination();
@@ -1978,7 +1978,7 @@ public class Metadaten {
     private int pageNumber = 0;
 
     private SelectOne<Separator> paginationSeparators = new SelectOne<>(Separator
-            .factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, DefaultValues.PAGE_SEPARATORS)));
+            .factory(ConfigCore.getParameter(Parameter.PAGE_SEPARATORS, DefaultValues.PAGE_SEPARATORS)));
 
     public int getPageNumber() {
         return this.pageNumber;
@@ -2187,7 +2187,7 @@ public class Metadaten {
      * OCR.
      */
     public boolean isShowOcrButton() {
-        return ConfigCore.getBooleanParameter(Parameters.SHOW_OCR_BUTTON);
+        return ConfigCore.getBooleanParameter(Parameter.SHOW_OCR_BUTTON);
     }
 
     /**
@@ -2250,7 +2250,7 @@ public class Metadaten {
     }
 
     private String getOcrBasisUrl(int... seiten) {
-        String url = ConfigCore.getParameter(Parameters.OCR_URL);
+        String url = ConfigCore.getParameter(Parameter.OCR_URL);
         VariableReplacer replacer = new VariableReplacer(this.digitalDocument, this.myPrefs, this.process, null);
         url = replacer.replace(url);
         url += "/&imgrange=" + seiten[0];
@@ -3163,7 +3163,7 @@ public class Metadaten {
     }
 
     public Boolean getDisplayFileManipulation() {
-        return ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_DISPLAY_FILE_MANIPULATION);
+        return ConfigCore.getBooleanParameter(Parameter.METS_EDITOR_DISPLAY_FILE_MANIPULATION);
     }
 
     /**

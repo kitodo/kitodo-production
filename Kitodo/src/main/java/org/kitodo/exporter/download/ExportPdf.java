@@ -37,7 +37,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.tasks.CreatePdfFromServletThread;
@@ -76,14 +76,14 @@ public class ExportPdf extends ExportMets {
         String servletPath = context.getExternalContext().getRequestServletPath();
         String basisUrl = fullPath.substring(0, fullPath.indexOf(servletPath));
 
-        if (!ConfigCore.getBooleanParameter(Parameters.PDF_AS_DOWNLOAD)) {
+        if (!ConfigCore.getBooleanParameter(Parameter.PDF_AS_DOWNLOAD)) {
             useContentServerForPdfCreation(metaFile, userHome, process, basisUrl);
         } else {
 
             GetMethod method = null;
             try {
                 // define path for mets and pdfs
-                Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+                Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameter.KITODO_CONTENT_SERVER_TIMEOUT,
                     DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
                 URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 
@@ -114,7 +114,7 @@ public class ExportPdf extends ExportMets {
     }
 
     private URL getKitodoContentServerURL(URI metaFile, Process process, String basisUrl) throws IOException {
-        String contentServerUrl = ConfigCore.getParameter(Parameters.KITODO_CONTENT_SERVER_URL);
+        String contentServerUrl = ConfigCore.getParameter(Parameter.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
         if (serviceManager.getMetadataValidationService().validate(process)) {

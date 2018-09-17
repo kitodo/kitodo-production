@@ -38,7 +38,7 @@ import org.kitodo.api.validation.metadata.MetadataValidationInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.UghHelperException;
@@ -235,7 +235,7 @@ public class MetadataValidationService {
     private boolean isMetadataValueReplaced(DocStructInterface docStruct, MetadataInterface metadata,
             String metadataLanguage) {
 
-        if (!metadata.getValue().replaceAll(ConfigCore.getParameter(Parameters.VALIDATE_IDENTIFIER_REGEX,
+        if (!metadata.getValue().replaceAll(ConfigCore.getParameter(Parameter.VALIDATE_IDENTIFIER_REGEX,
             DefaultValues.VALIDATE_IDENTIFIER_REGEX), "").equals("")) {
             Object[] parameters = new Object[] {metadata.getMetadataType().getNameByLanguage(metadataLanguage),
                                                 docStruct.getDocStructType().getNameByLanguage(metadataLanguage) };

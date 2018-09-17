@@ -23,8 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
-import org.kitodo.config.Config;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
@@ -103,6 +102,6 @@ public class ConfigCore extends Config {
      * @return String
      */
     public static String getKitodoDiagramDirectory() {
-        return getParameter(Parameters.DIR_DIAGRAMS);
+        return getParameter(Parameter.DIR_DIAGRAMS);
     }
 }

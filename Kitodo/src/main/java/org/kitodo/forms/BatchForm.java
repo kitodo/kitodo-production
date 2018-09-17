@@ -31,7 +31,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -138,7 +138,7 @@ public class BatchForm extends BaseForm {
             }
         }
 
-        Integer batchMaxSize = ConfigCore.getIntParameter(Parameters.BATCH_DISPLAY_LIMIT, -1);
+        Integer batchMaxSize = ConfigCore.getIntParameter(Parameter.BATCH_DISPLAY_LIMIT, -1);
         try {
             if (batchMaxSize > 0) {
                 processDTOS = serviceManager.getProcessService().findByQuery(query,
@@ -316,7 +316,7 @@ public class BatchForm extends BaseForm {
             for (Batch selectedBatch : this.selectedBatches) {
                 serviceManager.getBatchService().addAll(selectedBatch, this.selectedProcesses);
                 serviceManager.getBatchService().save(selectedBatch);
-                if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
+                if (ConfigCore.getBooleanParameter(Parameter.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(
                             Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
@@ -348,7 +348,7 @@ public class BatchForm extends BaseForm {
         for (Batch selectedBatch : this.selectedBatches) {
             serviceManager.getBatchService().removeAll(selectedBatch, this.selectedProcesses);
             serviceManager.getBatchService().save(selectedBatch);
-            if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
+            if (ConfigCore.getBooleanParameter(Parameter.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(
                         Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
@@ -400,7 +400,7 @@ public class BatchForm extends BaseForm {
             }
 
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
+            if (ConfigCore.getBooleanParameter(Parameter.BATCHES_LOG_CHANGES)) {
                 for (Process p : selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(
                         Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
@@ -459,7 +459,7 @@ public class BatchForm extends BaseForm {
                     case LOGISTIC:
                         for (Process process : selectedBatch.getProcesses()) {
                             ExportDms dms = new ExportDms(
-                                    ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
+                                    ConfigCore.getBooleanParameter(Parameter.EXPORT_WITH_IMAGES, true));
                             dms.startExport(process);
                         }
                         break;

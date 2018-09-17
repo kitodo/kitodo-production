@@ -26,7 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -269,7 +269,7 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(Parameter.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.title.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");

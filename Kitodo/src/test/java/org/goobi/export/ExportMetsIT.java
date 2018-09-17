@@ -28,7 +28,7 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exporter.download.ExportMets;
@@ -38,7 +38,7 @@ import org.kitodo.services.file.FileService;
 public class ExportMetsIT {
 
     private static final File scriptCreateDirUserHome = new File(
-            ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
+            ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_USER_HOME));
     private static ServiceManager serviceManager = new ServiceManager();
     private static FileService fileService = serviceManager.getFileService();
     private static String userDirectory;
@@ -57,7 +57,7 @@ public class ExportMetsIT {
         process = serviceManager.getProcessService().getById(1);
         metadataDirectory = process.getId().toString();
         userDirectory = user.getLogin();
-        exportUri = ConfigCore.getUri(Parameters.DIR_USERS, userDirectory);
+        exportUri = ConfigCore.getUriParameter(Parameter.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
         fileService.copyFileToDirectory(URI.create("metadata/testmetaOldFormat.xml"), URI.create(metadataDirectory));
@@ -69,7 +69,7 @@ public class ExportMetsIT {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
-        File userdataDirectory = new File(ConfigCore.getParameter(Parameters.DIR_USERS));
+        File userdataDirectory = new File(ConfigCore.getParameter(Parameter.DIR_USERS));
         if (!userdataDirectory.exists() && !userdataDirectory.mkdir()) {
             throw new IOException("Could not create users directory");
         }
@@ -81,7 +81,7 @@ public class ExportMetsIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create(metadataDirectory));
-        fileService.delete(ConfigCore.getUri(Parameters.DIR_USERS));
+        fileService.delete(ConfigCore.getUriParameter(Parameter.DIR_USERS));
         FileLoader.deleteConfigProjectsFile();
 
         if (!SystemUtils.IS_OS_WINDOWS) {
@@ -98,11 +98,11 @@ public class ExportMetsIT {
             // does the work of that script.
             // TODO Find a better way for changing script selection
             // corresponding to OS
-            fileService.createDirectory(ConfigCore.getUri(Parameters.DIR_USERS), userDirectory);
+            fileService.createDirectory(ConfigCore.getUriParameter(Parameter.DIR_USERS), userDirectory);
         }
 
         exportMets.startExport(process, exportUri);
-        List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(Parameters.DIR_USERS) + userDirectory
+        List<String> strings = Files.readAllLines(Paths.get(ConfigCore.getParameter(Parameter.DIR_USERS) + userDirectory
                 + "/" + serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + "_mets.xml"));
 
         Assert.assertTrue("Export of metadata was wrong",
