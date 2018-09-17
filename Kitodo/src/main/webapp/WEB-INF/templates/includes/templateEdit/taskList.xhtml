@@ -87,11 +87,4 @@
     </p:dataTable>
 
     <o:graphicImage rendered="#{item.template.workflow ne null}" value="#{TemplateForm.tasksDiagram}" dataURI="true" />
-
-    <p:commandButton action="#{TemplateForm.newTask}"
-                     value="#{msgs.taskAdd}"
-                     icon="fa fa-plus-circle fa-lg"
-                     iconPos="right"
-                     styleClass="callto"
-                     id="addStepButton"/>
 </ui:composition>
