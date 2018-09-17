@@ -32,6 +32,7 @@ public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
 
     private static final Field FIELD_DETAIL_MESSAGE;
+
     static {
         try {
             FIELD_DETAIL_MESSAGE = Throwable.class.getDeclaredField("detailMessage");
