@@ -329,6 +329,7 @@ public enum Parameter {
      * Use special pagination type for automatic default pagination.
      */
     METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination"),
+    // TODO: it doesn't fit here
     METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC("arabic"),
     METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN("roman"),
     METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED("uncounted"),
