@@ -89,19 +89,6 @@ public abstract class LongRunningTask extends EmptyTask {
     public abstract EmptyTask replace();
 
     /**
-     * The method stopped() had been used to record that the thread has stopped.
-     *
-     * @deprecated The method stopped() has become redundant due to newer
-     *             development. The thread state is now directly derived from
-     *             {@link Thread#getState()} which is reliable in determining
-     *             whether the thread has died, independent of whether it ever
-     *             managed to call stopped() or died before.
-     */
-    @Deprecated
-    protected void stopped() {
-    }
-
-    /**
      * Returns the display name of the task to show to the user.
      *
      * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()

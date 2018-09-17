@@ -261,11 +261,9 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * Download docket.
-     *
-     * @return String
+     * Download docket for all processes assigned to selected batch.
      */
-    public String downloadDocket() throws IOException {
+    public void downloadDocket() {
         logger.debug("generate docket for process list");
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
@@ -276,11 +274,14 @@ public class BatchForm extends BaseForm {
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
+            } catch (IOException e) {
+                //TODO: needed message for case of IOException
+                Helper.setErrorMessage(e.getMessage(), new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                        e);
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         }
-        return null;
     }
 
     /**

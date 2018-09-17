@@ -145,7 +145,7 @@ public class LdapServerForm extends BaseForm {
      * @return The passwordEncryption.
      */
     public PasswordEncryption[] getPasswordEncryption() {
-        return passwordEncryption.values();
+        return PasswordEncryption.values();
     }
 
     /**

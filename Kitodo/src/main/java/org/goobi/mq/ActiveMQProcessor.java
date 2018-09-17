@@ -21,9 +21,6 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ReportLevel;
@@ -53,7 +50,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      *            requires to have a field “id”.
      */
     protected abstract void process(MapMessageObjectReader ticket)
-            throws DAOException, DataException, IOException, JMSException, PreferencesException, ReadException, WriteException;
+            throws DAOException, DataException, IOException, JMSException;
 
     /**
      * Instantiating the class ActiveMQProcessor always requires to pass the

@@ -11,20 +11,16 @@
 
 package org.kitodo.forms;
 
-import java.io.FilenameFilter;
 import java.io.Serializable;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
-import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.helper.enums.MetadataFormat;

@@ -2196,7 +2196,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
-            throws IOException, JAXBException {
+            throws JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
         virtualFileGroup.setName(folder.getFileGroup());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));

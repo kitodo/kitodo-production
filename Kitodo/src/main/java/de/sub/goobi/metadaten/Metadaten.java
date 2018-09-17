@@ -514,41 +514,7 @@ public class Metadaten {
     }
 
     /**
-     * Get size of roles.
-     *
-     * @return size
-     */
-    public int getSizeOfRoles() {
-        try {
-            return getAddableRollen().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfRoles(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Get size of metadata.
-     *
-     * @return size
-     */
-    public int getSizeOfMetadata() {
-        try {
-            return getAddableMetadataTypes().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfMetadata(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Gets addeble metadata types.
+     * Gets addable metadata types.
      *
      * @return The metadata types.
      */
