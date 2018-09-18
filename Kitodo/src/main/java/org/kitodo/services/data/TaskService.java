@@ -443,11 +443,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
-        taskDTO.setProcessingTime(processingTime != JsonValue.NULL ? processingTime.toString() : null);
+        taskDTO.setProcessingTime(getDateFromJsonValue(processingTime));
         JsonValue processingBegin = taskJSONObject.get(TaskTypeField.PROCESSING_BEGIN.getKey());
-        taskDTO.setProcessingBegin(processingBegin != JsonValue.NULL ? processingBegin.toString() : null);
+        taskDTO.setProcessingBegin(getDateFromJsonValue(processingBegin));
         JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getKey());
-        taskDTO.setProcessingEnd(processingEnd != JsonValue.NULL ? processingEnd.toString() : null);
+        taskDTO.setProcessingEnd(getDateFromJsonValue(processingEnd));
         taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
         taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImportFileUpload(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(taskJSONObject));
@@ -485,6 +485,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
         taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
+    }
+
+    private String getDateFromJsonValue(JsonValue date) {
+        return date != JsonValue.NULL ? date.toString().replace("\"", "") : "";
     }
 
     /**

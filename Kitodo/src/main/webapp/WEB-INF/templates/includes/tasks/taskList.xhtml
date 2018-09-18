@@ -20,15 +20,25 @@
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
+
+        <p:ajax event="rowToggle" oncomplete="registerRowToggleEvents();" />
+
+        <p:column style="width: 16px;">
+            <p:rowToggler/>
+        </p:column>
+
         <p:column headerText="#{msgs.task}">
             <h:outputText value="#{item.title}"/>
         </p:column>
+
         <p:column headerText="#{msgs.process}">
             <h:outputText value="#{item.process.title}"/>
         </p:column>
+
         <p:column headerText="#{msgs.project}">
             <h:outputText value="#{item.process.project.title}"/>
         </p:column>
+
         <p:column headerText="#{msgs.status}">
             <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
                             title="#{item.processingStatus.title}" style="margin-right:10px;"/>
@@ -36,6 +46,7 @@
             <h:outputText value="!!" rendered="#{item.priority == 2}"/>
             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
         </p:column>
+
         <p:column headerText="#{msgs.actions}">
             <h:form>
                 <!-- assign task -->
@@ -85,5 +96,26 @@
                 </h:commandLink>
             </h:form>
         </p:column>
+
+        <p:rowExpansion styleClass="expansion-class">
+            <div class="row-expansion-wrapper">
+                <p:panelGrid columns="2" columnClasses="label, value" id="currentTaskDetailTable">
+                    <h:outputText value="#{msgs.priority}:"/>
+                    <h:outputText value="#{item.priority}"/>
+
+                    <h:outputText value="#{msgs.processingBegin}:"/>
+                    <h:outputText value="#{item.processingBegin}"/>
+
+                    <h:outputText value="#{msgs.lastEdited}:"/>
+                    <h:outputText value="#{item.processingTime}"/>
+
+                    <h:outputText value="#{msgs.lastUpdatedBy}:"/>
+                    <h:outputText value="#{item.processingUser.fullName}"/>
+
+                    <h:outputText value="#{msgs.editType}:"/>
+                    <h:outputText value="#{item.editTypeTitle}"/>
+                </p:panelGrid>
+            </div>
+        </p:rowExpansion>
     </p:dataTable>
 </ui:composition>
