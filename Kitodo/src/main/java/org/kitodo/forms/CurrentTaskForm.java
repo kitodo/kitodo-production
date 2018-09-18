@@ -598,20 +598,84 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
+    /**
+     * Check if it should show only open tasks.
+     * 
+     * @return boolean
+     */
     public boolean isOnlyOpenTasks() {
         return this.onlyOpenTasks;
     }
 
+    /**
+     * Set shown only open tasks.
+     *
+     * @param onlyOpenTasks
+     *            as boolean
+     */
     public void setOnlyOpenTasks(boolean onlyOpenTasks) {
         this.onlyOpenTasks = onlyOpenTasks;
+        serviceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
     }
 
+    /**
+     * Check if it should show only own tasks.
+     * 
+     * @return boolean
+     */
     public boolean isOnlyOwnTasks() {
         return this.onlyOwnTasks;
     }
 
+    /**
+     * Set shown only tasks owned by currently logged user.
+     *
+     * @param onlyOwnTasks
+     *            as boolean
+     */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
         this.onlyOwnTasks = onlyOwnTasks;
+        serviceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
+    }
+
+    /**
+     * Check if it should show also automatic tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isShowAutomaticTasks() {
+        return this.showAutomaticTasks;
+    }
+
+    /**
+     * Set show automatic tasks.
+     *
+     * @param showAutomaticTasks
+     *            as boolean
+     */
+    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
+        this.showAutomaticTasks = showAutomaticTasks;
+        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
+    }
+
+    /**
+     * Check if it should hide correction tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isHideCorrectionTasks() {
+        return hideCorrectionTasks;
+    }
+
+    /**
+     * Set hide correction tasks.
+     *
+     * @param hideCorrectionTasks
+     *            as boolean
+     */
+    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+        this.hideCorrectionTasks = hideCorrectionTasks;
+        serviceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
     }
 
     public Map<String, Boolean> getAnzeigeAnpassen() {
@@ -773,24 +837,6 @@ public class CurrentTaskForm extends BaseForm {
         this.batchHelper = batchHelper;
     }
 
-    public boolean getShowAutomaticTasks() {
-        return this.showAutomaticTasks;
-    }
-
-    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        this.showAutomaticTasks = showAutomaticTasks;
-        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
-    }
-
-    public boolean getHideCorrectionTasks() {
-        return hideCorrectionTasks;
-    }
-
-    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        this.hideCorrectionTasks = hideCorrectionTasks;
-        serviceManager.getTaskService().setHideCorrectionTasks(hideCorrectionTasks);
-    }
-
     /**
      * Method being used as viewAction for CurrentTaskForm.
      *
@@ -802,7 +848,7 @@ public class CurrentTaskForm extends BaseForm {
             setCurrentTask(serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                    logger, e);
+                logger, e);
         }
     }
 

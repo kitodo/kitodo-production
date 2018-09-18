@@ -63,6 +63,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TaskService instance = null;
+    private boolean onlyOpenTasks = false;
+    private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
 
@@ -98,22 +100,31 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query to retrieve tasks for which the user eligible.
      */
     private BoolQueryBuilder createUserTaskQuery(User user) {
-        BoolQueryBuilder subquery = new BoolQueryBuilder();
-        subquery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-        subquery.should(createSimpleQuery("users.id", user.getId(), true));
-        for (UserGroup userGroup : user.getUserGroups()) {
-            subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
-        }
-
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(subquery);
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
+        if (onlyOpenTasks) {
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.OPEN.getValue(), true));
+        }
+
+        if (onlyOwnTasks) {
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+        } else {
+            BoolQueryBuilder subQuery = new BoolQueryBuilder();
+            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            subQuery.should(createSimpleQuery("users.id", user.getId(), true));
+            for (UserGroup userGroup : user.getUserGroups()) {
+                subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+            }
+            query.must(subQuery);
+        }
+
         if (hideCorrectionTasks) {
             query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), 10, true));
         }
+
         if (!showAutomaticTasks) {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
@@ -713,6 +724,26 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }
+    }
+
+    /**
+     * Set shown only open tasks.
+     *
+     * @param onlyOpenTasks
+     *            as boolean
+     */
+    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
+        this.onlyOpenTasks = onlyOpenTasks;
+    }
+
+    /**
+     * Set shown only tasks owned by currently logged user.
+     *
+     * @param onlyOwnTasks
+     *            as boolean
+     */
+    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        this.onlyOwnTasks = onlyOwnTasks;
     }
 
     /**
