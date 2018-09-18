@@ -563,7 +563,8 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setMessage(EXPORT_FINISHED);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
-            Helper.setErrorMessage(ERROR_EXPORTING, new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORTING,
+                new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
     }
 
