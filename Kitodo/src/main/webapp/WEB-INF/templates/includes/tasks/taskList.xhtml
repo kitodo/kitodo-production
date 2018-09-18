@@ -45,7 +45,7 @@
 
         <p:column headerText="#{msgs.status}">
             <h:graphicImage alt="" value="#{item.processingStatus.bigImagePath}"
-                            title="#{item.processingStatus.title}" style="margin-right:10px;"/>
+                            title="#{item.processingStatusTitle}" style="margin-right:10px;"/>
             <h:outputText value="!" rendered="#{item.priority == 1}"/>
             <h:outputText value="!!" rendered="#{item.priority == 2}"/>
             <h:outputText value="!!!" rendered="#{item.priority == 3}"/>
