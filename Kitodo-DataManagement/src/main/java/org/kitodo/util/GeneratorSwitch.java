@@ -45,7 +45,7 @@ public class GeneratorSwitch {
      * Modifyable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
-    private List<Folder> generateContents;
+    private List<Folder> contentFolders;
 
     /**
      * Returns a list of generator switches for all folders whose contents can
@@ -53,12 +53,12 @@ public class GeneratorSwitch {
      *
      * @param projects
      *            stream of projects this task is used in
-     * @param generateContents
+     * @param contentFolders
      *            modifiable list of folders whose contents are to be generated
      * @return list of GeneratorSwitch objects or empty list
      */
     @SuppressWarnings("serial")
-    public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> generateContents) {
+    public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> contentFolders) {
 
         // Ignore all projects that do not have a source folder configured. It
         // isn’t possible to generate anything without a data source.
@@ -81,7 +81,7 @@ public class GeneratorSwitch {
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, generateContents));
+        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
 
         return new LinkedList<GeneratorSwitch>() {
             {
@@ -95,12 +95,12 @@ public class GeneratorSwitch {
      *
      * @param folder
      *            folder represented by this toggle switch
-     * @param generateContents
+     * @param contentFolders
      *            modifyable list of enabled toggle switches
      */
-    public GeneratorSwitch(Folder folder, List<Folder> generateContents) {
+    public GeneratorSwitch(Folder folder, List<Folder> contentFolders) {
         this.folder = folder;
-        this.generateContents = generateContents;
+        this.contentFolders = contentFolders;
     }
 
     /**
@@ -119,7 +119,7 @@ public class GeneratorSwitch {
      * @returns the value for the toggle switch
      */
     public boolean isValue() {
-        return generateContents.contains(folder);
+        return contentFolders.contains(folder);
     }
 
     /**
@@ -130,9 +130,9 @@ public class GeneratorSwitch {
      */
     public void setValue(boolean value) {
         if (!value) {
-            generateContents.remove(folder);
-        } else if (!generateContents.contains(folder)) {
-            generateContents.add(folder);
+            contentFolders.remove(folder);
+        } else if (!contentFolders.contains(folder)) {
+            contentFolders.add(folder);
         }
     }
 }

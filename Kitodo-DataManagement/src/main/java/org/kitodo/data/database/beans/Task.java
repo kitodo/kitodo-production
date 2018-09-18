@@ -147,11 +147,11 @@ public class Task extends BaseIndexedBean {
      * generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "generateContents_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_generateContents_task_x_folder_task_id")),
+    @JoinTable(name = "contentFolders_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
-    private List<Folder> generateContents;
+    private List<Folder> contentFolders;
 
     @Transient
     private String localizedTitle;
@@ -423,21 +423,21 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getGenerateContents() {
-        if (this.generateContents == null) {
-            this.generateContents = new ArrayList<>();
+    public List<Folder> getContentFolders() {
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
         }
-        return generateContents;
+        return contentFolders;
     }
 
     /**
      * Set list of folders whose contents are to be generated.
      *
-     * @param generateContents
+     * @param contentFolders
      *            as list
      */
-    public void setGenerateContents(List<Folder> generateContents) {
-        this.generateContents = generateContents;
+    public void setContentFolders(List<Folder> contentFolders) {
+        this.contentFolders = contentFolders;
     }
 
     /**
@@ -447,8 +447,8 @@ public class Task extends BaseIndexedBean {
      */
     @SuppressWarnings("serial")
     public List<GeneratorSwitch> getGenerators() {
-        if (this.generateContents == null) {
-            this.generateContents = new ArrayList<>();
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
         }
         Stream<Project> projects = template.getProjects().stream();
 
@@ -473,7 +473,7 @@ public class Task extends BaseIndexedBean {
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, generateContents));
+        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
 
         return new ArrayList<GeneratorSwitch>() {
             {
