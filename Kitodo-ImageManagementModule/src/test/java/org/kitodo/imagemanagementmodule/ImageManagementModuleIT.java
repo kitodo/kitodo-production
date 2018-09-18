@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.Config;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterImageManagement;
 
 /**
  * Tests the Image Management Module.
@@ -81,7 +81,7 @@ public class ImageManagementModuleIT {
         operation.addRawArgs(Arrays.asList("wizard:", "-compress", "None", _00000001_TIF));
         ConvertCmd convertCmd = new ConvertCmd();
         if (SystemUtils.IS_OS_WINDOWS) {
-            String parameter = Config.getParameter(Parameter.SEARCH_PATH);
+            String parameter = Config.getParameter(ParameterImageManagement.SEARCH_PATH);
             convertCmd.setSearchPath(parameter);
         }
         convertCmd.run(operation);

@@ -27,7 +27,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 
@@ -114,7 +114,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
 
         super(metadataType, binding, container, getGroupTypeFor(metadataType), projectName);
         checkConfiguration();
-        getField(Field.NORMDATA_RECORD).setValue(ConfigCore.getParameter(Parameter.AUTHORITY_DEFAULT, ""));
+        getField(Field.NORMDATA_RECORD).setValue(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""));
         if (binding != null) {
             for (PersonInterface person : binding.getPersonByType(metadataType.getName())) {
                 addContent(person);
@@ -274,7 +274,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
         }
         String normdataRecord = getField(Field.NORMDATA_RECORD).getValue();
         if (normdataRecord != null && normdataRecord.length() > 0
-                && !normdataRecord.equals(ConfigCore.getParameter(Parameter.AUTHORITY_DEFAULT, ""))) {
+                && !normdataRecord.equals(ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, ""))) {
             String[] authorityFile = Metadaten.parseAuthorityFileArgs(normdataRecord);
             person.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
         }

@@ -27,7 +27,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterAPI;
 import org.kitodo.config.enums.ParameterInterface;
 
 public class Config {
@@ -54,7 +54,7 @@ public class Config {
      * @return the directory for the process directories
      */
     public static String getKitodoModulesDirectory() {
-        return getParameter(Parameter.DIR_MODULES);
+        return getParameter(ParameterAPI.DIR_MODULES);
     }
 
     /**
@@ -63,7 +63,7 @@ public class Config {
      * @return the directory for the process directories
      */
     public static String getKitodoDataDirectory() {
-        return getParameter(Parameter.DIR_PROCESSES);
+        return getParameter(ParameterAPI.DIR_PROCESSES);
     }
 
     /**
@@ -72,7 +72,7 @@ public class Config {
      * @return the directory for XML configuration files
      */
     public static String getKitodoConfigDirectory() {
-        return getParameter(Parameter.DIR_XML_CONFIG);
+        return getParameter(ParameterAPI.DIR_XML_CONFIG);
     }
 
     /**

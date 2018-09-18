@@ -56,7 +56,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.helper.Helper;
@@ -121,8 +121,8 @@ public class ImagesHelper {
             return;
         }
 
-        String defaultPagination = ConfigCore.getParameter(Parameter.METS_EDITOR_DEFAULT_PAGINATION,
-            Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName());
+        String defaultPagination = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION,
+            ParameterCore.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName());
         Map<String, DocStructInterface> assignedImages = new HashMap<>();
         List<DocStructInterface> pageElementsWithoutImages = new ArrayList<>();
 
@@ -333,14 +333,14 @@ public class ImagesHelper {
      * @return pagination value as String
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
-        if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC.getName())) {
+        if (defaultPagination.equalsIgnoreCase(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC.getName())) {
             return String.valueOf(currentPhysicalOrder);
-        } else if (defaultPagination.equalsIgnoreCase(Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN.getName())) {
+        } else if (defaultPagination.equalsIgnoreCase(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN.getName())) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
-            return Parameter.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName();
+            return ParameterCore.METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED.getName();
         }
     }
 
@@ -355,7 +355,7 @@ public class ImagesHelper {
             tmpSize = 1;
         }
         logger.trace("tmpSize: {}", tmpSize);
-        Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(Parameter.KITODO_CONTENT_SERVER_URL);
+        Optional<String> kitodoContentServerUrl = ConfigCore.getOptionalString(ParameterCore.KITODO_CONTENT_SERVER_URL);
         if (kitodoContentServerUrl.isPresent()) {
             if (kitodoContentServerUrl.get().isEmpty()) {
                 logger.trace("api");
@@ -384,7 +384,7 @@ public class ImagesHelper {
                 HttpClient httpclient = new HttpClient();
                 GetMethod method = new GetMethod(csUrl.toString());
                 logger.trace("get");
-                Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameter.KITODO_CONTENT_SERVER_TIMEOUT,
+                Integer contentServerTimeOut = ConfigCore.getIntParameter(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT,
                     DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
                 int statusCode = httpclient.executeMethod(method);
@@ -435,7 +435,7 @@ public class ImagesHelper {
             }
 
             this.myLastImage = files.size();
-            if (ConfigCore.getParameter(Parameter.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX)
+            if (ConfigCore.getParameter(ParameterCore.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX)
                     .equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;

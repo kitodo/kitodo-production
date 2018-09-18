@@ -53,7 +53,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.JDKMessageDigest;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -192,7 +192,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
 
         // Start TLS
-        if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_TLS)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_TLS)) {
             logger.debug("use TLS for auth");
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
@@ -240,7 +240,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             }
         } else {
             logger.debug("don't use TLS for auth");
-            if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_SIMPLE_AUTH, false)) {
+            if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_SIMPLE_AUTH, false)) {
                 env.put(Context.SECURITY_AUTHENTICATION, "none");
                 // TODO auf passwort testen
             } else {
@@ -253,7 +253,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 logger.debug("start classic ldap authentication");
                 logger.debug("user DN is {}", buildUserDN(user));
 
-                if (ConfigCore.getParameter(Parameter.LDAP_ATTRIBUTE_TO_TEST) == null) {
+                if (ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST) == null) {
                     logger.debug("ldap attribute to test is null");
                     DirContext ctx = new InitialDirContext(env);
                     ctx.close();
@@ -263,10 +263,10 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                     DirContext ctx = new InitialDirContext(env);
 
                     Attributes attrs = ctx.getAttributes(buildUserDN(user));
-                    Attribute la = attrs.get(ConfigCore.getParameter(Parameter.LDAP_ATTRIBUTE_TO_TEST));
+                    Attribute la = attrs.get(ConfigCore.getParameter(ParameterCore.LDAP_ATTRIBUTE_TO_TEST));
                     logger.debug("ldap attributes set");
                     String test = (String) la.get(0);
-                    if (test.equals(ConfigCore.getParameter(Parameter.LDAP_VALUE_OF_ATTRIBUTE))) {
+                    if (test.equals(ConfigCore.getParameter(ParameterCore.LDAP_VALUE_OF_ATTRIBUTE))) {
                         logger.debug("ldap ok");
                         ctx.close();
                         return true;
@@ -292,13 +292,13 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      */
     public URI getUserHomeDirectory(User user) {
 
-        URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter(Parameter.DIR_USERS));
+        URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter(ParameterCore.DIR_USERS));
 
-        if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_LOCAL_DIRECTORY)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_LOCAL_DIRECTORY)) {
             return userFolderBasePath.resolve(user.getLogin());
         }
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
-        if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_TLS)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_TLS)) {
 
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
@@ -347,7 +347,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
                 }
             }
         }
-        if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE_SIMPLE_AUTH, false)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_SIMPLE_AUTH, false)) {
             env.put(Context.SECURITY_AUTHENTICATION, "none");
         }
         DirContext ctx;

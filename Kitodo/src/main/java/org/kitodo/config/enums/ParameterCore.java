@@ -16,7 +16,7 @@ package org.kitodo.config.enums;
  * file. This file reflects the order of the global
  * {@code kitodo_config.properties} file (as far as possible), and vice versa.
  */
-public enum Parameter implements ParameterInterface {
+public enum ParameterCore implements ParameterInterface {
 
     /*
      * FILE AND DIRECTORY MANAGEMENT
@@ -690,7 +690,7 @@ public enum Parameter implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    Parameter(String name) {
+    ParameterCore(String name) {
         this.name = name;
     }
 

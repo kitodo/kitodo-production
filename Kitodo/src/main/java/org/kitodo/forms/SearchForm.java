@@ -23,7 +23,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -396,7 +396,7 @@ public class SearchForm {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
-                && ConfigCore.getBooleanParameter(Parameter.WITH_USER_STEP_DONE_SEARCH)) {
+                && ConfigCore.getBooleanParameter(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }

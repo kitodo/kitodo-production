@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 
 /**
@@ -63,7 +63,7 @@ public class TaskManager {
      */
     private TaskManager() {
         taskSitter = Executors.newSingleThreadScheduledExecutor();
-        long delay = ConfigCore.getLongParameter(Parameter.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS,
+        long delay = ConfigCore.getLongParameter(ParameterCore.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS,
             DefaultValues.TASK_MANAGER_INSPECTION_INTERVAL_MILLIS);
         taskSitter.scheduleWithFixedDelay(new TaskSitter(), delay, delay, TimeUnit.MILLISECONDS);
     }

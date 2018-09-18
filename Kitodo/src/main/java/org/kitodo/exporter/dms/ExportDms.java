@@ -31,7 +31,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -88,7 +88,7 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI inZielVerzeichnis) {
         if (process.getProject().isUseDmsImport()
-                && ConfigCore.getBooleanParameter(Parameter.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
+                && ConfigCore.getBooleanParameter(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter(Parameter.USE_META_DATA_VALIDATION)
+        if (ConfigCore.getBooleanParameter(ParameterCore.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
             return false;
         }
@@ -218,7 +218,7 @@ public class ExportDms extends ExportMets {
     }
 
     private boolean executeDataCopierProcess(FileformatInterface gdzfile, Process process) {
-        String rules = ConfigCore.getParameter(Parameter.COPY_DATA_ON_EXPORT);
+        String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_EXPORT);
         if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(new CopierData(gdzfile, process));
@@ -340,7 +340,7 @@ public class ExportDms extends ExportMets {
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
-        if (!ConfigCore.getBooleanParameter(Parameter.EXPORT_WITHOUT_TIME_LIMIT)) {
+        if (!ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
             exportWithTimeLimit(process);
         }
         if (exportDmsTask != null) {
@@ -598,7 +598,7 @@ public class ExportDms extends ExportMets {
      *
      */
     private void directoryDownload(Process process, URI zielVerzeichnis) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(Parameter.PROCESS_DIRS);
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             URI srcDir = serviceManager.getProcessService().getProcessDataDirectory(process)

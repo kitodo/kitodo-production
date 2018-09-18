@@ -11,7 +11,7 @@
 
 package org.kitodo.config.enums;
 
-public enum Parameter implements ParameterInterface {
+public enum ParameterAPI implements ParameterInterface {
 
     DIR_MODULES("moduleFolder"),
 
@@ -42,7 +42,7 @@ public enum Parameter implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    Parameter(String name) {
+    ParameterAPI(String name) {
         this.name = name;
     }
 

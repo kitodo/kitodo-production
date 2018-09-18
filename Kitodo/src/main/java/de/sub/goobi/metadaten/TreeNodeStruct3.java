@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.TreeNode;
 
 public class TreeNodeStruct3 extends TreeNode {
@@ -71,7 +71,7 @@ public class TreeNodeStruct3 extends TreeNode {
 
     public String getMainTitle() {
 
-        int maxSize = ConfigCore.getIntParameter(Parameter.METS_EDITOR_MAX_TITLE_LENGTH);
+        int maxSize = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_TITLE_LENGTH);
         if (maxSize > ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS && this.mainTitle != null
                 && this.mainTitle.length() > maxSize) {
             return this.mainTitle.substring(0, maxSize - 1);

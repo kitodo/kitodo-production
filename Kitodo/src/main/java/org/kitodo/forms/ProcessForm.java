@@ -60,7 +60,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -147,7 +147,7 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameter.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(ParameterCore.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -248,7 +248,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter(Parameter.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");
@@ -309,7 +309,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void renameDefinedDirectories() {
-        String[] processDirs = ConfigCore.getStringArrayParameter(Parameter.PROCESS_DIRS);
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
         for (String processDir : processDirs) {
             // TODO: check it out
             URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)

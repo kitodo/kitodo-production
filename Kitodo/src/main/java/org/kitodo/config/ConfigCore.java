@@ -23,7 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
@@ -86,7 +86,7 @@ public class ConfigCore extends Config {
      *            default value
      * @return Parameter as Long
      */
-    public static long getLongParameter(Parameter key, long inDefault) {
+    public static long getLongParameter(ParameterCore key, long inDefault) {
         return getLongParameter(key.getName(), inDefault);
     }
 
@@ -111,7 +111,7 @@ public class ConfigCore extends Config {
      *            default value
      * @return Parameter as Duration
      */
-    public static Duration getDurationParameter(Parameter key, TimeUnit timeUnit, long defaultValue) {
+    public static Duration getDurationParameter(ParameterCore key, TimeUnit timeUnit, long defaultValue) {
         return getDurationParameter(key.getName(), timeUnit, defaultValue);
     }
 
@@ -122,7 +122,7 @@ public class ConfigCore extends Config {
      *            as Parameter whose value is to be returned
      * @return Parameter as String[]
      */
-    public static String[] getStringArrayParameter(Parameter key) {
+    public static String[] getStringArrayParameter(ParameterCore key) {
         return getConfig().getStringArray(key.getName());
     }
 
@@ -132,6 +132,6 @@ public class ConfigCore extends Config {
      * @return String
      */
     public static String getKitodoDiagramDirectory() {
-        return getParameter(Parameter.DIR_DIAGRAMS);
+        return getParameter(ParameterCore.DIR_DIAGRAMS);
     }
 }

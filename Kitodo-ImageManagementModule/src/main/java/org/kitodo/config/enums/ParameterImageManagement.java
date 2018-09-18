@@ -11,15 +11,12 @@
 
 package org.kitodo.config.enums;
 
-public enum Parameter implements ParameterInterface {
+public enum ParameterImageManagement implements ParameterInterface {
 
-    DIR_MODULES("moduleFolder"),
-    DIR_PROCESSES("MetadatenVerzeichnis"),
-    /**
-     * Directory suffix for created image directory on process creation.
-     */
-    DIRECTORY_SUFFIX("DIRECTORY_SUFFIX"),
-    CREATE_SOURCE_FOLDER("createSourceFolder");
+    DIR_TMP("ImageManagementModule.tmpDir"),
+    SEARCH_PATH("ImageManagementModule.searchPath"),
+    TIMEOUT_SEC("ImageManagementModule.timeoutSec"),
+    SSH_HOST("ImageManagementModule.sshHosts");
 
     private String name;
 
@@ -29,7 +26,7 @@ public enum Parameter implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    Parameter(String name) {
+    ParameterImageManagement(String name) {
         this.name = name;
     }
 

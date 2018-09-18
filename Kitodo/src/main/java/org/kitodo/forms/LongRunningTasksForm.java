@@ -14,7 +14,7 @@ package org.kitodo.forms;
 import java.util.List;
 
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 import org.kitodo.helper.tasks.TaskManager;
@@ -99,7 +99,7 @@ public class LongRunningTasksForm {
      *         the configuration
      */
     public boolean isDemoTasksLinkShowing() {
-        return ConfigCore.getBooleanParameter(Parameter.TASK_MANAGER_SHOW_SAMPLE_TASK);
+        return ConfigCore.getBooleanParameter(ParameterCore.TASK_MANAGER_SHOW_SAMPLE_TASK);
     }
 
     /**

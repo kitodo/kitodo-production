@@ -35,7 +35,7 @@ import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.LinkingMode;
@@ -184,7 +184,7 @@ public class SchemaService {
         String metsPointer = vp.replace(metsPointerToReplace);
         metsMods.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigCore.getBooleanParameter(Parameter.EXPORT_VALIDATE_IMAGES, true)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.EXPORT_VALIDATE_IMAGES, true)) {
             if (containsInvalidImages(prefs, digitalDocument, process)) {
                 return null;
             }

@@ -11,9 +11,15 @@
 
 package org.kitodo.config.enums;
 
-public enum Parameter implements ParameterInterface {
+public enum ParameterFileManagement implements ParameterInterface {
 
-    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination");
+    DIR_MODULES("moduleFolder"),
+    DIR_PROCESSES("MetadatenVerzeichnis"),
+    /**
+     * Directory suffix for created image directory on process creation.
+     */
+    DIRECTORY_SUFFIX("DIRECTORY_SUFFIX"),
+    CREATE_SOURCE_FOLDER("createSourceFolder");
 
     private String name;
 
@@ -23,7 +29,7 @@ public enum Parameter implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    Parameter(String name) {
+    ParameterFileManagement(String name) {
         this.name = name;
     }
 

@@ -11,12 +11,9 @@
 
 package org.kitodo.config.enums;
 
-public enum Parameter implements ParameterInterface {
+public enum ParameterDataEditor implements ParameterInterface {
 
-    DIR_TMP("ImageManagementModule.tmpDir"),
-    SEARCH_PATH("ImageManagementModule.searchPath"),
-    TIMEOUT_SEC("ImageManagementModule.timeoutSec"),
-    SSH_HOST("ImageManagementModule.sshHosts");
+    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination");
 
     private String name;
 
@@ -26,7 +23,7 @@ public enum Parameter implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    Parameter(String name) {
+    ParameterDataEditor(String name) {
         this.name = name;
     }
 
