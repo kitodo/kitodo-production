@@ -31,7 +31,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.util.Generator;
+import org.kitodo.util.GeneratorSwitch;
 
 @Entity
 @Table(name = "task")
@@ -446,7 +446,7 @@ public class Task extends BaseIndexedBean {
      * @return list of Folder objects or empty list
      */
     @SuppressWarnings("serial")
-    public List<Generator> getGenerators() {
+    public List<GeneratorSwitch> getGenerators() {
         if (this.generateContents == null) {
             this.generateContents = new ArrayList<>();
         }
@@ -473,9 +473,9 @@ public class Task extends BaseIndexedBean {
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<Generator> taskGenerators = generatableFolders.map(λ -> new Generator(λ, generateContents));
+        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, generateContents));
 
-        return new ArrayList<Generator>() {
+        return new ArrayList<GeneratorSwitch>() {
             {
                 taskGenerators.forEach(this::add);
             }
