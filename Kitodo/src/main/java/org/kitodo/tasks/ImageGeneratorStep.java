@@ -36,6 +36,7 @@ import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.helper.Helper;
+import org.kitodo.model.ContentFolder;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
@@ -50,7 +51,7 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
         public void accept(ImageGenerator generatorTask) {
             try {
                 generatorTask.setWorkDetail(Helper.getTranslation("listSourceFolder"));
-                generatorTask.sources = generatorTask.sourceFolder
+                generatorTask.sources = new ContentFolder(generatorTask.sourceFolder)
                         .listContents(generatorTask.vars,
                             FileFormatsConfig.getFileFormat(generatorTask.sourceFolder.getMimeType()).get()
                                     .getExtension(false))
@@ -133,7 +134,7 @@ public enum ImageGeneratorStep implements Consumer<ImageGenerator> {
                             ImageManagementInterface.class);
                     KitodoServiceLoader<FileManagementInterface> fileManagementServiceLoader = new KitodoServiceLoader<>(
                             FileManagementInterface.class);
-                    URI destination = folder.getURI(generatorTask.vars, dataSource.getKey(),
+                    URI destination = new ContentFolder(folder).getURI(generatorTask.vars, dataSource.getKey(),
                         fileFormat.getExtension(false));
 
                     if (folder.getDerivative().isPresent()) {

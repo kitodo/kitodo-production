@@ -108,6 +108,7 @@ import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
+import org.kitodo.model.ContentFolder;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -1456,7 +1457,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     /**
      * Good explanation how it should be implemented:
      * https://stackoverflow.com/a/9394237/2701807.
-     * 
+     *
      * @param facesContext
      *            context
      * @param file
@@ -2128,7 +2129,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = new File(folder.getRelativePath(variables.mapOfVariables())).toURI();
+                URI folderUri = new File(new ContentFolder(folder).getRelativePath(variables.mapOfVariables())).toURI();
                 if (fileService.fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     mm.getDigitalDocument().getFileSet()
