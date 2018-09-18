@@ -271,7 +271,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Unlock the current task's process.
-     * 
+     *
      * @return null
      */
     public String sperrungAufheben() {
@@ -437,12 +437,13 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateAllImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
+
     /**
      * Regenerate missing and damaged images.
      */
@@ -450,12 +451,13 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateMissingAndDamagedImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
+
     /**
      * Generate missing images.
      */
@@ -463,7 +465,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateMissingImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -845,7 +847,7 @@ public class CurrentTaskForm extends BaseForm {
             setCurrentTask(serviceManager.getTaskService().getById(id));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                    logger, e);
+                logger, e);
         }
     }
 

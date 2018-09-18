@@ -143,15 +143,15 @@ public class Task extends BaseIndexedBean {
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about folders whose contents are to be
-     * generated in this task.
+     * This field holds a list of folders whose contents are to be generated in
+     * the process of finishing this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "generateContents_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_generateContents_task_x_folder_task_id")),
+    @JoinTable(name = "contentFolders_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
         inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
     )
-    private List<Folder> generateContents;
+    private List<Folder> contentFolders;
 
     @Transient
     private String localizedTitle;
@@ -163,7 +163,7 @@ public class Task extends BaseIndexedBean {
         this.title = "";
         this.users = new ArrayList<>();
         this.userGroups = new ArrayList<>();
-        this.generateContents = new ArrayList<>();
+        this.contentFolders = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
     }
@@ -202,7 +202,7 @@ public class Task extends BaseIndexedBean {
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
 
         // necessary to create new ArrayList in other case session problem!
-        this.generateContents = new ArrayList<>(templateTask.getGenerateContents());
+        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -423,25 +423,27 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of type generate.
+     * Get list of folders whose contents are to be generated in the process of
+     * finishing this task.
      *
      * @return list of Folder objects or empty list
      */
-    public List<Folder> getGenerateContents() {
-        if (this.generateContents == null) {
-            this.generateContents = new ArrayList<>();
+    public List<Folder> getContentFolders() {
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
         }
-        return generateContents;
+        return contentFolders;
     }
 
     /**
-     * Set list of folders whose contents are to be generated.
+     * Set list of folders whose contents are to be generated in the process of
+     * finishing this task.
      *
-     * @param generateContents
+     * @param contentFolders
      *            as list
      */
-    public void setGenerateContents(List<Folder> generateContents) {
-        this.generateContents = generateContents;
+    public void setContentFolders(List<Folder> contentFolders) {
+        this.contentFolders = contentFolders;
     }
 
     /**
@@ -456,13 +458,13 @@ public class Task extends BaseIndexedBean {
      */
     @SuppressWarnings({"unchecked" })
     public List<Object> getGenerators() {
-        if (this.generateContents == null) {
-            this.generateContents = new ArrayList<>();
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
         }
         try {
             return (List<Object>) Class.forName("org.kitodo.forms.GeneratorSwitch")
                     .getMethod("getGeneratorSwitches", Stream.class, List.class)
-                    .invoke(null, this.template.getProjects().stream(), this.generateContents);
+                    .invoke(null, this.template.getProjects().stream(), this.contentFolders);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
                 | ClassNotFoundException e) {
             throw new UndeclaredThrowableException(e);

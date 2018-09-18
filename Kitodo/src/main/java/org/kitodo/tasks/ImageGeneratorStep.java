@@ -85,10 +85,10 @@ public enum ImageGeneratorStep implements Consumer<ImageGeneratorTask> {
              * could be parallelized after the underlying problem has been
              * resolved.
              */
-            List<Folder> generations = new ArrayList<Folder>(generatorTask.outputs.size());
+            List<Folder> generations = new ArrayList<Folder>(generatorTask.contentFolders.size());
             Predicate<? super Folder> requiresGeneration = generatorTask.variant.getFilter(generatorTask.vars,
                 source.getKey());
-            for (Folder folder : generatorTask.outputs) {
+            for (Folder folder : generatorTask.contentFolders) {
                 if (requiresGeneration.test(folder)) {
                     generations.add(folder);
                 }

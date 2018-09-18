@@ -57,7 +57,7 @@ public class ImageGeneratorTask extends EmptyTask {
     /**
      * Output folders.
      */
-    List<Folder> outputs;
+    List<Folder> contentFolders;
 
     /**
      * Current position in list.
@@ -83,15 +83,15 @@ public class ImageGeneratorTask extends EmptyTask {
      *            image source folder
      * @param variant
      *            variant of image generation
-     * @param outputs
+     * @param contentFolders
      *            output folders to generate to
      */
     public ImageGeneratorTask(String processtitle, Folder sourceFolder, ImageGeneratorTaskVariant variant,
-            List<Folder> outputs) {
+            List<Folder> contentFolders) {
         super(processtitle);
         this.sourceFolder = sourceFolder;
         this.variant = variant;
-        this.outputs = outputs;
+        this.contentFolders = contentFolders;
         this.state = LIST_SOURCE_FOLDER;
         this.sources = Collections.emptyList();
         this.toBeGenerated = new LinkedList<>();
@@ -109,7 +109,7 @@ public class ImageGeneratorTask extends EmptyTask {
         super(master);
         this.sourceFolder = master.sourceFolder;
         this.variant = master.variant;
-        this.outputs = master.outputs;
+        this.contentFolders = master.contentFolders;
         this.state = master.state;
         this.position = master.position;
         this.sources = master.sources;
