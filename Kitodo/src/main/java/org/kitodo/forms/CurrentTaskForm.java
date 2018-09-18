@@ -70,8 +70,8 @@ public class CurrentTaskForm extends BaseForm {
     private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
-    private boolean nurOffeneSchritte = false;
-    private boolean nurEigeneSchritte = false;
+    private boolean onlyOpenTasks = false;
+    private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
     private Map<String, Boolean> anzeigeAnpassen;
@@ -348,8 +348,8 @@ public class CurrentTaskForm extends BaseForm {
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
          * setzen
          */
-        if (!fertigListe.isEmpty() && this.nurOffeneSchritte) {
-            this.nurOffeneSchritte = false;
+        if (!fertigListe.isEmpty() && this.onlyOpenTasks) {
+            this.onlyOpenTasks = false;
             return taskListPath;
         }
         for (URI element : fertigListe) {
@@ -598,20 +598,20 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
-    public boolean isNurOffeneSchritte() {
-        return this.nurOffeneSchritte;
+    public boolean isOnlyOpenTasks() {
+        return this.onlyOpenTasks;
     }
 
-    public void setNurOffeneSchritte(boolean nurOffeneSchritte) {
-        this.nurOffeneSchritte = nurOffeneSchritte;
+    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
+        this.onlyOpenTasks = onlyOpenTasks;
     }
 
-    public boolean isNurEigeneSchritte() {
-        return this.nurEigeneSchritte;
+    public boolean isOnlyOwnTasks() {
+        return this.onlyOwnTasks;
     }
 
-    public void setNurEigeneSchritte(boolean nurEigeneSchritte) {
-        this.nurEigeneSchritte = nurEigeneSchritte;
+    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        this.onlyOwnTasks = onlyOwnTasks;
     }
 
     public Map<String, Boolean> getAnzeigeAnpassen() {
