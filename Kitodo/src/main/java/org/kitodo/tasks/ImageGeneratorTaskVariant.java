@@ -11,7 +11,6 @@
 
 package org.kitodo.tasks;
 
-import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Map;
@@ -63,7 +62,7 @@ public enum ImageGeneratorTaskVariant {
                         logger.debug("Image {0} not found in folder {1}: Marked for generation.", canonical, λ);
                         return true;
                     }
-                } catch (IOException | JAXBException e) {
+                } catch (JAXBException e) {
                     throw new UndeclaredThrowableException(e);
                 }
             };
@@ -110,7 +109,7 @@ public enum ImageGeneratorTaskVariant {
                             return true;
                         }
                     }
-                } catch (IOException | JAXBException e) {
+                } catch (JAXBException e) {
                     throw new UndeclaredThrowableException(e);
                 }
             };

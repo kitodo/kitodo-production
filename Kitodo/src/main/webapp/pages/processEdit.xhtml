@@ -19,7 +19,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{ProcessForm.loadProcess(id)}" />
+        <f:viewAction action="#{ProcessForm.load(id)}" />
         <f:viewAction action="#{ProcessForm.setProcessEditReferer(request.getParameter('referer'))}"/>
     </f:metadata>
 
@@ -35,7 +35,7 @@
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{ProcessForm.saveAndRedirect}"
+                         action="#{ProcessForm.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          disabled="#{ProcessForm.saveDisabled}"

@@ -33,7 +33,7 @@
                     <p:commandButton value="#{msgs.cancel}" immediate="true" icon="fa fa-times fa-lg" iconPos="right"
                                      styleClass="secondary" onclick="PF('createBatchDialog').hide();">
                     </p:commandButton>
-                    <p:commandButton action="#{BatchForm.createNewBatch}" id="save" update="processesTabView:batchForm"
+                    <p:commandButton action="#{BatchForm.createNew}" id="save" update="processesTabView:batchForm"
                                      oncomplete="PF('createBatchDialog').hide();" value="#{msgs.apply}"
                                      styleClass="right">
                     </p:commandButton>

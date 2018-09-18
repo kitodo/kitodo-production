@@ -64,7 +64,7 @@ public class LdapGroupForm extends BaseForm {
      *
      * @return page or null
      */
-    public String saveLdapGroup() {
+    public String save() {
         try {
             this.serviceManager.getLdapGroupService().saveToDatabase(this.myLdapGruppe);
             return ldapGroupListPath;
@@ -99,7 +99,7 @@ public class LdapGroupForm extends BaseForm {
      *
      * @return page or null
      */
-    public String deleteLdapGroup() {
+    public String delete() {
         try {
             this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {
@@ -115,7 +115,7 @@ public class LdapGroupForm extends BaseForm {
      * @param id
      *            ID of the ldap group to load
      */
-    public void loadLdapGroup(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setMyLdapGruppe(this.serviceManager.getLdapGroupService().getById(id));

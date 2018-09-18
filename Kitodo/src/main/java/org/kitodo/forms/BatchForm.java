@@ -11,11 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.helper.tasks.ExportNewspaperBatchTask;
-import de.sub.goobi.helper.tasks.ExportSerialBatchTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +41,13 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UnreachableCodeException;
-import org.kitodo.helper.BatchProcessHelper;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.SelectItemList;
+import org.kitodo.helper.batch.BatchProcessHelper;
+import org.kitodo.helper.tasks.ExportNewspaperBatchTask;
+import org.kitodo.helper.tasks.ExportSerialBatchTask;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("BatchForm")
@@ -61,7 +61,7 @@ public class BatchForm extends BaseForm {
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses = new ArrayList<>();
     private List<Batch> currentBatches;
-    private List<Integer> selectedBatches = new ArrayList<>();
+    private List<Batch> selectedBatches = new ArrayList<>();
     private int selectedBatchId;
     private String batchfilter;
     private String processfilter;
@@ -106,9 +106,7 @@ public class BatchForm extends BaseForm {
             for (Process process : selectedProcesses) {
                 batchesToSelect.addAll(process.getBatches());
             }
-            for (Batch batch : batchesToSelect) {
-                selectedBatches.add(Integer.valueOf(serviceManager.getBatchService().getIdString(batch)));
-            }
+            selectedBatches.addAll(batchesToSelect);
         }
     }
 
@@ -117,14 +115,11 @@ public class BatchForm extends BaseForm {
      */
     public void loadProcessData() {
         List<Process> processes = new ArrayList<>();
-        try {
-            for (int b : selectedBatches) {
-                processes.addAll(serviceManager.getBatchService().getById(b).getProcesses());
-            }
-            currentProcesses = new ArrayList<>(processes);
-        } catch (NumberFormatException | DAOException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
+
+        for (Batch selectedBatch : selectedBatches) {
+            processes.addAll(selectedBatch.getProcesses());
         }
+        currentProcesses = new ArrayList<>(processes);
     }
 
     /**
@@ -186,12 +181,17 @@ public class BatchForm extends BaseForm {
      *
      * @return list of select items
      */
-    public List<SelectItem> getCurrentProcessesAsSelectItems() {
-        List<SelectItem> answer = new ArrayList<>();
-        for (Process p : this.currentProcesses) {
-            answer.add(new SelectItem(p, p.getTitle()));
-        }
-        return answer;
+    public List<SelectItem> getProcessesSelectItems() {
+        return SelectItemList.getProcesses(this.currentProcesses);
+    }
+
+    /**
+     * Get current batches as select items.
+     *
+     * @return list of select items
+     */
+    public List<SelectItem> getBatchesSelectItems() {
+        return SelectItemList.getBatches(this.currentBatches);
     }
 
     public String getBatchfilter() {
@@ -245,11 +245,11 @@ public class BatchForm extends BaseForm {
         this.selectedProcesses = selectedProcesses;
     }
 
-    public List<Integer> getSelectedBatches() {
+    public List<Batch> getSelectedBatches() {
         return this.selectedBatches;
     }
 
-    public void setSelectedBatches(List<Integer> selectedBatches) {
+    public void setSelectedBatches(List<Batch> selectedBatches) {
         this.selectedBatches = selectedBatches;
     }
 
@@ -262,42 +262,38 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * Download docket.
-     *
-     * @return String
+     * Download docket for all processes assigned to selected batch.
      */
-    public String downloadDocket() throws IOException {
+    public void downloadDocket() {
         logger.debug("generate docket for process list");
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() == 1) {
             try {
-                serviceManager.getProcessService().downloadDocket(
-                    serviceManager.getBatchService().getById(selectedBatches.get(0)).getProcesses());
-            } catch (DAOException e) {
-                Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
-                    e);
+                serviceManager.getProcessService().downloadDocket(selectedBatches.get(0).getProcesses());
+            } catch (IOException e) {
+                //TODO: needed message for case of IOException
+                Helper.setErrorMessage(e.getMessage(), new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
+                        e);
             }
         } else {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         }
-        return null;
     }
 
     /**
      * The method deleteBatch() is called if the user clicks the action link to
      * delete batches. It runs the deletion of the batches.
      */
-    public void deleteBatch() {
+    public void delete() {
         int selectedBatchesSize = this.selectedBatches.size();
         if (selectedBatchesSize == 0) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
             return;
         }
-        List<Integer> ids = new ArrayList<>(selectedBatchesSize);
-        ids.addAll(this.selectedBatches);
+
         try {
-            serviceManager.getBatchService().removeAll(ids);
+            serviceManager.getBatchService().removeAll(this.selectedBatches);
             filterAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
@@ -317,14 +313,13 @@ public class BatchForm extends BaseForm {
             return;
         }
         try {
-            for (Integer entry : this.selectedBatches) {
-                Batch batch = serviceManager.getBatchService().getById(entry);
-                serviceManager.getBatchService().addAll(batch, this.selectedProcesses);
-                serviceManager.getBatchService().save(batch);
+            for (Batch selectedBatch : this.selectedBatches) {
+                serviceManager.getBatchService().addAll(selectedBatch, this.selectedProcesses);
+                serviceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(
-                            Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
+                            Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
                     }
                     this.serviceManager.getProcessService().saveList(this.selectedProcesses);
                 }
@@ -350,14 +345,13 @@ public class BatchForm extends BaseForm {
             return;
         }
 
-        for (Integer entry : this.selectedBatches) {
-            Batch batch = serviceManager.getBatchService().getById(entry);
-            serviceManager.getBatchService().removeAll(batch, this.selectedProcesses);
-            serviceManager.getBatchService().save(batch);
+        for (Batch selectedBatch : this.selectedBatches) {
+            serviceManager.getBatchService().removeAll(selectedBatch, this.selectedProcesses);
+            serviceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameter(Parameters.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(
-                        Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(batch)), p);
+                        Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
                 }
                 this.serviceManager.getProcessService().saveList(this.selectedProcesses);
             }
@@ -368,16 +362,16 @@ public class BatchForm extends BaseForm {
     /**
      * Rename Batch.
      */
-    public void renameBatch() {
+    public void rename() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
         } else if (this.selectedBatches.size() > 1) {
             Helper.setErrorMessage(TOO_MANY_BATCHES_SELECTED);
         } else {
             try {
-                Integer selected = selectedBatches.get(0);
+                Batch selectedBatch = selectedBatches.get(0);
                 for (Batch batch : currentBatches) {
-                    if (selected.equals(batch.getId())) {
+                    if (selectedBatch.getId().equals(batch.getId())) {
                         batch.setTitle(batchTitle == null || batchTitle.trim().length() == 0 ? null : batchTitle);
                         serviceManager.getBatchService().save(batch);
                         batchTitle = "";
@@ -394,7 +388,7 @@ public class BatchForm extends BaseForm {
     /**
      * Create new Batch.
      */
-    public void createNewBatch() throws DAOException, DataException {
+    public void createNew() throws DAOException, DataException {
         if (selectedProcesses.isEmpty()) {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {
@@ -445,41 +439,40 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * Creates a batch export task to export the selected batch. The type of
-     * export task depends on the batch type. If asynchronous tasks have been
-     * created, the user will be redirected to the task manager page where it
-     * can observe the task progressing.
+     * Creates a batch export task to export the selected batch. The type of export
+     * task depends on the batch type. If asynchronous tasks have been created, the
+     * user will be redirected to the task manager page where it can observe the
+     * task progressing.
      *
-     * @return the next page to show as named in a &lt;from-outcome&gt; element
-     *         in faces_config.xml
+     * @return the next page to show as named in a &lt;from-outcome&gt; element in
+     *         faces_config.xml
      */
-    public String exportBatch() {
+    public String export() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
             return null;
         }
 
-        for (Integer batchID : selectedBatches) {
+        for (Batch selectedBatch : selectedBatches) {
             try {
-                Batch batch = serviceManager.getBatchService().getById(batchID);
-                switch (batch.getType()) {
+                switch (selectedBatch.getType()) {
                     case LOGISTIC:
-                        for (Process process : batch.getProcesses()) {
+                        for (Process process : selectedBatch.getProcesses()) {
                             ExportDms dms = new ExportDms(
                                     ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
                             dms.startExport(process);
                         }
                         break;
                     case NEWSPAPER:
-                        TaskManager.addTask(new ExportNewspaperBatchTask(batch));
+                        TaskManager.addTask(new ExportNewspaperBatchTask(selectedBatch));
                         break;
                     case SERIAL:
-                        TaskManager.addTask(new ExportSerialBatchTask(batch));
+                        TaskManager.addTask(new ExportSerialBatchTask(selectedBatch));
                         break;
                     default:
                         throw new UnreachableCodeException("Complete switch statement");
                 }
-            } catch (DAOException | PreferencesException | WriteException | MetadataTypeNotAllowedException
+            } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException
                     | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
@@ -512,8 +505,8 @@ public class BatchForm extends BaseForm {
     }
 
     /**
-     * Sets the type of all currently selected batches to the named one,
-     * overriding a previously set type, if any.
+     * Sets the type of all currently selected batches to the named one, overriding
+     * a previously set type, if any.
      *
      * @param type
      *            type to set
@@ -521,7 +514,7 @@ public class BatchForm extends BaseForm {
     private void setType(Type type) {
         try {
             for (Batch batch : currentBatches) {
-                if (selectedBatches.contains(batch.getId())) {
+                if (selectedBatches.contains(batch)) {
                     batch.setType(type);
                     serviceManager.getBatchService().save(batch);
                 }
@@ -539,10 +532,10 @@ public class BatchForm extends BaseForm {
      *            change event
      */
     @SuppressWarnings("unchecked")
-    public void changeSelectedBatchId(ValueChangeEvent vcEvent) {
-        this.selectedBatches = (List<Integer>) vcEvent.getNewValue();
+    public void changeSelectedBatch(ValueChangeEvent vcEvent) {
+        this.selectedBatches = (List<Batch>) vcEvent.getNewValue();
         if (this.selectedBatches.size() == 1) {
-            this.selectedBatchId = this.selectedBatches.get(0);
+            this.selectedBatchId = this.selectedBatches.get(0).getId();
         } else {
             this.selectedBatchId = 0;
         }

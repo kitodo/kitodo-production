@@ -151,7 +151,7 @@
                 <p:commandLink action="#{ProjectForm.deleteFolder()}"
                                update="editForm"
                                title="#{msgs.fileGroupDelete}"
-                               onclick="if (!confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')) return"
+                               onclick="if (!confirm('#{msgs.shouldItemBeRemoved}')) return"
                                oncomplete="toggleSave()"
                                styleClass="buttonset plain"
                                disabled="#{ProjectForm.lockedMets}"

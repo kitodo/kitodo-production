@@ -16,8 +16,6 @@ import static org.kitodo.tasks.ImageGeneratorStep.GENERATE_IMAGES;
 import static org.kitodo.tasks.ImageGeneratorStep.LIST_SOURCE_FOLDER;
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
-import de.sub.goobi.helper.tasks.EmptyTask;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.helper.Helper;
+import org.kitodo.helper.tasks.EmptyTask;
 
 public class ImageGeneratorTask extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ImageGeneratorTask.class);

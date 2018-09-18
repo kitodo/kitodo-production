@@ -230,6 +230,7 @@ public class ProzesskopieForm implements Serializable {
     private List<String> digitalCollections;
     private String docType;
     private Integer guessedImages = 0;
+    private Process processForChoice;
 
     /**
      * The field hitlist holds some reference to the hitlist retrieved from a
@@ -266,7 +267,6 @@ public class ProzesskopieForm implements Serializable {
     private Project project;
     private boolean useOpac;
     private boolean useTemplates;
-    private Integer auswahl;
     private HashMap<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
@@ -608,10 +608,8 @@ public class ProzesskopieForm implements Serializable {
      * Auswahl des Prozesses auswerten.
      */
     public String templateAuswahlAuswerten() throws DAOException {
-        /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
-        if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
-            for (Property workpieceProperty : tempProzess.getWorkpieces()) {
+        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
@@ -623,8 +621,8 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
-            for (Property templateProperty : tempProzess.getTemplates()) {
+        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+            for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
                         field.setValue(templateProperty.getValue());
@@ -633,8 +631,8 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
-            for (Property processProperty : tempProzess.getProperties()) {
+        if (serviceManager.getProcessService().getPropertiesSize(this.processForChoice) > 0) {
+            for (Property processProperty : this.processForChoice.getProperties()) {
                 if (processProperty.getTitle().equals("digitalCollection")) {
                     digitalCollections.add(processProperty.getValue());
                 }
@@ -642,7 +640,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         try {
-            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
         }
@@ -1309,12 +1307,22 @@ public class ProzesskopieForm implements Serializable {
         this.template = template;
     }
 
-    public Integer getAuswahl() {
-        return this.auswahl;
+    /**
+     * Get process for choice list.
+     *
+     * @return process for choice list
+     */
+    public Process getProcessForChoice() {
+        return this.processForChoice;
     }
 
-    public void setAuswahl(Integer auswahl) {
-        this.auswahl = auswahl;
+    /**
+     * Set process for choice list.
+     *
+     * @param processForChoice as Process object
+     */
+    public void setProcessForChoice(Process processForChoice) {
+        this.processForChoice = processForChoice;
     }
 
     public List<AdditionalField> getAdditionalFields() {

@@ -772,12 +772,13 @@ public class MassImportForm extends BaseForm {
 
     /**
      * Download docket.
-     *
-     * @return String
      */
-    public String downloadDocket() throws IOException {
-        serviceManager.getProcessService().downloadDocket(this.processList);
-        return "";
+    public void downloadDocket() {
+        try {
+            serviceManager.getProcessService().downloadDocket(this.processList);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**

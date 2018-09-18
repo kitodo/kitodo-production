@@ -11,7 +11,6 @@
 
 package org.kitodo.forms;
 
-import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,7 +164,7 @@ public class ProjectForm extends BaseForm {
      *         'null' if the project could not be retrieved, which will prompt
      *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicateProject(Integer itemId) {
+    public String duplicate(Integer itemId) {
         setLockedDetail(false);
         setLockedTechnical(false);
         setLockedMets(false);
@@ -454,7 +453,7 @@ public class ProjectForm extends BaseForm {
                 List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
                 mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
                     λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
-            } catch (IOException | JAXBException | RuntimeException e) {
+            } catch (JAXBException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
             }
         }

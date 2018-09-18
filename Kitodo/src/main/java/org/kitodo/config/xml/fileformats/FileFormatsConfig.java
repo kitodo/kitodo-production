@@ -12,7 +12,6 @@
 package org.kitodo.config.xml.fileformats;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,13 +49,11 @@ public class FileFormatsConfig {
      * Returns the list of configured file formats.
      *
      * @return the configured file formats
-     * @throws IOException
-     *             if reading from the file fails
      * @throws JAXBException
      *             if the content of the file is syntactically or semantically
      *             incorrect
      */
-    public static List<FileFormat> getFileFormats() throws IOException, JAXBException {
+    public static List<FileFormat> getFileFormats() throws JAXBException {
         Unmarshaller fileFormatsConfig = JAXBContext.newInstance(FileFormatsConfig.class).createUnmarshaller();
         FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
         return read.fileFormat;
@@ -68,14 +65,12 @@ public class FileFormatsConfig {
      * @param keyMapper
      *            a mapping function to produce the keys of the map
      * @return a map of the configured file formats
-     * @throws IOException
-     *             if reading from the file fails
      * @throws JAXBException
      *             if the content of the file is syntactically or semantically
      *             incorrect
      */
     public static <T> Map<T, FileFormat> getFileFormats(Function<? super FileFormat, T> keyMapper)
-            throws IOException, JAXBException {
+            throws JAXBException {
         return getFileFormats().stream().collect(Collectors.toMap(keyMapper, Function.identity()));
     }
 
@@ -85,13 +80,11 @@ public class FileFormatsConfig {
      * @param mimeType
      *            MIME type to look up
      * @return the file format
-     * @throws IOException
-     *             if reading from the file fails
      * @throws JAXBException
      *             if the content of the file is syntactically or semantically
      *             incorrect
      */
-    public static Optional<FileFormat> getFileFormat(String mimeType) throws IOException, JAXBException {
+    public static Optional<FileFormat> getFileFormat(String mimeType) throws JAXBException {
         return Optional.ofNullable(getFileFormats(FileFormat::getMimeType).get(mimeType));
     }
 }

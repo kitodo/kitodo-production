@@ -82,7 +82,7 @@ public class RulesetForm extends BaseForm {
      *
      * @return page or empty String
      */
-    public String saveRuleset() {
+    public String save() {
         try {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
@@ -116,27 +116,6 @@ public class RulesetForm extends BaseForm {
         return rulesetFile.exists();
     }
 
-    /**
-     * Remove.
-     *
-     * @return redirect link or empty String
-     */
-    public String removeRuleset() {
-        try {
-            if (hasAssignedProcesses(this.ruleset)) {
-                Helper.setErrorMessage("rulesetInUse");
-                return null;
-            } else {
-                serviceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
-            return null;
-        }
-        return rulesetListPath;
-    }
-
     private boolean existsRulesetWithSameName() {
         List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
         if (rulesets.isEmpty()) {
@@ -166,7 +145,7 @@ public class RulesetForm extends BaseForm {
      * @param id
      *            ID of the ruleset to load
      */
-    public void loadRuleset(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setRuleset(this.serviceManager.getRulesetService().getById(id));
@@ -233,7 +212,7 @@ public class RulesetForm extends BaseForm {
     /**
      * Delete ruleset.
      */
-    public void deleteRuleset() {
+    public void delete() {
         try {
             if (hasAssignedProcesses(ruleset)) {
                 Helper.setErrorMessage("rulesetInUse");

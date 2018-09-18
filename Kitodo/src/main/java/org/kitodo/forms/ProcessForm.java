@@ -19,14 +19,9 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.export.download.ExportPdf;
-import de.sub.goobi.export.download.Multipage;
-import de.sub.goobi.export.download.TiffHeader;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -72,6 +67,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
@@ -80,6 +76,11 @@ import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.ExportMets;
+import org.kitodo.exporter.download.ExportPdf;
+import org.kitodo.exporter.download.Multipage;
+import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
@@ -121,7 +122,6 @@ public class ProcessForm extends TemplateBaseForm {
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -160,9 +160,9 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Save process.
+     * Save process and redirect to list view.
      *
-     * @return null
+     * @return url to list view
      */
     public String save() {
         /*
@@ -177,6 +177,7 @@ public class ProcessForm extends TemplateBaseForm {
 
             try {
                 serviceManager.getProcessService().save(this.process);
+                return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
             }
@@ -185,16 +186,6 @@ public class ProcessForm extends TemplateBaseForm {
         }
         reload();
         return null;
-    }
-
-    /**
-     * Save process and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String saveAndRedirect() {
-        save();
-        return processListPath;
     }
 
     /**
@@ -217,6 +208,19 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        Workflow workflow = this.process.getTemplate().getWorkflow();
+        if (Objects.nonNull(workflow)) {
+            return serviceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
+        }
+        return serviceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**
@@ -423,16 +427,6 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
-    }
-
-    /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setProcess(this.process);
-        this.process.getTasks().add(this.task);
-        return taskEditPath + "&id=" + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
 
     /**
@@ -1605,7 +1599,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param id
      *            ID of the process to load
      */
-    public void loadProcess(int id) {
+    public void load(int id) {
         try {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));

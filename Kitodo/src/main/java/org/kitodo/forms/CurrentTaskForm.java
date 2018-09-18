@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.TiffHeader;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
 
@@ -52,9 +50,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
-import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
+import org.kitodo.helper.batch.BatchTaskHelper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.tasks.ImageGeneratorTask;
 import org.kitodo.tasks.ImageGeneratorTaskVariant;
@@ -81,7 +81,7 @@ public class CurrentTaskForm extends BaseForm {
     private String scriptPath;
     private String addToWikiField = "";
     private String doneDirectoryName;
-    private BatchStepHelper batchHelper;
+    private BatchTaskHelper batchHelper;
     private List<Property> properties;
     private Property property;
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -166,7 +166,7 @@ public class CurrentTaskForm extends BaseForm {
                     processTask(task);
                 }
 
-                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
                 return taskBatchEditPath;
             }
         } else {
@@ -235,7 +235,7 @@ public class CurrentTaskForm extends BaseForm {
             } else if (currentTasksOfBatch.size() == 1) {
                 return taskEditPath + "&id=" + getTaskIdForPath();
             } else {
-                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
                 return taskBatchEditPath;
             }
         } else {
@@ -804,7 +804,7 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return batch helper as BatchHelper object
      */
-    public BatchStepHelper getBatchHelper() {
+    public BatchTaskHelper getBatchHelper() {
         return this.batchHelper;
     }
 
@@ -814,7 +814,7 @@ public class CurrentTaskForm extends BaseForm {
      * @param batchHelper
      *            as BatchHelper object
      */
-    public void setBatchHelper(BatchStepHelper batchHelper) {
+    public void setBatchHelper(BatchTaskHelper batchHelper) {
         this.batchHelper = batchHelper;
     }
 

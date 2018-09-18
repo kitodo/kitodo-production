@@ -57,7 +57,7 @@ public enum ImageGeneratorStep implements Consumer<ImageGeneratorTask> {
                         .entrySet().stream().map(λ -> Pair.of(λ.getKey(), λ.getValue())).collect(Collectors.toList());
                 generatorTask.state = DETERMINE_WHICH_IMAGES_NEED_TO_BE_GENERATED;
                 generatorTask.position = -1;
-            } catch (IOException | JAXBException e) {
+            } catch (JAXBException e) {
                 throw new UndeclaredThrowableException(e);
             }
         }

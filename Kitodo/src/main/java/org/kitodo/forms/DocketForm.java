@@ -110,7 +110,7 @@ public class DocketForm extends BaseForm {
     /**
      * Delete docket.
      */
-    public void deleteDocket() {
+    public void delete() {
         try {
             if (hasAssignedProcesses(myDocket)) {
                 Helper.setErrorMessage("docketInUse");
@@ -152,7 +152,7 @@ public class DocketForm extends BaseForm {
      * @param id
      *            ID of the docket to load
      */
-    public void loadDocket(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setMyDocket(this.serviceManager.getDocketService().getById(id));
