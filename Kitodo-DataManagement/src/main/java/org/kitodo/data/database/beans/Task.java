@@ -419,7 +419,7 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of type generate.
+     * Get list of folders whose contents are to be generated.
      *
      * @return list of Folder objects or empty list
      */
@@ -441,9 +441,10 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of folders whose contents are to be generated.
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
      *
-     * @return list of Folder objects or empty list
+     * @return list of GeneratorSwitch objects or empty list
      */
     @SuppressWarnings("serial")
     public List<GeneratorSwitch> getGenerators() {
