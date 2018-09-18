@@ -11,7 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.IOException;
@@ -55,6 +54,7 @@ import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.batch.BatchTaskHelper;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.tasks.ImageGeneratorTask;
 import org.kitodo.tasks.ImageGeneratorTaskVariant;

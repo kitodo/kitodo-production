@@ -28,6 +28,7 @@ import org.kitodo.api.validation.longtimepreservation.LongTimePreservationValida
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.model.ContentFolder;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
@@ -53,7 +54,7 @@ public enum ImageGeneratorTaskVariant {
             Predicate<? super Folder> result = λ -> {
                 Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
-                    boolean present = λ.getURIIfExists(vars, canonical,
+                    boolean present = new ContentFolder(λ).getURIIfExists(vars, canonical,
                         FileFormatsConfig.getFileFormat(λ.getMimeType()).get().getExtension(false)).isPresent();
                     if (present) {
                         logger.debug("Image {0} was found in folder {1}.", canonical, λ);
@@ -81,15 +82,16 @@ public enum ImageGeneratorTaskVariant {
                 Logger logger = LogManager.getLogger(ImageGeneratorTaskVariant.class);
                 try {
                     FileFormat fileFormat = FileFormatsConfig.getFileFormat(λ.getMimeType()).get();
-                    Optional<URI> imageURI = λ.getURIIfExists(vars, canonical, fileFormat.getExtension(false));
+                    Optional<URI> imageURI = new ContentFolder(λ).getURIIfExists(vars, canonical,
+                        fileFormat.getExtension(false));
                     if (!imageURI.isPresent()) {
                         logger.info("Image {0} not found in folder {1}: Marked for generation.", canonical, λ);
                         return true;
                     } else {
                         Optional<FileType> fileType = fileFormat.getFileType();
                         if (fileType.isPresent()) {
-                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader = new KitodoServiceLoader<>(
-                                    LongTimePreservationValidationInterface.class);
+                            KitodoServiceLoader<LongTimePreservationValidationInterface> longTimePreservationValidationInterfaceLoader
+                                    = new KitodoServiceLoader<>(LongTimePreservationValidationInterface.class);
                             ValidationResult validated = longTimePreservationValidationInterfaceLoader.loadModule()
                                     .validate(imageURI.get(), fileType.get());
                             if (validated.getState().equals(State.SUCCESS)) {

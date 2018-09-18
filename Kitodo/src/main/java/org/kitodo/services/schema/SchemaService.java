@@ -50,6 +50,7 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.model.ContentFolder;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -204,8 +205,8 @@ public class SchemaService {
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService()
-                        .getMethodFromName(folder.getRelativePath(variableReplacer.mapOfVariables()), process);
+                URI folderUri = serviceManager.getProcessService().getMethodFromName(
+                    new ContentFolder(folder).getRelativePath(variableReplacer.mapOfVariables()), process);
                 if (serviceManager.getFileService().fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
