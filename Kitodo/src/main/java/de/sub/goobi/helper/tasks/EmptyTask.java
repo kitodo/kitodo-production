@@ -11,13 +11,12 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.joda.time.Duration;
+import org.kitodo.helper.Helper;
 
 /**
  * The class EmptyTask is the base class for worker threads that operate

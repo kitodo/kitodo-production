@@ -11,7 +11,6 @@
 
 package org.kitodo.production.thread;
 
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.helper.Helper;
 import org.kitodo.tasks.ImageGenerator;
 import org.kitodo.tasks.ImageGeneratorTaskVariant;
 

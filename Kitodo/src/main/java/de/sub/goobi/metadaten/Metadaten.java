@@ -11,14 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
@@ -92,6 +84,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
@@ -101,7 +94,20 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
+import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.HelperComparator;
+import org.kitodo.helper.Transliteration;
+import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.XmlArtikelZaehlen;
+import org.kitodo.helper.XmlArtikelZaehlen.CountType;
+import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
+import org.kitodo.metadata.elements.selectable.SelectOne;
+import org.kitodo.metadata.elements.selectable.Separator;
+import org.kitodo.metadata.pagination.Paginator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;
@@ -127,12 +133,12 @@ public class Metadaten {
      *
      * @return value of imageHelper
      */
-    public MetadatenImagesHelper getImageHelper() {
+    public ImagesHelper getImageHelper() {
         return imageHelper;
     }
 
-    private MetadatenImagesHelper imageHelper;
-    private MetadatenHelper metaHelper;
+    private ImagesHelper imageHelper;
+    private MetadataHelper metaHelper;
     private boolean treeReloaded = false;
     private String ocrResult = "";
     private FileformatInterface gdzfile;
@@ -459,7 +465,7 @@ public class Metadaten {
      *            URI in an authority file
      * @return a String[] with authority, authorityURI and valueURI
      */
-    static String[] parseAuthorityFileArgs(String valueURI) {
+    public static String[] parseAuthorityFileArgs(String valueURI) {
         String authority = null;
         String authorityURI = null;
         if (valueURI != null && !valueURI.isEmpty()) {
@@ -719,8 +725,8 @@ public class Metadaten {
         this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
-        this.metaHelper = new MetadatenHelper(this.myPrefs, this.digitalDocument);
-        this.imageHelper = new MetadatenImagesHelper(this.myPrefs, this.digitalDocument);
+        this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
+        this.imageHelper = new ImagesHelper(this.myPrefs, this.digitalDocument);
 
         /*
          * Das Hauptelement ermitteln
@@ -967,8 +973,8 @@ public class Metadaten {
         upperNode.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
         upperNode.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
         upperNode
-                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst()));
-        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast()));
+                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberFirst()));
+        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberLast()));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getDocStructType().getName().equals("PeriodicalIssue")) {
             upperNode.setDescription(
@@ -1041,8 +1047,8 @@ public class Metadaten {
      * @return The image range (image number - page namber)
      */
     public String getImageRangeByElement(DocStructInterface docStructElement) {
-        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberFirst());
-        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberLast());
+        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberLast());
 
         return firstImage + " - " + lastImage;
     }
@@ -2750,7 +2756,7 @@ public class Metadaten {
             }
         }
 
-        for (de.sub.goobi.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
+        for (org.kitodo.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }
@@ -3221,7 +3227,7 @@ public class Metadaten {
      *            meta-data group type to look for
      * @return whether the type is available to add
      */
-    boolean canCreate(MetadataGroupTypeInterface type) {
+    public boolean canCreate(MetadataGroupTypeInterface type) {
         List<MetadataGroupTypeInterface> addableTypes = docStruct.getAddableMetadataGroupTypes();
         if (addableTypes == null) {
             addableTypes = Collections.emptyList();
@@ -3290,7 +3296,7 @@ public class Metadaten {
      * @param metadataGroup
      *            metadata group to delete.
      */
-    void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
+    public void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
         docStruct.removeMetadataGroup(metadataGroup);
     }
 
@@ -3303,7 +3309,7 @@ public class Metadaten {
      *         "SperrungAbgelaufen" to make JSF show the message that the lock
      *         time is up and the user must leave the editor and open it anew
      */
-    String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+    public String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
         newMetadataGroup = new RenderableMetadataGroup(master, docStruct.getAddableMetadataGroupTypes());
         modeAdd = false;
         modeAddPerson = false;

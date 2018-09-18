@@ -11,7 +11,7 @@
 
 package org.kitodo.enums;
 
-import de.sub.goobi.helper.Helper;
+import org.kitodo.helper.Helper;
 
 public enum ObjectType {
     AUTHORITY("authority", "authorities"),

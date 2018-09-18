@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,10 +32,12 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.Reader;
@@ -237,7 +236,7 @@ public class WorkflowForm extends BaseForm {
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             return workflowEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger, e);
             return null;
         }
     }

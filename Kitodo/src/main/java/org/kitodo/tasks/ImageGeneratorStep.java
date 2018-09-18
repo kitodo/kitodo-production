@@ -13,8 +13,6 @@ package org.kitodo.tasks;
 
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
-import de.sub.goobi.helper.Helper;
-
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -37,6 +35,7 @@ import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**

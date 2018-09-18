@@ -11,8 +11,6 @@
 
 package org.kitodo.controller;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +19,7 @@ import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.primefaces.context.RequestContext;
 

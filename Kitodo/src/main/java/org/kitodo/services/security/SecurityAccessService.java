@@ -345,7 +345,7 @@ public class SecurityAccessService {
     }
 
     /**
-     * Checks if the current user has one of the specified authorities globally, for
+     * Checks if the current user is admin or has one of the specified authorities globally, for
      * any client or for any project.
      *
      * @param authorityTitlesComplete
@@ -358,6 +358,20 @@ public class SecurityAccessService {
         if (isAdmin()) {
             return true;
         }
+        return hasAnyAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitlesComplete);
+    }
+
+    /**
+     * Checks if the current user has one of the specified authorities globally, for
+     * any client or for any project.
+     *
+     * @param authorityTitlesComplete
+     *            The authority titles separated with commas e.g. "authority1,
+     *            authority2, authority3".
+     * @return True if the current user is admin or has any of the specified
+     *         authorities for any client or project.
+     */
+    public boolean hasAnyAuthorityGlobalOrForAnyClientOrForAnyProject(String authorityTitlesComplete) {
         String[] authorityTitles = getStringArray(authorityTitlesComplete);
         for (String authorityTitle : authorityTitles) {
             if (hasAuthorityGlobalOrForAnyClientOrForAnyProject(authorityTitle)) {

@@ -11,9 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.VariableReplacer;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
 import java.io.IOException;
@@ -37,6 +34,7 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -56,6 +54,8 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.VariableReplacer;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -711,7 +711,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
         Process process = task.getProcess();
         ImageGenerator generator = new ImageGenerator(process.getTitle(), process.getProject().getGeneratorSource(),
-                ImageGeneratorTaskVariant.ALL_IMAGES, task.getGenerateContents());
+                ImageGeneratorTaskVariant.ALL_IMAGES, task.getContentFolders());
         generator.setWorker(executingThread);
         if (automatic) {
             if (executingThread.getException() == null) {

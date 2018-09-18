@@ -11,13 +11,6 @@
 
 package org.goobi.production.cli.helper;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
@@ -45,6 +38,9 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.DigitalCollections;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -53,8 +49,12 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.BeanHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.UghHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 

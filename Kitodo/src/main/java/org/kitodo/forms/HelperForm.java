@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.FilenameFilter;
 import java.io.Serializable;
 import java.net.URI;
@@ -27,6 +25,7 @@ import org.goobi.production.GoobiVersion;
 import org.goobi.production.enums.PluginType;
 import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
 import org.kitodo.services.ServiceManager;
@@ -41,8 +40,6 @@ import org.kitodo.services.ServiceManager;
 public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
     private transient ServiceManager serviceManager = new ServiceManager();
-    private static final String CSS_BASE_PATH = "/WEB-INF/resources/css";
-    private static final String CSS_PATH = "/userStyles";
 
     public String getVersion() {
         return GoobiVersion.getBuildversion();
@@ -80,21 +77,6 @@ public class HelperForm implements Serializable {
             }
         }
         return ffs;
-    }
-
-    /**
-     * Get all css files from root folder.
-     *
-     * @return list of css files
-     */
-    public List<SelectItem> getCssFiles() {
-        List<SelectItem> list = new ArrayList<>();
-        FilenameFilter filter = new FileNameEndsWithFilter(".css");
-        List<URI> uris = serviceManager.getFileService().getSubUris(filter, URI.create(CSS_BASE_PATH + CSS_PATH));
-        for (URI uri : uris) {
-            list.add(new SelectItem(uri.toString(), uri.toString()));
-        }
-        return list;
     }
 
     /**

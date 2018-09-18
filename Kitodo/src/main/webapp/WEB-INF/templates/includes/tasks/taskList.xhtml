@@ -16,11 +16,7 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
-    <p:dataTable id="taskTable"
-                 var="item"
-                 value="#{CurrentTaskForm.lazyDTOModel}"
-                 lazy="true"
-                 paginator="true"
+    <p:dataTable id="taskTable" var="item" value="#{CurrentTaskForm.lazyDTOModel}" lazy="true" paginator="true"
                  rows="#{LoginForm.myBenutzer.tableSize}"
                  paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                  paginatorPosition="bottom">
@@ -47,7 +43,7 @@
                                rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <i class="fa fa-bell-o"/>
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(item.id)}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}" />
                 </h:commandLink>
                 <!-- already assigned task (this user) -->
                 <h:link outcome="/pages/currentTasksEdit"
@@ -61,7 +57,7 @@
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and (!item.batchStep || !item.batchAvailable)}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <i class="fa fa-bell-slash"/>
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(item.id)}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}" />
                 </h:commandLink>
 
                 <!-- take over batch -->
@@ -69,7 +65,7 @@
                                rendered="#{item.processingStatus == 'OPEN' and item.batchStep and item.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(item.id)}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}" />
                 </h:commandLink>
 
                 <!-- edit batch step (this user) -->
@@ -77,7 +73,7 @@
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id == LoginForm.myBenutzer.id and item.batchStep and item.batchAvailable}"
                                title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(item.id)}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}" />
                 </h:commandLink>
 
                 <!-- edit batch step (different user) -->
@@ -85,7 +81,7 @@
                                rendered="#{item.processingStatus == 'INWORK' and item.processingUser.id != LoginForm.myBenutzer.id and item.batchStep and item.batchAvailable}"
                                title="#{msgs.inBearbeitungDurch}: #{(item.processingUser!=null and item.processingUser.id!=0 ? item.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
-                    <f:setPropertyActionListener target="#{CurrentTaskForm.currentTask}" value="#{CurrentTaskForm.getTaskById(item.id)}"/>
+                    <f:setPropertyActionListener value="#{item.id}" target="#{CurrentTaskForm.taskById}" />
                 </h:commandLink>
             </h:form>
         </p:column>

@@ -17,8 +17,6 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:outputScript library="js" name="batch.js" target="body"/>
-
     <h:form id="batchForm">
         <p:panelGrid id="detailForm" columns="2" cellpadding="10" layout="grid">
             <p:row>
@@ -36,10 +34,10 @@
 
                 <div>
                     <p:outputLabel for="selectBatches" value="#{msgs.selectPlease}"/>
-                    <h:selectManyListbox value="#{BatchForm.selectedBatches}" class="input"
-                                         size="20" id="selectBatches">
-                        <f:selectItems var="batch" value="#{BatchForm.currentBatches}"
-                                       itemLabel="#{batch}" itemValue="#{batch.id}"/>
+                    <h:selectManyListbox value="#{BatchForm.selectedBatches}" class="input" size="20" id="selectBatches"
+                                         onchange="submit()" valueChangeListener="#{BatchForm.changeSelectedBatchId}">
+                        <f:selectItems var="batch" value="#{BatchForm.currentBatches}" itemLabel="#{batch}"
+                                       itemValue="#{batch.id}"/>
                     </h:selectManyListbox>
                 </div>
 
@@ -77,9 +75,10 @@
                         <h:outputText><i class="fa fa-print"/> #{msgs.docketPrint}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.editProperties}">
-                        <h:outputText><i class="fa fa-pencil-square-o fa-lg"/> #{msgs.propertyEdit}</h:outputText>
-                    </h:commandLink>
+                    <h:link outcome="batchProperties" title="#{msgs.propertyEdit}">
+                        <f:param name="id" value="#{BatchForm.selectedBatchId}"/>
+                        <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
+                    </h:link>
 
                     <h:commandLink action="#{BatchForm.deleteBatch}">
                         <h:outputText><i class="fa fa-trash-o"/> #{msgs.deleteBatch}</h:outputText>
@@ -120,16 +119,15 @@
                         <h:outputText><i class="fa fa-times-circle-o"/> #{msgs.removeFromAssociatedBatch}</h:outputText>
                     </h:commandLink>
 
-                    <h:inputHidden value="#{BatchForm.batchName}" id="batchName"/>
-                    <h:commandLink action="#{BatchForm.renameBatch}"
-                                   onclick="if(!renameBox('#{msgs.enterBatchName}', '#{msgs.noBatchSelected}', '#{msgs.tooManyBatchesSelected}'))return false">
+                    <p:commandLink id="renameBatch" title="#{msgs.renameBatch}"
+                                   oncomplete="PF('renameBatchDialog').show()" update="@(.editDialog)">
                         <h:outputText><i class="fa fa-pencil-square-o fa-lg"/> #{msgs.renameBatch}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
 
-                    <h:commandLink action="#{BatchForm.createNewBatch}"
-                                   onclick="if(!newNameBox('#{msgs.enterBatchName}', '#{msgs.noProcessSelected}'))return false">
+                    <p:commandLink id="createBatch" title="#{msgs.createNewBatchFromSelectedProcesses}"
+                                   oncomplete="PF('createBatchDialog').show()" update="@(.editDialog)">
                         <h:outputText><i class="fa fa-plus"/> #{msgs.createNewBatchFromSelectedProcesses}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
                 </h:panelGrid>
             </p:row>
         </p:panelGrid>

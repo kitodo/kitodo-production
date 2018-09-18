@@ -11,14 +11,6 @@
 
 package org.kitodo.services.validation;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -43,9 +35,16 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.api.validation.metadata.MetadataValidationInterface;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.UghHelper;
+import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
@@ -193,7 +192,7 @@ public class MetadataValidationService {
             result = false;
         }
 
-        MetadatenImagesHelper mih = new MetadatenImagesHelper(prefs, dd);
+        ImagesHelper mih = new ImagesHelper(prefs, dd);
         try {
             if (!mih.checkIfImagesValid(process.getTitle(),
                 serviceManager.getProcessService().getImagesTifDirectory(true, process))) {

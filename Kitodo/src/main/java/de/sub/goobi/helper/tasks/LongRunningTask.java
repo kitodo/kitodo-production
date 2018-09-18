@@ -11,11 +11,10 @@
 
 package de.sub.goobi.helper.tasks;
 
-import de.sub.goobi.helper.Helper;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 
 /**
  * @author unascribed
@@ -61,7 +60,7 @@ public abstract class LongRunningTask extends EmptyTask {
      * The method setShowMessages() can be used to set a flag whether this long
      * running task is executing asynchronously or not, in the latter case it
      * shall show messages to the user using
-     * {@link de.sub.goobi.helper.Helper#setMessage(String)}, otherwise not.
+     * {@link org.kitodo.helper.Helper#setMessage(String)}, otherwise not.
      *
      * @param show
      *            whether to show messages to the user

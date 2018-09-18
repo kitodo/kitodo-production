@@ -11,13 +11,13 @@
 
 package org.kitodo.production.thread;
 
-import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.tasks.EmptyTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.TaskService;
 
@@ -60,7 +60,7 @@ public class TaskScriptThread extends EmptyTask {
             }
         }
 
-        if (!this.task.getGenerateContents().isEmpty()) {
+        if (!this.task.getContentFolders().isEmpty()) {
             try {
                 this.taskService.generateImages(this, task, automatic);
             } catch (DataException e) {

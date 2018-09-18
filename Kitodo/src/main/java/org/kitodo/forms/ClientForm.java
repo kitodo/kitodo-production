@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
@@ -24,6 +22,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 
 @Named("ClientForm")

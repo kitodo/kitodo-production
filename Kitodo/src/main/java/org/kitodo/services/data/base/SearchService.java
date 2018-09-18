@@ -19,8 +19,6 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import com.sun.research.ws.wadl.HTTPMethods;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +50,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BaseDTO;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.RelatedProperty;
 
 /**

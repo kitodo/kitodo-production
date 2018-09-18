@@ -11,13 +11,8 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
 import de.sub.goobi.export.dms.ExportDms;
 import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
 
@@ -41,6 +36,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.Parameters;
 import org.kitodo.data.database.beans.Batch;
@@ -55,6 +51,10 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.production.thread.ImageGeneratorTask;
 import org.kitodo.tasks.ImageGeneratorTaskVariant;
@@ -116,8 +116,6 @@ public class CurrentTaskForm extends BaseForm {
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        serviceManager.getTaskService().refresh(this.currentTask);
-
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return null;
@@ -273,7 +271,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Unlock the current task's process.
-     * 
+     *
      * @return null
      */
     public String sperrungAufheben() {
@@ -439,7 +437,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateAllImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -453,7 +451,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateMissingAndDamagedImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -467,7 +465,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             TaskManager
                     .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
-                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getGenerateContents()));
+                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getContentFolders()));
             Helper.setMessage("regenerateMissingImagesStarted");
         } catch (RuntimeException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -542,20 +540,13 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Get task with specific id.
+     * Set task for given id.
      *
      * @param id
      *            passed as int
-     * @return task
      */
-    public Task getTaskById(int id) {
-        try {
-            return serviceManager.getTaskService().getById(id);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                logger, e);
-            return null;
-        }
+    public void setTaskById(int id) {
+        loadTaskById(id);
     }
 
     /**
@@ -846,13 +837,18 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Method being used as viewAction for CurrenTaskForm.
+     * Method being used as viewAction for CurrentTaskForm.
      *
      * @param id
-     *            ID of the step to load
+     *            ID of the task to load
      */
-    public void loadMyStep(int id) {
-        setCurrentTask(getTaskById(id));
+    public void loadTaskById(int id) {
+        try {
+            setCurrentTask(serviceManager.getTaskService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
+        }
     }
 
     /**
