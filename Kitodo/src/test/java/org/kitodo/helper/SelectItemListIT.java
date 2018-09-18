@@ -19,13 +19,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.BatchService;
 
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.instanceOf;
@@ -53,9 +56,30 @@ public class SelectItemListIT {
     }
 
     @Test
+    public void shouldGetBatches() throws Exception {
+        BatchService batchService = new ServiceManager().getBatchService();
+
+        await().untilAsserted(() -> assertEquals("Incorrect amount of select items!", 4,
+            SelectItemList.getBatches(batchService.getAll()).size()));
+
+        List<SelectItem> selectItems = SelectItemList.getBatches(batchService.getAll());
+
+        assertEquals("First item is not sorted correctly!", "First batch (1 processes) [LOGISTIC]",
+            selectItems.get(0).getLabel());
+        assertEquals("Second item is not sorted correctly!", "Second batch (0 processes) [LOGISTIC]",
+            selectItems.get(1).getLabel());
+        assertEquals("Third item is not sorted correctly!", "Third batch (2 processes) [NEWSPAPER]",
+            selectItems.get(2).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "Batch 4 (0 processes) [SERIAL]",
+            selectItems.get(3).getLabel());
+
+        assertThat("First item is not a Batch type!", selectItems.get(0).getValue(), instanceOf(Batch.class));
+    }
+
+    @Test
     public void shouldGetClients() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getClients().size()));
+            () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getClients().size()));
 
         List<SelectItem> selectItems = SelectItemList.getClients();
 
@@ -73,7 +97,7 @@ public class SelectItemListIT {
     @Test
     public void shouldGetDockets() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets().size()));
+            () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getDockets().size()));
 
         List<SelectItem> selectItems = SelectItemList.getDockets();
 
@@ -89,7 +113,7 @@ public class SelectItemListIT {
     @Test
     public void shouldGetLdapGroups() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 1, SelectItemList.getLdapGroups().size()));
+            () -> assertEquals("Incorrect amount of select items!", 1, SelectItemList.getLdapGroups().size()));
 
         List<SelectItem> selectItems = SelectItemList.getLdapGroups();
 
@@ -106,13 +130,13 @@ public class SelectItemListIT {
 
         assertEquals("First item is not sorted correctly!", "First process", selectItems.get(0).getLabel());
 
-        assertThat("First item is not an Integer type!", selectItems.get(0).getValue(), instanceOf(Integer.class));
+        assertThat("First item is not an Process type!", selectItems.get(0).getValue(), instanceOf(Process.class));
     }
 
     @Test
     public void shouldGetProjects() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getProjects().size()));
+            () -> assertEquals("Incorrect amount of select items!", 3, SelectItemList.getProjects().size()));
 
         List<SelectItem> selectItems = SelectItemList.getProjects();
 
@@ -126,7 +150,7 @@ public class SelectItemListIT {
     @Test
     public void shouldGetRulesets() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets().size()));
+            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getRulesets().size()));
 
         List<SelectItem> selectItems = SelectItemList.getRulesets();
 
@@ -141,7 +165,7 @@ public class SelectItemListIT {
     @Test
     public void shouldGetWorkflows() {
         await().untilAsserted(
-                () -> assertEquals("Incorrect amount of select items!", 1, SelectItemList.getWorkflows().size()));
+            () -> assertEquals("Incorrect amount of select items!", 1, SelectItemList.getWorkflows().size()));
 
         List<SelectItem> selectItems = SelectItemList.getWorkflows();
 

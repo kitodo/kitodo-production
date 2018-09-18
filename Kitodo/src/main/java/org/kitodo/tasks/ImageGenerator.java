@@ -16,8 +16,6 @@ import static org.kitodo.tasks.ImageGeneratorStep.GENERATE_IMAGES;
 import static org.kitodo.tasks.ImageGeneratorStep.LIST_SOURCE_FOLDER;
 import static org.kitodo.tasks.ImageGeneratorTaskVariant.ALL_IMAGES;
 
-import de.sub.goobi.helper.tasks.EmptyTask;
-
 import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.production.thread.ImageGeneratorTask;
 import org.kitodo.production.thread.TaskScriptThread;
 

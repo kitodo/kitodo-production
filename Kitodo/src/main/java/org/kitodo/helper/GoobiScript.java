@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.export.dms.ExportDms;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -45,6 +43,7 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exceptions.UghHelperException;
+import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;

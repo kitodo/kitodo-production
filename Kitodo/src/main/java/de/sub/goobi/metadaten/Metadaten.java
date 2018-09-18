@@ -94,7 +94,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
-import org.kitodo.helper.BatchStepHelper;
+import org.kitodo.helper.batch.BatchTaskHelper;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.HelperComparator;
 import org.kitodo.helper.Transliteration;
@@ -514,41 +514,7 @@ public class Metadaten {
     }
 
     /**
-     * Get size of roles.
-     *
-     * @return size
-     */
-    public int getSizeOfRoles() {
-        try {
-            return getAddableRollen().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfRoles(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Get size of metadata.
-     *
-     * @return size
-     */
-    public int getSizeOfMetadata() {
-        try {
-            return getAddableMetadataTypes().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfMetadata(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Gets addeble metadata types.
+     * Gets addable metadata types.
      *
      * @return The metadata types.
      */
@@ -4113,7 +4079,7 @@ public class Metadaten {
     public void reportProblem() {
         List<Task> taskList = new  ArrayList<>();
         taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
-        BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
         batchStepHelper.setProblem(getProblem());
         batchStepHelper.reportProblemForSingle();
         refreshProcess(this.process);
@@ -4123,12 +4089,10 @@ public class Metadaten {
     }
 
     /**
-     * solve the problem.
-     *
-     *
+     * Solve the problem.
      */
     public void solveProblem(String comment) {
-        BatchStepHelper batchStepHelper = new BatchStepHelper();
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper();
         batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
@@ -4137,7 +4101,7 @@ public class Metadaten {
         try {
             serviceManager.getProcessService().save(process);
         } catch (DataException e) {
-            e.printStackTrace();
+            Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
         refreshProcess(this.process);
     }

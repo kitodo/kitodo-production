@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.helper.tasks.EmptyTask;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +54,7 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;

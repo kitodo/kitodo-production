@@ -78,7 +78,7 @@ public class CopyProcess extends ProzesskopieForm {
     private StringBuilder tifHeaderImageDescription = new StringBuilder();
     private String tifHeaderDocumentName = "";
     private String naviFirstPage;
-    private Integer auswahl;
+    private Process processForChoice;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
@@ -328,11 +328,9 @@ public class CopyProcess extends ProzesskopieForm {
      * Auswahl des Prozesses auswerten.
      */
     @Override
-    public String templateAuswahlAuswerten() throws DAOException {
-        /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
-        if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
-            for (Property workpieceProperty : tempProzess.getWorkpieces()) {
+    public String templateAuswahlAuswerten() {
+        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
@@ -341,8 +339,8 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
-            for (Property templateProperty : tempProzess.getTemplates()) {
+        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+            for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
                         field.setValue(templateProperty.getValue());
@@ -352,7 +350,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         try {
-            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
@@ -577,13 +575,13 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public Integer getAuswahl() {
-        return this.auswahl;
+    public Process getProcessForChoice() {
+        return this.processForChoice;
     }
 
     @Override
-    public void setAuswahl(Integer auswahl) {
-        this.auswahl = auswahl;
+    public void setProcessForChoice(Process processForChoice) {
+        this.processForChoice = processForChoice;
     }
 
     @Override

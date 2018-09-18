@@ -16,9 +16,12 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DataFormatVersionProvider {
 
+    private static final Logger logger = LogManager.getLogger(DataFormatVersionProvider.class);
     private static final String XSD_VERSION_IDENTIFIER = "CURRENT VERSION:";
 
     /**
@@ -35,7 +38,7 @@ public class DataFormatVersionProvider {
             int indexOfNextNewLine = xsdString.indexOf("\n", index);
             return xsdString.substring(index, indexOfNextNewLine).replaceAll("[^0-9?!\\.]", "");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return "error at providing version information";
 
         }

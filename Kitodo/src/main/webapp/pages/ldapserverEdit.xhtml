@@ -17,7 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:metadata>
         <f:viewParam name="id"/>
-        <f:viewAction action="#{LdapServerForm.loadLdapServer(id)}"/>
+        <f:viewAction action="#{LdapServerForm.load(id)}"/>
     </f:metadata>
 
     <ui:param name="isEditMode"
@@ -178,7 +178,7 @@
                          rendered="#{not isViewMode}">
                     <p:commandButton id="delete"
                                      value="#{msgs.delete}"
-                                     onclick="return confirm('#{msgs.sollDieserEintragWirklichGeloeschtWerden}')"
+                                     onclick="return confirm('#{msgs.shouldItemBeRemoved}')"
                                     action="#{LdapServerForm.delete}"
                                      rendered="#{isEditMode and SecurityAccessController.isAdminOrHasAuthorityGlobal('deleteLdapGroup')}"
                                      icon="fa fa-trash-o fa-lg"
@@ -191,7 +191,7 @@
                                      iconPos="right"
                                      update="editForm"
                                      immediate="true"
-                                     onclick="return confirm('#{msgs.sollDerContentWirklichGeloeschtWerden}')"/>
+                                     onclick="return confirm('#{msgs.shouldContentBeRemoved}')"/>
                 </p:panel>
             </p:tab>
         </p:tabView>

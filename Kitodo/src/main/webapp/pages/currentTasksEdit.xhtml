@@ -30,8 +30,8 @@
     <ui:define name="pageTabView">
         <p:tabView id="tasksTabView">
             <p:tab title="#{msgs.taskDetails}">
-                <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxDetails.xhtml"/>
-                <ui:include src="/WEB-INF/templates/includes/tasks/taskBoxActivities.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/taskBoxDetails.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/currentTasksEdit/taskBoxActivities.xhtml"/>
             </p:tab>
             <p:tab title="#{msgs.messages}">
                 <h:form id="addToWikiForm">

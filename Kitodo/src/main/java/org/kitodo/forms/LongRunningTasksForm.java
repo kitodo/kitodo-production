@@ -11,15 +11,14 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.helper.tasks.TaskSitter;
-
 import java.util.List;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.Parameters;
+import org.kitodo.helper.tasks.EmptyTask;
+import org.kitodo.helper.tasks.EmptyTask.Behaviour;
+import org.kitodo.helper.tasks.TaskManager;
+import org.kitodo.helper.tasks.TaskSitter;
 
 public class LongRunningTasksForm {
     /**
