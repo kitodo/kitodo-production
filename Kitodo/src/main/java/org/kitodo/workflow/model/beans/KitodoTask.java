@@ -22,6 +22,7 @@ public class KitodoTask {
     private Integer priority;
     private Integer ordering;
     private Integer editType;
+    private Integer processingStatus;
     private Boolean typeMetadata;
     private Boolean typeAutomatic;
     private Boolean typeImportFileUpload;
@@ -49,6 +50,7 @@ public class KitodoTask {
         this.priority = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "priority"));
         this.ordering = ordering;
         this.editType = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "editType"));
+        this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
         this.typeImportFileUpload = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImportFileUpload"));
@@ -163,6 +165,24 @@ public class KitodoTask {
      */
     public void setEditType(Integer editType) {
         this.editType = editType;
+    }
+
+    /**
+     * Get processingStatus.
+     *
+     * @return value of processingStatus
+     */
+    public Integer getProcessingStatus() {
+        return processingStatus;
+    }
+
+    /**
+     * Set processingStatus.
+     *
+     * @param processingStatus as java.lang.Integer
+     */
+    public void setProcessingStatus(Integer processingStatus) {
+        this.processingStatus = processingStatus;
     }
 
     /**

@@ -33,7 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
 import org.kitodo.metadata.comparator.MetadataImageComparator;
@@ -94,7 +94,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             new File("");
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
             URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter(Parameters.KITODO_CONTENT_SERVER_TIMEOUT,
+            Integer contentServerTimeOut = ConfigCore.getIntParameter(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT,
                 DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();
 
@@ -169,7 +169,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     }
 
     private URL getKitodoContentServerURL() throws IOException {
-        String contentServerUrl = ConfigCore.getParameter(Parameters.KITODO_CONTENT_SERVER_URL);
+        String contentServerUrl = ConfigCore.getParameter(ParameterCore.KITODO_CONTENT_SERVER_URL);
 
         // using mets file
         if (serviceManager.getMetadataValidationService().validate(this.getProcess()) && (this.metsURL != null)) {

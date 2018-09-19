@@ -14,7 +14,7 @@ package org.kitodo.security;
 import java.util.Objects;
 
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
@@ -139,7 +139,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     private void readLocalConfig() {
-        setLdapAuthentication(ConfigCore.getBooleanParameter(Parameters.LDAP_USE));
+        setLdapAuthentication(ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE));
     }
 
     private String[] convertUserDn(String userDn) {

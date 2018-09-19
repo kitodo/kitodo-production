@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.forms.ProzesskopieForm;
@@ -76,7 +76,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final String ERROR_CREATE = "errorCreating";
 
     public CreateNewProcessProcessor() {
-        super(ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
+        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
     }
 
     @Override

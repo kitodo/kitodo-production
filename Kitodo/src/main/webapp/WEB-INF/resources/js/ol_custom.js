@@ -12,6 +12,7 @@
 // Kitodo namespace
 window.kitodo = {};
 var kitodo = window.kitodo;
+var map;
 
 /**
  * @param {Object=} opt_options Custom control options for Kitodo in OpenLayers
@@ -87,38 +88,55 @@ kitodo.RotateRightControl = function(opt_options) {
 ol.inherits(kitodo.RotateLeftControl, ol.control.Rotate);
 ol.inherits(kitodo.RotateRightControl, ol.control.Rotate);
 
-// Map image coordinates to map coordinates to be able to use image extent in pixels.
-var extent = [0, 0, 800, 1280];
-var projection = new ol.proj.Projection({
-    code: 'kitodo-image',
-    units: 'pixels',
-    extent: extent
-});
+// load image to get correct dimensions
+var image = new Image();
+var imagePath = document.getElementById("imageData").dataset.image;
+var imageDimensions;
+image.onload = function () {
+    imageDimensions = [image.width, image.height];
+    initializeMap(imageDimensions);
+};
+image.src = imagePath;
 
-var map = new ol.Map({
-    controls: ol.control.defaults({
-        attributionOptions: {
-            collapsible: false
-        }
-    }).extend([
-        new kitodo.RotateLeftControl()
-    ]).extend([
-        new kitodo.RotateRightControl()
-    ]),
-    layers: [
-        new ol.layer.Image({
-            source: new ol.source.ImageStatic({
-                url: document.getElementById("imageData").dataset.image,
-                projection: projection,
-                imageExtent: extent
+function initializeMap(imageDimensions) {
+    // Map image coordinates to map coordinates to be able to use image extent in pixels.
+    var extent = [0, 0, imageDimensions[0], imageDimensions[1]];
+    var projection = new ol.proj.Projection({
+        code: 'kitodo-image',
+        units: 'pixels',
+        extent: extent
+    });
+
+    map = new ol.Map({
+        controls: ol.control.defaults({
+            attributionOptions: {
+                collapsible: false
+            }
+        }).extend([
+            new kitodo.RotateLeftControl()
+        ]).extend([
+            new kitodo.RotateRightControl()
+        ]),
+        layers: [
+            new ol.layer.Image({
+                source: new ol.source.ImageStatic({
+                    url: imagePath,
+                    projection: projection,
+                    imageExtent: extent
+                })
             })
+        ],
+        target: 'map',
+        view: new ol.View({
+            projection: projection,
+            center: ol.extent.getCenter(extent),
+            zoom: 1,
+            maxZoom: 8
         })
-    ],
-    target: 'map',
-    view: new ol.View({
-        projection: projection,
-        center: ol.extent.getCenter(extent),
-        zoom: 1,
-        maxZoom: 8
-    })
+    });
+}
+
+// reload map if container was resized
+$('#thirdColumnWrapper').on('resize', function () {
+    map.updateSize();
 });

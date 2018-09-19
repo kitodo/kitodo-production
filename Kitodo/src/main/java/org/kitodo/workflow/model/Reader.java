@@ -77,11 +77,6 @@ public class Reader {
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
-            if (task.getOrdering().equals(1)) {
-                task.setProcessingStatusEnum(TaskStatus.OPEN);
-            } else {
-                task.setProcessingStatusEnum(TaskStatus.LOCKED);
-            }
             task.setTemplate(template);
             template.getTasks().add(task);
         }
@@ -118,6 +113,7 @@ public class Reader {
         task.setOrdering(kitodoTask.getOrdering());
         task.setPriority(kitodoTask.getPriority());
         task.setEditType(kitodoTask.getEditType());
+        task.setProcessingStatus(kitodoTask.getProcessingStatus());
         task.setBatchStep(kitodoTask.getBatchStep());
         task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
         task.setTypeImagesRead(kitodoTask.getTypeImagesRead());

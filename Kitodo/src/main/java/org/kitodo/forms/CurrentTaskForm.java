@@ -35,7 +35,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -73,8 +73,8 @@ public class CurrentTaskForm extends BaseForm {
     private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
-    private boolean nurOffeneSchritte = false;
-    private boolean nurEigeneSchritte = false;
+    private boolean onlyOpenTasks = false;
+    private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
     private Map<String, Boolean> anzeigeAnpassen;
@@ -109,7 +109,7 @@ public class CurrentTaskForm extends BaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(ParameterCore.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -351,8 +351,8 @@ public class CurrentTaskForm extends BaseForm {
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
          * setzen
          */
-        if (!fertigListe.isEmpty() && this.nurOffeneSchritte) {
-            this.nurOffeneSchritte = false;
+        if (!fertigListe.isEmpty() && this.onlyOpenTasks) {
+            this.onlyOpenTasks = false;
             return taskListPath;
         }
         for (URI element : fertigListe) {
@@ -643,20 +643,84 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
-    public boolean isNurOffeneSchritte() {
-        return this.nurOffeneSchritte;
+    /**
+     * Check if it should show only open tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isOnlyOpenTasks() {
+        return this.onlyOpenTasks;
     }
 
-    public void setNurOffeneSchritte(boolean nurOffeneSchritte) {
-        this.nurOffeneSchritte = nurOffeneSchritte;
+    /**
+     * Set shown only open tasks.
+     *
+     * @param onlyOpenTasks
+     *            as boolean
+     */
+    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
+        this.onlyOpenTasks = onlyOpenTasks;
+        serviceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
     }
 
-    public boolean isNurEigeneSchritte() {
-        return this.nurEigeneSchritte;
+    /**
+     * Check if it should show only own tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isOnlyOwnTasks() {
+        return this.onlyOwnTasks;
     }
 
-    public void setNurEigeneSchritte(boolean nurEigeneSchritte) {
-        this.nurEigeneSchritte = nurEigeneSchritte;
+    /**
+     * Set shown only tasks owned by currently logged user.
+     *
+     * @param onlyOwnTasks
+     *            as boolean
+     */
+    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        this.onlyOwnTasks = onlyOwnTasks;
+        serviceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
+    }
+
+    /**
+     * Check if it should show also automatic tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isShowAutomaticTasks() {
+        return this.showAutomaticTasks;
+    }
+
+    /**
+     * Set show automatic tasks.
+     *
+     * @param showAutomaticTasks
+     *            as boolean
+     */
+    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
+        this.showAutomaticTasks = showAutomaticTasks;
+        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
+    }
+
+    /**
+     * Check if it should hide correction tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isHideCorrectionTasks() {
+        return hideCorrectionTasks;
+    }
+
+    /**
+     * Set hide correction tasks.
+     *
+     * @param hideCorrectionTasks
+     *            as boolean
+     */
+    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+        this.hideCorrectionTasks = hideCorrectionTasks;
+        serviceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
     }
 
     public Map<String, Boolean> getAnzeigeAnpassen() {
@@ -816,24 +880,6 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void setBatchHelper(BatchTaskHelper batchHelper) {
         this.batchHelper = batchHelper;
-    }
-
-    public boolean getShowAutomaticTasks() {
-        return this.showAutomaticTasks;
-    }
-
-    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        this.showAutomaticTasks = showAutomaticTasks;
-        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
-    }
-
-    public boolean getHideCorrectionTasks() {
-        return hideCorrectionTasks;
-    }
-
-    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        this.hideCorrectionTasks = hideCorrectionTasks;
-        serviceManager.getTaskService().setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**
