@@ -11,8 +11,6 @@
 
 package org.kitodo.helper;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,13 +21,13 @@ import javax.faces.model.SelectItem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseTemplateBean;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -47,12 +45,25 @@ public class SelectItemList {
 
     }
 
-    // TODO: list of select items must use client
+    /**
+     * Get batches for select list.
+     *
+     * @param batches
+     *            to convert to select list
+     * @return list of batches as SelectItem list
+     */
+    public static List<SelectItem> getBatches(List<Batch> batches) {
+        List<SelectItem> selectItems = new ArrayList<>();
+        for (Batch batch : batches) {
+            selectItems.add(new SelectItem(batch, batch.toString(), null));
+        }
+        return selectItems;
+    }
 
     /**
-     * Get dockets for select list.
+     * Get clients for select list.
      *
-     * @return list of dockets as SelectItem list
+     * @return list of clients as SelectItem list
      */
     public static List<SelectItem> getClients() {
         List<SelectItem> selectItems = new ArrayList<>();
@@ -97,7 +108,8 @@ public class SelectItemList {
      * 
      * @return list of templates as SelectItem list
      */
-    //TODO: check if this is still true - why take processes if it should be templates
+    // TODO: check if this is still true - why take processes if it should be
+    // templates
     public static List<SelectItem> getProcessesForChoiceList() {
         List<Process> processes = new ArrayList<>();
         // TODO Change to check the corresponding authority
@@ -117,9 +129,20 @@ public class SelectItemList {
         }
         processes = processes.stream().filter(BaseTemplateBean::getInChoiceListShown).collect(Collectors.toList());
 
+        return getProcesses(processes);
+    }
+
+    /**
+     * Get processes for select list.
+     *
+     * @param processes
+     *            to convert to select list
+     * @return list of processes as SelectItem list
+     */
+    public static List<SelectItem> getProcesses(List<Process> processes) {
         List<SelectItem> selectItems = new ArrayList<>();
         for (Process process : processes) {
-            selectItems.add(new SelectItem(process.getId(), process.getTitle(), null));
+            selectItems.add(new SelectItem(process, process.getTitle(), null));
         }
         return selectItems;
     }

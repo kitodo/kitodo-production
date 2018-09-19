@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +33,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
 
@@ -91,8 +90,16 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         return countDatabaseRows("SELECT COUNT(*) FROM Batch");
     }
 
-    public void removeAll(Iterable<Integer> ids) throws DAOException {
-        dao.removeAll(ids);
+    /**
+     * Remove all passed batches.
+     * 
+     * @param batches
+     *            to remove
+     */
+    public void removeAll(Iterable<Batch> batches) throws DAOException {
+        for (Batch batch : batches) {
+            dao.remove(batch);
+        }
     }
 
     /**

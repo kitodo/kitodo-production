@@ -11,13 +11,12 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.Serializable;
 import java.util.HashMap;
 
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 
 /**
  * Bean für die Sperrung der Metadaten.
@@ -31,7 +30,7 @@ public class MetadataLock implements Serializable {
      * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
      * behalten (30 min)
      */
-    private static final long sperrzeit = ConfigCore.getLongParameter(Parameters.METS_EDITOR_LOCKING_TIME,
+    private static final long sperrzeit = ConfigCore.getLongParameter(ParameterCore.METS_EDITOR_LOCKING_TIME,
         DefaultValues.METS_EDITOR_LOCKING_TIME);
 
     /**

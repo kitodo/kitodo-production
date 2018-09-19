@@ -11,8 +11,6 @@
 
 package org.kitodo.selenium.testframework;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.net.URI;
 
@@ -21,9 +19,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -44,8 +44,8 @@ public class BaseTestSelenium {
         FileLoader.createDigitalCollectionsFile();
 
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
@@ -58,8 +58,8 @@ public class BaseTestSelenium {
         Browser.close();
 
         if (SystemUtils.IS_OS_LINUX) {
-            File scriptCreateDirMeta = new File(ConfigCore.getParameter("script_createDirMeta"));
-            File scriptCreateDirUserHome = new File(ConfigCore.getParameter("script_createDirUserHome"));
+            File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+            File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
             ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }

@@ -18,14 +18,14 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
 
-    <h:outputScript name="js/opacImport.js" target="body" />
+    <h:outputScript name="js/opacImport.js" target="body"/>
     <p:panelGrid layout="grid" columns="2" cellpadding="10">
         <!-- choose from existing processes  -->
         <p:row rendered="#{ProzesskopieForm.useTemplates}">
             <div>
                 <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
-                <p:selectOneMenu id="processSelect"
-                                 value="#{ProzesskopieForm.auswahl}">
+                <p:selectOneMenu id="processSelect" value="#{ProzesskopieForm.processForChoice}"
+                                 converter="#{processConverter}">
                     <f:selectItems value="#{ProzesskopieForm.processesForChoiceList}"/>
                 </p:selectOneMenu>
             </div>
@@ -74,7 +74,7 @@
                              icon="fa fa-search" iconPos="right"
                              update="editForm"
                              onclick="if (document.forms['editForm']['editForm:processFromTemplateTabView:fieldValue'].value !== '') PF('notifications').renderMessage({'summary':'#{msgs.searchingOpac}','detail':'','severity':'info'})"
-                             rendered="#{ProzesskopieForm.useOpac}" />
+                             rendered="#{ProzesskopieForm.useOpac}"/>
         </p:row>
     </p:panelGrid>
 </ui:composition>

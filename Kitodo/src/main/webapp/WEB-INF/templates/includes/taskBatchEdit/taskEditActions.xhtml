@@ -43,8 +43,7 @@
                                 </h:commandLink>
                             </t:dataList>
 
-                            <h:outputText style="back-color:blue; color: red; font-weight: bold;"
-                                          rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS }"
+                            <h:outputText rendered="#{CurrentTaskForm.batchHelper.currentStep.typeExportDMS}"
                                           value="#{msgs.timeoutWarningDMS}"/>
 
                             <h:commandLink id="action9"
@@ -82,14 +81,14 @@
                                             <h:commandLink id="action130"
                                                            action="#{CurrentTaskForm.batchHelper.reportProblemForSingle}"
                                                            title="#{msgs.correctionMessageSend}"
-                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSend}"/>
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action131"
                                                            action="#{CurrentTaskForm.batchHelper.reportProblemForAll}"
                                                            title="#{msgs.correctionMessageSend}"
-                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
+                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
                                                 <h:outputText value="#{msgs.correctionMessageSendAllTasks}"/>
                                             </h:commandLink>
                                         </h:panelGroup>
@@ -105,8 +104,7 @@
 
                                     <h:graphicImage value="/pages/images/buttons/step_for_20px.gif" alt="step forward"
                                                     style="margin-right:3px;vertical-align:middle"/>
-                                    <h:outputText
-                                            value="#{msgs.meldungUeberProblemloesungAnNachchfolgendeStationSenden}"/>
+                                    <h:outputText value="#{msgs.sendSolutionMessageNextTask}"/>
                                 </span>
 
                                 <div class="toggle-2" style="display: none;">
@@ -126,16 +124,16 @@
                                         <h:panelGroup>
                                             <h:commandLink id="action140"
                                                            action="#{CurrentTaskForm.batchHelper.solveProblemForSingle}"
-                                                           title="#{msgs.meldungUeberProblemloesungSenden}"
-                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                                <h:outputText value="#{msgs.meldungUeberProblemloesungSendenSingle}"/>
+                                                           title="#{msgs.sendSolutionMessage}"
+                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
+                                                <h:outputText value="#{msgs.sendSolutionMessageForSingle}"/>
                                             </h:commandLink>
                                             <h:outputText value=" | "/>
                                             <h:commandLink id="action141"
                                                            action="#{CurrentTaskForm.batchHelper.solveProblemForAll}"
-                                                           title="#{msgs.meldungUeberProblemloesungSenden}"
-                                                           onclick="if (!confirm('#{msgs.wirklichAusfuehren}?')) return">
-                                                <h:outputText value="#{msgs.meldungUeberProblemloesungSendenForAll}"/>
+                                                           title="#{msgs.sendSolutionMessage}"
+                                                           onclick="if (!confirm('#{msgs.reallyExecute}?')) return">
+                                                <h:outputText value="#{msgs.sendSolutionMessageForAll}"/>
                                             </h:commandLink>
                                         </h:panelGroup>
                                     </h:panelGrid>
@@ -144,20 +142,20 @@
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
                             <h:commandLink id="action11"
-                                           action="#{CurrentTaskForm.batchHelper.setBatchTasksToOpen}"
-                                           title="#{msgs.bearbeitungDiesesSchrittesAbgeben}"
-                                           onclick="if (!confirm('#{msgs.bearbeitungDiesesSchrittesWirklichAbgeben}')) return">
+                                           action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
+                                           title="#{msgs.releaseTask}"
+                                           onclick="if (!confirm('#{msgs.reallyReleaseTask}')) return">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
                                                 style="margin-right:3px;vertical-align:middle"/>
-                                <h:outputText value="#{msgs.bearbeitungDiesesSchrittesAbgeben}"/>
+                                <h:outputText value="#{msgs.releaseTask}"/>
                             </h:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
-                            <h:commandLink id="action15" action="#{CurrentTaskForm.batchHelper.closeBatchTasks}"
-                                           title="#{msgs.diesenSchrittAbschliessen}"
-                                           onclick="if (!confirm('#{msgs.diesenSchrittAbschliessen}?')) return">
+                            <h:commandLink id="action15"
+                                           action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
+                                           title="#{msgs.closeTask}" onclick="if (!confirm('#{msgs.closeTask}?')) return">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                                 style="margin-right:3px;vertical-align:middle"/>
-                                <h:outputText value="#{msgs.diesenSchrittAbschliessen}"/>
+                                <h:outputText value="#{msgs.closeTask}"/>
                             </h:commandLink>
 
                         </h:panelGrid>

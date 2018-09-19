@@ -11,8 +11,6 @@
 
 package org.goobi.mq;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.Optional;
 
 import javax.jms.Connection;
@@ -32,8 +30,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.processors.CreateNewProcessProcessor;
 import org.goobi.mq.processors.FinaliseStepProcessor;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 
 /**
  * The class ActiveMQDirector is the head of all Active MQ processors. It
@@ -82,13 +81,13 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
      */
     @Override
     public void contextInitialized(ServletContextEvent initialisation) {
-        Optional<String> activeMQHost = ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_HOST_URL);
+        Optional<String> activeMQHost = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_HOST_URL);
         if (activeMQHost.isPresent()) {
             session = connectToServer(activeMQHost.get());
             if (session != null) {
                 registerListeners(services);
                 Optional<String> activeMQResultsTopic = ConfigCore
-                        .getOptionalString(Parameters.ACTIVE_MQ_RESULTS_TOPIC);
+                        .getOptionalString(ParameterCore.ACTIVE_MQ_RESULTS_TOPIC);
                 if (activeMQResultsTopic.isPresent()) {
                     resultsTopic = setUpReportChannel(activeMQResultsTopic.get());
                 }
@@ -164,7 +163,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
             Destination channel = session.createTopic(topic);
             result = session.createProducer(channel);
             result.setDeliveryMode(DeliveryMode.PERSISTENT);
-            result.setTimeToLive(ConfigCore.getLongParameter(Parameters.ACTIVE_MQ_RESULTS_TTL,
+            result.setTimeToLive(ConfigCore.getLongParameter(ParameterCore.ACTIVE_MQ_RESULTS_TTL,
                 DefaultValues.ACTIVE_MQ_RESULTS_TTL));
             return result;
         } catch (JMSException | RuntimeException e) {

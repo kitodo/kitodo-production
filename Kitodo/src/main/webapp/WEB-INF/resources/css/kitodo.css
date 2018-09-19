@@ -868,6 +868,16 @@ main i.fa {
     line-height: 22px;
 }
 
+.legal-dialog {
+    width: 640px;
+    min-height: 480px;
+}
+
+.legal-texts-select-menu {
+    margin: 0 10px 10px 0;
+    width: 250px;
+}
+
 .select-client-note {
     background: #F94A15;
     padding: 16px 32px 16px 32px;
@@ -1156,6 +1166,19 @@ Column content
     margin-left: 5px;
 }
 
+#galleryWrapperPanel,
+#galleryWrapperPanel_content {
+    height: 100%;
+}
+
+#thumbnailStripe > div {
+    text-align: center;
+}
+
+#thumbnailStripe a {
+    display: inline-block;
+}
+
 .thumbnail {
     height: 60px;
     border: 1px solid black;
@@ -1216,7 +1239,8 @@ footer {
     display: inline;
     }
 
-#footer-meta-menu li a {
+#footer-meta-menu li a,
+#footer-meta-menu li input {
     background: #999;
     color: #fff;
     text-decoration: none;
@@ -1226,7 +1250,8 @@ footer {
     margin-bottom: 5px;
     }
 
-#footer-meta-menu li a:hover {
+#footer-meta-menu li a:hover,
+#footer-meta-menu li input:hover{
     background: #005182;
     }
 
@@ -1288,6 +1313,13 @@ footer {
 .ui-datatable tr th.checkboxColumn,
 .ui-datatable tr td.checkboxColumn {
     width: 100px;
+}
+
+.ui-datatable tr td span.process-progress {
+    display: block;
+    width: 110px;
+    height: 16px;
+    border-radius: 3px;
 }
 
 

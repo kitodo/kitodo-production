@@ -11,13 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.FacesUtils;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.XMLUtils;
-import de.sub.goobi.helper.tasks.CreateNewspaperProcessesTask;
-import de.sub.goobi.helper.tasks.TaskManager;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +26,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.production.model.bibliography.course.Course;
 import org.goobi.production.model.bibliography.course.Granularity;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.FacesUtils;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.XMLUtils;
 import org.w3c.dom.Document;
 
 /**
@@ -227,7 +224,7 @@ public class GranularityForm {
      * @return an error message, or the empty string if everything is okay.
      */
     public String getLockMessage() {
-        long perProcess = ConfigCore.getLongParameter(Parameters.MINIMAL_NUMBER_OF_PAGES, -1);
+        long perProcess = ConfigCore.getLongParameter(ParameterCore.MINIMAL_NUMBER_OF_PAGES, -1);
         if (getNumberOfProcesses() < 1 || perProcess < 1
                 || (numberOfPages != null && numberOfPages / getNumberOfProcesses() >= perProcess)) {
             return null;

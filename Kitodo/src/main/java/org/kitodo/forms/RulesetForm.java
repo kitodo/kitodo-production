@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,11 +30,13 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 
@@ -83,9 +82,9 @@ public class RulesetForm extends BaseForm {
      *
      * @return page or empty String
      */
-    public String saveRuleset() {
+    public String save() {
         try {
-            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
                     return null;
@@ -117,27 +116,6 @@ public class RulesetForm extends BaseForm {
         return rulesetFile.exists();
     }
 
-    /**
-     * Remove.
-     *
-     * @return redirect link or empty String
-     */
-    public String removeRuleset() {
-        try {
-            if (hasAssignedProcesses(this.ruleset)) {
-                Helper.setErrorMessage("rulesetInUse");
-                return null;
-            } else {
-                serviceManager.getRulesetService().remove(this.ruleset);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
-                e);
-            return null;
-        }
-        return rulesetListPath;
-    }
-
     private boolean existsRulesetWithSameName() {
         List<Ruleset> rulesets = serviceManager.getRulesetService().getByTitle(this.ruleset.getTitle());
         if (rulesets.isEmpty()) {
@@ -167,7 +145,7 @@ public class RulesetForm extends BaseForm {
      * @param id
      *            ID of the ruleset to load
      */
-    public void loadRuleset(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setRuleset(this.serviceManager.getRulesetService().getById(id));
@@ -221,7 +199,7 @@ public class RulesetForm extends BaseForm {
      * @return list of ruleset filenames
      */
     public List getRulesetFilenames() {
-        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
+        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS)))) {
             return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
@@ -234,7 +212,7 @@ public class RulesetForm extends BaseForm {
     /**
      * Delete ruleset.
      */
-    public void deleteRuleset() {
+    public void delete() {
         try {
             if (hasAssignedProcesses(ruleset)) {
                 Helper.setErrorMessage("rulesetInUse");

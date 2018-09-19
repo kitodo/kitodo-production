@@ -18,7 +18,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.kitodo.data.database.beans.Batch.Type.LOGISTIC;
 
-import de.sub.goobi.config.ConfigCore;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.junit.AfterClass;
@@ -33,6 +36,7 @@ import org.kitodo.api.ugh.DigitalDocumentInterface;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.MetsModsInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -43,11 +47,6 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
-
-import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Tests for ProcessService class.

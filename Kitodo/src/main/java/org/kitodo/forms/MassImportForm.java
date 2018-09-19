@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 
 import java.io.File;
@@ -52,8 +50,9 @@ import org.jdom.input.SAXBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -61,6 +60,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
 
 @Named("MassImportForm")
 @SessionScoped
@@ -229,7 +229,7 @@ public class MassImportForm extends BaseForm {
 
             // found list with ids
             PrefsInterface prefs = serviceManager.getRulesetService().getPreferences(this.template.getRuleset());
-            String tempFolder = ConfigCore.getParameter(Parameters.DIR_TEMP);
+            String tempFolder = ConfigCore.getParameter(ParameterCore.DIR_TEMP);
             this.plugin.setImportFolder(tempFolder);
             this.plugin.setPrefs(prefs);
             this.plugin.setOpacCatalogue(this.getOpacCatalogue());
@@ -314,7 +314,7 @@ public class MassImportForm extends BaseForm {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
         URI temporalFile = serviceManager.getFileService().createResource(
-            FilenameUtils.concat(ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
+            FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }
@@ -772,12 +772,13 @@ public class MassImportForm extends BaseForm {
 
     /**
      * Download docket.
-     *
-     * @return String
      */
-    public String downloadDocket() throws IOException {
-        serviceManager.getProcessService().downloadDocket(this.processList);
-        return "";
+    public void downloadDocket() {
+        try {
+            serviceManager.getProcessService().downloadDocket(this.processList);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**

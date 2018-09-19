@@ -18,8 +18,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.net.URI;
 import java.util.Collections;
@@ -37,7 +35,8 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -325,17 +324,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldGetCss() throws Exception {
-        User user = userService.getById(1);
-        boolean condition = userService.getCss(user).equals("old/userStyles/classic.css");
-        assertTrue("Css file is incorrect!", condition);
-
-        user = userService.getById(2);
-        condition = userService.getCss(user).equals("old/userStyles/default.css");
-        assertTrue("Css file is incorrect!", condition);
-    }
-
-    @Test
     public void shouldGetUserGroupSize() {
         await().untilAsserted(
             () -> assertEquals("User groups' size is incorrect!", 1, userService.findById(1).getUserGroupSize()));
@@ -402,9 +390,9 @@ public class UserServiceIT {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         User user = userService.getById(1);
-        String homeDirectory = ConfigCore.getParameter(Parameters.DIR_USERS);
+        String homeDirectory = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
-        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
         ExecutionPermission.setExecutePermission(script);
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);

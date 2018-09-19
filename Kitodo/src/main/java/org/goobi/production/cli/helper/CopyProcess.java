@@ -11,13 +11,6 @@
 
 package org.goobi.production.cli.helper;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.UghHelperException;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
@@ -45,7 +38,10 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
+import org.kitodo.config.DigitalCollections;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -53,8 +49,12 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.BeanHelper;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.UghHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 
@@ -78,7 +78,7 @@ public class CopyProcess extends ProzesskopieForm {
     private StringBuilder tifHeaderImageDescription = new StringBuilder();
     private String tifHeaderDocumentName = "";
     private String naviFirstPage;
-    private Integer auswahl;
+    private Process processForChoice;
     private String docType;
     // TODO: check use of atstsl. Why is it never modified?
     private static final String atstsl = "";
@@ -328,11 +328,9 @@ public class CopyProcess extends ProzesskopieForm {
      * Auswahl des Prozesses auswerten.
      */
     @Override
-    public String templateAuswahlAuswerten() throws DAOException {
-        /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
-        if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
-            for (Property workpieceProperty : tempProzess.getWorkpieces()) {
+    public String templateAuswahlAuswerten() {
+        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
@@ -341,8 +339,8 @@ public class CopyProcess extends ProzesskopieForm {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
-            for (Property templateProperty : tempProzess.getTemplates()) {
+        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+            for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
                         field.setValue(templateProperty.getValue());
@@ -352,7 +350,7 @@ public class CopyProcess extends ProzesskopieForm {
         }
 
         try {
-            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.myRdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"Template-Metadaten" }, logger, e);
         }
@@ -417,7 +415,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valid = true;
 
-        if (ConfigCore.getBooleanParameter(Parameters.MASS_IMPORT_UNIQUE_TITLE, true)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.MASS_IMPORT_UNIQUE_TITLE, true)) {
             valid = isProcessTitleCorrect(this.prozessKopie);
         }
         return valid;
@@ -577,13 +575,13 @@ public class CopyProcess extends ProzesskopieForm {
     }
 
     @Override
-    public Integer getAuswahl() {
-        return this.auswahl;
+    public Process getProcessForChoice() {
+        return this.processForChoice;
     }
 
     @Override
-    public void setAuswahl(Integer auswahl) {
-        this.auswahl = auswahl;
+    public void setProcessForChoice(Process processForChoice) {
+        this.processForChoice = processForChoice;
     }
 
     @Override

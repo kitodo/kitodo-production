@@ -11,15 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.config.ConfigProjects;
-import de.sub.goobi.config.DigitalCollections;
-import de.sub.goobi.helper.BeanHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.UghHelper;
-import de.sub.goobi.helper.exceptions.UghHelperException;
-import de.sub.goobi.metadaten.copier.CopierData;
-import de.sub.goobi.metadaten.copier.DataCopier;
 import de.unigoettingen.sub.search.opac.ConfigOpac;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
@@ -69,8 +60,11 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.DigitalCollections;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -82,9 +76,15 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessCreationException;
+import org.kitodo.exceptions.UghHelperException;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.BeanHelper;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
+import org.kitodo.helper.UghHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.copier.CopierData;
+import org.kitodo.metadata.copier.DataCopier;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.omnifaces.util.Ajax;
@@ -222,7 +222,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(Parameters.DIRECTORY_SUFFIX,
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX,
         DefaultValues.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
@@ -230,6 +230,7 @@ public class ProzesskopieForm implements Serializable {
     private List<String> digitalCollections;
     private String docType;
     private Integer guessedImages = 0;
+    private Process processForChoice;
 
     /**
      * The field hitlist holds some reference to the hitlist retrieved from a
@@ -266,7 +267,6 @@ public class ProzesskopieForm implements Serializable {
     private Project project;
     private boolean useOpac;
     private boolean useTemplates;
-    private Integer auswahl;
     private HashMap<String, Boolean> standardFields;
     private String tifHeaderImageDescription = "";
     private String tifHeaderDocumentName = "";
@@ -511,7 +511,7 @@ public class ProzesskopieForm implements Serializable {
      *            data to process
      */
     private void applyCopyingRules(CopierData data) {
-        String rules = ConfigCore.getParameter(Parameters.COPY_DATA_ON_CATALOGUE_QUERY);
+        String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_CATALOGUE_QUERY);
         if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(data);
@@ -608,10 +608,8 @@ public class ProzesskopieForm implements Serializable {
      * Auswahl des Prozesses auswerten.
      */
     public String templateAuswahlAuswerten() throws DAOException {
-        /* den ausgewählten Prozess laden */
-        Process tempProzess = serviceManager.getProcessService().getById(this.auswahl);
-        if (serviceManager.getProcessService().getWorkpiecesSize(tempProzess) > 0) {
-            for (Property workpieceProperty : tempProzess.getWorkpieces()) {
+        if (serviceManager.getProcessService().getWorkpiecesSize(this.processForChoice) > 0) {
+            for (Property workpieceProperty : this.processForChoice.getWorkpieces()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(workpieceProperty.getTitle())) {
                         field.setValue(workpieceProperty.getValue());
@@ -623,8 +621,8 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getTemplatesSize(tempProzess) > 0) {
-            for (Property templateProperty : tempProzess.getTemplates()) {
+        if (serviceManager.getProcessService().getTemplatesSize(this.processForChoice) > 0) {
+            for (Property templateProperty : this.processForChoice.getTemplates()) {
                 for (AdditionalField field : this.additionalFields) {
                     if (field.getTitle().equals(templateProperty.getTitle())) {
                         field.setValue(templateProperty.getValue());
@@ -633,8 +631,8 @@ public class ProzesskopieForm implements Serializable {
             }
         }
 
-        if (serviceManager.getProcessService().getPropertiesSize(tempProzess) > 0) {
-            for (Property processProperty : tempProzess.getProperties()) {
+        if (serviceManager.getProcessService().getPropertiesSize(this.processForChoice) > 0) {
+            for (Property processProperty : this.processForChoice.getProperties()) {
                 if (processProperty.getTitle().equals("digitalCollection")) {
                     digitalCollections.add(processProperty.getValue());
                 }
@@ -642,7 +640,7 @@ public class ProzesskopieForm implements Serializable {
         }
 
         try {
-            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(tempProzess);
+            this.rdf = serviceManager.getProcessService().readMetadataAsTemplateFile(this.processForChoice);
         } catch (ReadException | PreferencesException | IOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_READ, new Object[] {"template-metadata" }, logger, e);
         }
@@ -715,7 +713,7 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
         }
 
-        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
@@ -982,7 +980,7 @@ public class ProzesskopieForm implements Serializable {
      * Metadata inheritance and enrichment.
      */
     private void updateMetadata() throws PreferencesException {
-        if (ConfigCore.getBooleanParameter(Parameters.USE_METADATA_ENRICHMENT)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
             DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
@@ -1309,12 +1307,22 @@ public class ProzesskopieForm implements Serializable {
         this.template = template;
     }
 
-    public Integer getAuswahl() {
-        return this.auswahl;
+    /**
+     * Get process for choice list.
+     *
+     * @return process for choice list
+     */
+    public Process getProcessForChoice() {
+        return this.processForChoice;
     }
 
-    public void setAuswahl(Integer auswahl) {
-        this.auswahl = auswahl;
+    /**
+     * Set process for choice list.
+     *
+     * @param processForChoice as Process object
+     */
+    public void setProcessForChoice(Process processForChoice) {
+        this.processForChoice = processForChoice;
     }
 
     public List<AdditionalField> getAdditionalFields() {
@@ -1930,7 +1938,7 @@ public class ProzesskopieForm implements Serializable {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigCore.getIntParameter(Parameters.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(ParameterCore.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
     }
 
     /**

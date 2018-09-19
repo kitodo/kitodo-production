@@ -15,8 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.net.URI;
 import java.util.List;
@@ -29,7 +27,8 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -42,8 +41,8 @@ import org.kitodo.workflow.Solution;
 public class WorkflowControllerServiceIT {
 
     private static final File scriptCreateDirUserHome = new File(
-            ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
-    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
+    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
     private static final TaskService taskService = serviceManager.getTaskService();

@@ -35,14 +35,13 @@
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
-                <p:commandLink id="deleteLdapgroup"
-                               action="#{LdapGroupForm.deleteLdapGroup}"
-                               title="#{msgs.delete}"
+                <h:commandLink action="#{LdapGroupForm.duplicateLdapGroup(item.id)}" immediate="true"
+                               title="#{msgs.duplicateLdapGroup}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                <p:commandLink id="deleteLdapgroup" action="#{LdapGroupForm.delete}" title="#{msgs.delete}"
                                update="usersTabView:ldapGroupsTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{LdapGroupForm.ldapGroupById}"/>
-                    <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{msgs.confirmDeleteLdapgroup}"
+                    <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmDeleteLdapgroup}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

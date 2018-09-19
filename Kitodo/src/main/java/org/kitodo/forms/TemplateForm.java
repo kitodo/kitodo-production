@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
@@ -27,15 +24,15 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.workflow.model.Reader;
@@ -53,7 +50,6 @@ public class TemplateForm extends TemplateBaseForm {
     private String title;
     private String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskTemplateEdit");
 
     /**
      * Constructor.
@@ -174,26 +170,27 @@ public class TemplateForm extends TemplateBaseForm {
      *         'null' if the template could not be retrieved, which will prompt
      *         JSF to remain on the same page and reuse the bean.
      */
-    public String duplicateTemplate(Integer itemId) {
+    public String duplicate(Integer itemId) {
         try {
             Template baseTemplate = serviceManager.getTemplateService().getById(itemId);
             this.template = serviceManager.getTemplateService().duplicateTemplate(baseTemplate);
             return templateEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage("unableToDuplicateTemplate", logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
             return null;
         }
     }
 
     /**
->>>>>>> Add backend functionality for copy template
-     * Save template.
+     * Save template and redirect to list view.
+     *
+     * @return url to list view
      */
-    private void save() {
+    public String save() {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return;
+                return null;
             }
 
             try {
@@ -203,7 +200,7 @@ public class TemplateForm extends TemplateBaseForm {
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
-                return;
+                return null;
             }
 
             try {
@@ -211,22 +208,11 @@ public class TemplateForm extends TemplateBaseForm {
             } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
+                return null;
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
-        }
-    }
-
-    /**
-     * Save template and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String saveAndRedirect() {
-        try {
-            save();
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            return null;
         }
         return templateListPath;
     }
@@ -248,38 +234,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setTemplate(this.template);
-        this.template.getTasks().add(this.task);
-        return taskEditPath;
-    }
-
-    /**
-     * Remove task.
-     */
-    public void removeTask() {
-        try {
-            this.template.getTasks().remove(this.task);
-            List<User> users = this.task.getUsers();
-            for (User user : users) {
-                user.getTasks().remove(this.task);
-            }
-
-            List<UserGroup> userGroups = this.task.getUserGroups();
-            for (UserGroup userGroup : userGroups) {
-                userGroup.getTasks().remove(this.task);
-            }
-
-            serviceManager.getTaskService().remove(this.task);
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-    }
-
-    /**
      * Save task and redirect to processEdit view.
      *
      * @return url to templateEdit view
@@ -291,7 +245,7 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.title.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");

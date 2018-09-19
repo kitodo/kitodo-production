@@ -11,8 +11,6 @@
 
 package org.kitodo.converter;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -26,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 @Named

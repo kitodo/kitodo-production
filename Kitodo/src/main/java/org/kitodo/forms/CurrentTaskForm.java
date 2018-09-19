@@ -11,13 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.exceptions.ExportFileException;
 import de.sub.goobi.metadaten.MetadataLock;
 
 import java.io.IOException;
@@ -40,8 +33,9 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -54,6 +48,12 @@ import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.TiffHeader;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
+import org.kitodo.helper.batch.BatchTaskHelper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
@@ -70,15 +70,15 @@ public class CurrentTaskForm extends BaseForm {
     private List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
-    private boolean nurOffeneSchritte = false;
-    private boolean nurEigeneSchritte = false;
+    private boolean onlyOpenTasks = false;
+    private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
     private Map<String, Boolean> anzeigeAnpassen;
     private String scriptPath;
     private String addToWikiField = "";
     private String doneDirectoryName;
-    private BatchStepHelper batchHelper;
+    private BatchTaskHelper batchHelper;
     private List<Property> properties;
     private Property property;
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -106,15 +106,13 @@ public class CurrentTaskForm extends BaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(ParameterCore.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
      * Bearbeitung des Schritts übernehmen oder abschliessen.
      */
     public String schrittDurchBenutzerUebernehmen() {
-        serviceManager.getTaskService().refresh(this.currentTask);
-
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
             return null;
@@ -165,7 +163,7 @@ public class CurrentTaskForm extends BaseForm {
                     processTask(task);
                 }
 
-                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
                 return taskBatchEditPath;
             }
         } else {
@@ -234,7 +232,7 @@ public class CurrentTaskForm extends BaseForm {
             } else if (currentTasksOfBatch.size() == 1) {
                 return taskEditPath + "&id=" + getTaskIdForPath();
             } else {
-                this.setBatchHelper(new BatchStepHelper(currentTasksOfBatch));
+                this.setBatchHelper(new BatchTaskHelper(currentTasksOfBatch));
                 return taskBatchEditPath;
             }
         } else {
@@ -350,8 +348,8 @@ public class CurrentTaskForm extends BaseForm {
          * die hochgeladenen Prozess-IDs durchlaufen und auf abgeschlossen
          * setzen
          */
-        if (!fertigListe.isEmpty() && this.nurOffeneSchritte) {
-            this.nurOffeneSchritte = false;
+        if (!fertigListe.isEmpty() && this.onlyOpenTasks) {
+            this.onlyOpenTasks = false;
             return taskListPath;
         }
         for (URI element : fertigListe) {
@@ -497,20 +495,13 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Get task with specific id.
+     * Set task for given id.
      *
      * @param id
      *            passed as int
-     * @return task
      */
-    public Task getTaskById(int id) {
-        try {
-            return serviceManager.getTaskService().getById(id);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
-                logger, e);
-            return null;
-        }
+    public void setTaskById(int id) {
+        loadTaskById(id);
     }
 
     /**
@@ -607,20 +598,84 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
-    public boolean isNurOffeneSchritte() {
-        return this.nurOffeneSchritte;
+    /**
+     * Check if it should show only open tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isOnlyOpenTasks() {
+        return this.onlyOpenTasks;
     }
 
-    public void setNurOffeneSchritte(boolean nurOffeneSchritte) {
-        this.nurOffeneSchritte = nurOffeneSchritte;
+    /**
+     * Set shown only open tasks.
+     *
+     * @param onlyOpenTasks
+     *            as boolean
+     */
+    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
+        this.onlyOpenTasks = onlyOpenTasks;
+        serviceManager.getTaskService().setOnlyOpenTasks(this.onlyOpenTasks);
     }
 
-    public boolean isNurEigeneSchritte() {
-        return this.nurEigeneSchritte;
+    /**
+     * Check if it should show only own tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isOnlyOwnTasks() {
+        return this.onlyOwnTasks;
     }
 
-    public void setNurEigeneSchritte(boolean nurEigeneSchritte) {
-        this.nurEigeneSchritte = nurEigeneSchritte;
+    /**
+     * Set shown only tasks owned by currently logged user.
+     *
+     * @param onlyOwnTasks
+     *            as boolean
+     */
+    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        this.onlyOwnTasks = onlyOwnTasks;
+        serviceManager.getTaskService().setOnlyOwnTasks(this.onlyOwnTasks);
+    }
+
+    /**
+     * Check if it should show also automatic tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isShowAutomaticTasks() {
+        return this.showAutomaticTasks;
+    }
+
+    /**
+     * Set show automatic tasks.
+     *
+     * @param showAutomaticTasks
+     *            as boolean
+     */
+    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
+        this.showAutomaticTasks = showAutomaticTasks;
+        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
+    }
+
+    /**
+     * Check if it should hide correction tasks.
+     * 
+     * @return boolean
+     */
+    public boolean isHideCorrectionTasks() {
+        return hideCorrectionTasks;
+    }
+
+    /**
+     * Set hide correction tasks.
+     *
+     * @param hideCorrectionTasks
+     *            as boolean
+     */
+    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
+        this.hideCorrectionTasks = hideCorrectionTasks;
+        serviceManager.getTaskService().setHideCorrectionTasks(this.hideCorrectionTasks);
     }
 
     public Map<String, Boolean> getAnzeigeAnpassen() {
@@ -768,7 +823,7 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return batch helper as BatchHelper object
      */
-    public BatchStepHelper getBatchHelper() {
+    public BatchTaskHelper getBatchHelper() {
         return this.batchHelper;
     }
 
@@ -778,36 +833,23 @@ public class CurrentTaskForm extends BaseForm {
      * @param batchHelper
      *            as BatchHelper object
      */
-    public void setBatchHelper(BatchStepHelper batchHelper) {
+    public void setBatchHelper(BatchTaskHelper batchHelper) {
         this.batchHelper = batchHelper;
     }
 
-    public boolean getShowAutomaticTasks() {
-        return this.showAutomaticTasks;
-    }
-
-    public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        this.showAutomaticTasks = showAutomaticTasks;
-        serviceManager.getTaskService().setShowAutomaticTasks(showAutomaticTasks);
-    }
-
-    public boolean getHideCorrectionTasks() {
-        return hideCorrectionTasks;
-    }
-
-    public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        this.hideCorrectionTasks = hideCorrectionTasks;
-        serviceManager.getTaskService().setHideCorrectionTasks(hideCorrectionTasks);
-    }
-
     /**
-     * Method being used as viewAction for CurrenTaskForm.
+     * Method being used as viewAction for CurrentTaskForm.
      *
      * @param id
-     *            ID of the step to load
+     *            ID of the task to load
      */
-    public void loadMyStep(int id) {
-        setCurrentTask(getTaskById(id));
+    public void loadTaskById(int id) {
+        try {
+            setCurrentTask(serviceManager.getTaskService().getById(id));
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
+        }
     }
 
     /**

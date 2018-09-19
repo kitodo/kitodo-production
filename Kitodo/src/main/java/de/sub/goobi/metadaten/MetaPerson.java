@@ -11,8 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.List;
 
 import javax.faces.model.SelectItem;
@@ -21,7 +19,9 @@ import org.kitodo.api.ugh.DocStructInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.metadata.MetadataHelper;
 
 /**
  * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
@@ -35,7 +35,7 @@ public class MetaPerson {
     private int identifier;
     private final PrefsInterface myPrefs;
     private final DocStructInterface myDocStruct;
-    private final MetadatenHelper mdh;
+    private final MetadataHelper mdh;
 
     /**
      * Allgemeiner Konstruktor().
@@ -45,7 +45,7 @@ public class MetaPerson {
         this.p = p;
         this.identifier = inID;
         this.myDocStruct = inStruct;
-        this.mdh = new MetadatenHelper(inPrefs, null);
+        this.mdh = new MetadataHelper(inPrefs, null);
     }
 
     public int getIdentifier() {
@@ -124,7 +124,7 @@ public class MetaPerson {
     public String getRecord() {
         String authorityValue = this.p.getAuthorityValue();
         if (authorityValue == null || authorityValue.isEmpty()) {
-            authorityValue = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+            authorityValue = ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, "");
         }
         return authorityValue;
     }

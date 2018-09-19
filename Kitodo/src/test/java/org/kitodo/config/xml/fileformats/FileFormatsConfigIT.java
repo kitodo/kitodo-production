@@ -15,7 +15,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import java.io.IOException;
 import java.util.Locale;
 import java.util.Locale.LanguageRange;
 
@@ -26,7 +25,7 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
 
 public class FileFormatsConfigIT {
     @Test
-    public void testFileFormatsConfig() throws JAXBException, IOException {
+    public void testFileFormatsConfig() throws JAXBException {
         assertThat("kitodo_fileFormats.xml does not contain exactly 8 entries",
             FileFormatsConfig.getFileFormats().size(), is(equalTo(8)));
 
@@ -43,7 +42,7 @@ public class FileFormatsConfigIT {
     }
 
     @Test
-    public void testFileFormatsConfigTransliteration() throws JAXBException, IOException {
+    public void testFileFormatsConfigTransliteration() throws JAXBException {
         FileFormat gif = FileFormatsConfig.getFileFormat("image/gif").get();
         assertThat("Wrong label without declared language of GIF file format", gif.getLabel(),
             is(equalTo("Graphics Interchange Format (image/gif, *.gif)")));

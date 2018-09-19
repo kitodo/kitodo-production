@@ -13,8 +13,6 @@ package org.kitodo.services.file;
 
 import static org.junit.Assume.assumeTrue;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,7 +27,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 
@@ -55,7 +54,7 @@ public class FileServiceTest {
     public void testCreateMetaDirectory() throws IOException {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_META));
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);
 
         boolean result = fileService.createMetaDirectory(URI.create("fileServiceTest"), "testMetaScript");
@@ -544,7 +543,7 @@ public class FileServiceTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
@@ -554,7 +553,7 @@ public class FileServiceTest {
         ExecutionPermission.setNoExecutePermission(script);
         Assert.assertTrue("Create symbolic link has failed!", result);
 
-        File scriptClean = new File(ConfigCore.getParameter(Parameters.SCRIPT_DELETE_SYMLINK));
+        File scriptClean = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
         ExecutionPermission.setExecutePermission(scriptClean);
         fileService.deleteSymLink(symLinkTarget);
         ExecutionPermission.setNoExecutePermission(scriptClean);
@@ -569,7 +568,7 @@ public class FileServiceTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File scriptPrepare = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_SYMLINK));
+        File scriptPrepare = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
         URI directory = fileService.createDirectory(URI.create(""), "symLinkSource");
         fileService.createResource(directory, "meta.xml");
         User user = new User();
@@ -578,7 +577,7 @@ public class FileServiceTest {
         fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
         ExecutionPermission.setNoExecutePermission(scriptPrepare);
 
-        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_DELETE_SYMLINK));
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
         ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.deleteSymLink(symLinkTarget);
         ExecutionPermission.setNoExecutePermission(script);

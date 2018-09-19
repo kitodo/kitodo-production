@@ -11,8 +11,6 @@
 
 package org.goobi.production.model.bibliography;
 
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,6 +23,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.kitodo.exceptions.UnreachableCodeException;
+import org.kitodo.helper.Helper;
 
 /**
  * The class Citation represents a citation as they are used in academic

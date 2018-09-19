@@ -11,8 +11,6 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -26,7 +24,8 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
@@ -174,7 +173,7 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
     public PrefsInterface getPreferences(Ruleset ruleset) {
         PrefsInterface myPreferences = UghImplementation.INSTANCE.createPrefs();
         try {
-            myPreferences.loadPrefs(ConfigCore.getParameter(Parameters.DIR_RULESETS) + ruleset.getFile());
+            myPreferences.loadPrefs(ConfigCore.getParameter(ParameterCore.DIR_RULESETS) + ruleset.getFile());
         } catch (PreferencesException e) {
             logger.error(e.getMessage(), e);
         }

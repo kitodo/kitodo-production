@@ -11,8 +11,6 @@
 
 package org.goobi.production.export;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,6 +39,7 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.transform.XSLTransformException;
 import org.jdom.transform.XSLTransformer;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;

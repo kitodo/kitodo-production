@@ -11,8 +11,6 @@
 
 package org.kitodo.workflow.model;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -32,6 +30,7 @@ import org.camunda.bpm.model.bpmn.instance.ScriptTask;
 import org.camunda.bpm.model.bpmn.instance.SequenceFlow;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
@@ -78,11 +77,6 @@ public class Reader {
 
         for (Map.Entry<Task, TaskInfo> entry : tasks.entrySet()) {
             org.kitodo.data.database.beans.Task task = getTask(entry.getKey(), entry.getValue());
-            if (task.getOrdering().equals(1)) {
-                task.setProcessingStatusEnum(TaskStatus.OPEN);
-            } else {
-                task.setProcessingStatusEnum(TaskStatus.LOCKED);
-            }
             task.setTemplate(template);
             template.getTasks().add(task);
         }
@@ -119,8 +113,12 @@ public class Reader {
         task.setOrdering(kitodoTask.getOrdering());
         task.setPriority(kitodoTask.getPriority());
         task.setEditType(kitodoTask.getEditType());
+        task.setProcessingStatus(kitodoTask.getProcessingStatus());
         task.setBatchStep(kitodoTask.getBatchStep());
         task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
+        task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
+        task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
+        task.setTypeImportFileUpload(kitodoTask.getTypeImportFileUpload());
         task.setTypeExportDMS(kitodoTask.getTypeExportDms());
         task.setTypeExportRussian(kitodoTask.getTypeExportRussian());
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());

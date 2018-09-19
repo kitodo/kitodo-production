@@ -11,8 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -41,6 +39,7 @@ import org.kitodo.dto.ProjectDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.DynamicAuthenticationProvider;
 import org.kitodo.security.SecurityPasswordEncoder;
@@ -96,13 +95,13 @@ public class UserForm extends BaseForm {
             return null;
         }
 
-        String id = null;
-        if (this.userObject.getId() != null) {
-            id = this.userObject.getId().toString();
+        if (isMissingClient()) {
+            Helper.setErrorMessage("errorMissingClient");
+            return null;
         }
 
         try {
-            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(id, login) == 0) {
+            if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
                 this.userObject.setPassword(passwordEncoder.encrypt(this.password));
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
@@ -123,6 +122,17 @@ public class UserForm extends BaseForm {
                 + File.separator + "kitodo_loginBlacklist.txt";
 
         return serviceManager.getUserService().isLoginValid(inLogin, filename);
+    }
+
+    private boolean isMissingClient() {
+        return this.userObject.getClients().isEmpty();
+    }
+
+    private String getUserId() {
+        if (this.userObject.getId() != null) {
+            return this.userObject.getId().toString();
+        }
+        return null;
     }
 
     /**
@@ -343,7 +353,7 @@ public class UserForm extends BaseForm {
      * @param id
      *            ID of the user to load
      */
-    public void loadUserObject(int id) {
+    public void load(int id) {
         try {
             if (!Objects.equals(id, 0)) {
                 setUserObject(this.serviceManager.getUserService().getById(id));

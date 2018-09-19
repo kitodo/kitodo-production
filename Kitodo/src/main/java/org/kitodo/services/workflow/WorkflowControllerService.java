@@ -11,12 +11,7 @@
 
 package org.kitodo.services.workflow;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.tasks.TaskManager;
 import de.sub.goobi.metadaten.MetadataLock;
-import de.sub.goobi.metadaten.MetadatenImagesHelper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,7 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -41,6 +37,10 @@ import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.WebDav;
+import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.production.thread.TaskScriptThread;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.workflow.Problem;
@@ -212,7 +212,7 @@ public class WorkflowControllerService {
         // cancel the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
-            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)) {
+            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(ParameterCore.USE_META_DATA_VALIDATION)) {
                 serviceManager.getMetadataValidationService().setAutoSave(true);
                 if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
                     return null;
@@ -221,7 +221,7 @@ public class WorkflowControllerService {
 
             // image validation
             if (task.isTypeImagesWrite()) {
-                MetadatenImagesHelper mih = new MetadatenImagesHelper(null, null);
+                ImagesHelper mih = new ImagesHelper(null, null);
                 URI imageFolder = serviceManager.getProcessService().getImagesOrigDirectory(false, task.getProcess());
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     Helper.setErrorMessage("Error on image validation!");
@@ -340,6 +340,8 @@ public class WorkflowControllerService {
         }
         task.setEditTypeEnum(TaskEditType.MANUAL_SINGLE);
         task.setProcessingTime(new Date());
+
+        serviceManager.getTaskService().save(task);
 
         // unlock the process
         metadataLock.setFree(task.getProcess().getId());

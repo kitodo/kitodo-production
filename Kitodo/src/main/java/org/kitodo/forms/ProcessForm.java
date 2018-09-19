@@ -19,19 +19,9 @@ import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.export.dms.ExportDms;
-import de.sub.goobi.export.download.ExportMets;
-import de.sub.goobi.export.download.ExportPdf;
-import de.sub.goobi.export.download.Multipage;
-import de.sub.goobi.export.download.TiffHeader;
-import de.sub.goobi.helper.GoobiScript;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.WebDav;
-import de.sub.goobi.helper.exceptions.ExportFileException;
-
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
@@ -68,14 +58,16 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.helper.enums.PropertyType;
 import org.kitodo.data.exceptions.DataException;
@@ -83,7 +75,16 @@ import org.kitodo.dto.ProcessDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.dto.UserGroupDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.ExportFileException;
+import org.kitodo.exporter.dms.ExportDms;
+import org.kitodo.exporter.download.ExportMets;
+import org.kitodo.exporter.download.ExportPdf;
+import org.kitodo.exporter.download.Multipage;
+import org.kitodo.exporter.download.TiffHeader;
+import org.kitodo.helper.GoobiScript;
+import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
+import org.kitodo.helper.WebDav;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.services.file.FileService;
 import org.kitodo.services.workflow.WorkflowControllerService;
@@ -121,7 +122,6 @@ public class ProcessForm extends TemplateBaseForm {
     private List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
-    private String taskEditPath = MessageFormat.format(REDIRECT_PATH, "taskEdit");
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
@@ -147,7 +147,7 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(ParameterCore.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**
@@ -160,9 +160,9 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Save process.
+     * Save process and redirect to list view.
      *
-     * @return null
+     * @return url to list view
      */
     public String save() {
         /*
@@ -177,6 +177,7 @@ public class ProcessForm extends TemplateBaseForm {
 
             try {
                 serviceManager.getProcessService().save(this.process);
+                return processListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
             }
@@ -185,16 +186,6 @@ public class ProcessForm extends TemplateBaseForm {
         }
         reload();
         return null;
-    }
-
-    /**
-     * Save process and redirect to list view.
-     *
-     * @return url to list view
-     */
-    public String saveAndRedirect() {
-        save();
-        return processListPath;
     }
 
     /**
@@ -217,6 +208,19 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (DataException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
         }
+    }
+
+    /**
+     * Get diagram image for current template.
+     *
+     * @return diagram image file
+     */
+    public InputStream getTasksDiagram() {
+        Workflow workflow = this.process.getTemplate().getWorkflow();
+        if (Objects.nonNull(workflow)) {
+            return serviceManager.getTemplateService().getTasksDiagram(workflow.getFileName());
+        }
+        return serviceManager.getTemplateService().getTasksDiagram("");
     }
 
     /**
@@ -244,7 +248,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private boolean renameAfterProcessTitleChanged() {
-        String validateRegEx = ConfigCore.getParameter(Parameters.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!this.newProcessTitle.matches(validateRegEx)) {
             Helper.setErrorMessage("processTitleInvalid");
@@ -305,7 +309,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void renameDefinedDirectories() {
-        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
         for (String processDir : processDirs) {
             // TODO: check it out
             URI processDirAbsolute = serviceManager.getProcessService().getProcessDataDirectory(process)
@@ -423,16 +427,6 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadWorkpieceProperties();
-    }
-
-    /**
-     * New task.
-     */
-    public String newTask() {
-        this.task = new Task();
-        this.task.setProcess(this.process);
-        this.process.getTasks().add(this.task);
-        return taskEditPath + "&id=" + (Objects.isNull(this.task.getId()) ? 0 : this.task.getId());
     }
 
     /**
@@ -1605,7 +1599,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param id
      *            ID of the process to load
      */
-    public void loadProcess(int id) {
+    public void load(int id) {
         try {
             if (id != 0) {
                 setProcess(this.serviceManager.getProcessService().getById(id));

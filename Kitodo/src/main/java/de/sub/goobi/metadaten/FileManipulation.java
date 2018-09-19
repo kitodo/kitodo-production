@@ -11,9 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -42,9 +39,11 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.helper.Helper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -421,7 +420,7 @@ public class FileManipulation {
      */
     public List<URI> getAllImportFolder() {
         URI tempDirectory = new File(
-                ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER)).toURI();
+                ConfigCore.getParameter(ParameterCore.DIR_TEMP, DefaultValues.TEMPFOLDER)).toURI();
         URI fileuploadFolder = tempDirectory.resolve(FILE_UPLOAD);
 
         allImportFolder = new ArrayList<>();
@@ -446,13 +445,13 @@ public class FileManipulation {
             Helper.setErrorMessage(NO_FILE_SELECTED);
             return;
         }
-        String tempDirectory = ConfigCore.getParameter(Parameters.DIR_TEMP, DefaultValues.TEMPFOLDER);
+        String tempDirectory = ConfigCore.getParameter(ParameterCore.DIR_TEMP, DefaultValues.TEMPFOLDER);
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
-        if (ConfigCore.getBooleanParameter(Parameters.USE_ORIG_FOLDER, true)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.USE_ORIG_FOLDER, true)) {
             useMasterFolder = true;
-            masterPrefix = ConfigCore.getParameter(Parameters.DIRECTORY_PREFIX,
+            masterPrefix = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX,
                 DefaultValues.DIRECTORY_PREFIX);
         }
         Process currentProcess = metadataBean.getProcess();
@@ -544,7 +543,7 @@ public class FileManipulation {
 
         String afterLastSlash = fileName.substring(fileName.lastIndexOf('/') + 1);
         String afterLastBackslash = afterLastSlash.substring(afterLastSlash.lastIndexOf('\\') + 1);
-        String prefix = ConfigCore.getParameter(Parameters.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
+        String prefix = ConfigCore.getParameter(ParameterCore.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX);
 
         return afterLastBackslash.matches(prefix + "\\..+");
     }

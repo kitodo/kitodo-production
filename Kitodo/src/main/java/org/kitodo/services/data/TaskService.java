@@ -11,12 +11,7 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.VariableReplacer;
-
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +31,8 @@ import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -55,6 +51,8 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.VariableReplacer;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -64,6 +62,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private final ServiceManager serviceManager = new ServiceManager();
     private static TaskService instance = null;
+    private boolean onlyOpenTasks = false;
+    private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
 
@@ -99,22 +99,31 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query to retrieve tasks for which the user eligible.
      */
     private BoolQueryBuilder createUserTaskQuery(User user) {
-        BoolQueryBuilder subquery = new BoolQueryBuilder();
-        subquery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-        subquery.should(createSimpleQuery("users.id", user.getId(), true));
-        for (UserGroup userGroup : user.getUserGroups()) {
-            subquery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
-        }
-
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(subquery);
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
+        if (onlyOpenTasks) {
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.OPEN.getValue(), true));
+        }
+
+        if (onlyOwnTasks) {
+            query.must(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+        } else {
+            BoolQueryBuilder subQuery = new BoolQueryBuilder();
+            subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
+            subQuery.should(createSimpleQuery("users.id", user.getId(), true));
+            for (UserGroup userGroup : user.getUserGroups()) {
+                subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
+            }
+            query.must(subQuery);
+        }
+
         if (hideCorrectionTasks) {
             query.must(createSimpleQuery(TaskTypeField.PRIORITY.getKey(), 10, true));
         }
+
         if (!showAutomaticTasks) {
             query.must(createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), "false", true));
         }
@@ -275,46 +284,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
-     * Get amount of current tasks for current user.
-     *
-     * @param open
-     *            true or false
-     * @param inProcessing
-     *            true or false
-     * @param user
-     *            current user
-     * @return amount of current tasks for current user
-     */
-    public Long getAmountOfCurrentTasks(boolean open, boolean inProcessing, User user) throws DataException {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        Set<Integer> processingStatus = new HashSet<>();
-        processingStatus.add(1);
-        processingStatus.add(2);
-
-        if (!open && !inProcessing) {
-            boolQuery.must(getQueryForProcessingStatus(processingStatus));
-        } else if (open && !inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));
-        } else if (!open && inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 2, true));
-        } else {
-            boolQuery.must(createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true));
-        }
-
-        Set<Integer> userGroups = new HashSet<>();
-        for (UserGroup userGroup : user.getUserGroups()) {
-            userGroups.add(userGroup.getId());
-        }
-        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
-        nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
-        nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
-        boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
-
-        return count(boolQuery.toString());
-    }
-
-    /**
      * Get query for processing statuses.
      *
      * @param processingStatus
@@ -444,11 +413,11 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setEditType(TaskEditType.getTypeFromValue(editType));
         taskDTO.setEditTypeTitle(Helper.getTranslation(taskDTO.getEditType().getTitle()));
         JsonValue processingTime = taskJSONObject.get(TaskTypeField.PROCESSING_TIME.getKey());
-        taskDTO.setProcessingTime(processingTime != JsonValue.NULL ? processingTime.toString() : null);
+        taskDTO.setProcessingTime(getDateFromJsonValue(processingTime));
         JsonValue processingBegin = taskJSONObject.get(TaskTypeField.PROCESSING_BEGIN.getKey());
-        taskDTO.setProcessingBegin(processingBegin != JsonValue.NULL ? processingBegin.toString() : null);
+        taskDTO.setProcessingBegin(getDateFromJsonValue(processingBegin));
         JsonValue processingEnd = taskJSONObject.get(TaskTypeField.PROCESSING_END.getKey());
-        taskDTO.setProcessingEnd(processingEnd != JsonValue.NULL ? processingEnd.toString() : null);
+        taskDTO.setProcessingEnd(getDateFromJsonValue(processingEnd));
         taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
         taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImportFileUpload(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(taskJSONObject));
@@ -486,6 +455,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
         taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
+    }
+
+    private String getDateFromJsonValue(JsonValue date) {
+        return date != JsonValue.NULL ? date.toString().replace("\"", "") : "";
     }
 
     /**
@@ -699,8 +672,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter(Parameters.AUTOMATIC_EXPORT_WITH_OCR, true);
+        boolean automaticExportWithImages = ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITH_IMAGES, true);
+        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR, true);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,
@@ -714,6 +687,26 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             logger.error(e.getMessage(), e);
             abortTask(task);
         }
+    }
+
+    /**
+     * Set shown only open tasks.
+     *
+     * @param onlyOpenTasks
+     *            as boolean
+     */
+    public void setOnlyOpenTasks(boolean onlyOpenTasks) {
+        this.onlyOpenTasks = onlyOpenTasks;
+    }
+
+    /**
+     * Set shown only tasks owned by currently logged user.
+     *
+     * @param onlyOwnTasks
+     *            as boolean
+     */
+    public void setOnlyOwnTasks(boolean onlyOwnTasks) {
+        this.onlyOwnTasks = onlyOwnTasks;
     }
 
     /**

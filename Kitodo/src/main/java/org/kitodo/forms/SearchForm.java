@@ -11,9 +11,6 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,12 +22,14 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.FilterString;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 @Named("SearchForm")
@@ -397,7 +396,7 @@ public class SearchForm {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
-                && ConfigCore.getBooleanParameter(Parameters.WITH_USER_STEP_DONE_SEARCH)) {
+                && ConfigCore.getBooleanParameter(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }

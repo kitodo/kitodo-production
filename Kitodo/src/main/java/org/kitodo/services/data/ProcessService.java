@@ -11,14 +11,7 @@
 
 package org.kitodo.services.data;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.exceptions.InvalidImagesException;
 import de.sub.goobi.metadaten.MetadataLock;
-import de.sub.goobi.metadaten.MetadatenHelper;
-import de.sub.goobi.metadaten.copier.CopierData;
-import de.sub.goobi.metadaten.copier.DataCopier;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,7 +68,8 @@ import org.kitodo.api.ugh.VirtualFileGroupInterface;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -107,7 +101,13 @@ import org.kitodo.dto.PropertyDTO;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.enums.ObjectType;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.copier.CopierData;
+import org.kitodo.metadata.copier.DataCopier;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -122,9 +122,9 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static ProcessService instance = null;
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
-    private static final String DIRECTORY_PREFIX = ConfigCore.getParameter("DIRECTORY_PREFIX", "orig");
-    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter("DIRECTORY_SUFFIX", "tif");
-    private static final String SUFFIX = ConfigCore.getParameter("MetsEditorDefaultSuffix", "");
+    private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
+    private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
     private static final String CLOSED = "closed";
@@ -133,8 +133,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
-            .getBooleanParameter(Parameters.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
-    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter(Parameters.USE_ORIG_FOLDER, true);
+            .getBooleanParameter(ParameterCore.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter(ParameterCore.USE_ORIG_FOLDER, true);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -1286,7 +1286,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         // check the format of the metadata - METS, XStream or RDF
-        String type = MetadatenHelper.getMetaFileType(metadataFileUri);
+        String type = MetadataHelper.getMetaFileType(metadataFileUri);
         logger.debug("current meta.xml file type for id {}: {}", process.getId(), type);
 
         FileformatInterface ff = determineFileFormat(type, process);
@@ -1342,7 +1342,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             throws ReadException, IOException, PreferencesException {
         URI processSubTypeURI = fileService.getProcessSubTypeURI(process, ProcessSubType.TEMPLATE, null);
         if (fileService.fileExist(processSubTypeURI)) {
-            String type = MetadatenHelper.getMetaFileType(processSubTypeURI);
+            String type = MetadataHelper.getMetaFileType(processSubTypeURI);
             logger.debug("current template.xml file type: {}", type);
             FileformatInterface ff = determineFileFormat(type, process);
             String processSubTypePath = fileService.getFile(processSubTypeURI).getAbsolutePath();
@@ -1409,7 +1409,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void downloadDocket(Process process) throws IOException {
         logger.debug("generate docket for process with id {}", process.getId());
-        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI rootPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri();
         URI xsltFile;
         if (process.getDocket() != null) {
             xsltFile = serviceManager.getFileService().createResource(rootPath, process.getDocket().getFile());
@@ -1440,7 +1440,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public void downloadDocket(List<Process> processes) throws IOException {
         logger.debug("generate docket for processes {}", processes);
-        URI rootPath = Paths.get(ConfigCore.getParameter("xsltFolder")).toUri();
+        URI rootPath = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri();
         URI xsltFile = serviceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
@@ -1602,7 +1602,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * by parameter processDirs within kitodo_config.properties
      */
     public void createProcessDirs(Process process) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
@@ -1707,7 +1707,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
             throws IOException, PreferencesException, ReadException {
         /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadatenHelper.getMetaFileType(metadataFile);
+        String type = MetadataHelper.getMetaFileType(metadataFile);
         FileformatInterface ff;
         switch (type) {
             case "metsmods":
@@ -1754,7 +1754,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)
+        if (ConfigCore.getBooleanParameter(ParameterCore.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
             return false;
         }
@@ -1811,7 +1811,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigCore.getBooleanParameter("exportWithoutTimeLimit") && project.isDmsImportCreateProcessFolder()) {
+            if (!ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT) && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
                 File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
                 fileService.delete(successFile.toURI());
@@ -1889,7 +1889,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      * @return false if no exception appeared
      */
     public boolean handleExceptionsForConfiguration(FileformatInterface newFile, Process process) {
-        Optional<String> rules = ConfigCore.getOptionalString(Parameters.COPY_DATA_ON_EXPORT);
+        Optional<String> rules = ConfigCore.getOptionalString(ParameterCore.COPY_DATA_ON_EXPORT);
         if (rules.isPresent()) {
             try {
                 new DataCopier(rules.get()).process(new CopierData(newFile, process));
@@ -2196,7 +2196,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     private VirtualFileGroupInterface prepareVirtualFileGroup(Folder folder, VariableReplacer variableReplacer)
-            throws IOException, JAXBException {
+            throws JAXBException {
         VirtualFileGroupInterface virtualFileGroup = UghImplementation.INSTANCE.createVirtualFileGroup();
         virtualFileGroup.setName(folder.getFileGroup());
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
@@ -2260,7 +2260,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      *            the destination directory
      */
     private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(Parameters.PROCESS_DIRS);
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"

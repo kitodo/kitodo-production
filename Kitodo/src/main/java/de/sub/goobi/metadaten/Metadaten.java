@@ -11,14 +11,6 @@
 
 package de.sub.goobi.metadaten;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.BatchStepHelper;
-import de.sub.goobi.helper.Helper;
-import de.sub.goobi.helper.HelperComparator;
-import de.sub.goobi.helper.Transliteration;
-import de.sub.goobi.helper.VariableReplacer;
-import de.sub.goobi.helper.XmlArtikelZaehlen;
-import de.sub.goobi.helper.XmlArtikelZaehlen.CountType;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManagerException;
 import de.unigoettingen.sub.commons.contentlib.exceptions.ImageManipulatorException;
 
@@ -92,8 +84,9 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.UGHException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -101,7 +94,20 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.PositionOfNewDocStrucElement;
 import org.kitodo.enums.SortType;
+import org.kitodo.helper.Helper;
+import org.kitodo.helper.HelperComparator;
+import org.kitodo.helper.Transliteration;
+import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.XmlArtikelZaehlen;
+import org.kitodo.helper.XmlArtikelZaehlen.CountType;
+import org.kitodo.helper.batch.BatchTaskHelper;
+import org.kitodo.helper.metadata.ImagesHelper;
+import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.metadata.elements.renderable.RenderableMetadataGroup;
+import org.kitodo.metadata.elements.selectable.SelectOne;
+import org.kitodo.metadata.elements.selectable.Separator;
+import org.kitodo.metadata.pagination.Paginator;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.Problem;
@@ -127,12 +133,12 @@ public class Metadaten {
      *
      * @return value of imageHelper
      */
-    public MetadatenImagesHelper getImageHelper() {
+    public ImagesHelper getImageHelper() {
         return imageHelper;
     }
 
-    private MetadatenImagesHelper imageHelper;
-    private MetadatenHelper metaHelper;
+    private ImagesHelper imageHelper;
+    private MetadataHelper metaHelper;
     private boolean treeReloaded = false;
     private String ocrResult = "";
     private FileformatInterface gdzfile;
@@ -292,7 +298,7 @@ public class Metadaten {
     public void addPerson() {
         this.modeAddPerson = true;
         this.tempPersonNachname = "";
-        this.tempPersonRecord = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+        this.tempPersonRecord = ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, "");
         this.tempPersonVorname = "";
     }
 
@@ -459,7 +465,7 @@ public class Metadaten {
      *            URI in an authority file
      * @return a String[] with authority, authorityURI and valueURI
      */
-    static String[] parseAuthorityFileArgs(String valueURI) {
+    public static String[] parseAuthorityFileArgs(String valueURI) {
         String authority = null;
         String authorityURI = null;
         if (valueURI != null && !valueURI.isEmpty()) {
@@ -473,7 +479,7 @@ public class Metadaten {
                 authorityURI = valueURI.substring(0, boundary + 1);
                 if (!authorityURI.equals(valueURI)) {
                     authority = ConfigCore
-                            .getParameter(Parameters.AUTHORITY_ID_FROM_URI.replaceFirst("\\{0\\}", authorityURI), null);
+                            .getParameter(ParameterCore.AUTHORITY_ID_FROM_URI.getName().replaceFirst("\\{0\\}", authorityURI), null);
                 }
             }
         }
@@ -508,41 +514,7 @@ public class Metadaten {
     }
 
     /**
-     * Get size of roles.
-     *
-     * @return size
-     */
-    public int getSizeOfRoles() {
-        try {
-            return getAddableRollen().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfRoles(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Get size of metadata.
-     *
-     * @return size
-     */
-    public int getSizeOfMetadata() {
-        try {
-            return getAddableMetadataTypes().size();
-        } catch (NullPointerException e) {
-            return 0;
-        }
-    }
-
-    public void setSizeOfMetadata(int i) {
-        // do nothing, needed for jsp only
-    }
-
-    /**
-     * Gets addeble metadata types.
+     * Gets addable metadata types.
      *
      * @return The metadata types.
      */
@@ -719,8 +691,8 @@ public class Metadaten {
         this.gdzfile = serviceManager.getProcessService().readMetadataFile(this.process);
         this.digitalDocument = this.gdzfile.getDigitalDocument();
         this.digitalDocument.addAllContentFiles();
-        this.metaHelper = new MetadatenHelper(this.myPrefs, this.digitalDocument);
-        this.imageHelper = new MetadatenImagesHelper(this.myPrefs, this.digitalDocument);
+        this.metaHelper = new MetadataHelper(this.myPrefs, this.digitalDocument);
+        this.imageHelper = new ImagesHelper(this.myPrefs, this.digitalDocument);
 
         /*
          * Das Hauptelement ermitteln
@@ -736,7 +708,7 @@ public class Metadaten {
         }
 
         retrieveAllImages();
-        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION, true)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren().isEmpty())) {
@@ -764,7 +736,7 @@ public class Metadaten {
     }
 
     private void createDefaultValues(DocStructInterface element) {
-        if (ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
             saveMetadataAsBean(element);
             List allChildren = element.getAllChildren();
             if (Objects.nonNull(allChildren)) {
@@ -967,8 +939,8 @@ public class Metadaten {
         upperNode.setZblSeiten(determineMetadata(inStrukturelement, "ZBLPageNumber"));
         upperNode.setPpnDigital(determineMetadata(inStrukturelement, "IdentifierDigital"));
         upperNode
-                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberFirst()));
-        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadatenHelper.getPageNumberLast()));
+                .setFirstImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberFirst()));
+        upperNode.setLastImage(this.metaHelper.getImageNumber(inStrukturelement, MetadataHelper.getPageNumberLast()));
         // wenn es ein Heft ist, die Issue-Number mit anzeigen
         if (inStrukturelement.getDocStructType().getName().equals("PeriodicalIssue")) {
             upperNode.setDescription(
@@ -1041,8 +1013,8 @@ public class Metadaten {
      * @return The image range (image number - page namber)
      */
     public String getImageRangeByElement(DocStructInterface docStructElement) {
-        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberFirst());
-        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadatenHelper.getPageNumberLast());
+        String firstImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberFirst());
+        String lastImage = this.metaHelper.getImageNumber(docStructElement, MetadataHelper.getPageNumberLast());
 
         return firstImage + " - " + lastImage;
     }
@@ -1610,7 +1582,7 @@ public class Metadaten {
         List<URI> subUris = fileService.getSubUrisForProcess(filterDirectory, this.process, ProcessSubType.IMAGE, "");
         this.allTifFolders.addAll(subUris);
 
-        Optional<String> suffix = ConfigCore.getOptionalString(Parameters.METS_EDITOR_DEFAULT_SUFFIX);
+        Optional<String> suffix = ConfigCore.getOptionalString(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX);
         if (suffix.isPresent()) {
             for (URI directoryUri : this.allTifFolders) {
                 if (directoryUri.toString().endsWith(suffix.get())
@@ -1648,7 +1620,7 @@ public class Metadaten {
         logger.trace("dataList");
         List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
-        if (ConfigCore.getBooleanParameter(Parameters.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION, true)
                 && (dataList == null || dataList.isEmpty())) {
             try {
                 createPagination();
@@ -2006,7 +1978,7 @@ public class Metadaten {
     private int pageNumber = 0;
 
     private SelectOne<Separator> paginationSeparators = new SelectOne<>(Separator
-            .factory(ConfigCore.getParameter(Parameters.PAGE_SEPARATORS, DefaultValues.PAGE_SEPARATORS)));
+            .factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS, DefaultValues.PAGE_SEPARATORS)));
 
     public int getPageNumber() {
         return this.pageNumber;
@@ -2215,7 +2187,7 @@ public class Metadaten {
      * OCR.
      */
     public boolean isShowOcrButton() {
-        return ConfigCore.getBooleanParameter(Parameters.SHOW_OCR_BUTTON);
+        return ConfigCore.getBooleanParameter(ParameterCore.SHOW_OCR_BUTTON);
     }
 
     /**
@@ -2278,7 +2250,7 @@ public class Metadaten {
     }
 
     private String getOcrBasisUrl(int... seiten) {
-        String url = ConfigCore.getParameter(Parameters.OCR_URL);
+        String url = ConfigCore.getParameter(ParameterCore.OCR_URL);
         VariableReplacer replacer = new VariableReplacer(this.digitalDocument, this.myPrefs, this.process, null);
         url = replacer.replace(url);
         url += "/&imgrange=" + seiten[0];
@@ -2750,7 +2722,7 @@ public class Metadaten {
             }
         }
 
-        for (de.sub.goobi.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
+        for (org.kitodo.helper.TreeNode treeNode : inTreeStruct.getChildren()) {
             TreeNodeStruct3 kind = (TreeNodeStruct3) treeNode;
             runThroughTree(kind);
         }
@@ -3191,7 +3163,7 @@ public class Metadaten {
     }
 
     public Boolean getDisplayFileManipulation() {
-        return ConfigCore.getBooleanParameter(Parameters.METS_EDITOR_DISPLAY_FILE_MANIPULATION);
+        return ConfigCore.getBooleanParameter(ParameterCore.METS_EDITOR_DISPLAY_FILE_MANIPULATION);
     }
 
     /**
@@ -3221,7 +3193,7 @@ public class Metadaten {
      *            meta-data group type to look for
      * @return whether the type is available to add
      */
-    boolean canCreate(MetadataGroupTypeInterface type) {
+    public boolean canCreate(MetadataGroupTypeInterface type) {
         List<MetadataGroupTypeInterface> addableTypes = docStruct.getAddableMetadataGroupTypes();
         if (addableTypes == null) {
             addableTypes = Collections.emptyList();
@@ -3290,7 +3262,7 @@ public class Metadaten {
      * @param metadataGroup
      *            metadata group to delete.
      */
-    void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
+    public void removeMetadataGroupFromCurrentDocStruct(MetadataGroupInterface metadataGroup) {
         docStruct.removeMetadataGroup(metadataGroup);
     }
 
@@ -3303,7 +3275,7 @@ public class Metadaten {
      *         "SperrungAbgelaufen" to make JSF show the message that the lock
      *         time is up and the user must leave the editor and open it anew
      */
-    String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
+    public String showAddMetadataGroupAsCopy(RenderableMetadataGroup master) {
         newMetadataGroup = new RenderableMetadataGroup(master, docStruct.getAddableMetadataGroupTypes());
         modeAdd = false;
         modeAddPerson = false;
@@ -4107,7 +4079,7 @@ public class Metadaten {
     public void reportProblem() {
         List<Task> taskList = new  ArrayList<>();
         taskList.add(serviceManager.getProcessService().getCurrentTask(this.process));
-        BatchStepHelper batchStepHelper = new BatchStepHelper(taskList);
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper(taskList);
         batchStepHelper.setProblem(getProblem());
         batchStepHelper.reportProblemForSingle();
         refreshProcess(this.process);
@@ -4117,12 +4089,10 @@ public class Metadaten {
     }
 
     /**
-     * solve the problem.
-     *
-     *
+     * Solve the problem.
      */
     public void solveProblem(String comment) {
-        BatchStepHelper batchStepHelper = new BatchStepHelper();
+        BatchTaskHelper batchStepHelper = new BatchTaskHelper();
         batchStepHelper.solveProblemForSingle(serviceManager.getProcessService().getCurrentTask(this.process));
         refreshProcess(this.process);
         String wikiField = getProcess().getWikiField();
@@ -4131,7 +4101,7 @@ public class Metadaten {
         try {
             serviceManager.getProcessService().save(process);
         } catch (DataException e) {
-            e.printStackTrace();
+            Helper.setErrorMessage("correctionSolveProblem", logger, e);
         }
         refreshProcess(this.process);
     }

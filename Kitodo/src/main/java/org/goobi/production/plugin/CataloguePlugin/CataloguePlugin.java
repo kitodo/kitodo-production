@@ -11,8 +11,6 @@
 
 package org.goobi.production.plugin.CataloguePlugin;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
@@ -22,8 +20,9 @@ import org.goobi.production.plugin.PluginLoader;
 import org.goobi.production.plugin.UnspecificPlugin;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 
 /**
  * The class CataloguePlugin is a redirection class that takes a library
@@ -276,7 +275,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the timeout for catalogue access
      */
     public static long getTimeout() {
-        return ConfigCore.getLongParameter(Parameters.CATALOGUE_TIMEOUT, DefaultValues.CATALOGUE_TIMEOUT);
+        return ConfigCore.getLongParameter(ParameterCore.CATALOGUE_TIMEOUT, DefaultValues.CATALOGUE_TIMEOUT);
     }
 
     /**

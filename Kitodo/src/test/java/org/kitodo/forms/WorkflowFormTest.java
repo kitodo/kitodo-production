@@ -15,8 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import de.sub.goobi.config.ConfigCore;
-
 import java.io.File;
 import java.net.URI;
 
@@ -24,6 +22,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;

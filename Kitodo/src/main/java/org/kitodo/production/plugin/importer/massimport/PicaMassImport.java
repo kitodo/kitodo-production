@@ -17,8 +17,6 @@
 
 package org.kitodo.production.plugin.importer.massimport;
 
-import de.sub.goobi.helper.exceptions.ImportPluginException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -80,6 +78,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.exceptions.ImportPluginException;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.production.plugin.importer.massimport.sru.SRUHelper;
 import org.w3c.dom.Document;

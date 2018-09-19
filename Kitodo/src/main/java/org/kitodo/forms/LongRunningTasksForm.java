@@ -11,15 +11,14 @@
 
 package org.kitodo.forms;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.tasks.EmptyTask;
-import de.sub.goobi.helper.tasks.EmptyTask.Behaviour;
-import de.sub.goobi.helper.tasks.TaskManager;
-import de.sub.goobi.helper.tasks.TaskSitter;
-
 import java.util.List;
 
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.helper.tasks.EmptyTask;
+import org.kitodo.helper.tasks.EmptyTask.Behaviour;
+import org.kitodo.helper.tasks.TaskManager;
+import org.kitodo.helper.tasks.TaskSitter;
 
 public class LongRunningTasksForm {
     /**
@@ -100,7 +99,7 @@ public class LongRunningTasksForm {
      *         the configuration
      */
     public boolean isDemoTasksLinkShowing() {
-        return ConfigCore.getBooleanParameter(Parameters.TASK_MANAGER_SHOW_SAMPLE_TASK);
+        return ConfigCore.getBooleanParameter(ParameterCore.TASK_MANAGER_SHOW_SAMPLE_TASK);
     }
 
     /**

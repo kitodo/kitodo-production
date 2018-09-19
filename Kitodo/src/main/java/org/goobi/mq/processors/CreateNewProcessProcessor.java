@@ -11,11 +11,8 @@
 
 package org.goobi.mq.processors;
 
-import de.sub.goobi.config.ConfigCore;
-import de.sub.goobi.helper.Helper;
 import de.unigoettingen.sub.search.opac.ConfigOpacDoctype;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,14 +27,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
-import org.kitodo.api.ugh.exceptions.PreferencesException;
-import org.kitodo.api.ugh.exceptions.ReadException;
-import org.kitodo.api.ugh.exceptions.WriteException;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessCreationException;
 import org.kitodo.forms.ProzesskopieForm;
 import org.kitodo.helper.AdditionalField;
+import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -80,12 +76,11 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
     private static final String ERROR_CREATE = "errorCreating";
 
     public CreateNewProcessProcessor() {
-        super(ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
+        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
     }
 
     @Override
-    protected void process(MapMessageObjectReader args)
-            throws IOException, JMSException, PreferencesException, ReadException, WriteException {
+    protected void process(MapMessageObjectReader args) throws JMSException {
         Set<String> collections = args.getMandatorySetOfString("collections");
         String id = args.getMandatoryString("id");
         String template = args.getMandatoryString("template");
@@ -106,7 +101,7 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      * This is the main routine used to create new processes.
      *
      * @param template
-     *            titel of the process template the new process shall be derived
+     *            title of the process template the new process shall be derived
      *            from
      * @param opac
      *            name of the connection to a library catalogue to load the
@@ -124,13 +119,9 @@ public class CreateNewProcessProcessor extends ActiveMQProcessor {
      *            collections to add the digitisation to
      * @param userFields
      *            Values for additional fields can be set here (may be null)
-     * @throws IOException
-     *             in various cases, such as bad parameters or errors in the
-     *             underlying layers
      */
     private static void createNewProcessMain(String template, String opac, String field, String value, String id,
-            String docType, Set<String> collections, Map<String, String> userFields)
-            throws IOException, PreferencesException, ReadException, WriteException {
+            String docType, Set<String> collections, Map<String, String> userFields) {
 
         try {
             ProzesskopieForm newProcess = newProcessFromTemplate(template);
