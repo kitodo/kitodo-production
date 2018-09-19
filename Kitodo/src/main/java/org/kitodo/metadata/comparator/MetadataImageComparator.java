@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.Comparator;
 
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.NotImplementedException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
@@ -48,7 +49,7 @@ public class MetadataImageComparator implements Comparator<Object> {
     }
 
     private int compareImages(String firstName, String secondName) {
-        String imageSorting = ConfigCore.getParameter("ImageSorting", "number");
+        String imageSorting = ConfigCore.getParameter(ParameterCore.IMAGE_SORTING, "number");
 
         if (imageSorting.equalsIgnoreCase("number")) {
             try {

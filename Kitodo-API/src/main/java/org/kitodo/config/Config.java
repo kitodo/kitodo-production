@@ -27,11 +27,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.enums.ParameterAPI;
+import org.kitodo.config.enums.ParameterInterface;
 
 public class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
 
     private static final Field FIELD_DETAIL_MESSAGE;
+
     static {
         try {
             FIELD_DETAIL_MESSAGE = Throwable.class.getDeclaredField("detailMessage");
@@ -45,34 +48,13 @@ public class Config {
     private static final String CONFIG_FILE = "kitodo_config.properties";
     public static final int INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS = 0;
 
-    private static final String DIR_MODULES = "moduleFolder";
-
-    /**
-     * Absolute path to the directory that process directories will be created
-     * in, terminated by a directory separator ("/"). The servlet container must
-     * have write permission to that directory.
-     */
-    private static final String DIR_PROCESSES = "MetadatenVerzeichnis";
-
-    /**
-     * Absolute path to the directory that the configuration files are stored
-     * in, terminated by a directory separator ("/").
-     *
-     * <p>
-     * Note: Several, but not all configuration files are read from that
-     * directory. You may want to decide to point this path to the directory
-     * where the servlet container will extract the configuration files to (like
-     * webapps/kitodo/WEB-INF/classes) in order to make sure they are found.
-     */
-    private static final String DIR_XML_CONFIG = "KonfigurationVerzeichnis";
-
     /**
      * Returns the directory that contains the modules.
      *
      * @return the directory for the process directories
      */
     public static String getKitodoModulesDirectory() {
-        return getParameter(DIR_MODULES);
+        return getParameter(ParameterAPI.DIR_MODULES);
     }
 
     /**
@@ -81,7 +63,7 @@ public class Config {
      * @return the directory for the process directories
      */
     public static String getKitodoDataDirectory() {
-        return getParameter(DIR_PROCESSES);
+        return getParameter(ParameterAPI.DIR_PROCESSES);
     }
 
     /**
@@ -90,7 +72,7 @@ public class Config {
      * @return the directory for XML configuration files
      */
     public static String getKitodoConfigDirectory() {
-        return getParameter(DIR_XML_CONFIG);
+        return getParameter(ParameterAPI.DIR_XML_CONFIG);
     }
 
     /**
@@ -98,12 +80,27 @@ public class Config {
      * {@code NoSuchElementException} if no such parameter exists.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @return value for the requested key
      * @throws NoSuchElementException
-     *             if parameter taken from config file is null or exception
-     *             occurred
+     *             if parameter taken from config file is null or exception occurred
      */
+    public static String getParameter(ParameterInterface key) {
+        return getParameter(key.getName());
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file. Throws a
+     * {@code NoSuchElementException} if no such parameter exists.
+     *
+     * @param key
+     *            whose value is to be returned
+     * @return value for the requested key
+     * @throws NoSuchElementException
+     *             if parameter taken from config file is null or exception occurred
+     */
+    //TODO: there is still ImageManagementModule where it is needed
     public static String getParameter(String key) {
         try {
             return getConfig().getString(key);
@@ -122,13 +119,34 @@ public class Config {
      * parameter exists, returns the given default value.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @param defaultValue
-     *            default value in case parameter taken from config file does
-     *            not exist or exception occurred
-     * @return value for the requested key, or {@code defaultIfNull} if not
-     *         found
+     *            default value in case parameter taken from config file does not
+     *            exist or exception occurred
+     * @return value for the requested key, or {@code defaultIfNull} if not found
      */
+    public static String getParameter(ParameterInterface key, String defaultValue) {
+        try {
+            return getConfig().getString(key.getName(), defaultValue);
+        } catch (ConversionException e) {
+            logConversionException(key.getName(), String.class, e, defaultValue);
+            return defaultValue;
+        }
+    }
+
+    /**
+     * Returns the selected parameter from the configuration file. If no such
+     * parameter exists, returns the given default value.
+     *
+     * @param key
+     *            whose value is to be returned
+     * @param defaultValue
+     *            default value in case parameter taken from config file does not
+     *            exist or exception occurred
+     * @return value for the requested key, or {@code defaultIfNull} if not found
+     */
+    //TODO: there is still one place when it is needed
     public static String getParameter(String key, String defaultValue) {
         try {
             return getConfig().getString(key, defaultValue);
@@ -144,11 +162,12 @@ public class Config {
      * returns {@code false}.
      *
      * @param key
-     *            key whose value is to be returned
-     * @return boolean value for the requested key, or {@code false} if not
-     *         found or not parsing
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
+     * @return boolean value for the requested key, or {@code false} if not found or
+     *         not parsing
      */
-    public static boolean getBooleanParameter(String key) {
+    public static boolean getBooleanParameter(ParameterInterface key) {
         return getBooleanParameter(key, false);
     }
 
@@ -158,18 +177,19 @@ public class Config {
      * returns the provided default value.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @param defaultValue
-     *            default value in case parameter taken from config file does
-     *            not exist or exception occurred
-     * @return boolean value for the requested key, or {@code defaultIfNull} if
-     *         not found or not parsing
+     *            default value in case parameter taken from config file does not
+     *            exist or exception occurred
+     * @return boolean value for the requested key, or {@code defaultIfNull} if not
+     *         found or not parsing
      */
-    public static boolean getBooleanParameter(String key, boolean defaultValue) {
+    public static boolean getBooleanParameter(ParameterInterface key, boolean defaultValue) {
         try {
-            return getConfig().getBoolean(key, defaultValue);
+            return getConfig().getBoolean(key.getName(), defaultValue);
         } catch (ConversionException e) {
-            logConversionException(key, boolean.class, e, defaultValue);
+            logConversionException(key.getName(), boolean.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -180,11 +200,12 @@ public class Config {
      * returns {@code 0}.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @return int value for the requested key, or {@code 0} if not found or not
      *         parsing
      */
-    public static int getIntParameter(String key) {
+    public static int getIntParameter(ParameterInterface key) {
         return getIntParameter(key, INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS);
     }
 
@@ -194,18 +215,19 @@ public class Config {
      * returns the provided default value.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @param defaultValue
-     *            default value in case parameter taken from config file does
-     *            not exist or exception occurred
+     *            default value in case parameter taken from config file does not
+     *            exist or exception occurred
      * @return int value for the requested key, or {@code defaultIfNull} if not
      *         found or not parsing
      */
-    public static int getIntParameter(String key, int defaultValue) {
+    public static int getIntParameter(ParameterInterface key, int defaultValue) {
         try {
-            return getConfig().getInt(key, defaultValue);
+            return getConfig().getInt(key.getName(), defaultValue);
         } catch (ConversionException e) {
-            logConversionException(key, int.class, e, defaultValue);
+            logConversionException(key.getName(), int.class, e, defaultValue);
             return defaultValue;
         }
     }
@@ -242,12 +264,13 @@ public class Config {
      * Returns the selected parameter from the configuration file, if any.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @return Optional holding the value for the requested key, else empty.
      */
-    public static Optional<String> getOptionalString(String key) {
+    public static Optional<String> getOptionalString(ParameterInterface key) {
         try {
-            return Optional.of(getConfig().getString(key));
+            return Optional.of(getConfig().getString(key.getName()));
         } catch (NoSuchElementException e) {
             logger.catching(Level.TRACE, e);
             return Optional.empty();
@@ -259,13 +282,13 @@ public class Config {
      * {@code NoSuchElementException} if no such parameter exists.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @return URI value for the requested key
      * @throws NoSuchElementException
-     *             if parameter taken from config file is null or exception
-     *             occurred
+     *             if parameter taken from config file is null or exception occurred
      */
-    public static URI getUriParameter(String key) {
+    public static URI getUriParameter(ParameterInterface key) {
         return Paths.get(getParameter(key)).toUri();
     }
 
@@ -274,15 +297,15 @@ public class Config {
      * {@code NoSuchElementException} if no such parameter exists.
      *
      * @param key
-     *            key whose value is to be returned
+     *            as ParameterInterface enum implementation whose value is to be
+     *            returned
      * @param fullFilenameToAdd
      *            the filename (or path) to attach to the base
      * @return URI value for the requested key
      * @throws NoSuchElementException
-     *             if parameter taken from config file is null or exception
-     *             occurred
+     *             if parameter taken from config file is null or exception occurred
      */
-    public static URI getUriParameter(String key, String fullFilenameToAdd) {
+    public static URI getUriParameter(ParameterInterface key, String fullFilenameToAdd) {
         return Paths.get(FilenameUtils.concat(getParameter(key), fullFilenameToAdd)).toUri();
     }
 
@@ -290,7 +313,7 @@ public class Config {
      * Logs a conversion exception with a helpful error message.
      *
      * @param key
-     *            key whose value could not be converted
+     *            whose value could not be converted
      * @param failedClass
      *            class to convert the value to
      * @param occurred
@@ -298,11 +321,11 @@ public class Config {
      * @param usedValue
      *            default value being used
      */
-    private static <T> void logConversionException(String key, Class<T> failedClass, ConversionException occurred,
-            T usedValue) {
+    private static <T> void logConversionException(String key, Class<T> failedClass,
+            ConversionException occurred, T usedValue) {
         logger.catching(Level.DEBUG, occurred);
         final String message = "Configuration found in kitodo_config.properties for key {} is defined as \"{}\", but "
                 .concat("cannot be converted to {}! Using the default value of \"{}\".");
-        logger.warn(message, key, getParameter(key), failedClass.getSimpleName(), usedValue);
+        logger.warn(message, key, failedClass.getSimpleName(), usedValue);
     }
 }

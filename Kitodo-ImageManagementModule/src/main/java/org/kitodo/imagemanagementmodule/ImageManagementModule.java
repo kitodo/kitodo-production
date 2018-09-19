@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.Config;
+import org.kitodo.config.enums.ParameterImageManagement;
 
 /**
  * An ImageManagementInterface implementation using ImageMagick.
@@ -44,7 +45,7 @@ public class ImageManagementModule implements ImageManagementInterface {
      * Temporary directory location.
      */
     private static final File TMPDIR = new File(
-            Config.getParameter("ImageManagementModule.tmpDir", System.getProperty("java.io.tmpdir")));
+            Config.getParameter(ParameterImageManagement.DIR_TMP, System.getProperty("java.io.tmpdir")));
 
     /**
      * Image format used internally to create web images, optimized for small

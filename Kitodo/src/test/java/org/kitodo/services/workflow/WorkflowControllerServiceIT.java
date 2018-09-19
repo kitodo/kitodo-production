@@ -28,7 +28,7 @@ import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
@@ -41,8 +41,8 @@ import org.kitodo.workflow.Solution;
 public class WorkflowControllerServiceIT {
 
     private static final File scriptCreateDirUserHome = new File(
-            ConfigCore.getParameter(Parameter.SCRIPT_CREATE_DIR_USER_HOME));
-    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(Parameter.SCRIPT_CREATE_SYMLINK));
+            ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
+    private static final File scriptCreateSymLink = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
     private static final ServiceManager serviceManager = new ServiceManager();
     private static final FileService fileService = serviceManager.getFileService();
     private static final TaskService taskService = serviceManager.getTaskService();

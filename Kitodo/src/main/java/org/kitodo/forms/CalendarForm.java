@@ -41,7 +41,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.DateUtils;
 import org.kitodo.helper.FacesUtils;
 import org.kitodo.helper.Helper;
@@ -677,7 +677,7 @@ public class CalendarForm implements Serializable {
      * </p>
      */
     public CalendarForm() {
-        issueColours = ConfigCore.getParameter(Parameter.ISSUE_COLOURS, DefaultValues.ISSUE_COLOURS)
+        issueColours = ConfigCore.getParameter(ParameterCore.ISSUE_COLOURS, DefaultValues.ISSUE_COLOURS)
                 .split(";");
         course = new Course();
         blockChangerResolver = new HashMap<>();

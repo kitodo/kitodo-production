@@ -13,7 +13,7 @@ package org.kitodo.config;
 
 import java.util.concurrent.TimeUnit;
 
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 
 /**
  * Hard-coded default values.
@@ -30,7 +30,7 @@ public class DefaultValues {
     public static final int HITLIST_PAGE_SIZE = 10;
     public static final int KITODO_CONTENT_SERVER_TIMEOUT = (int) TimeUnit.MILLISECONDS.convert(60, TimeUnit.SECONDS);
     public static final String IMAGE_PREFIX = "\\d{8}";
-    public static final String IMAGE_SORTING = Parameter.IMAGE_SORTING_VALUE_NUMBER.getName();
+    public static final String IMAGE_SORTING = ParameterCore.IMAGE_SORTING_VALUE_NUMBER.getName();
     public static final String ISSUE_COLOURS = "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000";
     public static final String LANGUAGE_DEFAULT = "de";
     public static final String LANGUAGE_FORCE_DEFAULT = "de";

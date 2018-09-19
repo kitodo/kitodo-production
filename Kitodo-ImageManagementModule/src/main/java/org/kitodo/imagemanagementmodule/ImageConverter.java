@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.im4java.core.IMOperation;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.config.Config;
+import org.kitodo.config.enums.ParameterImageManagement;
 
 /**
  * An image conversion task. One conversion task can create multiple result
@@ -145,6 +146,7 @@ class ImageConverter {
                     option = "-".concat(option);
                 }
                 commandLine.addRawArgs(option.split("\\."));
+                //FIXME: it is not secure to allow any possible key
                 String value = Config.getParameter(key);
                 if (!value.isEmpty()) {
                     commandLine.addRawArgs(value);
@@ -165,7 +167,7 @@ class ImageConverter {
         commandLine.addImage(FORMAT_OFF);
         ConvertRunner convertRunner = new ConvertRunner();
         try {
-            convertRunner.setSearchPath(Config.getParameter("ImageManagementModule.searchPath"));
+            convertRunner.setSearchPath(Config.getParameter(ParameterImageManagement.SEARCH_PATH));
         } catch (NoSuchElementException e) {
             logger.trace("No deviant search path configured.", e);
         }

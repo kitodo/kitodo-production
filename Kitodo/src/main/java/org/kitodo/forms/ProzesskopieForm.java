@@ -64,7 +64,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DefaultValues;
 import org.kitodo.config.DigitalCollections;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -222,7 +222,7 @@ public class ProzesskopieForm implements Serializable {
         }
     }
 
-    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(Parameter.DIRECTORY_SUFFIX,
+    private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX,
         DefaultValues.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
     private List<AdditionalField> additionalFields;
@@ -511,7 +511,7 @@ public class ProzesskopieForm implements Serializable {
      *            data to process
      */
     private void applyCopyingRules(CopierData data) {
-        String rules = ConfigCore.getParameter(Parameter.COPY_DATA_ON_CATALOGUE_QUERY);
+        String rules = ConfigCore.getParameter(ParameterCore.COPY_DATA_ON_CATALOGUE_QUERY);
         if (Objects.nonNull(rules)) {
             try {
                 new DataCopier(rules).process(data);
@@ -713,7 +713,7 @@ public class ProzesskopieForm implements Serializable {
             Helper.setErrorMessage(INCOMPLETE_DATA, "processTitleEmpty");
         }
 
-        String validateRegEx = ConfigCore.getParameter(Parameter.VALIDATE_PROCESS_TITLE_REGEX,
+        String validateRegEx = ConfigCore.getParameter(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX,
             DefaultValues.VALIDATE_PROCESS_TITLE_REGEX);
         if (!process.getTitle().matches(validateRegEx)) {
             valid = false;
@@ -980,7 +980,7 @@ public class ProzesskopieForm implements Serializable {
      * Metadata inheritance and enrichment.
      */
     private void updateMetadata() throws PreferencesException {
-        if (ConfigCore.getBooleanParameter(Parameter.USE_METADATA_ENRICHMENT)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.USE_METADATA_ENRICHMENT)) {
             DocStructInterface enricher = rdf.getDigitalDocument().getLogicalDocStruct();
             Map<String, Map<String, MetadataInterface>> higherLevelMetadata = new HashMap<>();
             while (enricher.getAllChildren() != null) {
@@ -1938,7 +1938,7 @@ public class ProzesskopieForm implements Serializable {
      *         configuration
      */
     private int getPageSize() {
-        return ConfigCore.getIntParameter(Parameter.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
+        return ConfigCore.getIntParameter(ParameterCore.HITLIST_PAGE_SIZE, DefaultValues.HITLIST_PAGE_SIZE);
     }
 
     /**

@@ -23,7 +23,7 @@ import javax.servlet.annotation.WebListener;
 import org.joda.time.Duration;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.enums.Parameter;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.tasks.EmptyTask.Behaviour;
 
 /**
@@ -161,13 +161,13 @@ public class TaskSitter implements Runnable, ServletContextListener {
         LinkedList<EmptyTask> failedThreads = new LinkedList<>();
         int availableClearance = autoRunLimit;
 
-        int successfulMaxCount = ConfigCore.getIntParameter(Parameter.TASK_MANAGER_KEEP_SUCCESSFUL,
+        int successfulMaxCount = ConfigCore.getIntParameter(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL,
             DefaultValues.TASK_MANAGER_KEEP_SUCCESSFUL);
-        int failedMaxCount = ConfigCore.getIntParameter(Parameter.TASK_MANAGER_KEEP_FAILED,
+        int failedMaxCount = ConfigCore.getIntParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED,
             DefaultValues.TASK_MANAGER_KEEP_FAILED);
-        Duration successfulMaxAge = ConfigCore.getDurationParameter(Parameter.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
+        Duration successfulMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
             TimeUnit.MINUTES, DefaultValues.TASK_MANAGER_KEEP_SUCCESSFUL_MINS);
-        Duration failedMaxAge = ConfigCore.getDurationParameter(Parameter.TASK_MANAGER_KEEP_FAILED_MINS,
+        Duration failedMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED_MINS,
             TimeUnit.MINUTES, DefaultValues.TASK_MANAGER_KEEP_FAILED_MINS);
 
         ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
@@ -251,7 +251,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     public static void setAutoRunningThreads(boolean on) {
         if (on) {
             int cores = Runtime.getRuntime().availableProcessors();
-            autoRunLimit = ConfigCore.getIntParameter(Parameter.TASK_MANAGER_AUTORUN_LIMIT, cores);
+            autoRunLimit = ConfigCore.getIntParameter(ParameterCore.TASK_MANAGER_AUTORUN_LIMIT, cores);
         } else {
             autoRunLimit = 0;
         }
