@@ -26,7 +26,6 @@ public class DefaultValues {
     public static final String DIRECTORY_SUFFIX = "tif";
     public static final String DONE_DIRECTORY_NAME = "fertig/";
     public static final int ELASTICSEARCH_BATCH = 1000;
-    public static final String ERR_LINK_TO_PAGE = "./desktop.jsf";
     public static final int HITLIST_PAGE_SIZE = 10;
     public static final int KITODO_CONTENT_SERVER_TIMEOUT = (int) TimeUnit.MILLISECONDS.convert(60, TimeUnit.SECONDS);
     public static final String IMAGE_PREFIX = "\\d{8}";

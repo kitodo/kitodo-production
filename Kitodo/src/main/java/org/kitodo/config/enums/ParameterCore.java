@@ -277,15 +277,6 @@ public enum ParameterCore implements ParameterInterface {
     WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch"),
 
     /*
-     * Error page
-     */
-
-    /**
-     * Page the user will be directed to continue.
-     */
-    ERR_LINK_TO_PAGE("err_linkToPage"),
-
-    /*
      * METADATA PROCESSING
      *
      * Catalogue search
@@ -619,29 +610,6 @@ public enum ParameterCore implements ParameterInterface {
      * </p>
      */
     AUTHORITY_DEFAULT("authority.default"),
-
-    /*
-     * INTERACTIVE ERROR MANAGEMENT
-     */
-
-    /**
-     * Boolean, defaults to {@code false}.
-     */
-    ERR_USER_HANDLING("err_userHandling"),
-
-    /**
-     * Use this to turn the email feature on or off. Boolean, defaults to
-     * {@code false}.
-     */
-    ERR_EMAIL_ENABLED("err_emailEnabled"),
-
-    /**
-     * An indefinite number of e-mail addresses can be entered here. Create one
-     * enumerated configuration entry line per address, like:
-     * {@code err_emailAddress1=(...)}, {@code err_emailAddress2=(...)},
-     * {@code err_emailAddress3=(...)}, ...
-     */
-    ERR_EMAIL_ADDRESS("err_emailAddress"),
 
     /*
      * FUNCTIONAL EXTENSIONS
