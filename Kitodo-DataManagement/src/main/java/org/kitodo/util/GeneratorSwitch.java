@@ -63,11 +63,7 @@ public class GeneratorSwitch {
         // Ignore all projects that do not have a source folder configured.
         Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
 
-        // Drop all folders to generate if they are their own source folder.
-        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
-                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
-        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
-                .map(λ -> λ.getLeft());
+        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
 
         // Remove all folders to generate which do not have anything to generate
         // configured.
@@ -80,6 +76,20 @@ public class GeneratorSwitch {
 
         List<GeneratorSwitch> result = taskGenerators.collect(Collectors.toCollection(LinkedList::new));
         return result;
+    }
+
+    /**
+     * Drop all folders to generate if they are their own source folder.
+     *
+     * @param projects
+     *            projects whose folders allowed to be generated are to be
+     *            determined
+     * @return a stream of folders that are allowed to be generated
+     */
+    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
+        Stream<Pair<Folder, Folder>> foldersWithSources = projects
+                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
+        return foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft());
     }
 
     /**
