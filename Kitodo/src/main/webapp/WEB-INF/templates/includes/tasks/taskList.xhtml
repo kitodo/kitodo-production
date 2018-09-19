@@ -24,7 +24,11 @@
             <h:outputText value="#{item.title}"/>
         </p:column>
         <p:column headerText="#{msgs.process}">
-            <h:outputText value="#{item.process.title}"/>
+            <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.processEdit}">
+                <i class="fa fa-pencil-square-o fa-lg"/>
+                <f:param name="id" value="#{item.process.id}"/>
+            </h:link>
+            <h:outputText value=" #{item.process.title}"/>
         </p:column>
         <p:column headerText="#{msgs.project}">
             <h:outputText value="#{item.process.project.title}"/>
