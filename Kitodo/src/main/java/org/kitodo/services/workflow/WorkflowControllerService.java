@@ -26,7 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Task;
@@ -212,7 +212,7 @@ public class WorkflowControllerService {
         // cancel the completion
         if (task.isTypeCloseVerify()) {
             // metadata validation
-            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameters.USE_META_DATA_VALIDATION)) {
+            if (task.isTypeMetadata() && ConfigCore.getBooleanParameter(Parameter.USE_META_DATA_VALIDATION)) {
                 serviceManager.getMetadataValidationService().setAutoSave(true);
                 if (!serviceManager.getMetadataValidationService().validate(task.getProcess())) {
                     return null;

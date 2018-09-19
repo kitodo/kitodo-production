@@ -26,7 +26,7 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -169,7 +169,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p) throws IOException {
-        if (ConfigCore.getBooleanParameter(Parameters.IMPORT_USE_OLD_CONFIGURATION)) {
+        if (ConfigCore.getBooleanParameter(Parameter.IMPORT_USE_OLD_CONFIGURATION)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {
                 imagesFolder = fileService.createResource(basepath, "_images");

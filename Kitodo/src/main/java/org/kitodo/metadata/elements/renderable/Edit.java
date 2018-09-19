@@ -21,7 +21,7 @@ import org.kitodo.api.ugh.MetadataInterface;
 import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.exceptions.UnreachableCodeException;
 
 /**
@@ -141,7 +141,7 @@ public class Edit extends RenderableMetadata
                             break;
                         case NORMDATA_RECORD:
                             if (value != null && value.length() > 0
-                                    && !value.equals(ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, ""))) {
+                                    && !value.equals(ConfigCore.getParameter(Parameter.AUTHORITY_DEFAULT, ""))) {
                                 String[] authorityFile = Metadaten.parseAuthorityFileArgs(value);
                                 found.setAutorityFile(authorityFile[0], authorityFile[1], authorityFile[2]);
                             }

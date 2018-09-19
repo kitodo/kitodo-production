@@ -30,7 +30,7 @@ import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedForParentException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exporter.dms.ExportDms;
@@ -155,7 +155,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     process = processesIterator.next();
                     DigitalDocumentInterface out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
-                            ConfigCore.getBooleanParameter(Parameters.EXPORT_WITH_IMAGES, true));
+                            ConfigCore.getBooleanParameter(Parameter.EXPORT_WITH_IMAGES, true));
                     exporter.setExportDmsTask(this);
                     exporter.startExport(process, serviceManager.getUserService()
                             .getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),

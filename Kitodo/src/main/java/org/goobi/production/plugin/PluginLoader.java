@@ -33,7 +33,7 @@ import org.goobi.production.plugin.CataloguePlugin.CataloguePlugin;
 import org.goobi.production.plugin.interfaces.IImportPlugin;
 import org.goobi.production.plugin.interfaces.IPlugin;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.production.plugin.importer.massimport.PicaMassImport;
 
 /**
@@ -152,7 +152,7 @@ public class PluginLoader {
         short entries = 2;
         HashMap<String, String> conf = new HashMap<>((int) Math.ceil(entries / 0.75));
         conf.put("configDir", ConfigCore.getKitodoConfigDirectory());
-        conf.put("tempDir", ConfigCore.getParameter(Parameters.DIR_PLUGINS_TEMP));
+        conf.put("tempDir", ConfigCore.getParameter(Parameter.DIR_PLUGINS_TEMP));
         return conf;
     }
 
@@ -224,7 +224,7 @@ public class PluginLoader {
      */
     private static PluginManagerUtil getPluginLoader(PluginType type) {
         PluginManager pluginManager = PluginManagerFactory.createPluginManager();
-        String path = FilenameUtils.concat(ConfigCore.getParameter(Parameters.DIR_PLUGINS), type.getName());
+        String path = FilenameUtils.concat(ConfigCore.getParameter(Parameter.DIR_PLUGINS), type.getName());
         pluginManager.addPluginsFrom(new File(path).toURI());
         return new PluginManagerUtil(pluginManager);
     }

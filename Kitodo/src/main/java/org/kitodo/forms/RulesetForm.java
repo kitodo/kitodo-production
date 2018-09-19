@@ -31,7 +31,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -84,7 +84,7 @@ public class RulesetForm extends BaseForm {
      */
     public String save() {
         try {
-            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameters.DIR_RULESETS))) {
+            if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(Parameter.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
                     return null;
@@ -199,7 +199,7 @@ public class RulesetForm extends BaseForm {
      * @return list of ruleset filenames
      */
     public List getRulesetFilenames() {
-        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameters.DIR_RULESETS)))) {
+        try (Stream<Path> rulesetPaths = Files.walk(Paths.get(ConfigCore.getParameter(Parameter.DIR_RULESETS)))) {
             return rulesetPaths.filter(f -> f.toString().endsWith(".xml")).map(Path::getFileName).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {

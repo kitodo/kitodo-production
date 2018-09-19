@@ -265,7 +265,7 @@ public class Config {
      *             if parameter taken from config file is null or exception
      *             occurred
      */
-    public static URI getUri(String key) {
+    public static URI getUriParameter(String key) {
         return Paths.get(getParameter(key)).toUri();
     }
 
@@ -282,7 +282,7 @@ public class Config {
      *             if parameter taken from config file is null or exception
      *             occurred
      */
-    public static URI getUri(String key, String fullFilenameToAdd) {
+    public static URI getUriParameter(String key, String fullFilenameToAdd) {
         return Paths.get(FilenameUtils.concat(getParameter(key), fullFilenameToAdd)).toUri();
     }
 

@@ -16,8 +16,8 @@ import java.net.URI;
 import java.nio.file.Paths;
 
 import org.kitodo.api.dataeditor.DataEditorInterface;
-import org.kitodo.config.Config;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 public class DataEditorService {
@@ -43,11 +43,11 @@ public class DataEditorService {
 
     private URI getXsltFileFromConfig() {
         String path = getXsltFolder();
-        String file = Config.getParameter(Parameters.XSLT_FILENAME_METADATA_TRANSFORMATION);
+        String file = ConfigCore.getParameter(Parameter.XSLT_FILENAME_METADATA_TRANSFORMATION);
         return Paths.get(path + file).toUri();
     }
 
     private String getXsltFolder() {
-        return Config.getParameter(Parameters.DIR_XSLT);
+        return ConfigCore.getParameter(Parameter.DIR_XSLT);
     }
 }

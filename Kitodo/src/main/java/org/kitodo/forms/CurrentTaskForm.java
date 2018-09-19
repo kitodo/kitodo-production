@@ -35,7 +35,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
 import org.kitodo.data.database.beans.Process;
@@ -106,7 +106,7 @@ public class CurrentTaskForm extends BaseForm {
         } else {
             this.anzeigeAnpassen.put("processDate", false);
         }
-        doneDirectoryName = ConfigCore.getParameter(Parameters.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
+        doneDirectoryName = ConfigCore.getParameter(Parameter.DONE_DIRECTORY_NAME, DefaultValues.DONE_DIRECTORY_NAME);
     }
 
     /**

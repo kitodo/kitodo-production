@@ -40,7 +40,7 @@ import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
@@ -752,10 +752,10 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public URI getHomeDirectory(User user) throws IOException {
         URI result;
         if (Objects.nonNull(user)) {
-            if (ConfigCore.getBooleanParameter(Parameters.LDAP_USE)) {
+            if (ConfigCore.getBooleanParameter(Parameter.LDAP_USE)) {
                 result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
             } else {
-                result = Paths.get(ConfigCore.getParameter(Parameters.DIR_USERS), user.getLogin()).toUri();
+                result = Paths.get(ConfigCore.getParameter(Parameter.DIR_USERS), user.getLogin()).toUri();
             }
 
             if (!new File(result).exists()) {

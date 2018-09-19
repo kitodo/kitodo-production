@@ -20,7 +20,7 @@ import java.io.InputStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
@@ -137,7 +137,7 @@ public class DmsImportThread extends Thread {
     }
 
     private void removeImages() {
-        if (!ConfigCore.getBooleanParameter(Parameters.EXPORT_WITHOUT_TIME_LIMIT)) {
+        if (!ConfigCore.getBooleanParameter(Parameter.EXPORT_WITHOUT_TIME_LIMIT)) {
             try {
                 serviceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {

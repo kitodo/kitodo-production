@@ -20,7 +20,7 @@ import javax.jms.JMSException;
 import org.goobi.mq.ActiveMQProcessor;
 import org.goobi.mq.MapMessageObjectReader;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.Parameter;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -44,7 +44,7 @@ public class FinaliseStepProcessor extends ActiveMQProcessor {
      * ActiveMQDirector.registerListeners() from starting this service.
      */
     public FinaliseStepProcessor() {
-        super(ConfigCore.getOptionalString(Parameters.ACTIVE_MQ_FINALIZE_STEP_QUEUE).orElse(null));
+        super(ConfigCore.getOptionalString(Parameter.ACTIVE_MQ_FINALIZE_STEP_QUEUE).orElse(null));
     }
 
     /**
