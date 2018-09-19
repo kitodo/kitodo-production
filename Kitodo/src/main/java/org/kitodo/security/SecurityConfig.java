@@ -144,7 +144,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 EDIT_RULESET + CLIENT_ANY)
 
             .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
-                EDIT_WORKFLOW + GLOBAL)
+                EDIT_WORKFLOW + GLOBAL,
+                EDIT_WORKFLOW + CLIENT_ANY,
+                EDIT_WORKFLOW + PROJECT_ANY)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
                 VIEW_ALL_TASKS + GLOBAL,
