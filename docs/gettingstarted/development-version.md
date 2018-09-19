@@ -16,6 +16,9 @@ su -c "apt install -y sudo && adduser $USER sudo && echo \"Defaults timestamp_ti
 
 ```
 sudo apt install -y dirmngr
+```
+
+```
 sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5 && echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-5.7" | sudo tee -a /etc/apt/sources.list.d/mysql-5.7.list
 ```
 
@@ -25,6 +28,11 @@ sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5 && echo "deb http:
 sudo debconf-set-selections <<< "mysql-community-server mysql-community-server/root-pass password "
 sudo debconf-set-selections <<< "mysql-community-server mysql-community-server/re-root-pass password "
 sudo apt update && sudo apt install -y openjdk-8-jdk maven mysql-community-server zip
+```
+### Change java security config (for cloud environments)
+
+```
+sudo sed -i 's/securerandom.source=file:\/dev\/random/securerandom.source=file:\/dev\/urandom/' /etc/java-8-openjdk/security/java.security
 ```
 
 ### Build development version and modules
@@ -48,7 +56,8 @@ sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo
 ### Generate SQL dump (flyway migration)
 
 ```
-wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/schema.sql https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-master/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
 (cd kitodo-production-master/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
 mysqldump -u kitodo --password=kitodo kitodo > kitodo-3.sql
 ```
@@ -61,6 +70,7 @@ install -m 444 kitodo-production-master/Kitodo/src/main/resources/kitodo_*.xml z
 install -m 444 kitodo-production-master/Kitodo/src/main/resources/modules.xml zip/config/
 install -m 444 kitodo-production-master/Kitodo/src/main/resources/docket*.xsl zip/xslt/
 install -m 444 kitodo-production-master/Kitodo/rulesets/*.xml zip/rulesets/
+install -m 444 kitodo-production-master/Kitodo/diagrams/*.xml zip/diagrams/
 install -m 554 kitodo-production-master/Kitodo/scripts/*.sh zip/scripts/
 chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/plugins/import zip/plugins/opac zip/plugins/step zip/plugins/validation zip/rulesets zip/scripts zip/xslt
 (cd zip && zip -r ../kitodo-3-config.zip *)
@@ -79,6 +89,9 @@ chmod -w zip/config zip/import zip/messages zip/plugins zip/plugins/command zip/
 
 ```
 sudo apt install -y apt-transport-https
+```
+
+```
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - && echo "deb https://artifacts.elastic.co/packages/5.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-5.x.list
 ```
 
@@ -154,9 +167,11 @@ sudo ln -s /var/lib/tomcat8/webapps/kitodo/plugins/opac/OpacPica-Plugin-1.0-SNAP
 
 ### Index example data
 
-http://localhost:8080/kitodo/pages/system.jsf
+Menu System: <http://localhost:8080/kitodo/pages/system.jsf>
 
-* Whole index / Start indexing
+* Delete ElasticSearch index
+* Create ElasticSearch mapping
+* Whole Index / Start indexing
 
 ## 4. Updates
 
@@ -173,7 +188,8 @@ unzip master.zip && rm master.zip
 ```
 sudo mysql -e "drop database kitodo;"
 sudo mysql -e "create database kitodo;grant all privileges on kitodo.* to kitodo@localhost identified by 'kitodo';flush privileges;"
-wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/schema.sql https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-master/Kitodo/setup/schema.sql | mysql -u kitodo -D kitodo --password=kitodo
+cat kitodo-production-master/Kitodo/setup/default.sql | mysql -u kitodo -D kitodo --password=kitodo
 (cd kitodo-production-master/Kitodo-DataManagement && mvn flyway:baseline -Pflyway && mvn flyway:migrate -Pflyway)
 ```
 
@@ -181,9 +197,8 @@ wget -O - https://raw.githubusercontent.com/kitodo/kitodo-production/master/Kito
 
 ```
 (cd kitodo-production-master/ && mvn clean package '-P!development')
-zip -j kitodo-3-modules.zip kitodo-production-master/Kitodo/modules/*.jar
 sudo rm -f /usr/local/kitodo/modules/*
-sudo unzip kitodo-3-modules.zip -d /usr/local/kitodo/modules
+sudo cp kitodo-production-master/Kitodo/modules/*.jar /usr/local/kitodo/modules
 sudo chown -R tomcat8:tomcat8 /usr/local/kitodo/modules
 mv kitodo-production-master/Kitodo/target/kitodo-3*.war kitodo-3.war
 sudo chown tomcat8:tomcat8 kitodo-3.war
@@ -191,6 +206,8 @@ sudo mv kitodo-3.war /var/lib/tomcat8/webapps/kitodo.war
 sleep 5
 until curl -s GET "localhost:8080/kitodo/pages/login.jsf" | grep -q -o "KITODO.PRODUCTION" ; do sleep 1; done
 ```
+
+Note: If the update provides new example data, it has to be copied from kitodo-production-master/Kitodo/... to /usr/local/kitodo/... manually.
 
 ### Reset index
 

@@ -34,7 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.DefaultValues;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -75,7 +75,7 @@ public class SpracheForm implements Serializable {
     private void setSessionLocaleFieldId() {
         String key = "";
         if (Objects.isNull(serviceManager.getUserService().getAuthenticatedUser())) {
-            key = ConfigCore.getParameter(Parameters.LANGUAGE_DEFAULT, DefaultValues.LANGUAGE_DEFAULT);
+            key = ConfigCore.getParameter(ParameterCore.LANGUAGE_DEFAULT, DefaultValues.LANGUAGE_DEFAULT);
         } else {
             try {
                 User user = serviceManager.getUserService().getById(serviceManager.getUserService().getAuthenticatedUser().getId());
@@ -211,7 +211,7 @@ public class SpracheForm implements Serializable {
              * When no locale is given (no Accept-Language Http Request header
              * is present) return default language
              */
-            String key = ConfigCore.getParameter(Parameters.LANGUAGE_DEFAULT,
+            String key = ConfigCore.getParameter(ParameterCore.LANGUAGE_DEFAULT,
                 DefaultValues.LANGUAGE_DEFAULT);
             Locale locale = new Locale.Builder().setLanguageTag(key).build();
             if (LocaleUtils.isAvailableLocale(locale)) {

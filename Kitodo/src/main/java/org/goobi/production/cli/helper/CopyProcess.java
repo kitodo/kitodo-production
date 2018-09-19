@@ -41,7 +41,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProjects;
 import org.kitodo.config.DigitalCollections;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -415,7 +415,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valid = true;
 
-        if (ConfigCore.getBooleanParameter(Parameters.MASS_IMPORT_UNIQUE_TITLE, true)) {
+        if (ConfigCore.getBooleanParameter(ParameterCore.MASS_IMPORT_UNIQUE_TITLE, true)) {
             valid = isProcessTitleCorrect(this.prozessKopie);
         }
         return valid;

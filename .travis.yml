@@ -5,6 +5,7 @@ language: java
 cache:
   directories:
     - $HOME/.m2
+  timeout: 1000
 
 dist: trusty
 

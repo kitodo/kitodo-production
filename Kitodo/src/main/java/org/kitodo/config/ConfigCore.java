@@ -23,8 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
-import org.kitodo.config.Config;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
@@ -42,8 +41,8 @@ public class ConfigCore extends Config {
     }
 
     /**
-     * Return the absolute path for the temporary images directory. Method
-     * creates also this folder in case it doesn't exist.
+     * Return the absolute path for the temporary images directory. Method creates
+     * also this folder in case it doesn't exist.
      *
      * @return the path for the temporary images directory as URI
      */
@@ -74,8 +73,21 @@ public class ConfigCore extends Config {
      *
      * @return Parameter as Long
      */
-    public static long getLongParameter(String inParameter, long inDefault) {
+    static long getLongParameter(String inParameter, long inDefault) {
         return getConfig().getLong(inParameter, inDefault);
+    }
+
+    /**
+     * Request long parameter from configuration.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @param inDefault
+     *            default value
+     * @return Parameter as Long
+     */
+    public static long getLongParameter(ParameterCore key, long inDefault) {
+        return getLongParameter(key.getName(), inDefault);
     }
 
     /**
@@ -89,12 +101,29 @@ public class ConfigCore extends Config {
     }
 
     /**
+     * Request Duration parameter from configuration.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @param timeUnit
+     *            as TimeUnit
+     * @param defaultValue
+     *            default value
+     * @return Parameter as Duration
+     */
+    public static Duration getDurationParameter(ParameterCore key, TimeUnit timeUnit, long defaultValue) {
+        return getDurationParameter(key.getName(), timeUnit, defaultValue);
+    }
+
+    /**
      * Request String[]-parameter from Configuration.
      *
+     * @param key
+     *            as Parameter whose value is to be returned
      * @return Parameter as String[]
      */
-    public static String[] getStringArrayParameter(String inParameter) {
-        return getConfig().getStringArray(inParameter);
+    public static String[] getStringArrayParameter(ParameterCore key) {
+        return getConfig().getStringArray(key.getName());
     }
 
     /**
@@ -103,6 +132,6 @@ public class ConfigCore extends Config {
      * @return String
      */
     public static String getKitodoDiagramDirectory() {
-        return getParameter(Parameters.DIR_DIAGRAMS);
+        return getParameter(ParameterCore.DIR_DIAGRAMS);
     }
 }

@@ -61,23 +61,6 @@ public class TaskServiceIT {
     }
 
     @Test
-    public void shouldCountTasksAccordingToQuery() {
-        UserService userService = new ServiceManager().getUserService();
-
-        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(4),
-            taskService.getAmountOfCurrentTasks(true, true, userService.getById(1))));
-
-        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
-            taskService.getAmountOfCurrentTasks(true, false, userService.getById(1))));
-
-        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
-            taskService.getAmountOfCurrentTasks(false, true, userService.getById(1))));
-
-        await().untilAsserted(() -> assertEquals("Tasks were not counted correctly!", Long.valueOf(2),
-            taskService.getAmountOfCurrentTasks(true, false, userService.getById(2))));
-    }
-
-    @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
         Long amount = taskService.countDatabaseRows();
         assertEquals("Tasks were not counted correctly!", Long.valueOf(8), amount);

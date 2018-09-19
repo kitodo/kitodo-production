@@ -9,14 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.config;
+package org.kitodo.config.enums;
 
 /**
  * These constants define configuration parameters usable in the configuration
  * file. This file reflects the order of the global
  * {@code kitodo_config.properties} file (as far as possible), and vice versa.
  */
-public class Parameters {
+public enum ParameterCore implements ParameterInterface {
 
     /*
      * FILE AND DIRECTORY MANAGEMENT
@@ -33,13 +33,13 @@ public class Parameters {
      * files in the future:
      */
 
-    // DIR_XML_CONFIG = "KonfigurationVerzeichnis" → org.kitodo.config.Config
+    DIR_XML_CONFIG("KonfigurationVerzeichnis"),
 
     /**
      * Absolute path to the directory that the rule set definition files will be
      * read from. It must be terminated by a directory separator ("/").
      */
-    public static final String DIR_RULESETS = "RegelsaetzeVerzeichnis";
+    DIR_RULESETS("RegelsaetzeVerzeichnis"),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are
@@ -48,7 +48,7 @@ public class Parameters {
      * the physical binding units to digitise. The path must be terminated by a
      * directory separator ("/").
      */
-    public static final String DIR_XSLT = "xsltFolder";
+    DIR_XSLT("xsltFolder"),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -59,7 +59,7 @@ public class Parameters {
      * files in the future:
      */
 
-    // DIR_PROCESSES = "MetadatenVerzeichnis" → org.kitodo.config.Config
+    DIR_PROCESSES("MetadatenVerzeichnis"),
 
     /**
      * Absolute path to the base directory of the users' home directories,
@@ -70,18 +70,18 @@ public class Parameters {
      * after finishing the task. Note: If LDAP is used, the users' home dirs
      * will instead be read from LDAP
      */
-    public static final String DIR_USERS = "dir_Users";
+    DIR_USERS("dir_Users"),
 
     /**
      * Absolute path to a folder the application can temporarily create files
      * in, terminated by a directory separator ("/").
      */
-    public static final String DIR_TEMP = "tempfolder";
+    DIR_TEMP("tempfolder"),
 
     /**
      * Path to directory in which BPMN diagrams are stored.
      */
-    public static final String DIR_DIAGRAMS = "diagramsFolder";
+    DIR_DIAGRAMS("diagramsFolder"),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -91,7 +91,7 @@ public class Parameters {
      * constant is if someone compares the two files in the future:
      */
 
-    // DIR_MODULES = "moduleFolder" → org.kitodo.config.Config
+    DIR_MODULES("moduleFolder"),
 
     /**
      * Points to a folder on the file system that contains <b>legacy</b>
@@ -102,13 +102,13 @@ public class Parameters {
      * <p>
      * Must be terminated by the file separator.
      */
-    public static final String DIR_PLUGINS = "pluginFolder";
+    DIR_PLUGINS("pluginFolder"),
 
     /**
      * Points to a folder on the file system that <b>legacy</b> plug-ins may use
      * to write temporary files.
      */
-    public static final String DIR_PLUGINS_TEMP = "debugFolder";
+    DIR_PLUGINS_TEMP("debugFolder"),
 
     /*
      * Directory management
@@ -117,7 +117,7 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String CREATE_ORIG_FOLDER_IF_NOT_EXISTS = "createOrigFolderIfNotExists";
+    CREATE_ORIG_FOLDER_IF_NOT_EXISTS("createOrigFolderIfNotExists"),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -126,23 +126,22 @@ public class Parameters {
      * but there is no constant for it here. This comment is to explain where
      * the constant is if someone compares the two files in the future:
      */
-
-    // "createSourceFolder" → org.kitodo.filemanagement.FileManagement
+    CREATE_SOURCE_FOLDER("createSourceFolder"),
 
     /**
      * Prefix of image directory name created on process creation.
      */
-    public static final String DIRECTORY_PREFIX = "DIRECTORY_PREFIX";
+    DIRECTORY_PREFIX("DIRECTORY_PREFIX"),
 
     /**
      * Directory suffix for created image directory on process creation.
      */
-    public static final String DIRECTORY_SUFFIX = "DIRECTORY_SUFFIX";
+    DIRECTORY_SUFFIX("DIRECTORY_SUFFIX"),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String IMPORT_USE_OLD_CONFIGURATION = "importUseOldConfiguration";
+    IMPORT_USE_OLD_CONFIGURATION("importUseOldConfiguration"),
 
     /**
      * Creation and export of process sub-directories, e.g.
@@ -155,13 +154,13 @@ public class Parameters {
      * always an addition to the existing folder creating and exporting
      * functions of Kitodo.Production.
      */
-    public static final String PROCESS_DIRS = "processDirs";
+    PROCESS_DIRS("processDirs"),
 
     /**
      * Set if master images folder {@code orig_} should be used at all. Boolean,
      * defaults to {@code true}.
      */
-    public static final String USE_ORIG_FOLDER = "useOrigFolder";
+    USE_ORIG_FOLDER("useOrigFolder"),
 
     /*
      * Directory and symbolic link management
@@ -170,23 +169,23 @@ public class Parameters {
     /**
      * Script to create the user's home directory when adding a new user.
      */
-    public static final String SCRIPT_CREATE_DIR_USER_HOME = "script_createDirUserHome";
+    SCRIPT_CREATE_DIR_USER_HOME("script_createDirUserHome"),
 
     /**
      * Script to create the directory for a new process.
      */
-    public static final String SCRIPT_CREATE_DIR_META = "script_createDirMeta";
+    SCRIPT_CREATE_DIR_META("script_createDirMeta"),
 
     /**
-     * Script to create a symbolic link in the user home direcory and set
+     * Script to create a symbolic link in the user home directory and set
      * permissions for the user.
      */
-    public static final String SCRIPT_CREATE_SYMLINK = "script_createSymLink";
+    SCRIPT_CREATE_SYMLINK("script_createSymLink"),
 
     /**
      * Script to remove the symbolic link from the user home directory.
      */
-    public static final String SCRIPT_DELETE_SYMLINK = "script_deleteSymLink";
+    SCRIPT_DELETE_SYMLINK("script_deleteSymLink"),
 
     /*
      * Runnotes
@@ -196,7 +195,7 @@ public class Parameters {
      * Filename of the XSLT file for transforming old metadata files which need
      * to be in the xslt folder above.
      */
-    public static final String XSLT_FILENAME_METADATA_TRANSFORMATION = "xsltFilenameMetadataTransformation";
+    XSLT_FILENAME_METADATA_TRANSFORMATION("xsltFilenameMetadataTransformation"),
 
     /*
      * Images
@@ -206,29 +205,29 @@ public class Parameters {
      * Prefix for image names as regex. Default is 8 digits \\d{8} and gets
      * validated.
      */
-    public static final String IMAGE_PREFIX = "ImagePrefix";
+    IMAGE_PREFIX("ImagePrefix"),
 
     /**
      * Sorting of images.
      */
-    public static final String IMAGE_SORTING = "ImageSorting";
+    IMAGE_SORTING("ImageSorting"),
 
     /**
      * Numeric sorting of images. 1 is lesser then 002, compares the number of
      * image names, characters other than digits are not supported
      */
-    public static final String IMAGE_SORTING_VALUE_NUMBER = "number";
+    IMAGE_SORTING_VALUE_NUMBER("number"),
 
     /**
      * Alphanumeric sorting of images. 1 is greater then 002, compares character
      * by character of image names, all characters are supported.
      */
-    public static final String IMAGE_SORTING_VALUE_ALPHANUMERIC = "alphanumeric";
+    IMAGE_SORTING_VALUE_ALPHANUMERIC("alphanumeric"),
 
     /**
      * Defaults to {@code fertig/}.
      */
-    public static final String DONE_DIRECTORY_NAME = "doneDirectoryName";
+    DONE_DIRECTORY_NAME("doneDirectoryName"),
 
     /*
      * VISUAL APPEARANCE
@@ -245,20 +244,20 @@ public class Parameters {
      * be used. If this directory exists BUT DOES NOT CONTAIN suitable
      * resources, the screens will not work as expected.
      */
-    public static final String DIR_LOCAL_MESSAGES = "localMessages";
+    DIR_LOCAL_MESSAGES("localMessages"),
 
     /**
      * Start-up language: If not set, Kitodo.Production will start up with the
      * language best matching the user's Accept-Languages HTTP Request header.
      * You can override this behaviour by setting a default language here.
      */
-    public static final String LANGUAGE_FORCE_DEFAULT = "language.force-default";
+    LANGUAGE_FORCE_DEFAULT("language.force-default"),
 
     /**
      * If no Accept-Language Http Request header is present, use the following
      * language.
      */
-    public static final String LANGUAGE_DEFAULT = "language.default";
+    LANGUAGE_DEFAULT("language.default"),
 
     /*
      * Data protection
@@ -269,13 +268,13 @@ public class Parameters {
      * this value to true. anonymized statistics, displaying user on steps, etc.
      * Boolean, defaults to {@code false}.
      */
-    public static final String ANONYMIZE = "anonymize";
+    ANONYMIZE("anonymize"),
 
     /**
      * Enable / disable search for steps done by user. Boolean, defaults to
      * {@code false}.
      */
-    public static final String WITH_USER_STEP_DONE_SEARCH = "withUserStepDoneSearch";
+    WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch"),
 
     /*
      * Error page
@@ -284,7 +283,7 @@ public class Parameters {
     /**
      * Page the user will be directed to continue.
      */
-    public static final String ERR_LINK_TO_PAGE = "err_linkToPage";
+    ERR_LINK_TO_PAGE("err_linkToPage"),
 
     /*
      * METADATA PROCESSING
@@ -296,13 +295,13 @@ public class Parameters {
      * Number of hits to show per page on the hitlist when multiple hits were
      * found on a catalogue search. Integer, defaults to 12.
      */
-    public static final String HITLIST_PAGE_SIZE = "catalogue.hitlist.pageSize";
+    HITLIST_PAGE_SIZE("catalogue.hitlist.pageSize"),
 
     /**
      * Indicates the maximum duration an interaction with a library catalogue
      * may take. Milliseconds, defaults to 30 minutes.
      */
-    public static final String CATALOGUE_TIMEOUT = "catalogue.timeout";
+    CATALOGUE_TIMEOUT("catalogue.timeout"),
 
     /*
      * Metadata editor behavior
@@ -311,50 +310,51 @@ public class Parameters {
     /**
      * Long, value in milliseconds. Defaults to 180000 (30 minutes).
      */
-    public static final String METS_EDITOR_LOCKING_TIME = "MetsEditorLockingTime";
+    METS_EDITOR_LOCKING_TIME("MetsEditorLockingTime"),
 
     /**
      * Use special image folder for METS editor if exists (define suffix here).
      */
-    public static final String METS_EDITOR_DEFAULT_SUFFIX = "MetsEditorDefaultSuffix";
+    METS_EDITOR_DEFAULT_SUFFIX("MetsEditorDefaultSuffix"),
 
     /**
      * Enables or disables automatic pagination changes in the meta-data editor.
      * If false, pagination must be updated manually by clicking the link “Read
      * in pagination from images”. Boolean, defaults to {@code true}.
      */
-    public static final String WITH_AUTOMATIC_PAGINATION = "MetsEditorWithAutomaticPagination";
+    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination"),
 
     /**
      * Use special pagination type for automatic default pagination.
      */
-    public static final String METS_EDITOR_DEFAULT_PAGINATION = "MetsEditorDefaultPagination";
-    public static final String METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC = "arabic";
-    public static final String METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN = "roman";
-    public static final String METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED = "uncounted";
+    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination"),
+    // TODO: it doesn't fit here
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC("arabic"),
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN("roman"),
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED("uncounted"),
 
     /**
      * Use a maximum of characters to display titles in the left part of mets
      * editor. Integer, the default value is 0 (everything is displayed).
      */
-    public static final String METS_EDITOR_MAX_TITLE_LENGTH = "MetsEditorMaxTitleLength";
+    METS_EDITOR_MAX_TITLE_LENGTH("MetsEditorMaxTitleLength"),
 
     /**
      * Initialize all sub elements in METS editor to assign default values.
      * Boolean, defaults to {@code true}.
      */
-    public static final String METS_EDITOR_ENABLE_DEFAULT_INITIALISATION = "MetsEditorEnableDefaultInitialisation";
+    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation"),
 
     /**
      * Display the file manipulation dialog within the METS editor.
      */
-    public static final String METS_EDITOR_DISPLAY_FILE_MANIPULATION = "MetsEditorDisplayFileManipulation";
+    METS_EDITOR_DISPLAY_FILE_MANIPULATION("MetsEditorDisplayFileManipulation"),
 
     /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */
-    public static final String PAGE_SEPARATORS = "pageSeparators";
+    PAGE_SEPARATORS("pageSeparators"),
 
     /*
      * backup of metadata configuration
@@ -363,7 +363,7 @@ public class Parameters {
     /**
      * Backup of metadata configuration. Integer.
      */
-    public static final String NUMBER_OF_META_BACKUPS = "numberOfMetaBackups";
+    NUMBER_OF_META_BACKUPS("numberOfMetaBackups"),
 
     /*
      * Metadata enrichment
@@ -376,7 +376,7 @@ public class Parameters {
      * lower levels are enriched with them upon process creation, given they
      * have the same meta data type addable. Boolean, defaults to false.
      */
-    public static final String USE_METADATA_ENRICHMENT = "useMetadataEnrichment";
+    USE_METADATA_ENRICHMENT("useMetadataEnrichment"),
 
     /*
      * Data copy rules
@@ -386,13 +386,13 @@ public class Parameters {
      * Data copy rules may be used to copy Kitodo internal data and metadata on
      * catalogue query.
      */
-    public static final String COPY_DATA_ON_CATALOGUE_QUERY = "copyData.onCatalogueQuery";
+    COPY_DATA_ON_CATALOGUE_QUERY("copyData.onCatalogueQuery"),
 
     /**
      * Data copy rules may be used to copy Kitodo internal data and metadata on
      * DMS export.
      */
-    public static final String COPY_DATA_ON_EXPORT = "copyData.onExport";
+    COPY_DATA_ON_EXPORT("copyData.onExport"),
 
     /*
      * Metadata validation
@@ -402,17 +402,17 @@ public class Parameters {
      * Perform basic metadata validation or not. Boolean, defaults to
      * {@code false}.
      */
-    public static final String USE_META_DATA_VALIDATION = "useMetadatenvalidierung";
+    USE_META_DATA_VALIDATION("useMetadatenvalidierung"),
 
     /**
      * Validation of process title via regular expression.
      */
-    public static final String VALIDATE_PROCESS_TITLE_REGEX = "validateProzessTitelRegex";
+    VALIDATE_PROCESS_TITLE_REGEX("validateProzessTitelRegex"),
 
     /**
      * Validation of the identifier via regular expression.
      */
-    public static final String VALIDATE_IDENTIFIER_REGEX = "validateIdentifierRegex";
+    VALIDATE_IDENTIFIER_REGEX("validateIdentifierRegex"),
 
     /*
      * AUTOMATION
@@ -423,23 +423,23 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String MASS_IMPORT_ALLOWED = "massImportAllowed";
+    MASS_IMPORT_ALLOWED("massImportAllowed"),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    public static final String MASS_IMPORT_UNIQUE_TITLE = "MassImportUniqueTitle";
+    MASS_IMPORT_UNIQUE_TITLE("MassImportUniqueTitle"),
 
     /**
      * Colours used to represent the issues in the calendar editor.
      */
-    public static final String ISSUE_COLOURS = "issue.colours";
+    ISSUE_COLOURS("issue.colours"),
 
     /**
-     * Number of pages per process below which the features in the granualarity
+     * Number of pages per process below which the features in the granularity
      * dialog shall be locked. Long.
      */
-    public static final String MINIMAL_NUMBER_OF_PAGES = "numberOfPages.minimum";
+    MINIMAL_NUMBER_OF_PAGES("numberOfPages.minimum"),
 
     /*
      * Batch processing
@@ -451,7 +451,7 @@ public class Parameters {
      * batches will be shown, the other batches will be present but hidden and
      * thus cannot be modified and not even be deleted. Integer.
      */
-    public static final String BATCH_DISPLAY_LIMIT = "batchMaxSize";
+    BATCH_DISPLAY_LIMIT("batchMaxSize"),
 
     /**
      * Turn on or off whether each assignment of processes to or removal from
@@ -459,7 +459,7 @@ public class Parameters {
      * leave a note there. Enabling this function may slow down operations in
      * the batches dialogue. Boolean, defaults to {@code false}.
      */
-    public static final String BATCHES_LOG_CHANGES = "batches.logChangesToWikiField";
+    BATCHES_LOG_CHANGES("batches.logChangesToWikiField"),
 
     /*
      * content server for PDF generation
@@ -468,19 +468,19 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String PDF_AS_DOWNLOAD = "pdfAsDownload";
+    PDF_AS_DOWNLOAD("pdfAsDownload"),
 
     /**
      * If empty, internal content server will be used.
      */
-    public static final String KITODO_CONTENT_SERVER_URL = "kitodoContentServerUrl";
+    KITODO_CONTENT_SERVER_URL("kitodoContentServerUrl"),
 
     /**
      * Timeout for content server requests via HTTP in ms. Integer, defaults to
      * 60000 (60 sec).
      */
 
-    public static final String KITODO_CONTENT_SERVER_TIMEOUT = "kitodoContentServerTimeOut";
+    KITODO_CONTENT_SERVER_TIMEOUT("kitodoContentServerTimeOut"),
 
     /*
      * Task manager
@@ -490,13 +490,13 @@ public class Parameters {
      * Overrides the limit of tasks run in parallel. Integer, defaults to the
      * number of available cores.
      */
-    public static final String TASK_MANAGER_AUTORUN_LIMIT = "taskManager.autoRunLimit";
+    TASK_MANAGER_AUTORUN_LIMIT("taskManager.autoRunLimit"),
 
     /**
      * Sets the time interval between two inspections of the task list. Long,
      * defaults to 2000 ms.
      */
-    public static final String TASK_MANAGER_INSPECTION_INTERVAL_MILLIS = "taskManager.inspectionIntervalMillis";
+    TASK_MANAGER_INSPECTION_INTERVAL_MILLIS("taskManager.inspectionIntervalMillis"),
 
     /**
      * Sets the maximum number of failed threads to keep around in RAM. Keep in
@@ -504,7 +504,7 @@ public class Parameters {
      * available for garbage collection, so choose these values as restrictive
      * as possible. Integer, defaults to 10.
      */
-    public static final String TASK_MANAGER_KEEP_FAILED = "taskManager.keepThreads.failed.count";
+    TASK_MANAGER_KEEP_FAILED("taskManager.keepThreads.failed.count"),
 
     /**
      * Sets the maximum time to keep failed threads around in RAM. Keep in mind
@@ -512,7 +512,7 @@ public class Parameters {
      * available for garbage collection, so choose these values as restrictive
      * as possible. Integer, defaults to 240 minutes.
      */
-    public static final String TASK_MANAGER_KEEP_FAILED_MINS = "taskManager.keepThreads.failed.minutes";
+    TASK_MANAGER_KEEP_FAILED_MINS("taskManager.keepThreads.failed.minutes"),
 
     /**
      * Sets the maximum number of successfully finished threads to keep around
@@ -520,7 +520,7 @@ public class Parameters {
      * all their ressources and aren't available for garbage collection, so
      * choose these values as restrictive as possible.
      */
-    public static final String TASK_MANAGER_KEEP_SUCCESSFUL = "taskManager.keepThreads.successful.count";
+    TASK_MANAGER_KEEP_SUCCESSFUL("taskManager.keepThreads.successful.count"),
 
     /**
      * Sets the maximum time to keep successfully finished threads around in
@@ -528,14 +528,14 @@ public class Parameters {
      * occupy all their resources and aren't available for garbage collection,
      * so choose these values as restrictive as possible.
      */
-    public static final String TASK_MANAGER_KEEP_SUCCESSFUL_MINS = "taskManager.keepThreads.successful.minutes";
+    TASK_MANAGER_KEEP_SUCCESSFUL_MINS("taskManager.keepThreads.successful.minutes"),
 
     /**
      * Sets whether or not to show an option to "add a sample task" in the task
      * manager. This isif for anything at all—useful for debugging or
      * demonstration purposes only. Boolean, defaults to {@code false}.
      */
-    public static final String TASK_MANAGER_SHOW_SAMPLE_TASK = "taskManager.showSampleTask";
+    TASK_MANAGER_SHOW_SAMPLE_TASK("taskManager.showSampleTask"),
 
     /*
      * Export to presentation module
@@ -546,28 +546,28 @@ public class Parameters {
      * background). This requires that the automatic export was set up in the
      * project settings. Boolean, defaults to {@code false}.
      */
-    public static final String ASYNCHRONOUS_AUTOMATIC_EXPORT = "asynchronousAutomaticExport";
+    ASYNCHRONOUS_AUTOMATIC_EXPORT("asynchronousAutomaticExport"),
 
     /**
      * Whether during an export to the DMS the images will be copied. Boolean,
      * defaults to {@code true}.
      */
-    public static final String EXPORT_WITH_IMAGES = "automaticExportWithImages";
+    EXPORT_WITH_IMAGES("automaticExportWithImages"),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    public static final String AUTOMATIC_EXPORT_WITH_OCR = "automaticExportWithOcr";
+    AUTOMATIC_EXPORT_WITH_OCR("automaticExportWithOcr"),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    public static final String EXPORT_VALIDATE_IMAGES = "ExportValidateImages";
+    EXPORT_VALIDATE_IMAGES("ExportValidateImages"),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String EXPORT_WITHOUT_TIME_LIMIT = "exportWithoutTimeLimit";
+    EXPORT_WITHOUT_TIME_LIMIT("exportWithoutTimeLimit"),
 
     /*
      * REMOTE SERVICES
@@ -578,21 +578,23 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code true}.
      */
-    public static final String LDAP_USE = "ldap_use";
+    LDAP_USE("ldap_use"),
 
-    public static final String LDAP_ATTRIBUTE_TO_TEST = "ldap_AttributeToTest";
+    LDAP_ATTRIBUTE_TO_TEST("ldap_AttributeToTest"),
 
-    public static final String LDAP_VALUE_OF_ATTRIBUTE = "ldap_ValueOfAttribute";
-
-    /**
-     * Boolean, defaults to {@code false}.
-     */
-    public static final String LDAP_USE_LOCAL_DIRECTORY = "useLocalDirectory";
+    LDAP_VALUE_OF_ATTRIBUTE("ldap_ValueOfAttribute"),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String LDAP_USE_TLS = "ldap_useTLS";
+    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory"),
+
+    /**
+     * Boolean, defaults to {@code false}.
+     */
+    LDAP_USE_TLS("ldap_useTLS"),
+
+    LDAP_USE_SIMPLE_AUTH("useSimpleAuthentification"),
 
     /*
      * Authority control configuration
@@ -605,7 +607,7 @@ public class Parameters {
      * Example: authority.http\://d-nb.info/gnd/.id=gnd
      * </p>
      */
-    public static final String AUTHORITY_ID_FROM_URI = "authority.{0}.id";
+    AUTHORITY_ID_FROM_URI("authority.{0}.id"),
 
     /**
      * Content to put in the URI field when adding a new metadata element of
@@ -616,7 +618,7 @@ public class Parameters {
      * Example: authority.default=http\://d-nb.info/gnd/
      * </p>
      */
-    public static final String AUTHORITY_DEFAULT = "authority.default";
+    AUTHORITY_DEFAULT("authority.default"),
 
     /*
      * INTERACTIVE ERROR MANAGEMENT
@@ -625,13 +627,13 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String ERR_USER_HANDLING = "err_userHandling";
+    ERR_USER_HANDLING("err_userHandling"),
 
     /**
      * Use this to turn the email feature on or off. Boolean, defaults to
      * {@code false}.
      */
-    public static final String ERR_EMAIL_ENABLED = "err_emailEnabled";
+    ERR_EMAIL_ENABLED("err_emailEnabled"),
 
     /**
      * An indefinite number of e-mail addresses can be entered here. Create one
@@ -639,7 +641,7 @@ public class Parameters {
      * {@code err_emailAddress1=(...)}, {@code err_emailAddress2=(...)},
      * {@code err_emailAddress3=(...)}, ...
      */
-    public static final String ERR_EMAIL_ADDRESS = "err_emailAddress";
+    ERR_EMAIL_ADDRESS("err_emailAddress"),
 
     /*
      * FUNCTIONAL EXTENSIONS
@@ -650,40 +652,50 @@ public class Parameters {
     /**
      * Boolean, defaults to {@code false}.
      */
-    public static final String SHOW_OCR_BUTTON = "showOcrButton";
+    SHOW_OCR_BUTTON("showOcrButton"),
 
     /**
      * Base path to OCR, without parameters.
      */
-    public static final String OCR_URL = "ocrUrl";
+    OCR_URL("ocrUrl"),
 
     /*
      * ActiveMQ web services
      */
 
-    public static final String ACTIVE_MQ_HOST_URL = "activeMQ.hostURL";
+    ACTIVE_MQ_HOST_URL("activeMQ.hostURL"),
 
-    public static final String ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE = "activeMQ.createNewProcess.queue";
+    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE("activeMQ.createNewProcess.queue"),
 
-    public static final String ACTIVE_MQ_FINALIZE_STEP_QUEUE = "activeMQ.finaliseStep.queue";
+    ACTIVE_MQ_FINALIZE_STEP_QUEUE("activeMQ.finaliseStep.queue"),
 
-    public static final String ACTIVE_MQ_RESULTS_TOPIC = "activeMQ.results.topic";
+    ACTIVE_MQ_RESULTS_TOPIC("activeMQ.results.topic"),
 
     /**
      * Long, value in milliseconds.
      */
-    public static final String ACTIVE_MQ_RESULTS_TTL = "activeMQ.results.timeToLive";
+    ACTIVE_MQ_RESULTS_TTL("activeMQ.results.timeToLive"),
 
     /*
      * Elasticsearch properties
      */
 
-    public static final String ELASTICSEARCH_BATCH = "elasticsearch.batch";
+    ELASTICSEARCH_BATCH("elasticsearch.batch");
+
+    private String name;
 
     /**
      * Private constructor to hide the implicit public one.
+     * 
+     * @param name
+     *            of parameter
      */
-    private Parameters() {
+    ParameterCore(String name) {
+        this.name = name;
+    }
 
+    @Override
+    public java.lang.String toString() {
+        return this.name;
     }
 }

@@ -20,7 +20,7 @@ import org.kitodo.api.ugh.MetadataTypeInterface;
 import org.kitodo.api.ugh.PersonInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.metadata.MetadataHelper;
 
 /**
@@ -124,7 +124,7 @@ public class MetaPerson {
     public String getRecord() {
         String authorityValue = this.p.getAuthorityValue();
         if (authorityValue == null || authorityValue.isEmpty()) {
-            authorityValue = ConfigCore.getParameter(Parameters.AUTHORITY_DEFAULT, "");
+            authorityValue = ConfigCore.getParameter(ParameterCore.AUTHORITY_DEFAULT, "");
         }
         return authorityValue;
     }

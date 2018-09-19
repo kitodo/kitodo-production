@@ -36,7 +36,7 @@ import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.Parameters;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
@@ -390,9 +390,9 @@ public class UserServiceIT {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         User user = userService.getById(1);
-        String homeDirectory = ConfigCore.getParameter(Parameters.DIR_USERS);
+        String homeDirectory = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
-        File script = new File(ConfigCore.getParameter(Parameters.SCRIPT_CREATE_DIR_USER_HOME));
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
         ExecutionPermission.setExecutePermission(script);
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);
