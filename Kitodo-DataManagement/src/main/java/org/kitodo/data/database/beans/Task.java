@@ -446,41 +446,11 @@ public class Task extends BaseIndexedBean {
      *
      * @return list of GeneratorSwitch objects or empty list
      */
-    @SuppressWarnings("serial")
     public List<GeneratorSwitch> getGenerators() {
         if (this.contentFolders == null) {
             this.contentFolders = new ArrayList<>();
         }
-        Stream<Project> projects = template.getProjects().stream();
-
-        // Ignore all projects that do not have a source folder configured. It
-        // isn’t possible to generate anything without a data source.
-        Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
-
-        // Drop all folders to generate if they are their own source folder. The
-        // user may have configured a generation rule on a folder that it later
-        // has set as source folder. This would cause the file to be overwritten
-        // by itself in the generation process, leading to data loss, which must
-        // be avoided.
-        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
-                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
-        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
-                .map(λ -> λ.getLeft());
-
-        // Remove all folders to generate which do not have anything to generate
-        // configured.
-        Stream<Folder> generatableFolders = allowedFolders.filter(λ -> λ.getDerivative().isPresent()
-                || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent());
-
-        // For all remaining folders, create an encapsulation to access the
-        // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
-
-        return new ArrayList<GeneratorSwitch>() {
-            {
-                taskGenerators.forEach(this::add);
-            }
-        };
+        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
     }
 
     public boolean isTypeExportRussian() {
