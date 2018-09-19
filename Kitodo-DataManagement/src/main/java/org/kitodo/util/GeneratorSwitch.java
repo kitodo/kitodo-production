@@ -11,7 +11,6 @@
 
 package org.kitodo.util;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -59,18 +58,12 @@ public class GeneratorSwitch {
      *            modifiable list of folders whose contents are to be generated
      * @return list of GeneratorSwitch objects or empty list
      */
-    @SuppressWarnings("serial")
     public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> contentFolders) {
 
-        // Ignore all projects that do not have a source folder configured. It
-        // isn’t possible to generate anything without a data source.
+        // Ignore all projects that do not have a source folder configured.
         Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
 
-        // Drop all folders to generate if they are their own source folder. The
-        // user may have configured a generation rule on a folder that it later
-        // has set as source folder. This would cause the file to be overwritten
-        // by itself in the generation process, leading to data loss, which must
-        // be avoided.
+        // Drop all folders to generate if they are their own source folder.
         Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
                 .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
         Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
