@@ -1166,6 +1166,19 @@ Column content
     margin-left: 5px;
 }
 
+#galleryWrapperPanel,
+#galleryWrapperPanel_content {
+    height: 100%;
+}
+
+#thumbnailStripe > div {
+    text-align: center;
+}
+
+#thumbnailStripe a {
+    display: inline-block;
+}
+
 .thumbnail {
     height: 60px;
     border: 1px solid black;
