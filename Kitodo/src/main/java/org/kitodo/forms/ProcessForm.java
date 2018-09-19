@@ -151,15 +151,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * needed for ExtendedSearch.
-     *
-     * @return always true
-     */
-    public boolean getInitialize() {
-        return true;
-    }
-
-    /**
      * Save process and redirect to list view.
      *
      * @return url to list view
