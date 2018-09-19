@@ -12,7 +12,6 @@
 package org.kitodo.services.data;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -282,46 +281,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Task");
-    }
-
-    /**
-     * Get amount of current tasks for current user.
-     *
-     * @param open
-     *            true or false
-     * @param inProcessing
-     *            true or false
-     * @param user
-     *            current user
-     * @return amount of current tasks for current user
-     */
-    public Long getAmountOfCurrentTasks(boolean open, boolean inProcessing, User user) throws DataException {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        Set<Integer> processingStatus = new HashSet<>();
-        processingStatus.add(1);
-        processingStatus.add(2);
-
-        if (!open && !inProcessing) {
-            boolQuery.must(getQueryForProcessingStatus(processingStatus));
-        } else if (open && !inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 1, true));
-        } else if (!open && inProcessing) {
-            boolQuery.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), 2, true));
-        } else {
-            boolQuery.must(createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true));
-        }
-
-        Set<Integer> userGroups = new HashSet<>();
-        for (UserGroup userGroup : user.getUserGroups()) {
-            userGroups.add(userGroup.getId());
-        }
-        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
-        nestedBoolQuery.should(createSetQuery("userGroups.id", userGroups, true));
-        nestedBoolQuery.should(createSimpleQuery("users.id", user.getId(), true));
-        boolQuery.must(nestedBoolQuery);
-        boolQuery.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
-
-        return count(boolQuery.toString());
     }
 
     /**
