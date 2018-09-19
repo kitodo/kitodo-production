@@ -11,9 +11,11 @@
 
 package org.kitodo.util;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -83,11 +85,8 @@ public class GeneratorSwitch {
         // generator properties of the folder.
         Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
 
-        return new LinkedList<GeneratorSwitch>() {
-            {
-                taskGenerators.forEach(this::add);
-            }
-        };
+        List<GeneratorSwitch> result = taskGenerators.collect(Collectors.toCollection(LinkedList::new));
+        return result;
     }
 
     /**
