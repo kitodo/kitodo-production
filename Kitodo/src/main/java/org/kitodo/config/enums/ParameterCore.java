@@ -581,9 +581,9 @@ public enum ParameterCore implements ParameterInterface {
     LDAP_VALUE_OF_ATTRIBUTE("ldap_ValueOfAttribute", null, null, new ArrayList<>()),
 
     /**
-     * Boolean, defaults to {@code false}.
+     * Boolean, defaults to {@code true}.
      */
-    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory", Boolean.TYPE, false, new ArrayList<>()),
+    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code false}.
