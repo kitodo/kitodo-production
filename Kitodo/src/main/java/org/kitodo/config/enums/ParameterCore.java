@@ -11,6 +11,11 @@
 
 package org.kitodo.config.enums;
 
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import org.kitodo.exceptions.ConfigParameterException;
+
 /**
  * These constants define configuration parameters usable in the configuration
  * file. This file reflects the order of the global
@@ -33,13 +38,13 @@ public enum ParameterCore implements ParameterInterface {
      * files in the future:
      */
 
-    DIR_XML_CONFIG("KonfigurationVerzeichnis"),
+    DIR_XML_CONFIG("KonfigurationVerzeichnis", null, null),
 
     /**
      * Absolute path to the directory that the rule set definition files will be
      * read from. It must be terminated by a directory separator ("/").
      */
-    DIR_RULESETS("RegelsaetzeVerzeichnis"),
+    DIR_RULESETS("RegelsaetzeVerzeichnis", null, null),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are
@@ -48,7 +53,7 @@ public enum ParameterCore implements ParameterInterface {
      * the physical binding units to digitise. The path must be terminated by a
      * directory separator ("/").
      */
-    DIR_XSLT("xsltFolder"),
+    DIR_XSLT("xsltFolder", null, null),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -59,7 +64,7 @@ public enum ParameterCore implements ParameterInterface {
      * files in the future:
      */
 
-    DIR_PROCESSES("MetadatenVerzeichnis"),
+    DIR_PROCESSES("MetadatenVerzeichnis", null, null),
 
     /**
      * Absolute path to the base directory of the users' home directories,
@@ -70,18 +75,18 @@ public enum ParameterCore implements ParameterInterface {
      * after finishing the task. Note: If LDAP is used, the users' home dirs
      * will instead be read from LDAP
      */
-    DIR_USERS("dir_Users"),
+    DIR_USERS("dir_Users", null, null),
 
     /**
      * Absolute path to a folder the application can temporarily create files
      * in, terminated by a directory separator ("/").
      */
-    DIR_TEMP("tempfolder"),
+    DIR_TEMP("tempfolder", String.class, "/usr/local/kitodo/temp/"),
 
     /**
      * Path to directory in which BPMN diagrams are stored.
      */
-    DIR_DIAGRAMS("diagramsFolder"),
+    DIR_DIAGRAMS("diagramsFolder", null, null),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -91,7 +96,7 @@ public enum ParameterCore implements ParameterInterface {
      * constant is if someone compares the two files in the future:
      */
 
-    DIR_MODULES("moduleFolder"),
+    DIR_MODULES("moduleFolder", null, null),
 
     /**
      * Points to a folder on the file system that contains <b>legacy</b>
@@ -102,13 +107,13 @@ public enum ParameterCore implements ParameterInterface {
      * <p>
      * Must be terminated by the file separator.
      */
-    DIR_PLUGINS("pluginFolder"),
+    DIR_PLUGINS("pluginFolder", null, null),
 
     /**
      * Points to a folder on the file system that <b>legacy</b> plug-ins may use
      * to write temporary files.
      */
-    DIR_PLUGINS_TEMP("debugFolder"),
+    DIR_PLUGINS_TEMP("debugFolder", null, null),
 
     /*
      * Directory management
@@ -117,7 +122,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    CREATE_ORIG_FOLDER_IF_NOT_EXISTS("createOrigFolderIfNotExists"),
+    CREATE_ORIG_FOLDER_IF_NOT_EXISTS("createOrigFolderIfNotExists", null, null),
 
     /*
      * Parameters.java has been sorted to corresponding to
@@ -126,22 +131,22 @@ public enum ParameterCore implements ParameterInterface {
      * but there is no constant for it here. This comment is to explain where
      * the constant is if someone compares the two files in the future:
      */
-    CREATE_SOURCE_FOLDER("createSourceFolder"),
+    CREATE_SOURCE_FOLDER("createSourceFolder", null, null),
 
     /**
      * Prefix of image directory name created on process creation.
      */
-    DIRECTORY_PREFIX("DIRECTORY_PREFIX"),
+    DIRECTORY_PREFIX("DIRECTORY_PREFIX", String.class, "orig"),
 
     /**
      * Directory suffix for created image directory on process creation.
      */
-    DIRECTORY_SUFFIX("DIRECTORY_SUFFIX"),
+    DIRECTORY_SUFFIX("DIRECTORY_SUFFIX", String.class, "tif"),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    IMPORT_USE_OLD_CONFIGURATION("importUseOldConfiguration"),
+    IMPORT_USE_OLD_CONFIGURATION("importUseOldConfiguration", null, null),
 
     /**
      * Creation and export of process sub-directories, e.g.
@@ -154,13 +159,13 @@ public enum ParameterCore implements ParameterInterface {
      * always an addition to the existing folder creating and exporting
      * functions of Kitodo.Production.
      */
-    PROCESS_DIRS("processDirs"),
+    PROCESS_DIRS("processDirs", null, null),
 
     /**
      * Set if master images folder {@code orig_} should be used at all. Boolean,
      * defaults to {@code true}.
      */
-    USE_ORIG_FOLDER("useOrigFolder"),
+    USE_ORIG_FOLDER("useOrigFolder", null, null),
 
     /*
      * Directory and symbolic link management
@@ -169,23 +174,23 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Script to create the user's home directory when adding a new user.
      */
-    SCRIPT_CREATE_DIR_USER_HOME("script_createDirUserHome"),
+    SCRIPT_CREATE_DIR_USER_HOME("script_createDirUserHome", null, null),
 
     /**
      * Script to create the directory for a new process.
      */
-    SCRIPT_CREATE_DIR_META("script_createDirMeta"),
+    SCRIPT_CREATE_DIR_META("script_createDirMeta", null, null),
 
     /**
      * Script to create a symbolic link in the user home directory and set
      * permissions for the user.
      */
-    SCRIPT_CREATE_SYMLINK("script_createSymLink"),
+    SCRIPT_CREATE_SYMLINK("script_createSymLink", null, null),
 
     /**
      * Script to remove the symbolic link from the user home directory.
      */
-    SCRIPT_DELETE_SYMLINK("script_deleteSymLink"),
+    SCRIPT_DELETE_SYMLINK("script_deleteSymLink", null, null),
 
     /*
      * Runnotes
@@ -195,7 +200,7 @@ public enum ParameterCore implements ParameterInterface {
      * Filename of the XSLT file for transforming old metadata files which need
      * to be in the xslt folder above.
      */
-    XSLT_FILENAME_METADATA_TRANSFORMATION("xsltFilenameMetadataTransformation"),
+    XSLT_FILENAME_METADATA_TRANSFORMATION("xsltFilenameMetadataTransformation", null, null),
 
     /*
      * Images
@@ -205,29 +210,29 @@ public enum ParameterCore implements ParameterInterface {
      * Prefix for image names as regex. Default is 8 digits \\d{8} and gets
      * validated.
      */
-    IMAGE_PREFIX("ImagePrefix"),
+    IMAGE_PREFIX("ImagePrefix", String.class, "\\d{8}"),
 
     /**
      * Sorting of images.
      */
-    IMAGE_SORTING("ImageSorting"),
+    IMAGE_SORTING("ImageSorting", String.class, ParameterCore.IMAGE_SORTING_VALUE_NUMBER.getName()),
 
     /**
      * Numeric sorting of images. 1 is lesser then 002, compares the number of
      * image names, characters other than digits are not supported
      */
-    IMAGE_SORTING_VALUE_NUMBER("number"),
+    IMAGE_SORTING_VALUE_NUMBER("number", null, null),
 
     /**
      * Alphanumeric sorting of images. 1 is greater then 002, compares character
      * by character of image names, all characters are supported.
      */
-    IMAGE_SORTING_VALUE_ALPHANUMERIC("alphanumeric"),
+    IMAGE_SORTING_VALUE_ALPHANUMERIC("alphanumeric", null, null),
 
     /**
      * Defaults to {@code fertig/}.
      */
-    DONE_DIRECTORY_NAME("doneDirectoryName"),
+    DONE_DIRECTORY_NAME("doneDirectoryName", String.class, "fertig/"),
 
     /*
      * VISUAL APPEARANCE
@@ -244,20 +249,20 @@ public enum ParameterCore implements ParameterInterface {
      * be used. If this directory exists BUT DOES NOT CONTAIN suitable
      * resources, the screens will not work as expected.
      */
-    DIR_LOCAL_MESSAGES("localMessages"),
+    DIR_LOCAL_MESSAGES("localMessages", String.class, "/usr/local/kitodo/messages/"),
 
     /**
      * Start-up language: If not set, Kitodo.Production will start up with the
      * language best matching the user's Accept-Languages HTTP Request header.
      * You can override this behaviour by setting a default language here.
      */
-    LANGUAGE_FORCE_DEFAULT("language.force-default"),
+    LANGUAGE_FORCE_DEFAULT("language.force-default", String.class, "de"),
 
     /**
      * If no Accept-Language Http Request header is present, use the following
      * language.
      */
-    LANGUAGE_DEFAULT("language.default"),
+    LANGUAGE_DEFAULT("language.default", String.class, "de"),
 
     /*
      * Data protection
@@ -268,13 +273,13 @@ public enum ParameterCore implements ParameterInterface {
      * this value to true. anonymized statistics, displaying user on steps, etc.
      * Boolean, defaults to {@code false}.
      */
-    ANONYMIZE("anonymize"),
+    ANONYMIZE("anonymize", null, null),
 
     /**
      * Enable / disable search for steps done by user. Boolean, defaults to
      * {@code false}.
      */
-    WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch"),
+    WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch", null, null),
 
     /*
      * METADATA PROCESSING
@@ -286,13 +291,13 @@ public enum ParameterCore implements ParameterInterface {
      * Number of hits to show per page on the hitlist when multiple hits were
      * found on a catalogue search. Integer, defaults to 12.
      */
-    HITLIST_PAGE_SIZE("catalogue.hitlist.pageSize"),
+    HITLIST_PAGE_SIZE("catalogue.hitlist.pageSize", Integer.TYPE, 12),
 
     /**
      * Indicates the maximum duration an interaction with a library catalogue
      * may take. Milliseconds, defaults to 30 minutes.
      */
-    CATALOGUE_TIMEOUT("catalogue.timeout"),
+    CATALOGUE_TIMEOUT("catalogue.timeout", Long.class, TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES)),
 
     /*
      * Metadata editor behavior
@@ -301,51 +306,51 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Long, value in milliseconds. Defaults to 180000 (30 minutes).
      */
-    METS_EDITOR_LOCKING_TIME("MetsEditorLockingTime"),
+    METS_EDITOR_LOCKING_TIME("MetsEditorLockingTime", Long.TYPE, TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES)),
 
     /**
      * Use special image folder for METS editor if exists (define suffix here).
      */
-    METS_EDITOR_DEFAULT_SUFFIX("MetsEditorDefaultSuffix"),
+    METS_EDITOR_DEFAULT_SUFFIX("MetsEditorDefaultSuffix", null, null),
 
     /**
      * Enables or disables automatic pagination changes in the meta-data editor.
      * If false, pagination must be updated manually by clicking the link “Read
      * in pagination from images”. Boolean, defaults to {@code true}.
      */
-    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination"),
+    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination", null, null),
 
     /**
      * Use special pagination type for automatic default pagination.
      */
-    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination"),
+    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination", null, null),
     // TODO: it doesn't fit here
-    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC("arabic"),
-    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN("roman"),
-    METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED("uncounted"),
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ARABIC("arabic", null, null),
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_ROMAN("roman", null, null),
+    METS_EDITOR_DEFAULT_PAGINATION_VALUE_UNCOUNTED("uncounted", null, null),
 
     /**
      * Use a maximum of characters to display titles in the left part of mets
      * editor. Integer, the default value is 0 (everything is displayed).
      */
-    METS_EDITOR_MAX_TITLE_LENGTH("MetsEditorMaxTitleLength"),
+    METS_EDITOR_MAX_TITLE_LENGTH("MetsEditorMaxTitleLength", null, null),
 
     /**
      * Initialize all sub elements in METS editor to assign default values.
      * Boolean, defaults to {@code true}.
      */
-    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation"),
+    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation", null, null),
 
     /**
      * Display the file manipulation dialog within the METS editor.
      */
-    METS_EDITOR_DISPLAY_FILE_MANIPULATION("MetsEditorDisplayFileManipulation"),
+    METS_EDITOR_DISPLAY_FILE_MANIPULATION("MetsEditorDisplayFileManipulation", null, null),
 
     /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */
-    PAGE_SEPARATORS("pageSeparators"),
+    PAGE_SEPARATORS("pageSeparators", String.class, "\" \""),
 
     /*
      * backup of metadata configuration
@@ -354,7 +359,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Backup of metadata configuration. Integer.
      */
-    NUMBER_OF_META_BACKUPS("numberOfMetaBackups"),
+    NUMBER_OF_META_BACKUPS("numberOfMetaBackups", null, null),
 
     /*
      * Metadata enrichment
@@ -367,7 +372,7 @@ public enum ParameterCore implements ParameterInterface {
      * lower levels are enriched with them upon process creation, given they
      * have the same meta data type addable. Boolean, defaults to false.
      */
-    USE_METADATA_ENRICHMENT("useMetadataEnrichment"),
+    USE_METADATA_ENRICHMENT("useMetadataEnrichment", null, null),
 
     /*
      * Data copy rules
@@ -377,13 +382,13 @@ public enum ParameterCore implements ParameterInterface {
      * Data copy rules may be used to copy Kitodo internal data and metadata on
      * catalogue query.
      */
-    COPY_DATA_ON_CATALOGUE_QUERY("copyData.onCatalogueQuery"),
+    COPY_DATA_ON_CATALOGUE_QUERY("copyData.onCatalogueQuery", null, null),
 
     /**
      * Data copy rules may be used to copy Kitodo internal data and metadata on
      * DMS export.
      */
-    COPY_DATA_ON_EXPORT("copyData.onExport"),
+    COPY_DATA_ON_EXPORT("copyData.onExport", null, null),
 
     /*
      * Metadata validation
@@ -393,17 +398,17 @@ public enum ParameterCore implements ParameterInterface {
      * Perform basic metadata validation or not. Boolean, defaults to
      * {@code false}.
      */
-    USE_META_DATA_VALIDATION("useMetadatenvalidierung"),
+    USE_META_DATA_VALIDATION("useMetadatenvalidierung", null, null),
 
     /**
      * Validation of process title via regular expression.
      */
-    VALIDATE_PROCESS_TITLE_REGEX("validateProzessTitelRegex"),
+    VALIDATE_PROCESS_TITLE_REGEX("validateProzessTitelRegex", String.class, "[\\w-]*"),
 
     /**
      * Validation of the identifier via regular expression.
      */
-    VALIDATE_IDENTIFIER_REGEX("validateIdentifierRegex"),
+    VALIDATE_IDENTIFIER_REGEX("validateIdentifierRegex", String.class, "[\\w|-]"),
 
     /*
      * AUTOMATION
@@ -414,23 +419,23 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    MASS_IMPORT_ALLOWED("massImportAllowed"),
+    MASS_IMPORT_ALLOWED("massImportAllowed", null, null),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    MASS_IMPORT_UNIQUE_TITLE("MassImportUniqueTitle"),
+    MASS_IMPORT_UNIQUE_TITLE("MassImportUniqueTitle", null, null),
 
     /**
      * Colours used to represent the issues in the calendar editor.
      */
-    ISSUE_COLOURS("issue.colours"),
+    ISSUE_COLOURS("issue.colours", String.class, "#CC0000;#0000AA;#33FF00;#FF9900;#5555FF;#006600;#AAAAFF;#000055;#0000FF;#FFFF00;#000000"),
 
     /**
      * Number of pages per process below which the features in the granularity
      * dialog shall be locked. Long.
      */
-    MINIMAL_NUMBER_OF_PAGES("numberOfPages.minimum"),
+    MINIMAL_NUMBER_OF_PAGES("numberOfPages.minimum", null, null),
 
     /*
      * Batch processing
@@ -442,7 +447,7 @@ public enum ParameterCore implements ParameterInterface {
      * batches will be shown, the other batches will be present but hidden and
      * thus cannot be modified and not even be deleted. Integer.
      */
-    BATCH_DISPLAY_LIMIT("batchMaxSize"),
+    BATCH_DISPLAY_LIMIT("batchMaxSize", null, null),
 
     /**
      * Turn on or off whether each assignment of processes to or removal from
@@ -450,7 +455,7 @@ public enum ParameterCore implements ParameterInterface {
      * leave a note there. Enabling this function may slow down operations in
      * the batches dialogue. Boolean, defaults to {@code false}.
      */
-    BATCHES_LOG_CHANGES("batches.logChangesToWikiField"),
+    BATCHES_LOG_CHANGES("batches.logChangesToWikiField", null, null),
 
     /*
      * content server for PDF generation
@@ -459,19 +464,19 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    PDF_AS_DOWNLOAD("pdfAsDownload"),
+    PDF_AS_DOWNLOAD("pdfAsDownload", null, null),
 
     /**
      * If empty, internal content server will be used.
      */
-    KITODO_CONTENT_SERVER_URL("kitodoContentServerUrl"),
+    KITODO_CONTENT_SERVER_URL("kitodoContentServerUrl", null, null),
 
     /**
      * Timeout for content server requests via HTTP in ms. Integer, defaults to
      * 60000 (60 sec).
      */
 
-    KITODO_CONTENT_SERVER_TIMEOUT("kitodoContentServerTimeOut"),
+    KITODO_CONTENT_SERVER_TIMEOUT("kitodoContentServerTimeOut", Integer.TYPE, (int) TimeUnit.MILLISECONDS.convert(60, TimeUnit.SECONDS)),
 
     /*
      * Task manager
@@ -481,37 +486,39 @@ public enum ParameterCore implements ParameterInterface {
      * Overrides the limit of tasks run in parallel. Integer, defaults to the
      * number of available cores.
      */
-    TASK_MANAGER_AUTORUN_LIMIT("taskManager.autoRunLimit"),
+    TASK_MANAGER_AUTORUN_LIMIT("taskManager.autoRunLimit", null, null),
 
     /**
      * Sets the time interval between two inspections of the task list. Long,
      * defaults to 2000 ms.
      */
-    TASK_MANAGER_INSPECTION_INTERVAL_MILLIS("taskManager.inspectionIntervalMillis"),
+    TASK_MANAGER_INSPECTION_INTERVAL_MILLIS("taskManager.inspectionIntervalMillis", Long.TYPE, TimeUnit.MILLISECONDS
+            .convert(2, TimeUnit.SECONDS)),
 
     /**
      * Sets the maximum number of failed threads to keep around in RAM. Keep in
-     * mind that zombie processes still occupy all their ressources and aren't
+     * mind that zombie processes still occupy all their resources and aren't
      * available for garbage collection, so choose these values as restrictive
      * as possible. Integer, defaults to 10.
      */
-    TASK_MANAGER_KEEP_FAILED("taskManager.keepThreads.failed.count"),
+    TASK_MANAGER_KEEP_FAILED("taskManager.keepThreads.failed.count", Integer.TYPE, 10),
 
     /**
      * Sets the maximum time to keep failed threads around in RAM. Keep in mind
-     * that zombie processes still occupy all their ressources and aren't
+     * that zombie processes still occupy all their resources and aren't
      * available for garbage collection, so choose these values as restrictive
      * as possible. Integer, defaults to 240 minutes.
      */
-    TASK_MANAGER_KEEP_FAILED_MINS("taskManager.keepThreads.failed.minutes"),
+    TASK_MANAGER_KEEP_FAILED_MINS("taskManager.keepThreads.failed.minutes", Long.TYPE, TimeUnit.MINUTES
+            .convert(4, TimeUnit.HOURS)),
 
     /**
      * Sets the maximum number of successfully finished threads to keep around
      * in RAM. Defaults to 3. Keep in mind that zombie processes still occupy
-     * all their ressources and aren't available for garbage collection, so
+     * all their resources and aren't available for garbage collection, so
      * choose these values as restrictive as possible.
      */
-    TASK_MANAGER_KEEP_SUCCESSFUL("taskManager.keepThreads.successful.count"),
+    TASK_MANAGER_KEEP_SUCCESSFUL("taskManager.keepThreads.successful.count", Integer.TYPE, 3),
 
     /**
      * Sets the maximum time to keep successfully finished threads around in
@@ -519,14 +526,15 @@ public enum ParameterCore implements ParameterInterface {
      * occupy all their resources and aren't available for garbage collection,
      * so choose these values as restrictive as possible.
      */
-    TASK_MANAGER_KEEP_SUCCESSFUL_MINS("taskManager.keepThreads.successful.minutes"),
+    TASK_MANAGER_KEEP_SUCCESSFUL_MINS("taskManager.keepThreads.successful.minutes", Long.TYPE, TimeUnit.MINUTES
+            .convert(20, TimeUnit.MINUTES)),
 
     /**
      * Sets whether or not to show an option to "add a sample task" in the task
      * manager. This isif for anything at all—useful for debugging or
      * demonstration purposes only. Boolean, defaults to {@code false}.
      */
-    TASK_MANAGER_SHOW_SAMPLE_TASK("taskManager.showSampleTask"),
+    TASK_MANAGER_SHOW_SAMPLE_TASK("taskManager.showSampleTask", null, null),
 
     /*
      * Export to presentation module
@@ -537,28 +545,28 @@ public enum ParameterCore implements ParameterInterface {
      * background). This requires that the automatic export was set up in the
      * project settings. Boolean, defaults to {@code false}.
      */
-    ASYNCHRONOUS_AUTOMATIC_EXPORT("asynchronousAutomaticExport"),
+    ASYNCHRONOUS_AUTOMATIC_EXPORT("asynchronousAutomaticExport", null, null),
 
     /**
      * Whether during an export to the DMS the images will be copied. Boolean,
      * defaults to {@code true}.
      */
-    EXPORT_WITH_IMAGES("automaticExportWithImages"),
+    EXPORT_WITH_IMAGES("automaticExportWithImages", null, null),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    AUTOMATIC_EXPORT_WITH_OCR("automaticExportWithOcr"),
+    AUTOMATIC_EXPORT_WITH_OCR("automaticExportWithOcr", null, null),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    EXPORT_VALIDATE_IMAGES("ExportValidateImages"),
+    EXPORT_VALIDATE_IMAGES("ExportValidateImages", null, null),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    EXPORT_WITHOUT_TIME_LIMIT("exportWithoutTimeLimit"),
+    EXPORT_WITHOUT_TIME_LIMIT("exportWithoutTimeLimit", null, null),
 
     /*
      * REMOTE SERVICES
@@ -569,23 +577,23 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code true}.
      */
-    LDAP_USE("ldap_use"),
+    LDAP_USE("ldap_use", null, null),
 
-    LDAP_ATTRIBUTE_TO_TEST("ldap_AttributeToTest"),
+    LDAP_ATTRIBUTE_TO_TEST("ldap_AttributeToTest", null, null),
 
-    LDAP_VALUE_OF_ATTRIBUTE("ldap_ValueOfAttribute"),
-
-    /**
-     * Boolean, defaults to {@code false}.
-     */
-    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory"),
+    LDAP_VALUE_OF_ATTRIBUTE("ldap_ValueOfAttribute", null, null),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    LDAP_USE_TLS("ldap_useTLS"),
+    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory", null, null),
 
-    LDAP_USE_SIMPLE_AUTH("useSimpleAuthentification"),
+    /**
+     * Boolean, defaults to {@code false}.
+     */
+    LDAP_USE_TLS("ldap_useTLS", null, null),
+
+    LDAP_USE_SIMPLE_AUTH("useSimpleAuthentification", null, null),
 
     /*
      * Authority control configuration
@@ -598,7 +606,7 @@ public enum ParameterCore implements ParameterInterface {
      * Example: authority.http\://d-nb.info/gnd/.id=gnd
      * </p>
      */
-    AUTHORITY_ID_FROM_URI("authority.{0}.id"),
+    AUTHORITY_ID_FROM_URI("authority.{0}.id", null, null),
 
     /**
      * Content to put in the URI field when adding a new metadata element of
@@ -609,7 +617,7 @@ public enum ParameterCore implements ParameterInterface {
      * Example: authority.default=http\://d-nb.info/gnd/
      * </p>
      */
-    AUTHORITY_DEFAULT("authority.default"),
+    AUTHORITY_DEFAULT("authority.default", null, null),
 
     /*
      * FUNCTIONAL EXTENSIONS
@@ -620,37 +628,39 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    SHOW_OCR_BUTTON("showOcrButton"),
+    SHOW_OCR_BUTTON("showOcrButton", null, null),
 
     /**
      * Base path to OCR, without parameters.
      */
-    OCR_URL("ocrUrl"),
+    OCR_URL("ocrUrl", null, null),
 
     /*
      * ActiveMQ web services
      */
 
-    ACTIVE_MQ_HOST_URL("activeMQ.hostURL"),
+    ACTIVE_MQ_HOST_URL("activeMQ.hostURL", null, null),
 
-    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE("activeMQ.createNewProcess.queue"),
+    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE("activeMQ.createNewProcess.queue", null, null),
 
-    ACTIVE_MQ_FINALIZE_STEP_QUEUE("activeMQ.finaliseStep.queue"),
+    ACTIVE_MQ_FINALIZE_STEP_QUEUE("activeMQ.finaliseStep.queue", null, null),
 
-    ACTIVE_MQ_RESULTS_TOPIC("activeMQ.results.topic"),
+    ACTIVE_MQ_RESULTS_TOPIC("activeMQ.results.topic", null, null),
 
     /**
      * Long, value in milliseconds.
      */
-    ACTIVE_MQ_RESULTS_TTL("activeMQ.results.timeToLive"),
+    ACTIVE_MQ_RESULTS_TTL("activeMQ.results.timeToLive", Long.TYPE, TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS)),
 
     /*
      * Elasticsearch properties
      */
 
-    ELASTICSEARCH_BATCH("elasticsearch.batch");
+    ELASTICSEARCH_BATCH("elasticsearch.batch", Integer.TYPE, null);
 
     private String name;
+    private Class type;
+    private Object defaultValue;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -658,8 +668,31 @@ public enum ParameterCore implements ParameterInterface {
      * @param name
      *            of parameter
      */
-    ParameterCore(String name) {
+    ParameterCore(String name, Class type, Object defaultValue) {
         this.name = name;
+        this.type = type;
+        this.defaultValue = defaultValue;
+    }
+
+    /**
+     * Get type.
+     *
+     * @return value of type
+     */
+    public Class getType() {
+        return type;
+    }
+
+    /**
+     * Get default value for parameter.
+     *
+     * @return value of defaultValue
+     */
+    public Object getDefaultValue() {
+        if (Objects.nonNull(defaultValue)) {
+            return defaultValue;
+        }
+        throw new ConfigParameterException(this.name);
     }
 
     @Override

@@ -32,7 +32,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
@@ -94,8 +93,8 @@ public class CreatePdfFromServletThread extends LongRunningTask {
             new File("");
             URI tempPdf = fileService.createResource(this.getProcess().getTitle() + ".pdf");
             URI finalPdf = fileService.createResource(this.targetFolder, this.getProcess().getTitle() + ".pdf");
-            Integer contentServerTimeOut = ConfigCore.getIntParameter(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT,
-                DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+            Integer contentServerTimeOut = ConfigCore
+                    .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
             URL kitodoContentServerUrl = getKitodoContentServerURL();
 
             // get pdf from servlet and forward response to file
@@ -239,7 +238,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public CreatePdfFromServletThread replace() {
@@ -249,7 +248,7 @@ public class CreatePdfFromServletThread extends LongRunningTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {

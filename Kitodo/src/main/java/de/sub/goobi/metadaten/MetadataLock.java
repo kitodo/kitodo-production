@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 
 /**
@@ -30,8 +29,7 @@ public class MetadataLock implements Serializable {
      * Zeit, innerhalb der der Benutzer handeln muss, um seine Sperrung zu
      * behalten (30 min)
      */
-    private static final long sperrzeit = ConfigCore.getLongParameter(ParameterCore.METS_EDITOR_LOCKING_TIME,
-        DefaultValues.METS_EDITOR_LOCKING_TIME);
+    private static final long sperrzeit = ConfigCore.getLongParameterOrDefaultValue(ParameterCore.METS_EDITOR_LOCKING_TIME);
 
     /**
      * Metadaten eines bestimmten Prozesses wieder freigeben.

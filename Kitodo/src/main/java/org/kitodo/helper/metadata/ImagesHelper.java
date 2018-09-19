@@ -55,7 +55,6 @@ import org.kitodo.api.ugh.exceptions.DocStructHasNoTypeException;
 import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.TypeNotAllowedAsChildException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -384,8 +383,8 @@ public class ImagesHelper {
                 HttpClient httpclient = new HttpClient();
                 GetMethod method = new GetMethod(csUrl.toString());
                 logger.trace("get");
-                Integer contentServerTimeOut = ConfigCore.getIntParameter(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT,
-                    DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                Integer contentServerTimeOut = ConfigCore
+                        .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
                 method.getParams().setParameter("http.socket.timeout", contentServerTimeOut);
                 int statusCode = httpclient.executeMethod(method);
                 if (statusCode != HttpStatus.SC_OK) {
@@ -435,7 +434,7 @@ public class ImagesHelper {
             }
 
             this.myLastImage = files.size();
-            if (ConfigCore.getParameter(ParameterCore.IMAGE_PREFIX, DefaultValues.IMAGE_PREFIX)
+            if (ConfigCore.getParameterOrDefaultValue(ParameterCore.IMAGE_PREFIX)
                     .equals("\\d{8}")) {
                 Collections.sort(files);
                 int counter = 1;

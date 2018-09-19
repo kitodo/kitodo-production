@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.joda.time.Duration;
 import org.junit.Test;
+import org.kitodo.config.enums.ParameterCore;
 
 import static org.junit.Assert.assertEquals;
 
@@ -31,14 +32,14 @@ public class ConfigCoreTest {
 
     @Test
     public void shouldGetLongParameter() {
-        long actual = ConfigCore.getLongParameter("longParameter", 4L);
+        long actual = ConfigCore.getLongParameter(ParameterCore.METS_EDITOR_LOCKING_TIME, 4L);
 
         assertEquals("Long value was queried incorrectly!", 2L, actual);
     }
 
     @Test
     public void shouldGetDurationParameter() {
-        Duration actual = ConfigCore.getDurationParameter("longParameter", TimeUnit.SECONDS, 4L);
+        Duration actual = ConfigCore.getDurationParameter(ParameterCore.METS_EDITOR_LOCKING_TIME, TimeUnit.SECONDS);
 
         assertEquals("Duration value was queried incorrectly!", 2L, actual.getStandardSeconds());
     }

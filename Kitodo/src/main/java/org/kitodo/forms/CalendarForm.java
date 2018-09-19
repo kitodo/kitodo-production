@@ -40,7 +40,6 @@ import org.joda.time.IllegalFieldValueException;
 import org.joda.time.LocalDate;
 import org.joda.time.ReadablePartial;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.helper.DateUtils;
 import org.kitodo.helper.FacesUtils;
@@ -677,8 +676,7 @@ public class CalendarForm implements Serializable {
      * </p>
      */
     public CalendarForm() {
-        issueColours = ConfigCore.getParameter(ParameterCore.ISSUE_COLOURS, DefaultValues.ISSUE_COLOURS)
-                .split(";");
+        issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
         course = new Course();
         blockChangerResolver = new HashMap<>();
         blockShowing = null;
