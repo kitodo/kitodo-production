@@ -169,7 +169,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
                 query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONEUSER, null)
-                    && ConfigCore.getBooleanParameter(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+                    && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
                 query.must(filterTaskDoneUser(tokenizedFilter, objectType));
             } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKAUTOMATIC, null)) {
                 query.must(filterAutomaticTasks(tokenizedFilter, objectType));

@@ -169,7 +169,7 @@ public class JobCreation {
      */
     @SuppressWarnings("static-access")
     public static void moveFiles(URI metsfile, URI basepath, Process p) throws IOException {
-        if (ConfigCore.getBooleanParameter(ParameterCore.IMPORT_USE_OLD_CONFIGURATION)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.IMPORT_USE_OLD_CONFIGURATION)) {
             URI imagesFolder = basepath;
             if (!fileService.fileExist(imagesFolder)) {
                 imagesFolder = fileService.createResource(basepath, "_images");

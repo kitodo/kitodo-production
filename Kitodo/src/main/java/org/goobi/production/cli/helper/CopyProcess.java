@@ -415,7 +415,7 @@ public class CopyProcess extends ProzesskopieForm {
     public boolean testTitle() {
         boolean valid = true;
 
-        if (ConfigCore.getBooleanParameter(ParameterCore.MASS_IMPORT_UNIQUE_TITLE, true)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.MASS_IMPORT_UNIQUE_TITLE)) {
             valid = isProcessTitleCorrect(this.prozessKopie);
         }
         return valid;

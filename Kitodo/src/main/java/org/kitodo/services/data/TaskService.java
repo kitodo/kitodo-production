@@ -672,8 +672,8 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException {
-        boolean automaticExportWithImages = ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITH_IMAGES, true);
-        boolean automaticExportWithOcr = ConfigCore.getBooleanParameter(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR, true);
+        boolean automaticExportWithImages = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES);
+        boolean automaticExportWithOcr = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.AUTOMATIC_EXPORT_WITH_OCR);
         Process process = task.getProcess();
         try {
             boolean validate = serviceManager.getProcessService().startDmsExport(process, automaticExportWithImages,

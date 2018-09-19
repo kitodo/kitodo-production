@@ -254,7 +254,7 @@ public class ExportNewspaperBatchTask extends EmptyTask {
             MetsModsInterface extendedData = buildExportableMetsMods(process, collectedYears, aggregation);
             setProgress(GAUGE_INCREMENT_PER_ACTION + (++dividend / divisor));
 
-            new ExportDms(ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITH_IMAGES, true)).startExport(process,
+            new ExportDms(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES)).startExport(process,
                 serviceManager.getUserService().getHomeDirectory(
                     serviceManager.getUserService().getAuthenticatedUser()),
                 extendedData.getDigitalDocument());

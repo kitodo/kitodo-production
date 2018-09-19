@@ -707,7 +707,7 @@ public class Metadaten {
         }
 
         retrieveAllImages();
-        if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION)
                 && (this.digitalDocument.getPhysicalDocStruct() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren() == null
                         || this.digitalDocument.getPhysicalDocStruct().getAllChildren().isEmpty())) {
@@ -735,7 +735,7 @@ public class Metadaten {
     }
 
     private void createDefaultValues(DocStructInterface element) {
-        if (ConfigCore.getBooleanParameter(ParameterCore.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION, true)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.METS_EDITOR_ENABLE_DEFAULT_INITIALISATION)) {
             saveMetadataAsBean(element);
             List allChildren = element.getAllChildren();
             if (Objects.nonNull(allChildren)) {
@@ -1619,7 +1619,7 @@ public class Metadaten {
         logger.trace("dataList");
         List<URI> dataList = this.imageHelper.getImageFiles(digitalDocument.getPhysicalDocStruct());
         logger.trace("dataList 2");
-        if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION, true)
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_AUTOMATIC_PAGINATION)
                 && (dataList == null || dataList.isEmpty())) {
             try {
                 createPagination();
@@ -2186,7 +2186,7 @@ public class Metadaten {
      * OCR.
      */
     public boolean isShowOcrButton() {
-        return ConfigCore.getBooleanParameter(ParameterCore.SHOW_OCR_BUTTON);
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_OCR_BUTTON);
     }
 
     /**

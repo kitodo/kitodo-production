@@ -147,7 +147,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    IMPORT_USE_OLD_CONFIGURATION("importUseOldConfiguration", null, null, new ArrayList<>()),
+    IMPORT_USE_OLD_CONFIGURATION("importUseOldConfiguration", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Creation and export of process sub-directories, e.g.
@@ -165,7 +165,7 @@ public enum ParameterCore implements ParameterInterface {
      * Set if master images folder {@code orig_} should be used at all. Boolean,
      * defaults to {@code true}.
      */
-    USE_ORIG_FOLDER("useOrigFolder", null, null, new ArrayList<>()),
+    USE_ORIG_FOLDER("useOrigFolder", Boolean.TYPE, true, new ArrayList<>()),
 
     /*
      * Directory and symbolic link management
@@ -269,13 +269,13 @@ public enum ParameterCore implements ParameterInterface {
      * value to true. anonymized statistics, displaying user on steps, etc. Boolean,
      * defaults to {@code false}.
      */
-    ANONYMIZE("anonymize", null, null, new ArrayList<>()),
+    ANONYMIZE("anonymize", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Enable / disable search for steps done by user. Boolean, defaults to
      * {@code false}.
      */
-    WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch", null, null, new ArrayList<>()),
+    WITH_USER_STEP_DONE_SEARCH("withUserStepDoneSearch", Boolean.TYPE, false, new ArrayList<>()),
 
     /*
      * METADATA PROCESSING
@@ -316,7 +316,7 @@ public enum ParameterCore implements ParameterInterface {
      * false, pagination must be updated manually by clicking the link “Read in
      * pagination from images”. Boolean, defaults to {@code true}.
      */
-    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination", null, null, new ArrayList<>()),
+    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Use special pagination type for automatic default pagination.
@@ -334,7 +334,7 @@ public enum ParameterCore implements ParameterInterface {
      * Initialize all sub elements in METS editor to assign default values. Boolean,
      * defaults to {@code true}.
      */
-    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation", null, null, new ArrayList<>()),
+    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Display the file manipulation dialog within the METS editor.
@@ -392,7 +392,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Perform basic metadata validation or not. Boolean, defaults to {@code false}.
      */
-    USE_META_DATA_VALIDATION("useMetadatenvalidierung", null, null, new ArrayList<>()),
+    USE_META_DATA_VALIDATION("useMetadatenvalidierung", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Validation of process title via regular expression.
@@ -413,12 +413,12 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    MASS_IMPORT_ALLOWED("massImportAllowed", null, null, new ArrayList<>()),
+    MASS_IMPORT_ALLOWED("massImportAllowed", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    MASS_IMPORT_UNIQUE_TITLE("MassImportUniqueTitle", null, null, new ArrayList<>()),
+    MASS_IMPORT_UNIQUE_TITLE("MassImportUniqueTitle", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Colours used to represent the issues in the calendar editor.
@@ -451,7 +451,7 @@ public enum ParameterCore implements ParameterInterface {
      * leave a note there. Enabling this function may slow down operations in the
      * batches dialogue. Boolean, defaults to {@code false}.
      */
-    BATCHES_LOG_CHANGES("batches.logChangesToWikiField", null, null, new ArrayList<>()),
+    BATCHES_LOG_CHANGES("batches.logChangesToWikiField", Boolean.TYPE, false, new ArrayList<>()),
 
     /*
      * content server for PDF generation
@@ -460,7 +460,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    PDF_AS_DOWNLOAD("pdfAsDownload", null, null, new ArrayList<>()),
+    PDF_AS_DOWNLOAD("pdfAsDownload", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * If empty, internal content server will be used.
@@ -531,7 +531,7 @@ public enum ParameterCore implements ParameterInterface {
      * manager. This isif for anything at all—useful for debugging or demonstration
      * purposes only. Boolean, defaults to {@code false}.
      */
-    TASK_MANAGER_SHOW_SAMPLE_TASK("taskManager.showSampleTask", null, null, new ArrayList<>()),
+    TASK_MANAGER_SHOW_SAMPLE_TASK("taskManager.showSampleTask", Boolean.TYPE, false, new ArrayList<>()),
 
     /*
      * Export to presentation module
@@ -542,28 +542,28 @@ public enum ParameterCore implements ParameterInterface {
      * background). This requires that the automatic export was set up in the
      * project settings. Boolean, defaults to {@code false}.
      */
-    ASYNCHRONOUS_AUTOMATIC_EXPORT("asynchronousAutomaticExport", null, null, new ArrayList<>()),
+    ASYNCHRONOUS_AUTOMATIC_EXPORT("asynchronousAutomaticExport", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Whether during an export to the DMS the images will be copied. Boolean,
      * defaults to {@code true}.
      */
-    EXPORT_WITH_IMAGES("automaticExportWithImages", null, null, new ArrayList<>()),
+    EXPORT_WITH_IMAGES("automaticExportWithImages", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    AUTOMATIC_EXPORT_WITH_OCR("automaticExportWithOcr", null, null, new ArrayList<>()),
+    AUTOMATIC_EXPORT_WITH_OCR("automaticExportWithOcr", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code true}.
      */
-    EXPORT_VALIDATE_IMAGES("ExportValidateImages", null, null, new ArrayList<>()),
+    EXPORT_VALIDATE_IMAGES("ExportValidateImages", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    EXPORT_WITHOUT_TIME_LIMIT("exportWithoutTimeLimit", null, null, new ArrayList<>()),
+    EXPORT_WITHOUT_TIME_LIMIT("exportWithoutTimeLimit", Boolean.TYPE, false, new ArrayList<>()),
 
     /*
      * REMOTE SERVICES
@@ -574,7 +574,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code true}.
      */
-    LDAP_USE("ldap_use", null, null, new ArrayList<>()),
+    LDAP_USE("ldap_use", Boolean.TYPE, true, new ArrayList<>()),
 
     LDAP_ATTRIBUTE_TO_TEST("ldap_AttributeToTest", null, null, new ArrayList<>()),
 
@@ -583,12 +583,12 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory", null, null, new ArrayList<>()),
+    LDAP_USE_LOCAL_DIRECTORY("useLocalDirectory", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Boolean, defaults to {@code false}.
      */
-    LDAP_USE_TLS("ldap_useTLS", null, null, new ArrayList<>()),
+    LDAP_USE_TLS("ldap_useTLS", Boolean.TYPE, false, new ArrayList<>()),
 
     LDAP_USE_SIMPLE_AUTH("useSimpleAuthentification", null, null, new ArrayList<>()),
 
@@ -625,7 +625,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Boolean, defaults to {@code false}.
      */
-    SHOW_OCR_BUTTON("showOcrButton", null, null, new ArrayList<>()),
+    SHOW_OCR_BUTTON("showOcrButton", Boolean.TYPE, false, new ArrayList<>()),
 
     /**
      * Base path to OCR, without parameters.
@@ -654,7 +654,7 @@ public enum ParameterCore implements ParameterInterface {
      * Elasticsearch properties
      */
 
-    ELASTICSEARCH_BATCH("elasticsearch.batch", Integer.TYPE, null, new ArrayList<>());
+    ELASTICSEARCH_BATCH("elasticsearch.batch", Integer.TYPE, 1000, new ArrayList<>());
 
     private String name;
     private Class type;

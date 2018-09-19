@@ -85,6 +85,21 @@ public class ConfigCore extends Config {
     }
 
     /**
+     * Request boolean parameter from configuration, if parameter is not there - use
+     * default value.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @return parameter as boolean or default value for this parameter
+     */
+    public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
+        if (key.getType().equals(Boolean.TYPE)) {
+            return getBooleanParameter(key, (boolean) key.getDefaultValue());
+        }
+        throw new ConfigParameterException(key.getName(), "boolean");
+    }
+
+    /**
      * Request int parameter from configuration, if parameter is not there - use
      * default value.
      *

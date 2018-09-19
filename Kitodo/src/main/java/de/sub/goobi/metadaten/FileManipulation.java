@@ -447,7 +447,7 @@ public class FileManipulation {
 
         String masterPrefix = "";
         boolean useMasterFolder = false;
-        if (ConfigCore.getBooleanParameter(ParameterCore.USE_ORIG_FOLDER, true)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER)) {
             useMasterFolder = true;
             masterPrefix = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIRECTORY_PREFIX);
         }

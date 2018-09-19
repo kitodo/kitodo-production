@@ -75,7 +75,7 @@ public class ExportPdf extends ExportMets {
         String servletPath = context.getExternalContext().getRequestServletPath();
         String basisUrl = fullPath.substring(0, fullPath.indexOf(servletPath));
 
-        if (!ConfigCore.getBooleanParameter(ParameterCore.PDF_AS_DOWNLOAD)) {
+        if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.PDF_AS_DOWNLOAD)) {
             useContentServerForPdfCreation(metaFile, userHome, process, basisUrl);
         } else {
 
