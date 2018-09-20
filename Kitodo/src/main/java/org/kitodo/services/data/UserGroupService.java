@@ -354,7 +354,7 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
         return convertListIdToDTO(getAllUserGroupIdsByClientIds(clientIdList), this);
     }
 
-    protected List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
+    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
         return dao.getAllUserGroupsByClientIds(clientIdList);
     }
 

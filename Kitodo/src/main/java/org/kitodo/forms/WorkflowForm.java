@@ -22,12 +22,16 @@ import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.io.IOUtils;
@@ -35,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -58,6 +63,7 @@ public class WorkflowForm extends BaseForm {
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
+    private Integer userGroupId;
 
     /**
      * Constructor.
@@ -266,7 +272,8 @@ public class WorkflowForm extends BaseForm {
             }
             return workflowEditPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
+                logger, e);
             return null;
         }
     }
@@ -305,6 +312,39 @@ public class WorkflowForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
                 logger, e);
         }
+    }
+
+    /**
+     * Get userGroupId.
+     *
+     * @return value of userGroupId
+     */
+    public Integer getUserGroupId() {
+        return userGroupId;
+    }
+
+    /**
+     * Set userGroupId.
+     * 
+     * @param userGroupId
+     *            as Integer.
+     */
+    public void setUserGroupId(Integer userGroupId) {
+        this.userGroupId = userGroupId;
+    }
+
+    /**
+     * Get hidden list of user groups.
+     *
+     * @return hidden list of user groups
+     */
+    public List<SelectItem> getUserGroups() {
+        List<SelectItem> selectItems = new ArrayList<>();
+        List<UserGroup> userGroups = serviceManager.getUserGroupService().getAllUserGroupsByClientIds(Arrays.asList(1));
+        for (UserGroup userGroup : userGroups) {
+            selectItems.add(new SelectItem(userGroup.getId(), userGroup.getTitle(), null));
+        }
+        return selectItems;
     }
 
     /**
