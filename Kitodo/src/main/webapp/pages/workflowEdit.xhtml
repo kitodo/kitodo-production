@@ -32,10 +32,11 @@
         </script>
         <h3>
             <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
-                          rendered="#{not empty WorkflowForm.workflow.title}"/>
-            <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{empty WorkflowForm.workflow.title}"/>
+                          rendered="#{WorkflowForm.workflow.id ne null and WorkflowForm.workflow.title ne null and WorkflowForm.workflow.fileName ne null}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}"
+                          rendered="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName eq null}"/>
             <h:outputText value="#{msgs.duplicateWorkflow}"
-                          rendered="#{empty WorkflowForm.workflow.title and not empty WorkflowForm.workflow.fileName}"/>
+                          rendered="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName ne null}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
