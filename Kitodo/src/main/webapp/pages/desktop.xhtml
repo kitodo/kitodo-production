@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="content">
         <h:outputScript name="desktop.js" target="body" library="js"/>
-        <p:panelGrid columns="2" layout="grid" id="desktopGrid">
+        <div id="desktopGrid">
             <p:panel styleClass="desktop-widget"
                      rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
                 <div class="content-header">
@@ -80,10 +80,10 @@
                 </div>
                 <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
             </p:panel>
-        </p:panelGrid>
-        <p:dialog widgetVar="loadingDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-            <p:graphicImage id="loading" alt="loading" value="/pages/images/ajax-loader.gif"/>
-        </p:dialog>
-        <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+            <p:dialog widgetVar="loadingDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <p:graphicImage id="loading" alt="loading" value="/pages/images/ajax-loader.gif"/>
+            </p:dialog>
+            <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+        </div>
     </ui:define>
 </ui:composition>

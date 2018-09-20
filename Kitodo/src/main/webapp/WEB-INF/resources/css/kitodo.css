@@ -488,22 +488,22 @@ section#content-section {
     height: 500px;
 }
 
-#desktopGrid,
-#desktopGrid_content {
+#desktopGrid {
     background: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     height: inherit;
+    justify-content: center;
 }
 
-#desktopGrid_content {
+#desktopGrid > .ui-panel {
+    background: transparent;
     display: flex;
-    flex-direction: column;
-    padding: 0 8px;
-}
-
-#desktopGrid .ui-grid-row {
-    flex-basis: 50%;
-    display: flex;
-    overflow-y: hidden;
+    flex-basis: calc(50% - 10px);
+    height: 50%;
+    overflow: hidden;
+    padding: 0;
 }
 
 #desktopGrid th.actionsColumn span,
@@ -515,32 +515,18 @@ section#content-section {
     margin-right: 0;
 }
 
-#desktopGrid.ui-panelgrid .ui-panelgrid-cell {
-    padding: 0 8px 16px 8px !important;
-}
-
-#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell {
+#desktopGrid > .ui-panel > .ui-panel-content {
     background-color: white !important;
     padding: 0;
     margin: 8px;
     border-radius: 3px;
-    -webkit-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
-    -moz-box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
-    box-shadow: 0px 3px 0px 0px rgba(0,0,0,0.2);
-    min-height: 90%;
+    -webkit-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
+    -moz-box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
+    box-shadow: 0 3px 0 0 rgba(0,0,0,0.2);
 }
 
-#desktopGrid_content > .ui-grid-row > .ui-panelgrid-cell .ui-widget-content {
-    padding: 0;
-}
-
-#desktopGrid_content .desktop-widget,
-#desktopGrid_content .desktop-widget > div{
-    height: 100%;
-    padding: 0;
-}
-
-.task-table-column, .process-table-column {
+.task-table-column,
+.process-table-column {
     width: 25% !important;
 }
 
@@ -552,21 +538,9 @@ section#content-section {
     width: 50% !important;
 }
 
-#desktopGrid_content .content-header {
-    height: unset !important;
-}
-
-#desktopGrid .ui-datatable-scrollable-body {
-    overflow-y: scroll;
-}
-
 #desktopGrid .ui-datatable-scrollable-header-box {
     border-top: 3px solid #999;
     background: #d8d8d8;
-}
-
-.desktop-widget .ui-widget-content {
-    border-radius: 3px;
 }
 
 #listWrapper, section#content-section {

@@ -18,7 +18,6 @@ $(window).on("load resize", function() {
     const headerHeight = widgetTables.prev(".content-header").outerHeight();
     widgetTables.height(widgetHeight - headerHeight);
 
-    const tableHeaders = $("#desktopGrid .ui-datatable-scrollable-header");
     const tableBodies = $("#desktopGrid .ui-datatable-scrollable-body");
 
     // update table heights
@@ -28,9 +27,8 @@ $(window).on("load resize", function() {
 
     // add right padding to header for scrollbars
     const headerBoxes = $("#desktopGrid .ui-datatable-scrollable-header-box");
-    const scrollBarWidth = tableBodies.outerWidth(true) - tableBodies.find("table[role='grid']").outerWidth(true);
-    headerBoxes.css("padding-right", scrollBarWidth + "px");
-
-    const desktopWidgets = $(".desktop-widget");
-    desktopWidgets.width = desktopWidgets.width() - scrollBarWidth;
+    for (var i = 0; i < widgetTables.length; i++) {
+        let scrollBarWidth = widgetTables.eq(i).outerWidth(true) - tableBodies.eq(i).find("table[role='grid']").outerWidth(true);
+        headerBoxes.eq(i).css("padding-right", scrollBarWidth + "px");
+    }
 });
