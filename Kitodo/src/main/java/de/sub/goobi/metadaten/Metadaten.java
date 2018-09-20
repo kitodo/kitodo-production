@@ -4085,7 +4085,7 @@ public class Metadaten {
         refreshProcess(this.process);
         setShowNewComment(false);
         setCorrectionComment(false);
-        setProblem(null);
+        setProblem(new Problem());
     }
 
     /**
