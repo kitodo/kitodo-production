@@ -129,7 +129,7 @@
                 <h:outputText value="#{msgs.filterAdjust}"/>
             </h3>
 
-            <h:form>
+            <h:form id="filterForm">
                 <h:panelGrid columns="2" style="margin-left:20px">
                     <h:outputText value="#{msgs.showAutomaticTasks}:"/>
                     <h:selectBooleanCheckbox id="showAutomaticTasks" value="#{CurrentTaskForm.showAutomaticTasks}"
@@ -149,7 +149,7 @@
                                              style="margin-right:20px"/>
                 </h:panelGrid>
 
-                <h:commandLink update="tasksTabView:taskTable" style="margin-left:24px" title="#{msgs.apply}">
+                <h:commandLink id="applyFilter" update="tasksTabView:taskTable" style="margin-left:24px" title="#{msgs.apply}">
                     <h:outputText value="#{msgs.apply}"/>
                 </h:commandLink>
             </h:form>

@@ -46,6 +46,24 @@ public class ListingST extends BaseTestSelenium {
         int tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
         int tasksDisplayed = Pages.getTasksPage().countListedTasks();
         assertEquals("Displayed wrong number of tasks", tasksInDatabase, tasksDisplayed);
+        Thread.sleep(5000);
+
+        List<String> detailsTask =  Pages.getTasksPage().getTaskDetails();
+        assertEquals("Displayed wrong number of task's details", 5, detailsTask.size());
+        assertEquals("Displayed wrong task's priority", "0", detailsTask.get(0));
+        assertEquals("Displayed wrong task's processing begin", "2016-10-25 00:00:00", detailsTask.get(1));
+        assertEquals("Displayed wrong task's processing update", "", detailsTask.get(2));
+        assertEquals("Displayed wrong task's processing user", "Kowalski, Jan", detailsTask.get(3));
+        assertEquals("Displayed wrong task's edit type", "manuell, regulärer Worklflow", detailsTask.get(4));
+
+        Pages.getTasksPage().applyFilterShowOnlyOpenTasks();
+
+        query = "SELECT t FROM Task AS t INNER JOIN t.users AS u WITH u.id = 1 INNER JOIN t.userGroups AS ug "
+                + "INNER JOIN ug.users AS uug WITH u.id = 1 WHERE (t.processingUser = 1 OR u.id = 1 OR uug.id = 1) AND "
+                + "t.processingStatus = 1 AND t.typeAutomatic = 0";
+        tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
+        tasksDisplayed = Pages.getTasksPage().countListedTasks();
+        assertEquals("Displayed wrong number of tasks with applied filter", tasksInDatabase, tasksDisplayed);
     }
 
     @Test
