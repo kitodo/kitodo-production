@@ -23,19 +23,19 @@ public enum TaskStatus {
     /**
      * Locked = step not startable.
      */
-    LOCKED(0, "statusGesperrt", "red_10.gif", "red_15a.gif", "steplocked"),
+    LOCKED(0, "statusLocked", "red_10.gif", "red_15a.gif", "steplocked"),
     /**
      * Open = someone can begin with this step.
      */
-    OPEN(1, "statusOffen", "orange_10.gif", "orange_15a.gif", "stepopen"),
+    OPEN(1, "statusOpen", "orange_10.gif", "orange_15a.gif", "stepopen"),
     /**
      * Inwork = someone is currently working on that step.
      */
-    INWORK(2, "statusInBearbeitung", "yellow_10.gif", "yellow_15a.gif", "stepinwork"),
+    INWORK(2, "statusInProcessing", "yellow_10.gif", "yellow_15a.gif", "stepinwork"),
     /**
      * Done = step is executed.
      */
-    DONE(3, "statusAbgeschlossen", "green_10.gif", "green_15a.gif", "stepdone");
+    DONE(3, "statusDone", "green_10.gif", "green_15a.gif", "stepdone");
 
     private int value;
     private String title;

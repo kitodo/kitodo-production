@@ -30,9 +30,9 @@
                 <p:selectOneMenu id="status" value="#{ProcessForm.task.processingStatusAsString}" required="#{empty param['editForm:saveButtonToggler']}" class="input">
                     <f:selectItem itemValue="" itemLabel="#{msgs.selectPlease}"/>
                     <f:selectItem itemValue="0" itemLabel="#{msgs.locked}"/>
-                    <f:selectItem itemValue="1" itemLabel="#{msgs.statusOffen}"/>
-                    <f:selectItem itemValue="2" itemLabel="#{msgs.statusInBearbeitung}"/>
-                    <f:selectItem itemValue="3" itemLabel="#{msgs.statusAbgeschlossen}"/>
+                    <f:selectItem itemValue="1" itemLabel="#{msgs.statusOpen}"/>
+                    <f:selectItem itemValue="2" itemLabel="#{msgs.statusInProcessing}"/>
+                    <f:selectItem itemValue="3" itemLabel="#{msgs.statusDone}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
