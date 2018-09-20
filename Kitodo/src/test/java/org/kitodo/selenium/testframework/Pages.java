@@ -11,26 +11,7 @@
 
 package org.kitodo.selenium.testframework;
 
-import org.kitodo.selenium.testframework.pages.ClientEditPage;
-import org.kitodo.selenium.testframework.pages.DocketEditPage;
-import org.kitodo.selenium.testframework.pages.HelpPage;
-import org.kitodo.selenium.testframework.pages.SystemPage;
-import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
-import org.kitodo.selenium.testframework.pages.LoginPage;
-import org.kitodo.selenium.testframework.pages.ProcessesPage;
-import org.kitodo.selenium.testframework.pages.ProcessFromTemplatePage;
-import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.selenium.testframework.pages.ProjectEditPage;
-import org.kitodo.selenium.testframework.pages.RulesetEditPage;
-import org.kitodo.selenium.testframework.pages.StartPage;
-import org.kitodo.selenium.testframework.pages.TasksPage;
-import org.kitodo.selenium.testframework.pages.TemplateEditPage;
-import org.kitodo.selenium.testframework.pages.TopNavigationPage;
-import org.kitodo.selenium.testframework.pages.UserConfigurationPage;
-import org.kitodo.selenium.testframework.pages.UserEditPage;
-import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
-import org.kitodo.selenium.testframework.pages.UsersPage;
-import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
+import org.kitodo.selenium.testframework.pages.*;
 import org.openqa.selenium.support.PageFactory;
 
 public class Pages {
@@ -59,6 +40,10 @@ public class Pages {
 
     public static ProcessesPage getProcessesPage() throws InstantiationException, IllegalAccessException {
         return getPage(ProcessesPage.class);
+    }
+
+    public static ProcessEditPage getProcessEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(ProcessEditPage.class);
     }
 
     public static ProcessFromTemplatePage getProcessFromTemplatePage() throws InstantiationException, IllegalAccessException {

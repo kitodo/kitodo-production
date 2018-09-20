@@ -36,7 +36,7 @@
                 checkForm('editForm')
             };
         </script>
-        <h3>
+        <h3 id="headerText">
             <h:outputText value="#{msgs.ldapGroupEdit} (#{LdapGroupForm.myLdapGruppe.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.ldapGroupView}" rendered="#{isViewMode}"/>

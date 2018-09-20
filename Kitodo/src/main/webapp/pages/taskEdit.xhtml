@@ -28,7 +28,7 @@
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
-        <h3>
+        <h3 id="headerText">
             <h:outputText value="#{msgs.taskAdd}" rendered="#{empty ProcessForm.task.title}"/>
             <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
                           rendered="#{not empty ProcessForm.task.title}"/>

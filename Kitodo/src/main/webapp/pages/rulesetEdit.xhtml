@@ -27,7 +27,7 @@
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
-        <h3>
+        <h3 id="headerText">
             <h:outputText value="#{msgs.rulesetEdit} (#{RulesetForm.ruleset.title})"
                           rendered="#{not empty RulesetForm.ruleset.title}"/>
             <h:outputText value="#{msgs.createNewRuleset}" rendered="#{empty RulesetForm.ruleset.title}"/>

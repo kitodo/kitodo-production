@@ -18,7 +18,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ProjectEditPage extends Page {
+public class ProjectEditPage extends Page<ProjectEditPage> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "editForm:save")
@@ -45,7 +45,7 @@ public class ProjectEditPage extends Page {
     }
 
     @Override
-    public RulesetEditPage goTo() {
+    public ProjectEditPage goTo() {
         return null;
     }
 

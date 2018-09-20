@@ -11,13 +11,11 @@
 
 package org.kitodo.selenium;
 
-import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
@@ -41,7 +39,6 @@ import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.services.ServiceManager;
-import org.openqa.selenium.By;
 
 public class AddingST extends BaseTestSelenium {
 
@@ -63,8 +60,13 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addProjectTest() throws Exception {
         Project project = ProjectGenerator.generateProject();
-        Pages.getProjectsPage().createNewProject().insertProjectData(project).save();
+        Pages.getProjectsPage().createNewProject();
+        assertEquals("Header for create new project is incorrect", "Neues Projekt",
+            Pages.getProjectEditPage().getHeaderText());
+
+        Pages.getProjectEditPage().insertProjectData(project).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
         assertTrue("Created Project was not listed at projects table!", projectAvailable);
     }
@@ -73,7 +75,11 @@ public class AddingST extends BaseTestSelenium {
     public void addTemplateTest() throws Exception {
         Template template = new Template();
         template.setTitle("MockTemplate");
-        Pages.getProjectsPage().createNewTemplate().insertTemplateData(template).save();
+        Pages.getProjectsPage().createNewTemplate();
+        assertEquals("Header for create new template is incorrect", "Neue Produktionsvorlage",
+            Pages.getTemplateEditPage().getHeaderText());
+
+        Pages.getTemplateEditPage().insertTemplateData(template).save();
         boolean templateAvailable = Pages.getProjectsPage().getTemplateTitles().contains(template.getTitle());
         assertTrue("Created Template was not listed at templates table!", templateAvailable);
     }
@@ -84,6 +90,9 @@ public class AddingST extends BaseTestSelenium {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         Pages.getProjectsPage().switchToTabByIndex(TabIndex.TEMPLATES.getIndex()).createNewProcess();
+        assertEquals("Header for create new process is incorrect", "createNewProcess",
+            Pages.getProcessFromTemplatePage().getHeaderText());
+
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcess();
         boolean processAvailable = Pages.getProcessesPage().getProcessTitles().contains(generatedTitle);
         assertTrue("Created Process was not listed at processes table!", processAvailable);
@@ -94,8 +103,13 @@ public class AddingST extends BaseTestSelenium {
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
         workflow.setFileName("testWorkflow");
-        Pages.getProjectsPage().createNewWorkflow().insertWorkflowData(workflow).save();
+        Pages.getProjectsPage().createNewWorkflow();
+        assertEquals("Header for create new ruleset is incorrect", "Neuen Regelsatz anlegen",
+            Pages.getRulesetEditPage().getHeaderText());
+
+        Pages.getWorkflowEditPage().insertWorkflowData(workflow).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+
         List<String> workflowTitles = Pages.getProjectsPage().getWorkflowTitles();
         boolean workflowAvailable = workflowTitles.contains("Process_1");
         assertTrue("Created Workflow was not listed at workflows table!", workflowAvailable);
@@ -105,8 +119,13 @@ public class AddingST extends BaseTestSelenium {
     public void addDocketTest() throws Exception {
         Docket docket = new Docket();
         docket.setTitle("MockDocket");
-        Pages.getProjectsPage().createNewDocket().insertDocketData(docket).save();
+        Pages.getProjectsPage().createNewDocket();
+        assertEquals("Header for create new docket is incorrect", "Neuen Laufzettel anlegen",
+            Pages.getDocketEditPage().getHeaderText());
+
+        Pages.getDocketEditPage().insertDocketData(docket).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+
         List<String> docketTitles = Pages.getProjectsPage().getDocketTitles();
         boolean docketAvailable = docketTitles.contains(docket.getTitle());
         assertTrue("Created Docket was not listed at dockets table!", docketAvailable);
@@ -116,8 +135,13 @@ public class AddingST extends BaseTestSelenium {
     public void addRulesetTest() throws Exception {
         Ruleset ruleset = new Ruleset();
         ruleset.setTitle("MockRuleset");
-        Pages.getProjectsPage().createNewRuleset().insertRulesetData(ruleset).save();
+        Pages.getProjectsPage().createNewRuleset();
+        assertEquals("Header for create new ruleset is incorrect", "Neuen Regelsatz anlegen",
+            Pages.getRulesetEditPage().getHeaderText());
+
+        Pages.getRulesetEditPage().insertRulesetData(ruleset).save();
         assertTrue("Redirection after save was not successful", Pages.getProjectsPage().isAt());
+
         List<String> rulesetTitles = Pages.getProjectsPage().getRulesetTitles();
         boolean rulesetAvailable = rulesetTitles.contains(ruleset.getTitle());
         assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
@@ -126,22 +150,32 @@ public class AddingST extends BaseTestSelenium {
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
-        Pages.getUsersPage().createNewUser().insertUserData(user).switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
+        Pages.getUsersPage().createNewUser();
+        assertEquals("Header for create new user is incorrect", "Neuen Benutzer anlegen",
+            Pages.getUserEditPage().getHeaderText());
+
+        Pages.getUserEditPage().insertUserData(user).switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
         Pages.getUserEditPage().addUserToUserGroup(serviceManager.getUserGroupService().getById(2).getTitle());
         Pages.getUserEditPage().switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(1).getName());
         Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(2).getName()).save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
         Pages.getTopNavigation().acceptClientSelection();
-        assertEquals(serviceManager.getClientService().getById(1).getName(), Pages.getTopNavigation().getSessionClient());
+        assertEquals(serviceManager.getClientService().getById(1).getName(),
+            Pages.getTopNavigation().getSessionClient());
     }
 
     @Test
     public void addLdapGroupTest() throws Exception {
         LdapGroup ldapGroup = LdapGroupGenerator.generateLdapGroup();
-        Pages.getUsersPage().createNewLdapGroup().insertLdapGroupData(ldapGroup).save();
+        Pages.getUsersPage().createNewLdapGroup();
+        assertEquals("Header for create new LDAP group is incorrect", "Neue LDAP-Gruppe anlegen",
+            Pages.getLdapGroupEditPage().getHeaderText());
+
+        Pages.getLdapGroupEditPage().insertLdapGroupData(ldapGroup).save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
 
         boolean ldapGroupAvailable = Pages.getUsersPage().getLdapGroupNames().contains(ldapGroup.getTitle());
@@ -155,8 +189,13 @@ public class AddingST extends BaseTestSelenium {
     public void addClientTest() throws Exception {
         Client client = new Client();
         client.setName("MockClient");
-        Pages.getUsersPage().createNewClient().insertClientData(client).save();
+        Pages.getUsersPage().createNewClient();
+        assertEquals("Header for create new client is incorrect", "Neuen Mandanten anlegen",
+            Pages.getClientEditPage().getHeaderText());
+
+        Pages.getClientEditPage().insertClientData(client).save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+
         boolean clientAvailable = Pages.getUsersPage().getClientNames().contains(client.getName());
         assertTrue("Created Client was not listed at clients table!", clientAvailable);
     }
@@ -166,17 +205,20 @@ public class AddingST extends BaseTestSelenium {
         UserGroup userGroup = new UserGroup();
         userGroup.setTitle("MockUserGroup");
 
-        Pages.getUsersPage().createNewUserGroup().setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
-                .assignAllClientAuthorities().assignAllProjectAuthorities();
+        Pages.getUsersPage().createNewUserGroup();
+        assertEquals("Header for create new user group is incorrect", "Neue Benutzergruppe anlegen",
+            Pages.getUserGroupEditPage().getHeaderText());
 
+        Pages.getUserGroupEditPage().setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
+                .assignAllClientAuthorities().assignAllProjectAuthorities();
         Pages.getUserGroupEditPage().save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         List<String> userGroupTitles = Pages.getUsersPage().getUserGroupTitles();
         assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
         int availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
-        int assignedGlobalAuthorities = Pages.getUsersPage()
-                .editUserGroup(userGroup.getTitle()).countAssignedGlobalAuthorities();
+        int assignedGlobalAuthorities = Pages.getUsersPage().editUserGroup(userGroup.getTitle())
+                .countAssignedGlobalAuthorities();
         assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
             assignedGlobalAuthorities);
 
@@ -192,13 +234,5 @@ public class AddingST extends BaseTestSelenium {
         int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
         assertEquals("Assigned project authorities of the new user group were not saved!", availableProjectAuthorities,
             assignedProjectAuthorities);
-    }
-
-    @Test
-    public void editUserConfigurationTest() throws Exception {
-        Pages.getUserConfigurationPage().changeUserSettings();
-
-        await("Wait for visible user configuration link").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertTrue(Browser.getDriver().findElement(By.partialLinkText("User configuration")).isDisplayed()));
     }
 }
