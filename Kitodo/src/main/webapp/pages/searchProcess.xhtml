@@ -31,17 +31,19 @@
     <ui:define name="pageTabView">
         <p:tabView id="searchTabView">
             <p:tab id="searchTab" title="#{msgs.details}">
-                <p:panelGrid id="processSearch-grid" rendered="#{ProcessForm.initialize}">
+                <p:panelGrid id="processSearch-grid">
                     <!-- process title -->
                     <p:row>
                         <p:column><p:outputLabel for="processtitle" value="#{msgs.processTitle}"/></p:column>
                         <p:column>
-                            <p:selectOneMenu for="processtitle" value="#{SearchForm.processOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                            <p:selectOneMenu value="#{SearchForm.processOperand}">
                                 <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column colspan="2" >
-                            <p:inputText id="processtitle" value="#{SearchForm.processTitle}" style="width:100%"/>
+                            <p:inputText id="processtitle"
+                                         value="#{SearchForm.processTitle}"
+                                         styleClass="extended-search-input-field"/>
                         </p:column>
                     </p:row>
                     <!--projects -->
@@ -49,11 +51,12 @@
                         <p:column>
                             <p:outputLabel for="projekt" value="#{msgs.projects}"/></p:column>
                         <p:column>
-                            <p:selectOneMenu id="projekt" value="#{SearchForm.projectOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                            <p:selectOneMenu id="projekt"
+                                             value="#{SearchForm.projectOperand}">
                                 <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu></p:column>
                         <p:column colspan="2">
-                            <p:selectOneMenu for="projekt" value="#{SearchForm.project}">
+                            <p:selectOneMenu value="#{SearchForm.project}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems id="pcid11" value="#{SearchForm.projects}"
                                                var="project" itemLabel="#{project}"
@@ -67,12 +70,12 @@
                             <p:outputLabel for="processproperty" value="#{msgs.processProperties}"/>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{SearchForm.processPropertyOperand}" style="width:200px; margin-right:3px; margin-left:3px">
+                            <p:selectOneMenu value="#{SearchForm.processPropertyOperand}">
                                 <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}" >
+                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.processPropertyTitles}"
                                                var="proc" itemLabel="#{proc}"
@@ -80,7 +83,9 @@
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:inputText id="processproperty" value="#{SearchForm.processPropertyValue}" style="width:100%"/>
+                            <p:inputText id="processproperty"
+                                         value="#{SearchForm.processPropertyValue}"
+                                         styleClass="extended-search-input-field"/>
                         </p:column>
                     </p:row>
                     <!-- masterpiece property -->
@@ -97,7 +102,10 @@
                                 <f:selectItems value="#{SearchForm.masterpiecePropertyTitles}" var="work" itemLabel="#{work}" itemValue="#{work}"/>
                             </p:selectOneMenu>
                         </p:column>
-                        <p:column> <p:inputText value="#{SearchForm.masterpiecePropertyValue}" style="width:100%"/> </p:column>
+                        <p:column>
+                            <p:inputText value="#{SearchForm.masterpiecePropertyValue}"
+                                         styleClass="extended-search-input-field"/>
+                        </p:column>
                     </p:row>
                     <!-- template property -->
                     <p:row>
@@ -113,7 +121,10 @@
                                 <f:selectItems value="#{SearchForm.templatePropertyTitles}" var="temp" itemLabel="#{temp}" itemValue="#{temp}"/>
                             </p:selectOneMenu>
                         </p:column>
-                        <p:column><p:inputText value="#{SearchForm.templatePropertyValue}" style="width:100%"/></p:column>
+                        <p:column>
+                            <p:inputText value="#{SearchForm.templatePropertyValue}"
+                                         styleClass="extended-search-input-field"/>
+                        </p:column>
                     </p:row>
                     <!--steps -->
                     <p:row>
@@ -156,7 +167,10 @@
                     <!-- process id -->
                     <p:row>
                         <p:column><p:outputLabel value="#{msgs.id}"/></p:column>
-                        <p:column colspan="3"><p:inputText value="#{SearchForm.idin}" style="width:100%"/></p:column>
+                        <p:column colspan="3">
+                            <p:inputText value="#{SearchForm.idin}"
+                                         styleClass="extended-search-input-field"/>
+                        </p:column>
                     </p:row>
                     <p:row>
                         <p:column><p:outputLabel value="#{msgs.showInactiveProjects}"
@@ -188,7 +202,7 @@
         </p:tabView>
     </ui:define>
     <ui:define name="breadcrumbs">
-        <li><h:link value="#{msgs.startPage}" outcome="start"/></li>
+        <li><h:link value="#{msgs.desktop}" outcome="desktop"/></li>
         <li><h:link value="#{msgs.processes}" outcome="processes"/> </li>
         <li><a href="">#{msgs.extendedSearch}</a></li>
     </ui:define>
