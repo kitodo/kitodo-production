@@ -14,9 +14,22 @@ package org.kitodo.forms;
 import org.kitodo.data.database.beans.Folder;
 
 /**
- * An encapsulation to access the generator properties of the folder.
+ * An encapsulation to access the content creation properties of a folder from
+ * JSF.
+ *
+ * <p>
+ * The content creation properties of a folder are stored internally differently
+ * than they are displayed in the user interface. The user interface displays a
+ * drop-down menu, in which a generator function can be selected. In addition, a
+ * parameter field appears suitably in which the parameter for the function can
+ * be specified. Internally, however, the configuration of the generator
+ * function is stored in four database fields, of which only one may be occupied
+ * at the same time. The selected field indicates the generator function and
+ * contains as value the parameter which has a different data type depending on
+ * the function. This conversion in both directions is accomplished in this
+ * class.
  */
-public class FolderGenerator {
+public class GeneratorSelect {
     /**
      * Generator method that changes the DPI of an image.
      */
@@ -68,7 +81,7 @@ public class FolderGenerator {
      * @param folder
      *            {@code Folder.this}
      */
-    public FolderGenerator(Folder folder) {
+    public GeneratorSelect(Folder folder) {
         this.folder = folder;
     }
 

@@ -53,9 +53,12 @@ import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.tasks.EmptyTask;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.tasks.ImageGenerator;
+import org.kitodo.tasks.ImageGeneratorTaskVariant;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
@@ -429,9 +432,10 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
 
         /*
-         * we read list of process but not list of templates because only process tasks
-         * are displayed on the task list and reading list of templates would cause
-         * never ending loop as list of templates reads list of tasks
+         * We read the list of the process, but not the list of templates,
+         * because only process tasks are displayed in the task list and reading
+         * the template list would result in never-ending loops as the list of
+         * templates reads the list of tasks.
          */
         Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
@@ -663,6 +667,35 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
         save(task);
+    }
+
+    /**
+     * Performs creating images when this happens automatically in a task.
+     *
+     * @param executingThread
+     *            Executing thread (displayed in the taskmanager)
+     * @param task
+     *            Task that generates images
+     * @param automatic
+     *            Whether it is an automatic task
+     * @throws DataException
+     *             If the task cannot be saved
+     */
+    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
+        Process process = task.getProcess();
+        ImageGenerator generator = new ImageGenerator(process.getTitle(), process.getProject().getGeneratorSource(),
+                ImageGeneratorTaskVariant.ALL_IMAGES, task.getContentFolders());
+        generator.setWorker(executingThread);
+        if (automatic) {
+            if (executingThread.getException() == null) {
+                task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                task.setProcessingStatus(TaskStatus.DONE.getValue());
+            } else {
+                task.setEditType(TaskEditType.AUTOMATIC.getValue());
+                task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                save(task);
+            }
+        }
     }
 
     /**

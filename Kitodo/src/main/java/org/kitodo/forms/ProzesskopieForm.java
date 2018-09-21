@@ -1034,7 +1034,7 @@ public class ProzesskopieForm implements Serializable {
                 continue;
             }
             there: for (Entry<String, MetadataInterface> higherElement : availableHigherMetadata.getValue()
-                    .entrySet()) {
+                       .entrySet()) {
                 List<MetadataInterface> amNotNull = enricher.getAllMetadata();
                 if (Objects.isNull(amNotNull)) {
                     amNotNull = Collections.emptyList();

@@ -54,7 +54,10 @@ import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.batch.BatchTaskHelper;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.production.thread.ImageGeneratorTask;
+import org.kitodo.tasks.ImageGeneratorTaskVariant;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -268,7 +271,7 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Unlock the current task's process.
-     * 
+     *
      * @return null
      */
     public String sperrungAufheben() {
@@ -424,6 +427,48 @@ public class CurrentTaskForm extends BaseForm {
                 }
                 this.myDav.downloadToHome(process, false);
             }
+        }
+    }
+
+    /**
+     * Regenerate all images.
+     */
+    public void regenerateAllImagesButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.ALL_IMAGES, currentTask.getContentFolders()));
+            Helper.setMessage("regenerateAllImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Regenerate missing and damaged images.
+     */
+    public void regenerateMissingImagesDamagedButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.MISSING_OR_DAMAGED_IMAGES, currentTask.getContentFolders()));
+            Helper.setMessage("regenerateMissingAndDamagedImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Generate missing images.
+     */
+    public void generateMissingImagesButtonClick() {
+        try {
+            TaskManager
+                    .addTask(new ImageGeneratorTask(myProcess.getTitle(), myProcess.getProject().getGeneratorSource(),
+                            ImageGeneratorTaskVariant.MISSING_IMAGES, currentTask.getContentFolders()));
+            Helper.setMessage("regenerateMissingImagesStarted");
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
