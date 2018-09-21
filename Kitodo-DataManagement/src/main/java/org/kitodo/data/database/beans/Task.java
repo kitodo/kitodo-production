@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.beans;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -28,10 +30,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.util.GeneratorSwitch;
 
 @Entity
 @Table(name = "task")
@@ -143,8 +143,8 @@ public class Task extends BaseIndexedBean {
     private List<UserGroup> userGroups;
 
     /**
-     * This field contains information about folders whose contents are to be
-     * generated in this task.
+     * This field holds a list of folders whose contents are to be generated in
+     * the process of finishing this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "contentFolders_task_x_folder",
@@ -163,6 +163,7 @@ public class Task extends BaseIndexedBean {
         this.title = "";
         this.users = new ArrayList<>();
         this.userGroups = new ArrayList<>();
+        this.contentFolders = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
     }
@@ -199,6 +200,9 @@ public class Task extends BaseIndexedBean {
 
         // necessary to create new ArrayList in other case session problem!
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+
+        // necessary to create new ArrayList in other case session problem!
+        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -419,7 +423,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of folders whose contents are to be generated.
+     * Get list of folders whose contents are to be generated in the process of
+     * finishing this task.
      *
      * @return list of Folder objects or empty list
      */
@@ -431,7 +436,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Set list of folders whose contents are to be generated.
+     * Set list of folders whose contents are to be generated in the process of
+     * finishing this task.
      *
      * @param contentFolders
      *            as list
@@ -441,16 +447,28 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
+     * Returns a list of objects representing switches to enable or disable
+     * content generation for all folders whose contents can be generated. The
+     * switches are either on or off, depending on whether the folder is listed
+     * in the field {@link #generateContents} or not. They are accessed from
+     * JSF.
      *
-     * @return list of GeneratorSwitch objects or empty list
+     * @return list of {@link org.kitodo.forms.GeneratorSwitch} objects or empty
+     *         list
      */
-    public List<GeneratorSwitch> getGenerators() {
+    @SuppressWarnings({"unchecked" })
+    public List<Object> getGenerators() {
         if (this.contentFolders == null) {
             this.contentFolders = new ArrayList<>();
         }
-        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
+        try {
+            return (List<Object>) Class.forName("org.kitodo.forms.GeneratorSwitch")
+                    .getMethod("getGeneratorSwitches", Stream.class, List.class)
+                    .invoke(null, this.template.getProjects().stream(), this.contentFolders);
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException
+                | ClassNotFoundException e) {
+            throw new UndeclaredThrowableException(e);
+        }
     }
 
     public boolean isTypeExportRussian() {

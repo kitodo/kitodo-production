@@ -50,6 +50,7 @@ import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
 import org.kitodo.helper.metadata.ImagesHelper;
 import org.kitodo.legacy.UghImplementation;
+import org.kitodo.model.ContentFolder;
 import org.kitodo.services.ServiceManager;
 
 /**
@@ -199,12 +200,13 @@ public class SchemaService {
 
     private MetsModsImportExportInterface addVirtualFileGroupsToMetsMods(MetsModsImportExportInterface metsMods,
             Process process, VariableReplacer variableReplacer)
-            throws PreferencesException, JAXBException {
+            throws PreferencesException, IOException, JAXBException {
         List<Folder> folders = process.getProject().getFolders();
         for (Folder folder : folders) {
             // check if source files exists
             if (folder.getLinkingMode().equals(LinkingMode.EXISTING)) {
-                URI folderUri = serviceManager.getProcessService().getMethodFromName(folder.getRelativePath(), process);
+                URI folderUri = serviceManager.getProcessService().getMethodFromName(
+                    new ContentFolder(folder).getRelativePath(variableReplacer.mapOfVariables()), process);
                 if (serviceManager.getFileService().fileExist(folderUri)
                         && !serviceManager.getFileService().getSubUris(folderUri).isEmpty()) {
                     metsMods.getDigitalDocument().getFileSet()
@@ -226,7 +228,8 @@ public class SchemaService {
         virtualFileGroup.setPathToFiles(variableReplacer.replace(folder.getUrlStructure()));
         virtualFileGroup.setMimetype(folder.getMimeType());
         if (FileFormatsConfig.getFileFormat(folder.getMimeType()).isPresent()) {
-            virtualFileGroup.setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
+            virtualFileGroup
+                    .setFileSuffix(FileFormatsConfig.getFileFormat(folder.getMimeType()).get().getExtension(false));
         }
         virtualFileGroup.setOrdinary(!folder.getLinkingMode().equals(LinkingMode.PREVIEW_IMAGE));
 
