@@ -11,111 +11,12 @@
 
 package org.kitodo.helper;
 
-import java.util.Comparator;
-
 /**
- * A string comparator implementation that compares strings as to their
- * lexicographical order. This respects ordering symbols before numbers, upper
- * case letters before lower case, sorting umlauts and German sharp s as to
- * German sort rules, and sorting sequences of numbers by their numeric value,
- * ignoring preceding zeroes.
+ * A string tokenizer with type detection, insertions for umlauts and number
+ * group detection. I.e., the String "Grüße166.txt" will be tokenized to ['G',
+ * 'r', 'u', 'e', 's', 's', 'e', 166, '.', 't', 'x', 't', -1, -1, …].
  */
-public class LexicographicalOrder implements Comparator<String> {
-
-    /**
-     * A string tokenizer with type detection, insertions for umlauts and number
-     * group detection. I.e., the String "Grüße166.txt" will be tokenized to
-     * ['G', 'r', 'u', 'e', 's', 's', 'e', 166, '.', 't', 'x', 't', -1, -1, …].
-     */
-    private class Tokenizer {
-
-        private final boolean caseInsensitive;
-
-        /**
-         * If a letter must be inserted to resolve umlauts or sharp s, it is
-         * cached here.
-         */
-        private short insert;
-
-        /**
-         * Reading position within the string.
-         */
-        private int position;
-
-        /**
-         * String to tokenize.
-         */
-        private final String string;
-
-        /**
-         * The length of the String, for not calculating it over and over again.
-         */
-        private final int stringLength;
-
-        /**
-         * Creates a new Tokenizer.
-         *
-         * @param s
-         *            String to tokenize
-         * @param caseInsensitive
-         *            Whether to work case-insensitive
-         */
-        private Tokenizer(String s, boolean caseInsensitive) {
-            string = s;
-            position = SYMBOL;
-            stringLength = s != null ? s.length() : -1;
-            insert = NONE;
-            this.caseInsensitive = caseInsensitive;
-        }
-
-        private int currentCodePoint() {
-            int i = string.codePointAt(position);
-            return caseInsensitive ? Character.toUpperCase(i) : i;
-        }
-
-        /**
-         * Each call to next() subesequently returns the next token. Result
-         * format is an array with the two entries type and value, in case of
-         * numbers three entries type, value and number of leading zeroes. After
-         * the end of data, an array with one type value of -1 is returned.
-         *
-         * @return the tokens of the string, each at a time.
-         */
-        private int[] next() {
-            if (string == null) {
-                return new int[] {Integer.MIN_VALUE };
-            }
-            if (insert > NONE) {
-                short insertValue = insert;
-                insert = NONE;
-                return new int[] {TYPES[insertValue], insertValue };
-            }
-            if (position >= stringLength) {
-                return new int[] {END };
-            }
-            int codePoint = currentCodePoint();
-            position++;
-            if (codePoint > LAST_MAPPED_CODE_POINT) {
-                return new int[] {SYMBOL, codePoint };
-            }
-            short type = TYPES[codePoint];
-            if (type != 1) {
-                insert = INSERTS[codePoint];
-                return new int[] {type, BASES[codePoint] };
-            } else {
-                int value = BASES[codePoint];
-                int leadingZeroes = value == 0 ? 1 : 0;
-                while (position < stringLength && TYPES[codePoint = currentCodePoint()] == 1) {
-                    value = 10 * value + BASES[codePoint];
-                    if (value == 0) {
-                        leadingZeroes++;
-                    }
-                    position++;
-                }
-                return new int[] {1, value, leadingZeroes };
-            }
-        }
-    }
+class LexicographicalOrderTokenizer {
 
     /**
      * Array of base characters for the characters U+0000 .. U+017E. Example:
@@ -152,7 +53,7 @@ public class LexicographicalOrder implements Comparator<String> {
      * Type value indicating the end of the string was reached. Sorts before any
      * other.
      */
-    private static final short END = -1;
+    static final short END = -1;
 
     /**
      * Constant value indicating that this letter does not require another
@@ -226,7 +127,7 @@ public class LexicographicalOrder implements Comparator<String> {
      * comparator does only support handling of non-negative integers, which
      * MUST NOT contain thousands’ separator characters.
      */
-    private static final short NUMERAL = 1;
+    static final short NUMERAL = 1;
 
     /**
      * Type value indicating the character was found to be a symbol. Sorts
@@ -292,56 +193,90 @@ public class LexicographicalOrder implements Comparator<String> {
                                                       LOWER, UPPER, LOWER, UPPER, LOWER, UPPER, LOWER, UPPER, UPPER,
                                                       LOWER, UPPER, LOWER, UPPER, LOWER };
 
+    private final boolean caseInsensitive;
+
     /**
-     * Compares two strings as defined by this comparator. A value &lt;0 means
-     * that the first String goes before the second one, a value of &gt;0 means
-     * that the second String has to go before the first one. A value of 0 means
-     * that both strings are equal. Supports {@code null} Strings, which are
-     * sorted before any other.
+     * If a letter must be inserted to resolve umlauts or sharp s, it is cached
+     * here.
      */
-    @Override
-    public int compare(String one, String another) {
-        // First, compare case insensitive.
-        int caseInsensitiveResult = compare(one, another, true);
-        if (caseInsensitiveResult != 0) {
-            return caseInsensitiveResult;
-        }
+    private short insert;
 
-        // If equal, compare case sensitive, uppercase before lowercase.
-        int caseSensitiveResult = compare(one, another, false);
-        if (caseSensitiveResult != 0) {
-            return caseSensitiveResult;
-        }
+    /**
+     * Reading position within the string.
+     */
+    private int position;
 
-        // If equal, check for binary equality. This is important for not
-        // loosing hash data structure members, that differ in symbols, but do
-        // not have lexicographical order.
-        return one.compareTo(another);
+    /**
+     * String to tokenize.
+     */
+    private final String string;
+
+    /**
+     * The length of the String, for not calculating it over and over again.
+     */
+    private final int stringLength;
+
+    /**
+     * Creates a new Tokenizer.
+     *
+     * @param s
+     *            String to tokenize
+     * @param caseInsensitive
+     *            Whether to work case-insensitive
+     */
+    LexicographicalOrderTokenizer(String s, boolean caseInsensitive) {
+        string = s;
+        position = SYMBOL;
+        stringLength = s != null ? s.length() : -1;
+        insert = NONE;
+        this.caseInsensitive = caseInsensitive;
     }
 
-    private int compare(String one, String another, boolean caseInsensitive) {
-        Tokenizer oneTokenizer = new Tokenizer(one, caseInsensitive);
-        Tokenizer anotherTokenizer = new Tokenizer(another, caseInsensitive);
-        while (true) {
-            int[] oneToken = oneTokenizer.next();
-            int[] anotherToken = anotherTokenizer.next();
-            int typeComparison = oneToken[0] - anotherToken[0];
-            if (typeComparison != 0) {
-                return typeComparison;
-            }
-            if (oneToken[0] == END) {
-                return 0;
-            }
-            int valueComparison = oneToken[1] - anotherToken[1];
-            if (valueComparison != 0) {
-                return valueComparison;
-            }
-            if (oneToken[0] == NUMERAL) {
-                int lengthComparison = anotherToken[2] - oneToken[2];
-                if (lengthComparison != 0) {
-                    return lengthComparison;
+    private int currentCodePoint() {
+        int i = string.codePointAt(position);
+        return caseInsensitive ? Character.toUpperCase(i) : i;
+    }
+
+    /**
+     * Each call to next() subesequently returns the next token. Result format
+     * is an array with the two entries type and value, in case of numbers three
+     * entries type, value and number of leading zeroes. After the end of data,
+     * an array with one type value of -1 is returned.
+     *
+     * @return the tokens of the string, each at a time.
+     */
+    int[] next() {
+        if (string == null) {
+            return new int[] {Integer.MIN_VALUE };
+        }
+        if (insert > NONE) {
+            short insertValue = insert;
+            insert = NONE;
+            return new int[] {TYPES[insertValue], insertValue };
+        }
+        if (position >= stringLength) {
+            return new int[] {END };
+        }
+        int codePoint = currentCodePoint();
+        position++;
+        if (codePoint > LAST_MAPPED_CODE_POINT) {
+            return new int[] {SYMBOL, codePoint };
+        }
+        short type = TYPES[codePoint];
+        if (type != 1) {
+            insert = INSERTS[codePoint];
+            return new int[] {type, BASES[codePoint] };
+        } else {
+            int value = BASES[codePoint];
+            int leadingZeroes = value == 0 ? 1 : 0;
+            while (position < stringLength && TYPES[codePoint = currentCodePoint()] == 1) {
+                value = 10 * value + BASES[codePoint];
+                if (value == 0) {
+                    leadingZeroes++;
                 }
+                position++;
             }
+            return new int[] {1, value, leadingZeroes };
         }
     }
 }

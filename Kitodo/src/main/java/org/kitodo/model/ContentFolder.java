@@ -37,29 +37,32 @@ import org.kitodo.helper.LexicographicalOrder;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 /**
- * Stores configuration settings regarding a type of sub-folder in the process
- * directories of processes in a project.
+ * Gives access to the contents of a subfolder in a process folder.
+ *
+ * The {@code path} field in the {@link Folder} bean represents quite a lot of
+ * functionality. On the one hand, placeholders for variables can be contained
+ * in the path, which need to be replaced at runtime. These placeholders are
+ * written as keywords enclosed in parentheses. For example,
+ * {@code (processtitle)} is to be replaced by the respective processes’ title.
+ * Therefore, you always have to pass a map with the variables when requesting
+ * {@link #getRelativePath(Map)} or {@link #getURI(Map, String, String)}. The
+ * map can be obtained from
+ * {@link de.sub.goobi.helper.VariableReplacer#mapOfVariables()}.
  *
  * <p>
- * Typically, a folder has a corresponding sub-directory in the process
- * directory of each process and a {@code <fileGrp>} structure in the produced
- * METS file. The assumption is, that each folder contains the same number of
- * files with the same names, except for the file extension, which can vary.
- * This structure is used to represent different versions of the same object (a
- * small low quality JPEG thumbnail, a high quality JPEG, an OCR-processed PDF,
- * etc.) Each version is represented by one {@code Folder} object.
- *
- * <p>
- * The sub-directory can be located by appending the value of {@link #path} to
- * the path to the process directory. The {@code <fileGrp>} structure has the
- * {@code USE} attribute set to the value of {@link #fileGroup}. It contains
- * links to the files contained in the directory. The links are formed by
- * concatenating the {@link #urlStructure} with the simple name of the file.
- *
- * <p>
- * However, a {@code Folder} can also only exist on the drive without being
- * exported to METS. Or, it can exist only virtually without correspondence on a
- * drive, just to produce the METS {@code <fileGrp>} structure.
+ * Secondly, it is also possible to define folders in such a way that the
+ * contents for several folders are stored in the same directory. This is an
+ * obsolete concept that should not be used anymore, but that we continue to
+ * support because there are legacy systems whose amounts of data files cannot
+ * easily be migrated. This behavior is enabled when there is an asterisk after
+ * the last directory separator. In that case, the contents of the folder must
+ * be listed with a special filter that results from this pattern. Thus, two
+ * files representing the same work have a common name part, hereafter called
+ * canonical, and a name part for the folder type. Therefore, the function
+ * {@link #listContents(Map, String)} returns a map that maps from the canonical
+ * part to the associated URI. In turn, the function
+ * {@link #getURI(Map, String, String)} takes the canonical part of the file
+ * name to form the requested URI.
  */
 public class ContentFolder {
     private Folder folderBean;
@@ -68,9 +71,29 @@ public class ContentFolder {
         folderBean = bean;
     }
 
+    /**
+     * When creating a map of URIs in
+     * {@link Collectors#toMap(Function, Function, BinaryOperator, Supplier)},
+     * this binary operator stores the newest value in the map. The behavior is
+     * the same as calling put () on the map several times in succession.
+     */
     private static final BinaryOperator<URI> LATEST_URI = (previous, latest) -> latest;
+
+    /**
+     * Creates a new map for the URIs of the content files.
+     */
     private static final Supplier<TreeMap<String, URI>> MAP_FACTORY = () -> new TreeMap<>(new LexicographicalOrder());
 
+    /**
+     * Replaces a variable within a string. The variable is indicated by
+     * parentheses.
+     *
+     * @param string
+     *            String in which variables are to be replaced.
+     * @param replacements
+     *            Values for replacing the variables
+     * @return The string with the replaced places
+     */
     private static String replaceInString(String string, Map<String, String> replacements) {
         for (Entry<String, String> replacement : replacements.entrySet()) {
             string = string.replace('(' + replacement.getKey() + ')', replacement.getValue());
@@ -115,7 +138,6 @@ public class ContentFolder {
      *            -->.getExtension(false))</code>
      * @return composed URI
      */
-    @Transient
     public URI getURI(Map<String, String> vars, String canonical, String extensionWithoutDot) {
         int lastSeparator = folderBean.getPath().lastIndexOf(File.separatorChar);
         String lastSegment = folderBean.getPath().substring(lastSeparator + 1);

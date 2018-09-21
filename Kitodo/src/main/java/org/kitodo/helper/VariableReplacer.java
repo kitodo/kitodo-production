@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -314,7 +315,7 @@ public class VariableReplacer {
     }
 
     private String getResultAccordingToMetadataLevel(MetadataLevel metadataLevel, String metadata, String resultFirst,
-            String resultTop) {
+                                                     String resultTop) {
         String result = "";
         switch (metadataLevel) {
             case FIRSTCHILD:
@@ -417,12 +418,23 @@ public class VariableReplacer {
             result.put("stepname", taskName);
         }
 
-        Arrays.asList(Pair.of(this.process.getWorkpieces(), "workpiece."),
-            Pair.of(this.process.getTemplates(), "template."), Pair.of(this.process.getProperties(), "process."))
-                .parallelStream().flatMap(λ -> λ.getLeft().parallelStream().map(μ -> Pair.of(μ, λ.getRight())))
-                .flatMap(λ -> toAnyCase(λ.getLeft().getTitle()).parallelStream().map(μ -> λ.getRight().concat(μ))
-                        .map(μ -> Pair.of(μ, λ.getValue())))
-                .forEach(λ -> result.put(λ.getKey(), λ.getValue()));
+        Pair<List<Property>, String> workpieceProperties = Pair.of(this.process.getWorkpieces(), "workpiece.");
+        Pair<List<Property>, String> templateProperties = Pair.of(this.process.getTemplates(), "template.");
+        Pair<List<Property>, String> processProperties = Pair.of(this.process.getProperties(), "process.");
+
+        Stream<Pair<List<Property>, String>> propertyLists = Arrays
+                .asList(workpieceProperties, templateProperties, processProperties).parallelStream();
+
+        Stream<Pair<Property, String>> properties = propertyLists
+                .flatMap(λ -> λ.getLeft().parallelStream().map(μ -> Pair.of(μ, λ.getRight())));
+
+        Stream<Pair<String, String>> keyVariantsWithValues = properties.flatMap((propertyValuePair) -> {
+            Stream<String> propertyNameVariants = toAnyCase(propertyValuePair.getLeft().getTitle()).parallelStream();
+            Stream<String> keyVariants = propertyNameVariants.map(λ -> propertyValuePair.getRight().concat(λ));
+            return keyVariants.map(λ -> Pair.of(λ, propertyValuePair.getValue()));
+        });
+
+        keyVariantsWithValues.forEach(λ -> result.put(λ.getKey(), λ.getValue()));
 
         return result;
     }

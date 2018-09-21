@@ -14,6 +14,7 @@ package org.kitodo.forms;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,7 +46,7 @@ public class GeneratorSwitch {
      * Modifyable list containing enabled generators. This list is member of the
      * {@link Task} and saves the generator state when the task is saved.
      */
-    private List<Folder> generateContents;
+    private List<Folder> contentFolders;
 
     /**
      * Returns a list of generator switches for all folders whose contents can
@@ -53,26 +54,16 @@ public class GeneratorSwitch {
      *
      * @param projects
      *            stream of projects this task is used in
-     * @param generateContents
+     * @param contentFolders
      *            modifiable list of folders whose contents are to be generated
      * @return list of GeneratorSwitch objects or empty list
      */
-    @SuppressWarnings("serial")
-    public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> generateContents) {
+    public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> contentFolders) {
 
-        // Ignore all projects that do not have a source folder configured. It
-        // isn’t possible to generate anything without a data source.
+        // Ignore all projects that do not have a source folder configured.
         Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
 
-        // Drop all folders to generate if they are their own source folder. The
-        // user may have configured a generation rule on a folder that it later
-        // has set as source folder. This would cause the file to be overwritten
-        // by itself in the generation process, leading to data loss, which must
-        // be avoided.
-        Stream<Pair<Folder, Folder>> foldersWithSources = projectsWithSourceFolder
-                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
-        Stream<Folder> allowedFolders = foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight()))
-                .map(λ -> λ.getLeft());
+        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
 
         // Remove all folders to generate which do not have anything to generate
         // configured.
@@ -81,13 +72,24 @@ public class GeneratorSwitch {
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, generateContents));
+        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
 
-        return new LinkedList<GeneratorSwitch>() {
-            {
-                taskGenerators.forEach(this::add);
-            }
-        };
+        List<GeneratorSwitch> result = taskGenerators.collect(Collectors.toCollection(LinkedList::new));
+        return result;
+    }
+
+    /**
+     * Drop all folders to generate if they are their own source folder.
+     *
+     * @param projects
+     *            projects whose folders allowed to be generated are to be
+     *            determined
+     * @return a stream of folders that are allowed to be generated
+     */
+    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
+        Stream<Pair<Folder, Folder>> foldersWithSources = projects
+                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
+        return foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft());
     }
 
     /**
@@ -95,12 +97,12 @@ public class GeneratorSwitch {
      *
      * @param folder
      *            folder represented by this toggle switch
-     * @param generateContents
-     *            modifyable list of enabled toggle switches
+     * @param contentFolders
+     *            modifiable list of enabled toggle switches
      */
-    public GeneratorSwitch(Folder folder, List<Folder> generateContents) {
+    public GeneratorSwitch(Folder folder, List<Folder> contentFolders) {
         this.folder = folder;
-        this.generateContents = generateContents;
+        this.contentFolders = contentFolders;
     }
 
     /**
@@ -119,7 +121,7 @@ public class GeneratorSwitch {
      * @returns the value for the toggle switch
      */
     public boolean isValue() {
-        return generateContents.contains(folder);
+        return contentFolders.contains(folder);
     }
 
     /**
@@ -130,9 +132,9 @@ public class GeneratorSwitch {
      */
     public void setValue(boolean value) {
         if (!value) {
-            generateContents.remove(folder);
-        } else if (!generateContents.contains(folder)) {
-            generateContents.add(folder);
+            contentFolders.remove(folder);
+        } else if (!contentFolders.contains(folder)) {
+            contentFolders.add(folder);
         }
     }
 }
