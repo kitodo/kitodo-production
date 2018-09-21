@@ -24,14 +24,19 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/save.js" target="body" />
+        <h:outputScript name="js/save.js" target="body"/>
         <script>
-            window.onload = function () {checkForm('editForm')};
+            window.onload = function () {
+                checkForm('editForm')
+            };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.projectEdit} (#{ProjectForm.myProjekt.title})" rendered="#{not empty ProjectForm.myProjekt.title}"/>
-            <h:outputText value="#{msgs.newProject}" rendered="#{empty ProjectForm.myProjekt.folders}"/>
-            <h:outputText value="#{msgs.duplicateProject}" rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}"/>
+            <h:outputText value="#{msgs.projectEdit} (#{ProjectForm.myProjekt.title})"
+                          rendered="#{not empty ProjectForm.myProjekt.title}"/>
+            <h:outputText value="#{msgs.newProject}"
+                          rendered="#{empty ProjectForm.myProjekt.title and empty ProjectForm.myProjekt.folders}"/>
+            <h:outputText value="#{msgs.duplicateProject}"
+                          rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -79,7 +84,8 @@
                 <ui:fragment rendered="#{empty ProjectForm.myProjekt.folders}">
                     #{msgs.newProject}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}">
+                <ui:fragment
+                        rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}">
                     #{msgs.duplicateProject}
                 </ui:fragment>
             </a>
