@@ -208,7 +208,7 @@ public class UserGroupServiceIT {
     public void shouldGetAuthorizationsAsString() throws Exception {
         UserGroup userGroup = userGroupService.getById(1);
         int actual = userGroupService.getAuthorizationsAsString(userGroup).size();
-        int expected = 109;
+        int expected = 119;
         assertEquals("Number of authority strings doesn't match!", expected, actual);
     }
 
