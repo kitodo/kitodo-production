@@ -210,7 +210,7 @@ public enum ParameterCore implements ParameterInterface {
      * Prefix for image names as regex. Default is 8 digits \\d{8} and gets
      * validated.
      */
-    IMAGE_PREFIX("ImagePrefix", String.class, "\\d{8}", new ArrayList<>()),
+    IMAGE_PREFIX("image.prefix", String.class, "\\d{8}", new ArrayList<>()),
 
     /**
      * Sorting of images.
@@ -223,12 +223,12 @@ public enum ParameterCore implements ParameterInterface {
      * character of image names, all characters are supported.
      * </p>
      */
-    IMAGE_SORTING("ImageSorting", String.class, "number", Arrays.asList("number", "alphanumeric")),
+    IMAGE_SORTING("image.sorting", String.class, "number", Arrays.asList("number", "alphanumeric")),
 
     /**
      * Defaults to {@code fertig/}.
      */
-    DONE_DIRECTORY_NAME("doneDirectoryName", String.class, "fertig/", new ArrayList<>()),
+    DONE_DIRECTORY_NAME("image.doneDirectoryName", String.class, "fertig/", new ArrayList<>()),
 
     /*
      * VISUAL APPEARANCE
