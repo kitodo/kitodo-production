@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,8 +28,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
+import org.kitodo.util.GeneratorSwitch;
 
 @Entity
 @Table(name = "task")
@@ -139,6 +142,17 @@ public class Task extends BaseIndexedBean {
                     @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
+    /**
+     * This field contains information about folders whose contents are to be
+     * generated in this task.
+     */
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "contentFolders_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
+        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
+    )
+    private List<Folder> contentFolders;
+
     @Transient
     private String localizedTitle;
 
@@ -155,7 +169,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Copy constructor.
-     * 
+     *
      * @param templateTask
      *            task to copy
      */
@@ -362,7 +376,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get list of users.
-     * 
+     *
      * @return list of User objects or empty list
      */
     public List<User> getUsers() {
@@ -374,7 +388,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set list of users.
-     * 
+     *
      * @param users
      *            as list
      */
@@ -384,7 +398,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get list of user groups.
-     * 
+     *
      * @return list of UserGroup objects or empty list
      */
     public List<UserGroup> getUserGroups() {
@@ -396,12 +410,47 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set list of user groups.
-     * 
+     *
      * @param userGroups
      *            as list
      */
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    /**
+     * Get list of folders whose contents are to be generated.
+     *
+     * @return list of Folder objects or empty list
+     */
+    public List<Folder> getContentFolders() {
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
+        }
+        return contentFolders;
+    }
+
+    /**
+     * Set list of folders whose contents are to be generated.
+     *
+     * @param contentFolders
+     *            as list
+     */
+    public void setContentFolders(List<Folder> contentFolders) {
+        this.contentFolders = contentFolders;
+    }
+
+    /**
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
+     *
+     * @return list of GeneratorSwitch objects or empty list
+     */
+    public List<GeneratorSwitch> getGenerators() {
+        if (this.contentFolders == null) {
+            this.contentFolders = new ArrayList<>();
+        }
+        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
     }
 
     public boolean isTypeExportRussian() {
@@ -427,7 +476,7 @@ public class Task extends BaseIndexedBean {
     /**
      * Set task type images. If types is true, it also sets type images read to
      * true.
-     * 
+     *
      * @param typeImagesWrite
      *            true or false
      */
@@ -565,7 +614,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Get localized title.
-     * 
+     *
      * @return localized title as String
      */
     public String getLocalizedTitle() {
@@ -574,7 +623,7 @@ public class Task extends BaseIndexedBean {
 
     /**
      * Set localized titles as String.
-     * 
+     *
      * @param localizedTitle
      *            as String
      */
@@ -586,7 +635,7 @@ public class Task extends BaseIndexedBean {
     // files
     /**
      * Get task title with user full name.
-     * 
+     *
      * @return task title with user full name as String
      */
     public String getTitleWithUserName() {
@@ -634,28 +683,18 @@ public class Task extends BaseIndexedBean {
             return false;
         }
         Task task = (Task) o;
-        return homeDirectory == task.homeDirectory
-            && typeMetadata == task.typeMetadata
-            && typeAutomatic == task.typeAutomatic
-            && typeImportFileUpload == task.typeImportFileUpload
-            && typeExportRussian == task.typeExportRussian
-            && typeImagesRead == task.typeImagesRead
-            && typeImagesWrite == task.typeImagesWrite
-            && typeExportDMS == task.typeExportDMS
-            && typeAcceptClose == task.typeAcceptClose
-            && typeCloseVerify == task.typeCloseVerify
-            && Objects.equals(title, task.title)
-            && Objects.equals(priority, task.priority)
-            && Objects.equals(ordering, task.ordering)
-            && Objects.equals(processingStatus, task.processingStatus)
-            && Objects.equals(processingTime, task.processingTime)
-            && Objects.equals(processingBegin, task.processingBegin)
-            && Objects.equals(processingEnd, task.processingEnd)
-            && Objects.equals(editType, task.editType)
-            && Objects.equals(scriptName, task.scriptName)
-            && Objects.equals(scriptPath, task.scriptPath)
-            && Objects.equals(batchStep, task.batchStep)
-            && Objects.equals(workflowId, task.workflowId);
+        return homeDirectory == task.homeDirectory && typeMetadata == task.typeMetadata
+                && typeAutomatic == task.typeAutomatic && typeImportFileUpload == task.typeImportFileUpload
+                && typeExportRussian == task.typeExportRussian && typeImagesRead == task.typeImagesRead
+                && typeImagesWrite == task.typeImagesWrite && typeExportDMS == task.typeExportDMS
+                && typeAcceptClose == task.typeAcceptClose && typeCloseVerify == task.typeCloseVerify
+                && Objects.equals(title, task.title) && Objects.equals(priority, task.priority)
+                && Objects.equals(ordering, task.ordering) && Objects.equals(processingStatus, task.processingStatus)
+                && Objects.equals(processingTime, task.processingTime)
+                && Objects.equals(processingBegin, task.processingBegin)
+                && Objects.equals(processingEnd, task.processingEnd) && Objects.equals(editType, task.editType)
+                && Objects.equals(scriptName, task.scriptName) && Objects.equals(scriptPath, task.scriptPath)
+                && Objects.equals(batchStep, task.batchStep) && Objects.equals(workflowId, task.workflowId);
     }
 
     @Override

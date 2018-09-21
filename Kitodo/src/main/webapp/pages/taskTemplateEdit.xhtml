@@ -54,6 +54,9 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="tabs">
+            <p:tab title="#{msgs.details}" rendered="#{not empty TemplateForm.task.generators}">
+                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditDetails.xhtml"/>
+            </p:tab>
             <p:tab title="#{msgs.user}">
                 <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsers.xhtml"/>
             </p:tab>

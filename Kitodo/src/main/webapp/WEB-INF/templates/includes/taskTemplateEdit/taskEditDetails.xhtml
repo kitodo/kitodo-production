@@ -1,0 +1,35 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <p:panelGrid columns="2" layout="grid">
+        <p:row>
+            <p:repeat var="generator" value="#{TemplateForm.task.generators}">
+                <div>
+                    <p:outputLabel for="generator">
+                        <h:outputFormat value="#{msgs.generator}">
+                            <f:param value="#{generator.label}"/>
+                        </h:outputFormat>
+                    </p:outputLabel>
+                    <p:selectBooleanCheckbox id="generator" value="#{generator.value}" class="input">
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectBooleanCheckbox>
+                </div>
+            </p:repeat>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>
