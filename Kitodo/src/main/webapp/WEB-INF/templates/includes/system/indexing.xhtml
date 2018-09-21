@@ -104,7 +104,7 @@
                                                  onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                  value="#{msgs.startIndexing}"
                                                  action="#{indexingForm.startAllIndexing()}"
-                                                 disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress())}"/>
+                                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress())}"/>
                             </td>
                             <td>
                                 <p:progressBar widgetVar="allProgress"

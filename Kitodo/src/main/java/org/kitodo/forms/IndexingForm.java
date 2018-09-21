@@ -421,6 +421,11 @@ public class IndexingForm {
         }
     }
 
+    public boolean isMappingEmpty() {
+        String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
+        return isMappingValid(emptyMapping);
+    }
+
     private boolean isMappingValid(String mapping) {
         try {
             JsonObject mappingExpected = Json.createReader(new StringReader(mapping)).readObject();
