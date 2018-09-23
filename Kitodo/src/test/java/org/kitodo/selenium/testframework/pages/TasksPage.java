@@ -13,19 +13,32 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class TasksPage extends Page<TasksPage> {
 
+    private static final String TASK_TABLE = "tasksTabView:taskTable";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "tasksTabView:taskTable_data")
-    private WebElement tasksTable;
+    @FindBy(id = TASK_TABLE + "_data")
+    private WebElement taskTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "tasksTabView:filterForm:onlyOpenTasks")
+    private WebElement showOnlyOpenTasksCheckbox;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "tasksTabView:filterForm:applyFilter")
+    private WebElement applyFilterLink;
 
     public TasksPage() {
         super("pages/tasks.jsf");
@@ -45,10 +58,22 @@ public class TasksPage extends Page<TasksPage> {
         return this;
     }
 
+    public List<String> getTaskDetails() {
+        int index = triggerRowToggle(taskTable, "Processed");
+        WebElement detailsTable = Browser.getDriver()
+                .findElement(By.id(TASK_TABLE + ":" + index + ":currentTaskDetailTable"));
+        return getTableDataByColumn(detailsTable, 1);
+    }
+
+    public void applyFilterShowOnlyOpenTasks() {
+        showOnlyOpenTasksCheckbox.click();
+        applyFilterLink.click();
+    }
+
     public int countListedTasks() throws Exception {
         if (isNotAt()) {
             goTo();
         }
-        return getRowsOfTable(tasksTable).size();
+        return getRowsOfTable(taskTable).size();
     }
 }
