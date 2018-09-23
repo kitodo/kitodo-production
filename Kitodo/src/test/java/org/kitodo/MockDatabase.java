@@ -411,6 +411,19 @@ public class MockDatabase {
         authorities.add(new Authority("deleteUser" + clientAssignableAuthoritySuffix));
         authorities.add(new Authority("addUser" + clientAssignableAuthoritySuffix));
 
+        //Workflow
+        authorities.add(new Authority("viewAllWorkflows" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("addWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("editWorkflow" + globalAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteWorkflow" + globalAssignableAuthoritySuffix));
+
+        authorities.add(new Authority("viewWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("viewAllWorkflows" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("editWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("deleteWorkflow" + clientAssignableAuthoritySuffix));
+        authorities.add(new Authority("addWorkflow" + clientAssignableAuthoritySuffix));
+
         for (Authority authority : authorities) {
             serviceManager.getAuthorityService().save(authority);
         }
