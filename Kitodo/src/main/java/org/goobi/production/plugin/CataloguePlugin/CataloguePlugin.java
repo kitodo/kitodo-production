@@ -21,7 +21,6 @@ import org.goobi.production.plugin.UnspecificPlugin;
 import org.kitodo.api.ugh.FileformatInterface;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 
 /**
@@ -275,7 +274,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      * @return the timeout for catalogue access
      */
     public static long getTimeout() {
-        return ConfigCore.getLongParameter(ParameterCore.CATALOGUE_TIMEOUT, DefaultValues.CATALOGUE_TIMEOUT);
+        return ConfigCore.getLongParameterOrDefaultValue(ParameterCore.CATALOGUE_TIMEOUT);
     }
 
     /**
@@ -295,7 +294,7 @@ public class CataloguePlugin extends UnspecificPlugin {
      *
      * @param preferences
      *            UGH preferences
-     * @see org.kitodo.services.data.RulesetService#getPreferences()
+     * @see org.kitodo.services.data.RulesetService#getPreferences(org.kitodo.data.database.beans.Ruleset)
      */
     public void setPreferences(PrefsInterface preferences) {
         invokeQuietly(plugin, setPreferences, preferences, null);

@@ -51,7 +51,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -314,7 +313,7 @@ public class MassImportForm extends BaseForm {
             basename = basename.substring(basename.lastIndexOf('\\') + 1);
         }
         URI temporalFile = serviceManager.getFileService().createResource(
-            FilenameUtils.concat(ConfigCore.getParameter(ParameterCore.DIR_TEMP, DefaultValues.TEMPFOLDER), basename));
+            FilenameUtils.concat(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_TEMP), basename));
 
         serviceManager.getFileService().copyFile(URI.create(this.uploadedFile.getName()), temporalFile);
     }

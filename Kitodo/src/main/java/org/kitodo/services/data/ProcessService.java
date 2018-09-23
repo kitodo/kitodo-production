@@ -134,7 +134,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final boolean CREATE_ORIG_FOLDER_IF_NOT_EXISTS = ConfigCore
             .getBooleanParameter(ParameterCore.CREATE_ORIG_FOLDER_IF_NOT_EXISTS);
-    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameter(ParameterCore.USE_ORIG_FOLDER, true);
+    private static final boolean USE_ORIG_FOLDER = ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_ORIG_FOLDER);
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -1754,7 +1754,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter(ParameterCore.USE_META_DATA_VALIDATION)
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, preferences, process)) {
             return false;
         }
@@ -1811,7 +1811,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
             Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
 
-            if (!ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT) && project.isDmsImportCreateProcessFolder()) {
+            if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
+                    && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
                 File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
                 fileService.delete(successFile.toURI());

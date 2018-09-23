@@ -184,7 +184,7 @@ public class SchemaService {
         String metsPointer = vp.replace(metsPointerToReplace);
         metsMods.setMptrAnchorUrl(metsPointer);
 
-        if (ConfigCore.getBooleanParameter(ParameterCore.EXPORT_VALIDATE_IMAGES, true)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_VALIDATE_IMAGES)) {
             if (containsInvalidImages(prefs, digitalDocument, process)) {
                 return null;
             }

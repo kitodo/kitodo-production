@@ -752,7 +752,7 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public URI getHomeDirectory(User user) throws IOException {
         URI result;
         if (Objects.nonNull(user)) {
-            if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE)) {
+            if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE)) {
                 result = Paths.get(serviceManager.getLdapServerService().getUserHomeDirectory(user)).toUri();
             } else {
                 result = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_USERS), user.getLogin()).toUri();

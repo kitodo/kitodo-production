@@ -88,7 +88,7 @@ public class ExportDms extends ExportMets {
     @Override
     public boolean startExport(Process process, URI inZielVerzeichnis) {
         if (process.getProject().isUseDmsImport()
-                && ConfigCore.getBooleanParameter(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
+                && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ASYNCHRONOUS_AUTOMATIC_EXPORT)) {
             TaskManager.addTask(new ExportDmsTask(this, process, inZielVerzeichnis));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
@@ -159,7 +159,7 @@ public class ExportDms extends ExportMets {
         trimAllMetadata(gdzfile.getDigitalDocument().getLogicalDocStruct());
 
         // validate metadata
-        if (ConfigCore.getBooleanParameter(ParameterCore.USE_META_DATA_VALIDATION)
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
                 && !serviceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
             return false;
         }
@@ -340,7 +340,7 @@ public class ExportDms extends ExportMets {
         }
 
         Helper.setMessage(process.getTitle() + ": ", "DMS-Export started");
-        if (!ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
+        if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
             exportWithTimeLimit(process);
         }
         if (exportDmsTask != null) {

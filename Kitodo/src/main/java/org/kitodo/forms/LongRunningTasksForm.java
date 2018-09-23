@@ -99,7 +99,7 @@ public class LongRunningTasksForm {
      *         the configuration
      */
     public boolean isDemoTasksLinkShowing() {
-        return ConfigCore.getBooleanParameter(ParameterCore.TASK_MANAGER_SHOW_SAMPLE_TASK);
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.TASK_MANAGER_SHOW_SAMPLE_TASK);
     }
 
     /**

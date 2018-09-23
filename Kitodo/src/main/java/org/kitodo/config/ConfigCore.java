@@ -24,6 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.exceptions.ConfigParameterException;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
@@ -69,35 +70,76 @@ public class ConfigCore extends Config {
     }
 
     /**
-     * Request long parameter from configuration.
-     *
-     * @return Parameter as Long
-     */
-    static long getLongParameter(String inParameter, long inDefault) {
-        return getConfig().getLong(inParameter, inDefault);
-    }
-
-    /**
-     * Request long parameter from configuration.
+     * Request string parameter from configuration, if parameter is not there - use
+     * default value.
      *
      * @param key
      *            as Parameter whose value is to be returned
-     * @param inDefault
-     *            default value
-     * @return Parameter as Long
+     * @return parameter as String or default value for this parameter
      */
-    public static long getLongParameter(ParameterCore key, long inDefault) {
-        return getLongParameter(key.getName(), inDefault);
+    public static String getParameterOrDefaultValue(ParameterCore key) {
+        if (key.getType().equals(String.class)) {
+            return getParameter(key.getName(), (String) key.getDefaultValue());
+        }
+        throw new ConfigParameterException(key.getName(), "String");
     }
 
     /**
-     * Request Duration parameter from configuration.
+     * Request boolean parameter from configuration, if parameter is not there - use
+     * default value.
      *
-     * @return Parameter as Duration
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @return parameter as boolean or default value for this parameter
      */
-    public static Duration getDurationParameter(String inParameter, TimeUnit timeUnit, long inDefault) {
-        long duration = getLongParameter(inParameter, inDefault);
-        return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
+    public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
+        if (key.getType().equals(Boolean.TYPE)) {
+            return getBooleanParameter(key, (boolean) key.getDefaultValue());
+        }
+        throw new ConfigParameterException(key.getName(), "boolean");
+    }
+
+    /**
+     * Request int parameter from configuration, if parameter is not there - use
+     * default value.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @return parameter as int or default value for this parameter
+     */
+    public static int getIntParameterOrDefaultValue(ParameterCore key) {
+        if (key.getType().equals(Integer.TYPE)) {
+            return getIntParameter(key, (int) key.getDefaultValue());
+        }
+        throw new ConfigParameterException(key.getName(), "int");
+    }
+
+    /**
+     * Request long parameter from configuration, if parameter is not there - use
+     * default value.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @return Parameter as long or default value
+     */
+    public static long getLongParameterOrDefaultValue(ParameterCore key) {
+        if (key.getType().equals(Long.TYPE)) {
+            return getLongParameter(key, (long) key.getDefaultValue());
+        }
+        throw new ConfigParameterException(key.getName(), "long");
+    }
+
+    /**
+     * Request long parameter or default value from configuration.
+     *
+     * @param key
+     *            as Parameter whose value is to be returned
+     * @param defaultValue
+     *            as long
+     * @return Parameter as long or default value
+     */
+    public static long getLongParameter(ParameterCore key, long defaultValue) {
+        return getConfig().getLong(key.getName(), defaultValue);
     }
 
     /**
@@ -107,12 +149,11 @@ public class ConfigCore extends Config {
      *            as Parameter whose value is to be returned
      * @param timeUnit
      *            as TimeUnit
-     * @param defaultValue
-     *            default value
      * @return Parameter as Duration
      */
-    public static Duration getDurationParameter(ParameterCore key, TimeUnit timeUnit, long defaultValue) {
-        return getDurationParameter(key.getName(), timeUnit, defaultValue);
+    public static Duration getDurationParameter(ParameterCore key, TimeUnit timeUnit) {
+        long duration = getLongParameterOrDefaultValue(key);
+        return new Duration(TimeUnit.MILLISECONDS.convert(duration, timeUnit));
     }
 
     /**

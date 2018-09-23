@@ -139,7 +139,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     private void readLocalConfig() {
-        setLdapAuthentication(ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE));
+        setLdapAuthentication(ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE));
     }
 
     private String[] convertUserDn(String userDn) {

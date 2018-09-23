@@ -316,7 +316,7 @@ public class BatchForm extends BaseForm {
             for (Batch selectedBatch : this.selectedBatches) {
                 serviceManager.getBatchService().addAll(selectedBatch, this.selectedProcesses);
                 serviceManager.getBatchService().save(selectedBatch);
-                if (ConfigCore.getBooleanParameter(ParameterCore.BATCHES_LOG_CHANGES)) {
+                if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
                         serviceManager.getProcessService().addToWikiField(
                             Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
@@ -348,7 +348,7 @@ public class BatchForm extends BaseForm {
         for (Batch selectedBatch : this.selectedBatches) {
             serviceManager.getBatchService().removeAll(selectedBatch, this.selectedProcesses);
             serviceManager.getBatchService().save(selectedBatch);
-            if (ConfigCore.getBooleanParameter(ParameterCore.BATCHES_LOG_CHANGES)) {
+            if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(
                         Helper.getTranslation("removeFromBatch", serviceManager.getBatchService().getLabel(selectedBatch)), p);
@@ -400,7 +400,7 @@ public class BatchForm extends BaseForm {
             }
 
             serviceManager.getBatchService().save(batch);
-            if (ConfigCore.getBooleanParameter(ParameterCore.BATCHES_LOG_CHANGES)) {
+            if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : selectedProcesses) {
                     serviceManager.getProcessService().addToWikiField(
                         Helper.getTranslation("addToBatch", serviceManager.getBatchService().getLabel(batch)), p);
@@ -459,7 +459,7 @@ public class BatchForm extends BaseForm {
                     case LOGISTIC:
                         for (Process process : selectedBatch.getProcesses()) {
                             ExportDms dms = new ExportDms(
-                                    ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITH_IMAGES, true));
+                                    ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                             dms.startExport(process);
                         }
                         break;

@@ -192,7 +192,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
 
         // Start TLS
-        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_TLS)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_TLS)) {
             logger.debug("use TLS for auth");
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;
@@ -294,11 +294,11 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
 
         URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter(ParameterCore.DIR_USERS));
 
-        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_LOCAL_DIRECTORY)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_LOCAL_DIRECTORY)) {
             return userFolderBasePath.resolve(user.getLogin());
         }
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
-        if (ConfigCore.getBooleanParameter(ParameterCore.LDAP_USE_TLS)) {
+        if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_TLS)) {
 
             env.put("java.naming.ldap.version", "3");
             LdapContext ctx = null;

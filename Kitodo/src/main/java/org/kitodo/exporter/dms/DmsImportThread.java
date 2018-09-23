@@ -137,7 +137,7 @@ public class DmsImportThread extends Thread {
     }
 
     private void removeImages() {
-        if (!ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
+        if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)) {
             try {
                 serviceManager.getFileService().delete(folderImages.toURI());
             } catch (IOException e) {

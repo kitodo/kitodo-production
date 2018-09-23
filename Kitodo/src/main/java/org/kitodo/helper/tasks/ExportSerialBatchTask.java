@@ -101,7 +101,7 @@ public class ExportSerialBatchTask extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -155,7 +155,7 @@ public class ExportSerialBatchTask extends EmptyTask {
                     process = processesIterator.next();
                     DigitalDocumentInterface out = buildExportDocument(process, pointers);
                     ExportDms exporter = new ExportDms(
-                            ConfigCore.getBooleanParameter(ParameterCore.EXPORT_WITH_IMAGES, true));
+                            ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     exporter.setExportDmsTask(this);
                     exporter.startExport(process, serviceManager.getUserService()
                             .getHomeDirectory(serviceManager.getUserService().getAuthenticatedUser()),

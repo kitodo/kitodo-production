@@ -396,7 +396,7 @@ public class SearchForm {
             search += "\"" + this.stepOperand + this.status + ":" + this.stepname + "\" ";
         }
         if (!this.stepdonetitle.isEmpty() && !this.stepdoneuser.isEmpty()
-                && ConfigCore.getBooleanParameter(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+                && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
             search += "\"" + FilterString.TASKDONEUSER.getFilterEnglish() + this.stepdoneuser + "\" \""
                     + FilterString.TASKDONETITLE.getFilterEnglish() + this.stepdonetitle + "\" ";
         }

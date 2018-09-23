@@ -24,25 +24,22 @@ import org.goobi.production.plugin.PluginLoader;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.helper.enums.MetadataFormat;
-import org.kitodo.services.ServiceManager;
 
 /**
- * Helper form.
- *
- * @author Wulf Riebensahm
+ * Helper form - used for some single methods which don't match yet to other
+ * forms.
  */
 @Named("HelperForm")
 @SessionScoped
 public class HelperForm implements Serializable {
     private static final long serialVersionUID = -5872893771807845586L;
-    private transient ServiceManager serviceManager = new ServiceManager();
 
     public String getVersion() {
         return GoobiVersion.getBuildversion();
     }
 
     public boolean getAnonymized() {
-        return ConfigCore.getBooleanParameter(ParameterCore.ANONYMIZE);
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE);
     }
 
     /**
@@ -81,7 +78,7 @@ public class HelperForm implements Serializable {
      * @return true or false
      */
     public boolean getMassImportAllowed() {
-        return ConfigCore.getBooleanParameter(ParameterCore.MASS_IMPORT_ALLOWED)
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.MASS_IMPORT_ALLOWED)
                 && !PluginLoader.getPluginList(PluginType.IMPORT).isEmpty();
     }
 
@@ -92,6 +89,6 @@ public class HelperForm implements Serializable {
      * @return boolean
      */
     public boolean getUserStepDoneSearchEnabled() {
-        return ConfigCore.getBooleanParameter(ParameterCore.WITH_USER_STEP_DONE_SEARCH);
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH);
     }
 }

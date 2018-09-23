@@ -36,7 +36,6 @@ import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.DefaultValues;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
@@ -76,15 +75,15 @@ public class ExportPdf extends ExportMets {
         String servletPath = context.getExternalContext().getRequestServletPath();
         String basisUrl = fullPath.substring(0, fullPath.indexOf(servletPath));
 
-        if (!ConfigCore.getBooleanParameter(ParameterCore.PDF_AS_DOWNLOAD)) {
+        if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.PDF_AS_DOWNLOAD)) {
             useContentServerForPdfCreation(metaFile, userHome, process, basisUrl);
         } else {
 
             GetMethod method = null;
             try {
                 // define path for mets and pdfs
-                Integer contentServerTimeOut = ConfigCore.getIntParameter(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT,
-                    DefaultValues.KITODO_CONTENT_SERVER_TIMEOUT);
+                Integer contentServerTimeOut = ConfigCore
+                        .getIntParameterOrDefaultValue(ParameterCore.KITODO_CONTENT_SERVER_TIMEOUT);
                 URL kitodoContentServerUrl = getKitodoContentServerURL(metaFile, process, basisUrl);
 
                 // get pdf from servlet and forward response to file
