@@ -436,10 +436,10 @@ public class IndexingForm {
     }
 
     private boolean isMappingEqualTo(String mapping) {
-        try {
-            JsonObject mappingExpected = Json.createReader(new StringReader(mapping)).readObject();
-            JsonObject mappingCurrent = Json.createReader(new StringReader(indexRestClient.getMapping())).readObject()
-                    .getJsonObject(indexRestClient.getIndex());
+        try (JsonReader mappingExpectedReader = Json.createReader(new StringReader(mapping));
+                JsonReader mappingCurrentReader = Json.createReader(new StringReader(indexRestClient.getMapping()))) {
+            JsonObject mappingExpected = mappingExpectedReader.readObject();
+            JsonObject mappingCurrent = mappingCurrentReader.readObject().getJsonObject(indexRestClient.getIndex());
             return mappingExpected.equals(mappingCurrent);
         } catch (IOException e) {
             return false;
