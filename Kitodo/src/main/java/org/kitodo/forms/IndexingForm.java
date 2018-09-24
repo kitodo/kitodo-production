@@ -421,12 +421,21 @@ public class IndexingForm {
         }
     }
 
+    /**
+     * Check if current mapping is empty.
+     * 
+     * @return true if mapping is empty, otherwise false
+     */
     public boolean isMappingEmpty() {
         String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
-        return isMappingValid(emptyMapping);
+        return isMappingEqualTo(emptyMapping);
     }
 
     private boolean isMappingValid(String mapping) {
+        return isMappingEqualTo(mapping);
+    }
+
+    private boolean isMappingEqualTo(String mapping) {
         try {
             JsonObject mappingExpected = Json.createReader(new StringReader(mapping)).readObject();
             JsonObject mappingCurrent = Json.createReader(new StringReader(indexRestClient.getMapping())).readObject()
