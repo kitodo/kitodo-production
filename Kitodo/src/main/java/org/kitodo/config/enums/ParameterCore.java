@@ -210,7 +210,7 @@ public enum ParameterCore implements ParameterInterface {
      * Prefix for image names as regex. Default is 8 digits \\d{8} and gets
      * validated.
      */
-    IMAGE_PREFIX("ImagePrefix", String.class, "\\d{8}", new ArrayList<>()),
+    IMAGE_PREFIX("image.prefix", String.class, "\\d{8}", new ArrayList<>()),
 
     /**
      * Sorting of images.
@@ -223,12 +223,12 @@ public enum ParameterCore implements ParameterInterface {
      * character of image names, all characters are supported.
      * </p>
      */
-    IMAGE_SORTING("ImageSorting", String.class, "number", Arrays.asList("number", "alphanumeric")),
+    IMAGE_SORTING("image.sorting", String.class, "number", Arrays.asList("number", "alphanumeric")),
 
     /**
      * Defaults to {@code fertig/}.
      */
-    DONE_DIRECTORY_NAME("doneDirectoryName", String.class, "fertig/", new ArrayList<>()),
+    DONE_DIRECTORY_NAME("image.doneDirectoryName", String.class, "fertig/", new ArrayList<>()),
 
     /*
      * VISUAL APPEARANCE
@@ -303,49 +303,49 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Long, value in milliseconds. Defaults to 180000 (30 minutes).
      */
-    METS_EDITOR_LOCKING_TIME("MetsEditorLockingTime", Long.TYPE, TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES),
+    METS_EDITOR_LOCKING_TIME("metsEditor.lockingTime", Long.TYPE, TimeUnit.MILLISECONDS.convert(30, TimeUnit.MINUTES),
             new ArrayList<>()),
 
     /**
      * Use special image folder for METS editor if exists (define suffix here).
      */
-    METS_EDITOR_DEFAULT_SUFFIX("MetsEditorDefaultSuffix", null, null, new ArrayList<>()),
+    METS_EDITOR_DEFAULT_SUFFIX("metsEditor.defaultSuffix", null, null, new ArrayList<>()),
 
     /**
      * Enables or disables automatic pagination changes in the meta-data editor. If
      * false, pagination must be updated manually by clicking the link “Read in
      * pagination from images”. Boolean, defaults to {@code true}.
      */
-    WITH_AUTOMATIC_PAGINATION("MetsEditorWithAutomaticPagination", Boolean.TYPE, true, new ArrayList<>()),
+    WITH_AUTOMATIC_PAGINATION("metsEditor.useAutomaticPagination", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Use special pagination type for automatic default pagination.
      */
-    METS_EDITOR_DEFAULT_PAGINATION("MetsEditorDefaultPagination", null, "uncounted",
+    METS_EDITOR_DEFAULT_PAGINATION("metsEditor.defaultPagination", null, "uncounted",
             Arrays.asList("arabic", "roman", "uncounted")),
 
     /**
      * Use a maximum of characters to display titles in the left part of mets
      * editor. Integer, the default value is 0 (everything is displayed).
      */
-    METS_EDITOR_MAX_TITLE_LENGTH("MetsEditorMaxTitleLength", null, null, new ArrayList<>()),
+    METS_EDITOR_MAX_TITLE_LENGTH("metsEditor.maxTitleLength", null, null, new ArrayList<>()),
 
     /**
      * Initialize all sub elements in METS editor to assign default values. Boolean,
      * defaults to {@code true}.
      */
-    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("MetsEditorEnableDefaultInitialisation", Boolean.TYPE, true, new ArrayList<>()),
+    METS_EDITOR_ENABLE_DEFAULT_INITIALISATION("metsEditor.enableDefaultInitialisation", Boolean.TYPE, true, new ArrayList<>()),
 
     /**
      * Display the file manipulation dialog within the METS editor.
      */
-    METS_EDITOR_DISPLAY_FILE_MANIPULATION("MetsEditorDisplayFileManipulation", null, null, new ArrayList<>()),
+    METS_EDITOR_DISPLAY_FILE_MANIPULATION("metsEditor.displayFileManipulation", null, null, new ArrayList<>()),
 
     /**
      * Comma-separated list of Strings which may be enclosed in double quotes.
      * Separators available for double page pagination modes.
      */
-    PAGE_SEPARATORS("pageSeparators", String.class, "\" \"", new ArrayList<>()),
+    PAGE_SEPARATORS("metsEditor.pageSeparators", String.class, "\" \"", new ArrayList<>()),
 
     /*
      * backup of metadata configuration
