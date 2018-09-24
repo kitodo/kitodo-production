@@ -1571,6 +1571,7 @@ public class ProcessForm extends TemplateBaseForm {
     public List<SelectItem> getRulesets() {
         return SelectItemList.getRulesets();
     }
+
     /**
      * Get list od DTO processes.
      *

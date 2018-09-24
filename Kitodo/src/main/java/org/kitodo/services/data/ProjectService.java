@@ -281,7 +281,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     private void convertRelatedJSONObjects(JsonObject jsonObject, ProjectDTO projectDTO) throws DataException {
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
-        projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(), serviceManager.getTemplateService()));
+        projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
+                serviceManager.getTemplateService()));
     }
 
     /**
