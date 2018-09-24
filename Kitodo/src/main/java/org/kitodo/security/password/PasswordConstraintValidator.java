@@ -13,19 +13,29 @@ package org.kitodo.security.password;
 
 import com.ibm.icu.impl.locale.XCldrStub;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
 
+import javax.faces.context.FacesContext;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.PasswordConfig;
+import org.kitodo.helper.Helper;
 import org.passay.CharacterRule;
 import org.passay.DictionaryRule;
 import org.passay.EnglishCharacterData;
 import org.passay.LengthRule;
+import org.passay.MessageResolver;
 import org.passay.PasswordData;
 import org.passay.PasswordValidator;
+import org.passay.PropertiesMessageResolver;
 import org.passay.Rule;
 import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
@@ -34,13 +44,15 @@ import org.passay.dictionary.WordListDictionary;
 
 public class PasswordConstraintValidator implements ConstraintValidator<ValidPassword, String> {
 
+    private static final Logger logger = LogManager.getLogger(PasswordConstraintValidator.class);
+
     @Override
     public void initialize(ValidPassword argument) {
     }
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        PasswordValidator validator = new PasswordValidator(getRulesFromConfigFile());
+        PasswordValidator validator = new PasswordValidator(getLocalizedMessages(), getRulesFromConfigFile());
 
         RuleResult result = validator.validate(new PasswordData(password));
         if (result.isValid()) {
@@ -67,5 +79,29 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
         }
 
         return rules;
+    }
+
+    private MessageResolver getLocalizedMessages() {
+        String messageFile = "password_en.properties";
+
+        if (FacesContext.getCurrentInstance() != null) {
+            Locale desiredLanguage = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+            if (desiredLanguage != null) {
+                if (desiredLanguage.equals(Locale.GERMAN)) {
+                    messageFile = "password_de.properties";
+                }
+            }
+        }
+
+        Properties properties = new Properties();
+
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        try (InputStream inputStream = classloader.getResourceAsStream("messages/" + messageFile)) {
+            properties.load(inputStream);
+            return new PropertiesMessageResolver(properties);
+        } catch (IOException e) {
+            Helper.setErrorMessage("Problem with messages loading!", logger, e);
+            return null;
+        }
     }
 }
