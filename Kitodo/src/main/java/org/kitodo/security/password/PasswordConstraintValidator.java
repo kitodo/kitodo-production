@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Properties;
 
 import javax.faces.context.FacesContext;
@@ -52,7 +53,12 @@ public class PasswordConstraintValidator implements ConstraintValidator<ValidPas
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        PasswordValidator validator = new PasswordValidator(getLocalizedMessages(), getRulesFromConfigFile());
+        PasswordValidator validator;
+        if (Objects.nonNull(getLocalizedMessages())) {
+            validator = new PasswordValidator(getLocalizedMessages(), getRulesFromConfigFile());
+        } else {
+            validator = new PasswordValidator(getRulesFromConfigFile());
+        }
 
         RuleResult result = validator.validate(new PasswordData(password));
         if (result.isValid()) {

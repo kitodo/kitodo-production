@@ -88,10 +88,10 @@ public class UserEditPage extends Page<UserEditPage> {
     }
 
     public UserEditPage insertUserData(User user) {
+        passwordInput.sendKeys(user.getPassword());
         firstNameInput.sendKeys(user.getName());
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
-        passwordInput.sendKeys(user.getPassword());
         locationInput.sendKeys(user.getLocation());
         metaDataLanguageInput.sendKeys(user.getMetadataLanguage());
         return this;
