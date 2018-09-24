@@ -30,11 +30,11 @@
 
         <h3 id="headerText">
             <h:outputText value="#{msgs.newTemplate}"
-                          rendered="#{TemplateForm.template.title eq null and empty TemplateForm.template.docket}"/>
+                          rendered="#{TemplateForm.template.title eq '' and empty TemplateForm.template.docket}"/>
             <h:outputText value="#{msgs.duplicateTemplate}"
-                          rendered="#{TemplateForm.template.title eq null and not empty TemplateForm.template.docket}"/>
+                          rendered="#{TemplateForm.template.title eq '' and not empty TemplateForm.template.docket}"/>
             <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})"
-                          rendered="#{TemplateForm.template.title ne null and not empty TemplateForm.template.docket}"/>
+                          rendered="#{TemplateForm.template.title ne '' and not empty TemplateForm.template.docket}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
