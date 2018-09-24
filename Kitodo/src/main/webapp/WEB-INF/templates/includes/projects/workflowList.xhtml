@@ -49,8 +49,9 @@
                         <f:param name="id" value="#{item.id}"/>
                     </h:link>
 
-                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" immediate="true"
-                                   title="#{msgs.duplicateWorkflow}"><i class="fa fa-clone fa-lg"/></h:commandLink>
+                    <h:commandLink action="#{WorkflowForm.duplicate(item.id)}" title="#{msgs.duplicateWorkflow}">
+                        <i class="fa fa-clone fa-lg"/>
+                    </h:commandLink>
 
                     <p:commandLink id="deleteWorkflow" action="#{WorkflowForm.delete}"
                                    title="#{msgs.delete}" update="projectsTabView:workflowTable">
