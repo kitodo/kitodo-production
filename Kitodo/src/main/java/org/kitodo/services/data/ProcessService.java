@@ -772,7 +772,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     UserDTO getBlockedUser(ProcessDTO process) {
         UserDTO result = null;
         if (MetadataLock.isLocked(process.getId())) {
-            String userID = this.msp.getLockBenutzer(process.getId());
+            String userID = this.msp.getLockUser(process.getId());
             try {
                 result = serviceManager.getUserService().findById(Integer.valueOf(userID));
             } catch (DataException | RuntimeException e) {
@@ -790,7 +790,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public User getBlockedUser(Process process) {
         User result = null;
         if (MetadataLock.isLocked(process.getId())) {
-            String userID = this.msp.getLockBenutzer(process.getId());
+            String userID = this.msp.getLockUser(process.getId());
             try {
                 result = serviceManager.getUserService().getById(Integer.valueOf(userID));
             } catch (DAOException | RuntimeException e) {
@@ -801,11 +801,11 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     public long getBlockedMinutes(Process process) {
-        return this.msp.getLockSekunden(process.getId()) / 60;
+        return this.msp.getLockSeconds(process.getId()) / 60;
     }
 
     public long getBlockedSeconds(Process process) {
-        return this.msp.getLockSekunden(process.getId()) % 60;
+        return this.msp.getLockSeconds(process.getId()) % 60;
     }
 
     /**
