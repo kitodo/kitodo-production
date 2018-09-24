@@ -85,9 +85,8 @@ public abstract class KitodoRestClient implements RestClientInterface {
         final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(user, password));
 
-        restClient = RestClient.builder(new HttpHost(host, port, protocol))
-                .setHttpClientConfigCallback(httpClientBuilder ->
-                        httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)).build();
+        restClient = RestClient.builder(new HttpHost(host, port, protocol)).setHttpClientConfigCallback(
+            httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider)).build();
     }
 
     /**
@@ -97,6 +96,17 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public String getServerInformation() throws IOException {
         Response response = restClient.performRequest("GET", "/", Collections.singletonMap("pretty", "true"));
+        return EntityUtils.toString(response.getEntity());
+    }
+
+    /**
+     * Get mapping.
+     *
+     * @return mapping
+     */
+    public String getMapping() throws IOException {
+        Response response = restClient.performRequest("GET", "/" + index + "/_mapping",
+            Collections.singletonMap("pretty", "true"));
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -120,8 +130,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
             query = "{\"settings\" : {\"index\" : {\"number_of_shards\" : 1,\"number_of_replicas\" : 0}}}";
         }
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
-        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.emptyMap(),
-                entity);
+        Response indexResponse = restClient.performRequest("PUT", "/" + index, Collections.emptyMap(), entity);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }

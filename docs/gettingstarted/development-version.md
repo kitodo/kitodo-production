@@ -125,7 +125,6 @@ sudo /bin/systemctl daemon-reload
 sudo /bin/systemctl enable elasticsearch.service
 sudo systemctl start elasticsearch.service
 until curl -s -X GET "localhost:9200/kitodo" | grep -q -o "kitodo" ; do sleep 1; done
-curl -X PUT "localhost:9200/kitodo"
 ```
 
 ### Create directories and set permissions

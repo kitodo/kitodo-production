@@ -25,7 +25,7 @@
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.startIndexing(objectType)}"
                                  styleClass="indexing-button"
-                                 disabled="#{!indexingForm.indexExists() or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
+                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.getNumberOfDatabaseObjects(objectType) lt 1)}"/>
             </td>
             <td>
                 <p:progressBar widgetVar="#{objectType}Progress"

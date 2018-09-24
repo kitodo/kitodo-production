@@ -301,8 +301,9 @@ public class IndexingForm {
             pollingChannel.send(MAPPING_STARTED_MESSAGE);
         }
         try {
+            String mapping = readMapping();
             String mappingStateMessage;
-            if (readMapping().equals("")) {
+            if (mapping.equals("")) {
                 if (indexRestClient.createIndex()) {
                     currentState = IndexStates.MAPPING_SUCCESS;
                     mappingStateMessage = MAPPING_FINISHED_MESSAGE;
@@ -311,9 +312,14 @@ public class IndexingForm {
                     mappingStateMessage = MAPPING_FAILED_MESSAGE;
                 }
             } else {
-                if (indexRestClient.createIndex(readMapping())) {
-                    currentState = IndexStates.MAPPING_SUCCESS;
-                    mappingStateMessage = MAPPING_FINISHED_MESSAGE;
+                if (indexRestClient.createIndex(mapping)) {
+                    if (isMappingValid(mapping)) {
+                        currentState = IndexStates.MAPPING_SUCCESS;
+                        mappingStateMessage = MAPPING_FINISHED_MESSAGE;
+                    } else {
+                        currentState = IndexStates.MAPPING_ERROR;
+                        mappingStateMessage = MAPPING_FAILED_MESSAGE;
+                    }
                 } else {
                     currentState = IndexStates.MAPPING_ERROR;
                     mappingStateMessage = MAPPING_FAILED_MESSAGE;
@@ -379,8 +385,8 @@ public class IndexingForm {
      */
     public int getProgress(ObjectType currentType) {
         long numberOfObjects = getNumberOfDatabaseObjects(currentType);
-        long nrOfindexedObjects = getNumberOfIndexedObjects(currentType);
-        int progress = numberOfObjects > 0 ? (int) ((nrOfindexedObjects / (float) numberOfObjects) * 100) : 0;
+        long nrOfIndexedObjects = getNumberOfIndexedObjects(currentType);
+        int progress = numberOfObjects > 0 ? (int) ((nrOfIndexedObjects / (float) numberOfObjects) * 100) : 0;
         if (Objects.equals(currentIndexState, currentType) && (numberOfObjects == 0 || progress == 100)) {
             lastIndexed.put(currentIndexState, LocalDateTime.now());
             currentIndexState = ObjectType.NONE;
@@ -412,6 +418,31 @@ public class IndexingForm {
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
+        }
+    }
+
+    /**
+     * Check if current mapping is empty.
+     * 
+     * @return true if mapping is empty, otherwise false
+     */
+    public boolean isMappingEmpty() {
+        String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
+        return isMappingEqualTo(emptyMapping);
+    }
+
+    private boolean isMappingValid(String mapping) {
+        return isMappingEqualTo(mapping);
+    }
+
+    private boolean isMappingEqualTo(String mapping) {
+        try {
+            JsonObject mappingExpected = Json.createReader(new StringReader(mapping)).readObject();
+            JsonObject mappingCurrent = Json.createReader(new StringReader(indexRestClient.getMapping())).readObject()
+                    .getJsonObject(indexRestClient.getIndex());
+            return mappingExpected.equals(mappingCurrent);
+        } catch (IOException e) {
+            return false;
         }
     }
 
