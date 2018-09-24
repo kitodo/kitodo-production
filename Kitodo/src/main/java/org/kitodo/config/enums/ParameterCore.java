@@ -35,18 +35,18 @@ public enum ParameterCore implements ParameterInterface {
     /*
      * Parameters.java has been sorted to corresponding to kitodo_config.properties,
      * including the section headers as you see. However there is an entry
-     * KonfigurationVerzeichnis in kitodo_config.properties, but there is no
-     * constant for it here. This comment is to explain where the constant is if
-     * someone compares the two files in the future:
+     * directory.config in kitodo_config.properties, but there is no constant for it
+     * here. This comment is to explain where the constant is if someone compares
+     * the two files in the future:
      */
 
-    DIR_XML_CONFIG("KonfigurationVerzeichnis", null, null, new ArrayList<>()),
+    DIR_XML_CONFIG("directory.config", null, null, new ArrayList<>()),
 
     /**
      * Absolute path to the directory that the rule set definition files will be
      * read from. It must be terminated by a directory separator ("/").
      */
-    DIR_RULESETS("RegelsaetzeVerzeichnis", null, null, new ArrayList<>()),
+    DIR_RULESETS("directory.rulesets", null, null, new ArrayList<>()),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are used
@@ -55,17 +55,17 @@ public enum ParameterCore implements ParameterInterface {
      * binding units to digitise. The path must be terminated by a directory
      * separator ("/").
      */
-    DIR_XSLT("xsltFolder", null, null, new ArrayList<>()),
+    DIR_XSLT("directory.xslt", null, null, new ArrayList<>()),
 
     /*
      * Parameters.java has been sorted to corresponding to kitodo_config.properties,
      * including the section headers as you see. However there is an entry
-     * MetadatenVerzeichnis in kitodo_config.properties, but there is no constant
-     * for it here. This comment is to explain where the constant is if someone
-     * compares the two files in the future:
+     * directory.metadata in kitodo_config.properties, but there is no constant for
+     * it here. This comment is to explain where the constant is if someone compares
+     * the two files in the future:
      */
 
-    DIR_PROCESSES("MetadatenVerzeichnis", null, null, new ArrayList<>()),
+    DIR_PROCESSES("directory.metadata", null, null, new ArrayList<>()),
 
     /**
      * Absolute path to the base directory of the users' home directories,
@@ -76,28 +76,28 @@ public enum ParameterCore implements ParameterInterface {
      * task. Note: If LDAP is used, the users' home dirs will instead be read from
      * LDAP
      */
-    DIR_USERS("dir_Users", null, null, new ArrayList<>()),
+    DIR_USERS("directory.users", null, null, new ArrayList<>()),
 
     /**
      * Absolute path to a folder the application can temporarily create files in,
      * terminated by a directory separator ("/").
      */
-    DIR_TEMP("tempfolder", String.class, "/usr/local/kitodo/temp/", new ArrayList<>()),
+    DIR_TEMP("directory.temp", String.class, "/usr/local/kitodo/temp/", new ArrayList<>()),
 
     /**
      * Path to directory in which BPMN diagrams are stored.
      */
-    DIR_DIAGRAMS("diagramsFolder", null, null, new ArrayList<>()),
+    DIR_DIAGRAMS("directory.diagrams", null, null, new ArrayList<>()),
 
     /*
      * Parameters.java has been sorted to corresponding to kitodo_config.properties,
      * including the section headers as you see. However there is an entry
-     * moduleFolder in kitodo_config.properties, but there is no constant for it
-     * here. This comment is to explain where the constant is if someone compares
+     * directory.modules in kitodo_config.properties, but there is no constant for
+     * it here. This comment is to explain where the constant is if someone compares
      * the two files in the future:
      */
 
-    DIR_MODULES("moduleFolder", null, null, new ArrayList<>()),
+    DIR_MODULES("directory.modules", null, null, new ArrayList<>()),
 
     /**
      * Points to a folder on the file system that contains <b>legacy</b> Production
@@ -108,13 +108,13 @@ public enum ParameterCore implements ParameterInterface {
      * <p>
      * Must be terminated by the file separator.
      */
-    DIR_PLUGINS("pluginFolder", null, null, new ArrayList<>()),
+    DIR_PLUGINS("directory.plugins", null, null, new ArrayList<>()),
 
     /**
      * Points to a folder on the file system that <b>legacy</b> plug-ins may use to
      * write temporary files.
      */
-    DIR_PLUGINS_TEMP("debugFolder", null, null, new ArrayList<>()),
+    DIR_PLUGINS_TEMP("directory.debug", null, null, new ArrayList<>()),
 
     /*
      * Directory management
@@ -245,7 +245,7 @@ public enum ParameterCore implements ParameterInterface {
      * used. If this directory exists BUT DOES NOT CONTAIN suitable resources, the
      * screens will not work as expected.
      */
-    DIR_LOCAL_MESSAGES("localMessages", String.class, "/usr/local/kitodo/messages/", new ArrayList<>()),
+    DIR_LOCAL_MESSAGES("directory.messages", String.class, "/usr/local/kitodo/messages/", new ArrayList<>()),
 
     /**
      * Start-up language: If not set, Kitodo.Production will start up with the

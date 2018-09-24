@@ -13,8 +13,8 @@ package org.kitodo.config.enums;
 
 public enum ParameterFileManagement implements ParameterInterface {
 
-    DIR_MODULES("moduleFolder"),
-    DIR_PROCESSES("MetadatenVerzeichnis"),
+    DIR_MODULES("directory.modules"),
+    DIR_PROCESSES("directory.metadata"),
     /**
      * Directory suffix for created image directory on process creation.
      */
