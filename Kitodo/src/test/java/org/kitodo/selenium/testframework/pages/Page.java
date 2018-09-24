@@ -47,11 +47,15 @@ public abstract class Page<T> {
 
     @SuppressWarnings("unused")
     @FindBy(id = "yesButton")
-    WebElement confirmRemoveButton;
+    private WebElement confirmRemoveButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = "noButton")
     WebElement cancelRemoveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "headerText")
+    private WebElement header;
 
     private String URL;
 
@@ -121,8 +125,7 @@ public abstract class Page<T> {
             }
         }
 
-        throw new NotFoundException(
-                "Row for title " + objectTitle + " was not found!");
+        throw new NotFoundException("Row for title " + objectTitle + " was not found!");
     }
 
     @SuppressWarnings("unchecked")
@@ -168,7 +171,27 @@ public abstract class Page<T> {
 
     protected void clickElement(WebElement element) {
         await("Wait for element clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
-                                        .ignoreExceptions().until(() -> isButtonClicked.matches(element));
+                .ignoreExceptions().until(() -> isButtonClicked.matches(element));
+    }
+
+    /**
+     * Get header text.
+     *
+     * @return value of header text
+     */
+    public String getHeaderText() {
+        return getWebElementText(header);
+    }
+
+    /**
+     * Get web element text.
+     *
+     * @param webElement
+     *            web element
+     * @return text value of web element
+     */
+    private String getWebElementText(WebElement webElement) {
+        return webElement.getText();
     }
 
     Predicate<WebElement> isButtonClicked = (webElement) -> {
@@ -185,9 +208,13 @@ public abstract class Page<T> {
             goTo();
         }
         switchToTabByIndex(tabIndex, tabView);
-        Browser.getDriver().findElement(By.xpath("//a[@href='/kitodo/pages/" + objectType.toLowerCase() + "Edit.jsf?id=" + removableID + "']/following-sibling::a[@id[contains(., 'delete" + objectType + "')]]")).click();
-        await("Wait for 'confirm delete' dialog to be displayed").atMost(Browser.getDelayAfterDelete(),
-                TimeUnit.MILLISECONDS).ignoreExceptions().until( () -> confirmRemoveButton.isDisplayed());
+        Browser.getDriver()
+                .findElement(By.xpath("//a[@href='/kitodo/pages/" + objectType.toLowerCase() + "Edit.jsf?id="
+                        + removableID + "']/following-sibling::a[@id[contains(., 'delete" + objectType + "')]]"))
+                .click();
+        await("Wait for 'confirm delete' dialog to be displayed")
+                .atMost(Browser.getDelayAfterDelete(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(() -> confirmRemoveButton.isDisplayed());
         confirmRemoveButton.click();
         Thread.sleep(Browser.getDelayAfterDelete());
         WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 60);

@@ -30,11 +30,14 @@ import org.openqa.selenium.support.FindBy;
 
 public class ProjectsPage extends Page<ProjectsPage> {
 
-    private static final String PROJECTS_TABLE = "projectsTabView:projectsTable";
-    private static final String TEMPLATE_TABLE = "projectsTabView:templateTable";
+    private static final String PROJECTS_TAB_VIEW = "projectsTabView";
+    private static final String PROJECTS_TABLE = PROJECTS_TAB_VIEW + ":projectsTable";
+    private static final String TEMPLATE_TABLE = PROJECTS_TAB_VIEW + ":templateTable";
+    private static final String DOCKET_TABLE = PROJECTS_TAB_VIEW + ":docketTable";
+    private static final String RULESET_TABLE = PROJECTS_TAB_VIEW + ":rulesetTable";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView")
+    @FindBy(id = PROJECTS_TAB_VIEW)
     private WebElement projectsTabView;
 
     @SuppressWarnings("unused")
@@ -50,11 +53,11 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement workflowsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:docketTable_data")
+    @FindBy(id = DOCKET_TABLE + "_data")
     private WebElement docketsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:rulesetTable_data")
+    @FindBy(id = RULESET_TABLE + "_data")
     private WebElement rulesetsTable;
 
     @SuppressWarnings("unused")
@@ -82,19 +85,39 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement newRulesetButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:templateTable:0:templateActionForm:action22")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/projectEdit.jsf?referer=projects&id=1']")
+    private WebElement editProjectLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/templateEdit.jsf?id=1']")
+    private WebElement editTemplateLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/workflowEdit.jsf?id=1']")
+    private WebElement editWorkflowLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/docketEdit.jsf?id=1']")
+    private WebElement editDocketLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/rulesetEdit.jsf?id=1']")
+    private WebElement editRulesetLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TEMPLATE_TABLE + ":0:templateActionForm:action22")
     private WebElement createProcess;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:projectsTable:0:projectActionForm:deleteProject")
+    @FindBy(id = PROJECTS_TABLE + ":0:projectActionForm:deleteProject")
     private WebElement deleteFirstProjectButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:docketTable:0:actionForm:deleteDocket")
+    @FindBy(id = DOCKET_TABLE + ":0:actionForm:deleteDocket")
     private WebElement deleteFirstDocketButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:rulesetTable:0:actionForm:deleteRuleset")
+    @FindBy(id = RULESET_TABLE + ":0:actionForm:deleteRuleset")
     private WebElement deleteFirstRulesetButton;
 
     public ProjectsPage() {
@@ -295,6 +318,67 @@ public class ProjectsPage extends Page<ProjectsPage> {
         }
         newElementButton.click();
         clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
+        return Pages.getRulesetEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new project.
+     *
+     * @return project edit page
+     */
+    public ProjectEditPage editProject() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        clickButtonAndWaitForRedirect(editProjectLink, Pages.getProjectEditPage().getUrl());
+        return Pages.getProjectEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new template.
+     *
+     * @return template edit page
+     */
+    public TemplateEditPage editTemplate() throws Exception {
+        switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
+
+        clickButtonAndWaitForRedirect(editTemplateLink, Pages.getTemplateEditPage().getUrl());
+        return Pages.getTemplateEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new workflow.
+     *
+     * @return workflow edit page
+     */
+    public WorkflowEditPage editWorkflow() throws Exception {
+        switchToTabByIndex(TabIndex.WORKFLOWS.getIndex());
+
+        clickButtonAndWaitForRedirect(editWorkflowLink, Pages.getWorkflowEditPage().getUrl());
+        return Pages.getWorkflowEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new docket.
+     *
+     * @return docket edit page
+     */
+    public DocketEditPage editDocket() throws Exception {
+        switchToTabByIndex(TabIndex.DOCKETS.getIndex());
+
+        clickButtonAndWaitForRedirect(editDocketLink, Pages.getDocketEditPage().getUrl());
+        return Pages.getDocketEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new ruleset.
+     *
+     * @return ruleset edit page
+     */
+    public RulesetEditPage editRuleset() throws Exception {
+        switchToTabByIndex(TabIndex.RULESETS.getIndex());
+
+        clickButtonAndWaitForRedirect(editRulesetLink, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
     }
 

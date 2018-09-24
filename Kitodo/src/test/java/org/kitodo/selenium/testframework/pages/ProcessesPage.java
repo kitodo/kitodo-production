@@ -29,6 +29,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @FindBy(id = "processesTabView:processesForm:processesTable_data")
     private WebElement processesTable;
 
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit.jsf?referer=processes&id=1']")
+    private WebElement editProcessLink;
+
     public ProcessesPage() {
         super("pages/processes.jsf");
     }
@@ -45,6 +49,19 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
                 .until(this::isAt);
         return this;
+    }
+
+    /**
+     * Go to edit page for creating a new project.
+     *
+     * @return project edit page
+     */
+    public ProcessEditPage editProcess() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        clickButtonAndWaitForRedirect(editProcessLink, Pages.getProcessEditPage().getUrl());
+        return Pages.getProcessEditPage();
     }
 
     public int countListedProcesses() throws Exception {

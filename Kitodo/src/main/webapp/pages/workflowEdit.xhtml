@@ -30,7 +30,7 @@
                 checkForm('editForm')
             };
         </script>
-        <h3>
+        <h3 id="headerText">
             <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
                           rendered="#{WorkflowForm.workflow.id ne null}"/>
             <h:outputText value="#{msgs.createNewWorkflow}"

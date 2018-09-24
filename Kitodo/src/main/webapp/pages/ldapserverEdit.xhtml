@@ -32,7 +32,7 @@
         <script>
             window.onload = function () {checkForm('editForm')};
         </script>
-        <h3>
+        <h3 id="headerText">
             <h:outputText value="#{msgs.ldapServerEdit} (#{LdapServerForm.ldapServer.title})"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.ldapServerNew}"

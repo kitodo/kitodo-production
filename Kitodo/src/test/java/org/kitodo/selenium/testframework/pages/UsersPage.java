@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -31,24 +30,30 @@ import org.openqa.selenium.support.FindBy;
 
 public class UsersPage extends Page<UsersPage> {
 
+    private static final String USERS_TAB_VIEW = "usersTabView";
+    private static final String USERS_TABLE = USERS_TAB_VIEW + ":usersTable";
+    private static final String USER_GROUPS_TABLE = USERS_TAB_VIEW + ":userGroupsTable";
+    private static final String CLIENTS_TABLE = USERS_TAB_VIEW + ":clientsTable";
+    private static final String LDAP_GROUPS_TABLE = USERS_TAB_VIEW + ":ldapGroupsTable";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView")
+    @FindBy(id = USERS_TAB_VIEW)
     private WebElement usersTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:usersTable_data")
+    @FindBy(id = USERS_TABLE + "_data")
     private WebElement usersTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:userGroupsTable_data")
+    @FindBy(id = USER_GROUPS_TABLE + "_data")
     private WebElement userGroupsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:clientsTable_data")
+    @FindBy(id = CLIENTS_TABLE + "_data")
     private WebElement clientsTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:ldapGroupsTable_data")
+    @FindBy(id = LDAP_GROUPS_TABLE + "_data")
     private WebElement ldapGroupsTable;
 
     @SuppressWarnings("unused")
@@ -72,19 +77,35 @@ public class UsersPage extends Page<UsersPage> {
     private WebElement newLdapGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:usersTable:0:actionForm:deleteUser")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/userEdit.jsf?id=1']")
+    private WebElement editUserLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/usergroupEdit.jsf?id=1']")
+    private WebElement editUserGroupLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/clientEdit.jsf?id=1']")
+    private WebElement editClientLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/ldapgroupEdit.jsf?id=1']")
+    private WebElement editLdapGroupLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USERS_TABLE + ":0:actionForm:deleteUser")
     private WebElement deleteFirstUserButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:userGroupsTable:0:actionForm:deleteUsergroup")
+    @FindBy(id = USER_GROUPS_TABLE + ":0:actionForm:deleteUsergroup")
     private WebElement deleteFirstUserGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:clientsTable:0:actionForm:deleteClient")
+    @FindBy(id = CLIENTS_TABLE + ":0:actionForm:deleteClient")
     private WebElement deleteFirstClientButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "usersTabView:ldapGroupsTable:0:actionForm:deleteLdapgroup")
+    @FindBy(id = LDAP_GROUPS_TABLE + ":0:actionForm:deleteLdapgroup")
     private WebElement deleteFirstLDAPGroupButton;
 
     public UsersPage() {
@@ -211,18 +232,26 @@ public class UsersPage extends Page<UsersPage> {
     }
 
     /**
-     * Goes to edit page for editing a given user group.
-     * 
-     * @param userGroup
-     *            The user group.
-     * @return The user group edit page.
+     * Go to edit page for editing a user.
+     *
+     * @return the user edit page
      */
-    public UserGroupEditPage editUserGroup(UserGroup userGroup) throws Exception {
+    public UserEditPage editUser() throws Exception {
+        switchToTabByIndex(TabIndex.USERS.getIndex());
+
+        clickButtonAndWaitForRedirect(editUserLink, Pages.getUserEditPage().getUrl());
+        return Pages.getUserEditPage();
+    }
+
+    /**
+     * Go to edit page for editing a user group.
+     *
+     * @return the user group edit page
+     */
+    public UserGroupEditPage editUserGroup() throws Exception {
         switchToTabByIndex(TabIndex.USER_GROUPS.getIndex());
 
-        WebElement userGroupEditLink = Browser.getDriver()
-                .findElementByXPath("//a[@href='/kitodo/pages/usergroupEdit.jsf?id=" + userGroup.getId() + "']");
-        userGroupEditLink.click();
+        clickButtonAndWaitForRedirect(editUserGroupLink, Pages.getUserGroupEditPage().getUrl());
         return Pages.getUserGroupEditPage();
     }
 
@@ -245,6 +274,30 @@ public class UsersPage extends Page<UsersPage> {
             }
         }
         throw new NoSuchElementException("No user group with given title was not found: " + userGroupTitle);
+    }
+
+    /**
+     * Go to edit page for editing a LDAP group.
+     *
+     * @return the LDAP group edit page
+     */
+    public LdapGroupEditPage editLdapGroup() throws Exception {
+        switchToTabByIndex(TabIndex.LDAP_GROUPS.getIndex());
+
+        clickButtonAndWaitForRedirect(editLdapGroupLink, Pages.getLdapGroupEditPage().getUrl());
+        return Pages.getLdapGroupEditPage();
+    }
+
+    /**
+     * Go to edit page for editing a client.
+     *
+     * @return the client edit page
+     */
+    public ClientEditPage editClient() throws Exception {
+        switchToTabByIndex(TabIndex.CLIENTS.getIndex());
+
+        clickButtonAndWaitForRedirect(editClientLink, Pages.getClientEditPage().getUrl());
+        return Pages.getClientEditPage();
     }
 
     /**
