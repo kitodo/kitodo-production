@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.im4java.core.IMOperation;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterImageManagement;
 
 /**
@@ -136,7 +136,7 @@ class ImageConverter {
      */
     private static void configureImageMagick(IMOperation commandLine) {
         final String configOptionsPrefix = "ImageManagementModule.param.";
-        Iterator<?> keys = Config.getConfig().getKeys(configOptionsPrefix);
+        Iterator<?> keys = KitodoConfig.getConfig().getKeys(configOptionsPrefix);
         while (keys.hasNext()) {
             Object keyObject = keys.next();
             if (keyObject instanceof String) {
@@ -147,7 +147,7 @@ class ImageConverter {
                 }
                 commandLine.addRawArgs(option.split("\\."));
                 //FIXME: it is not secure to allow any possible key
-                String value = Config.getParameter(key);
+                String value = KitodoConfig.getParameter(key);
                 if (!value.isEmpty()) {
                     commandLine.addRawArgs(value);
                 }
@@ -167,7 +167,7 @@ class ImageConverter {
         commandLine.addImage(FORMAT_OFF);
         ConvertRunner convertRunner = new ConvertRunner();
         try {
-            convertRunner.setSearchPath(Config.getParameter(ParameterImageManagement.SEARCH_PATH));
+            convertRunner.setSearchPath(KitodoConfig.getParameter(ParameterImageManagement.SEARCH_PATH));
         } catch (NoSuchElementException e) {
             logger.trace("No deviant search path configured.", e);
         }

@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.myfaces.util.FilenameUtils;
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 
 /**
  * A {@code kitodo_fileFormats.xml} config file. This class corresponds to the
@@ -40,7 +40,7 @@ import org.kitodo.config.Config;
 public class FileFormatsConfig {
 
     private static final File CONFIG_FILE = new File(
-            FilenameUtils.concat(Config.getKitodoConfigDirectory(), "kitodo_fileFormats.xml"));
+            FilenameUtils.concat(KitodoConfig.getKitodoConfigDirectory(), "kitodo_fileFormats.xml"));
 
     @XmlElement(required = true)
     protected List<FileFormat> fileFormat;

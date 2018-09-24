@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
-import org.kitodo.config.Config;
+import org.kitodo.config.ConfigCore;
 import org.omnifaces.cdi.Eager;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
@@ -135,7 +135,7 @@ public class LegalTexts implements Serializable {
      * @return the text content of the legal text
      */
     public static String loadText(String legalTextName, String language) {
-        String filePath = Config.getKitodoConfigDirectory() + "legal_" + legalTextName + "_" + language + ".html";
+        String filePath = ConfigCore.getKitodoConfigDirectory() + "legal_" + legalTextName + "_" + language + ".html";
         try {
             return new String(Files.readAllBytes(Paths.get(filePath)));
         } catch (IOException e) {

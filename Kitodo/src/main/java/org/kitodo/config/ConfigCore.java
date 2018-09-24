@@ -28,7 +28,7 @@ import org.kitodo.exceptions.ConfigParameterException;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
-public class ConfigCore extends Config {
+public class ConfigCore extends KitodoConfig {
     private static final Logger logger = LogManager.getLogger(ConfigCore.class);
     private static URI imagesPath = null;
     private static ServiceManager serviceManager = new ServiceManager();
