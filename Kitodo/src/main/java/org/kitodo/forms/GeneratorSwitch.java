@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.util;
+package org.kitodo.forms;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -98,7 +98,7 @@ public class GeneratorSwitch {
      * @param folder
      *            folder represented by this toggle switch
      * @param contentFolders
-     *            modifyable list of enabled toggle switches
+     *            modifiable list of enabled toggle switches
      */
     public GeneratorSwitch(Folder folder, List<Folder> contentFolders) {
         this.folder = folder;

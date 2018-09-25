@@ -22,7 +22,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <name>Kitodo - Long Time Preservation Validation Module</name>
-    <artifactId>kitodo-LongTimePreservationValidationModule</artifactId>
+    <artifactId>kitodo-longtimepreservation-validation</artifactId>
 
     <dependencies>
         <dependency>

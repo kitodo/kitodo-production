@@ -8,7 +8,8 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-package org.kitodo.util;
+
+package org.kitodo.forms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
