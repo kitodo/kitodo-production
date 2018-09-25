@@ -290,43 +290,4 @@ public class UserGroupForm extends BaseForm {
             }
         }
     }
-
-    /**
-     * Return the list of available authority levels and the list of authority
-     * levels currently assigned to 'userGroup' as a combined 'DualListModel' that
-     * is used by the frontend for authority management of user groups utilizing a
-     * PrimeFaces PickList object.
-     *
-     * @return DualListModel of available and assigned authority levels
-     */
-    public DualListModel<Authority> getProjectAssignableAuthorities() {
-        List<Authority> assignedAuthorities = serviceManager.getAuthorityService()
-                .filterAssignableToProjects(userGroup.getAuthorities());
-        List<Authority> availableAuthorities = null;
-        try {
-            availableAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects();
-            availableAuthorities.removeAll(assignedAuthorities);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        return new DualListModel<>(availableAuthorities, assignedAuthorities);
-    }
-
-    /**
-     * Assign the target property of given DualListModel of authorities to
-     * 'userGroup' in using a PrimeFaces PickList object.
-     *
-     * @param projectAuthoritiesModel
-     *            list of authority assigned to 'userGroup'
-     */
-    public void setProjectAssignableAuthorities(DualListModel<Authority> projectAuthoritiesModel) {
-        for (Authority authority : projectAuthoritiesModel.getSource()) {
-            userGroup.getAuthorities().remove(authority);
-        }
-        for (Authority authority : projectAuthoritiesModel.getTarget()) {
-            if (!userGroup.getAuthorities().contains(authority)) {
-                userGroup.getAuthorities().add(authority);
-            }
-        }
-    }
 }

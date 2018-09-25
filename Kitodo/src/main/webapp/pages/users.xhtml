@@ -20,17 +20,17 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
         <h:form id="newElementForm"
-                rendered="#{SecurityAccessController.isAdminOrHasAnyAuthorityForAny('addUser, addUserGroup')}">
+                rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser, addUserGroup')}">
             <p:menuButton value="#{msgs.newElement}"
                           id="newElementButton"
                           icon="fa fa-plus-circle fa-lg"
                           iconPos="right"
                           styleClass="callto">
                 <p:menuitem value="#{msgs.newUser}" id="newUserButton"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUser')}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUser')}"
                             action="#{UserForm.newUser}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newUserGroup}" id="newUserGroupButton"
-                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('addUserGroup')}"
+                            rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('addUserGroup')}"
                             action="#{UserGroupForm.newUserGroup}" icon="ui-icon-plusthick"/>
                 <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
                             rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobal('addClient')}"
@@ -57,7 +57,7 @@
                 <ui:include src="/WEB-INF/templates/includes/users/usergroupList.xhtml"/>
             </p:tab>
             <p:tab id="clientsTab" title="#{msgs.clients}"
-                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityForAny('viewAllClients')}">
+                   rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForAnyClient('viewAllClients')}">
                 <ui:include src="/WEB-INF/templates/includes/users/clientList.xhtml" />
             </p:tab>
             <p:tab title="#{msgs.ldapGroups}"

@@ -41,10 +41,6 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
     private WebElement clientAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_GROUP_TAB_VIEW + ":authoritiesProjectPick")
-    private WebElement projectAuthoritiesPickList;
-
-    @SuppressWarnings("unused")
     @FindBy(id = USER_GROUP_TAB_VIEW + ":clientSelect")
     private WebElement clientSelector;
 
@@ -73,20 +69,20 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return null;
     }
 
-    private WebElement getAddAllElementsButtonByPicklist(WebElement picklist) {
-        return picklist.findElement(By.className("ui-picklist-button-add-all"));
+    private WebElement getAddAllElementsButtonByPickList(WebElement pickList) {
+        return pickList.findElement(By.className("ui-picklist-button-add-all"));
     }
 
-    private WebElement getRemoveAllElementsButtonByPicklist(WebElement picklist) {
-        return picklist.findElement(By.className("ui-picklist-button-remove-all"));
+    private WebElement getRemoveAllElementsButtonByPickList(WebElement pickList) {
+        return pickList.findElement(By.className("ui-picklist-button-remove-all"));
     }
 
-    private WebElement getAddElementButtonByPicklist(WebElement picklist) {
-        return picklist.findElement(By.className("ui-picklist-button-add"));
+    private WebElement getAddElementButtonByPickList(WebElement pickList) {
+        return pickList.findElement(By.className("ui-picklist-button-add"));
     }
 
-    private WebElement getRemoveElementButtonByPicklist(WebElement picklist) {
-        return picklist.findElement(By.className("ui-picklist-button-remove"));
+    private WebElement getRemoveElementButtonByPickList(WebElement pickList) {
+        return pickList.findElement(By.className("ui-picklist-button-remove"));
     }
 
     private List<WebElement> getSourceItemsFromPickList(WebElement picklist) {
@@ -94,41 +90,30 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return source.findElements(By.className("ui-picklist-item"));
     }
 
-    private List<WebElement> getTargetItemsFromPickList(WebElement picklist) {
-        WebElement source = picklist.findElement(By.className("ui-picklist-target"));
+    private List<WebElement> getTargetItemsFromPickList(WebElement pickList) {
+        WebElement source = pickList.findElement(By.className("ui-picklist-target"));
         return source.findElements(By.className("ui-picklist-item"));
     }
 
     public UserGroupEditPage removeAllGlobalAuthorities() throws InterruptedException {
-        getRemoveAllElementsButtonByPicklist(globalAuthoritiesPickList).click();
+        getRemoveAllElementsButtonByPickList(globalAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
     public UserGroupEditPage assignAllGlobalAuthorities() throws InterruptedException {
-        getAddAllElementsButtonByPicklist(globalAuthoritiesPickList).click();
+        getAddAllElementsButtonByPickList(globalAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
 
     public UserGroupEditPage assignAllClientAuthorities() throws InterruptedException {
-        getAddAllElementsButtonByPicklist(clientAuthoritiesPickList).click();
+        getAddAllElementsButtonByPickList(clientAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
 
     public UserGroupEditPage removeAllClientAuthorities() throws InterruptedException {
-        getRemoveAllElementsButtonByPicklist(clientAuthoritiesPickList).click();
-        Thread.sleep(Browser.getDelayAfterPickListClick());
-        return this;
-    }
-
-    public UserGroupEditPage assignAllProjectAuthorities() throws InterruptedException {
-        getAddAllElementsButtonByPicklist(projectAuthoritiesPickList).click();
-        Thread.sleep(Browser.getDelayAfterPickListClick());
-        return this;
-    }
-    public UserGroupEditPage removeAllProjectAuthorities() throws InterruptedException {
-        getRemoveAllElementsButtonByPicklist(projectAuthoritiesPickList).click();
+        getRemoveAllElementsButtonByPickList(clientAuthoritiesPickList).click();
         Thread.sleep(Browser.getDelayAfterPickListClick());
         return this;
     }
@@ -146,19 +131,12 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return getTargetItemsFromPickList(clientAuthoritiesPickList).size();
     }
 
-    public int countAssignedProjectAuthorities() {
-        return getTargetItemsFromPickList(projectAuthoritiesPickList).size();
-    }
     public int countAvailableGlobalAuthorities() {
         return getSourceItemsFromPickList(globalAuthoritiesPickList).size();
     }
 
     public int countAvailableClientAuthorities() {
         return getSourceItemsFromPickList(clientAuthoritiesPickList).size();
-    }
-
-    public int countAvailablePrjectAuthorities() {
-        return getSourceItemsFromPickList(projectAuthoritiesPickList).size();
     }
 
     public UserGroupEditPage setUserGroupTitle(String newTitle) {

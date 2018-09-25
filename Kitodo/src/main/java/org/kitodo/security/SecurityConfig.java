@@ -35,7 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SessionRegistry sessionRegistry;
     private static final String CLIENT_ANY = "CLIENT_ANY";
     private static final String GLOBAL = "GLOBAL";
-    private static final String PROJECT_ANY = "PROJECT_ANY";
     private static final String ADMIN_GLOBAL = "admin_" + GLOBAL;
     private static final String EDIT_CLIENT = "editClient_";
     private static final String EDIT_DOCKET = "editDocket_";
@@ -109,19 +108,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers("/pages/processes.jsf").hasAnyAuthority(
                 VIEW_ALL_PROCESSES + GLOBAL,
-                VIEW_ALL_PROCESSES + CLIENT_ANY,
-                VIEW_ALL_PROCESSES + PROJECT_ANY)
+                VIEW_ALL_PROCESSES + CLIENT_ANY)
             .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
                 EDIT_PROCESS + GLOBAL,
-                EDIT_PROCESS + CLIENT_ANY,
-                EDIT_PROCESS + PROJECT_ANY)
+                EDIT_PROCESS + CLIENT_ANY)
 
             .antMatchers("/pages/projects.jsf").hasAnyAuthority(
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
                 VIEW_ALL_TEMPLATES + GLOBAL,
                 VIEW_ALL_TEMPLATES + CLIENT_ANY,
-                VIEW_ALL_TEMPLATES + PROJECT_ANY,
                 VIEW_ALL_DOCKETS + GLOBAL,
                 VIEW_ALL_DOCKETS + CLIENT_ANY,
                 VIEW_ALL_RULESETS + GLOBAL,
@@ -130,10 +126,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
                 EDIT_PROJECT + GLOBAL,
                 EDIT_PROJECT + CLIENT_ANY,
-                EDIT_PROJECT + PROJECT_ANY,
                 VIEW_PROJECT + GLOBAL,
-                VIEW_PROJECT + CLIENT_ANY,
-                VIEW_PROJECT + PROJECT_ANY)
+                VIEW_PROJECT + CLIENT_ANY)
 
             .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
                 EDIT_DOCKET + GLOBAL,
@@ -145,13 +139,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
             .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
                 EDIT_WORKFLOW + GLOBAL,
-                EDIT_WORKFLOW + CLIENT_ANY,
-                EDIT_WORKFLOW + PROJECT_ANY)
+                EDIT_WORKFLOW + CLIENT_ANY)
 
             .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
                 VIEW_ALL_TASKS + GLOBAL,
-                VIEW_ALL_TASKS + CLIENT_ANY,
-                VIEW_ALL_TASKS + PROJECT_ANY)
+                VIEW_ALL_TASKS + CLIENT_ANY)
 
             .antMatchers("/pages/users.jsf").hasAnyAuthority(
                 ADMIN_GLOBAL,
