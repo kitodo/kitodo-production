@@ -23,20 +23,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ConfigTest {
+public class KitodoConfigTest {
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Test
     public void shouldGetStringParameterWithoutDefault() {
-        String param = Config.getParameter(ParameterAPI.DIR_XML_CONFIG);
+        String param = KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG);
         assertEquals("Incorrect param!", "String", param);
     }
 
     @Test
     public void shouldGetStringParameterWithDefault() {
-        String param = Config.getParameter(ParameterAPI.DIR_XML_CONFIG, "test");
+        String param = KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG, "test");
         assertEquals("Incorrect param!", "String", param);
     }
 
@@ -44,53 +44,53 @@ public class ConfigTest {
     public void shouldGetStringParameterForNonexistentWithoutDefault() {
         expectedEx.expect(NoSuchElementException.class);
         expectedEx.expectMessage("No configuration found in kitodo_config.properties for key directory.metadata!");
-        Config.getParameter(ParameterAPI.DIR_PROCESSES);
+        KitodoConfig.getParameter(ParameterAPI.DIR_PROCESSES);
     }
 
     @Test
     public void shouldGetStringParameterForNonexistentWithDefault() {
-        String param = Config.getParameter(ParameterAPI.DIR_PROCESSES, "Default");
+        String param = KitodoConfig.getParameter(ParameterAPI.DIR_PROCESSES, "Default");
         assertEquals("Incorrect param!", "Default", param);
     }
 
     @Test
     public void shouldGetBooleanParameter() {
-        assertTrue("Incorrect param!", Config.getBooleanParameter(ParameterAPI.DIR_MODULES));
+        assertTrue("Incorrect param!", KitodoConfig.getBooleanParameter(ParameterAPI.DIR_MODULES));
     }
 
     @Test
     public void shouldGetBooleanParameterForNonexistentWithoutDefault() {
-        assertFalse("Incorrect param!", Config.getBooleanParameter(ParameterAPI.DIR_PROCESSES));
+        assertFalse("Incorrect param!", KitodoConfig.getBooleanParameter(ParameterAPI.DIR_PROCESSES));
     }
 
     @Test
     public void shouldGetBooleanParameterForNonexistentWithDefault() {
-        assertTrue("Incorrect param!", Config.getBooleanParameter(ParameterAPI.DIR_PROCESSES, true));
+        assertTrue("Incorrect param!", KitodoConfig.getBooleanParameter(ParameterAPI.DIR_PROCESSES, true));
     }
 
     @Ignore("find a way to mock enum or add more enums")
     @Test
     public void shouldGetIntParameterWithoutDefault() {
-        //int param = Config.getIntParameter("intParam");
+        //int param = KitodoConfig.getIntParameter("intParam");
         //assertEquals("Incorrect param!", 1, param);
     }
 
     @Ignore("find a way to mock enum or add more enums")
     @Test
     public void shouldGetIntParameterWithDefault() {
-        //int param = Config.getIntParameter("intParam", 3);
+        //int param = KitodoConfig.getIntParameter("intParam", 3);
         //assertEquals("Incorrect param!", 1, param);
     }
 
     @Test
     public void shouldGetIntParameterForNonexistentWithoutDefault() {
-        int param = Config.getIntParameter(ParameterAPI.DIR_PROCESSES);
+        int param = KitodoConfig.getIntParameter(ParameterAPI.DIR_PROCESSES);
         assertEquals("Incorrect param!", 0, param);
     }
 
     @Test
     public void shouldGetIntParameterForNonexistentWithDefault() {
-        int param = Config.getIntParameter(ParameterAPI.DIR_PROCESSES, 3);
+        int param = KitodoConfig.getIntParameter(ParameterAPI.DIR_PROCESSES, 3);
         assertEquals("Incorrect param!", 3, param);
     }
 }

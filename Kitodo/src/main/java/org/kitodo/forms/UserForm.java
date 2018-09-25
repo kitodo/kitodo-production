@@ -42,8 +42,9 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.security.DynamicAuthenticationProvider;
-import org.kitodo.security.SecurityPasswordEncoder;
 import org.kitodo.security.SecuritySession;
+import org.kitodo.security.password.SecurityPasswordEncoder;
+import org.kitodo.security.password.ValidPassword;
 
 @Named("UserForm")
 @SessionScoped
@@ -53,7 +54,10 @@ public class UserForm extends BaseForm {
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+
+    @ValidPassword
     private String password;
+
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 

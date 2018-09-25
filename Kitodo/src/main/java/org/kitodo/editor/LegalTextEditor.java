@@ -25,7 +25,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.kitodo.config.Config;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.LegalTexts;
 
@@ -71,7 +71,7 @@ public class LegalTextEditor implements Serializable {
      * Save text of currently selected legal text to file.
      */
     public void saveText() {
-        String filePath = Config.getKitodoConfigDirectory() + "legal_" + this.currentLegalTextTitle + "_"
+        String filePath = ConfigCore.getKitodoConfigDirectory() + "legal_" + this.currentLegalTextTitle + "_"
                 + this.currentLanguage + ".html";
         try {
             Files.write(Paths.get(filePath), this.currentLegalTextContent.getBytes());

@@ -41,7 +41,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 
 public class KitodoServiceLoader<T> {
     private Class clazz;
@@ -68,7 +68,7 @@ public class KitodoServiceLoader<T> {
      *            interface class of module to load
      */
     public KitodoServiceLoader(Class clazz) {
-        String modulePath = Config.getKitodoModulesDirectory();
+        String modulePath = KitodoConfig.getKitodoModulesDirectory();
         this.clazz = clazz;
         if (!new File(modulePath).exists()) {
             logger.error("Specified module folder does not exist: " + modulePath);

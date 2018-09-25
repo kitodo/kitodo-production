@@ -20,7 +20,7 @@ public class UserGenerator {
         String suffix = generateRandomString(5);
 
         User user = new User();
-        user.setPassword(generateRandomString(10));
+        user.setPassword("P_" + generateRandomString(10));
         user.setName("Name" + suffix);
         user.setSurname("Surname" + suffix);
         user.setLogin("UserLogin" + suffix);
@@ -31,6 +31,6 @@ public class UserGenerator {
     }
 
     private static String generateRandomString(int length) {
-        return RandomStringUtils.random(length, true, false);
+        return RandomStringUtils.random(length, true, true);
     }
 }

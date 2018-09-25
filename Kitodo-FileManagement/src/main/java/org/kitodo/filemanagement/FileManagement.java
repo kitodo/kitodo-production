@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterFileManagement;
 
 public class FileManagement implements FileManagementInterface {
@@ -347,7 +347,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI createProcessLocation(String processId) throws IOException {
-        File processRootDirectory = new File((Config.getKitodoDataDirectory() + File.separator + processId));
+        File processRootDirectory = new File((KitodoConfig.getKitodoDataDirectory() + File.separator + processId));
         if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
@@ -431,7 +431,7 @@ public class FileManagement implements FileManagementInterface {
      * @return the source directory as a string
      */
     private URI getSourceDirectory(String processId, String processTitle) {
-        final String suffix = "_" + Config.getParameter(ParameterFileManagement.DIRECTORY_SUFFIX, "tif");
+        final String suffix = "_" + KitodoConfig.getParameter(ParameterFileManagement.DIRECTORY_SUFFIX, "tif");
         URI dir = URI.create(getProcessSubType(processId, processTitle, ProcessSubType.IMAGE, null));
         FilenameFilter filterDirectory = new FileNameEndsWithFilter(suffix);
         URI sourceFolder = URI.create("");
@@ -439,7 +439,7 @@ public class FileManagement implements FileManagementInterface {
             List<URI> directories = getSubUris(filterDirectory, dir);
             if (directories.isEmpty()) {
                 sourceFolder = dir.resolve(processTitle + suffix + "/");
-                if (Config.getBooleanParameter(ParameterFileManagement.CREATE_SOURCE_FOLDER, false)) {
+                if (KitodoConfig.getBooleanParameter(ParameterFileManagement.CREATE_SOURCE_FOLDER, false)) {
                     if (!fileExist(dir)) {
                         createDirectory(dir.resolve(".."), IMAGES_DIRECTORY_NAME);
                     }
@@ -463,14 +463,14 @@ public class FileManagement implements FileManagementInterface {
             return false;
         }
 
-        String command = Config.getParameter("script_createSymLink");
+        String command = KitodoConfig.getParameter("script_createSymLink");
         CommandService commandService = new CommandService();
         List<String> parameters = new ArrayList<>();
         parameters.add(imagePath.getAbsolutePath());
         parameters.add(userHome.getAbsolutePath());
 
         if (onlyRead) {
-            parameters.add(Config.getParameter("UserForImageReading", "root"));
+            parameters.add(KitodoConfig.getParameter("UserForImageReading", "root"));
         } else {
             parameters.add(userLogin);
         }
@@ -490,7 +490,7 @@ public class FileManagement implements FileManagementInterface {
     public boolean deleteSymLink(URI homeUri) {
         File homeFile = new File(fileMapper.mapAccordingToMappingType(homeUri));
 
-        String command = Config.getParameter("script_deleteSymLink");
+        String command = KitodoConfig.getParameter("script_deleteSymLink");
         CommandService commandService = new CommandService();
         List<String> parameters = new ArrayList<>();
         parameters.add(homeFile.getAbsolutePath());

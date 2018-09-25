@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterDataEditor;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -61,7 +61,7 @@ public class PhysicalStructMapType extends StructMapType {
             DivType div = objectFactory.createDivType();
             div.setID("PHYS_" + String.format("%04d", counter));
             div.setORDER(BigInteger.valueOf(counter));
-            div.setORDERLABEL(Config.getParameter(ParameterDataEditor.METS_EDITOR_DEFAULT_PAGINATION));
+            div.setORDERLABEL(KitodoConfig.getParameter(ParameterDataEditor.METS_EDITOR_DEFAULT_PAGINATION));
             div.setTYPE(getPhysicalDivTypeByFileType(file));
             DivType.Fptr divTypeFptr = objectFactory.createDivTypeFptr();
             divTypeFptr.setFILEID(file);

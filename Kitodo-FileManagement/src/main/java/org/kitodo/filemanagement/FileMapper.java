@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 
 /**
  * Class for performing mapping and unmapping of URIs.
@@ -81,12 +81,12 @@ public class FileMapper {
      * @return absolute URI path
      */
     private URI mapUriToKitodoDataDirectoryUri(URI uri) {
-        String kitodoDataDirectory = Config.getKitodoDataDirectory();
+        String kitodoDataDirectory = KitodoConfig.getKitodoDataDirectory();
         if (uri == null) {
-            return Paths.get(Config.getKitodoDataDirectory()).toUri();
+            return Paths.get(KitodoConfig.getKitodoDataDirectory()).toUri();
         } else {
             if (!uri.isAbsolute() && !uri.getRawPath().contains(kitodoDataDirectory)) {
-                return Paths.get(Config.getKitodoDataDirectory(), uri.getRawPath()).toUri();
+                return Paths.get(KitodoConfig.getKitodoDataDirectory(), uri.getRawPath()).toUri();
             }
         }
         return uri;
@@ -105,7 +105,7 @@ public class FileMapper {
     }
 
     private URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
-        return unmapDirectory(uri, Config.getKitodoDataDirectory());
+        return unmapDirectory(uri, KitodoConfig.getKitodoDataDirectory());
     }
 
     private URI unmapDirectory(URI uri, String directory) {

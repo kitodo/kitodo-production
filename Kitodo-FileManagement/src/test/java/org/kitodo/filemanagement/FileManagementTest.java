@@ -31,7 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
-import org.kitodo.config.Config;
+import org.kitodo.config.KitodoConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -285,7 +285,7 @@ public class FileManagementTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File script = new File(Config.getParameter("script_createSymLink"));
+        File script = new File(KitodoConfig.getParameter("script_createSymLink"));
         URI directory = fileManagement.create(URI.create(""), "symLinkSource", false);
         fileManagement.create(directory, "meta.xml", true);
         setFileExecutable(script);
@@ -293,7 +293,7 @@ public class FileManagementTest {
         setFileNotExecutable(script);
         assertTrue("Create symbolic link has failed!", result);
 
-        File scriptClean = new File(Config.getParameter("script_deleteSymLink"));
+        File scriptClean = new File(KitodoConfig.getParameter("script_deleteSymLink"));
         setFileExecutable(scriptClean);
         fileManagement.deleteSymLink(symLinkTarget);
         setFileNotExecutable(scriptClean);
@@ -308,14 +308,14 @@ public class FileManagementTest {
         URI symLinkSource = URI.create("symLinkSource");
         URI symLinkTarget = URI.create("symLinkTarget");
 
-        File scriptPrepare = new File(Config.getParameter("script_createSymLink"));
+        File scriptPrepare = new File(KitodoConfig.getParameter("script_createSymLink"));
         URI directory =  fileManagement.create(URI.create(""), "symLinkSource", false);
         fileManagement.create(directory, "meta.xml", true);
         setFileExecutable(scriptPrepare);
         fileManagement.createSymLink(symLinkSource, symLinkTarget, false, SystemUtils.USER_NAME);
         setFileNotExecutable(scriptPrepare);
 
-        File script = new File(Config.getParameter("script_deleteSymLink"));
+        File script = new File(KitodoConfig.getParameter("script_deleteSymLink"));
         setFileExecutable(script);
         boolean result = fileManagement.deleteSymLink(symLinkTarget);
         setFileNotExecutable(script);

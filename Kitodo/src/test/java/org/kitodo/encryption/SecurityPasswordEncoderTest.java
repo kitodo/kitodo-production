@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.kitodo.security.SecurityPasswordEncoder;
+import org.kitodo.security.password.SecurityPasswordEncoder;
 
 public class SecurityPasswordEncoderTest {
     static Map<String, String> testData;
