@@ -26,18 +26,28 @@ import org.openqa.selenium.support.FindBy;
 
 public class TasksPage extends Page<TasksPage> {
 
-    private static final String TASK_TABLE = "tasksTabView:taskTable";
+    private static final String TASKS_TAB_VIEW = "tasksTabView";
+    private static final String TASK_TABLE = TASKS_TAB_VIEW + ":taskTable";
+    private static final String FILTER_FORM = TASKS_TAB_VIEW + ":filterForm";
 
     @SuppressWarnings("unused")
     @FindBy(id = TASK_TABLE + "_data")
     private WebElement taskTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "tasksTabView:filterForm:onlyOpenTasks")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=8']")
+    private WebElement editTaskLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TASK_TABLE + ":0:actions:take")
+    private WebElement takeTaskLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_FORM + ":onlyOpenTasks")
     private WebElement showOnlyOpenTasksCheckbox;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "tasksTabView:filterForm:applyFilter")
+    @FindBy(id = FILTER_FORM + ":applyFilter")
     private WebElement applyFilterLink;
 
     public TasksPage() {
@@ -75,5 +85,13 @@ public class TasksPage extends Page<TasksPage> {
             goTo();
         }
         return getRowsOfTable(taskTable).size();
+    }
+
+    public void takeOpenTask() {
+        takeTaskLink.click();
+    }
+
+    public void editOwnedTask() {
+        editTaskLink.click();
     }
 }

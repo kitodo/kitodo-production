@@ -26,6 +26,10 @@ public class Pages {
         return getPage(ClientEditPage.class);
     }
 
+    public static CurrentTasksEditPage getCurrentTasksEditPage() throws InstantiationException, IllegalAccessException {
+        return getPage(CurrentTasksEditPage.class);
+    }
+
     public static HelpPage getHelpPage() throws InstantiationException, IllegalAccessException {
         return getPage(HelpPage.class);
     }
