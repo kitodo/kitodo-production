@@ -1725,7 +1725,7 @@ public class Metadaten {
          * gilt, Sperrung aktualisieren
          */
         if (MetadataLock.isLocked(this.process.getId())
-                && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
+                && this.sperrung.getLockUser(this.process.getId()).equals(this.userId)) {
             this.sperrung.setLocked(this.process.getId(), this.userId);
             return true;
         } else {
@@ -1735,7 +1735,7 @@ public class Metadaten {
 
     private void disableReturn() {
         if (MetadataLock.isLocked(this.process.getId())
-                && this.sperrung.getLockBenutzer(this.process.getId()).equals(this.userId)) {
+                && this.sperrung.getLockUser(this.process.getId()).equals(this.userId)) {
             this.sperrung.setFree(this.process.getId());
         }
     }
