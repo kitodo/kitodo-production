@@ -28,7 +28,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.WrongImportFileException;
 
 /**
- * Import von Metadaten aus upgeloadeten Dateien
+ * Import metadata from uploaded files.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 25.06.2005

@@ -175,7 +175,7 @@ public class EmptyTask extends Thread implements INameableTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public String getDisplayName() {
@@ -247,7 +247,7 @@ public class EmptyTask extends Thread implements INameableTask {
     }
 
     /**
-     * The function getTaskState() returns the task state, which can be one of
+     * The function getTaskState() returns the task state. It can be one of
      * the followings:
      *
      * <dl>

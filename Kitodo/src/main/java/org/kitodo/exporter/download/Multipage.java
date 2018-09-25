@@ -41,7 +41,7 @@ import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Die Klasse Multipage dient zur Erzeugung von mehrseitigen Tiffs
+ * The class Multipage is used to generate multi-page tiffs.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 12.04.2005

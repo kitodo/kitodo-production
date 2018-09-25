@@ -12,7 +12,7 @@
 package org.kitodo.data.database.helper.enums;
 
 /**
- * Enum for edit type of task steps each one has an integer value, and a title
+ * Enum for edit type of task steps each one has an integer value, and a title.
  * 
  * @author Steffen Hankiewicz
  * @version 17.05.2009

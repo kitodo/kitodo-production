@@ -40,7 +40,7 @@ public class Batch extends BaseIndexedBean {
     private static final long serialVersionUID = -5187947220333984868L;
 
     /**
-     * Type of batch:
+     * Enum for batch type. Type of batch:
      *
      * <dl>
      * <dt>LOGISTIC</dt>

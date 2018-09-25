@@ -1619,7 +1619,7 @@ public class ProzesskopieForm implements Serializable {
     }
 
     /**
-     * Conditions:
+     * Find title definitions. Conditions:
      * <dl>
      * <dt>{@code isDocType.equals("") && isNotDocType.equals("")}</dt>
      * <dd>nothing was specified</dd>

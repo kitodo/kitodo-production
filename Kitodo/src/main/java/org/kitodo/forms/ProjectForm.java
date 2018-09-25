@@ -451,8 +451,9 @@ public class ProjectForm extends BaseForm {
             try {
                 Locale language = FacesContext.getCurrentInstance().getViewRoot().getLocale();
                 List<LanguageRange> languages = Arrays.asList(new LanguageRange(language.toLanguageTag()));
-                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(Collectors.toMap(
-                    λ -> λ.getLabel(languages), FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
+                mimeTypes = FileFormatsConfig.getFileFormats().parallelStream().collect(
+                        Collectors.toMap(locale -> locale.getLabel(languages),
+                                FileFormat::getMimeType, (prior, recent) -> recent, TreeMap::new));
             } catch (JAXBException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {e.getMessage() }, logger, e);
             }

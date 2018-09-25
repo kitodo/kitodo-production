@@ -69,7 +69,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("dpi must be > 0, but was " + Integer.toString(dpi));
         }
 
-        return summarize("dpiChangedImage-", RAW_IMAGE_FORMAT, sourceUri, λ -> λ.resizeToDpi(dpi),
+        return summarize("dpiChangedImage-", RAW_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToDpi(dpi),
             "Resizing {} as {} to {} DPI", dpi);
     }
 
@@ -124,7 +124,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("factor must be > 0.0, but was " + Double.toString(factor));
         }
 
-        return summarize("scaledWebImage-", WEB_IMAGE_FORMAT, sourceUri, λ -> λ.resize(factor),
+        return summarize("scaledWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resize(factor),
             "Generating scaled web image from {} as {}, factor {}%", 100 * factor);
     }
 
@@ -144,7 +144,7 @@ public class ImageManagementModule implements ImageManagementInterface {
             throw new IllegalArgumentException("width must be > 0, but was " + Integer.toString(width));
         }
 
-        return summarize("sizedWebImage-", WEB_IMAGE_FORMAT, sourceUri, λ -> λ.resizeToWidth(width),
+        return summarize("sizedWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToWidth(width),
             "Generating sized web image from {} as {}, width {} px", width);
     }
 

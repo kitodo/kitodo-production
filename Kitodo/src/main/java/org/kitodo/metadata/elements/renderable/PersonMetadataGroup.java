@@ -191,7 +191,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
      *
      * @param data
      *            data to add
-     * @see RenderableGroupableMetadata#addContent(ugh.dl.Metadata)
+     * @see RenderableGroupableMetadata#addContent(MetadataInterface)
      */
     @Override
     public void addContent(MetadataInterface data) {
@@ -258,14 +258,13 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
     }
 
     /**
-     * Returns the value of this person as metadata element
+     * Returns the value of this person as metadata element.
      *
      * @return a list with one person element with the value of this component
      * @see RenderableGroupableMetadata#toMetadata()
      */
     @Override
     public List<PersonInterface> toMetadata() {
-        List<PersonInterface> result = new ArrayList<>(1);
         PersonInterface person;
         try {
             person = UghImplementation.INSTANCE.createPerson(metadataType);
@@ -280,6 +279,7 @@ public class PersonMetadataGroup extends RenderableMetadataGroup implements Rend
         }
         person.setFirstName(getField(Field.FIRSTNAME).getValue());
         person.setLastName(getField(Field.LASTNAME).getValue());
+        List<PersonInterface> result = new ArrayList<>(1);
         result.add(person);
         return result;
     }

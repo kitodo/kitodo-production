@@ -20,7 +20,7 @@ public interface CommandInterface {
      *            The id, to identify the command and it's results.
      * @param command
      *            The command as a String.
-     * @return A commandResult, which contains id and resultmessages.
+     * @return A commandResult, which contains id and result messages.
      */
     CommandResult runCommand(Integer id, String command);
 }

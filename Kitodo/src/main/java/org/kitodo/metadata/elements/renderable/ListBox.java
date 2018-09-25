@@ -109,7 +109,7 @@ public class ListBox extends RenderableMetadata implements RenderableGroupableMe
     }
 
     /**
-     * Returns the value of this edit component as metadata elements
+     * Returns the value of this edit component as metadata elements.
      *
      * @return a list of metadata elements with the selected values of this
      *         input

@@ -30,7 +30,7 @@ public interface DocketInterface {
     File generateDocket(DocketData docketData, URI xslFileUri) throws IOException;
 
     /**
-     * Generates multiple dockets
+     * Generates multiple dockets.
      *
      * @param docketData
      *            - a List data shown in the dockets

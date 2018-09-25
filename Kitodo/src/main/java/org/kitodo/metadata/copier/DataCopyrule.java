@@ -47,7 +47,7 @@ public abstract class DataCopyrule {
 
     /**
      * Factory method to create a class implementing the metadata copy rule
-     * referenced by a given command string
+     * referenced by a given command string.
      *
      * @param command
      *            A space-separated string consisting of subject (aka. patiens),
