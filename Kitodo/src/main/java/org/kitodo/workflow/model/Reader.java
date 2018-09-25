@@ -32,7 +32,6 @@ import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -118,9 +117,7 @@ public class Reader {
         task.setTypeAutomatic(kitodoTask.getTypeAutomatic());
         task.setTypeImagesRead(kitodoTask.getTypeImagesRead());
         task.setTypeImagesWrite(kitodoTask.getTypeImagesWrite());
-        task.setTypeImportFileUpload(kitodoTask.getTypeImportFileUpload());
         task.setTypeExportDMS(kitodoTask.getTypeExportDms());
-        task.setTypeExportRussian(kitodoTask.getTypeExportRussian());
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());

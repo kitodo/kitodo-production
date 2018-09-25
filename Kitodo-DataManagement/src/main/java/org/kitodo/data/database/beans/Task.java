@@ -69,12 +69,6 @@ public class Task extends BaseIndexedBean {
     @Column(name = "typeAutomatic")
     private boolean typeAutomatic = false;
 
-    @Column(name = "typeImportFileUpload")
-    private boolean typeImportFileUpload = false;
-
-    @Column(name = "typeExportRussian")
-    private boolean typeExportRussian = false;
-
     @Column(name = "typeImagesRead")
     private boolean typeImagesRead = false;
 
@@ -182,10 +176,8 @@ public class Task extends BaseIndexedBean {
         this.typeAcceptClose = templateTask.isTypeAcceptClose();
         this.typeCloseVerify = templateTask.isTypeCloseVerify();
         this.typeExportDMS = templateTask.isTypeExportDMS();
-        this.typeExportRussian = templateTask.isTypeExportRussian();
         this.typeImagesRead = templateTask.isTypeImagesRead();
         this.typeImagesWrite = templateTask.isTypeImagesWrite();
-        this.typeImportFileUpload = templateTask.isTypeImportFileUpload();
         this.typeMetadata = templateTask.isTypeMetadata();
         this.processingStatus = templateTask.getProcessingStatus();
         this.homeDirectory = templateTask.getHomeDirectory();
@@ -451,14 +443,6 @@ public class Task extends BaseIndexedBean {
         return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
     }
 
-    public boolean isTypeExportRussian() {
-        return this.typeExportRussian;
-    }
-
-    public void setTypeExportRussian(boolean typeExportRussian) {
-        this.typeExportRussian = typeExportRussian;
-    }
-
     public boolean isTypeImagesRead() {
         return this.typeImagesRead;
     }
@@ -491,14 +475,6 @@ public class Task extends BaseIndexedBean {
 
     public void setTypeExportDMS(boolean typeExportDMS) {
         this.typeExportDMS = typeExportDMS;
-    }
-
-    public boolean isTypeImportFileUpload() {
-        return this.typeImportFileUpload;
-    }
-
-    public void setTypeImportFileUpload(boolean typeImportFileUpload) {
-        this.typeImportFileUpload = typeImportFileUpload;
     }
 
     public boolean isTypeMetadata() {
@@ -681,24 +657,32 @@ public class Task extends BaseIndexedBean {
             return false;
         }
         Task task = (Task) o;
-        return homeDirectory == task.homeDirectory && typeMetadata == task.typeMetadata
-                && typeAutomatic == task.typeAutomatic && typeImportFileUpload == task.typeImportFileUpload
-                && typeExportRussian == task.typeExportRussian && typeImagesRead == task.typeImagesRead
-                && typeImagesWrite == task.typeImagesWrite && typeExportDMS == task.typeExportDMS
-                && typeAcceptClose == task.typeAcceptClose && typeCloseVerify == task.typeCloseVerify
-                && Objects.equals(title, task.title) && Objects.equals(priority, task.priority)
-                && Objects.equals(ordering, task.ordering) && Objects.equals(processingStatus, task.processingStatus)
+        return homeDirectory == task.homeDirectory
+                && typeMetadata == task.typeMetadata
+                && typeAutomatic == task.typeAutomatic
+                && typeImagesRead == task.typeImagesRead
+                && typeImagesWrite == task.typeImagesWrite
+                && typeExportDMS == task.typeExportDMS
+                && typeAcceptClose == task.typeAcceptClose
+                && typeCloseVerify == task.typeCloseVerify
+                && Objects.equals(title, task.title)
+                && Objects.equals(priority, task.priority)
+                && Objects.equals(ordering, task.ordering)
+                && Objects.equals(processingStatus, task.processingStatus)
                 && Objects.equals(processingTime, task.processingTime)
                 && Objects.equals(processingBegin, task.processingBegin)
-                && Objects.equals(processingEnd, task.processingEnd) && Objects.equals(editType, task.editType)
-                && Objects.equals(scriptName, task.scriptName) && Objects.equals(scriptPath, task.scriptPath)
-                && Objects.equals(batchStep, task.batchStep) && Objects.equals(workflowId, task.workflowId);
+                && Objects.equals(processingEnd, task.processingEnd)
+                && Objects.equals(editType, task.editType)
+                && Objects.equals(scriptName, task.scriptName)
+                && Objects.equals(scriptPath, task.scriptPath)
+                && Objects.equals(batchStep, task.batchStep)
+                && Objects.equals(workflowId, task.workflowId);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(title, priority, ordering, processingStatus, processingTime, processingBegin, processingEnd,
-            editType, homeDirectory, typeMetadata, typeAutomatic, typeImportFileUpload, typeExportRussian,
+            editType, homeDirectory, typeMetadata, typeAutomatic,
             typeImagesRead, typeImagesWrite, typeExportDMS, typeAcceptClose, scriptName, scriptPath, typeCloseVerify,
             batchStep, workflowId, workflowCondition, processingUser, template, localizedTitle);
     }

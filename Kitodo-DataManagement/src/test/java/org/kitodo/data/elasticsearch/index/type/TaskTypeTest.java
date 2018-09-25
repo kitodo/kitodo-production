@@ -147,14 +147,10 @@ public class TaskTypeTest {
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertTrue("Key typeMetadata doesn't match to given value!",
             TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImportFileUpload doesn't match to given value!",
-            TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(actual));
         assertFalse("Key typeImagesWrite doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
         assertFalse("Key typeImagesRead doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertFalse("Key typeExportRussian doesn't match to given value!",
-            TaskTypeField.TYPE_EXPORT_RUSSIAN.getBooleanValue(actual));
         assertEquals("Key processForTask.id doesn't match to given value!", 1,
             TaskTypeField.PROCESS_ID.getIntValue(actual));
         assertEquals("Key processForTask.title doesn't match to given value!", "First",
@@ -210,14 +206,10 @@ public class TaskTypeTest {
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertFalse("Key typeMetadata doesn't match to given value!",
             TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImportFileUpload doesn't match to given value!",
-            TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(actual));
         assertFalse("Key typeImagesWrite doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
         assertFalse("Key typeImagesRead doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertFalse("Key typeExportRussian doesn't match to given value!",
-            TaskTypeField.TYPE_EXPORT_RUSSIAN.getBooleanValue(actual));
         assertEquals("Key processForTask.id doesn't match to given value!", 0,
             TaskTypeField.PROCESS_ID.getIntValue(actual));
         assertEquals("Key processForTask.title doesn't match to given value!", "",
@@ -273,14 +265,10 @@ public class TaskTypeTest {
             TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
         assertFalse("Key typeMetadata doesn't match to given value!",
             TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImportFileUpload doesn't match to given value!",
-            TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(actual));
         assertFalse("Key typeImagesWrite doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
         assertFalse("Key typeImagesRead doesn't match to given value!",
             TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertFalse("Key typeExportRussian doesn't match to given value!",
-            TaskTypeField.TYPE_EXPORT_RUSSIAN.getBooleanValue(actual));
         assertEquals("Key processForTask.id doesn't match to given value!", 0,
             TaskTypeField.PROCESS_ID.getIntValue(actual));
         assertEquals("Key processForTask.title doesn't match to given value!", "",
@@ -301,7 +289,7 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 23, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
 
         JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
         JsonObject user = users.getJsonObject(0);

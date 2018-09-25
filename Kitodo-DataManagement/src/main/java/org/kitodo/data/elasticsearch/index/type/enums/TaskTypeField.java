@@ -26,8 +26,6 @@ public enum TaskTypeField implements TypeInterface {
     HOME_DIRECTORY("homeDirectory"),
     TYPE_METADATA("typeMetadata"),
     TYPE_AUTOMATIC("typeAutomatic"),
-    TYPE_IMPORT_FILE_UPLOAD("typeImportFileUpload"),
-    TYPE_EXPORT_RUSSIAN("typeExportRussian"),
     TYPE_IMAGES_READ("typeImagesRead"),
     TYPE_IMAGES_WRITE("typeImagesWrite"),
     BATCH_STEP("batchStep"),

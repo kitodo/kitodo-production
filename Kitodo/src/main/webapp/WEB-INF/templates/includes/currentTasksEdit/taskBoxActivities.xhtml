@@ -23,35 +23,6 @@
 
     <h:panelGroup
             rendered="#{task.processingUser.id == LoginForm.myBenutzer.id}">
-        <!-- Import -->
-        <ui:fragment rendered="#{process.blockedUser == null and task.typeImportFileUpload}">
-
-            <h:outputText value="#{msgs.metadataImport}"/>
-
-            <h:panelGrid columns="1">
-                <!-- Import-Upload -->
-                <h:panelGroup>
-                    <h:panelGroup rendered="#{Import.importMessage !=''}">
-                        <h:outputText value="#{Import.importMessage}" style="color: blue;"/>
-                        <br/>
-                        <br/>
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{Import.importError !=''}">
-                        <h:outputText value="#{Import.importError}" style="color: red;" escape="false"/>
-                        <br/>
-                        <br/>
-                    </h:panelGroup>
-                    <h:form enctype="multipart/form-data" id="formupload">
-                        <h:inputFile id="fileupload" accept="image/*" value="#{Import.uploadedFile}" storage="file"
-                                     styleClass="fileUploadInput" required="false"/>
-                        <h:commandButton value="#{msgs.metadataImport}" id="button1" action="#{Import.start}">
-                            <f:setPropertyActionListener target="#{Import.task}" value="#{task}"/>
-                        </h:commandButton>
-                    </h:form>
-                </h:panelGroup>
-            </h:panelGrid>
-        </ui:fragment>
 
         <!--  Import -->
         <h:form id="actionForm">
