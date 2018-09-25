@@ -9,14 +9,14 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
--- Change ruleset authories added in V2_28
+-- Change ruleset authorities added in V2_28
 UPDATE authority SET clientAssignable='1' WHERE title='viewAllRulesets';
 UPDATE authority SET clientAssignable='1' WHERE title='viewRuleset';
 UPDATE authority SET clientAssignable='1' WHERE title='addRuleset';
 UPDATE authority SET clientAssignable='1' WHERE title='editRuleset';
 UPDATE authority SET clientAssignable='1' WHERE title='deleteRuleset';
 
--- Change docket authories added in V2_26
+-- Change docket authorities added in V2_26
 UPDATE authority SET clientAssignable='1' WHERE title='viewAllDockets';
 UPDATE authority SET clientAssignable='1' WHERE title='viewDocket';
 UPDATE authority SET clientAssignable='1' WHERE title='addDocket';
