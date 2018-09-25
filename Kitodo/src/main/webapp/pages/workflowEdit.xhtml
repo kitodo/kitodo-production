@@ -31,12 +31,12 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
-                          rendered="#{WorkflowForm.workflow.id ne null}"/>
             <h:outputText value="#{msgs.createNewWorkflow}"
-                          rendered="#{WorkflowForm.workflow.id eq null and WorkflowForm.workflow.fileName eq null}"/>
+                          rendered="#{WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName eq null}"/>
             <h:outputText value="#{msgs.duplicateWorkflow}"
                           rendered="#{WorkflowForm.workflow.title eq null and WorkflowForm.workflow.fileName ne null}"/>
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
+                          rendered="#{WorkflowForm.workflow.title ne null and WorkflowForm.workflow.fileName ne null}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"

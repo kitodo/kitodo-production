@@ -115,7 +115,6 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public String newTemplate() {
         this.template = new Template();
-        this.template.setTitle("");
         this.title = "";
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
