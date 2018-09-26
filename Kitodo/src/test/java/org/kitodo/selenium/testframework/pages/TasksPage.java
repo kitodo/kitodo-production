@@ -95,7 +95,6 @@ public class TasksPage extends Page<TasksPage> {
 
     private void setTakeTaskLink() {
         int index = getRowIndex(taskTable, "Blocking");
-        System.out.println("Index row:" + index);
         takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:take");
     }
 }

@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -220,6 +221,10 @@ public abstract class Page<T> {
 
     Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
         return !webElement.getAttribute("value").equals("");
+    };
+
+    Predicate<File> isFileDownloaded = (file) -> {
+        return file.exists();
     };
 
     void deleteElement(String objectType, int removableID, int tabIndex, WebElement tabView) throws Exception {

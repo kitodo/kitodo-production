@@ -11,6 +11,9 @@
 
 package org.kitodo.selenium;
 
+import java.io.File;
+
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +26,7 @@ import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class WorkingST extends BaseTestSelenium {
 
@@ -69,5 +73,25 @@ public class WorkingST extends BaseTestSelenium {
 
         Task task = serviceManager.getTaskService().getById(8);
         assertEquals("Task was not closed!", task.getProcessingStatusEnum(), TaskStatus.DONE);
+    }
+
+    @Test
+    public void downloadDocketTest() throws Exception {
+        Pages.getProcessesPage().goTo().downloadDocket();
+        assertTrue("Docket file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+    }
+
+    @Test
+    public void downloadLogTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
+        Pages.getProcessesPage().goTo().downloadLog();
+        assertTrue("Log file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+    }
+
+    @Test
+    public void editMetadataTest() throws Exception {
+        Pages.getProcessesPage().goTo().editMetadata();
+        assertTrue("Redirection after click edit metadata was not successful", Pages.getMetadataEditorPage().isAt());
     }
 }

@@ -14,7 +14,9 @@ package org.kitodo.selenium.testframework;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +31,11 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -42,6 +48,9 @@ public class Browser {
     private static final String CHROME_DRIVER_VERSION = "2.40";
     private static boolean onTravis = false;
     private static BrowserType browserType = BrowserType.CHROME;
+    private static final String USER_DIR = System.getProperty("user.dir");
+    public static final String DOWNLOAD_DIR = USER_DIR + "/target/downloads/";
+    private static final String DRIVER_DIR = USER_DIR + "/target/extracts/";
 
     private static int delayIndexing = 3000;
     private static int delayAfterLogin = 2000;
@@ -76,35 +85,50 @@ public class Browser {
     }
 
     private static void provideChromeDriver() throws IOException {
-        String userDir = System.getProperty("user.dir");
-        String driverFilePath = userDir + "/target/extracts/";
         String driverFileName = "chromedriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
         }
-        File driverFile = new File(driverFilePath + driverFileName);
+        File driverFile = new File(DRIVER_DIR + driverFileName);
 
         if (!driverFile.exists()) {
             logger.debug(driverFile.getAbsolutePath() + " does not exist, providing chrome driver now");
-            WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, userDir + "/target/downloads/",
-                userDir + "/target/extracts/");
+            WebDriverProvider.provideChromeDriver(CHROME_DRIVER_VERSION, DOWNLOAD_DIR, DRIVER_DIR);
         }
-        webDriver = new ChromeDriver();
+
+        ChromeDriverService service = new ChromeDriverService.Builder()
+                .usingDriverExecutable(driverFile)
+                .usingAnyFreePort()
+                .build();
+
+        Map<String, Object> chromePrefs = new HashMap<>();
+        chromePrefs.put("download.default_directory", DOWNLOAD_DIR);
+        chromePrefs.put("download.prompt_for_download", false);
+        ChromeOptions options = new ChromeOptions();
+        options.setExperimentalOption("prefs", chromePrefs);
+
+        webDriver = new ChromeDriver(service, options);
     }
 
     private static void provideGeckoDriver() throws IOException {
-        String userDir = System.getProperty("user.dir");
-        String driverFilePath = userDir + "/target/extracts/";
         String driverFileName = "geckodriver";
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFileName = driverFileName.concat(".exe");
         }
-        File driverFile = new File(driverFilePath + driverFileName);
+        File driverFile = new File(DRIVER_DIR + driverFileName);
         if (!driverFile.exists()) {
-            WebDriverProvider.provideGeckoDriver(GECKO_DRIVER_VERSION, userDir + "/target/downloads/",
-                userDir + "/target/extracts/");
+            WebDriverProvider.provideGeckoDriver(GECKO_DRIVER_VERSION, DOWNLOAD_DIR, DRIVER_DIR);
         }
-        webDriver = new FirefoxDriver();
+
+        FirefoxProfile profile = new FirefoxProfile();
+        profile.setAssumeUntrustedCertificateIssuer(false);
+        profile.setPreference("browser.helperApps.alwaysAsk.force", false);
+        profile.setPreference("browser.download.dir", DOWNLOAD_DIR);
+
+        FirefoxOptions options = new FirefoxOptions();
+        options.setProfile(profile);
+
+        webDriver = new FirefoxDriver(options);
     }
 
     public static boolean isAlertPresent() {

@@ -43,62 +43,56 @@ public class RemovingST extends BaseTestSelenium {
 
     @Test
     public void removeUserTest() throws Exception {
-        int numberOfUsersDisplayed = usersPage.countListedUsers();
+        int usersDisplayed = usersPage.countListedUsers();
         long usersInDatabase = serviceManager.getUserService().countDatabaseRows();
-        Assert.assertTrue("User list is empty",
-                numberOfUsersDisplayed > 0 && usersInDatabase > 0);
+        Assert.assertTrue("User list is empty", usersDisplayed > 0 && usersInDatabase > 0);
         usersPage.deleteRemovableUser();
         Assert.assertTrue("Removal of first user was not successful!",
-                usersPage.countListedUsers() == numberOfUsersDisplayed - 1 &&
-                        serviceManager.getUserService().countDatabaseRows() == usersInDatabase - 1);
+            usersPage.countListedUsers() == usersDisplayed - 1
+                    && serviceManager.getUserService().countDatabaseRows() == usersInDatabase - 1);
     }
 
     @Test
-    public void removeUsergroupTest() throws Exception {
-        int numbeOfUsergroupsDisplayed = usersPage.countListedUserGroups();
-        long usergroupsInDatabase = serviceManager.getUserGroupService().countDatabaseRows();
-        Assert.assertTrue("User group list is empty",
-                numbeOfUsergroupsDisplayed > 0 && usergroupsInDatabase > 0);
+    public void removeUserGroupTest() throws Exception {
+        int userGroupsDisplayed = usersPage.countListedUserGroups();
+        long userGroupsInDatabase = serviceManager.getUserGroupService().countDatabaseRows();
+        Assert.assertTrue("User group list is empty", userGroupsDisplayed > 0 && userGroupsInDatabase > 0);
         usersPage.deleteRemovableUserGroup();
         Assert.assertTrue("Removal of first user group was not successful!",
-                usersPage.countListedUserGroups() == numbeOfUsergroupsDisplayed - 1 &&
-                        serviceManager.getUserGroupService().countDatabaseRows() == usergroupsInDatabase - 1);
+            usersPage.countListedUserGroups() == userGroupsDisplayed - 1
+                    && serviceManager.getUserGroupService().countDatabaseRows() == userGroupsInDatabase - 1);
     }
 
     @Test
     public void removeClientTest() throws Exception {
-        int numberOfClientsDisplayed = usersPage.countListedClients();
+        int clientsDisplayed = usersPage.countListedClients();
         long clientsInDatabase = serviceManager.getClientService().countDatabaseRows();
-        Assert.assertTrue("Client list is empty",
-                numberOfClientsDisplayed > 0 && clientsInDatabase > 0);
+        Assert.assertTrue("Client list is empty", clientsDisplayed > 0 && clientsInDatabase > 0);
         usersPage.deleteRemovableClient();
         Assert.assertTrue("Removal of first client was not successful!",
-                usersPage.countListedClients() == numberOfClientsDisplayed - 1
-                        && serviceManager.getClientService().countDatabaseRows() == clientsInDatabase - 1);
+            usersPage.countListedClients() == clientsDisplayed - 1
+                    && serviceManager.getClientService().countDatabaseRows() == clientsInDatabase - 1);
     }
 
     @Test
     public void removeDocketTest() throws Exception {
-        int numberOfDocketsDisplayed = projectsPage.countListedDockets();
+        int docketsDisplayed = projectsPage.countListedDockets();
         long docketsInDatabase = serviceManager.getDocketService().countDatabaseRows();
-        Assert.assertTrue("Docket list is empty",
-                numberOfDocketsDisplayed > 0 && docketsInDatabase > 0);
+        Assert.assertTrue("Docket list is empty", docketsDisplayed > 0 && docketsInDatabase > 0);
         projectsPage.deleteDocket();
         Assert.assertTrue("Removal of first docket was not successful!",
-                projectsPage.countListedDockets() == numberOfDocketsDisplayed - 1 &&
-                        serviceManager.getDocketService().countDatabaseRows() == docketsInDatabase - 1);
+            projectsPage.countListedDockets() == docketsDisplayed - 1
+                    && serviceManager.getDocketService().countDatabaseRows() == docketsInDatabase - 1);
     }
 
     @Test
     public void removeRulesetTest() throws Exception {
-        int numberOfRulesetsDisplayed = projectsPage.countListedRulesets();
+        int rulesetsDisplayed = projectsPage.countListedRulesets();
         long rulesetsInDatabase = serviceManager.getRulesetService().countDatabaseRows();
-        Assert.assertTrue("Ruleset list is empty",
-                numberOfRulesetsDisplayed > 0 && rulesetsInDatabase > 0);
+        Assert.assertTrue("Ruleset list is empty", rulesetsDisplayed > 0 && rulesetsInDatabase > 0);
         projectsPage.deleteRuleset();
-        Assert.assertTrue("Removal of ruleset was not successfull!",
-                projectsPage.countListedRulesets() == numberOfRulesetsDisplayed - 1 &&
-                        serviceManager.getRulesetService().countDatabaseRows() == rulesetsInDatabase -1);
+        Assert.assertTrue("Removal of ruleset was not successful!",
+            projectsPage.countListedRulesets() == rulesetsDisplayed - 1
+                    && serviceManager.getRulesetService().countDatabaseRows() == rulesetsInDatabase - 1);
     }
-
 }
