@@ -29,6 +29,10 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
     private WebElement closeTaskLink;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "tasksTabView:actionForm:cancel")
+    private WebElement releaseTaskLink;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "yesButton")
     private WebElement confirmButton;
 
@@ -55,7 +59,7 @@ public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
     }
 
     public void releaseTask() throws Exception {
-        closeTaskLink.click();
+        releaseTaskLink.click();
 
         await("Wait for 'confirm release' dialog to be displayed")
                 .atMost(Browser.getDelayAfterDelete(), TimeUnit.MILLISECONDS).ignoreExceptions()
