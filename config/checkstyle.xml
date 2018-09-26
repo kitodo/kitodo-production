@@ -58,8 +58,6 @@
 
         <module name="NeedBraces"/>
 
-        <module name="RightCurly"/>
-
         <module name="RightCurly">
             <property name="option" value="alone"/>
             <property name="tokens"
@@ -190,7 +188,7 @@
             <property name="maximum" value="2"/>
         </module>
 
-        <!-- Checks if the licenceheader is present -->
+        <!-- Checks if the licence header is present -->
         <module name="Regexp">
             <property name="format" value="\A/\*"/>
         </module>
