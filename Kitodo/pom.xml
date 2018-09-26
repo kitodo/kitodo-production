@@ -30,7 +30,7 @@
 
     <properties>
         <parent.basedir>${basedir}/../</parent.basedir>
-        <maxAllowedViolations>34</maxAllowedViolations>
+        <maxAllowedViolations>90</maxAllowedViolations>
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>

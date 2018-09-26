@@ -22,7 +22,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <maxAllowedViolations>3</maxAllowedViolations>
+        <maxAllowedViolations>4</maxAllowedViolations>
     </properties>
 
     <artifactId>kitodo-api</artifactId>

@@ -24,6 +24,7 @@
 
     <properties>
         <jaxb.version>2.3.0</jaxb.version>
+        <maxAllowedViolations>4</maxAllowedViolations>
     </properties>
 
     <dependencies>

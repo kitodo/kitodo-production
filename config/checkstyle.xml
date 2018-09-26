@@ -41,6 +41,10 @@
             <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
 
+        <module name="MethodLength">
+            <property name="max" value="50"/>
+        </module>
+
         <module name="AvoidStarImport"/>
 
         <module name="OneTopLevelClass"/>
