@@ -77,6 +77,8 @@
 
         <module name="InnerAssignment"/>
 
+        <module name="IllegalThrows"/>
+
         <module name="OneStatementPerLine"/>
 
         <module name="MultipleVariableDeclarations"/>
