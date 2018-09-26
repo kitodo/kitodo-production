@@ -20,7 +20,8 @@ public class UserGenerator {
         String suffix = generateRandomString(5);
 
         User user = new User();
-        user.setPassword("P_" + generateRandomString(10));
+        // sometimes generated password doesn't contain number so it is added here explicitly
+        user.setPassword("P1_" + generateRandomString(10));
         user.setName("Name" + suffix);
         user.setSurname("Surname" + suffix);
         user.setLogin("UserLogin" + suffix);
