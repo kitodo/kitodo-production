@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -292,10 +293,10 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
      */
     public URI getUserHomeDirectory(User user) {
 
-        URI userFolderBasePath = URI.create("file:///" + ConfigCore.getParameter(ParameterCore.DIR_USERS));
+        String userFolderBasePath = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_LOCAL_DIRECTORY)) {
-            return userFolderBasePath.resolve(user.getLogin());
+            return Paths.get(userFolderBasePath, user.getLogin()).toUri();
         }
         Hashtable<String, String> env = initializeWithLdapConnectionSettings(user.getLdapGroup().getLdapServer());
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.LDAP_USE_TLS)) {
@@ -322,12 +323,12 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             } catch (IOException e) {
                 logger.error("TLS negotiation error:", e);
 
-                return userFolderBasePath.resolve(user.getLogin());
+                return Paths.get(userFolderBasePath, user.getLogin()).toUri();
             } catch (NamingException e) {
 
                 logger.error("JNDI error:", e);
 
-                return userFolderBasePath.resolve(user.getLogin());
+                return Paths.get(userFolderBasePath, user.getLogin()).toUri();
             } finally {
                 if (tls != null) {
                     try {
@@ -366,7 +367,7 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             if (userFolderPath.getPath().startsWith("/")) {
                 userFolderPath = serviceManager.getFileService().deleteFirstSlashFromPath(userFolderPath);
             }
-            return userFolderBasePath.resolve(userFolderPath);
+            return Paths.get(userFolderBasePath, userFolderPath.getRawPath()).toUri();
         } else {
             return userFolderPath;
         }
