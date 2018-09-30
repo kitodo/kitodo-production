@@ -17,7 +17,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.helper.Helper;
 
 /**
- * @author unascribed
+ * Deprecated class.
+ *
  * @author Matthias Ronge &lt;matthias.ronge@zeutschel.de&gt;
  * @deprecated New task implementations should directly implement EmptyTask.
  */
@@ -70,6 +71,8 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
+     * Cancel method.
+     *
      * @deprecated Replaced by {@link Thread#interrupt()}.
      */
     @Deprecated
@@ -83,7 +86,7 @@ public abstract class LongRunningTask extends EmptyTask {
      * order to render possible to restart them.
      *
      * @return a not-yet-executed replacement of this thread
-     * @see de.sub.goobi.helper.tasks.EmptyTask#replace()
+     * @see org.kitodo.helper.tasks.EmptyTask#replace()
      */
     @Override
     public abstract EmptyTask replace();
@@ -91,7 +94,7 @@ public abstract class LongRunningTask extends EmptyTask {
     /**
      * Returns the display name of the task to show to the user.
      *
-     * @see de.sub.goobi.helper.tasks.INameableTask#getDisplayName()
+     * @see org.kitodo.helper.tasks.INameableTask#getDisplayName()
      */
     @Override
     public abstract String getDisplayName();
@@ -147,6 +150,8 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
+     * Set status progress.
+     *
      * @deprecated Replaced by {@link EmptyTask#setProgress(double)}.
      */
     @Deprecated
@@ -187,6 +192,8 @@ public abstract class LongRunningTask extends EmptyTask {
     }
 
     /**
+     * Set long message.
+     *
      * @deprecated Replaced by {@link EmptyTask#setWorkDetail(String)}.
      */
     @Deprecated

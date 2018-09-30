@@ -69,8 +69,12 @@ public class TreeNodeStruct3 extends TreeNode {
         this.identifier = identifier;
     }
 
+    /**
+     * Get main title.
+     *
+     * @return main title
+     */
     public String getMainTitle() {
-
         int maxSize = ConfigCore.getIntParameter(ParameterCore.METS_EDITOR_MAX_TITLE_LENGTH);
         if (maxSize > ConfigCore.INT_PARAMETER_NOT_DEFINED_OR_ERRONEOUS && this.mainTitle != null
                 && this.mainTitle.length() > maxSize) {

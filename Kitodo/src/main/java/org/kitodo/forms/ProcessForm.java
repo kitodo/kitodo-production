@@ -169,7 +169,8 @@ public class ProcessForm extends TemplateBaseForm {
                 serviceManager.getProcessService().save(this.process);
                 return processListPath;
             } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
@@ -196,7 +197,8 @@ public class ProcessForm extends TemplateBaseForm {
             }
             serviceManager.getProcessService().remove(this.process);
         } catch (DataException | RuntimeException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
+                e);
         }
     }
 
@@ -338,7 +340,8 @@ public class ProcessForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.templateProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
+                e);
         }
         loadTemplateProperties();
     }
@@ -353,7 +356,8 @@ public class ProcessForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.workpieceProperty);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
+                e);
         }
         loadWorkpieceProperties();
     }
@@ -552,7 +556,8 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setMessage(EXPORT_FINISHED);
         } catch (PreferencesException | WriteException | MetadataTypeNotAllowedException | ReadException | IOException
                 | ExportFileException | RuntimeException | JAXBException e) {
-            Helper.setErrorMessage(ERROR_EXPORTING, new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
+            Helper.setErrorMessage(ERROR_EXPORTING,
+                new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.process.getId() }, logger, e);
         }
     }
 
@@ -683,10 +688,10 @@ public class ProcessForm extends TemplateBaseForm {
                 webDav.downloadToHome(process, false);
             } else {
                 Helper.setMessage(
-                        Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
-                                + Helper.getTranslation("isInUse"),
-                        serviceManager.getUserService()
-                                .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
+                    Helper.getTranslation("directory ") + " " + processDTO.getTitle() + " "
+                            + Helper.getTranslation("isInUse"),
+                    serviceManager.getUserService()
+                            .getFullName(serviceManager.getProcessService().getImageFolderInUseUser(process)));
                 webDav.downloadToHome(process, true);
             }
         } catch (DAOException e) {
@@ -803,7 +808,8 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             setProcess(serviceManager.getProcessService().getById(processID));
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE,
+                new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID }, logger, e);
         }
     }
 
@@ -1283,7 +1289,6 @@ public class ProcessForm extends TemplateBaseForm {
         return externalContext;
     }
 
-
     /**
      * Return whether closed processes should be displayed or not.
      *
@@ -1322,8 +1327,8 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Return whether inactive projects should be displayed or not.
      *
-     * @return parameter controlling whether inactive projects should be
-     *         displayed or not
+     * @return parameter controlling whether inactive projects should be displayed
+     *         or not
      */
     @Override
     public boolean isShowInactiveProjects() {
@@ -1490,7 +1495,8 @@ public class ProcessForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
+                e);
         }
         loadProcessProperties();
     }
@@ -1505,7 +1511,8 @@ public class ProcessForm extends TemplateBaseForm {
             serviceManager.getProcessService().save(this.process);
             serviceManager.getPropertyService().remove(this.property);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
+                e);
         }
 
         List<Property> properties = this.process.getProperties();
@@ -1524,7 +1531,8 @@ public class ProcessForm extends TemplateBaseForm {
             serviceManager.getPropertyService().save(newProperty);
             Helper.setMessage(PROPERTY_SAVED);
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
+                e);
         }
         loadProcessProperties();
     }
@@ -1539,7 +1547,8 @@ public class ProcessForm extends TemplateBaseForm {
                     serviceManager.getProcessService().save(this.process);
                     serviceManager.getPropertyService().remove(processProperty);
                 } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger, e);
+                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
+                        logger, e);
                 }
             }
         }
@@ -1596,7 +1605,8 @@ public class ProcessForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -1610,7 +1620,8 @@ public class ProcessForm extends TemplateBaseForm {
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
+                logger, e);
         }
     }
 
@@ -1623,7 +1634,8 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserService().findAllActiveUsers();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER.getTranslationPlural() }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER.getTranslationPlural() }, logger,
+                e);
             return new LinkedList<>();
         }
     }
@@ -1637,7 +1649,8 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             return serviceManager.getUserGroupService().findAll();
         } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.USER_GROUP.getTranslationPlural() },
+                logger, e);
             return new LinkedList<>();
         }
     }
@@ -1662,9 +1675,11 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set referring view which will be returned when the user clicks "save" or "cancel" on the task edit page.
+     * Set referring view which will be returned when the user clicks "save" or
+     * "cancel" on the task edit page.
      *
-     * @param referer the referring view
+     * @param referer
+     *            the referring view
      */
     public void setTaskEditReferer(String referer) {
         if (referer.equals("processEdit?id=" + this.task.getProcess().getId())) {
@@ -1684,9 +1699,11 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set referring view which will be returned when the user clicks "save" or "cancel" on the process edit page.
+     * Set referring view which will be returned when the user clicks "save" or
+     * "cancel" on the process edit page.
      *
-     * @param referer the referring view
+     * @param referer
+     *            the referring view
      */
     public void setProcessEditReferer(String referer) {
         if (!referer.isEmpty()) {

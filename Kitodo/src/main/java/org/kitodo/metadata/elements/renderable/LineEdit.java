@@ -108,7 +108,7 @@ public class LineEdit extends RenderableMetadata
     }
 
     /**
-     * Returns the value of this edit component as metadata element
+     * Returns the value of this edit component as metadata element.
      *
      * @return a list with one metadata element with the value of this component
      * @see org.kitodo.metadata.elements.renderable.RenderableGroupableMetadata#toMetadata()

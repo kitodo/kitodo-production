@@ -71,6 +71,8 @@ public class PluginLoader {
     }
 
     /**
+     * Get plugin list.
+     *
      * @deprecated Using this function is discouraged. Use
      *             <code>getPlugins(Class)</code> instead.
      */
@@ -84,6 +86,8 @@ public class PluginLoader {
     }
 
     /**
+     * Get plugin by title.
+     *
      * @deprecated Using this function is discouraged. Use
      *             <code>getPluginByTitle(Class, String, Locale)</code> instead.
      */

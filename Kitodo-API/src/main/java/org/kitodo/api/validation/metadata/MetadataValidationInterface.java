@@ -20,7 +20,7 @@ import org.kitodo.api.validation.ValidationResult;
 public interface MetadataValidationInterface extends ValidationInterface {
 
     /**
-     * Validates if a mets file is confirm to a rulesetFile
+     * Validates if a mets file is confirm to a rulesetFile.
      *
      * @param metsFileUri
      *            The uri to the mets file which should be validated.

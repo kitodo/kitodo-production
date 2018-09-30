@@ -30,8 +30,6 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
-        <parent.basedir>${basedir}/../</parent.basedir>
-        <checkstyle.config.location>${parent.basedir}/config/checkstyle.xml</checkstyle.config.location>
         <maxAllowedViolations>4</maxAllowedViolations>
     </properties>
 

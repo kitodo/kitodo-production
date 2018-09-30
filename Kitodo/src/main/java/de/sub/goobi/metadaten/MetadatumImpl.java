@@ -28,8 +28,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.services.ServiceManager;
 
 /**
- * Die Klasse Schritt ist ein Bean für einen einzelnen Schritt mit dessen
- * Eigenschaften und erlaubt die Bearbeitung der Schrittdetails
+ * Metadata implementation.
  *
  * @author Steffen Hankiewicz
  * @version 1.00 - 10.01.2005

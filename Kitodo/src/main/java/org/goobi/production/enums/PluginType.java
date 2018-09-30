@@ -34,6 +34,8 @@ public enum PluginType {
     }
 
     /**
+     * Get interface.
+     *
      * @deprecated Using this function is discouraged. Use
      *             {@link org.goobi.production.plugin.UnspecificPlugin#typeOf(Class)}
      *             instead.

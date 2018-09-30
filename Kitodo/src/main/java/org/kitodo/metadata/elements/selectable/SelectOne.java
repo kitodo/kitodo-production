@@ -67,7 +67,7 @@ public class SelectOne<T extends Selectable> {
     }
 
     /**
-     * Sets the selected element by its ID
+     * Sets the selected element by its ID.
      * 
      * @param id
      *            ID of the element to select.

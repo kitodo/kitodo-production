@@ -143,7 +143,7 @@ public class FileFormat {
      */
     public String getLabel(List<LanguageRange> languageRanges) {
         Map<Locale, String> labels = label.stream()
-                .collect(Collectors.toMap(λ -> λ.getLanguage().orElse(UNDEFINED_LOCALE), Label::getValue));
+                .collect(Collectors.toMap(locale -> locale.getLanguage().orElse(UNDEFINED_LOCALE), Label::getValue));
         Locale lookup = Locale.lookup(languageRanges, labels.keySet());
         if (lookup == null && languageRanges != UNDEFINED_LANGUAGE_RANGE) {
             lookup = Locale.lookup(UNDEFINED_LANGUAGE_RANGE, labels.keySet());

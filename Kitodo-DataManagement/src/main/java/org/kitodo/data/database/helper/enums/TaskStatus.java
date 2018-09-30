@@ -13,44 +13,39 @@ package org.kitodo.data.database.helper.enums;
 
 /**
  * Enum for status of steps, each one with integer value for database, with
- * title and images for gui
- * 
- * @author Steffen Hankiewicz
- * @version 17.05.2009
+ * title and images for gui.
  */
 public enum TaskStatus {
 
     /**
      * Locked = step not startable.
      */
-    LOCKED(0, "statusLocked", "red_10.gif", "red_15a.gif", "steplocked"),
+    LOCKED(0, "statusLocked", "red_15a.gif", "steplocked"),
     /**
      * Open = someone can begin with this step.
      */
-    OPEN(1, "statusOpen", "orange_10.gif", "orange_15a.gif", "stepopen"),
+    OPEN(1, "statusOpen", "orange_15a.gif", "stepopen"),
     /**
      * Inwork = someone is currently working on that step.
      */
-    INWORK(2, "statusInProcessing", "yellow_10.gif", "yellow_15a.gif", "stepinwork"),
+    INWORK(2, "statusInProcessing", "yellow_15a.gif", "stepinwork"),
     /**
      * Done = step is executed.
      */
-    DONE(3, "statusDone", "green_10.gif", "green_15a.gif", "stepdone");
+    DONE(3, "statusDone", "green_15a.gif", "stepdone");
 
     private int value;
     private String title;
-    private String imageSmall;
     private String imageBig;
     private String searchString;
 
     /**
-     * Private constructor, initializes integer value, title, small and big
+     * Private constructor, initializes integer value, title and big
      * image.
      */
-    TaskStatus(int inValue, String inTitle, String smallImage, String bigImage, String searchString) {
+    TaskStatus(int inValue, String inTitle, String bigImage, String searchString) {
         this.value = inValue;
         this.title = inTitle;
-        this.imageSmall = smallImage;
         this.imageBig = bigImage;
         this.searchString = searchString;
     }
@@ -71,15 +66,6 @@ public enum TaskStatus {
      */
     public String getTitle() {
         return this.title;
-    }
-
-    /**
-     * Get file name for small image.
-     *
-     * @return file name for small image
-     */
-    public String getSmallImagePath() {
-        return "/pages/images/status/" + this.imageSmall;
     }
 
     /**

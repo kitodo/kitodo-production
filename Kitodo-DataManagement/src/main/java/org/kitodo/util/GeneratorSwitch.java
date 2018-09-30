@@ -60,22 +60,22 @@ public class GeneratorSwitch {
      */
     public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> contentFolders) {
 
+        //TODO: find more meaningful name
         // Ignore all projects that do not have a source folder configured.
-        Stream<Project> projectsWithSourceFolder = projects.filter(λ -> Objects.nonNull(λ.getGeneratorSource()));
+        Stream<Project> projectsWithSourceFolder = projects.filter(lambda -> Objects.nonNull(lambda.getGeneratorSource()));
 
         Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
 
         // Remove all folders to generate which do not have anything to generate
         // configured.
-        Stream<Folder> generatableFolders = allowedFolders.filter(λ -> λ.getDerivative().isPresent()
-                || λ.getDpi().isPresent() || λ.getImageScale().isPresent() || λ.getImageSize().isPresent());
+        Stream<Folder> generatableFolders = allowedFolders.filter(lambda -> lambda.getDerivative().isPresent()
+                || lambda.getDpi().isPresent() || lambda.getImageScale().isPresent() || lambda.getImageSize().isPresent());
 
         // For all remaining folders, create an encapsulation to access the
         // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(λ -> new GeneratorSwitch(λ, contentFolders));
+        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(lambda -> new GeneratorSwitch(lambda, contentFolders));
 
-        List<GeneratorSwitch> result = taskGenerators.collect(Collectors.toCollection(LinkedList::new));
-        return result;
+        return taskGenerators.collect(Collectors.toCollection(LinkedList::new));
     }
 
     /**
@@ -88,8 +88,8 @@ public class GeneratorSwitch {
      */
     private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
         Stream<Pair<Folder, Folder>> foldersWithSources = projects
-                .flatMap(λ -> λ.getFolders().stream().map(μ -> Pair.of(μ, λ.getGeneratorSource())));
-        return foldersWithSources.filter(λ -> !λ.getLeft().equals(λ.getRight())).map(λ -> λ.getLeft());
+                .flatMap(lambda -> lambda.getFolders().stream().map(mi -> Pair.of(mi, lambda.getGeneratorSource())));
+        return foldersWithSources.filter(lambda -> !lambda.getLeft().equals(lambda.getRight())).map(lambda -> lambda.getLeft());
     }
 
     /**
@@ -98,7 +98,7 @@ public class GeneratorSwitch {
      * @param folder
      *            folder represented by this toggle switch
      * @param contentFolders
-     *            modifyable list of enabled toggle switches
+     *            modifiable list of enabled toggle switches
      */
     public GeneratorSwitch(Folder folder, List<Folder> contentFolders) {
         this.folder = folder;
@@ -118,7 +118,7 @@ public class GeneratorSwitch {
      * Returns the toggle switch value by looking into the list of folders to
      * generate.
      *
-     * @returns the value for the toggle switch
+     * @return the value for the toggle switch
      */
     public boolean isValue() {
         return contentFolders.contains(folder);

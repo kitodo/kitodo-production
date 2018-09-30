@@ -47,7 +47,7 @@ public class Issue {
     private final Course course;
 
     /**
-     * Dates with issue on days of week without regular appearance
+     * Dates with issue on days of week without regular appearance.
      *
      * <p>
      * Implementors note: SortedSet and SortedMap do not declare HashCode &

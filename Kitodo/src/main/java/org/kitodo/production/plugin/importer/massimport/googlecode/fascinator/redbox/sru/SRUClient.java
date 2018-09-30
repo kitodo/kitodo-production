@@ -273,7 +273,7 @@ public class SRUClient {
     }
 
     /**
-     * Parse an XML document from a string
+     * Parse an XML document from a string.
      *
      * @param xmlData
      *            The String to parse
