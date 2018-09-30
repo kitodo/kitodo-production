@@ -11,9 +11,13 @@
 
 package org.kitodo.selenium;
 
+import java.io.File;
+
+import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -22,6 +26,7 @@ import org.kitodo.services.ServiceManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class WorkingST extends BaseTestSelenium {
 
@@ -42,11 +47,20 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void takeOpenTaskAndGiveItBackTest() throws Exception {
+        Task task = serviceManager.getTaskService().getById(2);
+        assertEquals("Task can not be taken by user!", task.getProcessingStatusEnum(), TaskStatus.OPEN);
+
         Pages.getTasksPage().goTo().takeOpenTask();
         assertTrue("Redirection after click take task was not successful", Pages.getCurrentTasksEditPage().isAt());
 
+        task = serviceManager.getTaskService().getById(2);
+        assertEquals("Task was not taken by user!", task.getProcessingStatusEnum(), TaskStatus.INWORK);
+
         Pages.getCurrentTasksEditPage().releaseTask();
         assertTrue("Redirection after click release task was not successful", Pages.getTasksPage().isAt());
+
+        task = serviceManager.getTaskService().getById(2);
+        assertEquals("Task was not released by user!", task.getProcessingStatusEnum(), TaskStatus.OPEN);
     }
 
     @Test
@@ -57,7 +71,27 @@ public class WorkingST extends BaseTestSelenium {
         Pages.getCurrentTasksEditPage().closeTask();
         assertTrue("Redirection after click close task was not successful", Pages.getTasksPage().isAt());
 
-        assertEquals("Task was not closed!", serviceManager.getTaskService().getById(8).getProcessingStatusEnum(),
-            TaskStatus.DONE);
+        Task task = serviceManager.getTaskService().getById(8);
+        assertEquals("Task was not closed!", task.getProcessingStatusEnum(), TaskStatus.DONE);
+    }
+
+    @Test
+    public void downloadDocketTest() throws Exception {
+        Pages.getProcessesPage().goTo().downloadDocket();
+        assertTrue("Docket file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+    }
+
+    @Test
+    public void downloadLogTest() throws Exception {
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+
+        Pages.getProcessesPage().goTo().downloadLog();
+        assertTrue("Log file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+    }
+
+    @Test
+    public void editMetadataTest() throws Exception {
+        Pages.getProcessesPage().goTo().editMetadata();
+        assertTrue("Redirection after click edit metadata was not successful", Pages.getMetadataEditorPage().isAt());
     }
 }

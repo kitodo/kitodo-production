@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -38,8 +37,6 @@ public class TasksPage extends Page<TasksPage> {
     @FindBy(xpath = "//a[@href='/kitodo/pages/currentTasksEdit.jsf?id=8']")
     private WebElement editTaskLink;
 
-    @SuppressWarnings("unused")
-    @FindBy(id = TASK_TABLE + ":0:actions:take")
     private WebElement takeTaskLink;
 
     @SuppressWarnings("unused")
@@ -71,7 +68,7 @@ public class TasksPage extends Page<TasksPage> {
     public List<String> getTaskDetails() {
         int index = triggerRowToggle(taskTable, "Processed");
         WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id(TASK_TABLE + ":" + index + ":currentTaskDetailTable"));
+                .findElementById(TASK_TABLE + ":" + index + ":currentTaskDetailTable");
         return getTableDataByColumn(detailsTable, 1);
     }
 
@@ -87,11 +84,17 @@ public class TasksPage extends Page<TasksPage> {
         return getRowsOfTable(taskTable).size();
     }
 
-    public void takeOpenTask() {
+    public void takeOpenTask() throws Exception {
+        setTakeTaskLink();
         takeTaskLink.click();
     }
 
     public void editOwnedTask() {
         editTaskLink.click();
+    }
+
+    private void setTakeTaskLink() {
+        int index = getRowIndex(taskTable, "Blocking");
+        takeTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":actions:take");
     }
 }

@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -117,10 +118,29 @@ public abstract class Page<T> {
     int triggerRowToggle(WebElement dataTable, String objectTitle) {
         List<WebElement> tableRows = getRowsOfTable(dataTable);
 
+        int index = getRowIndex(dataTable, objectTitle);
+        WebElement tableRow = tableRows.get(index);
+        tableRow.findElement(By.className("ui-row-toggler")).click();
+
+        return index;
+    }
+
+
+    /**
+     * Find row in table matching to give title, return index of found row.
+     *
+     * @param dataTable
+     *            table for search
+     * @param objectTitle
+     *            searched row
+     * @return index of found row
+     */
+    int getRowIndex(WebElement dataTable, String objectTitle) {
+        List<WebElement> tableRows = getRowsOfTable(dataTable);
+
         for (int i = 0; i < tableRows.size(); i++) {
             WebElement tableRow = tableRows.get(i);
             if (Browser.getCellDataByRow(tableRow, 1).equals(objectTitle)) {
-                tableRow.findElement(By.className("ui-row-toggler")).click();
                 return i;
             }
         }
@@ -201,6 +221,10 @@ public abstract class Page<T> {
 
     Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
         return !webElement.getAttribute("value").equals("");
+    };
+
+    Predicate<File> isFileDownloaded = (file) -> {
+        return file.exists();
     };
 
     void deleteElement(String objectType, int removableID, int tabIndex, WebElement tabView) throws Exception {

@@ -78,6 +78,16 @@
         <language name="de">Haupttitel</language>
         <language name="en">main title</language>
     </MetadataType>
+    <MetadataType>
+        <Name>TitleDocMainShort</Name>
+        <language name="de">Haupttitel (Sortierung)</language>
+        <language name="en">main title (sorting)</language>
+    </MetadataType>
+    <MetadataType>
+        <Name>TSL_ATS</Name>
+        <language name="en">TSL/ATS</language>
+        <language name="de">TSL/ATS</language>
+    </MetadataType>
     <MetadataType type="person">
         <Name>FormerOwner</Name>
         <language name="de">Vorbesitzer</language>
@@ -142,7 +152,9 @@
         <Name>Monograph</Name>
         <language name="de">Monographie</language>
         <language name="en">Monograph</language>
-        <metadata DefaultDisplay="true" num="1o">TitleDocMain</metadata>
+        <metadata DefaultDisplay="true" num="1m">TitleDocMain</metadata>
+        <metadata num="1o">TitleDocMainShort</metadata>
+        <metadata DefaultDisplay="true" num="1o">TSL_ATS</metadata>
     </DocStrctType>
     <DocStrctType>
         <Name>Cover</Name>
