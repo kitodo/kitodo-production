@@ -209,30 +209,19 @@ public class AddingST extends BaseTestSelenium {
         assertEquals("Header for create new user group is incorrect", "Neue Benutzergruppe anlegen",
             Pages.getUserGroupEditPage().getHeaderText());
 
-        Pages.getUserGroupEditPage().setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
-                .assignAllClientAuthorities().assignAllProjectAuthorities();
+        Pages.getUserGroupEditPage().setUserGroupTitle(userGroup.getTitle()).assignAllClientAuthorities();
         Pages.getUserGroupEditPage().save();
         assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
         List<String> userGroupTitles = Pages.getUsersPage().getUserGroupTitles();
         assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
 
-        int availableAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
-        int assignedGlobalAuthorities = Pages.getUsersPage().editUserGroup(userGroup.getTitle())
-                .countAssignedGlobalAuthorities();
-        assertEquals("Assigned authorities of the new user group were not saved!", availableAuthorities,
-            assignedGlobalAuthorities);
-
-        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
-        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
-
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
-        int assignedClientAuthorities = Pages.getUserGroupEditPage().countAssignedClientAuthorities();
+        int assignedClientAuthorities = Pages.getUsersPage().editUserGroup(userGroup.getTitle())
+                .countAssignedClientAuthorities();
         assertEquals("Assigned client authorities of the new user group were not saved!", availableClientAuthorities,
             assignedClientAuthorities);
 
-        int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
-        int assignedProjectAuthorities = Pages.getUserGroupEditPage().countAssignedProjectAuthorities();
-        assertEquals("Assigned project authorities of the new user group were not saved!", availableProjectAuthorities,
-            assignedProjectAuthorities);
+        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
+        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
     }
 }

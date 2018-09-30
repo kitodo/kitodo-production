@@ -80,36 +80,9 @@
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
-                            <p:panelGrid columns="3" layout="grid">
-                                <!--global authorities-->
-
-                                <h:panelGroup>
-                                    <h3 style="margin-bottom: 20px">
-                                        <h:outputText value="#{msgs.authoritiesGlobal}"/>
-                                    </h3>
-                                    <p:pickList id="authoritiesGlobalPick"
-                                                showSourceFilter="true" showTargetFilter="true"
-                                                filterMatchMode="contains"
-                                                responsive="true"
-                                                disabled="#{isViewMode}"
-                                                value="#{UserGroupForm.globalAssignableAuthorities}"
-                                                converter="#{authorityConverter}"
-                                                var="authority"
-                                                itemLabel="#{authority.getTitleWithoutSuffix()}"
-                                                itemValue="#{authority}"
-                                                onTransfer="toggleSave()">
-                                        <f:facet name="sourceCaption"
-                                                 style="color: #000;">#{msgs.available}</f:facet>
-                                        <f:facet name="targetCaption"
-                                                 style="color: #000;">#{msgs.assigned}</f:facet>
-                                    </p:pickList>
-                                </h:panelGroup>
-
+                            <p:panelGrid columns="2" layout="grid">
                                 <!--client authorities-->
                                 <h:panelGroup>
-                                    <h3 style="margin-bottom: 20px">
-                                        <h:outputText value="#{msgs.authoritiesClient}"/>
-                                    </h3>
                                     <p:pickList id="authoritiesClientPick"
                                                 value="#{UserGroupForm.clientAssignableAuthorities}"
                                                 converter="#{authorityConverter}"
@@ -118,29 +91,6 @@
                                                 showSourceFilter="true" showTargetFilter="true"
                                                 filterMatchMode="contains"
                                                 responsive="true"
-                                                onTransfer="toggleSave()"
-                                                itemLabel="#{authority.getTitleWithoutSuffix()}"
-                                                itemValue="#{authority}">
-                                        <f:facet name="sourceCaption"
-                                                 style="color: #000;">#{msgs.available}</f:facet>
-                                        <f:facet name="targetCaption"
-                                                 style="color: #000;">#{msgs.assigned}</f:facet>
-                                    </p:pickList>
-                                </h:panelGroup>
-
-                                <!--project authorities-->
-                                <h:panelGroup>
-                                    <h3 style="margin-bottom: 20px">
-                                        <h:outputText value="#{msgs.authoritiesProject}"/>
-                                    </h3>
-                                    <p:pickList id="authoritiesProjectPick"
-                                                value="#{UserGroupForm.projectAssignableAuthorities}"
-                                                converter="#{authorityConverter}"
-                                                showSourceFilter="true" showTargetFilter="true"
-                                                disabled="#{isViewMode}"
-                                                filterMatchMode="contains"
-                                                responsive="true"
-                                                var="authority"
                                                 onTransfer="toggleSave()"
                                                 itemLabel="#{authority.getTitleWithoutSuffix()}"
                                                 itemValue="#{authority}">
