@@ -54,6 +54,8 @@ public class WorkflowControllerServiceIT {
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(new ServiceManager().getUserService().getById(1));
 
+        fileService.createDirectory(URI.create(""), "users");
+
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setExecutePermission(scriptCreateSymLink);
@@ -70,6 +72,8 @@ public class WorkflowControllerServiceIT {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
         }
+
+        fileService.delete(URI.create("users"));
     }
 
     @Test

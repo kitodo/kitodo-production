@@ -44,12 +44,14 @@ import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
+import org.kitodo.services.file.FileService;
 
 /**
  * Tests for UserService class.
  */
 public class UserServiceIT {
 
+    private static final FileService fileService = new ServiceManager().getFileService();
     private static final UserService userService = new ServiceManager().getUserService();
 
     @BeforeClass
@@ -57,12 +59,16 @@ public class UserServiceIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
+
+        fileService.createDirectory(URI.create(""), "users");
     }
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+
+        fileService.delete(URI.create("users"));
     }
 
     @Rule
