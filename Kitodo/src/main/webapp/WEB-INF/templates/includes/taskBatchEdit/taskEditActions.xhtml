@@ -15,12 +15,13 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:t="http://myfaces.apache.org/tomahawk"
 >
     <h:panelGroup rendered="#{CurrentTaskForm.batchHelper.currentStep.processingUser.id == LoginForm.myBenutzer.id}">
 
-        <h:form id="actionform">
+        <h:form id="actionForm">
             <table cellpadding="3" cellspacing="0" width="100%" class="eingabeBoxen" style="margin-top:20px">
                 <tr>
                     <td class="eingabeBoxen_row1">
@@ -141,22 +142,22 @@
                             </h:panelGroup>
 
                             <!-- Bearbeitung abbrechen-Schaltknopf -->
-                            <h:commandLink id="action11"
-                                           action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
-                                           title="#{msgs.releaseTask}"
-                                           onclick="if (!confirm('#{msgs.reallyReleaseTask}')) return">
+                            <p:commandLink id="cancel" action="#{CurrentTaskForm.batchHelper.openBatchTasksByUser}"
+                                           title="#{msgs.releaseTask}">
                                 <h:graphicImage value="/pages/images/buttons/cancel3.gif" alt="cancel"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.releaseTask}"/>
-                            </h:commandLink>
+                                <p:confirm header="#{msgs.confirmRelease}" message="#{msgs.reallyReleaseTask}}"
+                                           icon="ui-icon-alert"/>
+                            </p:commandLink>
                             <!-- Abschliessen-Schaltknopf -->
-                            <h:commandLink id="action15"
-                                           action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
-                                           title="#{msgs.closeTask}" onclick="if (!confirm('#{msgs.closeTask}?')) return">
+                            <p:commandLink id="close" action="#{CurrentTaskForm.batchHelper.closeBatchTasksByUser}"
+                                           title="#{msgs.closeTask}">
                                 <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                                 style="margin-right:3px;vertical-align:middle"/>
                                 <h:outputText value="#{msgs.closeTask}"/>
-                            </h:commandLink>
+                                <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}" icon="ui-icon-alert"/>
+                            </p:commandLink>
 
                         </h:panelGrid>
                     </td>

@@ -15,6 +15,7 @@
         xmlns:c="http://java.sun.com/jsp/jstl/core"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <c:set var="task" value="#{CurrentTaskForm.currentTask}" scope="request"/>
@@ -53,7 +54,7 @@
         </ui:fragment>
 
         <!--  Import -->
-        <h:form id="actionform">
+        <h:form id="actionForm">
             <!-- Action -->
             <ui:fragment>
 
@@ -124,11 +125,12 @@
                     </h:commandLink>
 
                     <!-- Edit Cancel-buttons -->
-                    <h:commandLink id="action11" action="#{CurrentTaskForm.schrittDurchBenutzerZurueckgeben}"
-                                   title="#{msgs.releaseTask}"
-                                   onclick="if (!confirm('#{msgs.reallyReleaseTask}')) return">
+                    <p:commandLink id="cancel" action="#{CurrentTaskForm.schrittDurchBenutzerZurueckgeben}"
+                                   title="#{msgs.releaseTask}">
                         <h:outputText><i class="fa fa-ban"/> #{msgs.releaseTask}</h:outputText>
-                    </h:commandLink>
+                        <p:confirm header="#{msgs.confirmRelease}" message="#{msgs.reallyReleaseTask}}"
+                                   icon="ui-icon-alert"/>
+                    </p:commandLink>
 
                     <!-- Return to previous station for correction purposes-->
                     <h:panelGroup rendered="#{CurrentTaskForm.sizeOfPreviousStepsForProblemReporting > 0}">
@@ -195,12 +197,13 @@
                     </h:panelGroup>
 
                     <!-- Lock button -->
-                    <h:commandLink id="action15" action="#{CurrentTaskForm.schrittDurchBenutzerAbschliessen}"
-                                   title="#{msgs.closeTask}" onclick="if (!confirm('#{msgs.closeTask}?')) return">
+                    <p:commandLink id="close" action="#{CurrentTaskForm.schrittDurchBenutzerAbschliessen}"
+                                   title="#{msgs.closeTask}">
                         <h:graphicImage value="/pages/images/buttons/ok.gif" alt="ok"
                                         style="margin-right:3px;vertical-align:middle"/>
                         <h:outputText value="#{msgs.closeTask}"/>
-                    </h:commandLink>
+                        <p:confirm header="#{msgs.confirmClose}" message="#{msgs.closeTask}" icon="ui-icon-alert"/>
+                    </p:commandLink>
                 </h:panelGrid>
             </ui:fragment>
         </h:form>

@@ -52,7 +52,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.actions}">
-            <h:form>
+            <h:form id="actions">
                 <!-- assign task -->
                 <h:commandLink id="take" action="#{CurrentTaskForm.schrittDurchBenutzerUebernehmen}"
                                rendered="#{(item.processingStatus == 'OPEN' and !item.batchStep) || (item.processingStatus == 'OPEN' and item.batchStep and !item.batchAvailable)}"
