@@ -11,23 +11,31 @@
 
 package org.kitodo.selenium;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
+
+import static org.junit.Assert.assertTrue;
 
 public class RemovingST extends BaseTestSelenium {
 
     private static ServiceManager serviceManager = new ServiceManager();
 
     private static UsersPage usersPage;
+    private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
 
     @BeforeClass
     public static void setup() throws Exception {
         usersPage = Pages.getUsersPage();
+        processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
     }
 
@@ -42,12 +50,23 @@ public class RemovingST extends BaseTestSelenium {
     }
 
     @Test
+    public void removeBatchTest() throws Exception {
+        int batchesDisplayed = processesPage.countListedBatches();
+        long batchesInDatabase = serviceManager.getBatchService().countDatabaseRows();
+        assertTrue("Batch list is empty", batchesDisplayed > 0 && batchesInDatabase > 0);
+        processesPage.deleteBatch();
+        assertTrue("Removal of batch was not successful!",
+                processesPage.countListedBatches() == batchesDisplayed - 1
+                        && serviceManager.getBatchService().countDatabaseRows() == batchesInDatabase - 1);
+    }
+
+    @Test
     public void removeUserTest() throws Exception {
         int usersDisplayed = usersPage.countListedUsers();
         long usersInDatabase = serviceManager.getUserService().countDatabaseRows();
-        Assert.assertTrue("User list is empty", usersDisplayed > 0 && usersInDatabase > 0);
+        assertTrue("User list is empty", usersDisplayed > 0 && usersInDatabase > 0);
         usersPage.deleteRemovableUser();
-        Assert.assertTrue("Removal of first user was not successful!",
+        assertTrue("Removal of first user was not successful!",
             usersPage.countListedUsers() == usersDisplayed - 1
                     && serviceManager.getUserService().countDatabaseRows() == usersInDatabase - 1);
     }
@@ -56,9 +75,9 @@ public class RemovingST extends BaseTestSelenium {
     public void removeUserGroupTest() throws Exception {
         int userGroupsDisplayed = usersPage.countListedUserGroups();
         long userGroupsInDatabase = serviceManager.getUserGroupService().countDatabaseRows();
-        Assert.assertTrue("User group list is empty", userGroupsDisplayed > 0 && userGroupsInDatabase > 0);
+        assertTrue("User group list is empty", userGroupsDisplayed > 0 && userGroupsInDatabase > 0);
         usersPage.deleteRemovableUserGroup();
-        Assert.assertTrue("Removal of first user group was not successful!",
+        assertTrue("Removal of first user group was not successful!",
             usersPage.countListedUserGroups() == userGroupsDisplayed - 1
                     && serviceManager.getUserGroupService().countDatabaseRows() == userGroupsInDatabase - 1);
     }
@@ -67,9 +86,9 @@ public class RemovingST extends BaseTestSelenium {
     public void removeClientTest() throws Exception {
         int clientsDisplayed = usersPage.countListedClients();
         long clientsInDatabase = serviceManager.getClientService().countDatabaseRows();
-        Assert.assertTrue("Client list is empty", clientsDisplayed > 0 && clientsInDatabase > 0);
+        assertTrue("Client list is empty", clientsDisplayed > 0 && clientsInDatabase > 0);
         usersPage.deleteRemovableClient();
-        Assert.assertTrue("Removal of first client was not successful!",
+        assertTrue("Removal of first client was not successful!",
             usersPage.countListedClients() == clientsDisplayed - 1
                     && serviceManager.getClientService().countDatabaseRows() == clientsInDatabase - 1);
     }
@@ -78,9 +97,9 @@ public class RemovingST extends BaseTestSelenium {
     public void removeDocketTest() throws Exception {
         int docketsDisplayed = projectsPage.countListedDockets();
         long docketsInDatabase = serviceManager.getDocketService().countDatabaseRows();
-        Assert.assertTrue("Docket list is empty", docketsDisplayed > 0 && docketsInDatabase > 0);
+        assertTrue("Docket list is empty", docketsDisplayed > 0 && docketsInDatabase > 0);
         projectsPage.deleteDocket();
-        Assert.assertTrue("Removal of first docket was not successful!",
+        assertTrue("Removal of first docket was not successful!",
             projectsPage.countListedDockets() == docketsDisplayed - 1
                     && serviceManager.getDocketService().countDatabaseRows() == docketsInDatabase - 1);
     }
@@ -89,9 +108,9 @@ public class RemovingST extends BaseTestSelenium {
     public void removeRulesetTest() throws Exception {
         int rulesetsDisplayed = projectsPage.countListedRulesets();
         long rulesetsInDatabase = serviceManager.getRulesetService().countDatabaseRows();
-        Assert.assertTrue("Ruleset list is empty", rulesetsDisplayed > 0 && rulesetsInDatabase > 0);
+        assertTrue("Ruleset list is empty", rulesetsDisplayed > 0 && rulesetsInDatabase > 0);
         projectsPage.deleteRuleset();
-        Assert.assertTrue("Removal of ruleset was not successful!",
+        assertTrue("Removal of ruleset was not successful!",
             projectsPage.countListedRulesets() == rulesetsDisplayed - 1
                     && serviceManager.getRulesetService().countDatabaseRows() == rulesetsInDatabase - 1);
     }

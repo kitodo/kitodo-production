@@ -71,7 +71,7 @@
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadAllProcesses}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.downloadDocket}">
+                    <h:commandLink id="downloadDocket" action="#{BatchForm.downloadDocket}">
                         <h:outputText><i class="fa fa-print"/> #{msgs.docketPrint}</h:outputText>
                     </h:commandLink>
 
@@ -80,7 +80,7 @@
                         <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
                     </h:link>
 
-                    <h:commandLink action="#{BatchForm.delete}">
+                    <h:commandLink id="deleteBatch" action="#{BatchForm.delete}">
                         <h:outputText><i class="fa fa-trash-o"/> #{msgs.deleteBatch}</h:outputText>
                     </h:commandLink>
                 </h:panelGrid>

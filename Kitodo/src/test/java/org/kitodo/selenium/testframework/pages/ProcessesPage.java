@@ -79,6 +79,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement renameBatchLink;
 
     @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":deleteBatch")
+    private WebElement deleteBatchLink;
+
+    @SuppressWarnings("unused")
     @FindBy(id = BATCH_FORM + ":addProcessesToBatch")
     private WebElement addProcessesToBatchLink;
 
@@ -184,6 +188,15 @@ public class ProcessesPage extends Page<ProcessesPage> {
         renameBatchLink.click();
         renameBatchTitleInput.sendKeys("SeleniumBatch");
         renameBatchSaveButton.click();
+    }
+
+    public void deleteBatch() throws Exception {
+        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+
+        Select batchSelect = new Select(batchesSelect);
+        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+
+        deleteBatchLink.click();
     }
 
     public void downloadDocket() {
