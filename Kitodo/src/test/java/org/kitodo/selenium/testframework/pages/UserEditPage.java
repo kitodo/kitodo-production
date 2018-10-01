@@ -119,27 +119,13 @@ public class UserEditPage extends Page<UserEditPage> {
     public UserEditPage addUserToUserGroup(String userGroupTitle) {
         addUserToGroupButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(addToUserGroupDialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+        return addRow(tableRows, userGroupTitle, addToUserGroupDialog);
     }
 
     public UserEditPage addUserToClient(String clientName) {
         addUserToClientButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(clientName)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(addToClientDialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No client with given title was found: " + clientName);
+        return addRow(tableRows, clientName, addToClientDialog);
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {
@@ -147,4 +133,15 @@ public class UserEditPage extends Page<UserEditPage> {
         link.click();
     }
 
+
+    private UserEditPage addRow(List<WebElement> tableRows, String title, WebElement dialog) {
+        for (WebElement tableRow : tableRows) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
+                clickLinkOfTableRow(tableRow);
+                Browser.closeDialog(dialog);
+                return this;
+            }
+        }
+        throw new NoSuchElementException("No row for given value found: " + title);
+    }
 }
