@@ -107,15 +107,15 @@
                 </div>
 
                 <h:panelGrid columns="1" cellpadding="2px">
-                    <h:commandLink action="#{BatchForm.loadBatchData}">
+                    <h:commandLink id="loadBatchData" action="#{BatchForm.loadBatchData}">
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadAssociatedBatchOfProcess}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.addProcessesToBatch}">
+                    <h:commandLink id="addProcessesToBatch" action="#{BatchForm.addProcessesToBatch}">
                         <h:outputText><i class="fa fa-check-circle-o"/> #{msgs.addToSelectedBatch}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.removeProcessesFromBatch}">
+                    <h:commandLink id="removeProcessesFromBatch" action="#{BatchForm.removeProcessesFromBatch}">
                         <h:outputText><i class="fa fa-times-circle-o"/> #{msgs.removeFromAssociatedBatch}</h:outputText>
                     </h:commandLink>
 

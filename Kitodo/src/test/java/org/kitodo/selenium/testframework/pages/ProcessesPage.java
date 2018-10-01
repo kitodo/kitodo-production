@@ -75,12 +75,32 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement createBatchLink;
 
     @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":renameBatch")
+    private WebElement renameBatchLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":addProcessesToBatch")
+    private WebElement addProcessesToBatchLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":removeProcessesFromBatch")
+    private WebElement removeProcessesFromBatchLink;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "createBatchForm:batchTitle")
     private WebElement createBatchTitleInput;
 
     @SuppressWarnings("unused")
     @FindBy(id = "createBatchForm:save")
     private WebElement createBatchSaveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "renameBatchForm:batchTitle")
+    private WebElement renameBatchTitleInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "renameBatchForm:save")
+    private WebElement renameBatchSaveButton;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -140,6 +160,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void createNewBatch() throws Exception {
         switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+
         Select processSelect = new Select(processesSelect);
         processSelect.selectByIndex(0);
         processSelect.selectByIndex(1);
@@ -147,6 +168,22 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         createBatchTitleInput.sendKeys("SeleniumBatch");
         createBatchSaveButton.click();
+    }
+
+    public void editBatch() throws Exception {
+        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+
+        Select batchSelect = new Select(batchesSelect);
+        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+
+        Select processSelect = new Select(processesSelect);
+        processSelect.selectByVisibleText("First process");
+
+        removeProcessesFromBatchLink.click();
+
+        renameBatchLink.click();
+        renameBatchTitleInput.sendKeys("SeleniumBatch");
+        renameBatchSaveButton.click();
     }
 
     public void downloadDocket() {
