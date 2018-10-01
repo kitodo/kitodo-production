@@ -20,24 +20,27 @@ import org.openqa.selenium.support.FindBy;
 
 public class TemplateEditPage extends Page<TemplateEditPage> {
 
+    private static final String EDIT_FORM = "editForm";
+    private static final String TEMPLATE_TAB_VIEW = EDIT_FORM + ":templateTabView";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
+    @FindBy(id = EDIT_FORM + ":save")
     private WebElement saveTemplateButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:templateTabView:title")
+    @FindBy(id = TEMPLATE_TAB_VIEW + ":title")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:templateTabView:workflow")
+    @FindBy(id = TEMPLATE_TAB_VIEW + ":workflow")
     private WebElement workflowSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:templateTabView:ruleset")
+    @FindBy(id = TEMPLATE_TAB_VIEW + ":ruleset")
     private WebElement rulesetSelect;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:templateTabView:docket")
+    @FindBy(id = TEMPLATE_TAB_VIEW + ":docket")
     private WebElement docketSelect;
 
     private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";

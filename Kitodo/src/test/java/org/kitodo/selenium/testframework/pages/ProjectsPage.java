@@ -33,6 +33,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private static final String PROJECTS_TAB_VIEW = "projectsTabView";
     private static final String PROJECTS_TABLE = PROJECTS_TAB_VIEW + ":projectsTable";
     private static final String TEMPLATE_TABLE = PROJECTS_TAB_VIEW + ":templateTable";
+    private static final String WORKFLOW_TABLE = PROJECTS_TAB_VIEW + ":workflowTable";
     private static final String DOCKET_TABLE = PROJECTS_TAB_VIEW + ":docketTable";
     private static final String RULESET_TABLE = PROJECTS_TAB_VIEW + ":rulesetTable";
 
@@ -49,7 +50,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:workflowTable_data")
+    @FindBy(id = WORKFLOW_TABLE + "_data")
     private WebElement workflowsTable;
 
     @SuppressWarnings("unused")

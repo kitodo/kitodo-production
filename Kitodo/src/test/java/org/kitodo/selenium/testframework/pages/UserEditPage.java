@@ -22,44 +22,48 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class UserEditPage extends Page<UserEditPage> {
+
+    private static final String EDIT_FORM = "editForm";
+    private static final String USER_TAB_VIEW = EDIT_FORM + ":userTabView";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
+    @FindBy(id = EDIT_FORM + ":save")
     private WebElement saveUserButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:firstName")
-    private WebElement firstNameInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:surname")
-    private WebElement lastNameInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:login")
-    private WebElement loginInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:password")
-    private WebElement passwordInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:location")
-    private WebElement locationInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:metaDataLanguage")
-    private WebElement metaDataLanguageInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView")
+    @FindBy(id = USER_TAB_VIEW)
     private WebElement userEditTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:addUserGroupButton")
+    @FindBy(id = USER_TAB_VIEW + ":firstName")
+    private WebElement firstNameInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":surname")
+    private WebElement lastNameInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":login")
+    private WebElement loginInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":password")
+    private WebElement passwordInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":location")
+    private WebElement locationInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
+    private WebElement metaDataLanguageInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + "addUserGroupButton")
     private WebElement addUserToGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:addClientButton")
+    @FindBy(id = USER_TAB_VIEW + ":addClientButton")
     private WebElement addUserToClientButton;
 
     @SuppressWarnings("unused")

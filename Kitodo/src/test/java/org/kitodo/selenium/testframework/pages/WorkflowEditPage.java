@@ -18,16 +18,19 @@ import org.openqa.selenium.support.FindBy;
 
 public class WorkflowEditPage extends Page<WorkflowEditPage> {
 
+    private static final String EDIT_FORM = "editForm";
+    private static final String WORKFLOW_TAB_VIEW = EDIT_FORM + ":workflowTabView";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
+    @FindBy(id = EDIT_FORM + ":save")
     private WebElement saveWorkflowButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:workflowTabView:xmlDiagramName")
+    @FindBy(id = WORKFLOW_TAB_VIEW + ":xmlDiagramName")
     private WebElement fileInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:workflowTabView:js-create-diagram")
+    @FindBy(id = WORKFLOW_TAB_VIEW + ":js-create-diagram")
     private WebElement createDiagram;
 
     @Override

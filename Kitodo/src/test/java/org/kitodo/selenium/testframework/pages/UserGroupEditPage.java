@@ -21,24 +21,27 @@ import org.openqa.selenium.support.FindBy;
 
 public class UserGroupEditPage extends Page<UserGroupEditPage> {
 
+    private static final String EDIT_FORM = "editForm";
+    private static final String USER_GROUP_TAB_VIEW = EDIT_FORM + ":usergroupTabView";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
+    @FindBy(id = EDIT_FORM + ":save")
     private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:usergroupTabView:titleInput")
+    @FindBy(id = USER_GROUP_TAB_VIEW + ":titleInput")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:usergroupTabView:authoritiesClientPick")
+    @FindBy(id = USER_GROUP_TAB_VIEW + ":authoritiesClientPick")
     private WebElement clientAuthoritiesPickList;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:usergroupTabView:clientSelect")
+    @FindBy(id = USER_GROUP_TAB_VIEW + ":clientSelect")
     private WebElement clientSelector;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:usergroupTabView:projectSelect")
+    @FindBy(id = USER_GROUP_TAB_VIEW + ":projectSelect")
     private WebElement projectSelector;
 
     public UserGroupEditPage() {

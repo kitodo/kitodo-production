@@ -24,6 +24,8 @@ import org.openqa.selenium.support.FindBy;
 
 public class UserConfigurationPage extends Page<UserConfigurationPage> {
 
+    private static final String USER_CONFIG_FORM = "userConfigurationTabView:userConfigForm";
+
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
     private WebElement userMenuButton;
@@ -33,15 +35,15 @@ public class UserConfigurationPage extends Page<UserConfigurationPage> {
     private WebElement userConfigButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userConfigurationTabView:userConfigForm:table-size")
+    @FindBy(id = USER_CONFIG_FORM + ":table-size")
     private WebElement tableSizeInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userConfigurationTabView:userConfigForm:metadata-language")
+    @FindBy(id = USER_CONFIG_FORM + ":metadata-language")
     private WebElement metadataLanguageInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "userConfigurationTabView:userConfigForm:submit")
+    @FindBy(id = USER_CONFIG_FORM + ":submit")
     private WebElement saveConfigurationButton;
 
     public UserConfigurationPage() {
@@ -60,7 +62,7 @@ public class UserConfigurationPage extends Page<UserConfigurationPage> {
         metadataLanguageInput.clear();
         metadataLanguageInput.sendKeys("en");
         Browser.getDriver().findElements(By.cssSelector(".ui-selectonemenu-trigger")).get(0).click();
-        Browser.getDriver().findElement(By.id("userConfigurationTabView:userConfigForm:languages_1")).click();
+        Browser.getDriver().findElement(By.id(USER_CONFIG_FORM + ":languages_1")).click();
         saveConfigurationButton.click();
     }
 
