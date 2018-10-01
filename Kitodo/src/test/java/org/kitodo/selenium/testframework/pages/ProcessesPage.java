@@ -15,8 +15,10 @@ import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
 
 import java.io.File;
 import java.util.List;
@@ -30,12 +32,21 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private static final String PROCESSES_TAB_VIEW = "processesTabView";
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
+    private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
     private static final String PROCESS_TITLE =  "Second process";
 
     @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_TAB_VIEW)
+    private WebElement processesTabView;
+
+    @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TABLE + "_data")
     private WebElement processesTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":selectBatches")
+    private WebElement batchesSelect;
 
     @SuppressWarnings("unused")
     @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit.jsf?referer=processes&id=1']")
@@ -91,6 +102,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
             goTo();
         }
         return getRowsOfTable(processesTable).size();
+    }
+
+    public int countListedBatches() throws Exception {
+        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        Select batchSelect = new Select(batchesSelect);
+        return batchSelect.getOptions().size();
     }
 
     /**
