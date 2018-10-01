@@ -18,15 +18,30 @@ import static org.junit.Assume.assumeTrue;
 import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
 
 public class EditingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
+
+    private static ProcessesPage processesPage;
+    private static ProjectsPage projectsPage;
+    private static UsersPage usersPage;
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        processesPage = Pages.getProcessesPage();
+        projectsPage = Pages.getProjectsPage();
+        usersPage = Pages.getUsersPage();
+    }
 
     @Before
     public void login() throws Exception {
@@ -45,80 +60,80 @@ public class EditingST extends BaseTestSelenium {
     public void editProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        Pages.getProcessesPage().editProcess();
+        processesPage.editProcess();
         assertEquals("Header for edit process is incorrect", "Vorgang bearbeiten (First process)",
-                Pages.getProcessEditPage().getHeaderText());
+            Pages.getProcessEditPage().getHeaderText());
     }
 
     @Test
     public void editBatchTest() throws Exception {
-        Pages.getProcessesPage().editBatch();
-        await().untilAsserted(
-                () -> assertEquals("Batch was not renamed!", 1, serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+        processesPage.editBatch();
+        await().untilAsserted(() -> assertEquals("Batch was not renamed!", 1,
+            serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
 
-        assertEquals("Process was not removed from batch", 1,
-                serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
+        assertEquals("Process was not removed from batch", 1, serviceManager.getBatchService()
+                .getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
     }
 
     @Test
     public void editProjectTest() throws Exception {
-        Pages.getProjectsPage().editProject();
+        projectsPage.editProject();
         assertEquals("Header for edit project is incorrect", "Projekt bearbeiten (First project)",
             Pages.getProjectEditPage().getHeaderText());
     }
 
     @Test
     public void addTemplateTest() throws Exception {
-        Pages.getProjectsPage().editTemplate();
+        projectsPage.editTemplate();
         assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (First template)",
             Pages.getTemplateEditPage().getHeaderText());
     }
 
     @Test
     public void editWorkflowTest() throws Exception {
-        Pages.getProjectsPage().editWorkflow();
+        projectsPage.editWorkflow();
         assertEquals("Header for edit ruleset is incorrect", "Workflow bearbeiten (say-hello)",
-                Pages.getWorkflowEditPage().getHeaderText());
+            Pages.getWorkflowEditPage().getHeaderText());
     }
 
     @Test
     public void editDocketTest() throws Exception {
-        Pages.getProjectsPage().editDocket();
+        projectsPage.editDocket();
         assertEquals("Header for edit docket is incorrect", "Laufzettel bearbeiten (default)",
-                Pages.getDocketEditPage().getHeaderText());
+            Pages.getDocketEditPage().getHeaderText());
     }
 
     @Test
     public void editRulesetTest() throws Exception {
-        Pages.getProjectsPage().editRuleset();
+        projectsPage.editRuleset();
         assertEquals("Header for edit ruleset is incorrect", "Regelsatz bearbeiten (SLUBDD)",
-                Pages.getRulesetEditPage().getHeaderText());
+            Pages.getRulesetEditPage().getHeaderText());
     }
 
     @Test
     public void editUserTest() throws Exception {
-        Pages.getUsersPage().editUser();
+        usersPage.editUser();
         assertEquals("Header for edit user is incorrect", "Benutzer bearbeiten (Kowalski, Jan)",
             Pages.getUserEditPage().getHeaderText());
     }
 
     @Test
     public void editUserGroupTest() throws Exception {
-        Pages.getUsersPage().editUserGroup();
+        usersPage.editUserGroup();
         assertEquals("Header for edit user group is incorrect", "Benutzergruppe bearbeiten (Admin)",
-                Pages.getClientEditPage().getHeaderText());
+            Pages.getClientEditPage().getHeaderText());
     }
 
     @Test
     public void editLdapGroupTest() throws Exception {
-        Pages.getUsersPage().editLdapGroup();
+        usersPage.editLdapGroup();
         assertEquals("Header for edit LDAP group is incorrect", "LDAP-Gruppe bearbeiten (LG)",
             Pages.getLdapGroupEditPage().getHeaderText());
     }
 
     @Test
     public void editClientTest() throws Exception {
-        Pages.getUsersPage().editClient();
+        usersPage.editClient();
         assertEquals("Header for edit client is incorrect", "Mandant bearbeiten",
             Pages.getClientEditPage().getHeaderText());
     }
