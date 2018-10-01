@@ -91,6 +91,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement removeProcessesFromBatchLink;
 
     @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":downloadDocket")
+    private WebElement downloadDocketForBatchLink;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "createBatchForm:batchTitle")
     private WebElement createBatchTitleInput;
 
@@ -145,7 +149,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public int countListedBatches() throws Exception {
-        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
         Select batchSelect = new Select(batchesSelect);
         return batchSelect.getOptions().size();
     }
@@ -163,7 +167,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void createNewBatch() throws Exception {
-        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select processSelect = new Select(processesSelect);
         processSelect.selectByIndex(0);
@@ -175,7 +179,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void editBatch() throws Exception {
-        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
@@ -191,12 +195,25 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void deleteBatch() throws Exception {
-        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
         Select batchSelect = new Select(batchesSelect);
         batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
 
         deleteBatchLink.click();
+    }
+
+    public void downloadDocketForBatch() throws Exception {
+        switchToTabByIndex(TabIndex.BATCHES.getIndex());
+
+        Select batchSelect = new Select(batchesSelect);
+        batchSelect.selectByVisibleText("Third batch (2 processes) [NEWSPAPER]");
+
+        downloadDocketForBatchLink.click();
+
+        await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
     }
 
     public void downloadDocket() {
@@ -251,5 +268,15 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private void setDownloadLogLink() {
         int index = getRowIndex(processesTable, PROCESS_TITLE);
         downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
+    }
+
+    /**
+     * Clicks on the tab indicated by given index (starting with 0 for the first
+     * tab).
+     *
+     * @param index of tab to be clicked
+     */
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, processesTabView);
     }
 }

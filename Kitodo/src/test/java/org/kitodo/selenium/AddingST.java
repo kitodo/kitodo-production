@@ -97,7 +97,7 @@ public class AddingST extends BaseTestSelenium {
     public void addProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        Pages.getProjectsPage().switchToTabByIndex(TabIndex.TEMPLATES.getIndex()).createNewProcess();
+        Pages.getProjectsPage().createNewProcess();
         assertEquals("Header for create new process is incorrect", "createNewProcess",
             Pages.getProcessFromTemplatePage().getHeaderText());
 
