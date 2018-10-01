@@ -95,6 +95,28 @@
                         <f:param name="zurueck" value="AktuelleSchritteBearbeiten"/>
                     </h:commandLink>
 
+                    <!-- Re-generate all images action link -->
+                    <h:commandLink id="action12"
+                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.generateAllImages}"
+                                   title="#{msgs.regenerateAllImages}">
+                        <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateAllImages}</h:outputText>
+                    </h:commandLink>
+                    <!-- Generate missing and re-generate damaged images action link -->
+                    <h:commandLink id="action16"
+                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.generateMissingAndDamagedImages}"
+                                   title="#{msgs.regenerateMissingAndDamagedImages}">
+                        <h:outputText><i class="fa fa-cog"/> #{msgs.regenerateMissingAndDamagedImages}</h:outputText>
+                    </h:commandLink>
+                    <!-- Generate missing images action link -->
+                    <h:commandLink id="action17"
+                                   rendered="#{CurrentTaskForm.showingGenerationActions and process.blockedUser == null}"
+                                   action="#{CurrentTaskForm.generateMissingImages}"
+                                   title="#{msgs.generateMissingImages}">
+                        <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
+                    </h:commandLink>
+
                     <!-- Edit Cancel-buttons -->
                     <p:commandLink id="cancel" action="#{CurrentTaskForm.schrittDurchBenutzerZurueckgeben}"
                                    title="#{msgs.releaseTask}">

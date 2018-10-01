@@ -34,6 +34,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.util.GeneratorSwitch;
 import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
@@ -299,6 +300,15 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public List<SelectItem> getWorkflows() {
         return SelectItemList.getWorkflows();
+    }
+
+    /**
+     * Get list of generator switches.
+     * 
+     * @return list of generator switches
+     */
+    public List<GeneratorSwitch> getGeneratorSwitches() {
+        return serviceManager.getTaskService().getGenerators(task);
     }
 
     /**

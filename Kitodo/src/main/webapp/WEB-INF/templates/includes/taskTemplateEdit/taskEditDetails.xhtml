@@ -18,7 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:panelGrid columns="2" layout="grid">
         <p:row>
-            <p:repeat var="generator" value="#{TemplateForm.task.generators}">
+            <p:repeat var="generator" value="#{TemplateForm.generatorSwitches}">
                 <div>
                     <p:outputLabel for="generator">
                         <h:outputFormat value="#{msgs.generator}">

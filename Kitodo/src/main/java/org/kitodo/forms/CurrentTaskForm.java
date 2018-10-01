@@ -46,6 +46,7 @@ import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
+import org.kitodo.enums.GenerationMode;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
@@ -53,7 +54,12 @@ import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.batch.BatchTaskHelper;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.model.Subfolder;
+import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.services.file.SubfolderFactoryService;
+import org.kitodo.services.image.ImageGenerator;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -426,6 +432,47 @@ public class CurrentTaskForm extends BaseForm {
         }
     }
 
+    /**
+     * Generate all images.
+     */
+    public void generateAllImages() {
+        generateImages(GenerationMode.ALL, "regenerateAllImagesStarted");
+    }
+
+    /**
+     * Generate missing and damaged images.
+     */
+    public void generateMissingAndDamagedImages() {
+        generateImages(GenerationMode.MISSING_OR_DAMAGED, "regenerateMissingAndDamagedImagesStarted");
+    }
+
+    /**
+     * Generate missing images.
+     */
+    public void generateMissingImages() {
+        generateImages(GenerationMode.MISSING, "regenerateMissingImagesStarted");
+    }
+
+    /**
+     * Action that creates images.
+     * 
+     * @param mode
+     *            which function should be executed
+     * @param messageKey
+     *            message displayed to the user (key for resourcebundle)
+     */
+    private void generateImages(GenerationMode mode, String messageKey) {
+        try {
+            Subfolder sourceFolder = new Subfolder(myProcess, myProcess.getProject().getGeneratorSource());
+            List<Subfolder> outputs = SubfolderFactoryService.createAll(myProcess, currentTask.getContentFolders());
+            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
+            TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
+            Helper.setMessage(messageKey);
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
     public String getScriptPath() {
         return this.scriptPath;
     }
@@ -644,6 +691,17 @@ public class CurrentTaskForm extends BaseForm {
      */
     public boolean isShowAutomaticTasks() {
         return this.showAutomaticTasks;
+    }
+
+    /**
+     * Using this helper variable, JSF can check if there is content to generate
+     * in the current task. In this case, corresponding action links are
+     * rendered, otherwise not.
+     * 
+     * @return whether action links should be displayed
+     */
+    public boolean isShowingGenerationActions() {
+        return !serviceManager.getTaskService().getGenerators(currentTask).isEmpty();
     }
 
     /**
