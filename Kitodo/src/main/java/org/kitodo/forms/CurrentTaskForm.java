@@ -53,7 +53,12 @@ import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.WebDav;
 import org.kitodo.helper.batch.BatchTaskHelper;
+import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
+import org.kitodo.model.UseFolder;
+import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.services.image.GenerationMode;
+import org.kitodo.services.image.ImageGenerator;
 import org.kitodo.workflow.Problem;
 import org.kitodo.workflow.Solution;
 
@@ -423,6 +428,48 @@ public class CurrentTaskForm extends BaseForm {
                 }
                 this.myDav.downloadToHome(process, false);
             }
+        }
+    }
+
+    /**
+     * Regenerate all images.
+     */
+    public void regenerateAllImagesButtonClick() {
+        generateImages(GenerationMode.ALL, "regenerateAllImagesStarted");
+    }
+
+    /**
+     * Regenerate missing and damaged images.
+     */
+    public void regenerateMissingAndDamagedImagesButtonClick() {
+        generateImages(GenerationMode.MISSING_OR_DAMAGED, "regenerateMissingAndDamagedImagesStarted");
+    }
+
+    /**
+     * Generate missing images.
+     */
+    public void generateMissingImagesButtonClick() {
+        generateImages(GenerationMode.MISSING, "regenerateMissingImagesStarted");
+    }
+
+    /**
+     * Action that creates images. The three possible functions are so similar
+     * that this has been summarized in one function.
+     * 
+     * @param mode
+     *            which function should be executed
+     * @param messageKey
+     *            message displayed to the user (key for resourcebundle)
+     */
+    private void generateImages(GenerationMode mode, String messageKey) {
+        try {
+            UseFolder sourceFolder = new UseFolder(myProcess, myProcess.getProject().getGeneratorSource());
+            List<UseFolder> outputs = UseFolder.createAll(myProcess, currentTask.getContentFolders());
+            ImageGenerator imageGenerator = new ImageGenerator(sourceFolder, mode, outputs);
+            TaskManager.addTask(new TaskImageGeneratorThread(myProcess.getTitle(), imageGenerator));
+            Helper.setMessage(messageKey);
+        } catch (RuntimeException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 

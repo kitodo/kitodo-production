@@ -12,10 +12,11 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,7 +29,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.util.GeneratorSwitch;
@@ -127,9 +127,7 @@ public class Task extends BaseIndexedBean {
      * this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
+    @JoinTable(name = "task_x_user", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
     private List<User> users;
 
     /**
@@ -137,9 +135,7 @@ public class Task extends BaseIndexedBean {
      * work on this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_userGroup", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
+    @JoinTable(name = "task_x_userGroup", joinColumns = {@JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_userGroup_task_id")) }, inverseJoinColumns = {@JoinColumn(name = "userGroup_id", foreignKey = @ForeignKey(name = "FK_task_x_user_userGroup_id")) })
     private List<UserGroup> userGroups;
 
     /**
@@ -147,10 +143,7 @@ public class Task extends BaseIndexedBean {
      * generated in this task.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "contentFolders_task_x_folder",
-        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")),
-        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
-    )
+    @JoinTable(name = "contentFolders_task_x_folder", joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_contentFolders_task_x_folder_task_id")), inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id")))
     private List<Folder> contentFolders;
 
     @Transient
@@ -199,6 +192,9 @@ public class Task extends BaseIndexedBean {
 
         // necessary to create new ArrayList in other case session problem!
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+
+        // necessary to create new ArrayList in other case session problem!
+        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -356,6 +352,24 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
+     * Get project(s). If the task belongs to a template, the projects are in
+     * the template. If the task belongs to a process, the projects are in the
+     * process.
+     *
+     * @return value of project(s)
+     */
+    @Transient
+    public List<Project> getProjects() {
+        if (Objects.nonNull(process)) {
+            return Arrays.asList(process.getProject());
+        } else if (Objects.nonNull(template)) {
+            return template.getProjects();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * Get template.
      *
      * @return value of template
@@ -450,7 +464,7 @@ public class Task extends BaseIndexedBean {
         if (this.contentFolders == null) {
             this.contentFolders = new ArrayList<>();
         }
-        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
+        return GeneratorSwitch.getGeneratorSwitches(getProjects().stream(), contentFolders);
     }
 
     public boolean isTypeExportRussian() {
@@ -552,8 +566,8 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
-     * Get workflow id - id of task object in diagram - by this id we can identify
-     * change done to task.
+     * Get workflow id - id of task object in diagram - by this id we can
+     * identify change done to task.
      *
      * @return workflow id as String
      */
@@ -565,8 +579,8 @@ public class Task extends BaseIndexedBean {
      * Set workflow id.
      *
      * @param workflowId
-     *            id of task object in diagram - by this id we can identify change
-     *            done to task
+     *            id of task object in diagram - by this id we can identify
+     *            change done to task
      */
     public void setWorkflowId(String workflowId) {
         this.workflowId = workflowId;
