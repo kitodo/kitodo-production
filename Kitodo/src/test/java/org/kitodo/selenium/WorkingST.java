@@ -17,6 +17,8 @@ import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kitodo.config.KitodoConfig;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -86,12 +88,26 @@ public class WorkingST extends BaseTestSelenium {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         Pages.getProcessesPage().goTo().downloadLog();
-        assertTrue("Log file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+        assertTrue("Log file was not downloaded",
+            new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second process_log.xml").exists());
     }
 
     @Test
     public void editMetadataTest() throws Exception {
         Pages.getProcessesPage().goTo().editMetadata();
         assertTrue("Redirection after click edit metadata was not successful", Pages.getMetadataEditorPage().isAt());
+    }
+
+    @Test
+    public void downloadSearchResultAsExcelTest() throws Exception {
+        Pages.getProcessesPage().goTo().downloadSearchResultAsExcel();
+        assertTrue("Search result excel file was not downloaded",
+            new File(Browser.DOWNLOAD_DIR + "search.xls").exists());
+    }
+
+    @Test
+    public void downloadSearchResultAsPdfTest() throws Exception {
+        Pages.getProcessesPage().goTo().downloadSearchResultAsPdf();
+        assertTrue("Search result pdf file was not downloaded", new File(Browser.DOWNLOAD_DIR + "search.pdf").exists());
     }
 }

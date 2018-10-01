@@ -11,6 +11,8 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.kitodo.config.KitodoConfig;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
@@ -27,7 +29,8 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 public class ProcessesPage extends Page<ProcessesPage> {
 
     private static final String PROCESSES_TAB_VIEW = "processesTabView";
-    private static final String PROCESSES_TABLE = PROCESSES_TAB_VIEW + ":processesForm:processesTable";
+    private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
+    private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
     private static final String PROCESS_TITLE =  "Second process";
 
     @SuppressWarnings("unused")
@@ -43,6 +46,14 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement downloadLogLink;
 
     private WebElement editMetadataLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_FORM + ":createExcel")
+    private WebElement downloadSearchResultAsExcel;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_FORM + ":createPdf")
+    private WebElement downloadSearchResultAsPdf;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -98,25 +109,39 @@ public class ProcessesPage extends Page<ProcessesPage> {
         setDownloadDocketLink();
         downloadDocketLink.click();
 
-        await("Wait for file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+        await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
     }
 
-    public void downloadLog() throws Exception {
+    public void downloadLog() {
         setDownloadLogLink();
         downloadLogLink.click();
 
-        Thread.sleep(55000);
-
-        /*await("Wait for file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+        await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));*/
+                .until(() -> isFileDownloaded.matches(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/" + PROCESS_TITLE + "_log.xml")));
     }
 
     public void editMetadata() throws IllegalAccessException, InstantiationException {
         setEditMetadataLink();
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+    }
+
+    public void downloadSearchResultAsExcel() {
+        downloadSearchResultAsExcel.click();
+
+        await("Wait for search result excel file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.xls")));
+    }
+
+    public void downloadSearchResultAsPdf() {
+        downloadSearchResultAsPdf.click();
+
+        await("Wait for search result pdf file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.pdf")));
     }
 
     private void setDownloadDocketLink() {

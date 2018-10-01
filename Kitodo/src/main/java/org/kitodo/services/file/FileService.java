@@ -116,7 +116,6 @@ public class FileService {
         if (!serviceManager.getFileService().fileExist(dirName)) {
             CommandService commandService = serviceManager.getCommandService();
             List<String> commandParameter = Arrays.asList(userName, new File(dirName).getAbsolutePath());
-            System.out.println(commandParameter);
             commandService.runCommand(new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME)),
                 commandParameter);
         }
