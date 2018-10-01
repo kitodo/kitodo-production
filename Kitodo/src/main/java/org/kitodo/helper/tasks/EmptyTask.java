@@ -464,7 +464,7 @@ public class EmptyTask extends Thread implements INameableTask {
      * @param statusProgress
      *            the tasks progress
      */
-    protected void setProgress(double statusProgress) {
+    public void setProgress(double statusProgress) {
         setProgress((int) Math.ceil(statusProgress));
     }
 

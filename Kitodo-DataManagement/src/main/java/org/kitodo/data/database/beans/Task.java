@@ -12,6 +12,8 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -189,6 +191,9 @@ public class Task extends BaseIndexedBean {
 
         // necessary to create new ArrayList in other case session problem!
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+
+        // necessary to create new ArrayList in other case session problem!
+        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -346,6 +351,24 @@ public class Task extends BaseIndexedBean {
     }
 
     /**
+     * Get project(s). If the task belongs to a template, the projects are in
+     * the template. If the task belongs to a process, the projects are in the
+     * process.
+     *
+     * @return value of project(s)
+     */
+    @Transient
+    public List<Project> getProjects() {
+        if (Objects.nonNull(process)) {
+            return Arrays.asList(process.getProject());
+        } else if (Objects.nonNull(template)) {
+            return template.getProjects();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * Get template.
      *
      * @return value of template
@@ -440,7 +463,7 @@ public class Task extends BaseIndexedBean {
         if (this.contentFolders == null) {
             this.contentFolders = new ArrayList<>();
         }
-        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
+        return GeneratorSwitch.getGeneratorSwitches(getProjects().stream(), contentFolders);
     }
 
     public boolean isTypeImagesRead() {

@@ -60,8 +60,7 @@ public class VariableReplacer {
     private final FileService fileService = serviceManager.getFileService();
     private final ProcessService processService = serviceManager.getProcessService();
 
-    @SuppressWarnings("unused")
-    private VariableReplacer() {
+    protected VariableReplacer() {
     }
 
     VariableReplacer(Process process) {
