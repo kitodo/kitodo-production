@@ -21,14 +21,9 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UserEditPage extends Page<UserEditPage> {
+public class UserEditPage extends EditPage<UserEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String USER_TAB_VIEW = EDIT_FORM + ":userTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":save")
-    private WebElement saveUserButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW)
@@ -59,7 +54,7 @@ public class UserEditPage extends Page<UserEditPage> {
     private WebElement metaDataLanguageInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = USER_TAB_VIEW + "addUserGroupButton")
+    @FindBy(id = USER_TAB_VIEW + ":addUserGroupButton")
     private WebElement addUserToGroupButton;
 
     @SuppressWarnings("unused")
@@ -102,7 +97,7 @@ public class UserEditPage extends Page<UserEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveUserButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

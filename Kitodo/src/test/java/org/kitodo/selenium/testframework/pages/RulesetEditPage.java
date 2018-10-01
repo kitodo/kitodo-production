@@ -18,14 +18,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class RulesetEditPage extends Page<RulesetEditPage> {
+public class RulesetEditPage extends EditPage<RulesetEditPage> {
+
+    private static final String RULESET_TAB_VIEW = EDIT_FORM + ":rulesetTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
-    private WebElement saveRulesetButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:rulesetTabView:title")
+    @FindBy(id = RULESET_TAB_VIEW + ":title")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
@@ -48,12 +46,12 @@ public class RulesetEditPage extends Page<RulesetEditPage> {
     public RulesetEditPage insertRulesetData(Ruleset ruleset) {
         titleInput.sendKeys(ruleset.getTitle());
         selectTrigger.click();
-        Browser.getDriver().findElement(By.id("editForm:rulesetTabView:file_0")).click();
+        Browser.getDriver().findElement(By.id(RULESET_TAB_VIEW + ":file_0")).click();
         return this;
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveRulesetButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

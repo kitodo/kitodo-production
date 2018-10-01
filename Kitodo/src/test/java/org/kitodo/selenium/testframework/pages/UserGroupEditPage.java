@@ -19,14 +19,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UserGroupEditPage extends Page<UserGroupEditPage> {
+public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String USER_GROUP_TAB_VIEW = EDIT_FORM + ":usergroupTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":save")
-    private WebElement saveUserGroupButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_GROUP_TAB_VIEW + ":titleInput")
@@ -92,7 +87,7 @@ public class UserGroupEditPage extends Page<UserGroupEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveUserGroupButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 

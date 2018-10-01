@@ -40,7 +40,7 @@
             <h:outputText value="#{msgs.clientView}"
                           rendered="#{isViewMode}"/>
         </h3>
-        <p:commandButton id="saveButton"
+        <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -52,7 +52,7 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.clientSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{ClientForm.setSaveDisabled(false)}"
-                         update="saveButton"
+                         update="save"
                          style="display:none;"/>
         <p:button value="#{msgs.cancel}" outcome="users" onclick="setConfirmUnload(false);"
                   icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>

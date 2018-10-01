@@ -16,14 +16,9 @@ import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
+public class LdapGroupEditPage extends EditPage<LdapGroupEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String LDAP_GROUP_TAB_VIEW = EDIT_FORM + ":ldapGroupTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveButton")
-    private WebElement saveLdapGroupButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = LDAP_GROUP_TAB_VIEW + ":title")
@@ -159,7 +154,7 @@ public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveLdapGroupButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

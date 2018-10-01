@@ -18,14 +18,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ProjectEditPage extends Page<ProjectEditPage> {
+public class ProjectEditPage extends EditPage<ProjectEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String PROJECT_TAB_VIEW = EDIT_FORM + ":projectTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":save")
-    private WebElement saveProjectButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = PROJECT_TAB_VIEW + ":title")
@@ -65,7 +60,7 @@ public class ProjectEditPage extends Page<ProjectEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveProjectButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

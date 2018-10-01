@@ -18,14 +18,12 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class DocketEditPage extends Page<DocketEditPage> {
+public class DocketEditPage extends EditPage<DocketEditPage> {
+
+    private static final String DOCKET_TAB_VIEW = EDIT_FORM + ":docketTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
-    private WebElement saveDocketButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:docketTabView:title")
+    @FindBy(id = DOCKET_TAB_VIEW + ":title")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
@@ -53,7 +51,7 @@ public class DocketEditPage extends Page<DocketEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveDocketButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

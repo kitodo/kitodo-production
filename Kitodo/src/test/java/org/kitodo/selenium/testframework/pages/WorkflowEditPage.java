@@ -16,14 +16,9 @@ import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class WorkflowEditPage extends Page<WorkflowEditPage> {
+public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String WORKFLOW_TAB_VIEW = EDIT_FORM + ":workflowTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":save")
-    private WebElement saveWorkflowButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = WORKFLOW_TAB_VIEW + ":xmlDiagramName")
@@ -49,7 +44,7 @@ public class WorkflowEditPage extends Page<WorkflowEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveWorkflowButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

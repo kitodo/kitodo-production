@@ -18,14 +18,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class TemplateEditPage extends Page<TemplateEditPage> {
+public class TemplateEditPage extends EditPage<TemplateEditPage> {
 
-    private static final String EDIT_FORM = "editForm";
     private static final String TEMPLATE_TAB_VIEW = EDIT_FORM + ":templateTabView";
-
-    @SuppressWarnings("unused")
-    @FindBy(id = EDIT_FORM + ":save")
-    private WebElement saveTemplateButton;
 
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TAB_VIEW + ":title")
@@ -69,7 +64,7 @@ public class TemplateEditPage extends Page<TemplateEditPage> {
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveTemplateButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }
