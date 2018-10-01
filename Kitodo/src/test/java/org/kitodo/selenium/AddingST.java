@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
@@ -55,6 +56,13 @@ public class AddingST extends BaseTestSelenium {
         if (Browser.isAlertPresent()) {
             Browser.getDriver().switchTo().alert().accept();
         }
+    }
+
+    @Test
+    public void addBatchTest() throws Exception {
+        Pages.getProcessesPage().createNewBatch();
+        await().untilAsserted(
+                () -> assertEquals("Batch was inserted!", 1, serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
     }
 
     @Test

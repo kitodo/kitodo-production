@@ -49,6 +49,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement batchesSelect;
 
     @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":selectProcesses")
+    private WebElement processesSelect;
+
+    @SuppressWarnings("unused")
     @FindBy(xpath = "//a[@href='/kitodo/pages/processEdit.jsf?referer=processes&id=1']")
     private WebElement editProcessLink;
 
@@ -65,6 +69,18 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_FORM + ":createPdf")
     private WebElement downloadSearchResultAsPdf;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = BATCH_FORM + ":createBatch")
+    private WebElement createBatchLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "createBatchForm:batchTitle")
+    private WebElement createBatchTitleInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "createBatchForm:save")
+    private WebElement createBatchSaveButton;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -120,6 +136,17 @@ public class ProcessesPage extends Page<ProcessesPage> {
             goTo();
         }
         return getTableDataByColumn(processesTable, 0);
+    }
+
+    public void createNewBatch() throws Exception {
+        switchToTabByIndex(TabIndex.BATCHES.getIndex(), processesTabView);
+        Select processSelect = new Select(processesSelect);
+        processSelect.selectByIndex(0);
+        processSelect.selectByIndex(1);
+        createBatchLink.click();
+
+        createBatchTitleInput.sendKeys("SeleniumBatch");
+        createBatchSaveButton.click();
     }
 
     public void downloadDocket() {
