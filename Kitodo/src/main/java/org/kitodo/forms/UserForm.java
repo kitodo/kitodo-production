@@ -92,7 +92,6 @@ public class UserForm extends BaseForm {
      * @return page or empty String
      */
     public String save() {
-        serviceManager.getUserService().evict(this.userObject);
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
@@ -106,7 +105,9 @@ public class UserForm extends BaseForm {
 
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
-                this.userObject.setPassword(passwordEncoder.encrypt(this.password));
+                if (Objects.nonNull(this.password)) {
+                    this.userObject.setPassword(passwordEncoder.encrypt(this.password));
+                }
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
             } else {
