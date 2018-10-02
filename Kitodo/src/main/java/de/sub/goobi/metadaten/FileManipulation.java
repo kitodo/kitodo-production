@@ -349,9 +349,11 @@ public class FileManipulation {
         URI tempDirectory = fileService.getTemporaryDirectory();
         URI fileuploadFolder = fileService.createDirectory(tempDirectory, FILE_UPLOAD);
 
-        URI destination = fileuploadFolder.resolve(File.separator + metadataBean.getProcess().getTitle());
+        URI destination = fileuploadFolder.resolve(File.separator
+                + serviceManager.getProcessService().getNormalizedTitle(metadataBean.getProcess().getTitle()));
         if (!fileService.fileExist(destination)) {
-            fileService.createDirectory(fileuploadFolder, metadataBean.getProcess().getTitle());
+            fileService.createDirectory(fileuploadFolder,
+                serviceManager.getProcessService().getNormalizedTitle(metadataBean.getProcess().getTitle()));
         }
 
         copyFiles(filenamesToMove, destination);
@@ -372,7 +374,8 @@ public class FileManipulation {
     private void copyFiles(List<String> filenamesToMove, URI destination) throws IOException {
         for (String filename : filenamesToMove) {
             String prefix = filename.replace(Metadaten.getFileExtension(filename), "");
-            String processTitle = metadataBean.getProcess().getTitle();
+            String processTitle = serviceManager.getProcessService()
+                    .getNormalizedTitle(metadataBean.getProcess().getTitle());
             for (URI folder : metadataBean.getAllTifFolders()) {
                 List<URI> filesInFolder = fileService.getSubUris(serviceManager.getFileService()
                         .getProcessSubTypeURI(metadataBean.getProcess(), ProcessSubType.IMAGE, folder.toString()));

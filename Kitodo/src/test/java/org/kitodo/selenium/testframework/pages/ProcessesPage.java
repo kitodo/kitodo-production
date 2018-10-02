@@ -16,6 +16,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.kitodo.services.ServiceManager;
+import org.kitodo.services.data.ProcessService;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -30,11 +32,13 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 public class ProcessesPage extends Page<ProcessesPage> {
 
+    private ProcessService processService = new ServiceManager().getProcessService();
+
     private static final String PROCESSES_TAB_VIEW = "processesTabView";
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
-    private static final String PROCESS_TITLE =  "Second process";
+    private static final String PROCESS_TITLE = "Second process";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -221,8 +225,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
         downloadDocketLink.click();
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
+                .ignoreExceptions().until(() -> isFileDownloaded.matches(
+                    new File(Browser.DOWNLOAD_DIR + processService.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
     }
 
     public void downloadLog() {
@@ -231,7 +235,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.matches(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/" + PROCESS_TITLE + "_log.xml")));
+                .until(() -> isFileDownloaded.matches(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
+                        + "kowal/" + processService.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
     }
 
     public void editMetadata() throws IllegalAccessException, InstantiationException {
@@ -242,16 +247,16 @@ public class ProcessesPage extends Page<ProcessesPage> {
     public void downloadSearchResultAsExcel() {
         downloadSearchResultAsExcel.click();
 
-        await("Wait for search result excel file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions()
+        await("Wait for search result excel file download").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.xls")));
     }
 
     public void downloadSearchResultAsPdf() {
         downloadSearchResultAsPdf.click();
 
-        await("Wait for search result pdf file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions()
+        await("Wait for search result pdf file download").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isFileDownloaded.matches(new File(Browser.DOWNLOAD_DIR + "search.pdf")));
     }
 
@@ -274,7 +279,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).
      *
-     * @param index of tab to be clicked
+     * @param index
+     *            of tab to be clicked
      */
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, processesTabView);
