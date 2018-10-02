@@ -3,14 +3,14 @@
   <project name="default">
     <createNewProcess>
       <itemlist>
-        <item from="werk" multiselect="true"> Artist
+        <item from="werk"> Artist
               <select label="CHANGEME"> CHANGEME BIBLIOTHEKSLABEL </select>
-    </item>
-        <item from="werk" multiselect="false"> Schrifttyp
-        <select label="Antiqua">Antiqua</select>
-        <select label="Fraktur">Fraktur</select>
-        <select label="anderes">anderes</select>
-    </item>
+        </item>
+        <item from="werk"> Schrifttyp
+            <select label="Antiqua">Antiqua</select>
+            <select label="Fraktur">Fraktur</select>
+            <select label="anderes">anderes</select>
+        </item>
         <!-- title for monograph and periodical -->
         <item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMain"> Titel </item>
         <item from="vorlage" isnotdoctype="multivolume" required="true" ughbinding="true" docstruct="topstruct" metadata="TitleDocMainShort"> Titel (Sortierung)</item>
