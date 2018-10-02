@@ -110,7 +110,7 @@
                         <div>
                             <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
                             <p:password id="password" class="input" rendered="#{isCreateMode}"
-                                        placeholder="#{msgs.password}" value="#{UserForm.password}"
+                                        placeholder="#{msgs.password}" value="#{UserForm.passwordToEncrypt}"
                                         onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
                                         redisplay="true"/>
                         </div>
