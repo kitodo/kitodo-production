@@ -46,14 +46,6 @@
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
-            <div>
-                <p:outputLabel for="client" value="#{msgs.client}"/>
-                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjectForm.myProjekt.client}"
-                                 required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{ProjectForm.clients}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
-            </div>
         </p:row>
         <p:row>
             <div>
