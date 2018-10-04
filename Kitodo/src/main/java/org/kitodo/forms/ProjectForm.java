@@ -51,7 +51,7 @@ import org.kitodo.model.LazyDTOModel;
 public class ProjectForm extends BaseForm {
     private static final long serialVersionUID = 6735912903249358786L;
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
-    private Project myProjekt;
+    private Project project;
 
     /**
      * The folder currently under edit in the pop-up dialog.
@@ -99,11 +99,11 @@ public class ProjectForm extends BaseForm {
      *            IDs of folders to delete
      */
     private void deleteFolders(List<Integer> folderIds) {
-        if (Objects.nonNull(this.myProjekt)) {
+        if (Objects.nonNull(this.project)) {
             for (Integer id : folderIds) {
-                for (Folder f : this.myProjekt.getFolders()) {
+                for (Folder f : this.project.getFolders()) {
                     if (f.getId() == null ? id == null : f.getId().equals(id)) {
-                        this.myProjekt.getFolders().remove(f);
+                        this.project.getFolders().remove(f);
                         break;
                     }
                 }
@@ -145,8 +145,8 @@ public class ProjectForm extends BaseForm {
      * @return page address
      */
     public String newProject() {
-        this.myProjekt = new Project();
-        this.myProjekt.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
+        this.project = new Project();
+        this.project.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return projectEditPath;
     }
 
@@ -163,7 +163,7 @@ public class ProjectForm extends BaseForm {
         setCopyTemplates(true);
         try {
             this.baseProject = serviceManager.getProjectService().getById(itemId);
-            this.myProjekt = serviceManager.getProjectService().duplicateProject(baseProject);
+            this.project = serviceManager.getProjectService().duplicateProject(baseProject);
             return projectEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
@@ -178,22 +178,22 @@ public class ProjectForm extends BaseForm {
      * @return page or null
      */
     public String save() {
-        serviceManager.getProjectService().evict(this.myProjekt);
+        serviceManager.getProjectService().evict(this.project);
         // call this to make saving and deleting permanent
         this.commitFolders();
-        if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
+        if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
             Helper.setErrorMessage("errorProjectNoTitleGiven");
             return null;
         } else {
             try {
                 if (this.copyTemplates) {
                     for (Template template : this.baseProject.getTemplates()) {
-                        template.getProjects().add(this.myProjekt);
-                        this.myProjekt.getTemplates().add(template);
+                        template.getProjects().add(this.project);
+                        this.project.getTemplates().add(template);
                     }
                     setCopyTemplates(false);
                 }
-                serviceManager.getProjectService().save(this.myProjekt);
+                serviceManager.getProjectService().save(this.project);
                 return projectListPath;
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
@@ -211,11 +211,11 @@ public class ProjectForm extends BaseForm {
     public String apply() {
         // call this to make saving and deleting permanent
         this.commitFolders();
-        if (this.myProjekt.getTitle().equals("") || this.myProjekt.getTitle() == null) {
+        if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
             Helper.setErrorMessage("Can not save project with empty title!");
         } else {
             try {
-                serviceManager.getProjectService().save(this.myProjekt);
+                serviceManager.getProjectService().save(this.project);
                 Helper.setMessage("Project saved!");
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
@@ -229,11 +229,11 @@ public class ProjectForm extends BaseForm {
      * Remove.
      */
     public void delete() {
-        if (!this.myProjekt.getUsers().isEmpty()) {
+        if (!this.project.getUsers().isEmpty()) {
             Helper.setErrorMessage("userAssignedError");
         } else {
             try {
-                serviceManager.getProjectService().remove(this.myProjekt);
+                serviceManager.getProjectService().remove(this.project);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
@@ -248,7 +248,7 @@ public class ProjectForm extends BaseForm {
      */
     public String addFolder() {
         this.myFolder = new Folder();
-        this.myFolder.setProject(this.myProjekt);
+        this.myFolder.setProject(this.project);
         this.newFolders.add(this.myFolder.getId());
         return this.zurueck;
     }
@@ -257,11 +257,11 @@ public class ProjectForm extends BaseForm {
      * Save folder.
      */
     public void saveFolder() {
-        if (this.myProjekt.getFolders() == null) {
-            this.myProjekt.setFolders(new ArrayList<>());
+        if (this.project.getFolders() == null) {
+            this.project.setFolders(new ArrayList<>());
         }
-        if (!this.myProjekt.getFolders().contains(this.myFolder)) {
-            this.myProjekt.getFolders().add(this.myFolder);
+        if (!this.project.getFolders().contains(this.myFolder)) {
+            this.project.getFolders().add(this.myFolder);
         }
     }
 
@@ -282,8 +282,8 @@ public class ProjectForm extends BaseForm {
      *
      * @return Project object
      */
-    public Project getMyProjekt() {
-        return this.myProjekt;
+    public Project getProject() {
+        return this.project;
     }
 
     /**
@@ -292,10 +292,10 @@ public class ProjectForm extends BaseForm {
      * @param inProjekt
      *            Project object
      */
-    public void setMyProjekt(Project inProjekt) {
+    public void setProject(Project inProjekt) {
         // has to be called if a page back move was done
         this.cancel();
-        this.myProjekt = inProjekt;
+        this.project = inProjekt;
     }
 
     /**
@@ -306,7 +306,7 @@ public class ProjectForm extends BaseForm {
      */
     public void setProjectById(int projectID) {
         try {
-            setMyProjekt(serviceManager.getProjectService().getById(projectID));
+            setProject(serviceManager.getProjectService().getById(projectID));
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
@@ -339,10 +339,10 @@ public class ProjectForm extends BaseForm {
      * @return modified ArrayList
      */
     public List<Folder> getFolderList() {
-        List<Folder> filteredFolderList = new ArrayList<>(this.myProjekt.getFolders());
+        List<Folder> filteredFolderList = new ArrayList<>(this.project.getFolders());
 
         for (Integer id : this.deletedFolders) {
-            for (Folder f : this.myProjekt.getFolders()) {
+            for (Folder f : this.project.getFolders()) {
                 if (f.getId() == null ? id == null : f.getId().equals(id)) {
                     filteredFolderList.remove(f);
                     break;
@@ -403,7 +403,7 @@ public class ProjectForm extends BaseForm {
      * @return the source folder for generation
      */
     public String getGeneratorSource() {
-        Folder source = myProjekt.getGeneratorSource();
+        Folder source = project.getGeneratorSource();
         return source == null ? null : source.toString();
     }
 
@@ -415,7 +415,7 @@ public class ProjectForm extends BaseForm {
      *            source folder for generation to set
      */
     public void setGeneratorSource(String generatorSource) {
-        myProjekt.setGeneratorSource(getFolderMap().get(generatorSource));
+        project.setGeneratorSource(getFolderMap().get(generatorSource));
     }
 
     /**
@@ -424,7 +424,7 @@ public class ProjectForm extends BaseForm {
      * @return media view folder
      */
     public String getMediaView() {
-        Folder mediaView = myProjekt.getMediaView();
+        Folder mediaView = project.getMediaView();
         return mediaView == null ? null : mediaView.toString();
     }
 
@@ -435,7 +435,7 @@ public class ProjectForm extends BaseForm {
      *            media view folder
      */
     public void setMediaView(String mediaView) {
-        myProjekt.setMediaView(getFolderMap().get(mediaView));
+        project.setMediaView(getFolderMap().get(mediaView));
     }
 
     /**
@@ -444,7 +444,7 @@ public class ProjectForm extends BaseForm {
      * @return preview folder
      */
     public String getPreview() {
-        Folder preview = myProjekt.getPreview();
+        Folder preview = project.getPreview();
         return preview == null ? null : preview.toString();
     }
 
@@ -455,7 +455,7 @@ public class ProjectForm extends BaseForm {
      *            preview folder
      */
     public void setPreview(String preview) {
-        myProjekt.setPreview(getFolderMap().get(preview));
+        project.setPreview(getFolderMap().get(preview));
     }
 
     /**
@@ -467,7 +467,7 @@ public class ProjectForm extends BaseForm {
     public void loadProject(int id) {
         try {
             if (!Objects.equals(id, 0)) {
-                setMyProjekt(this.serviceManager.getProjectService().getById(id));
+                setProject(this.serviceManager.getProjectService().getById(id));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
