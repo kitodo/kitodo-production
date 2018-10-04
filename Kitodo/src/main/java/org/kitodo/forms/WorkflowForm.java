@@ -55,7 +55,6 @@ public class WorkflowForm extends BaseForm {
     private FileService fileService = serviceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
-    private static final String diagramsFolder = ConfigCore.getKitodoDiagramDirectory();
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
@@ -71,7 +70,8 @@ public class WorkflowForm extends BaseForm {
      * Read XML for file chosen out of the select list.
      */
     public void readXMLDiagram() {
-        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
+        URI xmlDiagramURI = new File(
+                ConfigCore.getKitodoDiagramDirectory() + encodeXMLDiagramName(this.workflow.getFileName())).toURI();
 
         try (InputStream inputStream = fileService.read(xmlDiagramURI);
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -113,9 +113,10 @@ public class WorkflowForm extends BaseForm {
             try {
                 serviceManager.getWorkflowService().remove(this.workflow);
 
+                String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
                 URI svgDiagramURI = new File(
-                        diagramsFolder + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
-                URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(this.workflow.getFileName()))
+                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
+                URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(this.workflow.getFileName()))
                         .toURI();
 
                 fileService.delete(svgDiagramURI);
@@ -163,8 +164,9 @@ public class WorkflowForm extends BaseForm {
     }
 
     private Map<String, URI> getDiagramUris(Workflow workflow) {
-        URI svgDiagramURI = new File(diagramsFolder + decodeXMLDiagramName(workflow.getFileName()) + ".svg").toURI();
-        URI xmlDiagramURI = new File(diagramsFolder + encodeXMLDiagramName(workflow.getFileName())).toURI();
+        String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
+        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + ".svg").toURI();
+        URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(workflow.getFileName())).toURI();
 
         Map<String, URI> diagramUris = new HashMap<>();
         diagramUris.put("svgDiagramURI", svgDiagramURI);
