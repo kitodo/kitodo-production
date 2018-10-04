@@ -420,8 +420,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setProcessingEnd(getDateFromJsonValue(processingEnd));
         taskDTO.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(taskJSONObject));
         taskDTO.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(taskJSONObject));
-        taskDTO.setTypeImportFileUpload(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getBooleanValue(taskJSONObject));
-        taskDTO.setTypeExportRussian(TaskTypeField.TYPE_EXPORT_RUSSIAN.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));

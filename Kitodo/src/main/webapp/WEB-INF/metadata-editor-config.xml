@@ -39,11 +39,4 @@
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
-    <!-- Bean für Import -->
-    <managed-bean>
-        <managed-bean-name>Import</managed-bean-name>
-        <managed-bean-class>org.kitodo.importer.Import</managed-bean-class>
-        <managed-bean-scope>request</managed-bean-scope>
-    </managed-bean>
-
 </faces-config>

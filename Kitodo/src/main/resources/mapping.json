@@ -748,16 +748,10 @@
                 "typeAutomatic": {
                     "type": "boolean"
                 },
-                "typeExportRussian": {
-                    "type": "boolean"
-                },
                 "typeImagesRead": {
                     "type": "boolean"
                 },
                 "typeImagesWrite": {
-                    "type": "boolean"
-                },
-                "typeImportFileUpload": {
                     "type": "boolean"
                 },
                 "typeMetadata": {

@@ -25,9 +25,7 @@ public class KitodoTask {
     private Integer processingStatus;
     private Boolean typeMetadata;
     private Boolean typeAutomatic;
-    private Boolean typeImportFileUpload;
     private Boolean typeExportDms;
-    private Boolean typeExportRussian;
     private Boolean typeImagesRead;
     private Boolean typeImagesWrite;
     private Boolean typeAcceptClose;
@@ -53,9 +51,7 @@ public class KitodoTask {
         this.processingStatus = getIntegerValue(task.getAttributeValueNs(NAMESPACE, "processingStatus"));
         this.typeMetadata = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeMetadata"));
         this.typeAutomatic = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAutomatic"));
-        this.typeImportFileUpload = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImportFileUpload"));
         this.typeExportDms = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportDMS"));
-        this.typeExportRussian = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeExportRussian"));
         this.typeImagesRead = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesRead"));
         this.typeImagesWrite = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeImagesWrite"));
         this.typeAcceptClose = getBooleanValue(task.getAttributeValueNs(NAMESPACE, "typeAcceptClose"));
@@ -222,24 +218,6 @@ public class KitodoTask {
     }
 
     /**
-     * Get typeImportFileUpload.
-     *
-     * @return value of typeImportFileUpload
-     */
-    public Boolean getTypeImportFileUpload() {
-        return typeImportFileUpload;
-    }
-
-    /**
-     * Set typeImportFileUpload.
-     *
-     * @param typeImportFileUpload as java.lang.Boolean
-     */
-    public void setTypeImportFileUpload(Boolean typeImportFileUpload) {
-        this.typeImportFileUpload = typeImportFileUpload;
-    }
-
-    /**
      * Get typeExportDms.
      *
      * @return value of typeExportDms
@@ -255,24 +233,6 @@ public class KitodoTask {
      */
     public void setTypeExportDms(Boolean typeExportDms) {
         this.typeExportDms = typeExportDms;
-    }
-
-    /**
-     * Get typeExportRussian.
-     *
-     * @return value of typeExportRussian
-     */
-    public Boolean getTypeExportRussian() {
-        return typeExportRussian;
-    }
-
-    /**
-     * Set typeExportRussian.
-     *
-     * @param typeExportRussian as java.lang.Boolean
-     */
-    public void setTypeExportRussian(Boolean typeExportRussian) {
-        this.typeExportRussian = typeExportRussian;
     }
 
     /**

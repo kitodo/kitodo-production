@@ -42,8 +42,6 @@ public class TaskDTO extends BaseDTO {
     private int userGroupsSize;
     private boolean typeAutomatic;
     private boolean typeMetadata;
-    private boolean typeImportFileUpload;
-    private boolean typeExportRussian;
     private boolean typeImagesRead;
     private boolean typeImagesWrite;
     private boolean batchStep;
@@ -428,44 +426,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
-    }
-
-    /**
-     * Get information if task type is import file upload.
-     * 
-     * @return true or false
-     */
-    public boolean isTypeImportFileUpload() {
-        return typeImportFileUpload;
-    }
-
-    /**
-     * Set information if task type is import file upload.
-     * 
-     * @param typeImportFileUpload
-     *            as boolean
-     */
-    public void setTypeImportFileUpload(boolean typeImportFileUpload) {
-        this.typeImportFileUpload = typeImportFileUpload;
-    }
-
-    /**
-     * Get information if task type is export russian.
-     *
-     * @return true or false
-     */
-    public boolean isTypeExportRussian() {
-        return typeExportRussian;
-    }
-
-    /**
-     * Set information if task type is export russian.
-     *
-     * @param typeExportRussian
-     *            as boolean
-     */
-    public void setTypeExportRussian(boolean typeExportRussian) {
-        this.typeExportRussian = typeExportRussian;
     }
 
     /**

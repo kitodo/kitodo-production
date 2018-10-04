@@ -33,10 +33,6 @@
             }, {name: 'typeAutomatic',
                 isAttr: !0,
                 type: 'Boolean'
-            }, {name: 'typeImportFileUpload', isAttr: !0, type: 'Boolean'}, {
-                name: 'typeExportRussian',
-                isAttr: !0,
-                type: 'Boolean'
             }, {name: 'typeImagesRead',
                 isAttr: !0,
                 type: 'Boolean'
@@ -83,11 +79,6 @@
             label: 'Metadata',
             modelProperty: 'typeMetadata'
         })), group.entries.push(_EntryFactory2.default.checkbox({
-            id: 'typeImportFileUpload',
-            description: '',
-            label: 'Import by file upload',
-            modelProperty: 'typeImportFileUpload'
-        })), group.entries.push(_EntryFactory2.default.checkbox({
             id: 'typeImagesRead',
             description: '',
             label: 'Read images',
@@ -97,11 +88,6 @@
             description: '',
             label: 'Write images',
             modelProperty: 'typeImagesWrite'
-        })), group.entries.push(_EntryFactory2.default.checkbox({
-            id: 'typeExportRussian',
-            description: '',
-            label: 'Export Russian',
-            modelProperty: 'typeExportRussian'
         })), group.entries.push(_EntryFactory2.default.checkbox({
             id: 'typeExportDMS',
             description: '',

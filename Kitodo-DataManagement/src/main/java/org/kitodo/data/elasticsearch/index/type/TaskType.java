@@ -46,8 +46,6 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add(TaskTypeField.HOME_DIRECTORY.getKey(), preventNull(String.valueOf(task.getHomeDirectory())));
         jsonObjectBuilder.add(TaskTypeField.TYPE_METADATA.getKey(), task.isTypeMetadata());
         jsonObjectBuilder.add(TaskTypeField.TYPE_AUTOMATIC.getKey(), task.isTypeAutomatic());
-        jsonObjectBuilder.add(TaskTypeField.TYPE_IMPORT_FILE_UPLOAD.getKey(), task.isTypeImportFileUpload());
-        jsonObjectBuilder.add(TaskTypeField.TYPE_EXPORT_RUSSIAN.getKey(), task.isTypeExportRussian());
         jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_READ.getKey(), task.isTypeImagesRead());
         jsonObjectBuilder.add(TaskTypeField.TYPE_IMAGES_WRITE.getKey(), task.isTypeImagesWrite());
         jsonObjectBuilder.add(TaskTypeField.BATCH_STEP.getKey(), task.isBatchStep());
