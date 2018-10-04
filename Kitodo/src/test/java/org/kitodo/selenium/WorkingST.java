@@ -95,7 +95,7 @@ public class WorkingST extends BaseTestSelenium {
     @Test
     public void downloadDocketTest() throws Exception {
         processesPage.goTo().downloadDocket();
-        assertTrue("Docket file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second process.pdf").exists());
+        assertTrue("Docket file was not downloaded", new File(Browser.DOWNLOAD_DIR + "Second__process.pdf").exists());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class WorkingST extends BaseTestSelenium {
 
         processesPage.goTo().downloadLog();
         assertTrue("Log file was not downloaded",
-            new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second process_log.xml").exists());
+            new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS) + "kowal/Second__process_log.xml").exists());
     }
 
     @Test

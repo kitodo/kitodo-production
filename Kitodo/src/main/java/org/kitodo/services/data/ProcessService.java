@@ -1425,7 +1425,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             DocketInterface module = initialiseDocketModule();
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
-            writeToOutputStream(facesContext, file, process.getTitle() + ".pdf");
+            writeToOutputStream(facesContext, file, getNormalizedTitle(process.getTitle()) + ".pdf");
             file.delete();
         }
     }
@@ -1606,7 +1606,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         for (String processDir : processDirs) {
             fileService.createDirectory(this.getProcessDataDirectory(process),
-                processDir.replace(PROCESS_TITLE, process.getTitle()));
+                processDir.replace(PROCESS_TITLE, getNormalizedTitle(process.getTitle())));
         }
     }
 
@@ -1743,7 +1743,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     public boolean startDmsExport(Process process, boolean exportWithImages, boolean exportFullText)
             throws IOException, PreferencesException, WriteException, JAXBException {
         PrefsInterface preferences = serviceManager.getRulesetService().getPreferences(process.getRuleset());
-        String atsPpnBand = process.getTitle();
+        String atsPpnBand = getNormalizedTitle(process.getTitle());
 
         // read document
         FileformatInterface gdzfile = readDocument(preferences, process);
@@ -1767,7 +1767,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
 
         // if necessary, create an operation folder
         if (project.isDmsImportCreateProcessFolder()) {
-            targetDirectory = userHome.resolve(File.separator + process.getTitle());
+            targetDirectory = userHome.resolve(File.separator + getNormalizedTitle(process.getTitle()));
             boolean created = createOperationDirectory(userHome, process);
             if (!created) {
                 return false;
@@ -1814,7 +1814,8 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             if (!ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITHOUT_TIME_LIMIT)
                     && project.isDmsImportCreateProcessFolder()) {
                 // again remove success folder
-                File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+                File successFile = new File(project.getDmsImportSuccessPath() + File.separator
+                        + getNormalizedTitle(process.getTitle()));
                 fileService.delete(successFile.toURI());
             }
         }
@@ -1859,14 +1860,16 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             return false;
         }
         // remove old success folder
-        File successFile = new File(project.getDmsImportSuccessPath() + File.separator + process.getTitle());
+        File successFile = new File(project.getDmsImportSuccessPath() + File.separator
+                + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(successFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Success")));
             return false;
         }
         // remove old error folder
-        File errorFile = new File(project.getDmsImportErrorPath() + File.separator + process.getTitle());
+        File errorFile = new File(project.getDmsImportErrorPath() + File.separator
+                + getNormalizedTitle(process.getTitle()));
         if (!fileService.delete(errorFile.toURI())) {
             Helper.setErrorMessage(Helper.getTranslation(ERROR_EXPORT, Collections.singletonList(process.getTitle())),
                 Helper.getTranslation(EXPORT_DIR_DELETE, Collections.singletonList("Error")));
@@ -1874,7 +1877,7 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         if (!fileService.fileExist(userHome)) {
-            fileService.createDirectory(userHome, File.separator + process.getTitle());
+            fileService.createDirectory(userHome, File.separator + getNormalizedTitle(process.getTitle()));
         }
         return true;
     }
@@ -2262,12 +2265,13 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
         String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
+        String normalizedTitle = getNormalizedTitle(myProcess.getTitle());
 
         for (String processDir : processDirs) {
             URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
-                    + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
+                    + processDir.replace(PROCESS_TITLE, normalizedTitle));
             URI destinationDirectory = URI
-                    .create(targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, myProcess.getTitle()));
+                    .create(targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, normalizedTitle));
 
             if (fileService.isDirectory(sourceDirectory)) {
                 fileService.copyFile(sourceDirectory, destinationDirectory);

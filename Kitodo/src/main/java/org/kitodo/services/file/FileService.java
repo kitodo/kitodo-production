@@ -690,8 +690,8 @@ public class FileService {
             resourceName = "";
         }
         FileManagementInterface fileManagementModule = getFileManagementModule();
-        return fileManagementModule.getProcessSubTypeUri(processDataDirectory, process.getTitle(), processSubType,
-            resourceName);
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
+            serviceManager.getProcessService().getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 
     /**
@@ -841,14 +841,16 @@ public class FileService {
     }
 
     /**
-     * Creates images files by copy of a configured source dummy image at images source folder of given process.
+     * Creates images files by copy of a configured source dummy image at images
+     * source folder of given process.
      * 
      * @param process
      *            The process object.
      * @param numberOfNewImages
      *            The number of images to be created.
      */
-    public void createDummyImagesForProcess(Process process, int numberOfNewImages) throws IOException, URISyntaxException {
+    public void createDummyImagesForProcess(Process process, int numberOfNewImages)
+            throws IOException, URISyntaxException {
         URI imagesDirectory = getSourceDirectory(process);
         int startValue = serviceManager.getFileService().getNumberOfFiles(imagesDirectory) + 1;
         URI dummyImage = getDummyImagePath();
@@ -862,7 +864,7 @@ public class FileService {
     }
 
     private String extractNumber(String string) {
-        return string.replaceAll("\\D+","");
+        return string.replaceAll("\\D+", "");
     }
 
     private URI getDummyImagePath() throws URISyntaxException, IOException {

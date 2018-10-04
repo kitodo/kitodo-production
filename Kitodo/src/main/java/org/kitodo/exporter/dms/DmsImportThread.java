@@ -61,7 +61,8 @@ public class DmsImportThread extends Thread {
         this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(), ats + ".xml");
         if (process.getProject().isDmsImportCreateProcessFolder()) {
             this.fileSuccess = new File(process.getProject().getDmsImportSuccessPath(),
-                    process.getTitle() + File.separator + ats + ".xml");
+                    serviceManager.getProcessService().getNormalizedTitle(process.getTitle()) + File.separator + ats
+                            + ".xml");
         }
 
         this.folderImages = new File(process.getProject().getDmsImportImagesPath(), ats + "_tif");
