@@ -41,7 +41,7 @@
             <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.ldapGroupView}" rendered="#{isViewMode}"/>
         </h3>
-        <p:commandButton id="saveButton"
+        <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -53,7 +53,7 @@
                          update="notifications"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{LdapGroupForm.setSaveDisabled(false)}"
-                         update="saveButton"
+                         update="save"
                          style="display:none;"/>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
@@ -65,7 +65,7 @@
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="ldabgroupTabView">
+        <p:tabView id="ldapGroupTabView">
             <p:tab id="labgroupTab" title="#{msgs.details}">
                 <p:panelGrid columns="2" layout="grid">
                     <p:row>

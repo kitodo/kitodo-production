@@ -16,14 +16,12 @@ import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ClientEditPage extends Page<ClientEditPage> {
+public class ClientEditPage extends EditPage<ClientEditPage> {
+
+    private static final String CLIENTS_TAB_VIEW = EDIT_FORM + ":clientsTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveButton")
-    private WebElement saveClientButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:clientsTabView:nameInput")
+    @FindBy(id = CLIENTS_TAB_VIEW + ":nameInput")
     private WebElement nameInput;
 
     public ClientEditPage() {
@@ -41,7 +39,7 @@ public class ClientEditPage extends Page<ClientEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveClientButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

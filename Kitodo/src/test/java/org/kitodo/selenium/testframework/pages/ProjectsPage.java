@@ -33,6 +33,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private static final String PROJECTS_TAB_VIEW = "projectsTabView";
     private static final String PROJECTS_TABLE = PROJECTS_TAB_VIEW + ":projectsTable";
     private static final String TEMPLATE_TABLE = PROJECTS_TAB_VIEW + ":templateTable";
+    private static final String WORKFLOW_TABLE = PROJECTS_TAB_VIEW + ":workflowTable";
     private static final String DOCKET_TABLE = PROJECTS_TAB_VIEW + ":docketTable";
     private static final String RULESET_TABLE = PROJECTS_TAB_VIEW + ":rulesetTable";
 
@@ -49,7 +50,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement templatesTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "projectsTabView:workflowTable_data")
+    @FindBy(id = WORKFLOW_TABLE + "_data")
     private WebElement workflowsTable;
 
     @SuppressWarnings("unused")
@@ -137,16 +138,6 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return this;
     }
 
-    /**
-     * Clicks on the tab indicated by given index (starting with 0 for the first
-     * tab).
-     *
-     * @return The users page.
-     */
-    public ProjectsPage switchToTabByIndex(int index) throws Exception {
-        return switchToTabByIndex(index, projectsTabView);
-    }
-
     public int countListedProjects() throws Exception {
         if (isNotAt()) {
             goTo();
@@ -226,7 +217,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return getTableDataByColumn(rulesetsTable, 0);
     }
 
-    public void createNewProcess() {
+    public void createNewProcess() throws Exception {
+        switchToTabByIndex(TabIndex.TEMPLATES.getIndex());
+
         int index = triggerRowToggle(templatesTable, "First template");
         WebElement createProcess = Browser.getDriver()
                 .findElement(By.id(TEMPLATE_TABLE + ":" + index + ":createProcessForm:projects:0:createProcess"));
@@ -400,5 +393,15 @@ public class ProjectsPage extends Page<ProjectsPage> {
                 MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
                 TabIndex.RULESETS.getIndex(),
                 projectsTabView);
+    }
+
+    /**
+     * Clicks on the tab indicated by given index (starting with 0 for the first
+     * tab).
+     *
+     * @param index of tab to be clicked
+     */
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, projectsTabView);
     }
 }

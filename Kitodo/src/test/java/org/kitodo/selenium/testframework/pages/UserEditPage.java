@@ -21,45 +21,44 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class UserEditPage extends Page<UserEditPage> {
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
-    private WebElement saveUserButton;
+public class UserEditPage extends EditPage<UserEditPage> {
+
+    private static final String USER_TAB_VIEW = EDIT_FORM + ":userTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:firstName")
-    private WebElement firstNameInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:surname")
-    private WebElement lastNameInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:login")
-    private WebElement loginInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:password")
-    private WebElement passwordInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:location")
-    private WebElement locationInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:metaDataLanguage")
-    private WebElement metaDataLanguageInput;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView")
+    @FindBy(id = USER_TAB_VIEW)
     private WebElement userEditTabView;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:addUserGroupButton")
+    @FindBy(id = USER_TAB_VIEW + ":firstName")
+    private WebElement firstNameInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":surname")
+    private WebElement lastNameInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":login")
+    private WebElement loginInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":password")
+    private WebElement passwordInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":location")
+    private WebElement locationInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":metaDataLanguage")
+    private WebElement metaDataLanguageInput;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":addUserGroupButton")
     private WebElement addUserToGroupButton;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:userTabView:addClientButton")
+    @FindBy(id = USER_TAB_VIEW + ":addClientButton")
     private WebElement addUserToClientButton;
 
     @SuppressWarnings("unused")
@@ -98,7 +97,7 @@ public class UserEditPage extends Page<UserEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveUserButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 
@@ -115,27 +114,13 @@ public class UserEditPage extends Page<UserEditPage> {
     public UserEditPage addUserToUserGroup(String userGroupTitle) {
         addUserToGroupButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(userGroupTitle)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(addToUserGroupDialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No user group with given title was found: " + userGroupTitle);
+        return addRow(tableRows, userGroupTitle, addToUserGroupDialog);
     }
 
     public UserEditPage addUserToClient(String clientName) {
         addUserToClientButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(clientName)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(addToClientDialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No client with given title was found: " + clientName);
+        return addRow(tableRows, clientName, addToClientDialog);
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {
@@ -143,4 +128,15 @@ public class UserEditPage extends Page<UserEditPage> {
         link.click();
     }
 
+
+    private UserEditPage addRow(List<WebElement> tableRows, String title, WebElement dialog) {
+        for (WebElement tableRow : tableRows) {
+            if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
+                clickLinkOfTableRow(tableRow);
+                Browser.closeDialog(dialog);
+                return this;
+            }
+        }
+        throw new NoSuchElementException("No row for given value found: " + title);
+    }
 }

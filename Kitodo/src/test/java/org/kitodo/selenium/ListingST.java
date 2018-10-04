@@ -20,11 +20,28 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.ProcessesPage;
+import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.TasksPage;
+import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
 
 public class ListingST extends BaseTestSelenium {
 
     private ServiceManager serviceManager = new ServiceManager();
+
+    private static ProcessesPage processesPage;
+    private static ProjectsPage projectsPage;
+    private static TasksPage tasksPage;
+    private static UsersPage usersPage;
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        processesPage = Pages.getProcessesPage();
+        projectsPage = Pages.getProjectsPage();
+        tasksPage = Pages.getTasksPage();
+        usersPage = Pages.getUsersPage();
+    }
 
     @BeforeClass
     public static void login() throws Exception {
@@ -39,15 +56,15 @@ public class ListingST extends BaseTestSelenium {
 
     @Test
     public void listTasksTest() throws Exception {
-        Pages.getTasksPage().goTo();
+        tasksPage.goTo();
         String query = "SELECT t FROM Task AS t INNER JOIN t.users AS u WITH u.id = 1 INNER JOIN t.userGroups AS ug "
         + "INNER JOIN ug.users AS uug WITH u.id = 1 WHERE (t.processingUser = 1 OR u.id = 1 OR uug.id = 1) AND "
         + "(t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
         int tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
-        int tasksDisplayed = Pages.getTasksPage().countListedTasks();
+        int tasksDisplayed = tasksPage.countListedTasks();
         assertEquals("Displayed wrong number of tasks", tasksInDatabase, tasksDisplayed);
 
-        List<String> detailsTask =  Pages.getTasksPage().getTaskDetails();
+        List<String> detailsTask =  tasksPage.getTaskDetails();
         assertEquals("Displayed wrong number of task's details", 5, detailsTask.size());
         assertEquals("Displayed wrong task's priority", "0", detailsTask.get(0));
         assertEquals("Displayed wrong task's processing begin", "2016-10-25 00:00:00", detailsTask.get(1));
@@ -55,24 +72,24 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong task's processing user", "Kowalski, Jan", detailsTask.get(3));
         assertEquals("Displayed wrong task's edit type", "manuell, regulärer Worklflow", detailsTask.get(4));
 
-        Pages.getTasksPage().applyFilterShowOnlyOpenTasks();
+        tasksPage.applyFilterShowOnlyOpenTasks();
 
         query = "SELECT t FROM Task AS t INNER JOIN t.users AS u WITH u.id = 1 INNER JOIN t.userGroups AS ug "
                 + "INNER JOIN ug.users AS uug WITH u.id = 1 WHERE (t.processingUser = 1 OR u.id = 1 OR uug.id = 1) AND "
                 + "t.processingStatus = 1 AND t.typeAutomatic = 0";
         tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
-        tasksDisplayed = Pages.getTasksPage().countListedTasks();
+        tasksDisplayed = tasksPage.countListedTasks();
         assertEquals("Displayed wrong number of tasks with applied filter", tasksInDatabase, tasksDisplayed);
     }
 
     @Test
     public void listProjectsTest() throws Exception {
-        Pages.getProjectsPage().goTo();
+        projectsPage.goTo();
         int projectsInDatabase = serviceManager.getProjectService().getAll().size();
-        int projectsDisplayed = Pages.getProjectsPage().countListedProjects();
+        int projectsDisplayed = projectsPage.countListedProjects();
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
-        List<String> detailsProject =  Pages.getProjectsPage().getProjectDetails();
+        List<String> detailsProject =  projectsPage.getProjectDetails();
         //TODO : check out how exactly columns and rows are calculated
         assertEquals("Displayed wrong number of project's details", 5, detailsProject.size());
         assertEquals("Displayed wrong project's save format", "Mets", detailsProject.get(0));
@@ -81,10 +98,10 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong project's template", "First template", detailsProject.get(3));
 
         int templatesInDatabase = serviceManager.getTemplateService().getActiveTemplates().size();
-        int templatesDisplayed = Pages.getProjectsPage().countListedTemplates();
+        int templatesDisplayed = projectsPage.countListedTemplates();
         assertEquals("Displayed wrong number of templates", templatesInDatabase, templatesDisplayed);
 
-        List<String> detailsTemplate =  Pages.getProjectsPage().getTemplateDetails();
+        List<String> detailsTemplate =  projectsPage.getTemplateDetails();
         //TODO: find way to read this table without exception
         //assertEquals("Displayed wrong number of template's details", 4, detailsTemplate.size());
         //assertEquals("Displayed wrong template's workflow", "", detailsTemplate.get(0));
@@ -93,47 +110,47 @@ public class ListingST extends BaseTestSelenium {
         //assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
 
         int workflowsInDatabase = serviceManager.getWorkflowService().getAll().size();
-        int workflowsDisplayed = Pages.getProjectsPage().countListedWorkflows();
+        int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 
         int docketsInDatabase = serviceManager.getDocketService().getAll().size();
-        int docketsDisplayed = Pages.getProjectsPage().countListedDockets();
+        int docketsDisplayed = projectsPage.countListedDockets();
         assertEquals("Displayed wrong number of dockets", docketsInDatabase, docketsDisplayed);
 
         int rulesetsInDatabase = serviceManager.getRulesetService().getAll().size();
-        int rulesetsDisplayed = Pages.getProjectsPage().countListedRulesets();
+        int rulesetsDisplayed = projectsPage.countListedRulesets();
         assertEquals("Displayed wrong number of rulesets", rulesetsInDatabase, rulesetsDisplayed);
     }
 
     @Test
     public void listProcessesTest() throws Exception {
-        Pages.getProcessesPage().goTo();
+        processesPage.goTo();
         int processesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
-        int processesDisplayed = Pages.getProcessesPage().countListedProcesses();
+        int processesDisplayed = processesPage.countListedProcesses();
         assertEquals("Displayed wrong number of processes", processesInDatabase, processesDisplayed);
 
         int batchesInDatabase = serviceManager.getBatchService().getAll().size();
-        int batchesDisplayed = Pages.getProcessesPage().countListedBatches();
+        int batchesDisplayed = processesPage.countListedBatches();
         assertEquals("Displayed wrong number of batches", batchesInDatabase, batchesDisplayed);
     }
 
     @Test
     public void listUsersTest() throws Exception {
-        Pages.getUsersPage().goTo();
+        usersPage.goTo();
         int usersInDatabase = serviceManager.getUserService().getAll().size();
-        int usersDisplayed = Pages.getUsersPage().countListedUsers();
+        int usersDisplayed = usersPage.countListedUsers();
         assertEquals("Displayed wrong number of users", usersInDatabase, usersDisplayed);
 
         int userGroupsInDatabase = serviceManager.getUserGroupService().getAll().size();
-        int userGroupsDisplayed = Pages.getUsersPage().countListedUserGroups();
+        int userGroupsDisplayed = usersPage.countListedUserGroups();
         assertEquals("Displayed wrong number of user groups", userGroupsInDatabase, userGroupsDisplayed);
 
         int clientsInDatabase = serviceManager.getClientService().getAll().size();
-        int clientsDisplayed = Pages.getUsersPage().countListedClients();
+        int clientsDisplayed = usersPage.countListedClients();
         assertEquals("Displayed wrong number of clients", clientsInDatabase, clientsDisplayed);
 
         int ldapGroupsInDatabase = serviceManager.getLdapGroupService().getAll().size();
-        int ldapGroupsDisplayed = Pages.getUsersPage().countListedLdapGroups();
+        int ldapGroupsDisplayed = usersPage.countListedLdapGroups();
         assertEquals("Displayed wrong number of ldap groups!", ldapGroupsInDatabase, ldapGroupsDisplayed);
     }
 }

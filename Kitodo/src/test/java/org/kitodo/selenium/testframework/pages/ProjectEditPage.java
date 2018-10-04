@@ -18,22 +18,20 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class ProjectEditPage extends Page<ProjectEditPage> {
+public class ProjectEditPage extends EditPage<ProjectEditPage> {
+
+    private static final String PROJECT_TAB_VIEW = EDIT_FORM + ":projectTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:save")
-    private WebElement saveProjectButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:title")
+    @FindBy(id = PROJECT_TAB_VIEW + ":title")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:pages")
+    @FindBy(id = PROJECT_TAB_VIEW + ":pages")
     private WebElement pagesAmountInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:projectTabView:band")
+    @FindBy(id = PROJECT_TAB_VIEW + ":band")
     private WebElement volumeAmountInput;
 
     @SuppressWarnings("unused")
@@ -56,13 +54,13 @@ public class ProjectEditPage extends Page<ProjectEditPage> {
         volumeAmountInput.clear();
         volumeAmountInput.sendKeys(project.getNumberOfVolumes().toString());
         selectTrigger.click();
-        WebElement option = Browser.getDriver().findElement(By.id("editForm:projectTabView:client_1"));
+        WebElement option = Browser.getDriver().findElement(By.id(PROJECT_TAB_VIEW + ":client_1"));
         option.click();
         return this;
     }
 
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveProjectButton, Pages.getProjectsPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
     }
 }

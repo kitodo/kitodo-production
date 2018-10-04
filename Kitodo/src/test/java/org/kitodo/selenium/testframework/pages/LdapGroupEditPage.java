@@ -16,86 +16,84 @@ import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
-public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
+public class LdapGroupEditPage extends EditPage<LdapGroupEditPage> {
+
+    private static final String LDAP_GROUP_TAB_VIEW = EDIT_FORM + ":ldapGroupTabView";
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:saveButton")
-    private WebElement saveLdapGroupButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:title")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":title")
     private WebElement titleInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:userDn")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":userDn")
     private WebElement userDnInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:homeDirectory")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":homeDirectory")
     private WebElement homeDirectoryInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:gidNumber")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":gidNumber")
     private WebElement gidNumberInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:objectClasses")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":objectClasses")
     private WebElement objectClassesInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaSid")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaSid")
     private WebElement sambaSidInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sn")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sn")
     private WebElement snInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:uid")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":uid")
     private WebElement uidInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:description")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":description")
     private WebElement descriptionInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:displayName")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":displayName")
     private WebElement displayNameInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:gecos")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":gecos")
     private WebElement gecosInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:loginShell")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":loginShell")
     private WebElement loginShellInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaAcctFlags")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaAcctFlags")
     private WebElement sambaAcctFlagsInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaLogonScript")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaLogonScript")
     private WebElement sambaLogonScriptInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaPrimaryGroupSid")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPrimaryGroupSid")
     private WebElement sambaPrimaryGroupSidInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaPwdMustChange")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPwdMustChange")
     private WebElement sambaPwdMustChangeInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaPasswordHistory")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaPasswordHistory")
     private WebElement sambaPasswordHistoryInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaLogonHours")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaLogonHours")
     private WebElement sambaLogonHoursInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "editForm:ldabgroupTabView:sambaKickoffTime")
+    @FindBy(id = LDAP_GROUP_TAB_VIEW + ":sambaKickoffTime")
     private WebElement sambaKickoffTimeInput;
 
     public LdapGroupEditPage() {
@@ -156,7 +154,7 @@ public class LdapGroupEditPage extends Page<LdapGroupEditPage> {
     }
 
     public UsersPage save() throws IllegalAccessException, InstantiationException {
-        clickButtonAndWaitForRedirect(saveLdapGroupButton, Pages.getUsersPage().getUrl());
+        clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
     }
 }

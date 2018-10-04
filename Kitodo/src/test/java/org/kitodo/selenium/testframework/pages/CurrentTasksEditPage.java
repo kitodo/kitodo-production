@@ -24,12 +24,14 @@ import static org.awaitility.Awaitility.await;
 
 public class CurrentTasksEditPage extends Page<CurrentTasksEditPage> {
 
+    private static final String ACTION_FORM = "tasksTabView:actionForm";
+
     @SuppressWarnings("unused")
-    @FindBy(id = "tasksTabView:actionForm:close")
+    @FindBy(id = ACTION_FORM + ":close")
     private WebElement closeTaskLink;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "tasksTabView:actionForm:cancel")
+    @FindBy(id = ACTION_FORM + ":cancel")
     private WebElement releaseTaskLink;
 
     @SuppressWarnings("unused")
