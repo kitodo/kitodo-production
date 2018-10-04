@@ -146,6 +146,7 @@ public class ProjectForm extends BaseForm {
      */
     public String newProject() {
         this.myProjekt = new Project();
+        this.myProjekt.setClient(serviceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return projectEditPath;
     }
 
