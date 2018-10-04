@@ -312,6 +312,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         Project duplicatedProject = new Project();
 
         // Project _title_ should explicitly _not_ be duplicated!
+        duplicatedProject.setClient(baseProject.getClient());
         duplicatedProject.setStartDate(baseProject.getStartDate());
         duplicatedProject.setEndDate(baseProject.getEndDate());
         duplicatedProject.setNumberOfPages(baseProject.getNumberOfPages());

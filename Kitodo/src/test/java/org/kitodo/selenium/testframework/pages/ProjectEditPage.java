@@ -12,9 +12,7 @@
 package org.kitodo.selenium.testframework.pages;
 
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -34,10 +32,6 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
     @FindBy(id = PROJECT_TAB_VIEW + ":band")
     private WebElement volumeAmountInput;
 
-    @SuppressWarnings("unused")
-    @FindBy(className = "ui-selectonemenu-trigger")
-    private WebElement selectTrigger;
-
     public ProjectEditPage() {
         super("pages/projectEdit.jsf");
     }
@@ -53,9 +47,6 @@ public class ProjectEditPage extends EditPage<ProjectEditPage> {
         pagesAmountInput.sendKeys(project.getNumberOfPages().toString());
         volumeAmountInput.clear();
         volumeAmountInput.sendKeys(project.getNumberOfVolumes().toString());
-        selectTrigger.click();
-        WebElement option = Browser.getDriver().findElement(By.id(PROJECT_TAB_VIEW + ":client_1"));
-        option.click();
         return this;
     }
 

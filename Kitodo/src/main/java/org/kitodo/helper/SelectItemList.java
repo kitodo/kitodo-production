@@ -68,7 +68,6 @@ public class SelectItemList {
     public static List<SelectItem> getClients() {
         List<SelectItem> selectItems = new ArrayList<>();
         List<Client> clients = serviceManager.getClientService().getByQuery("from Client ORDER BY name");
-        selectItems.add(new SelectItem(null, Helper.getTranslation("clientNon")));
         for (Client client : clients) {
             selectItems.add(new SelectItem(client, client.getName(), null));
         }

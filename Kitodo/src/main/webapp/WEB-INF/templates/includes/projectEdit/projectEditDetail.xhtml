@@ -31,34 +31,26 @@
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
-                             value="#{ProjectForm.myProjekt.title}"
+                             value="#{ProjectForm.project.title}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="pages" value="#{msgs.numberImages}" />
-                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectForm.myProjekt.numberOfPages}">
+                <p:inputText id="pages" placeholder="10" class="input" value="#{ProjectForm.project.numberOfPages}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
             <div>
                 <p:outputLabel for="band" value="#{msgs.numberVolumes}" />
-                <p:inputText id="band" placeholder="1" class="input" value="#{ProjectForm.myProjekt.numberOfVolumes}">
+                <p:inputText id="band" placeholder="1" class="input" value="#{ProjectForm.project.numberOfVolumes}">
                     <p:ajax event="blur"/>
                 </p:inputText>
-            </div>
-            <div>
-                <p:outputLabel for="client" value="#{msgs.client}"/>
-                <p:selectOneMenu id="client" converter="#{clientConverter}" value="#{ProjectForm.myProjekt.client}"
-                                 required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{ProjectForm.clients}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
             </div>
         </p:row>
         <p:row>
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
-                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.myProjekt.startDate}"
+                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.project.startDate}"
                             showOn="button">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                     <p:ajax event="blur" oncomplete="toggleSave()"/>
@@ -66,7 +58,7 @@
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.endDate}" />
-                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjectForm.myProjekt.endDate}"
+                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjectForm.project.endDate}"
                             showOn="button">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
                     <p:ajax event="blur" oncomplete="toggleSave()"/>
@@ -74,7 +66,7 @@
             </div>
             <div>
                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-                <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjectForm.myProjekt.active}">
+                <p:selectBooleanCheckbox id="projectIsActive" class="input" value="#{ProjectForm.project.active}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>

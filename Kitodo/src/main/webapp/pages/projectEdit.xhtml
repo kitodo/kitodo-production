@@ -32,12 +32,12 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.projectEdit} (#{ProjectForm.myProjekt.title})"
-                          rendered="#{not empty ProjectForm.myProjekt.title}"/>
+            <h:outputText value="#{msgs.projectEdit} (#{ProjectForm.project.title})"
+                          rendered="#{not empty ProjectForm.project.title}"/>
             <h:outputText value="#{msgs.newProject}"
-                          rendered="#{empty ProjectForm.myProjekt.title and empty ProjectForm.myProjekt.folders}"/>
+                          rendered="#{empty ProjectForm.project.title and empty ProjectForm.project.folders}"/>
             <h:outputText value="#{msgs.duplicateProject}"
-                          rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}"/>
+                          rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -72,7 +72,7 @@
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMets.xhtml"/>
             </p:tab>
         </p:tabView>
-        <ui:fragment rendered="#{not empty ProjectForm.myProjekt.title}">
+        <ui:fragment rendered="#{not empty ProjectForm.project.title}">
             <script>
                 $(document).ready(function() { disableGlobally('#{msgs.locked}');});
             </script>
@@ -84,14 +84,14 @@
         <li><h:link value="#{msgs.projects}" outcome="projects"/></li>
         <li>
             <a href="">
-                <ui:fragment rendered="#{not empty ProjectForm.myProjekt.title}">
+                <ui:fragment rendered="#{not empty ProjectForm.project.title}">
                     #{msgs.projectEdit}
                 </ui:fragment>
-                <ui:fragment rendered="#{empty ProjectForm.myProjekt.folders}">
+                <ui:fragment rendered="#{empty ProjectForm.project.folders}">
                     #{msgs.newProject}
                 </ui:fragment>
                 <ui:fragment
-                        rendered="#{empty ProjectForm.myProjekt.title and not empty ProjectForm.myProjekt.folders}">
+                        rendered="#{empty ProjectForm.project.title and not empty ProjectForm.project.folders}">
                     #{msgs.duplicateProject}
                 </ui:fragment>
             </a>
