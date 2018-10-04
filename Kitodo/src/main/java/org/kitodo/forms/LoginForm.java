@@ -13,6 +13,7 @@ package org.kitodo.forms;
 
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
@@ -182,5 +183,19 @@ public class LoginForm implements Serializable {
             firstVisit = false;
         }
         return visit;
+    }
+
+    /**
+     * Redirect to desktop if user is already logged in.
+     *
+     * @return path to desktop
+     */
+    public String redirectToDesktop() {
+        if (Objects.nonNull(this.myBenutzer)) {
+            return "desktop";
+        } else {
+            return "login";
+        }
+
     }
 }
