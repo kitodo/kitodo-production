@@ -35,6 +35,8 @@ public class LdapGroupForm extends BaseForm {
     private String ldapGroupListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapGroupEditPath = MessageFormat.format(REDIRECT_PATH, "ldapgroupEdit");
 
+    protected static final String ERROR_DELETING_LDAP_GROUPE = "ldapGroupInUse";
+
     /**
      * Create new LDAP group.
      *
@@ -100,6 +102,10 @@ public class LdapGroupForm extends BaseForm {
      * @return page or null
      */
     public String delete() {
+        if (!this.myLdapGruppe.getUsers().isEmpty()) {
+            Helper.setErrorMessage(ERROR_DELETING_LDAP_GROUPE, new Object[]{Helper.getTranslation(LDAP_GROUP)});
+            return null;
+        }
         try {
             this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {

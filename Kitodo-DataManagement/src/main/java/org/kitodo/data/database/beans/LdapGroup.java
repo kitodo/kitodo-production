@@ -11,13 +11,17 @@
 
 package org.kitodo.data.database.beans;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -85,6 +89,9 @@ public class LdapGroup extends BaseBean {
     @ManyToOne
     @JoinColumn(name = "ldapServer_id", foreignKey = @ForeignKey(name = "FK_ldapGroup_ldapServer_id"))
     private LdapServer ldapServer;
+
+    @OneToMany(mappedBy = "ldapGroup", cascade = CascadeType.PERSIST)
+    private List<User> users;
 
     public String getTitle() {
         return this.title;
@@ -255,6 +262,27 @@ public class LdapGroup extends BaseBean {
      */
     public void setLdapServer(LdapServer ldapServer) {
         this.ldapServer = ldapServer;
+    }
+
+    /**
+     * Get users list.
+     *
+     * @return list of users
+     */
+    public List<User> getUsers() {
+        if (Objects.isNull(users)) {
+            users = new ArrayList<>();
+        }
+        return users;
+    }
+
+    /**
+     * Set list of users.
+     *
+     * @param users as user list
+     */
+    public void setUsers(List<User> users) {
+        this.users = users;
     }
 
     @Override
