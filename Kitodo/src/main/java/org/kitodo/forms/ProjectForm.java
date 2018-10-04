@@ -70,9 +70,6 @@ public class ProjectForm extends BaseForm {
     private List<Integer> newFolders = new ArrayList<>();
     private List<Integer> deletedFolders = new ArrayList<>();
 
-    private boolean lockedDetail;
-    private boolean lockedMets;
-    private boolean lockedTechnical;
     private boolean copyTemplates;
 
     private String projectListPath = MessageFormat.format(REDIRECT_PATH, "projects");
@@ -148,9 +145,6 @@ public class ProjectForm extends BaseForm {
      * @return page address
      */
     public String newProject() {
-        setLockedDetail(false);
-        setLockedMets(false);
-        setLockedTechnical(false);
         this.myProjekt = new Project();
         return projectEditPath;
     }
@@ -165,9 +159,6 @@ public class ProjectForm extends BaseForm {
      *         JSF to remain on the same page and reuse the bean.
      */
     public String duplicate(Integer itemId) {
-        setLockedDetail(false);
-        setLockedTechnical(false);
-        setLockedMets(false);
         setCopyTemplates(true);
         try {
             this.baseProject = serviceManager.getProjectService().getById(itemId);
@@ -319,63 +310,6 @@ public class ProjectForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectID }, logger, e);
         }
-    }
-
-    /**
-     * Getter for lockedDetail.
-     *
-     * @return the lockedDetail
-     */
-    public boolean isLockedDetail() {
-        return lockedDetail;
-    }
-
-    /**
-     * Setter for lockedDetail.
-     *
-     * @param lockedDetail
-     *            the lockedDetail to set
-     */
-    public void setLockedDetail(boolean lockedDetail) {
-        this.lockedDetail = lockedDetail;
-    }
-
-    /**
-     * Getter for lockedMets.
-     *
-     * @return the lockedMets
-     */
-    public boolean isLockedMets() {
-        return lockedMets;
-    }
-
-    /**
-     * Setter for lockedMets.
-     *
-     * @param lockedMets
-     *            the lockedMets to set
-     */
-    public void setLockedMets(boolean lockedMets) {
-        this.lockedMets = lockedMets;
-    }
-
-    /**
-     * Getter for lockedTechnicaal.
-     *
-     * @return the lockedTechnical
-     */
-    public boolean isLockedTechnical() {
-        return lockedTechnical;
-    }
-
-    /**
-     * Setter for lockedTechnical.
-     *
-     * @param lockedTechnical
-     *            the lockedTechnical to set
-     */
-    public void setLockedTechnical(boolean lockedTechnical) {
-        this.lockedTechnical = lockedTechnical;
     }
 
     /**

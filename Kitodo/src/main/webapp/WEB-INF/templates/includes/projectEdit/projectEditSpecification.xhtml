@@ -19,29 +19,27 @@
 
     <h:outputScript name="js/clipboard.js" target="body" />
     <p:panel>
-        <p:selectBooleanButton
-                onLabel="#{msgs.locked}"
-                offLabel="#{msgs.unlocked}"
-                onIcon="fa fa-lock fa-lg"
-                offIcon="fa fa-unlock fa-lg"
+        <p:commandButton
+                value="#{msgs.unlocked}"
+                icon="fa fa-unlock fa-lg"
+                iconPos="right"
                 styleClass="callto"
-                id="specificationLockedButton"
-                value="#{ProjectForm.lockedTechnical}">
-            <p:ajax event="change" update="technischeDatenForm" />
-        </p:selectBooleanButton>
+                id="technicalLockedButton"
+                onclick="enableOrDisable(this,'#{msgs.locked}','#{msgs.unlocked}')">
+        </p:commandButton>
     </p:panel>
     <p:panelGrid id="technischeDatenForm" columns="2" cellpadding="10" layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="internalFormat" value="#{msgs.internFileFormat}" />
-                <p:selectOneMenu id="internalFormat" value="#{ProjectForm.myProjekt.fileFormatInternal}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:selectOneMenu id="internalFormat" value="#{ProjectForm.myProjekt.fileFormatInternal}">
                     <f:selectItems value="#{HelperForm.fileFormatsInternalOnly}" />
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
                 <p:outputLabel for="dmsExportImageDir" value="#{msgs.dmsImportImagesPath}" />
-                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportImagesPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportImagesPath}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:inputText id="dmsExportImageDir" placeholder="#{msgs.dmsImportImagesPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportImagesPath}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportImageDirButton"/>
                 </p:inputText>
@@ -49,7 +47,7 @@
             </div>
             <div>
                 <p:outputLabel for="dmsExportErrorDir" value="#{msgs.dmsImportErrorPath}" />
-                <p:inputText id="dmsExportErrorDir" placeholder="#{msgs.dmsImportErrorPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportErrorPath}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:inputText id="dmsExportErrorDir" placeholder="#{msgs.dmsImportErrorPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportErrorPath}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportErrorDirButton"/>
                 </p:inputText>
@@ -57,13 +55,13 @@
             </div>
             <div>
                 <p:outputLabel for="automaticExport" value="#{msgs.automaticDmsImport}" />
-                <p:selectBooleanCheckbox id="automaticExport" value="#{ProjectForm.myProjekt.useDmsImport}" class="input" disabled="#{ProjectForm.lockedTechnical}">
+                <p:selectBooleanCheckbox id="automaticExport" value="#{ProjectForm.myProjekt.useDmsImport}" class="input">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
             <div>
                 <p:outputLabel for="timeout" value="#{msgs.timeout}" />
-                <p:inputText id="timeout" placeholder="#{msgs.timeout}" class="input" value="#{ProjectForm.myProjekt.dmsImportTimeOut}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:inputText id="timeout" placeholder="#{msgs.timeout}" class="input" value="#{ProjectForm.myProjekt.dmsImportTimeOut}">
                     <p:ajax event="blur"/>
                 </p:inputText>
             </div>
@@ -71,14 +69,14 @@
         <p:row>
             <div>
                 <p:outputLabel for="DmsFormat" value="#{msgs.dmsExportFormat}" />
-                <p:selectOneMenu id="DmsFormat" value="#{ProjectForm.myProjekt.fileFormatDmsExport}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:selectOneMenu id="DmsFormat" value="#{ProjectForm.myProjekt.fileFormatDmsExport}">
                     <f:selectItems value="#{HelperForm.fileFormats}" />
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
             <div>
                 <p:outputLabel for="dmsExportDir" value="#{msgs.dmsImportPathXmlFile}" />
-                <p:inputText id="dmsExportDir" placeholder="#{msgs.dmsImportPathXmlFile}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportRootPath}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:inputText id="dmsExportDir" placeholder="#{msgs.dmsImportPathXmlFile}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportRootPath}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportDirButton"/>
                 </p:inputText>
@@ -86,7 +84,7 @@
             </div>
             <div>
                 <p:outputLabel for="dmsExportSuccessDir" value="#{msgs.dmsImportSuccessPath}" />
-                <p:inputText id="dmsExportSuccessDir" placeholder="#{msgs.dmsImportSuccessPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportSuccessPath}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:inputText id="dmsExportSuccessDir" placeholder="#{msgs.dmsImportSuccessPath}" styleClass="input-with-button" value="#{ProjectForm.myProjekt.dmsImportSuccessPath}">
                     <p:ajax event="blur"/>
                     <p:ajax event="keyup" update="editForm:projectTabView:copyDmsExportSuccessDirButton"/>
                 </p:inputText>
@@ -94,7 +92,7 @@
             </div>
             <div>
                 <p:outputLabel for="createDir" value="#{msgs.dmsImportCreateProcessFolder}" />
-                <p:selectBooleanCheckbox id="createDir" class="input" value="#{ProjectForm.myProjekt.dmsImportCreateProcessFolder}" disabled="#{ProjectForm.lockedTechnical}">
+                <p:selectBooleanCheckbox id="createDir" class="input" value="#{ProjectForm.myProjekt.dmsImportCreateProcessFolder}">
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>

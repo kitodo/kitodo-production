@@ -24,7 +24,8 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/save.js" target="body"/>
+        <h:outputScript name="js/save.js" target="body" />
+        <h:outputScript name="js/toggleLock.js" target="body"/>
         <script>
             window.onload = function () {
                 checkForm('editForm')
@@ -71,6 +72,11 @@
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/projectEditMets.xhtml"/>
             </p:tab>
         </p:tabView>
+        <ui:fragment rendered="#{not empty ProjectForm.myProjekt.title}">
+            <script>
+                $(document).ready(function() { disableGlobally('#{msgs.locked}');});
+            </script>
+        </ui:fragment>
     </ui:define>
 
     <ui:define name="breadcrumbs">
