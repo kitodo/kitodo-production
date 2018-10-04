@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assume.assumeTrue;
 
@@ -21,8 +22,11 @@ import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.services.ServiceManager;
 
 public class EditingST extends BaseTestSelenium {
+
+    private ServiceManager serviceManager = new ServiceManager();
 
     @Before
     public void login() throws Exception {
@@ -44,6 +48,16 @@ public class EditingST extends BaseTestSelenium {
         Pages.getProcessesPage().editProcess();
         assertEquals("Header for edit process is incorrect", "Vorgang bearbeiten (First process)",
                 Pages.getProcessEditPage().getHeaderText());
+    }
+
+    @Test
+    public void editBatchTest() throws Exception {
+        Pages.getProcessesPage().editBatch();
+        await().untilAsserted(
+                () -> assertEquals("Batch was not renamed!", 1, serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").size()));
+
+        assertEquals("Process was not removed from batch", 1,
+                serviceManager.getBatchService().getByQuery("FROM Batch WHERE title = 'SeleniumBatch'").get(0).getProcesses().size());
     }
 
     @Test

@@ -46,7 +46,6 @@ public class ListingST extends BaseTestSelenium {
         int tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
         int tasksDisplayed = Pages.getTasksPage().countListedTasks();
         assertEquals("Displayed wrong number of tasks", tasksInDatabase, tasksDisplayed);
-        Thread.sleep(5000);
 
         List<String> detailsTask =  Pages.getTasksPage().getTaskDetails();
         assertEquals("Displayed wrong number of task's details", 5, detailsTask.size());
@@ -112,6 +111,10 @@ public class ListingST extends BaseTestSelenium {
         int processesInDatabase = serviceManager.getProcessService().getActiveProcesses().size();
         int processesDisplayed = Pages.getProcessesPage().countListedProcesses();
         assertEquals("Displayed wrong number of processes", processesInDatabase, processesDisplayed);
+
+        int batchesInDatabase = serviceManager.getBatchService().getAll().size();
+        int batchesDisplayed = Pages.getProcessesPage().countListedBatches();
+        assertEquals("Displayed wrong number of batches", batchesInDatabase, batchesDisplayed);
     }
 
     @Test

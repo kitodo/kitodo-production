@@ -71,7 +71,7 @@
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadAllProcesses}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.downloadDocket}">
+                    <h:commandLink id="downloadDocket" action="#{BatchForm.downloadDocket}">
                         <h:outputText><i class="fa fa-print"/> #{msgs.docketPrint}</h:outputText>
                     </h:commandLink>
 
@@ -80,7 +80,7 @@
                         <i class="fa fa-pencil-square-o fa-lg"/> <h:outputText value="#{msgs.propertyEdit}"/>
                     </h:link>
 
-                    <h:commandLink action="#{BatchForm.delete}">
+                    <h:commandLink id="deleteBatch" action="#{BatchForm.delete}">
                         <h:outputText><i class="fa fa-trash-o"/> #{msgs.deleteBatch}</h:outputText>
                     </h:commandLink>
                 </h:panelGrid>
@@ -107,15 +107,15 @@
                 </div>
 
                 <h:panelGrid columns="1" cellpadding="2px">
-                    <h:commandLink action="#{BatchForm.loadBatchData}">
+                    <h:commandLink id="loadBatchData" action="#{BatchForm.loadBatchData}">
                         <h:outputText><i class="fa fa-refresh"/> #{msgs.loadAssociatedBatchOfProcess}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.addProcessesToBatch}">
+                    <h:commandLink id="addProcessesToBatch" action="#{BatchForm.addProcessesToBatch}">
                         <h:outputText><i class="fa fa-check-circle-o"/> #{msgs.addToSelectedBatch}</h:outputText>
                     </h:commandLink>
 
-                    <h:commandLink action="#{BatchForm.removeProcessesFromBatch}">
+                    <h:commandLink id="removeProcessesFromBatch" action="#{BatchForm.removeProcessesFromBatch}">
                         <h:outputText><i class="fa fa-times-circle-o"/> #{msgs.removeFromAssociatedBatch}</h:outputText>
                     </h:commandLink>
 

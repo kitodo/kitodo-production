@@ -64,10 +64,6 @@ public class ReaderIT {
         List<Task> tasks = template.getTasks();
         tasks.sort(Comparator.comparing(Task::getOrdering, Comparator.nullsFirst(Comparator.naturalOrder())));
 
-        for (Task task : tasks) {
-            System.out.println(task.getOrdering() + " " + task.getTitle() + " " + task.getWorkflowCondition());
-        }
-
         assertEquals("Process definition - workflow's task ordering was determined incorrectly!", 1,
                 tasks.get(0).getOrdering().intValue());
         assertEquals("Process definition - workflow's task conditions were determined incorrectly!", "default",
