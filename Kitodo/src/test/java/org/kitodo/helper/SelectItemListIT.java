@@ -79,17 +79,14 @@ public class SelectItemListIT {
     @Test
     public void shouldGetClients() {
         await().untilAsserted(
-            () -> assertEquals("Incorrect amount of select items!", 5, SelectItemList.getClients().size()));
+            () -> assertEquals("Incorrect amount of select items!", 4, SelectItemList.getClients().size()));
 
         List<SelectItem> selectItems = SelectItemList.getClients();
 
-        assertEquals("First item is a client item!", "No client", selectItems.get(0).getLabel());
-        assertNull("First item is a client item!", selectItems.get(0).getValue());
-
-        assertEquals("Second item is not sorted correctly!", "First client", selectItems.get(1).getLabel());
-        assertEquals("Third item is not sorted correctly!", "Not used client", selectItems.get(2).getLabel());
-        assertEquals("Fourth item is not sorted correctly!", "Removable client", selectItems.get(3).getLabel());
-        assertEquals("Fifth item is not sorted correctly!", "Second client", selectItems.get(4).getLabel());
+        assertEquals("Second item is not sorted correctly!", "First client", selectItems.get(0).getLabel());
+        assertEquals("Third item is not sorted correctly!", "Not used client", selectItems.get(1).getLabel());
+        assertEquals("Fourth item is not sorted correctly!", "Removable client", selectItems.get(2).getLabel());
+        assertEquals("Fifth item is not sorted correctly!", "Second client", selectItems.get(3).getLabel());
 
         assertThat("Second item is not a Client type!", selectItems.get(1).getValue(), instanceOf(Client.class));
     }
