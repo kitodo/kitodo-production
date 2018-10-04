@@ -78,7 +78,6 @@ import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.exporter.download.ExportPdf;
-import org.kitodo.exporter.download.Multipage;
 import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
@@ -1013,19 +1012,6 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (DAOException | DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /*
-     * Downloads
-     */
-    public void downloadTiffHeader() throws IOException {
-        TiffHeader tiff = new TiffHeader(this.process);
-        tiff.exportStart();
-    }
-
-    public void downloadMultiTiff() throws IOException {
-        Multipage mp = new Multipage();
-        mp.startExport(this.process);
     }
 
     public String getKitodoScript() {
