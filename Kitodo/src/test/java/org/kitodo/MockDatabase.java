@@ -1193,6 +1193,7 @@ public class MockDatabase {
         firstUser.setLocation("Dresden");
         firstUser.setTableSize(20);
         firstUser.setLanguage("de");
+        firstUser.setMetadataLanguage("de");
         firstUser.getUserGroups().add(serviceManager.getUserGroupService().getById(1));
         serviceManager.getUserService().save(firstUser);
 

@@ -16,6 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -58,6 +59,10 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement addUserToGroupButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = USER_TAB_VIEW + ":addProjectButton")
+    private WebElement addUserToProjectButton;
+
+    @SuppressWarnings("unused")
     @FindBy(id = USER_TAB_VIEW + ":addClientButton")
     private WebElement addUserToClientButton;
 
@@ -66,12 +71,20 @@ public class UserEditPage extends EditPage<UserEditPage> {
     private WebElement selectUserGroupTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "userProjectForm:selectProjectTable_data")
+    private WebElement selectProjectTable;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "userClientForm:selectClientTable_data")
     private WebElement selectClientTable;
 
     @SuppressWarnings("unused")
     @FindBy(id = "addUserGroupDialog")
     private WebElement addToUserGroupDialog;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "addProjectDialog")
+    private WebElement addToProjectDialog;
 
     @SuppressWarnings("unused")
     @FindBy(id = "addClientDialog")
@@ -111,16 +124,25 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return switchToTabByIndex(index, userEditTabView);
     }
 
-    public UserEditPage addUserToUserGroup(String userGroupTitle) {
+    public UserEditPage addUserToUserGroup(String userGroupTitle) throws Exception {
+        switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
         addUserToGroupButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
         return addRow(tableRows, userGroupTitle, addToUserGroupDialog);
     }
 
-    public UserEditPage addUserToClient(String clientName) {
+    public UserEditPage addUserToClient(String clientName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
         return addRow(tableRows, clientName, addToClientDialog);
+    }
+
+    public UserEditPage addUserToProject(String projectName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
+        addUserToProjectButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
+        return addRow(tableRows, projectName, addToProjectDialog);
     }
 
     private void clickLinkOfTableRow(WebElement tableRow) {

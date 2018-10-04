@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -149,6 +150,21 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         return countDatabaseRows("SELECT COUNT(*) FROM Project");
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ProjectDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
+        Integer currentUserId = serviceManager.getUserService().getAuthenticatedUser().getId();
+        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForUserId(currentUserId));
+        if (Objects.nonNull(sessionClient)) {
+            query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClient.getId(), true));
+        }
+
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString(), sort, offset, size), false);
+    }
+
     /**
      * Find all projects available to assign to the edited user. It will be
      * displayed in the userEditProjectsPopup. If user id is null and session client
@@ -230,8 +246,11 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of JSON objects
      */
     List<JsonObject> findByUserId(Integer id) throws DataException {
-        QueryBuilder query = getQueryForUserId(id, true);
-        return searcher.findDocuments(query.toString());
+        return searcher.findDocuments(getQueryForUserId(id).toString());
+    }
+
+    private QueryBuilder getQueryForUserId(Integer id) {
+        return createSimpleQuery("users.id", id, true);
     }
 
     /**

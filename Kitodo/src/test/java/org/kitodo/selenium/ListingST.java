@@ -85,7 +85,8 @@ public class ListingST extends BaseTestSelenium {
     @Test
     public void listProjectsTest() throws Exception {
         projectsPage.goTo();
-        int projectsInDatabase = serviceManager.getProjectService().getAll().size();
+        int projectsInDatabase = serviceManager.getProjectService()
+                .getByQuery("FROM Project AS p INNER JOIN p.users AS u WITH u.id = 1").size();
         int projectsDisplayed = projectsPage.countListedProjects();
         assertEquals("Displayed wrong number of projects", projectsInDatabase, projectsDisplayed);
 
