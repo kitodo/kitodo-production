@@ -321,7 +321,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Use special pagination type for automatic default pagination.
      */
-    METS_EDITOR_DEFAULT_PAGINATION("metsEditor.defaultPagination", null, "uncounted",
+    METS_EDITOR_DEFAULT_PAGINATION("metsEditor.defaultPagination", String.class, "uncounted",
             Arrays.asList("arabic", "roman", "uncounted")),
 
     /**

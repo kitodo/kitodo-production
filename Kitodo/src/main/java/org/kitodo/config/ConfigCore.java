@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -78,6 +79,7 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as String or default value for this parameter
      */
     public static String getParameterOrDefaultValue(ParameterCore key) {
+        checkNotNullKeyType(key);
         if (key.getType().equals(String.class)) {
             return getParameter(key.getName(), (String) key.getDefaultValue());
         }
@@ -93,6 +95,7 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as boolean or default value for this parameter
      */
     public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
+        checkNotNullKeyType(key);
         if (key.getType().equals(Boolean.TYPE)) {
             return getBooleanParameter(key, (boolean) key.getDefaultValue());
         }
@@ -108,6 +111,7 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as int or default value for this parameter
      */
     public static int getIntParameterOrDefaultValue(ParameterCore key) {
+        checkNotNullKeyType(key);
         if (key.getType().equals(Integer.TYPE)) {
             return getIntParameter(key, (int) key.getDefaultValue());
         }
@@ -123,6 +127,7 @@ public class ConfigCore extends KitodoConfig {
      * @return Parameter as long or default value
      */
     public static long getLongParameterOrDefaultValue(ParameterCore key) {
+        checkNotNullKeyType(key);
         if (key.getType().equals(Long.TYPE)) {
             return getLongParameter(key, (long) key.getDefaultValue());
         }
@@ -174,5 +179,11 @@ public class ConfigCore extends KitodoConfig {
      */
     public static String getKitodoDiagramDirectory() {
         return getParameter(ParameterCore.DIR_DIAGRAMS);
+    }
+
+    private static void checkNotNullKeyType(ParameterCore key) {
+        if (Objects.isNull(key.getType())) {
+            throw new ConfigParameterException("Type of key '" + key.getName() + "' is null");
+        }
     }
 }
