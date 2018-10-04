@@ -53,10 +53,10 @@ public class UserForm extends BaseForm {
     private User userObject = new User();
     private boolean hideInactiveUsers = true;
     private static final Logger logger = LogManager.getLogger(UserForm.class);
-    private SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
+    private transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
 
     @ValidPassword
-    private String password;
+    private String passwordToEncrypt;
 
     private String userListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
@@ -82,7 +82,7 @@ public class UserForm extends BaseForm {
         this.userObject.setLogin("");
         this.userObject.setLdapLogin("");
         this.userObject.setPassword("");
-        this.password = "";
+        setPasswordToEncrypt("");
         return userEditPath;
     }
 
@@ -92,7 +92,6 @@ public class UserForm extends BaseForm {
      * @return page or empty String
      */
     public String save() {
-        serviceManager.getUserService().evict(this.userObject);
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
@@ -106,7 +105,9 @@ public class UserForm extends BaseForm {
 
         try {
             if (this.serviceManager.getUserService().getAmountOfUsersWithExactlyTheSameLogin(getUserId(), login) == 0) {
-                this.userObject.setPassword(passwordEncoder.encrypt(this.password));
+                if (Objects.nonNull(this.passwordToEncrypt)) {
+                    this.userObject.setPassword(passwordEncoder.encrypt(this.passwordToEncrypt));
+                }
                 this.serviceManager.getUserService().save(this.userObject);
                 return userListPath;
             } else {
@@ -404,18 +405,18 @@ public class UserForm extends BaseForm {
      *
      * @return The password.
      */
-    public String getPassword() {
-        return password;
+    public String getPasswordToEncrypt() {
+        return passwordToEncrypt;
     }
 
     /**
      * Sets password.
      *
-     * @param password
+     * @param passwordToEncrypt
      *            The password.
      */
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordToEncrypt(String passwordToEncrypt) {
+        this.passwordToEncrypt = passwordToEncrypt;
     }
 
     /**
@@ -441,9 +442,9 @@ public class UserForm extends BaseForm {
     public void changePasswordForCurrentUser() {
         try {
             if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
-                serviceManager.getLdapServerService().changeUserPassword(userObject, this.password);
+                serviceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
             }
-            serviceManager.getUserService().changeUserPassword(userObject, this.password);
+            serviceManager.getUserService().changeUserPassword(userObject, this.passwordToEncrypt);
             Helper.setMessage("passwordChanged");
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
