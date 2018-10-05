@@ -41,6 +41,11 @@ public class FileNames {
     public static final String METADATA_DISPLAY_RULES_FILE = "kitodo_metadataDisplayRules.xml";
 
     /**
+     * Configuration file for login blacklist.
+     */
+    public static final String LOGIN_BLACKLIST_FILE = "kitodo_loginBlacklist.txt";
+
+    /**
      * Private constructor to hide the implicit public one.
      */
     private FileNames() {

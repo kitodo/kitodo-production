@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.naming.NameAlreadyBoundException;
 import javax.naming.NamingException;
-import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.goobi.production.constants.FileNames;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
@@ -121,12 +121,8 @@ public class UserForm extends BaseForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String filename = session.getServletContext().getRealPath("/WEB-INF") + File.separator + "classes"
-                + File.separator + "kitodo_loginBlacklist.txt";
-
-        return serviceManager.getUserService().isLoginValid(inLogin, filename);
+        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.LOGIN_BLACKLIST_FILE);
+        return serviceManager.getUserService().isLoginValid(inLogin, file.getAbsolutePath());
     }
 
     private boolean isMissingClient() {
