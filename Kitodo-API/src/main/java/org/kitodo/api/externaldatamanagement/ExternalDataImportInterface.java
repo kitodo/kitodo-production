@@ -15,6 +15,8 @@ import java.util.Collection;
 
 import javax.swing.event.EventListenerList;
 
+import org.w3c.dom.Document;
+
 /**
  * Manages the import of data from an external source.
  */
@@ -23,26 +25,41 @@ public interface ExternalDataImportInterface {
     EventListenerList externalDataListeners = new EventListenerList();
 
     /**
-     * Searches for Data in a given source by term and field.
+     * Get the full record with the given ID from the catalog.
      *
-     * @param field
-     *            The field, to search for the term.
-     * @param term
-     *            The search term.
-     * @param source
-     *            The source to search in.
-     * @return A list of result data.
+     * @param catalogId
+     *            The ID of the catalog that will be queried.
+     * @param id
+     *            The ID of the record that will be imported.
+     * @return The queried record transformed into Kitodo internal format.
      */
-    Collection<ImportData> getEntry(String field, String term, Source source);
+    Document getFullRecordById(String catalogId, String id);
+
+    /**
+     * Perform search in catalog with given ID 'catalogId' Map 'searchTerms', which
+     * contains search fields as keys and search terms as values. The parameter rows
+     * controls how many records should be returned.
+     *
+     * @param catalogId
+     *            ID of the catalog that will be queried.
+     * @param field
+     *            search field that will be queried
+     * @param term
+     *            value of search field that will be queried
+     * @param rows
+     *            number of records to be returned
+     * @return Search result of performed query.
+     */
+    SearchResult search(String catalogId, String field, String term, int rows);
 
     /**
      * Searches for Data in a given source by term and field.
      *
      * @param ids
      *            The ids from the entries to get.
-     * @param source
-     *            The source to search in.
+     * @param catalogId
+     *            ID of the catalog that will be queried.
      * @return A list of result data.
      */
-    Collection<ImportData> getMultipleEntriesById(Collection<String> ids, Source source);
+    Collection<Document> getMultipleEntriesById(Collection<String> ids, String catalogId);
 }
