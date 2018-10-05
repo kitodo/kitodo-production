@@ -9,12 +9,22 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-$(window).on("load", function() {
-    $.ready.then(function() {
-        if ($('#editForm\\:workflowTabView\\:btnReadXmlDiagram').length > 0) {
-            $('#editForm\\:workflowTabView\\:btnReadXmlDiagram')[0].click();
-        } else {
-            $('#editForm\\:workflowTabView\\:js-create-diagram')[0].click();
-        }
-    });
+ var availableUserRoles = [];
+
+$(window).on("load", function () {
+	$.ready.then(function () {
+		if ($('#editForm\\:workflowTabView\\:btnReadXmlDiagram').length > 0) {
+			$('#editForm\\:workflowTabView\\:btnReadXmlDiagram')[0].click();
+		} else {
+			$('#editForm\\:workflowTabView\\:js-create-diagram')[0].click();
+		}
+
+
+		var userRoles = $("#editForm\\:workflowTabView\\:userGroupId_input").children();
+
+		userRoles.each(function( index ) {
+			var role = { name: $(this).text(), value: $(this).val() };
+			availableUserRoles.push(role);
+		});
+	});
 });
