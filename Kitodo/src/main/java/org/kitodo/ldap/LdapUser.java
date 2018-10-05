@@ -134,8 +134,8 @@ public class LdapUser implements DirContext {
             /* LanMgr */
             try {
                 this.attributes.put("sambaLMPassword", toHexString(lmHash(inPassword)));
-            } catch (InvalidKeyException | UnsupportedEncodingException | NoSuchPaddingException
-                    | IllegalBlockSizeException | BadPaddingException | RuntimeException e) {
+            } catch (InvalidKeyException | NoSuchPaddingException | BadPaddingException
+                    | IllegalBlockSizeException | RuntimeException e) {
                 logger.error(e.getMessage(), e);
             }
             /* NTLM */
@@ -193,16 +193,16 @@ public class LdapUser implements DirContext {
      * @return The LM Hash of the given password, used in the calculation of the LM
      *         Response.
      */
-    public static byte[] lmHash(String password) throws UnsupportedEncodingException, NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+    public static byte[] lmHash(String password) throws BadPaddingException, NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException {
 
-        byte[] oemPassword = password.toUpperCase().getBytes("US-ASCII");
+        byte[] oemPassword = password.toUpperCase().getBytes(StandardCharsets.US_ASCII);
         int length = Math.min(oemPassword.length, 14);
         byte[] keyBytes = new byte[14];
         System.arraycopy(oemPassword, 0, keyBytes, 0, length);
         Key lowKey = createDESKey(keyBytes, 0);
         Key highKey = createDESKey(keyBytes, 7);
-        byte[] magicConstant = "KGS!@#$%".getBytes("US-ASCII");
+        byte[] magicConstant = "KGS!@#$%".getBytes(StandardCharsets.US_ASCII);
         Cipher des = Cipher.getInstance("DES/ECB/NoPadding");
         des.init(Cipher.ENCRYPT_MODE, lowKey);
         byte[] lowHash = des.doFinal(magicConstant);
