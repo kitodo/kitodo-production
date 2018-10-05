@@ -11,7 +11,7 @@
 
 -- 1. Update the dummy LDAP group
 
-UPDATE ldapGroup SET homeDirectory = '/home/test/users/{login}',
+UPDATE ldapGroup SET homeDirectory = '/usr/local/kitodo/users/{login}',
 gidNumber = '242',
 userDN = 'cn={login},ou=user,o=TestOrg,dc=kitodo,dc=org',
 objectClasses = 'top,inetOrgPerson,posixAccount,shadowAccount,sambaSamAccount',
