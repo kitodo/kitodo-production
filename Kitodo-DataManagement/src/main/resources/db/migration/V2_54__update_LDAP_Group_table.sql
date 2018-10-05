@@ -11,6 +11,8 @@
 
 -- 1. Update the dummy LDAP group
 
+SET SQL_SAFE_UPDATES = 0;
+
 UPDATE ldapGroup SET homeDirectory = '/usr/local/kitodo/users/{login}',
 gidNumber = '242',
 userDN = 'cn={login},ou=user,o=TestOrg,dc=kitodo,dc=org',
@@ -29,4 +31,6 @@ sambaPasswordMustChange = '2147483647',
 sambaPasswordHistory = '00000000000000000000000000000000000000',
 sambaLogonHours = 'FFFFFFFFFFFFFFFFFFFF',
 sambaKickoffTime = '0'
-WHERE id = 2 AND homeDirectory IS NULL AND gidNumber IS NULL AND sambaSID IS NULL;
+WHERE title = 'test' AND homeDirectory IS NULL AND gidNumber IS NULL AND sambaSID IS NULL;
+
+SET SQL_SAFE_UPDATES = 1;
