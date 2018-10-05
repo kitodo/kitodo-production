@@ -21,7 +21,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 /**
  * Controller for getting and setting the client of users current session.
@@ -55,8 +55,7 @@ public class SessionClientController {
                 setSessionClient(client);
                 return client.getName();
             }
-            showClientSelectDialog();
-            return "";
+            return null;
         }
     }
 
@@ -87,11 +86,23 @@ public class SessionClientController {
         return !userHasOnlyOneClient();
     }
 
-    private void showClientSelectDialog() {
-        RequestContext.getCurrentInstance().execute("PF('selectClientDialog').show();");
+    /**
+     * Display client selection dialog if user is logged in, not an admin and has multiple clients.
+     */
+    public void showClientSelectDialog() {
+        if (!Objects.nonNull(getCurrentSessionClient())) {
+            if (!userIsAdmin() && !userHasOnlyOneClient()) {
+                PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
+            }
+        }
     }
 
-    private Client getCurrentSessionClient() {
+    /**
+     * Get current session client.
+     *
+     * @return current session client
+     */
+    public Client getCurrentSessionClient() {
         return serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
     }
 

@@ -197,7 +197,8 @@
                             <p:column style="text-align: right">
                                 <p:commandButton id="setSessionClientButton"
                                                  action="#{SessionClientController.setSelectedClientAsSessionClient}"
-                                                 oncomplete="PF('selectClientDialog').hide();"
+                                                 onstart="PF('selectClientDialog').hide(); PF('loadingDialog').show();"
+                                                 oncomplete="PF('loadingDialog').hide();"
                                                  disabled="#{not SessionClientController.areClientsAvailableForUser()}"
                                                  update="@all"
                                                  value="#{msgs.select}"

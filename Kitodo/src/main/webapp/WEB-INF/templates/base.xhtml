@@ -63,6 +63,9 @@
                     </ui:insert>
                 </footer>
             </div>
+            <p:dialog widgetVar="loadingDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                <p:graphicImage id="loading" alt="loading" value="/pages/images/ajax-loader.gif"/>
+            </p:dialog>
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" styleClass="confirm-delete" id="deleteConfirmDialog">
                 <p:commandButton id="yesButton" value="#{msgs.yes}" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" immediate="true" update="@(.ui-datatable)"/>
                 <p:commandButton id="noButton" value="#{msgs.no}" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
