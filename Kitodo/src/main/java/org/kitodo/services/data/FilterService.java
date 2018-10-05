@@ -296,7 +296,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private List<String> prepareStrings(String filter, String filterName) {
         List<String> filterValues = new ArrayList<>();
         String filterValue = filter.substring(filter.indexOf(filterName));
-        filterValue = filterValue.substring(filterName.lastIndexOf(':') + 1, filterValue.length());
+        filterValue = filterValue.substring(filterName.lastIndexOf(':') + 1);
         if (filterValue.matches("^[\\s\\d]+$")) {
             filterValues.addAll(Arrays.asList(filterValue.split("\\s+")));
         } else {
@@ -344,7 +344,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         String filterValue = filter.replace(filterName, "");
         if (filterValue.contains(":")) {
             titleValue.add(filterValue.substring(0, filterValue.lastIndexOf(':')));
-            titleValue.add(filterValue.substring(filterValue.lastIndexOf(':') + 1, filterValue.length()));
+            titleValue.add(filterValue.substring(filterValue.lastIndexOf(':') + 1));
         } else {
             titleValue.add(filterValue);
         }
