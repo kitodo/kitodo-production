@@ -29,4 +29,4 @@ sambaPasswordMustChange = '2147483647',
 sambaPasswordHistory = '00000000000000000000000000000000000000',
 sambaLogonHours = 'FFFFFFFFFFFFFFFFFFFF',
 sambaKickoffTime = '0'
-WHERE id = 2 ;
+WHERE id = 2 AND homeDirectory IS NULL AND gidNumber IS NULL AND sambaSID IS NULL;
