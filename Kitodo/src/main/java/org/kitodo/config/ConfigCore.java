@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.config.enums.ParameterType;
 import org.kitodo.exceptions.ConfigParameterException;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
@@ -79,8 +80,8 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as String or default value for this parameter
      */
     public static String getParameterOrDefaultValue(ParameterCore key) {
-        checkNotNullKeyType(key);
-        if (key.getType().equals(String.class)) {
+        checkNullAndNoneKeyType(key);
+        if (key.getType().equals(ParameterType.STRING)) {
             return getParameter(key.getName(), (String) key.getDefaultValue());
         }
         throw new ConfigParameterException(key.getName(), "String");
@@ -95,8 +96,8 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as boolean or default value for this parameter
      */
     public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
-        checkNotNullKeyType(key);
-        if (key.getType().equals(Boolean.TYPE)) {
+        checkNullAndNoneKeyType(key);
+        if (key.getType().equals(ParameterType.BOOLEAN)) {
             return getBooleanParameter(key, (boolean) key.getDefaultValue());
         }
         throw new ConfigParameterException(key.getName(), "boolean");
@@ -111,8 +112,8 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as int or default value for this parameter
      */
     public static int getIntParameterOrDefaultValue(ParameterCore key) {
-        checkNotNullKeyType(key);
-        if (key.getType().equals(Integer.TYPE)) {
+        checkNullAndNoneKeyType(key);
+        if (key.getType().equals(ParameterType.INT)) {
             return getIntParameter(key, (int) key.getDefaultValue());
         }
         throw new ConfigParameterException(key.getName(), "int");
@@ -127,8 +128,8 @@ public class ConfigCore extends KitodoConfig {
      * @return Parameter as long or default value
      */
     public static long getLongParameterOrDefaultValue(ParameterCore key) {
-        checkNotNullKeyType(key);
-        if (key.getType().equals(Long.TYPE)) {
+        checkNullAndNoneKeyType(key);
+        if (key.getType().equals(ParameterType.LONG)) {
             return getLongParameter(key, (long) key.getDefaultValue());
         }
         throw new ConfigParameterException(key.getName(), "long");
@@ -181,9 +182,9 @@ public class ConfigCore extends KitodoConfig {
         return getParameter(ParameterCore.DIR_DIAGRAMS);
     }
 
-    private static void checkNotNullKeyType(ParameterCore key) {
-        if (Objects.isNull(key.getType())) {
-            throw new ConfigParameterException("Type of key '" + key.getName() + "' is null");
+    private static void checkNullAndNoneKeyType(ParameterCore key) {
+        if (Objects.isNull(key.getType()) || Objects.equals(key.getType(), ParameterType.NONE)) {
+            throw new ConfigParameterException("Type of key '" + key.getName() + "' is null or none");
         }
     }
 }
