@@ -134,8 +134,7 @@ public class RulesetForm extends BaseForm {
     }
 
     private boolean hasAssignedProcesses(Ruleset ruleset) throws DataException {
-        Integer number = serviceManager.getProcessService().findByRuleset(ruleset).size();
-        return number > 0;
+        return !serviceManager.getProcessService().findByRuleset(ruleset).isEmpty();
     }
 
     /**

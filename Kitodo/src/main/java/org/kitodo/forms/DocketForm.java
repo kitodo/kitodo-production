@@ -142,8 +142,7 @@ public class DocketForm extends BaseForm {
 
     private boolean hasAssignedProcesses(Docket d) throws DataException {
         ProcessService processService = serviceManager.getProcessService();
-        Integer number = processService.findByDocket(d).size();
-        return number > 0;
+        return !processService.findByDocket(d).isEmpty();
     }
 
     /**
