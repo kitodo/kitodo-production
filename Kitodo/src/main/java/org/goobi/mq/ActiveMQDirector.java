@@ -87,9 +87,7 @@ public class ActiveMQDirector implements ServletContextListener, ExceptionListen
                 registerListeners(services);
                 Optional<String> activeMQResultsTopic = ConfigCore
                         .getOptionalString(ParameterCore.ACTIVE_MQ_RESULTS_TOPIC);
-                if (activeMQResultsTopic.isPresent()) {
-                    resultsTopic = setUpReportChannel(activeMQResultsTopic.get());
-                }
+                activeMQResultsTopic.ifPresent(topic -> resultsTopic = setUpReportChannel(topic));
             }
         }
     }
