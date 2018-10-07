@@ -74,23 +74,17 @@ public class SessionClientController {
 
     /**
      * The conditions when user need to select a session client is configured in
-     * this method.
+     * this method. Change is not happening if user is admin or has only one client
+     * assigned.
      *
      * @return True if the session client select dialog should by displayed to the
      *         current user
      */
     public boolean shouldUserChangeSessionClient() {
-
-        // No change if user is admin.
         if (userIsAdmin()) {
             return false;
         }
-
-        // No change if we have only one client for selection.
-        if (userHasOnlyOneClient()) {
-            return false;
-        }
-        return true;
+        return !userHasOnlyOneClient();
     }
 
     private void showClientSelectDialog() {
@@ -147,7 +141,8 @@ public class SessionClientController {
     }
 
     /**
-     * Gets all clients to which the user directly assigned and also those from user assigned projects.
+     * Gets all clients to which the user directly assigned and also those from user
+     * assigned projects.
      *
      * @return The list of clients.
      */
