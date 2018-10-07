@@ -42,6 +42,7 @@ import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
 
@@ -52,12 +53,14 @@ public class AddingST extends BaseTestSelenium {
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
+    private static UserGroupEditPage userGroupEditPage;
 
     @BeforeClass
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
         usersPage = Pages.getUsersPage();
+        userGroupEditPage = Pages.getUserGroupEditPage();
     }
 
     @Before
@@ -230,13 +233,22 @@ public class AddingST extends BaseTestSelenium {
 
         usersPage.createNewUserGroup();
         assertEquals("Header for create new user group is incorrect", "Neue Benutzergruppe anlegen",
-            Pages.getUserGroupEditPage().getHeaderText());
+                userGroupEditPage.getHeaderText());
 
-        Pages.getUserGroupEditPage().setUserGroupTitle(userGroup.getTitle()).assignAllClientAuthorities();
-        Pages.getUserGroupEditPage().save();
+        userGroupEditPage.setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
+                .assignAllClientAuthorities().assignAllProjectAuthorities();
+        userGroupEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
         List<String> userGroupTitles = usersPage.getUserGroupTitles();
         assertTrue("New user group was not saved", userGroupTitles.contains(userGroup.getTitle()));
+
+        int availableGlobalAuthorities = serviceManager.getAuthorityService().getAllAssignableGlobal().size();
+        int assignedGlobalAuthorities = usersPage.editUserGroup(userGroup.getTitle())
+                .countAssignedGlobalAuthorities();
+        assertEquals("Assigned authorities of the new user group were not saved!", availableGlobalAuthorities,
+                assignedGlobalAuthorities);
+        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
+        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
 
         int availableClientAuthorities = serviceManager.getAuthorityService().getAllAssignableToClients().size();
         int assignedClientAuthorities = usersPage.editUserGroup(userGroup.getTitle())
@@ -244,7 +256,11 @@ public class AddingST extends BaseTestSelenium {
         assertEquals("Assigned client authorities of the new user group were not saved!", availableClientAuthorities,
             assignedClientAuthorities);
 
-        String actualTitle = Pages.getUserGroupEditPage().getUserGroupTitle();
+        int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
+        int assignedProjectAuthorities = userGroupEditPage.countAssignedProjectAuthorities();
+        assertEquals("Assigned project authorities of the new user group were not saved!", availableProjectAuthorities,
+                assignedProjectAuthorities);
+        actualTitle = userGroupEditPage.getUserGroupTitle();
         assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
     }
 }
