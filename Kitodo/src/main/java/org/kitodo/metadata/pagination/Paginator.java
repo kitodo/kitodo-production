@@ -155,7 +155,7 @@ public class Paginator {
 
     private List addAlternatingRectoVersoSuffixToEachInSequence(List sequence) {
         List<Object> rectoversoSequence = new ArrayList<>(sequence.size());
-        Boolean toggle = false;
+        boolean toggle = false;
         for (Object o : sequence) {
             String label = o.toString();
             toggle = !toggle;

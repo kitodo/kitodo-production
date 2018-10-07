@@ -39,7 +39,7 @@ public class IdentifierPPN {
      * @return true or false
      */
     public static boolean isValid(String identifier) {
-        Boolean result;
+        boolean result;
         int flags = Pattern.CASE_INSENSITIVE;
         Pattern pattern;
         Matcher matcher;

@@ -486,7 +486,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      */
     private QueryBuilder createHistoricFilter(String filterPart) {
         /* filtering by a certain minimal status */
-        Integer taskOrdering = 1;
+        int taskOrdering = 1;
         BoolQueryBuilder historicFilter = new BoolQueryBuilder();
         String taskTitle = getFilterValueFromFilterString(filterPart, FilterString.TASK);
         if (taskTitle != null) {
