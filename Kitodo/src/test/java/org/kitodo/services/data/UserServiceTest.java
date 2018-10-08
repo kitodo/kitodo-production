@@ -23,9 +23,8 @@ public class UserServiceTest {
 
     @Test
     public void shouldCheckIfIsLoginValid() {
-        assertTrue("Login is invalid!",
-            userService.isLoginValid("validLogin", "src/test/resources/test_loginBlackList.txt"));
+        assertTrue("Login is invalid!", userService.isLoginValid("validLogin"));
 
-        assertFalse("Login is valid!", userService.isLoginValid("root", "src/test/resources/test_loginBlackList.txt"));
+        assertFalse("Login is valid!", userService.isLoginValid("root"));
     }
 }
