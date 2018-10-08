@@ -11,54 +11,64 @@
 
 package org.kitodo.longtimepreservationvalidationmodule;
 
-import edu.harvard.hul.ois.jhove.RepInfo;
-
 import org.kitodo.api.validation.State;
+import org.kitodo.config.KitodoConfig;
 
-public enum ValidationResultState {
-    ERROR(State.ERROR),
-    NOT_WELL_FORMED(State.ERROR),
-    UNKNOWN(State.WARNING),
-    VALID(State.SUCCESS),
-    WELL_FORMED(State.SUCCESS),
-    WELL_FORMED_BUT_NOT_VALID(State.WARNING);
+/**
+ * The validation result state is used to map the two-valued result state of
+ * JHove to the Kitodo validation interface.
+ */
+public class ValidationResultState {
+    /**
+     * Constant for the error case.
+     */
+    public static final ValidationResultState ERROR = new ValidationResultState() {
+        @Override
+        public State toState() {
+            return State.ERROR;
+        }
+    };
 
     /**
-     * Returns the enum constant for the specified wellformedness and valididity
-     * values.
+     * Saves the value of well-formedness.
+     */
+    private TernaryValue wellFormed;
+
+    /**
+     * Saves the validation value.
+     */
+    private TernaryValue valid;
+
+    /**
+     * Creates a validation result state with the specified wellformedness and
+     * validity values.
      *
      * @param wellFormed
      *            whether the file is well formed
      * @param valid
      *            whether the file is valid
-     * @return the corresponding enum constant
      */
-    public static ValidationResultState valueOf(int wellFormed, int valid) {
-        switch (wellFormed) {
-            case RepInfo.UNDETERMINED:
-                return UNKNOWN;
-            case RepInfo.FALSE:
-                return NOT_WELL_FORMED;
-            case RepInfo.TRUE:
-                switch (valid) {
-                    case RepInfo.UNDETERMINED:
-                        return WELL_FORMED;
-                    case RepInfo.FALSE:
-                        return WELL_FORMED_BUT_NOT_VALID;
-                    case RepInfo.TRUE:
-                        return VALID;
-                    default:
-                        throw new IllegalArgumentException("No enum constant");
-                }
-            default:
-                throw new IllegalArgumentException("No enum constant");
-        }
+    public ValidationResultState(int wellFormed, int valid) {
+        this.wellFormed = TernaryValue.valueOf(wellFormed);
+        this.valid = TernaryValue.valueOf(valid);
     }
 
-    private State state;
+    /**
+     * Generates an empty result. The value must be contributed elsewhere.
+     */
+    private ValidationResultState() {
+    }
 
-    ValidationResultState(State state) {
-        this.state = state;
+    /**
+     * Formulates the bivalent validation result of the JHove library as an
+     * expression in English. The result is returned along with (possibly)
+     * further messages in the result object to allow the operator to better
+     * estimate the validation result.
+     * 
+     * @return the validation result in English
+     */
+    public String getResultString() {
+        return "Examination result:" + wellFormed.toModalAdverb() + " well-formed," + valid.toModalAdverb() + " valid";
     }
 
     /**
@@ -67,6 +77,12 @@ public enum ValidationResultState {
      * @return the state
      */
     public State toState() {
-        return state;
+        return State.valueOf(KitodoConfig.getParameter(LongTermPreservationValidationConfigParameter.valueOf(this)));
     }
+
+    @Override
+    public String toString() {
+        return wellFormed.toString() + '/' + valid.toString();
+    }
+
 }

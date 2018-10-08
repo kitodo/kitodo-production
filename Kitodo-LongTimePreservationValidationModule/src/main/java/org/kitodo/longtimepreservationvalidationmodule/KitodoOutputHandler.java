@@ -113,8 +113,9 @@ public class KitodoOutputHandler extends HandlerBase {
 
     @Override
     public void show(RepInfo info) {
-        state = ValidationResultState.valueOf(info.getWellFormed(),
+        state = new ValidationResultState(info.getWellFormed(),
             super._je.getSignatureFlag() ? RepInfo.UNDETERMINED : info.getValid());
+        messages.add(state.getResultString());
         info.getMessage().forEach(this::addMessage);
     }
 
