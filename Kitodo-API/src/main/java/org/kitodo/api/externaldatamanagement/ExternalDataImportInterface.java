@@ -12,6 +12,7 @@
 package org.kitodo.api.externaldatamanagement;
 
 import java.util.Collection;
+import java.util.HashMap;
 
 import javax.swing.event.EventListenerList;
 
@@ -36,9 +37,9 @@ public interface ExternalDataImportInterface {
     Document getFullRecordById(String catalogId, String id);
 
     /**
-     * Perform search in catalog with given ID 'catalogId' Map 'searchTerms', which
-     * contains search fields as keys and search terms as values. The parameter rows
-     * controls how many records should be returned.
+     * Perform search in catalog with given ID 'catalogId' with given search fields
+     * 'field' and term 'term'. The parameter rows controls how many records should
+     * be returned.
      *
      * @param catalogId
      *            ID of the catalog that will be queried.
@@ -51,6 +52,21 @@ public interface ExternalDataImportInterface {
      * @return Search result of performed query.
      */
     SearchResult search(String catalogId, String field, String term, int rows);
+
+    /**
+     * Perform search in catalog with given ID 'catalogId' Map 'searchTerms', which
+     * contains search fields as keys and search terms as values. The parameter rows
+     * controls how many records should be returned.
+     *
+     * @param catalogId
+     *            ID of the catalog that will be queried.
+     * @param searchParameters
+     *            map containing search fields and terms
+     * @param rows
+     *            number of records to be returned
+     * @return Search result of performed query.
+     */
+    SearchResult search(String catalogId, HashMap<String, String> searchParameters, int rows);
 
     /**
      * Searches for Data in a given source by term and field.

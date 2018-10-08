@@ -1,0 +1,54 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid layout="grid" columns="1" cellpadding="10">
+        <div>
+            <p:outputLabel for="catalogueSelectMenu" value="#{msgs.queryOPAC}"/>
+            <p:selectOneMenu id="catalogueSelectMenu"
+                             required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
+                             immediate="true"
+                             value="#{ImportForm.selectedCatalog}">
+                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
+                <f:selectItems value="#{ImportForm.catalogs}" var="step" itemLabel="#{step}"
+                               itemValue="#{step}"/>
+                <p:ajax update="editForm:processFromTemplateTabView:fieldSelectMenu"/>
+            </p:selectOneMenu>
+        </div>
+        <div>
+            <p:outputLabel for="fieldSelectMenu" value="#{msgs.field}"/>
+            <p:selectOneMenu id="fieldSelectMenu"
+                             required="#{not empty param['editForm:processFromTemplateTabView:performCatalogSearch']}"
+                             value="#{ImportForm.selectedField}">
+                <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectSearchField} --" noSelectionOption="true"/>
+                <f:selectItems value="#{ImportForm.searchFields}" var="field" />
+            </p:selectOneMenu>
+        </div>
+        <div>
+            <p:outputLabel for="searchTerm" value="#{msgs.value}"/>
+            <p:inputText id="searchTerm" value="#{ImportForm.searchTerm}"
+                         class="input" required="true"/>
+        </div>
+        <p:commandButton id="performCatalogSearch"
+                         action="#{ImportForm.search}"
+                         value="#{msgs.searchOPAC}"
+                         title="#{msgs.searchOPAC}"
+                         icon="fa fa-search" iconPos="right"
+                         update="editForm hitlist"/>
+    </p:panelGrid>
+</ui:composition>

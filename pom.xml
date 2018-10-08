@@ -120,6 +120,7 @@
         <module>OpacPica-Plugin</module>
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
+        <module>Kitodo-SRU-Import</module>
         <module>Kitodo-DataEditor</module>
         <module>Kitodo-DataFormat</module>
         <module>Kitodo-ImageManagement</module>

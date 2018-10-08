@@ -52,11 +52,15 @@
             <p:tab id="searchTab" title="#{msgs.search}">
                 <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processSearchEdit.xhtml" />
             </p:tab>
+            <p:tab id="importTab" title="#{msgs.queryOPAC}">
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/processImport.xhtml" />
+            </p:tab>
         </p:tabView>
     </ui:define>
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/processEdit/hitlistPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processEdit/hitlistDialog.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
