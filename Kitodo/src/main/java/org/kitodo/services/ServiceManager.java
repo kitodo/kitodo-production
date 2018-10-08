@@ -11,6 +11,8 @@
 
 package org.kitodo.services;
 
+import java.util.Objects;
+
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.AuthorityService;
 import org.kitodo.services.data.BatchService;
@@ -18,6 +20,7 @@ import org.kitodo.services.data.ClientService;
 import org.kitodo.services.data.DocketService;
 import org.kitodo.services.data.FilterService;
 import org.kitodo.services.data.FolderService;
+import org.kitodo.services.data.ImportService;
 import org.kitodo.services.data.LdapGroupService;
 import org.kitodo.services.data.LdapServerService;
 import org.kitodo.services.data.ProcessService;
@@ -51,6 +54,7 @@ public class ServiceManager {
     private static DocketService docketService;
     private static FilterService filterService;
     private static ImageService imageService;
+    private static ImportService importService;
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
     private static MetsService metsService;
@@ -120,6 +124,12 @@ public class ServiceManager {
     private static void initializeImageService() {
         if (imageService == null) {
             imageService = ImageService.getInstance();
+        }
+    }
+
+    private static void initializeImportService() {
+        if (Objects.isNull(importService)) {
+            importService = ImportService.getInstance();
         }
     }
 
@@ -321,6 +331,15 @@ public class ServiceManager {
     public static FilterService getFilterService() {
         initializeFilterService();
         return filterService;
+    }
+
+    /**
+     * Initialize ImportService if it is not yet initialized and return it.
+     * @return ImportService object
+     */
+    public ImportService getImportService() {
+        initializeImportService();
+        return importService;
     }
 
     /**

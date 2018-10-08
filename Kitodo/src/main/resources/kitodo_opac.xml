@@ -53,4 +53,25 @@
         <config address="dispatch.opac.d-nb.de" database="1.1" description="Zeitschriftendatenbank (ZDB)"
                 iktlist="IKTLIST-ZDB.xml" port="80"/>
     </catalogue>
+    <catalogue title="Kalliope" description="Kalliope Verbundkatalog">
+        <config>
+            <param name="host" value="kalliope-verbund.info" />
+            <param name="scheme" value="http" />
+            <param name="path" value="/sru" />
+        </config>
+        <identifierParameter value="ead.id" />
+        <urlParameters>
+            <param name="version" value="1.2" />
+            <param name="operation" value="searchRetrieve" />
+            <param name="recordSchema" value="mods" />
+        </urlParameters>
+        <searchFields>
+            <searchField label="Title" value="ead.title" />
+            <searchField label="Creator" value="ead.creator" />
+            <searchField label="Identifier" value="ead.id" />
+            <searchField label="Creation date" value="ead.creationdate.normal" />
+            <searchField label="Genre" value="ead.genre" />
+            <searchField label="Keyword" value="ead.keyword" />
+        </searchFields>
+    </catalogue>
 </opacCatalogues>
