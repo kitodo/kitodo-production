@@ -9,17 +9,11 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.util;
+package org.kitodo.forms;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 
 /**
@@ -36,7 +30,7 @@ import org.kitodo.data.database.beans.Task;
  * Conversely, the task knows nothing about which non-selected folders with
  * configured generator function there.
  */
-public class GeneratorSwitch {
+public class FolderProcessingSwitch {
     /**
      * Folder represented by this generator switch.
      */
@@ -49,50 +43,6 @@ public class GeneratorSwitch {
     private List<Folder> contentFolders;
 
     /**
-     * Returns a list of generator switches for all folders whose contents can
-     * be generated.
-     *
-     * @param projects
-     *            stream of projects this task is used in
-     * @param contentFolders
-     *            modifiable list of folders whose contents are to be generated
-     * @return list of GeneratorSwitch objects or empty list
-     */
-    public static List<GeneratorSwitch> getGeneratorSwitches(Stream<Project> projects, List<Folder> contentFolders) {
-
-        //TODO: find more meaningful name
-        // Ignore all projects that do not have a source folder configured.
-        Stream<Project> projectsWithSourceFolder = projects.filter(lambda -> Objects.nonNull(lambda.getGeneratorSource()));
-
-        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
-
-        // Remove all folders to generate which do not have anything to generate
-        // configured.
-        Stream<Folder> generatableFolders = allowedFolders.filter(lambda -> lambda.getDerivative().isPresent()
-                || lambda.getDpi().isPresent() || lambda.getImageScale().isPresent() || lambda.getImageSize().isPresent());
-
-        // For all remaining folders, create an encapsulation to access the
-        // generator properties of the folder.
-        Stream<GeneratorSwitch> taskGenerators = generatableFolders.map(lambda -> new GeneratorSwitch(lambda, contentFolders));
-
-        return taskGenerators.collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    /**
-     * Drop all folders to generate if they are their own source folder.
-     *
-     * @param projects
-     *            projects whose folders allowed to be generated are to be
-     *            determined
-     * @return a stream of folders that are allowed to be generated
-     */
-    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
-        Stream<Pair<Folder, Folder>> foldersWithSources = projects
-                .flatMap(lambda -> lambda.getFolders().stream().map(mi -> Pair.of(mi, lambda.getGeneratorSource())));
-        return foldersWithSources.filter(lambda -> !lambda.getLeft().equals(lambda.getRight())).map(lambda -> lambda.getLeft());
-    }
-
-    /**
      * Creates a new generator for this task.
      *
      * @param folder
@@ -100,7 +50,7 @@ public class GeneratorSwitch {
      * @param contentFolders
      *            modifiable list of enabled toggle switches
      */
-    public GeneratorSwitch(Folder folder, List<Folder> contentFolders) {
+    public FolderProcessingSwitch(Folder folder, List<Folder> contentFolders) {
         this.folder = folder;
         this.contentFolders = contentFolders;
     }

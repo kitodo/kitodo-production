@@ -14,8 +14,11 @@ package org.kitodo.forms;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
@@ -26,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -34,7 +39,7 @@ import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;
 import org.kitodo.model.LazyDTOModel;
-import org.kitodo.util.GeneratorSwitch;
+import org.kitodo.services.data.TaskService;
 import org.kitodo.workflow.model.Reader;
 
 @Named("TemplateForm")
@@ -303,15 +308,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Get list of generator switches.
-     * 
-     * @return list of generator switches
-     */
-    public List<GeneratorSwitch> getGeneratorSwitches() {
-        return serviceManager.getTaskService().getGenerators(task);
-    }
-
-    /**
      * Set template by id.
      *
      * @param id
@@ -403,6 +399,49 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public void setTask(Task task) {
         this.task = task;
+    }
+
+    /**
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
+     *
+     * @return list of FolderProcessingSwitch objects or empty list
+     */
+    public List<FolderProcessingSwitch> getGeneratableFolderSwitches() {
+        Stream<Project> projectsStream = template.getProjects().stream();
+        Stream<Folder> generatableFolders = TaskService.generatableFoldersFromProjects(projectsStream);
+        return getSwitches(generatableFolders, task.getContentFolders());
+    }
+
+    /**
+     * Convert the stream of folders to a list of switch objects.
+     * 
+     * @param folders
+     *            folders for which generation or validation can be switched on
+     *            or off
+     * @param activated
+     *            Folders for which generation or validation is switched on.
+     *            This list must be modifiable and connected to the database so
+     *            that changes made by the switches are persisted when the
+     *            template is stored in the database.
+     * @return a list of switch objects to be rendered by JSF
+     */
+    private List<FolderProcessingSwitch> getSwitches(Stream<Folder> folders, List<Folder> activated) {
+        Stream<FolderProcessingSwitch> validatorSwitches = folders
+                .map(folder -> new FolderProcessingSwitch(folder, activated));
+        return validatorSwitches.collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    /**
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
+     *
+     * @return list of FolderProcessingSwitch objects or empty list
+     */
+    public List<FolderProcessingSwitch> getValidatableFolderSwitches() {
+        Stream<Folder> validatableFolders = template.getProjects().stream()
+                .flatMap(project -> project.getFolders().stream());
+        return getSwitches(validatableFolders, task.getValidationFolders());
     }
 
     /**

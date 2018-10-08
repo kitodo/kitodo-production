@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +59,7 @@ import org.kitodo.helper.tasks.TaskManager;
 import org.kitodo.model.LazyDTOModel;
 import org.kitodo.model.Subfolder;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.services.data.TaskService;
 import org.kitodo.services.file.SubfolderFactoryService;
 import org.kitodo.services.image.ImageGenerator;
 import org.kitodo.workflow.Problem;
@@ -701,7 +703,8 @@ public class CurrentTaskForm extends BaseForm {
      * @return whether action links should be displayed
      */
     public boolean isShowingGenerationActions() {
-        return !serviceManager.getTaskService().getGenerators(currentTask).isEmpty();
+        return TaskService.generatableFoldersFromProjects(Arrays.asList(currentTask.getProcess().getProject()).stream())
+                .findAny().isPresent();
     }
 
     /**

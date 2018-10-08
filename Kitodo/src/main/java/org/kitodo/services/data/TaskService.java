@@ -12,18 +12,19 @@
 package org.kitodo.services.data;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -36,6 +37,7 @@ import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
@@ -60,8 +62,12 @@ import org.kitodo.helper.VariableReplacer;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
-import org.kitodo.util.GeneratorSwitch;
 
+/**
+ * The class provides a service for tasks. The service can be used to perform
+ * functions on the task because the task itself is a database bean and
+ * therefore may not include functionality.
+ */
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
@@ -462,19 +468,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
     private String getDateFromJsonValue(JsonValue date) {
         return date != JsonValue.NULL ? date.toString().replace("\"", "") : "";
-    }
-
-    /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
-     *
-     * @return list of GeneratorSwitch objects or empty list
-     */
-    public List<GeneratorSwitch> getGenerators(Task task) {
-        if (Objects.isNull(task.getContentFolders())) {
-            task.setContentFolders(new ArrayList<>());
-        }
-        return GeneratorSwitch.getGeneratorSwitches(getProjects(task).stream(), task.getContentFolders());
     }
 
     /**
@@ -975,5 +968,81 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }
+    }
+
+    /**
+     * The function determines, from projects, the folders whose contents can be
+     * generated automatically.
+     * 
+     * <p>
+     * This feature is needed once by the task in the template to determine
+     * which folders show buttons in the interface to turn content creation on
+     * or off. In addition, the function of the task in the process is required
+     * to determine if there is at least one folder to be created in the task,
+     * because then action links for generating are displayed, and not
+     * otherwise.
+     * 
+     * <p>
+     * To create content automatically, a folder must be defined as the template
+     * folder in the project. The templates serve to create the contents in the
+     * other folders to be created. Under no circumstances should the contents
+     * of the template folder be automatically generated, even if, for example,
+     * after a reconfiguration, this is still set as otherwise they would
+     * overwrite themselves. Also, contents can not be created in folders where
+     * nothing is configured. The folders that are left over can be created.
+     * 
+     * @param projects
+     *            an object stream of projects that may have folders defined
+     *            whose contents can be auto-generated
+     * @return an object stream of generable folders
+     */
+    public static Stream<Folder> generatableFoldersFromProjects(Stream<Project> projects) {
+        Stream<Project> projectsWithSourceFolder = skipProjectsWithoutSourceFolder(projects);
+        Stream<Folder> allowedFolders = dropOwnSourceFolders(projectsWithSourceFolder);
+        Stream<Folder> generatableFolders = removeFoldersThatCannotBeGenerated(allowedFolders);
+        return generatableFolders;
+    }
+
+    /**
+     * Only lets projects pass where a source folder is selected.
+     * 
+     * @param projects
+     *            the unpurified stream of projects
+     * @return a stream only of projects that define a source to generate images
+     */
+    private static Stream<Project> skipProjectsWithoutSourceFolder(Stream<Project> projects) {
+        return projects.filter(project -> Objects.nonNull(project.getGeneratorSource()));
+    }
+
+    /**
+     * Drops all folders to generate if they are their own source folder.
+     *
+     * @param projects
+     *            projects whose folders allowed to be generated are to be
+     *            determined
+     * @return a stream of folders that are allowed to be generated
+     */
+    private static Stream<Folder> dropOwnSourceFolders(Stream<Project> projects) {
+        Stream<Pair<Folder, Folder>> withSources = projects.flatMap(
+            project -> project.getFolders().stream().map(folder -> Pair.of(folder, project.getGeneratorSource())));
+        Stream<Pair<Folder, Folder>> filteredWithSources = withSources.filter(
+            destinationAndSource -> !destinationAndSource.getLeft().equals(destinationAndSource.getRight()));
+        Stream<Folder> filteredFolders = filteredWithSources
+                .map(destinationAndSource -> destinationAndSource.getLeft());
+        return filteredFolders;
+    }
+
+    /**
+     * Removes all folders to generate which do not have anything to generate
+     * configured.
+     * 
+     * @param folders
+     *            a stream of folders
+     * @return a stream only of those folders where an image generation module
+     *         has been selected
+     */
+    private static Stream<Folder> removeFoldersThatCannotBeGenerated(Stream<Folder> folders) {
+        return folders.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
+                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
     }
 }

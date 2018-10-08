@@ -144,6 +144,17 @@ public class Task extends BaseIndexedBean {
     )
     private List<Folder> contentFolders;
 
+    /**
+     * This field contains information about folders whose contents are to be
+     * validated in this task.
+     */
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "validationFolders_task_x_folder",
+        joinColumns = @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_validationFolders_task_x_folder_task_id")),
+        inverseJoinColumns = @JoinColumn(name = "folder_id", foreignKey = @ForeignKey(name = "FK_task_x_folder_folder_id"))
+    )
+    private List<Folder> validationFolders;
+
     @Transient
     private String localizedTitle;
 
@@ -430,6 +441,28 @@ public class Task extends BaseIndexedBean {
      */
     public void setContentFolders(List<Folder> contentFolders) {
         this.contentFolders = contentFolders;
+    }
+
+    /**
+     * Get list of folders whose contents are to be validated.
+     *
+     * @return list of Folder objects or empty list
+     */
+    public List<Folder> getValidationFolders() {
+        if (this.validationFolders == null) {
+            this.validationFolders = new ArrayList<>();
+        }
+        return validationFolders;
+    }
+
+    /**
+     * Set list of folders whose contents are to be validated.
+     *
+     * @param validationFolders
+     *            as list
+     */
+    public void setValidationFolders(List<Folder> validationFolders) {
+        this.validationFolders = validationFolders;
     }
 
     public boolean isTypeImagesRead() {
