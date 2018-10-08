@@ -120,7 +120,8 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
         <module>Kitodo-DataEditor</module>
-        <module>Kitodo-DataFormat</module>
+        <!--Due to connection problems with loc.gov, we are not able to use this module-->
+        <!--<module>Kitodo-DataFormat</module>-->
         <module>Kitodo-ImageManagementModule</module>
         <module>Kitodo-LongTimePreservationValidationModule</module>
         <module>Kitodo-PersistentIdentifier</module>
