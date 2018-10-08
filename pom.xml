@@ -120,7 +120,7 @@
         <module>Kitodo-DataManagement</module>
         <module>Kitodo-API</module>
         <module>Kitodo-DataEditor</module>
-        <module>Kitodo-DataFormat</module>
+        <!--<module>Kitodo-DataFormat</module>-->
         <module>Kitodo-ImageManagementModule</module>
         <module>Kitodo-LongTimePreservationValidationModule</module>
         <module>Kitodo-PersistentIdentifier</module>
