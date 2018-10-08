@@ -29,8 +29,8 @@ var saveDiagramFunctionCall;
                 isAttr: !0,
                 type: 'Integer'
             }, {name: 'permittedUserRole',
-                 isAttr: !0,
-                 type: 'Integer'
+                isAttr: !0,
+                type: 'Integer'
             }, {name: 'typeMetadata',
                 isAttr: !0,
                 type: 'Boolean'
@@ -77,12 +77,12 @@ var saveDiagramFunctionCall;
                 {name: 'In processing', value: 2},
                 {name: 'Closed', value: 3}],
             modelProperty: 'processingStatus'
-        })),group.entries.push(_EntryFactory2.default.selectBox({
-             id: 'permittedUserRole',
-             description: '',
-             label: 'Permitted User Role',
-             selectOptions : availableUserRoles,
-             modelProperty: 'permittedUserRole'
+        })), group.entries.push(_EntryFactory2.default.selectBox({
+            id: 'permittedUserRole',
+            description: '',
+            label: 'Permitted User Role',
+            selectOptions : availableUserRoles,
+            modelProperty: 'permittedUserRole'
         })), group.entries.push(_EntryFactory2.default.checkbox({
             id: 'typeMetadata',
             description: '',
