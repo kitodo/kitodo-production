@@ -46,7 +46,10 @@
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({
-'summary':'#{msgs.workflowSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});window['saveDiagramFunctionCall']();"
+                              'summary':'#{msgs.workflowSaving}',
+                              'detail':'#{msgs.youWillBeRedirected}',
+                              'severity':'info'});
+                              window['saveDiagramFunctionCall']();"
                          disabled="#{WorkflowForm.saveDisabled}"
                          immediate="true"/>
         <p:commandButton id="saveButtonToggler"
