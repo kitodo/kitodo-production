@@ -124,7 +124,6 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
 
-    @Ignore("for some unknown yet reason save doesn't work if executed automatically")
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();

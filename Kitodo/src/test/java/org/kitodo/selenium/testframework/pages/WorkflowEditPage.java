@@ -39,7 +39,6 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
 
     public WorkflowEditPage insertWorkflowData(Workflow workflow) {
         fileInput.sendKeys(workflow.getFileName());
-        createDiagram.click();
         return this;
     }
 
