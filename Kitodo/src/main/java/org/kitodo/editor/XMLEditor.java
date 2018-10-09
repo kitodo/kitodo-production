@@ -11,7 +11,6 @@
 
 package org.kitodo.editor;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,8 +40,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.FileNames;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -54,6 +52,7 @@ public class XMLEditor implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(XMLEditor.class);
     private static final long serialVersionUID = 4204501980337055803L;
+    private KitodoConfigFile configurationFile;
     private String currentConfigurationFile = "";
     private String xmlConfigurationString = "";
     private static DocumentBuilder documentBuilder = null;
@@ -74,7 +73,7 @@ public class XMLEditor implements Serializable {
      * Load first configuration file when bean is created.
      */
     @PostConstruct
-    public void loadInititalConfiguration() {
+    public void loadInitialConfiguration() {
         loadProjectConfiguration();
     }
 
@@ -116,8 +115,8 @@ public class XMLEditor implements Serializable {
     public void loadXMLConfiguration(String configurationFile) {
         try (StringWriter stringWriter = new StringWriter()) {
             currentConfigurationFile = configurationFile;
-            XMLConfiguration currentConfiguration = new XMLConfiguration(
-                    ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
+            this.configurationFile = KitodoConfigFile.getByName(configurationFile);
+            XMLConfiguration currentConfiguration = new XMLConfiguration(this.configurationFile.getAbsolutePath());
             currentConfiguration.save(stringWriter);
             this.xmlConfigurationString = stringWriter.toString();
         } catch (ConfigurationException e) {
@@ -140,8 +139,7 @@ public class XMLEditor implements Serializable {
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource domSource = new DOMSource(document);
-            File xmlConfigurationFile = new File(ConfigCore.getKitodoConfigDirectory() + currentConfigurationFile);
-            try (FileOutputStream outputStream = new FileOutputStream(xmlConfigurationFile, false);
+            try (FileOutputStream outputStream = new FileOutputStream(configurationFile.getFile(), false);
                     PrintWriter printWriter = new PrintWriter(outputStream)) {
                 StreamResult streamResult = new StreamResult(printWriter);
                 transformer.transform(domSource, streamResult);
@@ -205,7 +203,7 @@ public class XMLEditor implements Serializable {
      * editor.
      */
     public void loadProjectConfiguration() {
-        loadXMLConfiguration(FileNames.PROJECT_CONFIGURATION_FILE);
+        loadXMLConfiguration(KitodoConfigFile.PROJECT_CONFIGURATION.getName());
     }
 
     /**
@@ -213,7 +211,7 @@ public class XMLEditor implements Serializable {
      * editor.
      */
     public void loadDisplayRulesConfiguration() {
-        loadXMLConfiguration(FileNames.METADATA_DISPLAY_RULES_FILE);
+        loadXMLConfiguration(KitodoConfigFile.METADATA_DISPLAY_RULES.getName());
     }
 
     /**
@@ -221,7 +219,7 @@ public class XMLEditor implements Serializable {
      * in the editor.
      */
     public void loadDigitalCollectionsConfiguration() {
-        loadXMLConfiguration(FileNames.DIGITAL_COLLECTIONS_FILE);
+        loadXMLConfiguration(KitodoConfigFile.DIGITAL_COLLECTIONS.getName());
     }
 
 }

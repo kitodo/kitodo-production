@@ -38,7 +38,6 @@ import javax.xml.xpath.XPathFactory;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,7 +50,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.goobi.production.constants.FileNames;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
 import org.goobi.production.enums.PluginType;
@@ -77,6 +75,7 @@ import org.kitodo.api.ugh.exceptions.MetadataTypeNotAllowedException;
 import org.kitodo.api.ugh.exceptions.PreferencesException;
 import org.kitodo.api.ugh.exceptions.ReadException;
 import org.kitodo.api.ugh.exceptions.WriteException;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.exceptions.ImportPluginException;
 import org.kitodo.legacy.UghImplementation;
@@ -719,8 +718,7 @@ public class PicaMassImport implements IImportPlugin, IPlugin {
 
         String address;
 
-        try (FileInputStream istream = new FileInputStream(
-                FilenameUtils.concat(this.getGoobiConfigDirectory(), FileNames.OPAC_CONFIGURATION_FILE))) {
+        try (FileInputStream istream = new FileInputStream(KitodoConfigFile.OPAC_CONFIGURATION.getFile())) {
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 

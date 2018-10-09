@@ -11,7 +11,6 @@
 
 package de.unigoettingen.sub.search.opac;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +30,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.FileNames;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.helper.Helper;
 
 @XmlRootElement(name = "catalogueConfiguration")
@@ -48,14 +46,14 @@ public class ConfigOpac {
         if (config != null) {
             return config;
         }
-        File configPath = new File(ConfigCore.getKitodoConfigDirectory(),
-            FileNames.OPAC_CONFIGURATION_FILE);
 
-        if (!configPath.exists()) {
-            throw new FileNotFoundException("File not found: " + configPath);
+        KitodoConfigFile opacConfiguration = KitodoConfigFile.OPAC_CONFIGURATION;
+
+        if (!opacConfiguration.exists()) {
+            throw new FileNotFoundException("File not found: " + opacConfiguration.getAbsolutePath());
         }
         try {
-            config = new XMLConfiguration(configPath);
+            config = new XMLConfiguration(opacConfiguration.getFile());
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             config = new XMLConfiguration();

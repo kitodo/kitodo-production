@@ -11,26 +11,24 @@
 
 package org.kitodo.services.data;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.goobi.production.constants.FileNames;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.services.ServiceManager;
 
 public class ProjectServiceTest {
 
-    private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
+    private static String absolutePath = KitodoConfigFile.DIGITAL_COLLECTIONS.getAbsolutePath();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -65,11 +63,9 @@ public class ProjectServiceTest {
         Assert.assertFalse("Project shouldn't be complete", projectService.isProjectComplete(project));
 
         // Add xmls to complete project
-        File projectsXml = new File("src/test/resources/" + FileNames.PROJECT_CONFIGURATION_FILE);
-        projectsXml.createNewFile();
-
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().createNewFile();
         Assert.assertTrue("Project should be complete", projectService.isProjectComplete(project));
-        projectsXml.delete();
+        KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
 
     }
 
