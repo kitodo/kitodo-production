@@ -332,15 +332,15 @@ public class ImagesHelper {
      */
     private String determinePagination(int currentPhysicalOrder, String defaultPagination) {
         if (defaultPagination.equalsIgnoreCase(
-                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getPossibleValues().get(0))) {
+                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(0))) {
             return String.valueOf(currentPhysicalOrder);
         } else if (defaultPagination.equalsIgnoreCase(
-                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getPossibleValues().get(1))) {
+                (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getPossibleValues().get(1))) {
             RomanNumeralInterface roman = UghImplementation.INSTANCE.createRomanNumeral();
             roman.setValue(currentPhysicalOrder);
             return roman.getNumber();
         } else {
-            return (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getDefaultValue();
+            return (String) ParameterCore.METS_EDITOR_DEFAULT_PAGINATION.getParameter().getDefaultValue();
         }
     }
 
