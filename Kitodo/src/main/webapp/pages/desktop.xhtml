@@ -14,76 +14,81 @@
 <ui:composition
         template="/WEB-INF/templates/base.xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewAction action="#{SessionClientController.showClientSelectDialog()}" />
+    </f:metadata>
+
     <ui:define name="content">
         <h:outputScript name="desktop.js" target="body" library="js"/>
-        <div id="desktopGrid">
-            <p:panel styleClass="desktop-widget"
-                     rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
-                <div class="content-header">
-                    <div class="ui-panel-content ui-widget-content">
-                        <h3>#{msgs.tasks}</h3>
-                        <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="plain">
-                                <p:ajax update="taskTable"/>
-                        </p:commandButton>
-                        <p:button id="allTasks" value="#{msgs.allTasks}"
-                                  outcome="tasks"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+        <ui:fragment rendered="#{SessionClientController.currentSessionClient ne null or not SessionClientController.shouldUserChangeSessionClient()}">
+            <div id="desktopGrid">
+                <p:panel styleClass="desktop-widget"
+                         rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
+                    <div class="content-header">
+                        <div class="ui-panel-content ui-widget-content">
+                            <h3>#{msgs.tasks}</h3>
+                            <p:commandButton icon="fa fa-repeat fa-lg"
+                                      styleClass="plain">
+                                    <p:ajax update="taskTable"/>
+                            </p:commandButton>
+                            <p:button id="allTasks" value="#{msgs.allTasks}"
+                                      outcome="tasks"
+                                      icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                        </div>
                     </div>
-                </div>
-                <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
-            </p:panel>
-            <p:panel styleClass="desktop-widget"
-                     rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
-                <div class="content-header">
-                    <div class="ui-panel-content ui-widget-content">
-                        <h3>#{msgs.processes}</h3>
-                        <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="plain">
-                                <p:ajax update="processTable"/>
-                        </p:commandButton>
-                        <p:button id="allProcesses" value="#{msgs.allProcesses}"
-                                  outcome="processes"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                    <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
+                </p:panel>
+                <p:panel styleClass="desktop-widget"
+                         rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
+                    <div class="content-header">
+                        <div class="ui-panel-content ui-widget-content">
+                            <h3>#{msgs.processes}</h3>
+                            <p:commandButton icon="fa fa-repeat fa-lg"
+                                      styleClass="plain">
+                                    <p:ajax update="processTable"/>
+                            </p:commandButton>
+                            <p:button id="allProcesses" value="#{msgs.allProcesses}"
+                                      outcome="processes"
+                                      icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
 
+                        </div>
                     </div>
-                </div>
-                <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
-            </p:panel>
-            <p:panel styleClass="desktop-widget"
-                     rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
-                <div class="content-header">
-                    <div class="ui-panel-content ui-widget-content">
-                        <h3>#{msgs.projects}</h3>
-                        <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="plain">
-                            <p:ajax update="projectTable"/>
-                        </p:commandButton>
-                        <p:button id="allProjects" value="#{msgs.allProjects}"
-                                  outcome="projects"
-                                  icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                    <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
+                </p:panel>
+                <p:panel styleClass="desktop-widget"
+                         rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
+                    <div class="content-header">
+                        <div class="ui-panel-content ui-widget-content">
+                            <h3>#{msgs.projects}</h3>
+                            <p:commandButton icon="fa fa-repeat fa-lg"
+                                      styleClass="plain">
+                                <p:ajax update="projectTable"/>
+                            </p:commandButton>
+                            <p:button id="allProjects" value="#{msgs.allProjects}"
+                                      outcome="projects"
+                                      icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                        </div>
                     </div>
-                </div>
-                <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
-            </p:panel>
-            <p:panel styleClass="desktop-widget">
-                <div class="content-header">
-                    <div class="ui-panel-content ui-widget-content">
-                        <h3>#{msgs.databaseStatistic}</h3>
-                        <p:commandButton icon="fa fa-repeat fa-lg"
-                                  styleClass="plain">
-                            <p:ajax update="statisticsTable"/>
-                        </p:commandButton>
+                    <ui:include src="/WEB-INF/templates/includes/desktop/projectsWidget.xhtml"/>
+                </p:panel>
+                <p:panel styleClass="desktop-widget">
+                    <div class="content-header">
+                        <div class="ui-panel-content ui-widget-content">
+                            <h3>#{msgs.databaseStatistic}</h3>
+                            <p:commandButton icon="fa fa-repeat fa-lg"
+                                      styleClass="plain">
+                                <p:ajax update="statisticsTable"/>
+                            </p:commandButton>
+                        </div>
                     </div>
-                </div>
-                <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
-            </p:panel>
-            <p:dialog widgetVar="loadingDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
-                <p:graphicImage id="loading" alt="loading" value="/pages/images/ajax-loader.gif"/>
-            </p:dialog>
-            <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
-        </div>
+                    <ui:include src="/WEB-INF/templates/includes/desktop/statisticWidget.xhtml"/>
+                </p:panel>
+                <p:ajaxStatus onstart="PF('loadingDialog').show()" oncomplete="PF('loadingDialog').hide()"/>
+            </div>
+        </ui:fragment>
     </ui:define>
 </ui:composition>
