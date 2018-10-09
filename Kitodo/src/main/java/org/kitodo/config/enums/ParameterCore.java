@@ -674,7 +674,7 @@ public enum ParameterCore implements ParameterInterface {
     }
 
     @Override
-    public java.lang.String toString() {
+    public String toString() {
         return this.parameter.getKey();
     }
 }
