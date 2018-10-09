@@ -23,6 +23,7 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonValue;
 
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.goobi.production.constants.FileNames;
 import org.kitodo.config.ConfigCore;
@@ -151,14 +152,42 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     }
 
     /**
+     * Find all projects available to assign to the edited user. It will be
+     * displayed in the userEditProjectsPopup. If user id is null and session client
+     * is null, return list of all projects.
+     *
+     * @param userId
+     *            id of user which is going to be edited
+     * @return list of all matching projects
+     */
+    public List<ProjectDTO> findAllAvailableForAssignToUser(Integer userId) throws DataException {
+        Client sessionClient = serviceManager.getUserService().getSessionClientOfAuthenticatedUser();
+
+        if (Objects.nonNull(userId) || Objects.nonNull(sessionClient)) {
+            return findAvailableForAssignToUser(userId, sessionClient);
+        } else {
+            return findAll(true);
+        }
+    }
+
+    private List<ProjectDTO> findAvailableForAssignToUser(Integer userId, Client sessionClient) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+        query.must(getQueryForUserId(userId, false));
+        if (Objects.nonNull(sessionClient)) {
+            query.must(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), sessionClient.getId(), true));
+        }
+        return convertJSONObjectsToDTOs(searcher.findDocuments(query.toString()), true);
+    }
+
+    /**
      * Find active or inactive projects.
      *
      * @param active
      *            if true - find active projects, if false - find not active
      *            projects
      * @param related
-     *            if true - found project is related to some other DTO object,
-     *            if false - not and it collects all related objects
+     *            if true - found project is related to some other DTO object, if
+     *            false - not and it collects all related objects
      * @return list of ProjectDTO objects
      */
     List<ProjectDTO> findByActive(Boolean active, boolean related) throws DataException {
@@ -173,7 +202,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return search result
      */
-    public JsonObject findByProcessId(Integer id) throws DataException {
+    JsonObject findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery("processes.id", id, true);
         return searcher.findDocument(query.toString());
     }
@@ -185,7 +214,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *            of process
      * @return list of JSON objects with projects for specific process title
      */
-    public List<JsonObject> findByProcessTitle(String title) throws DataException {
+    List<JsonObject> findByProcessTitle(String title) throws DataException {
         Set<Integer> processIds = new HashSet<>();
 
         List<JsonObject> processes = serviceManager.getProcessService().findByTitle(title, true);
@@ -203,7 +232,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      * @return list of JSON objects
      */
     List<JsonObject> findByUserId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("users.id", id, true);
+        QueryBuilder query = getQueryForUserId(id, true);
         return searcher.findDocuments(query.toString());
     }
 
@@ -217,6 +246,10 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
     List<JsonObject> findByUserLogin(String login) throws DataException {
         JsonObject user = serviceManager.getUserService().findByLogin(login);
         return findByUserId(getIdFromJSONObject(user));
+    }
+
+    private QueryBuilder getQueryForUserId(Integer id, boolean contains) {
+        return createSimpleQuery(ProjectTypeField.USERS.getKey() + ".id", id, contains);
     }
 
     /**
@@ -282,7 +315,7 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-                serviceManager.getTemplateService()));
+            serviceManager.getTemplateService()));
     }
 
     /**

@@ -372,7 +372,7 @@ public class UserForm extends BaseForm {
      */
     public List<ProjectDTO> getProjects() {
         try {
-            return serviceManager.getProjectService().findAll(true);
+            return serviceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject.getId());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
