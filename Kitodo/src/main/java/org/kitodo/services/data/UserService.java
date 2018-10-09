@@ -38,6 +38,7 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
+import org.goobi.production.constants.FileNames;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -694,11 +695,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      * 
      * @param login
      *            to validation
-     * @param filePath
-     *            to file with black list of signs
      * @return true or false
      */
-    public boolean isLoginValid(String login, String filePath) {
+    public boolean isLoginValid(String login) {
         String patternString = "[A-Za-z0-9@_\\-.]*";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(login);
@@ -707,8 +706,9 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             return false;
         }
 
+        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.LOGIN_BLACKLIST_FILE);
         // Go through the file line by line and compare to invalid characters
-        try (FileInputStream fis = new FileInputStream(filePath);
+        try (FileInputStream fis = new FileInputStream(file.getAbsolutePath());
                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                 BufferedReader in = new BufferedReader(isr)) {
             String str;

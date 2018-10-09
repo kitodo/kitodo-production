@@ -121,8 +121,7 @@ public class UserForm extends BaseForm {
     }
 
     private boolean isLoginValid(String inLogin) {
-        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.LOGIN_BLACKLIST_FILE);
-        return serviceManager.getUserService().isLoginValid(inLogin, file.getAbsolutePath());
+        return serviceManager.getUserService().isLoginValid(inLogin);
     }
 
     private boolean isMissingClient() {
