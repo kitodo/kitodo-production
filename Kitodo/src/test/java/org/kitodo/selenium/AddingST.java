@@ -124,14 +124,13 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Process was not listed at processes table!", processAvailable);
     }
 
-    @Ignore("for some unknown yet reason save doesn't work if executed automatically")
     @Test
     public void addWorkflowTest() throws Exception {
         Workflow workflow = new Workflow();
         workflow.setFileName("testWorkflow");
         projectsPage.createNewWorkflow();
-        assertEquals("Header for create new ruleset is incorrect", "Neuen Regelsatz anlegen",
-            Pages.getRulesetEditPage().getHeaderText());
+        assertEquals("Header for create new workflow is incorrect", "Neuen Workflow anlegen",
+            Pages.getWorkflowEditPage().getHeaderText());
 
         Pages.getWorkflowEditPage().insertWorkflowData(workflow).save();
         assertTrue("Redirection after save was not successful", projectsPage.isAt());

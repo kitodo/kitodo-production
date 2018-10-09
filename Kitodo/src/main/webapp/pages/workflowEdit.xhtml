@@ -39,16 +39,17 @@
                           rendered="#{WorkflowForm.workflow.title ne null and WorkflowForm.workflow.fileName ne null}"/>
         </h3>
         <p:commandButton id="save"
+                         action="#{WorkflowForm.saveAndRedirect}" 
                          widgetVar="save"
                          value="#{msgs.save}"
-                         action="#{WorkflowForm.saveAndRedirect}"
                          update="notifications"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({
-                            'summary':'#{msgs.workflowSaving}',
-                            'detail':'#{msgs.youWillBeRedirected}',
-                            'severity':'info'});"
+                              'summary':'#{msgs.workflowSaving}',
+                              'detail':'#{msgs.youWillBeRedirected}',
+                              'severity':'info'});
+                              window['saveDiagramFunctionCall']();"
                          disabled="#{WorkflowForm.saveDisabled}"
                          immediate="true"/>
         <p:commandButton id="saveButtonToggler"

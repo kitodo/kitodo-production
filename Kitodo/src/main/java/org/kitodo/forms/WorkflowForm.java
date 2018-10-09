@@ -153,7 +153,7 @@ public class WorkflowForm extends BaseForm {
         URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
         URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
 
-        xmlDiagram = requestParameterMap.get("diagram");
+        xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
         if (Objects.nonNull(xmlDiagram)) {
             svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
             xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");

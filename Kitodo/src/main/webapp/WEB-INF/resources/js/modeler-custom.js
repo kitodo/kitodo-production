@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
- var availableUserRoles = [];
+var availableUserRoles = [];
 
 $(window).on("load", function () {
 	$.ready.then(function () {
