@@ -14,7 +14,6 @@ package org.kitodo.services.dataeditor;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.services.ServiceManager;
 
@@ -22,19 +21,16 @@ public class DataEditorServiceTest {
 
     private DataEditorService dataEditorService = new ServiceManager().getDataEditorService();
 
-    @Ignore
     @Test
     public void shouldReadMetadata() throws IOException {
         dataEditorService.readData(Paths.get("./src/test/resources/metadata/testmeta.xml").toUri());
     }
 
-    @Ignore
     @Test
     public void shouldReadOldMetadata() throws IOException {
         dataEditorService.readData(Paths.get("./src/test/resources/metadata/testmetaOldFormat.xml").toUri());
     }
 
-    @Ignore
     @Test(expected = IOException.class)
     public void shouldNotReadMetadataOfNotExistingFile() throws IOException {
         dataEditorService.readData(Paths.get("notExisting.xml").toUri());
