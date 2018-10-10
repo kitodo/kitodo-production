@@ -61,6 +61,9 @@ public class WorkflowForm extends BaseForm {
     private String svgDiagram;
     private String xmlDiagram;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
+    private static final String SVG_EXTENSION = ".svg";
+    private static final String SVG_DIAGRAM_URI = "svgDiagramURI";
+    private static final String XML_DIAGRAM_URI = "xmlDiagramURI";
     private String workflowListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private String workflowEditPath = MessageFormat.format(REDIRECT_PATH, "workflowEdit");
     private Integer userGroupId;
@@ -121,7 +124,7 @@ public class WorkflowForm extends BaseForm {
 
                 String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
                 URI svgDiagramURI = new File(
-                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + ".svg").toURI();
+                        diagramDirectory + decodeXMLDiagramName(this.workflow.getFileName()) + SVG_EXTENSION).toURI();
                 URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(this.workflow.getFileName()))
                         .toURI();
 
@@ -150,8 +153,8 @@ public class WorkflowForm extends BaseForm {
 
         Map<String, URI> diagramsUris = getDiagramUris();
 
-        URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
-        URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
+        URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
+        URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
         xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
         if (Objects.nonNull(xmlDiagram)) {
@@ -171,12 +174,12 @@ public class WorkflowForm extends BaseForm {
 
     private Map<String, URI> getDiagramUris(Workflow workflow) {
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
-        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + ".svg").toURI();
+        URI svgDiagramURI = new File(diagramDirectory + decodeXMLDiagramName(workflow.getFileName()) + SVG_EXTENSION).toURI();
         URI xmlDiagramURI = new File(diagramDirectory + encodeXMLDiagramName(workflow.getFileName())).toURI();
 
         Map<String, URI> diagramUris = new HashMap<>();
-        diagramUris.put("svgDiagramURI", svgDiagramURI);
-        diagramUris.put("xmlDiagramURI", xmlDiagramURI);
+        diagramUris.put(SVG_DIAGRAM_URI, svgDiagramURI);
+        diagramUris.put(XML_DIAGRAM_URI, xmlDiagramURI);
         return diagramUris;
     }
 
@@ -252,14 +255,14 @@ public class WorkflowForm extends BaseForm {
 
             Map<String, URI> diagramsUris = getDiagramUris(baseWorkflow);
 
-            URI svgDiagramURI = diagramsUris.get("svgDiagramURI");
-            URI xmlDiagramURI = diagramsUris.get("xmlDiagramURI");
+            URI svgDiagramURI = diagramsUris.get(SVG_DIAGRAM_URI);
+            URI xmlDiagramURI = diagramsUris.get(XML_DIAGRAM_URI);
 
             this.workflow = serviceManager.getWorkflowService().duplicateWorkflow(baseWorkflow);
             Map<String, URI> diagramsCopyUris = getDiagramUris();
 
-            URI svgDiagramCopyURI = diagramsCopyUris.get("svgDiagramURI");
-            URI xmlDiagramCopyURI = diagramsCopyUris.get("xmlDiagramURI");
+            URI svgDiagramCopyURI = diagramsCopyUris.get(SVG_DIAGRAM_URI);
+            URI xmlDiagramCopyURI = diagramsCopyUris.get(XML_DIAGRAM_URI);
 
             try (InputStream svgInputStream = serviceManager.getFileService().read(svgDiagramURI);
                     InputStream xmlInputStream = serviceManager.getFileService().read(xmlDiagramURI)) {
