@@ -139,9 +139,6 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public URI rename(URI uri, String newName) throws IOException {
-        final int sleepIntervalMilliseconds = 20;
-        final int maxWaitMilliseconds = 150000; // 2½ minutes
-
         if ((uri == null) || (newName == null)) {
             return null;
         }
@@ -153,8 +150,6 @@ public class FileManagement implements FileManagementInterface {
         URI newFileUri = URI.create(substring + newName);
         URI mappedFileURI = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         URI mappedNewFileURI = fileMapper.mapUriToKitodoDataDirectoryUri(newFileUri);
-        boolean success;
-        int millisWaited = 0;
 
         if (!fileExist(mappedFileURI)) {
             logger.debug("File {} does not exist for renaming.", uri.getPath());
@@ -167,19 +162,29 @@ public class FileManagement implements FileManagementInterface {
             throw new IOException(message);
         }
 
+        return performRename(mappedFileURI, mappedNewFileURI);
+    }
+
+    private URI performRename(URI mappedFileURI, URI mappedNewFileURI) throws IOException {
         File fileToRename = new File(mappedFileURI);
         File renamedFile = new File(mappedNewFileURI);
+
+        final int sleepIntervalMilliseconds = 20;
+        final int maxWaitMilliseconds = 150000; // 2½ minutes
+
+        boolean success;
+        int millisWaited = 0;
+
         do {
             if (SystemUtils.IS_OS_WINDOWS && millisWaited == sleepIntervalMilliseconds) {
-                logger.warn("Renaming " + uri
-                        + " failed. This is Windows. Running the garbage collector may yield good results. "
-                        + "Forcing immediate garbage collection now!");
+                logger.warn("Renaming {} failed. This is Windows. Running the garbage collector may yield good"
+                        + " results. Forcing immediate garbage collection now!", fileToRename.getName());
                 System.gc();
             }
             success = fileToRename.renameTo(renamedFile);
             if (!success) {
                 if (millisWaited == 0) {
-                    logger.info("Renaming " + uri + " failed. File may be locked. Retrying...");
+                    logger.info("Renaming {} failed. File may be locked. Retrying...", fileToRename.getName());
                 }
                 waitForThread(sleepIntervalMilliseconds);
                 millisWaited += sleepIntervalMilliseconds;
@@ -187,12 +192,13 @@ public class FileManagement implements FileManagementInterface {
         } while (!success && millisWaited < maxWaitMilliseconds);
 
         if (!success) {
-            logger.error("Rename " + uri + " failed. This is a permanent error. Giving up.");
-            throw new IOException("Renaming of " + uri + " into " + newName + " failed.");
+            logger.error("Rename {} failed. This is a permanent error. Giving up.", fileToRename.getName());
+            throw new IOException(
+                    "Renaming of " + fileToRename.getName() + " into " + renamedFile.getName() + " failed.");
         }
 
         if (millisWaited > 0) {
-            logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
+            logger.info("Rename finally succeeded after {} milliseconds.", Integer.toString(millisWaited));
         }
         return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(renamedFile.getPath()).toUri());
     }
@@ -360,7 +366,8 @@ public class FileManagement implements FileManagementInterface {
     }
 
     @Override
-    public URI getProcessSubTypeUri(URI processBaseUri, String processTitle, ProcessSubType subType, String resourceName) {
+    public URI getProcessSubTypeUri(URI processBaseUri, String processTitle, ProcessSubType subType,
+            String resourceName) {
         return URI.create(getProcessSubType(processBaseUri.toString(), processTitle, subType, resourceName));
     }
 
