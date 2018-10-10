@@ -211,7 +211,7 @@
             <property name="groups" value="com,de,edu,gov,io,/^java\./,javax,junit,net,org,sun,ugh"/>
             <property name="ordered" value="true"/>
             <property name="separated" value="true"/>
-            <property name="option" value="above"/>
+            <property name="option" value="top"/>
             <property name="sortStaticImportsAlphabetically" value="true"/>
         </module>
 
