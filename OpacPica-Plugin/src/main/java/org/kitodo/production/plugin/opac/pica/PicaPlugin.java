@@ -958,7 +958,7 @@ public class PicaPlugin implements Plugin {
     }
 
     /**
-     * The function useCatalogue() sets a catalogue to be used
+     * The function useCatalogue() sets a catalogue to be used.
      *
      * @param catalogueID
      *            a String indentifying the catalogue

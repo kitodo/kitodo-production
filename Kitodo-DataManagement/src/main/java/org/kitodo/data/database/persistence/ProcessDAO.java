@@ -46,6 +46,8 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
+     * Save process with regard to its progress.
+     *
      * @param process
      *            object
      * @param progress
@@ -61,6 +63,8 @@ public class ProcessDAO extends BaseDAO<Process> {
     }
 
     /**
+     * Save list of processes.
+     *
      * @param list
      *            of processes
      * @throws DAOException

@@ -355,15 +355,15 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
     
     /**
-     * Get all user roles for a list of clients
+     * Get all user roles for a list of clients.
      *
      * @param clientIds
      *              The list of client IDs
      *
      * @return The list of all user roles for the given client IDs
      */
-    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIdList) {
-        return dao.getAllUserGroupsByClientIds(clientIdList);
+    public List<UserGroup> getAllUserGroupsByClientIds(List<Integer> clientIds) {
+        return dao.getAllUserGroupsByClientIds(clientIds);
     }
 
     /**
