@@ -32,6 +32,7 @@ import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.Task;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.file.FileService;
 import org.kitodo.workflow.model.beans.Diagram;
@@ -68,7 +69,7 @@ public class Reader {
      *
      * @return Template bean
      */
-    public Template convertWorkflowToTemplate(Template template) {
+    public Template convertWorkflowToTemplate(Template template) throws DAOException {
         this.tasks = new HashMap<>();
         this.followingFlowNodes = new ArrayList<>();
 
@@ -104,7 +105,7 @@ public class Reader {
         this.workflow = new Diagram(process);
     }
 
-    private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) {
+    private org.kitodo.data.database.beans.Task getTask(Task workflowTask, TaskInfo taskInfo) throws DAOException {
         org.kitodo.data.database.beans.Task task = new org.kitodo.data.database.beans.Task();
         KitodoTask kitodoTask = new KitodoTask(workflowTask, taskInfo.getOrdering());
         task.setWorkflowId(kitodoTask.getWorkflowId());
@@ -121,6 +122,10 @@ public class Reader {
         task.setTypeAcceptClose(kitodoTask.getTypeAcceptClose());
         task.setTypeCloseVerify(kitodoTask.getTypeCloseVerify());
         task.setWorkflowCondition(taskInfo.getCondition());
+        Integer userRoleId = kitodoTask.getUserRole();
+        if (userRoleId > 0) {
+            task.getUserGroups().add(serviceManager.getUserGroupService().getById(userRoleId));
+        }
 
         if (workflowTask instanceof ScriptTask) {
             KitodoScriptTask kitodoScriptTask = new KitodoScriptTask((ScriptTask) workflowTask, taskInfo.getOrdering());

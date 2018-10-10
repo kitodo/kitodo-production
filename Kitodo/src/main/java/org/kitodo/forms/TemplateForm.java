@@ -197,7 +197,7 @@ public class TemplateForm extends TemplateBaseForm {
                     Reader reader = new Reader(this.template.getWorkflow().getFileName());
                     this.template = reader.convertWorkflowToTemplate(this.template);
                 }
-            } catch (IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
                 return null;
             }
