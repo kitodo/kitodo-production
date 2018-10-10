@@ -12,6 +12,9 @@
 package org.kitodo.services.data;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +37,7 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -56,6 +60,7 @@ import org.kitodo.helper.VariableReplacer;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.util.GeneratorSwitch;
 
 public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
 
@@ -460,6 +465,19 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     /**
+     * Get list of switch objects for all folders whose contents can be
+     * generated.
+     *
+     * @return list of GeneratorSwitch objects or empty list
+     */
+    public List<GeneratorSwitch> getGenerators(Task task) {
+        if (Objects.isNull(task.getContentFolders())) {
+            task.setContentFolders(new ArrayList<>());
+        }
+        return GeneratorSwitch.getGeneratorSwitches(getProjects(task).stream(), task.getContentFolders());
+    }
+
+    /**
      * Convert date of processing begin to formatted String.
      *
      * @param task
@@ -512,6 +530,25 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      */
     public String getNormalizedTitle(String title) {
         return title.replace(" ", "_");
+    }
+
+    /**
+     * Get project(s). If the task belongs to a template, the projects are in
+     * the template. If the task belongs to a process, the project is in the
+     * process.
+     *
+     * @return value of project(s)
+     */
+    public static List<Project> getProjects(Task task) {
+        Process process = task.getProcess();
+        Template template = task.getTemplate();
+        if (Objects.nonNull(process)) {
+            return Arrays.asList(process.getProject());
+        } else if (Objects.nonNull(template)) {
+            return template.getProjects();
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     /**

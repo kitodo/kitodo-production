@@ -29,7 +29,6 @@ import javax.persistence.Transient;
 
 import org.kitodo.data.database.helper.enums.TaskEditType;
 import org.kitodo.data.database.helper.enums.TaskStatus;
-import org.kitodo.util.GeneratorSwitch;
 
 @Entity
 @Table(name = "task")
@@ -189,6 +188,9 @@ public class Task extends BaseIndexedBean {
 
         // necessary to create new ArrayList in other case session problem!
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
+
+        // necessary to create new ArrayList in other case session problem!
+        this.contentFolders = new ArrayList<>(templateTask.getContentFolders());
     }
 
     public String getTitle() {
@@ -428,19 +430,6 @@ public class Task extends BaseIndexedBean {
      */
     public void setContentFolders(List<Folder> contentFolders) {
         this.contentFolders = contentFolders;
-    }
-
-    /**
-     * Get list of switch objects for all folders whose contents can be
-     * generated.
-     *
-     * @return list of GeneratorSwitch objects or empty list
-     */
-    public List<GeneratorSwitch> getGenerators() {
-        if (this.contentFolders == null) {
-            this.contentFolders = new ArrayList<>();
-        }
-        return GeneratorSwitch.getGeneratorSwitches(template.getProjects().stream(), contentFolders);
     }
 
     public boolean isTypeImagesRead() {
