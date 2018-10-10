@@ -17,18 +17,18 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.constants.FileNames;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 
 public class FileLoader {
 
-    private static String configProjectsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE;
+    private static String configProjectsPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.PROJECT_CONFIGURATION;
     private static String diagramBasePath = ConfigCore.getKitodoDiagramDirectory() + "base.bpmn20.xml";
     private static String diagramTestPath = ConfigCore.getKitodoDiagramDirectory() + "test.bpmn20.xml";
     private static String diagramReaderTestPath = ConfigCore.getKitodoDiagramDirectory() + "extended-test.bpmn20.xml";
     private static String diagramReaderGatewayPath = ConfigCore.getKitodoDiagramDirectory() + "gateway.bpmn20.xml";
-    private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
-    private static String metadataDisplayRulesPath = ConfigCore.getKitodoConfigDirectory() + FileNames.METADATA_DISPLAY_RULES_FILE;
+    private static String digitalCollectionsPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.DIGITAL_COLLECTIONS;
+    private static String metadataDisplayRulesPath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.METADATA_DISPLAY_RULES;
     private static String metadataPath = ConfigCore.getKitodoDataDirectory() + "1/meta.xml";
     private static String metadataTemplatePath = ConfigCore.getKitodoDataDirectory() + "1/template.xml";
 

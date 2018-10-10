@@ -11,17 +11,16 @@
 
 package org.kitodo.config;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.goobi.production.constants.FileNames;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Process;
 
 public class DigitalCollections {
@@ -100,14 +99,14 @@ public class DigitalCollections {
     }
 
     private static Element getRoot() throws JDOMException, IOException {
-        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.DIGITAL_COLLECTIONS_FILE);
+        KitodoConfigFile file = KitodoConfigFile.DIGITAL_COLLECTIONS;
         if (!(file.exists())) {
             throw new FileNotFoundException("File not found: " + file.getAbsolutePath());
         }
 
         // import file and determine root
         SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(file);
+        Document doc = builder.build(file.getFile());
         return doc.getRootElement();
     }
 

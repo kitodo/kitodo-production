@@ -11,7 +11,6 @@
 
 package org.kitodo.config;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.FileNames;
+import org.kitodo.config.enums.KitodoConfigFile;
 
 public class ConfigProjects {
     private XMLConfiguration config;
@@ -32,7 +31,7 @@ public class ConfigProjects {
     private static final Logger logger = LogManager.getLogger(ConfigProjects.class);
 
     public ConfigProjects(String projectTitle) throws IOException {
-        this(projectTitle, ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE);
+        this(projectTitle, KitodoConfigFile.PROJECT_CONFIGURATION);
     }
 
     /**
@@ -40,15 +39,15 @@ public class ConfigProjects {
      *
      * @param projectTitle
      *            project title
-     * @param configPath
-     *            config path
+     * @param configFile
+     *            config file as KitodoFile
      */
-    public ConfigProjects(String projectTitle, String configPath) throws IOException {
-        if (!(new File(configPath)).exists()) {
-            throw new IOException("File not found: " + configPath);
+    public ConfigProjects(String projectTitle, KitodoConfigFile configFile) throws IOException {
+        if (!configFile.exists()) {
+            throw new IOException("File not found: " + configFile.getAbsolutePath());
         }
         try {
-            this.config = new XMLConfiguration(configPath);
+            this.config = new XMLConfiguration(configFile.getAbsolutePath());
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             this.config = new XMLConfiguration();

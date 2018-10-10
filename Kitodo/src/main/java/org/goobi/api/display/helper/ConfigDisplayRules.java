@@ -21,8 +21,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.goobi.api.display.Item;
 import org.goobi.api.display.enums.DisplayType;
-import org.goobi.production.constants.FileNames;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 
 public final class ConfigDisplayRules {
 
@@ -42,7 +41,7 @@ public final class ConfigDisplayRules {
      * Reads given xml file into XMLConfiguration.
      */
     private ConfigDisplayRules() {
-        String configPath = ConfigCore.getKitodoConfigDirectory() + FileNames.METADATA_DISPLAY_RULES_FILE;
+        String configPath = KitodoConfigFile.METADATA_DISPLAY_RULES.getAbsolutePath();
         try {
             config = new XMLConfiguration(configPath);
             config.setReloadingStrategy(new FileChangedReloadingStrategy());

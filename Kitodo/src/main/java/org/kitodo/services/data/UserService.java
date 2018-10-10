@@ -38,9 +38,9 @@ import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
-import org.goobi.production.constants.FileNames;
 import org.joda.time.LocalDateTime;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Filter;
@@ -706,9 +706,8 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             return false;
         }
 
-        File file = new File(ConfigCore.getKitodoConfigDirectory(), FileNames.LOGIN_BLACKLIST_FILE);
         // Go through the file line by line and compare to invalid characters
-        try (FileInputStream fis = new FileInputStream(file.getAbsolutePath());
+        try (FileInputStream fis = new FileInputStream(KitodoConfigFile.LOGIN_BLACKLIST.getFile());
                 InputStreamReader isr = new InputStreamReader(fis, StandardCharsets.UTF_8);
                 BufferedReader in = new BufferedReader(isr)) {
             String str;

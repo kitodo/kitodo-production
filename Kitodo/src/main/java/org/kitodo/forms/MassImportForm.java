@@ -31,7 +31,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
-import org.goobi.production.constants.FileNames;
 import org.goobi.production.enums.ImportFormat;
 import org.goobi.production.enums.ImportReturnValue;
 import org.goobi.production.enums.ImportType;
@@ -51,6 +50,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.kitodo.api.ugh.PrefsInterface;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Batch.Type;
@@ -134,17 +134,17 @@ public class MassImportForm extends BaseForm {
     private void initializePossibleDigitalCollections() {
         final String defaultString = "default";
         this.possibleDigitalCollections = new ArrayList<>();
-        ArrayList<String> defaultCollections = new ArrayList<>();
-        String filename = ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE;
-        if (!(new File(filename).exists())) {
-            Helper.setErrorMessage("File not found: ", filename);
+        List<String> defaultCollections = new ArrayList<>();
+        KitodoConfigFile digitalCollectionsFile = KitodoConfigFile.DIGITAL_COLLECTIONS;
+        if (!(digitalCollectionsFile.exists())) {
+            Helper.setErrorMessage("File not found: ", digitalCollectionsFile.getAbsolutePath());
             return;
         }
         this.digitalCollections = new ArrayList<>();
         try {
             // read data and determine the root
             SAXBuilder builder = new SAXBuilder();
-            Document doc = builder.build(new File(filename));
+            Document doc = builder.build(digitalCollectionsFile.getFile());
             Element root = doc.getRootElement();
             // run through all projects
             List<Element> projects = root.getChildren();

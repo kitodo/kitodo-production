@@ -11,7 +11,6 @@
 
 package org.kitodo.services.data;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -25,8 +24,7 @@ import javax.json.JsonValue;
 
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.goobi.production.constants.FileNames;
-import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -327,10 +325,8 @@ public class ProjectService extends TitleSearchService<Project, ProjectDTO, Proj
      *         is incomplete
      */
     public boolean isProjectComplete(Project project) {
-        boolean projectsXmlExists = (new File(
-                ConfigCore.getKitodoConfigDirectory() + FileNames.PROJECT_CONFIGURATION_FILE)).exists();
-        boolean digitalCollectionsXmlExists = (new File(
-                ConfigCore.getKitodoConfigDirectory() + FileNames.DIGITAL_COLLECTIONS_FILE)).exists();
+        boolean projectsXmlExists = KitodoConfigFile.PROJECT_CONFIGURATION.exists();
+        boolean digitalCollectionsXmlExists = KitodoConfigFile.DIGITAL_COLLECTIONS.exists();
 
         return project.getTitle() != null && project.template != null && project.getFileFormatDmsExport() != null
                 && project.getFileFormatInternal() != null && digitalCollectionsXmlExists && projectsXmlExists;
