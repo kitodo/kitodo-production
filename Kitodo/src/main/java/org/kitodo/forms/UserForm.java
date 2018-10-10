@@ -11,7 +11,6 @@
 
 package org.kitodo.forms;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
@@ -27,8 +26,6 @@ import javax.naming.NamingException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.goobi.production.constants.FileNames;
-import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
