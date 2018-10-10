@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import javax.faces.context.FacesContext;
@@ -24,8 +23,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.Duration;
+import org.kitodo.config.beans.Parameter;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.config.enums.ParameterType;
 import org.kitodo.exceptions.ConfigParameterException;
 import org.kitodo.helper.Helper;
 import org.kitodo.services.ServiceManager;
@@ -80,11 +79,12 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as String or default value for this parameter
      */
     public static String getParameterOrDefaultValue(ParameterCore key) {
-        checkNullAndNoneKeyType(key);
-        if (key.getType().equals(ParameterType.STRING)) {
-            return getParameter(key.getName(), (String) key.getDefaultValue());
+        Parameter parameter = key.getParameter();
+
+        if (parameter.getDefaultValue() instanceof String) {
+            return getParameter(key.getName(), (String) parameter.getDefaultValue());
         }
-        throw new ConfigParameterException(key.getName(), "String");
+        throw new ConfigParameterException(parameter.getKey(), "String");
     }
 
     /**
@@ -96,11 +96,12 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as boolean or default value for this parameter
      */
     public static boolean getBooleanParameterOrDefaultValue(ParameterCore key) {
-        checkNullAndNoneKeyType(key);
-        if (key.getType().equals(ParameterType.BOOLEAN)) {
-            return getBooleanParameter(key, (boolean) key.getDefaultValue());
+        Parameter parameter = key.getParameter();
+
+        if (parameter.getDefaultValue() instanceof Boolean) {
+            return getBooleanParameter(key, (boolean) parameter.getDefaultValue());
         }
-        throw new ConfigParameterException(key.getName(), "boolean");
+        throw new ConfigParameterException(parameter.getKey(), "boolean");
     }
 
     /**
@@ -112,11 +113,12 @@ public class ConfigCore extends KitodoConfig {
      * @return parameter as int or default value for this parameter
      */
     public static int getIntParameterOrDefaultValue(ParameterCore key) {
-        checkNullAndNoneKeyType(key);
-        if (key.getType().equals(ParameterType.INT)) {
-            return getIntParameter(key, (int) key.getDefaultValue());
+        Parameter parameter = key.getParameter();
+
+        if (parameter.getDefaultValue() instanceof Integer) {
+            return getIntParameter(key, (int) parameter.getDefaultValue());
         }
-        throw new ConfigParameterException(key.getName(), "int");
+        throw new ConfigParameterException(parameter.getKey(), "int");
     }
 
     /**
@@ -128,11 +130,12 @@ public class ConfigCore extends KitodoConfig {
      * @return Parameter as long or default value
      */
     public static long getLongParameterOrDefaultValue(ParameterCore key) {
-        checkNullAndNoneKeyType(key);
-        if (key.getType().equals(ParameterType.LONG)) {
-            return getLongParameter(key, (long) key.getDefaultValue());
+        Parameter parameter = key.getParameter();
+
+        if (parameter.getDefaultValue() instanceof Long) {
+            return getLongParameter(key, (long) parameter.getDefaultValue());
         }
-        throw new ConfigParameterException(key.getName(), "long");
+        throw new ConfigParameterException(parameter.getKey(), "long");
     }
 
     /**
@@ -180,11 +183,5 @@ public class ConfigCore extends KitodoConfig {
      */
     public static String getKitodoDiagramDirectory() {
         return getParameter(ParameterCore.DIR_DIAGRAMS);
-    }
-
-    private static void checkNullAndNoneKeyType(ParameterCore key) {
-        if (Objects.isNull(key.getType()) || Objects.equals(key.getType(), ParameterType.NONE)) {
-            throw new ConfigParameterException("Type of key '" + key.getName() + "' is null or none");
-        }
     }
 }

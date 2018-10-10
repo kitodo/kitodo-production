@@ -9,12 +9,9 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.config.enums;
+package org.kitodo.config.beans;
 
-public enum ParameterType {
-    NONE,
-    BOOLEAN,
-    INT,
-    LONG,
-    STRING
+public class UndefinedParameter {
+    // class for case of undefined parameter
+    // TODO: every parameter in ParameterCore should be defined
 }
