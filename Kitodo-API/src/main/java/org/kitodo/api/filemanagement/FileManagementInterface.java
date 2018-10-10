@@ -16,8 +16,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ProtocolException;
 import java.net.URI;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Manages the handling of files.
@@ -39,13 +42,63 @@ public interface FileManagementInterface {
     URI create(URI parentFolderUri, String name, boolean file) throws IOException;
 
     /**
+     * Attempts to get locks on one or more files. There are only two results:
+     * either, all locks can be granted, or none of the requested locks are
+     * granted. In the former case, the conflicts map in the locking result is
+     * empty, in the latter case it contains for each conflicting file the users
+     * who hold a conflicting lock on the file. If no locks have been granted,
+     * the call to {@code close()} on the locking result is meaningless, meaning
+     * that leaving the try-with-resources statement will not throw an
+     * exception. Just to mention that.
+     * 
+     * @param user
+     *            A human-readable string that identifies the user or process
+     *            requesting the locks. This string will later be returned to
+     *            other users if they try to request a conflicting lock.
+     * @param requests
+     *            the locks to request
+     * @return An object that manages allocated locks or provides information
+     *         about conflict originators in case of error.
+     * @throws IOException
+     *             if the file does not exist or if an error occurs in disk
+     *             access, e.g. because the write permission for the directory
+     *             is missing
+     */
+    LockingResult tryLock(String user, Map<URI, LockingMode> requests) throws IOException;
+
+    /**
      * Opens an OutputStream to a given uri.
      *
      * @param uri
      *            the uri to write to
      * @return an writable OutputStream
+     * @deprecated This write function creates an exclusive lock with the
+     *             meaningless user name “System”. Therefore, this writing
+     *             function should not be used anymore. Use
+     *             {@link #write(URI, LockingResult)} instead.
      */
+    @Deprecated
     OutputStream write(URI uri) throws IOException;
+
+    /**
+     * Opens an OutputStream to a given uri.
+     *
+     * @param uri
+     *            the uri to write to
+     * @param permission
+     *            the result of a successful lock operation that authorizes the
+     *            opening of the stream
+     * @return an writable OutputStream
+     * @throws AccessDeniedException
+     *             if the user does not have sufficient authorization
+     * @throws ProtocolException
+     *             if the file had to be first read in again, but this step was
+     *             skipped on the protocol. This error can occur with the
+     *             UPGRADE_WRITE_ONCE lock because its protocol form requires
+     *             that the file must first be read in again and the input
+     *             stream must be closed after the lock has been upgraded.
+     */
+    OutputStream write(URI uri, LockingResult permission) throws IOException;
 
     /**
      * Opens an InputStream to a given uri.
@@ -53,8 +106,27 @@ public interface FileManagementInterface {
      * @param uri
      *            the uri to write from
      * @return a readable InputStream
+     * @deprecated This read function creates an exclusive lock with the
+     *             meaningless user name “System”. Therefore, this reading
+     *             function should not be used anymore. Use
+     *             {@link #read(URI, LockingResult)} instead.
      */
+    @Deprecated
     InputStream read(URI uri) throws IOException;
+
+    /**
+     * Opens an InputStream to a given URI.
+     *
+     * @param uri
+     *            the URI to read from
+     * @param permission
+     *            the result of a successful lock operation that authorizes the
+     *            opening of the stream
+     * @return a readable InputStream
+     * @throws AccessDeniedException
+     *             if the user does not have sufficient authorization
+     */
+    InputStream read(URI uri, LockingResult permission) throws IOException;
 
     /**
      * Copy resource.
