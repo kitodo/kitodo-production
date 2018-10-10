@@ -90,10 +90,8 @@ public class SessionClientController {
      * Display client selection dialog if user is logged in, not an admin and has multiple clients.
      */
     public void showClientSelectDialog() {
-        if (!Objects.nonNull(getCurrentSessionClient())) {
-            if (!userIsAdmin() && !userHasOnlyOneClient()) {
-                PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
-            }
+        if (!Objects.nonNull(getCurrentSessionClient()) && !userIsAdmin() && !userHasOnlyOneClient()) {
+            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
         }
     }
 
