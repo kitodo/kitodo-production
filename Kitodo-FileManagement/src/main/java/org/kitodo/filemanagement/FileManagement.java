@@ -54,40 +54,40 @@ public class FileManagement implements FileManagementInterface {
     }
 
     private URI createDirectory(URI parentFolderUri, String directoryName) throws IOException {
-        parentFolderUri = fileMapper.mapAccordingToMappingType(parentFolderUri);
+        parentFolderUri = fileMapper.mapUriToKitodoDataDirectoryUri(parentFolderUri);
         File directory = new File(Paths.get(new File(parentFolderUri).getPath(), directoryName).toUri());
         if (!directory.exists() && !directory.mkdir()) {
             throw new IOException("Could not create directory.");
         }
-        return fileMapper.unmapAccordingToMappingType(Paths.get(directory.getPath()).toUri());
+        return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(directory.getPath()).toUri());
     }
 
     private URI createResource(URI targetFolder, String fileName) throws IOException {
-        targetFolder = fileMapper.mapAccordingToMappingType(targetFolder);
+        targetFolder = fileMapper.mapUriToKitodoDataDirectoryUri(targetFolder);
         File file = new File(Paths.get(new File(targetFolder).getPath(), fileName).toUri());
         if (file.exists() || file.createNewFile()) {
-            return fileMapper.unmapAccordingToMappingType(Paths.get(file.getPath()).toUri());
+            return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(file.getPath()).toUri());
         }
         return URI.create("");
     }
 
     @Override
     public OutputStream write(URI uri) throws IOException {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new FileOutputStream(new File(uri));
     }
 
     @Override
     public InputStream read(URI uri) throws IOException {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         URL url = uri.toURL();
         return url.openStream();
     }
 
     @Override
     public void copy(URI sourceUri, URI targetUri) throws IOException {
-        sourceUri = fileMapper.mapAccordingToMappingType(sourceUri);
-        targetUri = fileMapper.mapAccordingToMappingType(targetUri);
+        sourceUri = fileMapper.mapUriToKitodoDataDirectoryUri(sourceUri);
+        targetUri = fileMapper.mapUriToKitodoDataDirectoryUri(targetUri);
         if (!fileExist(sourceUri)) {
             throw new FileNotFoundException();
         } else if (isFile(sourceUri) && targetUri.getPath().contains(".")) {
@@ -116,7 +116,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean delete(URI uri) throws IOException {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         File file = new File(uri);
         if (file.exists()) {
             if (file.isFile()) {
@@ -151,8 +151,8 @@ public class FileManagement implements FileManagementInterface {
             newName = newName.substring(newName.lastIndexOf('/') + 1);
         }
         URI newFileUri = URI.create(substring + newName);
-        URI mappedFileURI = fileMapper.mapAccordingToMappingType(uri);
-        URI mappedNewFileURI = fileMapper.mapAccordingToMappingType(newFileUri);
+        URI mappedFileURI = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
+        URI mappedNewFileURI = fileMapper.mapUriToKitodoDataDirectoryUri(newFileUri);
         boolean success;
         int millisWaited = 0;
 
@@ -194,7 +194,7 @@ public class FileManagement implements FileManagementInterface {
         if (millisWaited > 0) {
             logger.info("Rename finally succeeded after" + Integer.toString(millisWaited) + " milliseconds.");
         }
-        return fileMapper.unmapAccordingToMappingType(Paths.get(renamedFile.getPath()).toUri());
+        return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(renamedFile.getPath()).toUri());
     }
 
     private void waitForThread(int sleepIntervalMilliseconds) {
@@ -208,32 +208,32 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean fileExist(URI uri) {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri).exists();
     }
 
     @Override
     public boolean isFile(URI uri) {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri).isFile();
     }
 
     @Override
     public boolean isDirectory(URI directory) {
-        directory = fileMapper.mapAccordingToMappingType(directory);
+        directory = fileMapper.mapUriToKitodoDataDirectoryUri(directory);
         return new File(directory).isDirectory();
     }
 
     @Override
     public boolean canRead(URI uri) {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri).canRead();
     }
 
     @Override
     public Integer getNumberOfFiles(FilenameFilter filter, URI directory) {
         int count = 0;
-        directory = fileMapper.mapAccordingToMappingType(directory);
+        directory = fileMapper.mapUriToKitodoDataDirectoryUri(directory);
         if (filter == null) {
             count += iterateOverDirectories(directory);
         } else {
@@ -254,7 +254,7 @@ public class FileManagement implements FileManagementInterface {
         if (isDirectory(directory)) {
             List<URI> children = getSubUris(null, directory);
             for (URI child : children) {
-                child = fileMapper.mapAccordingToMappingType(child);
+                child = fileMapper.mapUriToKitodoDataDirectoryUri(child);
                 if (isDirectory(child)) {
                     count += getNumberOfFiles(null, child);
                 } else {
@@ -278,7 +278,7 @@ public class FileManagement implements FileManagementInterface {
             count = getSubUris(filter, directory).size();
             List<URI> children = getSubUris(null, directory);
             for (URI child : children) {
-                child = fileMapper.mapAccordingToMappingType(child);
+                child = fileMapper.mapUriToKitodoDataDirectoryUri(child);
                 count += getNumberOfFiles(filter, child);
             }
         }
@@ -288,7 +288,7 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public Long getSizeOfDirectory(URI directory) throws IOException {
         if (!directory.isAbsolute()) {
-            directory = fileMapper.mapAccordingToMappingType(directory);
+            directory = fileMapper.mapUriToKitodoDataDirectoryUri(directory);
         }
         if (isDirectory(directory)) {
             return FileUtils.sizeOfDirectory(new File(directory));
@@ -305,7 +305,7 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public List<URI> getSubUris(FilenameFilter filter, URI uri) {
         if (!uri.isAbsolute()) {
-            uri = fileMapper.mapAccordingToMappingType(uri);
+            uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         }
         List<URI> resultList = new ArrayList<>();
         File[] files;
@@ -316,7 +316,7 @@ public class FileManagement implements FileManagementInterface {
         }
         for (File file : files) {
             URI tempURI = Paths.get(file.getPath()).toUri();
-            resultList.add(fileMapper.unmapAccordingToMappingType(tempURI));
+            resultList.add(fileMapper.unmapUriFromKitodoDataDirectoryUri(tempURI));
         }
         return resultList;
     }
@@ -351,7 +351,7 @@ public class FileManagement implements FileManagementInterface {
         if (!processRootDirectory.exists() && !processRootDirectory.mkdir()) {
             throw new IOException("Could not create processRoot directory.");
         }
-        return fileMapper.unmapAccordingToMappingType(Paths.get(processRootDirectory.getPath()).toUri());
+        return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(processRootDirectory.getPath()).toUri());
     }
 
     @Override
@@ -457,7 +457,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean createSymLink(URI homeUri, URI targetUri, boolean onlyRead, String userLogin) {
-        File imagePath = new File(fileMapper.mapAccordingToMappingType(homeUri));
+        File imagePath = new File(fileMapper.mapUriToKitodoDataDirectoryUri(homeUri));
         File userHome = new File(getDecodedPath(targetUri));
         if (userHome.exists()) {
             return false;
@@ -488,7 +488,7 @@ public class FileManagement implements FileManagementInterface {
 
     @Override
     public boolean deleteSymLink(URI homeUri) {
-        File homeFile = new File(fileMapper.mapAccordingToMappingType(homeUri));
+        File homeFile = new File(fileMapper.mapUriToKitodoDataDirectoryUri(homeUri));
 
         String command = KitodoConfig.getParameter("script_deleteSymLink");
         CommandService commandService = new CommandService();
@@ -506,7 +506,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     private String getDecodedPath(URI uri) {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         String uriToDecode = new File(uri).getPath();
         String decodedPath;
         try {
@@ -519,7 +519,7 @@ public class FileManagement implements FileManagementInterface {
     }
 
     public File getFile(URI uri) {
-        uri = fileMapper.mapAccordingToMappingType(uri);
+        uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri);
     }
 }

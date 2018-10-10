@@ -14,64 +14,12 @@ package org.kitodo.filemanagement;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpSession;
-
 import org.kitodo.config.KitodoConfig;
 
 /**
  * Class for performing mapping and unmapping of URIs.
  */
-public class FileMapper {
-
-    /**
-     * Execute right mapping type according to value of enum MappingType.
-     *
-     * @param uri
-     *            to map
-     * @return mapped URI
-     */
-    URI mapAccordingToMappingType(URI uri) {
-        if (uri != null) {
-            if (uri.toString().contains("css")) {
-                return mapUriToKitodoRootFolderUri(uri);
-            }
-            return mapUriToKitodoDataDirectoryUri(uri);
-        }
-        return mapUriToKitodoDataDirectoryUri(null);
-    }
-
-    /**
-     * Execute right unpmapping type according to value of enum MappingType.
-     *
-     * @param uri
-     *            to unamp
-     * @return unmapped URI
-     */
-    URI unmapAccordingToMappingType(URI uri) {
-        if (uri.toString().contains(".css")) {
-            return unmapUriFromKitodoRootFolderUri(uri, "WEB-INF/resources/css/");
-        } else {
-            return unmapUriFromKitodoDataDirectoryUri(uri);
-        }
-    }
-
-    /**
-     * Map resource to its absolute path inside the Kitodo root folder.
-     *
-     * @param uri
-     *            directory or file to map eg. css file
-     * @return absolute path to mapped resource
-     */
-    private URI mapUriToKitodoRootFolderUri(URI uri) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        if (uri == null) {
-            return Paths.get(session.getServletContext().getContextPath()).toUri();
-        } else {
-            return Paths.get(session.getServletContext().getRealPath(uri.getPath())).toUri();
-        }
-    }
+class FileMapper {
 
     /**
      * Map relative URI to absolute kitodo data directory URI.
@@ -80,7 +28,7 @@ public class FileMapper {
      *            relative path
      * @return absolute URI path
      */
-    private URI mapUriToKitodoDataDirectoryUri(URI uri) {
+    URI mapUriToKitodoDataDirectoryUri(URI uri) {
         String kitodoDataDirectory = KitodoConfig.getKitodoDataDirectory();
         if (uri == null) {
             return Paths.get(KitodoConfig.getKitodoDataDirectory()).toUri();
@@ -92,19 +40,7 @@ public class FileMapper {
         return uri;
     }
 
-    private URI unmapUriFromKitodoRootFolderUri(URI uri, String unmapFolderName) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        String directory;
-        if (uri == null) {
-            directory = session.getServletContext().getContextPath();
-        } else {
-            directory = session.getServletContext().getRealPath(unmapFolderName);
-        }
-        return unmapDirectory(uri, directory);
-    }
-
-    private URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
+    URI unmapUriFromKitodoDataDirectoryUri(URI uri) {
         return unmapDirectory(uri, KitodoConfig.getKitodoDataDirectory());
     }
 
