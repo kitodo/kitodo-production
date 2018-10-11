@@ -58,11 +58,16 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.TaskDTO;
 import org.kitodo.dto.UserDTO;
+import org.kitodo.enums.GenerationMode;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.VariableReplacer;
+import org.kitodo.helper.tasks.EmptyTask;
+import org.kitodo.model.Subfolder;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.command.CommandService;
 import org.kitodo.services.data.base.TitleSearchService;
+import org.kitodo.services.file.SubfolderFactoryService;
+import org.kitodo.services.image.ImageGenerator;
 
 /**
  * The class provides a service for tasks. The service can be used to perform
@@ -415,9 +420,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
 
         /*
-         * we read list of process but not list of templates because only process tasks
-         * are displayed on the task list and reading list of templates would cause
-         * never ending loop as list of templates reads list of tasks
+         * We read the list of the process but not the list of templates, because only process tasks
+         * are displayed in the task list and reading the template list would result in
+         * never-ending loops as the list of templates reads the list of tasks.
          */
         Integer process = TaskTypeField.PROCESS_ID.getIntValue(taskJSONObject);
         if (process > 0) {
@@ -610,17 +615,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             CommandService commandService = serviceManager.getCommandService();
             CommandResult commandResult = commandService.runCommand(script);
             executedSuccessful = commandResult.isSuccessful();
-            if (automatic) {
-                if (commandResult.isSuccessful()) {
-                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
-                    task.setProcessingStatus(TaskStatus.DONE.getValue());
-                    serviceManager.getWorkflowControllerService().close(task);
-                } else {
-                    task.setEditType(TaskEditType.AUTOMATIC.getValue());
-                    task.setProcessingStatus(TaskStatus.OPEN.getValue());
-                    save(task);
-                }
-            }
+            finishOrReturnAutomaticTask(task, automatic, commandResult.isSuccessful());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -647,10 +642,64 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         }
     }
 
+    /**
+     * Make the necessary changes when performing an automatic task.
+     * 
+     * @param task
+     *            ongoing task
+     * @param automatic
+     *            if it is an automatic task
+     * @param successful
+     *            if the processing was successful
+     * @throws DataException
+     *             if the task cannot be saved
+     * @throws IOException
+     *             if the task cannot be closed
+     */
+    private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
+            throws DataException, IOException {
+        if (automatic) {
+            task.setEditType(TaskEditType.AUTOMATIC.getValue());
+            if (successful) {
+                task.setProcessingStatus(TaskStatus.DONE.getValue());
+                serviceManager.getWorkflowControllerService().close(task);
+            } else {
+                task.setProcessingStatus(TaskStatus.OPEN.getValue());
+                save(task);
+            }
+        }
+    }
+
     private void abortTask(Task task) throws DataException {
         task.setProcessingStatus(TaskStatus.OPEN.getValue());
         task.setEditType(TaskEditType.AUTOMATIC.getValue());
         save(task);
+    }
+
+    /**
+     * Performs creating images when this happens automatically in a task.
+     *
+     * @param executingThread
+     *            Executing thread (displayed in the taskmanager)
+     * @param task
+     *            Task that generates images
+     * @param automatic
+     *            Whether it is an automatic task
+     * @throws DataException
+     *             if the task cannot be saved
+     */
+    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
+        try {
+            Process process = task.getProcess();
+            Subfolder sourceFolder = new Subfolder(process, process.getProject().getGeneratorSource());
+            List<Subfolder> foldersToGenerate = SubfolderFactoryService.createAll(process, task.getContentFolders());
+            ImageGenerator generator = new ImageGenerator(sourceFolder, GenerationMode.ALL, foldersToGenerate);
+            generator.setSupervisor(executingThread);
+            generator.run();
+            finishOrReturnAutomaticTask(task, automatic, executingThread.getException() == null);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
