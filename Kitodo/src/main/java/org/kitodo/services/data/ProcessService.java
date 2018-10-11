@@ -1302,6 +1302,38 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return ff;
     }
 
+    /**
+     * Reads the metadata File.
+     *
+     * @param metadataFile
+     *            The given metadataFile.
+     * @param prefs
+     *            The Preferences
+     * @return The fileFormat.
+     */
+    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
+            throws IOException, PreferencesException, ReadException {
+        String type = MetadataHelper.getMetaFileType(metadataFile);
+        FileformatInterface ff;
+        switch (type) {
+            case "metsmods":
+                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
+                break;
+            case "mets":
+                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
+                break;
+            case "xstream":
+                ff = UghImplementation.INSTANCE.createXStream(prefs);
+                break;
+            default:
+                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
+                break;
+        }
+        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
+
+        return ff;
+    }
+
     private FileformatInterface determineFileFormat(String type, Process process) throws PreferencesException {
         FileformatInterface fileFormat;
         RulesetService rulesetService = serviceManager.getRulesetService();
@@ -1521,6 +1553,18 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Sets new value for wiki field.
+     *
+     * @param wikiField
+     *            string
+     * @param process
+     *            object
+     */
+    public void setWikiField(String wikiField, Process process) {
+        process.setWikiField(wikiField);
+    }
+
+    /**
      * The addMessageToWikiField() method is a helper method which composes the
      * new wiki field using a StringBuilder. The message is encoded using HTML
      * entities to prevent certain characters from playing merry havoc when the
@@ -1541,18 +1585,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         process.setWikiField(composer.toString());
 
         return process;
-    }
-
-    /**
-     * Sets new value for wiki field.
-     *
-     * @param wikiField
-     *            string
-     * @param process
-     *            object
-     */
-    public void setWikiField(String wikiField, Process process) {
-        process.setWikiField(wikiField);
     }
 
     /**
@@ -1693,39 +1725,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
      */
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND).toString());
-    }
-
-    /**
-     * Reads the metadata File.
-     *
-     * @param metadataFile
-     *            The given metadataFile.
-     * @param prefs
-     *            The Preferences
-     * @return The fileFormat.
-     */
-    public FileformatInterface readMetadataFile(URI metadataFile, PrefsInterface prefs)
-            throws IOException, PreferencesException, ReadException {
-        /* prüfen, welches Format die Metadaten haben (Mets, xstream oder rdf */
-        String type = MetadataHelper.getMetaFileType(metadataFile);
-        FileformatInterface ff;
-        switch (type) {
-            case "metsmods":
-                ff = UghImplementation.INSTANCE.createMetsModsImportExport(prefs);
-                break;
-            case "mets":
-                ff = UghImplementation.INSTANCE.createMetsMods(prefs);
-                break;
-            case "xstream":
-                ff = UghImplementation.INSTANCE.createXStream(prefs);
-                break;
-            default:
-                ff = UghImplementation.INSTANCE.createRDFFile(prefs);
-                break;
-        }
-        ff.read(ConfigCore.getKitodoDataDirectory() + metadataFile.getPath());
-
-        return ff;
     }
 
     /**

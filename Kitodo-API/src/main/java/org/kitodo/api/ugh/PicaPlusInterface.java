@@ -24,7 +24,6 @@ public interface PicaPlusInterface extends FileformatInterface {
      *
      * @param node
      *            node which should be read
-     * @return always {@code true}. The return value is never used.
      */
     void read(Node node) throws ReadException;
 }

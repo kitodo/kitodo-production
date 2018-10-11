@@ -78,7 +78,6 @@ import org.kitodo.exceptions.ExportFileException;
 import org.kitodo.exporter.dms.ExportDms;
 import org.kitodo.exporter.download.ExportMets;
 import org.kitodo.exporter.download.ExportPdf;
-import org.kitodo.exporter.download.TiffHeader;
 import org.kitodo.helper.GoobiScript;
 import org.kitodo.helper.Helper;
 import org.kitodo.helper.SelectItemList;

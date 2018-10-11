@@ -32,6 +32,7 @@ public class LdapServerForm extends BaseForm {
 
     private static final long serialVersionUID = 2390900243176826176L;
     private static final Logger logger = LogManager.getLogger(LdapServerForm.class);
+    private static final String LDAP_SERVER = Helper.getTranslation("ldapServer");
     private String ldapServerListPath = MessageFormat.format(REDIRECT_PATH, "users");
     private String ldapServerEditPath = MessageFormat.format(REDIRECT_PATH, "ldapserverEdit");
 
@@ -72,7 +73,7 @@ public class LdapServerForm extends BaseForm {
             this.serviceManager.getLdapServerService().saveToDatabase(this.ldapServer);
             return ldapServerListPath;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
             return null;
         }
     }
@@ -85,7 +86,7 @@ public class LdapServerForm extends BaseForm {
         try {
             this.serviceManager.getLdapServerService().removeFromDatabase(this.ldapServer);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation("ldapServer") }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {LDAP_SERVER }, logger, e);
         }
     }
 
@@ -101,7 +102,7 @@ public class LdapServerForm extends BaseForm {
                 this.ldapServer = this.serviceManager.getLdapServerService().getById(id);
             }
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("ldapServer"), id }, logger,
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, id }, logger,
                 e);
         }
         setSaveDisabled(true);
@@ -117,7 +118,7 @@ public class LdapServerForm extends BaseForm {
         try {
             this.ldapServer = this.serviceManager.getLdapServerService().getById(ldapServerID);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {Helper.getTranslation("ldapServer"), ldapServerID }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {LDAP_SERVER, ldapServerID }, logger, e);
         }
     }
 
