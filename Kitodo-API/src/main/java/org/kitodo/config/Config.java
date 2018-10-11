@@ -11,8 +11,6 @@
 
 package org.kitodo.config;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
 
 import org.apache.commons.configuration.AbstractConfiguration;
@@ -27,17 +25,6 @@ import org.apache.logging.log4j.Logger;
 public abstract class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
     private static volatile PropertiesConfiguration config;
-
-    static final Field FIELD_DETAIL_MESSAGE;
-
-    static {
-        try {
-            FIELD_DETAIL_MESSAGE = Throwable.class.getDeclaredField("detailMessage");
-            FIELD_DETAIL_MESSAGE.setAccessible(true);
-        } catch (NoSuchFieldException | SecurityException e) {
-            throw new UndeclaredThrowableException(e);
-        }
-    }
 
     /**
      * Returns the configuration.
