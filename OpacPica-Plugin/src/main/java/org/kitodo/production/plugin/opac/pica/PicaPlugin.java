@@ -641,7 +641,7 @@ public class PicaPlugin implements Plugin {
                 DocStruct dsvolume = inDigDoc.createDocStruct(dstV);
                 topstruct.addChild(dsvolume);
             } catch (TypeNotAllowedAsChildException e) {
-                e.printStackTrace();
+                logger.error(e);
             }
         }
     }

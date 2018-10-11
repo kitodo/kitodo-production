@@ -338,7 +338,7 @@ class GetOpac {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
         result.append("  </" + PICA_RECORD + ">\n");
         return result.toString();

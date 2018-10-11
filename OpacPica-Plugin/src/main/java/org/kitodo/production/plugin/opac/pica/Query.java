@@ -14,8 +14,12 @@ package org.kitodo.production.plugin.opac.pica;
 import java.net.URLEncoder;
 
 import org.apache.commons.lang.CharEncoding;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class Query {
+    private static final Logger logger = LogManager.getLogger(Query.class);
+
     private static final String FIELDLESS = "Fieldless query isn’t supported";
     private static final String BRACKET = "Brackets aren’t supported";
     private static final String INCOMPLETE = "Query is syntactically incomplete";
@@ -165,7 +169,7 @@ class Query {
         try {
             this.queryUrl += QUERY + this.queryTermNumber + "=" + URLEncoder.encode(query, CharEncoding.ISO_8859_1);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e);
         }
 
         this.queryTermNumber++;
