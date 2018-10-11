@@ -305,8 +305,12 @@ public class ProcessForm extends TemplateBaseForm {
                     .resolve(processDir.replace("(processtitle)", process.getTitle()));
 
             File dir = new File(processDirAbsolute);
+            boolean renamed;
             if (dir.isDirectory()) {
-                dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                if (!renamed) {
+                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName()});
+                }
             }
         }
     }
