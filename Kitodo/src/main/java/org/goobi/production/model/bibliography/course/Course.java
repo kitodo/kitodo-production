@@ -154,8 +154,8 @@ public class Course extends ArrayList<Block> {
     /**
      * List of Lists of Issues, each representing a process.
      */
-    private final List<List<IndividualIssue>> processes = new ArrayList<>();
-    private final Map<String, Block> resolveByBlockVariantCache = new HashMap<>();
+    private final transient List<List<IndividualIssue>> processes = new ArrayList<>();
+    private final transient Map<String, Block> resolveByBlockVariantCache = new HashMap<>();
 
     private boolean processesAreVolatile = true;
 

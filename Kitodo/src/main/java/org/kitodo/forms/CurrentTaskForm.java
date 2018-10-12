@@ -72,9 +72,9 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private Problem problem = new Problem();
-    private Solution solution = new Solution();
-    private List<TaskDTO> selectedTasks;
+    private transient Problem problem = new Problem();
+    private transient Solution solution = new Solution();
+    private transient List<TaskDTO> selectedTasks;
     private final WebDav myDav = new WebDav();
     private int gesamtAnzahlImages = 0;
     private boolean onlyOpenTasks = false;
@@ -85,7 +85,7 @@ public class CurrentTaskForm extends BaseForm {
     private String scriptPath;
     private String addToWikiField = "";
     private String doneDirectoryName;
-    private BatchTaskHelper batchHelper;
+    private transient BatchTaskHelper batchHelper;
     private List<Property> properties;
     private Property property;
     private String taskListPath = MessageFormat.format(REDIRECT_PATH, "tasks");

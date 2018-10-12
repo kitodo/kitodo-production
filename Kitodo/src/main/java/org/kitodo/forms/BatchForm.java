@@ -66,7 +66,7 @@ public class BatchForm extends BaseForm {
     private String batchfilter;
     private String processfilter;
     private String batchTitle;
-    private BatchProcessHelper batchHelper;
+    private transient BatchProcessHelper batchHelper;
     private static final String NO_BATCH_SELECTED = "noBatchSelected";
     private static final String NO_PROCESS_SELECTED = "noProcessSelected";
     private static final String TOO_MANY_BATCHES_SELECTED = "tooManyBatchesSelected";

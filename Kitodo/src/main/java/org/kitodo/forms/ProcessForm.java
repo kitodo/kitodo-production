@@ -93,7 +93,7 @@ public class ProcessForm extends TemplateBaseForm {
     private static final Logger logger = LogManager.getLogger(ProcessForm.class);
     private Process process = new Process();
     private Task task = new Task();
-    private List<ProcessCounterObject> processCounterObjects;
+    private transient List<ProcessCounterObject> processCounterObjects;
     private HashMap<String, Integer> counterSummary;
     private Property templateProperty;
     private Property workpieceProperty;
@@ -108,7 +108,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private String addToWikiField = "";
-    private List<ProcessDTO> processDTOS = new ArrayList<>();
+    private transient List<ProcessDTO> processDTOS = new ArrayList<>();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();
@@ -116,7 +116,7 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String EXPORT_FINISHED = "exportFinished";
     private static final String PROPERTIES_SAVED = "propertiesSaved";
     private static final String PROPERTY_SAVED = "propertySaved";
-    private List<ProcessDTO> selectedProcesses = new ArrayList<>();
+    private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
