@@ -23,9 +23,12 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 class ConfigOpac {
     private static XMLConfiguration config;
+    private static final Logger logger = LogManager.getLogger(ConfigOpac.class);
 
     /**
      * Private constructor to hide the implicit public one.
@@ -46,7 +49,7 @@ class ConfigOpac {
         try {
             config = new XMLConfiguration(configPfad);
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            logger.error(e);
             config = new XMLConfiguration();
         }
         config.setListDelimiter('&');

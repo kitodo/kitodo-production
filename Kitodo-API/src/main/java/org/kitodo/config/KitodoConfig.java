@@ -11,7 +11,6 @@
 
 package org.kitodo.config;
 
-import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
@@ -90,12 +89,7 @@ public class KitodoConfig extends Config {
         try {
             return getConfig().getString(key);
         } catch (NoSuchElementException e) {
-            try {
-                FIELD_DETAIL_MESSAGE.set(e, "No configuration found in kitodo_config.properties for key " + key + "!");
-            } catch (IllegalAccessException e1) {
-                throw new UndeclaredThrowableException(e1);
-            }
-            throw e;
+            throw new NoSuchElementException("No configuration found in " + CONFIG_FILE + " for key " + key + "!");
         }
     }
 
