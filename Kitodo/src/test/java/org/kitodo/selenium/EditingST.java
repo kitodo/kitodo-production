@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import org.apache.commons.lang.SystemUtils;
