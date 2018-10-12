@@ -16,6 +16,7 @@ public enum UserGroupTypeField implements TypeInterface {
     ID("id"),
     TITLE("title"),
     AUTHORITIES("authorities"),
+    CLIENTS("clients"),
     USERS("users");
 
     private String name;

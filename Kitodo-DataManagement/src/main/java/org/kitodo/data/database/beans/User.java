@@ -251,7 +251,15 @@ public class User extends BaseIndexedBean {
         this.ldapGroup = ldapGroup;
     }
 
+    /**
+     * Get user groups.
+     *
+     * @return list of UserGroup objects
+     */
     public List<UserGroup> getUserGroups() {
+        if (Objects.isNull(this.userGroups)) {
+            this.userGroups = new ArrayList<>();
+        }
         return this.userGroups;
     }
 

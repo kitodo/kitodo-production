@@ -189,7 +189,7 @@ public class UserGroupTypeTest {
         HttpEntity document = userGroupType.createDocument(userGroup);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 3, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 4, actual.keySet().size());
 
         JsonArray authorities = UserGroupTypeField.AUTHORITIES.getJsonArray(actual);
         JsonObject authority = authorities.getJsonObject(0);
