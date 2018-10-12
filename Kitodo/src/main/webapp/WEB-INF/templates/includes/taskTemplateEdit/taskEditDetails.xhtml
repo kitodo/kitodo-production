@@ -30,7 +30,7 @@
                     </p:selectBooleanCheckbox>
                 </div>
             </p:repeat>
-            <p:repeat var="validators" value="#{TemplateForm.validatableFolderSwitches}">
+            <p:repeat var="validator" value="#{TemplateForm.validatableFolderSwitches}">
                 <div>
                     <p:outputLabel for="validator">
                         <h:outputFormat value="#{msgs.validator}">
