@@ -57,18 +57,7 @@
             <p:tab title="#{msgs.details}">
                 <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditDetails.xhtml"/>
             </p:tab>
-            <p:tab title="#{msgs.user}">
-                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsers.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs.userGroup}">
-                <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsergroups.xhtml"/>
-            </p:tab>
         </p:tabView>
-    </ui:define>
-
-    <ui:define name="dialog">
-        <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsergroupsPopup.xhtml"/>
-        <ui:include src="/WEB-INF/templates/includes/taskTemplateEdit/taskEditUsersPopup.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
