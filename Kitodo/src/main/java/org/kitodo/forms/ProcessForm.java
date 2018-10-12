@@ -440,10 +440,6 @@ public class ProcessForm extends TemplateBaseForm {
     public void removeTask() {
         try {
             this.process.getTasks().remove(this.task);
-            List<User> users = this.task.getUsers();
-            for (User user : users) {
-                user.getTasks().remove(this.task);
-            }
 
             List<UserGroup> userGroups = this.task.getUserGroups();
             for (UserGroup userGroup : userGroups) {
@@ -458,14 +454,6 @@ public class ProcessForm extends TemplateBaseForm {
 
     private void deleteSymlinksFromUserHomes() {
         WebDav webDav = new WebDav();
-        /* alle Benutzer */
-        for (User user : this.task.getUsers()) {
-            try {
-                webDav.uploadFromHome(user, this.task.getProcess());
-            } catch (RuntimeException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
         /* alle Benutzergruppen mit ihren Benutzern */
         for (UserGroup userGroup : this.task.getUserGroups()) {
             for (User user : userGroup.getUsers()) {
@@ -476,16 +464,6 @@ public class ProcessForm extends TemplateBaseForm {
                 }
             }
         }
-    }
-
-    /**
-     * Remove User.
-     *
-     * @return empty String
-     */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
     }
 
     /**
@@ -505,16 +483,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String addUserGroup() {
         addUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Add User.
-     *
-     * @return empty String
-     */
-    public String addUser() {
-        addUser(this.task);
         return null;
     }
 

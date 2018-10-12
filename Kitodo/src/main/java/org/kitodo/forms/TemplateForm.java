@@ -136,26 +136,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Add User.
-     *
-     * @return empty String
-     */
-    public String addUser() {
-        addUser(this.task);
-        return null;
-    }
-
-    /**
-     * Remove User.
-     *
-     * @return empty String
-     */
-    public String deleteUser() {
-        deleteUser(this.task);
-        return null;
-    }
-
-    /**
      * Remove UserGroup.
      *
      * @return empty String

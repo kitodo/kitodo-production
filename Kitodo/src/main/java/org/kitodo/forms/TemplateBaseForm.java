@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -69,45 +68,6 @@ public class TemplateBaseForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                     new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
-        }
-    }
-
-    /**
-     * Add user to task.
-     *
-     * @param task
-     *            to add user
-     */
-    public void addUser(Task task) {
-        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            User user = serviceManager.getUserService().getById(userId);
-            for (User taskUser : task.getUsers()) {
-                if (taskUser.equals(user)) {
-                    return;
-                }
-            }
-            task.getUsers().add(user);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
-        }
-    }
-
-    /**
-     * Remove user from task.
-     *
-     * @param task
-     *            for delete user
-     */
-    public void deleteUser(Task task) {
-        Integer userId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            User user = serviceManager.getUserService().getById(userId);
-            task.getUsers().remove(user);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{ObjectType.USER.getTranslationSingular(), userId}, logger, e);
         }
     }
 

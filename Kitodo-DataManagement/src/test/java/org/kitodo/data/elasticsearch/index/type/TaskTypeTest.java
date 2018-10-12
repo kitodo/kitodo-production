@@ -89,7 +89,6 @@ public class TaskTypeTest {
         firstTask.setBatchStep(true);
         firstTask.setProcessingUser(users.get(0));
         firstTask.setProcess(process);
-        firstTask.setUsers(users);
         firstTask.setUserGroups(userGroups);
         tasks.add(firstTask);
 
@@ -104,7 +103,6 @@ public class TaskTypeTest {
         localDate = new LocalDate(2017, 2, 10);
         secondTask.setProcessingBegin(localDate.toDate());
         secondTask.setProcessingUser(users.get(1));
-        secondTask.setUsers(users);
         secondTask.setUserGroups(userGroups);
         tasks.add(secondTask);
 
@@ -156,15 +154,6 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "First",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 2, users.size());
-
-        JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
-
-        user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
-
         JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
 
@@ -214,15 +203,6 @@ public class TaskTypeTest {
             TaskTypeField.PROCESS_ID.getIntValue(actual));
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
-
-        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 2, users.size());
-
-        JsonObject user = users.getJsonObject(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
-
-        user = users.getJsonObject(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
 
         JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 2, userGroups.size());
@@ -274,9 +254,6 @@ public class TaskTypeTest {
         assertEquals("Key processForTask.title doesn't match to given value!", "",
             TaskTypeField.PROCESS_TITLE.getStringValue(actual));
 
-        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 0, users.size());
-
         JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         assertEquals("Size users doesn't match to given value!", 0, userGroups.size());
     }
@@ -289,11 +266,7 @@ public class TaskTypeTest {
         HttpEntity document = taskType.createDocument(task);
 
         JsonObject actual = Json.createReader(new StringReader(EntityUtils.toString(document))).readObject();
-        assertEquals("Amount of keys is incorrect!", 21, actual.keySet().size());
-
-        JsonArray users = TaskTypeField.USERS.getJsonArray(actual);
-        JsonObject user = users.getJsonObject(0);
-        assertEquals("Amount of keys in users is incorrect!", 1, user.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 20, actual.keySet().size());
 
         JsonArray userGroups = TaskTypeField.USER_GROUPS.getJsonArray(actual);
         JsonObject userGroup = userGroups.getJsonObject(0);

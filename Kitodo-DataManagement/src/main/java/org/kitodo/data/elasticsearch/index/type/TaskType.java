@@ -54,7 +54,6 @@ public class TaskType extends BaseType<Task> {
         jsonObjectBuilder.add(TaskTypeField.PROCESS_TITLE.getKey(), processTitle);
         jsonObjectBuilder.add(TaskTypeField.TEMPLATE_ID.getKey(), templateId);
         jsonObjectBuilder.add(TaskTypeField.TEMPLATE_TITLE.getKey(), templateTitle);
-        jsonObjectBuilder.add(TaskTypeField.USERS.getKey(), addObjectRelation(task.getUsers()));
         jsonObjectBuilder.add(TaskTypeField.USER_GROUPS.getKey(), addObjectRelation(task.getUserGroups()));
         return jsonObjectBuilder.build();
     }

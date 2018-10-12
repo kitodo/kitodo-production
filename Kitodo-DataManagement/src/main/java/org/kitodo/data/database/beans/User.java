@@ -80,9 +80,6 @@ public class User extends BaseIndexedBean {
             foreignKey = @ForeignKey(name = "FK_user_x_userGroup_userGroup_id")) })
     private List<UserGroup> userGroups;
 
-    @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST)
-    private List<Task> tasks;
-
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
     private List<Task> processingTasks;
 
@@ -107,7 +104,6 @@ public class User extends BaseIndexedBean {
     public User() {
         this.userGroups = new ArrayList<>();
         this.projects = new ArrayList<>();
-        this.tasks = new ArrayList<>();
         this.filters = new ArrayList<>();
         this.setLanguage("de");
     }
@@ -153,12 +149,6 @@ public class User extends BaseIndexedBean {
             this.clients = user.clients;
         } else {
             this.clients = new ArrayList<>();
-        }
-
-        if (user.tasks != null) {
-            this.tasks = user.tasks;
-        } else {
-            this.tasks = new ArrayList<>();
         }
 
         if (user.filters != null) {
@@ -267,14 +257,6 @@ public class User extends BaseIndexedBean {
 
     public void setUserGroups(List<UserGroup> userGroups) {
         this.userGroups = userGroups;
-    }
-
-    public List<Task> getTasks() {
-        return this.tasks;
-    }
-
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
     }
 
     public List<Task> getProcessingTasks() {

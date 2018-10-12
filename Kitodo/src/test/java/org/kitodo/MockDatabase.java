@@ -914,7 +914,6 @@ public class MockDatabase {
         firstTask.setProcessingStatusEnum(TaskStatus.OPEN);
         firstTask.setTemplate(firstTemplate);
         firstTemplate.getTasks().add(firstTask);
-        firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         firstUser.getProcessingTasks().add(firstTask);
         serviceManager.getTaskService().save(firstTask);
@@ -932,8 +931,6 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.OPEN);
         secondTask.setProcess(firstProcess);
-        secondTask.getUsers().add(blockedUser);
-        secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
@@ -948,7 +945,6 @@ public class MockDatabase {
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         thirdTask.setProcess(firstProcess);
-        thirdTask.getUsers().add(secondUser);
         serviceManager.getTaskService().save(thirdTask);
 
         Task fourthTask = new Task();
@@ -962,7 +958,6 @@ public class MockDatabase {
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(firstProcess);
-        fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
 
         Template secondTemplate = serviceManager.getTemplateService().getById(2);
@@ -977,7 +972,6 @@ public class MockDatabase {
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(secondUser);
         fifthTask.setTemplate(secondTemplate);
-        fifthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fifthTask);
 
         Task sixthTask = new Task();
@@ -1004,8 +998,6 @@ public class MockDatabase {
         seventhTask.setProcessingUser(blockedUser);
         seventhTask.setProcessingStatusEnum(TaskStatus.OPEN);
         seventhTask.setProcess(secondProcess);
-        seventhTask.getUsers().add(blockedUser);
-        seventhTask.getUsers().add(secondUser);
         seventhTask.getUserGroups().add(userGroup);
         seventhTask.setScriptName("scriptName");
         seventhTask.setScriptPath("../type/automatic/script/path");
@@ -1020,7 +1012,6 @@ public class MockDatabase {
         eightTask.setProcessingUser(firstUser);
         eightTask.setProcessingStatusEnum(TaskStatus.INWORK);
         eightTask.setProcess(secondProcess);
-        eightTask.setUsers(serviceManager.getUserService().getAll());
         eightTask.getUserGroups().add(userGroup);
         serviceManager.getTaskService().save(eightTask);
     }
@@ -1044,7 +1035,6 @@ public class MockDatabase {
         firstTask.setProcessingUser(firstUser);
         firstTask.setProcessingStatusEnum(TaskStatus.DONE);
         firstTask.setTemplate(template);
-        firstTask.setUsers(serviceManager.getUserService().getAll());
         firstTask.getUserGroups().add(userGroup);
         serviceManager.getTaskService().save(firstTask);
         serviceManager.getTemplateService().save(template);
@@ -1063,8 +1053,6 @@ public class MockDatabase {
         secondTask.setProcessingUser(blockedUser);
         secondTask.setProcessingStatusEnum(TaskStatus.DONE);
         secondTask.setTemplate(template);
-        secondTask.getUsers().add(blockedUser);
-        secondTask.getUsers().add(secondUser);
         secondTask.getUserGroups().add(userGroup);
         secondTask.setScriptName("scriptName");
         secondTask.setScriptPath("../type/automatic/script/path");
@@ -1079,7 +1067,6 @@ public class MockDatabase {
         thirdTask.setProcessingBegin(localDate.toDate());
         thirdTask.setProcessingStatusEnum(TaskStatus.INWORK);
         thirdTask.setTemplate(template);
-        thirdTask.getUsers().add(secondUser);
         serviceManager.getTaskService().save(thirdTask);
 
         Task fourthTask = new Task();
@@ -1093,14 +1080,10 @@ public class MockDatabase {
         fourthTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         fourthTask.setProcessingUser(secondUser);
         fourthTask.setTemplate(template);
-        fourthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fourthTask);
 
         secondUser.getProcessingTasks().add(fourthTask);
         blockedUser.getProcessingTasks().add(secondTask);
-        blockedUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(secondTask);
-        secondUser.getTasks().add(thirdTask);
         serviceManager.getUserService().save(blockedUser);
         serviceManager.getUserService().save(secondUser);
 
@@ -1120,7 +1103,6 @@ public class MockDatabase {
         fifthTask.setProcessingStatusEnum(TaskStatus.DONE);
         fifthTask.setProcessingUser(secondUser);
         fifthTask.setProcess(process);
-        fifthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(fifthTask);
 
         Task sixthTask = new Task();
@@ -1133,7 +1115,6 @@ public class MockDatabase {
         sixthTask.setProcessingStatusEnum(TaskStatus.INWORK);
         sixthTask.setProcessingUser(secondUser);
         sixthTask.setProcess(process);
-        sixthTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(sixthTask);
 
         Task seventhTask = new Task();
@@ -1147,7 +1128,6 @@ public class MockDatabase {
         seventhTask.setProcessingStatusEnum(TaskStatus.LOCKED);
         seventhTask.setProcessingUser(secondUser);
         seventhTask.setProcess(process);
-        seventhTask.setUsers(serviceManager.getUserService().getAll());
         serviceManager.getTaskService().save(seventhTask);
     }
 

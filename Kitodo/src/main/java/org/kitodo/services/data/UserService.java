@@ -180,18 +180,11 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
      */
     private void manageTasksDependenciesForIndex(User user) throws CustomResponseException, IOException {
         if (user.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : user.getTasks()) {
-                task.getUsers().remove(user);
-                serviceManager.getTaskService().saveToIndex(task, false);
-            }
             for (Task task : user.getProcessingTasks()) {
                 task.setProcessingUser(null);
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
         } else {
-            for (Task task : user.getTasks()) {
-                serviceManager.getTaskService().saveToIndex(task, false);
-            }
             for (Task task : user.getProcessingTasks()) {
                 serviceManager.getTaskService().saveToIndex(task, false);
             }
@@ -623,8 +616,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
             serviceManager.getProjectService()));
         userDTO.setClients(convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.CLIENTS.getKey(),
             serviceManager.getClientService()));
-        userDTO.setTasks(
-            convertRelatedJSONObjectToDTO(jsonObject, UserTypeField.TASKS.getKey(), serviceManager.getTaskService()));
         userDTO.setProcessingTasks(
                 convertRelatedJSONObjectToDTO(
                         jsonObject, UserTypeField.PROCESSING_TASKS.getKey(), serviceManager.getTaskService()));

@@ -44,22 +44,6 @@ public class GoobiScriptIT {
     }
 
     @Test
-    public void shouldExecuteAddUserScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
-
-        Task task = serviceManager.getTaskService().getById(3);
-        int amountOfUsers = task.getUsers().size();
-
-        String script = "action:addUser \"steptitle:Testing and Blocking\" username:kowal";
-        List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
-
-        task = serviceManager.getTaskService().getById(3);
-        assertEquals("User was not correctly added to task!", amountOfUsers + 1, task.getUsers().size());
-    }
-
-    @Test
     public void shouldExecuteAddUserGroupScript() throws Exception {
         GoobiScript goobiScript = new GoobiScript();
 
@@ -168,19 +152,6 @@ public class GoobiScriptIT {
 
         Task task = serviceManager.getTaskService().getById(2);
         assertTrue("Task property was not set!", task.isTypeCloseVerify());
-    }
-
-    @Test
-    public void shouldNotExecuteAddUserScript() throws Exception {
-        GoobiScript goobiScript = new GoobiScript();
-
-        String script = "action:addUser \"steptitle:Testing and Blocking\" username:";
-        List<Process> processes = new ArrayList<>();
-        processes.add(serviceManager.getProcessService().getById(1));
-        goobiScript.execute(processes, script);
-
-        Task task = serviceManager.getTaskService().getById(3);
-        assertEquals("User without login was added to task!", 1, task.getUsers().size());
     }
 
     @Test

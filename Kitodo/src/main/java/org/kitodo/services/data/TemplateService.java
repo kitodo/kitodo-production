@@ -344,7 +344,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return true;
         }
         for (Task task : tasks) {
-            if (taskService.getUserGroupsSize(task) == 0 && taskService.getUsersSize(task) == 0) {
+            if (taskService.getUserGroupsSize(task) == 0) {
                 return true;
             }
         }
@@ -364,7 +364,7 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
             return false;
         }
         for (TaskDTO task : tasks) {
-            if (task.getUserGroupsSize() == 0 && task.getUsersSize() == 0) {
+            if (task.getUserGroupsSize() == 0) {
                 return false;
             }
         }

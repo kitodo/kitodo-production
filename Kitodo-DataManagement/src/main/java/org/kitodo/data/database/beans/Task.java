@@ -114,16 +114,6 @@ public class Task extends BaseIndexedBean {
     private Process process;
 
     /**
-     * This field contains information about users, which are allowed to work on
-     * this task.
-     */
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "task_x_user", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_user_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_x_user_user_id")) })
-    private List<User> users;
-
-    /**
      * This field contains information about user's groups, which are allowed to
      * work on this task.
      */
@@ -163,7 +153,6 @@ public class Task extends BaseIndexedBean {
      */
     public Task() {
         this.title = "";
-        this.users = new ArrayList<>();
         this.userGroups = new ArrayList<>();
         this.priority = 0;
         this.ordering = 0;
@@ -193,9 +182,6 @@ public class Task extends BaseIndexedBean {
         this.homeDirectory = templateTask.getHomeDirectory();
         this.workflowId = templateTask.getWorkflowId();
         this.workflowCondition = templateTask.getWorkflowCondition();
-
-        // necessary to create new ArrayList in other case session problem!
-        this.users = new ArrayList<>(templateTask.getUsers());
 
         // necessary to create new ArrayList in other case session problem!
         this.userGroups = new ArrayList<>(templateTask.getUserGroups());
@@ -375,28 +361,6 @@ public class Task extends BaseIndexedBean {
      */
     public void setTemplate(Template template) {
         this.template = template;
-    }
-
-    /**
-     * Get list of users.
-     *
-     * @return list of User objects or empty list
-     */
-    public List<User> getUsers() {
-        if (this.users == null) {
-            this.users = new ArrayList<>();
-        }
-        return this.users;
-    }
-
-    /**
-     * Set list of users.
-     *
-     * @param users
-     *            as list
-     */
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 
     /**
