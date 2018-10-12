@@ -8,32 +8,32 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-package org.kitodo.util;
+
+package org.kitodo.forms;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 
-public class GeneratorSwitchTest {
+public class TemplateFormTest {
     @Test
-    public void getGeneratorSwitchesTest() {
+    public void testGettingGeneratableFolderSwitches() {
         Project projectWithoutSourceFolder = new Project();
         Folder folderInProjectWithoutSourceFolder = new Folder();
         folderInProjectWithoutSourceFolder.setPath("folderInProjectWithoutSourceFolder");
         folderInProjectWithoutSourceFolder.setImageScale(1.0);
         projectWithoutSourceFolder.getFolders().add(folderInProjectWithoutSourceFolder);
-        Collection<Project> projects = new ArrayList<>();
+        List<Project> projects = new ArrayList<>();
         projects.add(projectWithoutSourceFolder);
 
         Project project = new Project();
@@ -52,10 +52,16 @@ public class GeneratorSwitchTest {
         projectFolders.add(folderToBeGenerated);
         projects.add(project);
 
-        List<Folder> contentFolders = new ArrayList<>();
+        Template template = new Template();
+        template.setProjects(projects);
+        TemplateForm templateForm = new TemplateForm();
+        templateForm.setTemplate(template);
+        Task task = new Task();
+        task.setContentFolders(new ArrayList<>());
+        templateForm.setTask(task);
 
-        List<GeneratorSwitch> testOutcome = GeneratorSwitch.getGeneratorSwitches(projects.stream(), contentFolders);
-        List<String> switchesGenerated = testOutcome.parallelStream().map(λ -> λ.getLabel())
+        List<FolderProcessingSwitch> testOutcome = templateForm.getGeneratableFolderSwitches();
+        List<String> switchesGenerated = testOutcome.parallelStream().map(folderSwitch -> folderSwitch.getLabel())
                 .collect(Collectors.toList());
 
         assertThat(switchesGenerated, not(contains("folderInProjectWithoutSourceFolder")));
@@ -65,37 +71,27 @@ public class GeneratorSwitchTest {
     }
 
     @Test
-    public void getLabelTest() {
-        Folder folderToBeGenerated = new Folder();
-        folderToBeGenerated.setPath("folderToBeGenerated");
-        List<Folder> contentFolders = new ArrayList<>();
+    public void testGettingValidatableFolderSwitches() {
+        List<Project> projects = new ArrayList<>();
+        Project project = new Project();
+        List<Folder> projectFolders = project.getFolders();
+        Folder folderToBeValidated = new Folder();
+        folderToBeValidated.setPath("folderToBeValidated");
+        projectFolders.add(folderToBeValidated);
+        projects.add(project);
 
-        GeneratorSwitch generatorSwitch = new GeneratorSwitch(folderToBeGenerated, contentFolders);
+        Template template = new Template();
+        template.setProjects(projects);
+        TemplateForm templateForm = new TemplateForm();
+        templateForm.setTemplate(template);
+        Task task = new Task();
+        task.setValidationFolders(new ArrayList<>());
+        templateForm.setTask(task);
 
-        assertThat(generatorSwitch.getLabel(), is(equalTo(("folderToBeGenerated"))));
-    }
+        List<FolderProcessingSwitch> testOutcome = templateForm.getValidatableFolderSwitches();
+        List<String> switchesGenerated = testOutcome.parallelStream().map(folderSwitch -> folderSwitch.getLabel())
+                .collect(Collectors.toList());
 
-    @Test
-    public void isValueTest() {
-        Folder folder = new Folder();
-        List<Folder> contentFolders = new ArrayList<>();
-        GeneratorSwitch generatorSwitch = new GeneratorSwitch(folder, contentFolders);
-        assertThat(generatorSwitch.isValue(), is(equalTo((false))));
-        contentFolders.add(folder);
-        assertThat(generatorSwitch.isValue(), is(equalTo((true))));
-        contentFolders.remove(folder);
-        assertThat(generatorSwitch.isValue(), is(equalTo((false))));
-    }
-
-    @Test
-    public void setValueTest() {
-        Folder folder = new Folder();
-        List<Folder> contentFolders = new ArrayList<>();
-        GeneratorSwitch generatorSwitch = new GeneratorSwitch(folder, contentFolders);
-        assertThat(contentFolders, not(contains(folder)));
-        generatorSwitch.setValue(true);
-        assertThat(contentFolders, contains(folder));
-        generatorSwitch.setValue(false);
-        assertThat(contentFolders, not(contains(folder)));
+        assertThat(switchesGenerated, contains("folderToBeValidated"));
     }
 }

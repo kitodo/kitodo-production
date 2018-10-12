@@ -18,7 +18,7 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <p:panelGrid columns="2" layout="grid">
         <p:row>
-            <p:repeat var="generator" value="#{TemplateForm.generatorSwitches}">
+            <p:repeat var="generator" value="#{TemplateForm.generatableFolderSwitches}">
                 <div>
                     <p:outputLabel for="generator">
                         <h:outputFormat value="#{msgs.generator}">
@@ -26,6 +26,18 @@
                         </h:outputFormat>
                     </p:outputLabel>
                     <p:selectBooleanCheckbox id="generator" value="#{generator.value}" class="input">
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectBooleanCheckbox>
+                </div>
+            </p:repeat>
+            <p:repeat var="validators" value="#{TemplateForm.validatableFolderSwitches}">
+                <div>
+                    <p:outputLabel for="validator">
+                        <h:outputFormat value="#{msgs.validator}">
+                            <f:param value="#{validator.label}"/>
+                        </h:outputFormat>
+                    </p:outputLabel>
+                    <p:selectBooleanCheckbox id="validator" value="#{validator.value}" class="input">
                         <p:ajax event="change" oncomplete="toggleSave()"/>
                     </p:selectBooleanCheckbox>
                 </div>
