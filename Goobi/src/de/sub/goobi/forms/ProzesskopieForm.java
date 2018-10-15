@@ -14,6 +14,7 @@ package de.sub.goobi.forms;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,9 +37,11 @@ import javax.naming.NamingException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Logger;
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.goobi.production.cli.helper.WikiFieldHelper;
 import org.goobi.production.constants.FileNames;
 import org.goobi.production.constants.Parameters;
@@ -73,6 +76,7 @@ import de.sub.goobi.helper.BeanHelper;
 import de.sub.goobi.helper.Helper;
 import de.sub.goobi.helper.ScriptThreadWithoutHibernate;
 import de.sub.goobi.helper.UghHelper;
+import de.sub.goobi.helper.XMLUtils;
 import de.sub.goobi.helper.enums.StepEditType;
 import de.sub.goobi.helper.enums.StepStatus;
 import de.sub.goobi.helper.exceptions.DAOException;
@@ -227,6 +231,9 @@ public class ProzesskopieForm {
     private List<String> digitalCollections;
     private String docType;
     private Integer guessedImages = 0;
+    private String source = "opac";
+    private UploadedFile uploadedFile;
+
 
     /**
      * The field hitlist holds some reference to the hitlist retrieved from a
@@ -2116,5 +2123,62 @@ public class ProzesskopieForm {
      */
     public Fileformat getFileformat() {
         return myRdf;
+    }
+
+    /**
+     * Get source.
+     * @return source
+     */
+    public String getSource() {
+        return this.source;
+    }
+
+    /**
+     * Set source.
+     * @param source
+     *          new source
+     */
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    /**
+     * Get uploaded file.
+     * @return uploaded file
+     */
+    public UploadedFile getUploadedFile() {
+        return this.uploadedFile;
+    }
+
+    /**
+     * Set uploaded file.
+     * @param uploadedFile
+     *          new uploaded file
+     */
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
+    }
+
+    /**
+     * Upload a file via file upload dialog and validate that it contains valid MODS XML.
+     */
+    public void uploadFile() {
+        String xsdPath = new Helper().getGoobiConfigDirectory() + "mods.xsd";
+        if (this.uploadedFile != null) {
+            try (InputStream inputStream = this.uploadedFile.getInputStream()) {
+                String xmlString = IOUtils.toString(inputStream);
+                if (XMLUtils.validateXML(xmlString, xsdPath)) {
+                    Helper.setMeldung("Successfully validated given XML file '" + this.uploadedFile.getName() + "'!");
+                    //TODO: handle XML (e.g. convert to internal format)
+                } else {
+                    Helper.setFehlerMeldung("ERROR: given file '" + this.uploadedFile.getName() + "' does not contain valid MODS XML!");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.err.println("Uploaded file is null!");
+        }
     }
 }

@@ -12,10 +12,13 @@
 package de.sub.goobi.helper;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.NoSuchElementException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -24,6 +27,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -127,6 +134,32 @@ public class XMLUtils {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
             throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Validates the XML contained in the given String 'xmlString' against the
+     * schema definition file with the given filepath 'xsdFilePath' and returns
+     * whether the validation was successful or not, i.e. whether the XML in
+     * 'xmlString' is valid or not.
+     *
+     * @param xmlString
+     *              String containing the XML document that is validated
+     * @param xsdFilePath
+     *              filepath of the schema definition file against which the XML will be validated
+     * @return whether the given XML is valid according to the referenced schema definition file
+     * @throws IOException
+     *              if XML schema definition file cannot be found
+     */
+    public static boolean validateXML(String xmlString, String xsdFilePath) throws IOException {
+        try (InputStream xsdFileStream = new FileInputStream(xsdFilePath)) {
+            SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            Schema schema = schemaFactory.newSchema(new StreamSource(xsdFileStream));
+            Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(new StringReader(xmlString)));
+            return true;
+        } catch (SAXException e) {
+            return false;
         }
     }
 
