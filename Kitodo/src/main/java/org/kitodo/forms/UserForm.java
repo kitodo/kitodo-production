@@ -215,9 +215,9 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Add user to project.
+     * Add client to user.
      *
-     * @return empty String or null
+     * @return null
      */
     public String addToClient() {
         int clientId = 0;
