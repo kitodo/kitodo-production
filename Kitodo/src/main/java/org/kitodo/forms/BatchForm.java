@@ -85,10 +85,6 @@ public class BatchForm extends BaseForm {
         return this.currentProcesses;
     }
 
-    public void setCurrentProcesses(List<Process> currentProcesses) {
-        this.currentProcesses = currentProcesses;
-    }
-
     /**
      * Load Batch data.
      */
@@ -314,7 +310,7 @@ public class BatchForm extends BaseForm {
         }
         try {
             for (Batch selectedBatch : this.selectedBatches) {
-                serviceManager.getBatchService().addAll(selectedBatch, this.selectedProcesses);
+                selectedBatch.getProcesses().addAll(this.selectedProcesses);
                 serviceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     for (Process p : this.selectedProcesses) {
@@ -346,7 +342,7 @@ public class BatchForm extends BaseForm {
         }
 
         for (Batch selectedBatch : this.selectedBatches) {
-            serviceManager.getBatchService().removeAll(selectedBatch, this.selectedProcesses);
+            selectedBatch.getProcesses().removeAll(this.selectedProcesses);
             serviceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 for (Process p : this.selectedProcesses) {
