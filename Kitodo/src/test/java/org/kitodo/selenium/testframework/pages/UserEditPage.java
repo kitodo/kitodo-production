@@ -17,8 +17,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
@@ -114,51 +112,33 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return Pages.getUsersPage();
     }
 
-    /**
-     * Clicks on the tab indicated by given index (starting with 0 for the first
-     * tab).
-     *
-     * @return The users page.
-     */
-    public UserEditPage switchToTabByIndex(int index) throws Exception {
-        return switchToTabByIndex(index, userEditTabView);
-    }
-
-    public UserEditPage addUserToUserGroup(String userGroupTitle) throws Exception {
+    public void addUserToUserGroup(String userGroupTitle) throws Exception {
         switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
         addUserToGroupButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectUserGroupTable);
-        return addRow(tableRows, userGroupTitle, addToUserGroupDialog);
+        addRow(tableRows, userGroupTitle, addToUserGroupDialog);
     }
 
-    public UserEditPage addUserToClient(String clientName) throws Exception {
+    public void addUserToClient(String clientName) throws Exception {
         switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
         addUserToClientButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
-        return addRow(tableRows, clientName, addToClientDialog);
+        addRow(tableRows, clientName, addToClientDialog);
     }
 
     public UserEditPage addUserToProject(String projectName) throws Exception {
         switchToTabByIndex(TabIndex.USER_PROJECT_LIST.getIndex());
         addUserToProjectButton.click();
         List<WebElement> tableRows = Browser.getRowsOfTable(selectProjectTable);
-        return addRow(tableRows, projectName, addToProjectDialog);
+        addRow(tableRows, projectName, addToProjectDialog);
+        return this;
     }
 
-    private void clickLinkOfTableRow(WebElement tableRow) {
-        WebElement link = tableRow.findElement(By.tagName("a"));
-        link.click();
-    }
-
-
-    private UserEditPage addRow(List<WebElement> tableRows, String title, WebElement dialog) {
-        for (WebElement tableRow : tableRows) {
-            if (Browser.getCellDataByRow(tableRow, 0).equals(title)) {
-                clickLinkOfTableRow(tableRow);
-                Browser.closeDialog(dialog);
-                return this;
-            }
-        }
-        throw new NoSuchElementException("No row for given value found: " + title);
+    /**
+     * Clicks on the tab indicated by given index (starting with 0 for the first
+     * tab).
+     */
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, userEditTabView);
     }
 }

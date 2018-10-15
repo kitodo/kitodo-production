@@ -465,14 +465,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             logger.error(e.getMessage(), e);
         }
 
-        BoolQueryBuilder userGroupsOrUsers = new BoolQueryBuilder();
-
         // only tasks assigned to the user groups the current user is member of
         List<UserGroupDTO> userUserGroups = userDTO.getUserGroups();
-        userGroupsOrUsers.should(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
-        // only task where the user is assigned to
-        userGroupsOrUsers.should(createSimpleQuery("users.id", user.getId(), true));
-        taskQuery.must(userGroupsOrUsers);
+        taskQuery.must(createSetQuery("userGroups.id", collectIds(userUserGroups), true));
 
         return taskQuery;
     }

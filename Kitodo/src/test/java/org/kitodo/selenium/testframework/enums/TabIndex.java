@@ -25,6 +25,10 @@ public enum TabIndex {
     USER_PROJECT_LIST(2),
     USER_CLIENT_LIST(3),
 
+    // user group edit page
+    USER_GROUP_DETAILS(0),
+    USER_GROUP_CLIENT_LIST(1),
+
     // projects page
     PROJECTS(0),
     TEMPLATES(1),

@@ -36,12 +36,12 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UserGroupEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 import org.kitodo.services.ServiceManager;
@@ -54,12 +54,14 @@ public class AddingST extends BaseTestSelenium {
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
     private static UserGroupEditPage userGroupEditPage;
+    private static UserEditPage userEditPage;
 
     @BeforeClass
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
         projectsPage = Pages.getProjectsPage();
         usersPage = Pages.getUsersPage();
+        userEditPage = Pages.getUserEditPage();
         userGroupEditPage = Pages.getUserGroupEditPage();
     }
 
@@ -179,14 +181,14 @@ public class AddingST extends BaseTestSelenium {
         User user = UserGenerator.generateUser();
         usersPage.createNewUser();
         assertEquals("Header for create new user is incorrect", "Neuen Benutzer anlegen",
-            Pages.getUserEditPage().getHeaderText());
+                userEditPage.getHeaderText());
 
-        Pages.getUserEditPage().insertUserData(user).switchToTabByIndex(TabIndex.USER_USER_GROUPS.getIndex());
-        Pages.getUserEditPage().addUserToUserGroup(serviceManager.getUserGroupService().getById(2).getTitle());
-        Pages.getUserEditPage().switchToTabByIndex(TabIndex.USER_CLIENT_LIST.getIndex());
-        Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(1).getName());
-        Pages.getUserEditPage().addUserToClient(serviceManager.getClientService().getById(2).getName()).save();
-        assertTrue("Redirection after save was not successful", Pages.getUsersPage().isAt());
+        userEditPage.insertUserData(user);
+        userEditPage.addUserToUserGroup(serviceManager.getUserGroupService().getById(2).getTitle());
+        userEditPage.addUserToClient(serviceManager.getClientService().getById(1).getName());
+        userEditPage.addUserToClient(serviceManager.getClientService().getById(2).getName());
+        userEditPage.save();
+        assertTrue("Redirection after save was not successful", usersPage.isAt());
 
         Pages.getTopNavigation().logout();
         Pages.getLoginPage().performLogin(user);
@@ -238,6 +240,8 @@ public class AddingST extends BaseTestSelenium {
 
         userGroupEditPage.setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
                 .assignAllClientAuthorities().assignAllProjectAuthorities();
+        userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(1).getName());
+        userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(2).getName());
         userGroupEditPage.save();
         assertTrue("Redirection after save was not successful", usersPage.isAt());
         List<String> userGroupTitles = usersPage.getUserGroupTitles();

@@ -20,7 +20,7 @@
             <!-- edit dialog -->
             <p:dialog widgetVar="addClientDialog" id="addClientDialog" header="#{msgs.clientAdd}" width="700px"
                       modal="true" dynamic="true">
-                <h:form id="userClientForm">
+                <h:form id="userGroupClientForm">
                     <p:dataTable var="client" id="selectClientTable" value="#{ClientForm.lazyDTOModel}" lazy="true"
                                  paginator="true" rows="#{LoginForm.myBenutzer.tableSize}"
                                  paginatorPosition="bottom">

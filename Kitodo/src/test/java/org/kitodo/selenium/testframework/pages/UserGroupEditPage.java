@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -22,6 +23,10 @@ import org.openqa.selenium.support.FindBy;
 public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
 
     private static final String USER_GROUP_TAB_VIEW = EDIT_FORM + ":usergroupTabView";
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_GROUP_TAB_VIEW)
+    private WebElement userGroupTabView;
 
     @SuppressWarnings("unused")
     @FindBy(id = USER_GROUP_TAB_VIEW + ":titleInput")
@@ -46,6 +51,18 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
     @SuppressWarnings("unused")
     @FindBy(id = USER_GROUP_TAB_VIEW + ":projectSelect")
     private WebElement projectSelector;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = USER_GROUP_TAB_VIEW + ":addClientButton")
+    private WebElement addUserGroupToClientButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "userGroupClientForm:selectClientTable_data")
+    private WebElement selectClientTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "addClientDialog")
+    private WebElement addToClientDialog;
 
     public UserGroupEditPage() {
         super("pages/usergroupEdit.jsf");
@@ -154,4 +171,18 @@ public class UserGroupEditPage extends EditPage<UserGroupEditPage> {
         return titleInput.getAttribute("value");
     }
 
+    public void addUserGroupToClient(String clientName) throws Exception {
+        switchToTabByIndex(TabIndex.USER_GROUP_CLIENT_LIST.getIndex());
+        addUserGroupToClientButton.click();
+        List<WebElement> tableRows = Browser.getRowsOfTable(selectClientTable);
+        addRow(tableRows, clientName, addToClientDialog);
+    }
+
+    /**
+     * Clicks on the tab indicated by given index (starting with 0 for the first
+     * tab).
+     */
+    private void switchToTabByIndex(int index) throws Exception {
+        switchToTabByIndex(index, userGroupTabView);
+    }
 }

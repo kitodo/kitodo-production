@@ -956,6 +956,7 @@ public class MockDatabase {
         localDate = new LocalDate(2017, 1, 29);
         fourthTask.setProcessingBegin(localDate.toDate());
         fourthTask.setProcessingStatusEnum(TaskStatus.INWORK);
+        fourthTask.getUserGroups().add(userGroup);
         fourthTask.setProcessingUser(secondUser);
         fourthTask.setProcess(firstProcess);
         serviceManager.getTaskService().save(fourthTask);
