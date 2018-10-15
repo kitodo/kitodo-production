@@ -438,25 +438,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     /**
-     * Find active users by name or surname.
-     *
-     * @param active
-     *            true or false
-     * @param name
-     *            name or surname
-     * @return list of JSONObjects
-     */
-    List<JsonObject> findByActiveAndName(boolean active, String name) throws DataException {
-        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-        boolQuery.must(createSimpleQuery(UserTypeField.ACTIVE.getKey(), active, true));
-        BoolQueryBuilder nestedBoolQuery = new BoolQueryBuilder();
-        nestedBoolQuery.should(createSimpleWildcardQuery(UserTypeField.NAME.getKey(), name));
-        nestedBoolQuery.should(createSimpleWildcardQuery(UserTypeField.SURNAME.getKey(), name));
-        boolQuery.must(nestedBoolQuery);
-        return searcher.findDocuments(boolQuery.toString(), sortByLogin());
-    }
-
-    /**
      * Find users with exact location.
      *
      * @param location
@@ -561,18 +542,6 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     public List<UserDTO> findAllActiveUsersWithRelations() throws DataException {
         List<JsonObject> jsonObjects = findByActive(true);
         return convertJSONObjectsToDTOs(jsonObjects, false);
-    }
-
-    /**
-     * Find filtered users by name.
-     *
-     * @param name
-     *            the name filter
-     * @return a list of filtered users
-     */
-    public List<UserDTO> findActiveUsersByName(String name) throws DataException {
-        List<JsonObject> jsonObjects = findByActiveAndName(true, name);
-        return convertJSONObjectsToDTOs(jsonObjects, true);
     }
 
     private String sortByLogin() {

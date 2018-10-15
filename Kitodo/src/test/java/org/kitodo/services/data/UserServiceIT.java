@@ -432,21 +432,6 @@ public class UserServiceIT {
     }
 
     @Test
-    public void shouldFindActiveUsersByName() {
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 1, userService.findActiveUsersByName("Jan").size()));
-
-        await().untilAsserted(() -> assertEquals(2, userService.findActiveUsersByName("owa").size()));
-
-        Integer expected = 1;
-        await().untilAsserted(() -> assertEquals("Id of first user is incorrect!", expected,
-            userService.findActiveUsersByName("owa").get(0).getId()));
-
-        await().untilAsserted(
-            () -> assertEquals("Size of users is incorrect!", 2, userService.findActiveUsersByName("owa").size()));
-    }
-
-    @Test
     public void shouldGetAuthorityOfUser() throws Exception {
         Authority authority = userService.getByLogin("kowal").getUserGroups().get(0).getAuthorities().get(1);
         assertEquals("Authority title is incorrect!", "viewAllClients_globalAssignable", authority.getTitle());

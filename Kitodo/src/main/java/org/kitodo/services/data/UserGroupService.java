@@ -228,18 +228,6 @@ public class UserGroupService extends TitleSearchService<UserGroup, UserGroupDTO
     }
 
     /**
-     * Find user groups with authorization id.
-     *
-     * @param authorizationId
-     *            of the searched user group
-     * @return list of JSON objects
-     */
-    List<JsonObject> findByAuthorizationId(Integer authorizationId) throws DataException {
-        QueryBuilder query = createSimpleQuery("authorities.id", authorizationId, true);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find user groups by id of user.
      *
      * @param id
