@@ -128,7 +128,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            subQuery.should(createSimpleQuery("users.id", user.getId(), true));
             for (UserGroup userGroup : user.getUserGroups()) {
                 subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
             }
