@@ -35,11 +35,9 @@
                         <h:outputText value="#{usergroup.title}"/>
                     </p:column>
                     <p:column headerText="#{msgs.actions}">
-                        <p:commandLink id="addUsergroup"
-                                       action="#{ProcessForm.addUserGroup}"
-                                       oncomplete="toggleSave()"
-                                       update="editForm:tabs:usergroupTable">
-                            <h:graphicImage alt="add task to user group" value="/pages/images/buttons/addUser.gif"/>
+                        <p:commandLink id="addUsergroup" action="#{ProcessForm.addUserGroup}"
+                                       oncomplete="toggleSave()" update="editForm:tabs:usergroupTable">
+                            <i class="fa fa-user-plus"/>
                             <f:param name="ID" value="#{usergroup.id}"/>
                         </p:commandLink>
                     </p:column>
