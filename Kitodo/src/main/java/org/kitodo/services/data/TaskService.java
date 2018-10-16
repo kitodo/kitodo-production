@@ -14,6 +14,7 @@ package org.kitodo.services.data;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,9 +111,12 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      * @return query to retrieve tasks for which the user eligible.
      */
     private BoolQueryBuilder createUserTaskQuery(User user) {
+        Set<Integer> processingStatuses = new HashSet<>();
+        processingStatuses.add(TaskStatus.OPEN.getValue());
+        processingStatuses.add(TaskStatus.INWORK.getValue());
+
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.LOCKED.getValue(), false));
-        query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), TaskStatus.DONE.getValue(), false));
+        query.must(getQueryForProcessingStatus(processingStatuses));
         query.must(createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), 0, true));
 
         if (onlyOpenTasks) {
@@ -301,7 +305,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            set of processing statuses as Integer
      * @return query as QueryBuilder
      */
-    public QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
+    private QueryBuilder getQueryForProcessingStatus(Set<Integer> processingStatus) {
         return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
     }
 
@@ -312,20 +316,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            of process
      * @return list of JSON objects with tasks for specific process id
      */
-    public List<JsonObject> findByProcessId(Integer id) throws DataException {
+    List<JsonObject> findByProcessId(Integer id) throws DataException {
         QueryBuilder query = createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), id, true);
         return searcher.findDocuments(query.toString());
-    }
-
-    /**
-     * Get query for process ids.
-     *
-     * @param processIds
-     *            set of process ids as Integer
-     * @return query as QueryBuilder
-     */
-    public QueryBuilder getQueryProcessIds(Set<Integer> processIds) {
-        return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), processIds, true);
     }
 
     /**
@@ -356,7 +349,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as Integer
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
+    private List<JsonObject> findByProcessingStatusUserAndPriority(TaskStatus taskStatus, Integer processingUser,
             Integer priority, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
@@ -376,7 +369,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+    private List<JsonObject> findByProcessingStatusUserAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
             boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
@@ -398,7 +391,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
      *            as boolean
      * @return list of task as JSONObject objects
      */
-    List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
+    private List<JsonObject> findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus taskStatus, Integer processingUser,
             Integer priority, boolean typeAutomatic, String sort) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), taskStatus.getValue(), true));
@@ -456,7 +449,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     }
 
     private void convertRelatedJSONObjects(JsonObject jsonObject, TaskDTO taskDTO) throws DataException {
-        Integer processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
+        int processingUser = TaskTypeField.PROCESSING_USER.getIntValue(jsonObject);
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
@@ -770,7 +763,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusAndUser(TaskStatus.INWORK, user.getId(), sort);
         return convertJSONObjectsToDTOs(results, false);
     }
-
     /**
      * Find open tasks without correction for current user sorted according to
      * sort query.
@@ -784,7 +776,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         List<JsonObject> results = findByProcessingStatusUserAndPriority(TaskStatus.INWORK, user.getId(), 10, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
-
     /**
      * Find open not automatic tasks for current user sorted according to sort
      * query.
@@ -796,10 +787,9 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserAndTypeAutomatic(TaskStatus.INWORK, user.getId(), false,
-            sort);
+                sort);
         return convertJSONObjectsToDTOs(results, false);
     }
-
     /**
      * Find open not automatic tasks without correction for current user sorted
      * according to sort query.
@@ -811,7 +801,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
     public List<TaskDTO> findOpenNotAutomaticTasksWithoutCorrectionForCurrentUser(String sort) throws DataException {
         User user = serviceManager.getUserService().getAuthenticatedUser();
         List<JsonObject> results = findByProcessingStatusUserPriorityAndTypeAutomatic(TaskStatus.INWORK, user.getId(),
-            10, false, sort);
+                10, false, sort);
         return convertJSONObjectsToDTOs(results, false);
     }
 
