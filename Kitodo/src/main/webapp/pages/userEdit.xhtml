@@ -164,7 +164,7 @@
                     <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">
                         <p:commandLink id="deleteFromUserGroup"
                                        rendered="#{isEditMode || isCreateMode}"
-                                       action="#{UserForm.deleteFromGroup}"
+                                       action="#{UserForm.deleteFromUserGroup}"
                                        title="#{msgs.ausGruppeLoeschen}"
                                        immediate="true"
                                        oncomplete="toggleSave()"

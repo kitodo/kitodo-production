@@ -14,7 +14,6 @@ package org.kitodo.forms;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -153,16 +152,14 @@ public class UserForm extends BaseForm {
      *
      * @return empty String
      */
-    public String deleteFromGroup() {
+    public String deleteFromUserGroup() {
         try {
             int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            List<UserGroup> neu = new ArrayList<>();
             for (UserGroup userGroup : this.userObject.getUserGroups()) {
-                if (userGroup.getId() != userGroupId) {
-                    neu.add(userGroup);
+                if (userGroup.getId().equals(userGroupId)) {
+                    this.userObject.getUserGroups().remove(userGroup);
                 }
             }
-            this.userObject.setUserGroups(neu);
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -174,17 +171,15 @@ public class UserForm extends BaseForm {
      *
      * @return empty String or null
      */
-    public String addToGroup() {
+    public String addToUserGroup() {
         int userGroupId = 0;
         try {
             userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
             UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
-            for (UserGroup b : this.userObject.getUserGroups()) {
-                if (b.equals(userGroup)) {
-                    return null;
-                }
+
+            if (!this.userObject.getUserGroups().contains(userGroup)) {
+                this.userObject.getUserGroups().add(userGroup);
             }
-            this.userObject.getUserGroups().add(userGroup);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
@@ -200,14 +195,13 @@ public class UserForm extends BaseForm {
      * @return empty String
      */
     public String deleteFromClient() {
-        int clientId = 0;
         try {
-            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Client client = serviceManager.getClientService().getById(clientId);
-            this.userObject.getClients().remove(client);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
+            int clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Client client : this.userObject.getClients()) {
+                if (client.getId().equals(clientId)) {
+                    this.userObject.getClients().remove(client);
+                }
+            }
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -224,12 +218,10 @@ public class UserForm extends BaseForm {
         try {
             clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Client client = serviceManager.getClientService().getById(clientId);
-            for (Client assignedClient : this.userObject.getClients()) {
-                if (assignedClient.equals(client)) {
-                    return null;
-                }
+
+            if (!this.userObject.getClients().contains(client)) {
+                this.userObject.getClients().add(client);
             }
-            this.userObject.getClients().add(client);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
@@ -245,14 +237,13 @@ public class UserForm extends BaseForm {
      * @return empty String
      */
     public String deleteFromProject() {
-        int projectId = 0;
         try {
-            projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
-            Project project = serviceManager.getProjectService().getById(projectId);
-            this.userObject.getProjects().remove(project);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
+            int projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (Project project : this.userObject.getProjects()) {
+                if (project.getId().equals(projectId)) {
+                    this.userObject.getProjects().remove(project);
+                }
+            }
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -269,12 +260,10 @@ public class UserForm extends BaseForm {
         try {
             projectId = Integer.parseInt(Helper.getRequestParameter("ID"));
             Project project = serviceManager.getProjectService().getById(projectId);
-            for (Project p : this.userObject.getProjects()) {
-                if (p.equals(project)) {
-                    return null;
-                }
+
+            if (!this.userObject.getProjects().contains(project)) {
+                this.userObject.getProjects().add(project);
             }
-            this.userObject.getProjects().add(project);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DATABASE_READING,
                 new Object[] {ObjectType.PROJECT.getTranslationSingular(), projectId }, logger, e);
