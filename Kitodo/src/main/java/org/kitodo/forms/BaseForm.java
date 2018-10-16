@@ -23,7 +23,7 @@ public class BaseForm implements Serializable {
 
     private static final long serialVersionUID = 2950419497162710096L;
     protected transient ServiceManager serviceManager = new ServiceManager();
-    String zurueck = null;
+    String stayOnCurrentPage = null;
     protected String filter = "";
     protected User user;
     protected LazyDTOModel lazyDTOModel = null;
@@ -66,12 +66,24 @@ public class BaseForm implements Serializable {
         this.lazyDTOModel = lazyDTOModel;
     }
 
-    public String getZurueck() {
-        return this.zurueck;
+    /**
+     * Get overlay for return null.
+     * 
+     * @return to current page
+     */
+    public String getStayOnCurrentPage() {
+        return this.stayOnCurrentPage;
     }
 
-    public void setZurueck(String zurueck) {
-        this.zurueck = zurueck;
+    /**
+     * Set overlay for return null.
+     * 
+     * @param stayOnCurrentPage
+     *            overlay for return null which ensures staying on the same
+     *            page where it was called
+     */
+    public void setStayOnCurrentPage(String stayOnCurrentPage) {
+        this.stayOnCurrentPage = stayOnCurrentPage;
     }
 
     /**
@@ -163,7 +175,8 @@ public class BaseForm implements Serializable {
     /**
      * Set boolean to disable save button.
      *
-     * @param saveDisabled true or false
+     * @param saveDisabled
+     *            true or false
      */
     public void setSaveDisabled(boolean saveDisabled) {
         this.saveDisabled = saveDisabled;

@@ -126,26 +126,6 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Add UserGroup.
-     *
-     * @return empty String
-     */
-    public String addUserGroup() {
-        addUserGroup(this.task);
-        return null;
-    }
-
-    /**
-     * Remove UserGroup.
-     *
-     * @return empty String
-     */
-    public String deleteUserGroup() {
-        deleteUserGroup(this.task);
-        return null;
-    }
-
-    /**
      * Duplicate the selected template.
      *
      * @param itemId
@@ -161,7 +141,7 @@ public class TemplateForm extends TemplateBaseForm {
             return templateEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -174,7 +154,7 @@ public class TemplateForm extends TemplateBaseForm {
         if (this.template != null && this.template.getTitle() != null) {
             if (!this.template.getTitle().equals(this.title) && this.title != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return this.stayOnCurrentPage;
             }
 
             try {
@@ -184,7 +164,7 @@ public class TemplateForm extends TemplateBaseForm {
                 }
             } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getId() }, logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
 
             try {
@@ -192,11 +172,11 @@ public class TemplateForm extends TemplateBaseForm {
             } catch (DataException | RuntimeException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
         } else {
             Helper.setErrorMessage("titleEmpty");
-            return null;
+            return this.stayOnCurrentPage;
         }
         return templateListPath;
     }

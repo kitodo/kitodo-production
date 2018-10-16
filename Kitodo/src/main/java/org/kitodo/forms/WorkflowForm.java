@@ -107,7 +107,7 @@ public class WorkflowForm extends BaseForm {
             saveWorkflow();
             return workflowListPath;
         } else {
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -270,13 +270,13 @@ public class WorkflowForm extends BaseForm {
                 saveFile(xmlDiagramCopyURI, this.xmlDiagram);
             } catch (IOException e) {
                 Helper.setErrorMessage("unableToDuplicateWorkflow", logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
             return workflowEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
                 logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 

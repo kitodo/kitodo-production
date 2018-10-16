@@ -122,7 +122,7 @@ public class CurrentTaskForm extends BaseForm {
     public String schrittDurchBenutzerUebernehmen() {
         if (this.currentTask.getProcessingStatusEnum() != TaskStatus.OPEN) {
             Helper.setErrorMessage("stepInWorkError");
-            return null;
+            return this.stayOnCurrentPage;
         } else {
             setCurrentTask(serviceManager.getWorkflowControllerService().assignTaskToUser(this.currentTask));
             try {
@@ -162,7 +162,7 @@ public class CurrentTaskForm extends BaseForm {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
-                return null;
+                return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
                 return schrittDurchBenutzerUebernehmen();
             } else {
@@ -175,7 +175,7 @@ public class CurrentTaskForm extends BaseForm {
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -235,7 +235,7 @@ public class CurrentTaskForm extends BaseForm {
             Integer batchId = batches.get(0).getId();
             List<Task> currentTasksOfBatch = serviceManager.getTaskService().getCurrentTasksOfBatch(taskTitle, batchId);
             if (currentTasksOfBatch.isEmpty()) {
-                return null;
+                return this.stayOnCurrentPage;
             } else if (currentTasksOfBatch.size() == 1) {
                 return taskEditPath + "&id=" + getTaskIdForPath();
             } else {
@@ -244,7 +244,7 @@ public class CurrentTaskForm extends BaseForm {
             }
         } else {
             Helper.setErrorMessage("multipleBatchesAssigned");
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -283,7 +283,7 @@ public class CurrentTaskForm extends BaseForm {
         this.currentTask.getProcess().setBlockedUser(null);
         this.currentTask.getProcess().setBlockedMinutes(0);
         this.currentTask.getProcess().setBlockedSeconds(0);
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -378,7 +378,7 @@ public class CurrentTaskForm extends BaseForm {
 
         this.myDav.removeAllFromHome(geprueft, URI.create(doneDirectoryName));
         Helper.setMessage("removed " + geprueft.size() + " directories from user home:", doneDirectoryName);
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -390,7 +390,7 @@ public class CurrentTaskForm extends BaseForm {
         download();
         // calcHomeImages();
         Helper.setMessage("Created directories in user home");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -402,7 +402,7 @@ public class CurrentTaskForm extends BaseForm {
         download();
         // calcHomeImages();
         Helper.setMessage("Created directories in user home");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     @SuppressWarnings("unchecked")

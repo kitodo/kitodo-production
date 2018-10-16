@@ -92,12 +92,12 @@ public class UserForm extends BaseForm {
         String login = this.userObject.getLogin();
 
         if (!isLoginValid(login)) {
-            return null;
+            return this.stayOnCurrentPage;
         }
 
         if (isMissingClient()) {
             Helper.setErrorMessage("errorMissingClient");
-            return null;
+            return this.stayOnCurrentPage;
         }
 
         try {
@@ -109,11 +109,11 @@ public class UserForm extends BaseForm {
                 return userListPath;
             } else {
                 Helper.setErrorMessage("loginInUse");
-                return null;
+                return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -166,7 +166,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -191,7 +191,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -211,7 +211,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -236,7 +236,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -256,7 +256,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -281,7 +281,7 @@ public class UserForm extends BaseForm {
         } catch (NumberFormatException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /*

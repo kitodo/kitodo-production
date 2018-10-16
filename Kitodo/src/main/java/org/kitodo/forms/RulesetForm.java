@@ -87,18 +87,18 @@ public class RulesetForm extends BaseForm {
             if (hasValidRulesetFilePath(this.ruleset, ConfigCore.getParameter(ParameterCore.DIR_RULESETS))) {
                 if (existsRulesetWithSameName()) {
                     Helper.setErrorMessage("rulesetTitleDuplicated");
-                    return null;
+                    return this.stayOnCurrentPage;
                 }
                 serviceManager.getRulesetService().save(this.ruleset);
                 return rulesetListPath;
             } else {
                 Helper.setErrorMessage("rulesetNotFound");
-                return null;
+                return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                 e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 

@@ -160,7 +160,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.process != null && this.process.getTitle() != null) {
             if (!this.process.getTitle().equals(this.newProcessTitle) && this.newProcessTitle != null
                     && !renameAfterProcessTitleChanged()) {
-                return null;
+                return this.stayOnCurrentPage;
             }
 
             try {
@@ -174,7 +174,7 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("titleEmpty");
         }
         reload();
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -234,7 +234,7 @@ public class ProcessForm extends TemplateBaseForm {
         }
 
         Helper.setMessage("Content deleted");
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     private boolean renameAfterProcessTitleChanged() {
@@ -473,7 +473,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String deleteUserGroup() {
         deleteUserGroup(this.task);
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -483,7 +483,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String addUserGroup() {
         addUserGroup(this.task);
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**

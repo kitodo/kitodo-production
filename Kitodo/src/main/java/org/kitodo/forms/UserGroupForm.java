@@ -82,7 +82,7 @@ public class UserGroupForm extends BaseForm {
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER_GROUP.getTranslationSingular() }, logger,
                 e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
