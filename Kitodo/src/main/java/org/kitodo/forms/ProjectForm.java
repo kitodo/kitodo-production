@@ -204,28 +204,6 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Saves current project if title is not empty.
-     *
-     * @return String
-     */
-    public String apply() {
-        // call this to make saving and deleting permanent
-        this.commitFolders();
-        if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
-            Helper.setErrorMessage("Can not save project with empty title!");
-        } else {
-            try {
-                serviceManager.getProjectService().save(this.project);
-                Helper.setMessage("Project saved!");
-            } catch (DataException e) {
-                Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
-                    logger, e);
-            }
-        }
-        return null;
-    }
-
-    /**
      * Remove.
      */
     public void delete() {

@@ -108,7 +108,6 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> workpieces;
     private Property property;
     private String addToWikiField = "";
-    private transient List<ProcessDTO> processDTOS = new ArrayList<>();
     private transient FileService fileService = serviceManager.getFileService();
     private transient WorkflowControllerService workflowControllerService = serviceManager
             .getWorkflowControllerService();
@@ -1537,15 +1536,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<SelectItem> getRulesets() {
         return SelectItemList.getRulesets();
-    }
-
-    /**
-     * Get list od DTO processes.
-     *
-     * @return list of ProcessDTO objects
-     */
-    public List<ProcessDTO> getProcessDTOS() {
-        return processDTOS;
     }
 
     /**
