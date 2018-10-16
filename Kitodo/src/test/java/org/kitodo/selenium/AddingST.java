@@ -93,6 +93,8 @@ public class AddingST extends BaseTestSelenium {
         Pages.getProjectEditPage().insertProjectData(project).save();
         assertTrue("Redirection after save was not successful", projectsPage.isAt());
 
+        Pages.getUsersPage().editUser().addUserToProject(project.getTitle()).save();
+
         boolean projectAvailable = Pages.getProjectsPage().getProjectsTitles().contains(project.getTitle());
         assertTrue("Created Project was not listed at projects table!", projectAvailable);
     }
