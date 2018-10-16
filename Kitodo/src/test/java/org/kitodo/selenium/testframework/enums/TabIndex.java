@@ -32,6 +32,10 @@ public enum TabIndex {
     DOCKETS(3),
     RULESETS(4),
 
+    // template edit page
+    TEMPLATE_DETAILS(0),
+    TEMPLATE_TASKS(1),
+
     // processes page
     PROCESSES(0),
     BATCHES(1),
