@@ -69,7 +69,7 @@ public class DesktopForm extends BaseForm {
      */
     public List getProcesses() {
         try {
-            return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10);
+            return serviceManager.getProcessService().findAll("{\"title\":\"asc\" }", 0, 10, null);
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
             return new ArrayList();
@@ -83,7 +83,7 @@ public class DesktopForm extends BaseForm {
      */
     public List getProjects() {
         try {
-            return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10);
+            return serviceManager.getProjectService().findAll("{\"title\":\"asc\" }", 0, 10, null);
         } catch (DataException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() }, logger, e);
             return new ArrayList();

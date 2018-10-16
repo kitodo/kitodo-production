@@ -92,6 +92,8 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
+import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.dto.BatchDTO;
@@ -108,6 +110,7 @@ import org.kitodo.helper.metadata.MetadataHelper;
 import org.kitodo.legacy.UghImplementation;
 import org.kitodo.metadata.copier.CopierData;
 import org.kitodo.metadata.copier.DataCopier;
+import org.kitodo.security.SecurityUserDetails;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.data.base.TitleSearchService;
@@ -160,58 +163,56 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<ProcessDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
+        return convertJSONObjectsToDTOs(
+                searcher.findDocuments(createUserProcessesQuery(filters).toString(), sort, offset, size), false);
 
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            return convertJSONObjectsToDTOs(findBySort(false, true, sort, offset, size), false);
-        }
-
-        query = readFilters(filterMap);
-
-        String queryString = "";
-        if (!Objects.equals(query, null)) {
-            queryString = query.toString();
-        }
-        return convertJSONObjectsToDTOs(searcher.findDocuments(queryString, sort, offset, size), false);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public String createCountQuery(Map filters) throws DataException {
-        Map<String, String> filterMap = (Map<String, String>) filters;
-
-        BoolQueryBuilder query;
-
-        if (Objects.equals(filters, null) || filters.isEmpty()) {
-            query = new BoolQueryBuilder();
-            query.must(getQuerySortHelperStatus(false));
-            query.must(getQueryProjectActive(true));
-        } else {
-            query = readFilters(filterMap);
-        }
-
-        if (Objects.nonNull(query)) {
-            return query.toString();
-        }
-        return "";
+        return createUserProcessesQuery(filters).toString();
     }
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-        BoolQueryBuilder query = null;
+        BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query = serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false);
-            if (!this.showClosedProcesses) {
-                query.must(getQuerySortHelperStatus(false));
-            }
-            if (!this.showInactiveProjects) {
-                query.must(getQueryProjectActive(true));
-            }
+            query.must(serviceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
         }
+        return query;
+    }
+
+    /**
+     * Creates and returns a query to retrieve processes for which the currently
+     * logged in user is eligible.
+     *
+     * @param filters
+     *            map of applicable filters
+     * @return query to retrieve processes for which the user eligible
+     */
+    @SuppressWarnings("unchecked")
+    private BoolQueryBuilder createUserProcessesQuery(Map filters) throws DataException {
+        BoolQueryBuilder query = new BoolQueryBuilder();
+
+        if (Objects.nonNull(filters) && !filters.isEmpty()) {
+            Map<String, String> filterMap = (Map<String, String>) filters;
+            query.must(readFilters(filterMap));
+        }
+
+        SecurityUserDetails authenticatedUser = serviceManager.getUserService().getAuthenticatedUser();
+        if (Objects.nonNull(authenticatedUser.getSessionClient())) {
+            query.must(getQueryProjectIsAssignedToSelectedClient(authenticatedUser.getSessionClient().getId()));
+        }
+
+        if (!this.showClosedProcesses) {
+            query.must(getQuerySortHelperStatus(false));
+        }
+
+        if (!this.showInactiveProjects) {
+            query.must(getQueryProjectActive(true));
+        }
+
         return query;
     }
 
@@ -540,6 +541,17 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
     }
 
     /**
+     * Get query for projects assigned to selected client.
+     *
+     * @param id
+     *            of selected client
+     * @return query as QueryBuilder
+     */
+    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
+        return createSimpleQuery(TemplateTypeField.PROJECTS.getKey() + "." + ProjectTypeField.CLIENT_ID, id, true);
+    }
+
+    /**
      * Find processes by property.
      *
      * @param title
@@ -567,14 +579,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
             propertyIds.add(getIdFromJSONObject(property));
         }
         return searcher.findDocuments(createSetQuery(key, propertyIds, true).toString());
-    }
-
-    private List<JsonObject> findBySort(boolean closed, boolean active, String sort, Integer offset, Integer size)
-            throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQuerySortHelperStatus(closed));
-        query.must(getQueryProjectActive(active));
-        return searcher.findDocuments(query.toString(), sort, offset, size);
     }
 
     private List<JsonObject> findBySortHelperStatusProjectActive(boolean closed, boolean active, String sort)
