@@ -408,18 +408,13 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove task.
      */
     public void removeTask() {
-        try {
-            this.process.getTasks().remove(this.task);
+        this.process.getTasks().remove(this.task);
 
-            List<UserGroup> userGroups = this.task.getUserGroups();
-            for (UserGroup userGroup : userGroups) {
-                userGroup.getTasks().remove(this.task);
-            }
-            deleteSymlinksFromUserHomes();
-            serviceManager.getTaskService().remove(this.task);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+        List<UserGroup> userGroups = this.task.getUserGroups();
+        for (UserGroup userGroup : userGroups) {
+            userGroup.getTasks().remove(this.task);
         }
+        deleteSymlinksFromUserHomes();
     }
 
     private void deleteSymlinksFromUserHomes() {
