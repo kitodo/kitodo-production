@@ -114,8 +114,6 @@ public class ProcessForm extends TemplateBaseForm {
             .getWorkflowControllerService();
     private String doneDirectoryName;
     private static final String EXPORT_FINISHED = "exportFinished";
-    private static final String PROPERTIES_SAVED = "propertiesSaved";
-    private static final String PROPERTY_SAVED = "propertySaved";
     private transient List<ProcessDTO> selectedProcesses = new ArrayList<>();
     String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -336,15 +334,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove template properties.
      */
     public void deleteTemplateProperty() {
-        try {
-            this.templateProperty.getProcesses().clear();
-            this.process.getTemplates().remove(this.templateProperty);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.templateProperty);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
-                e);
-        }
+        this.templateProperty.getProcesses().clear();
+        this.process.getTemplates().remove(this.templateProperty);
         loadTemplateProperties();
     }
 
@@ -352,15 +343,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Remove workpiece properties.
      */
     public void deleteWorkpieceProperty() {
-        try {
-            this.workpieceProperty.getProcesses().clear();
-            this.process.getWorkpieces().remove(this.workpieceProperty);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.workpieceProperty);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger,
-                e);
-        }
+        this.workpieceProperty.getProcesses().clear();
+        this.process.getWorkpieces().remove(this.workpieceProperty);
         loadWorkpieceProperties();
     }
 
@@ -371,10 +355,10 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.templates == null) {
             this.templates = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.templates.add(property);
-        this.templateProperty = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.templates.add(newProperty);
+        this.templateProperty = newProperty;
     }
 
     /**
@@ -384,25 +368,18 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.workpieces == null) {
             this.workpieces = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.workpieces.add(property);
-        this.workpieceProperty = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.workpieces.add(newProperty);
+        this.workpieceProperty = newProperty;
     }
 
     /**
      * Save template property.
      */
     public void saveTemplateProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.templateProperty);
-            if (!this.process.getTemplates().contains(this.templateProperty)) {
-                this.process.getTemplates().add(this.templateProperty);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+        if (!this.process.getTemplates().contains(this.templateProperty)) {
+            this.process.getTemplates().add(this.templateProperty);
         }
         loadTemplateProperties();
     }
@@ -411,15 +388,8 @@ public class ProcessForm extends TemplateBaseForm {
      * Save workpiece property.
      */
     public void saveWorkpieceProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.workpieceProperty);
-            if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
-                this.process.getWorkpieces().add(this.workpieceProperty);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTIES_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
+        if (!this.process.getWorkpieces().contains(this.workpieceProperty)) {
+            this.process.getWorkpieces().add(this.workpieceProperty);
         }
         loadWorkpieceProperties();
     }
@@ -1414,17 +1384,14 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private void loadProcessProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.properties = this.process.getProperties();
     }
 
     private void loadTemplateProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.templates = this.process.getTemplates();
     }
 
     private void loadWorkpieceProperties() {
-        serviceManager.getProcessService().refresh(this.process);
         this.workpieces = this.process.getWorkpieces();
     }
 
@@ -1435,26 +1402,18 @@ public class ProcessForm extends TemplateBaseForm {
         if (this.properties == null) {
             this.properties = new ArrayList<>();
         }
-        Property property = new Property();
-        property.setType(PropertyType.STRING);
-        this.properties.add(property);
-        this.property = property;
+        Property newProperty = new Property();
+        newProperty.setType(PropertyType.STRING);
+        this.properties.add(newProperty);
+        this.property = newProperty;
     }
 
     /**
      * Save current property.
      */
     public void saveCurrentProperty() {
-        try {
-            serviceManager.getPropertyService().save(this.property);
-            if (!this.process.getProperties().contains(this.property)) {
-                this.process.getProperties().add(this.property);
-            }
-            serviceManager.getProcessService().save(this.process);
-            Helper.setMessage(PROPERTY_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
+        if (!this.process.getProperties().contains(this.property)) {
+            this.process.getProperties().add(this.property);
         }
         loadProcessProperties();
     }
@@ -1463,18 +1422,11 @@ public class ProcessForm extends TemplateBaseForm {
      * Delete property.
      */
     public void deleteProperty() {
-        try {
-            this.property.getProcesses().clear();
-            this.process.getProperties().remove(this.property);
-            serviceManager.getProcessService().save(this.process);
-            serviceManager.getPropertyService().remove(this.property);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
-        }
+        this.property.getProcesses().clear();
+        this.process.getProperties().remove(this.property);
 
-        List<Property> properties = this.process.getProperties();
-        removePropertiesWithEmptyTitle(properties);
+        List<Property> propertiesToFilterTitle = this.process.getProperties();
+        removePropertiesWithEmptyTitle(propertiesToFilterTitle);
         loadProcessProperties();
     }
 
@@ -1483,31 +1435,17 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void duplicateProperty() {
         Property newProperty = serviceManager.getPropertyService().transfer(this.property);
-        try {
-            newProperty.getProcesses().add(this.process);
-            this.process.getProperties().add(newProperty);
-            serviceManager.getPropertyService().save(newProperty);
-            Helper.setMessage(PROPERTY_SAVED);
-        } catch (DataException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() }, logger,
-                e);
-        }
+        newProperty.getProcesses().add(this.process);
+        this.process.getProperties().add(newProperty);
         loadProcessProperties();
     }
 
     // TODO: is it really a case that title is empty?
     private void removePropertiesWithEmptyTitle(List<Property> properties) {
         for (Property processProperty : properties) {
-            if (processProperty.getTitle() == null) {
-                try {
-                    processProperty.getProcesses().clear();
-                    this.process.getProperties().remove(processProperty);
-                    serviceManager.getProcessService().save(this.process);
-                    serviceManager.getPropertyService().remove(processProperty);
-                } catch (DataException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROPERTY.getTranslationSingular() },
-                        logger, e);
-                }
+            if (Objects.isNull(processProperty.getTitle()) ||  processProperty.getTitle().isEmpty()) {
+                processProperty.getProcesses().clear();
+                this.process.getProperties().remove(processProperty);
             }
         }
     }
