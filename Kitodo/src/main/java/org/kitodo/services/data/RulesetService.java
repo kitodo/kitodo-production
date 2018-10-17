@@ -72,6 +72,16 @@ public class RulesetService extends TitleSearchService<Ruleset, RulesetDTO, Rule
         return countDatabaseRows("SELECT COUNT(*) FROM Ruleset");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Ruleset> getAllNotIndexed() {
+        return getByQuery("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Get list of rulesets for given title.
      *

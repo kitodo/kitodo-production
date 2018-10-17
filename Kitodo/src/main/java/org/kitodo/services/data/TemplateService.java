@@ -85,6 +85,16 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
         return countDatabaseRows("SELECT COUNT(*) FROM Template");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Template> getAllNotIndexed() {
+        return getByQuery("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Method saves or removes tasks and project related to modified template.
      *

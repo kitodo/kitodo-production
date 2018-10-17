@@ -283,6 +283,16 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         return countDatabaseRows("SELECT COUNT(*) FROM Task");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Task> getAllNotIndexed() {
+        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Get query for processing statuses.
      *

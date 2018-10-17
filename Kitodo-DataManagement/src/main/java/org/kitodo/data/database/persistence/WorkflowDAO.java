@@ -42,6 +42,12 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
     }
 
     @Override
+    public List<Workflow> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public Workflow save(Workflow workflow) throws DAOException {
         storeObject(workflow);
         return retrieveObject(Workflow.class, workflow.getId());

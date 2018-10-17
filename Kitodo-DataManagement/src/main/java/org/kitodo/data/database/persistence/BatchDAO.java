@@ -45,6 +45,12 @@ public class BatchDAO extends BaseDAO<Batch> {
     }
 
     @Override
+    public List<Batch> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+            size);
+    }
+
+    @Override
     public Batch save(Batch batch) throws DAOException {
         storeObject(batch);
         return retrieveObject(Batch.class, batch.getId());

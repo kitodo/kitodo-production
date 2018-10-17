@@ -44,6 +44,12 @@ public class UserGroupDAO extends BaseDAO<UserGroup> {
     }
 
     @Override
+    public List<UserGroup> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM UserGroup WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+            offset, size);
+    }
+
+    @Override
     public UserGroup save(UserGroup userGroup) throws DAOException {
         storeObject(userGroup);
         return retrieveObject(UserGroup.class, userGroup.getId());

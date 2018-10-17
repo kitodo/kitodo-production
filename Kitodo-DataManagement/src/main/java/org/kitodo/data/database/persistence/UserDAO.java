@@ -41,6 +41,13 @@ public class UserDAO extends BaseDAO<User> {
         return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", offset, size);
     }
 
+    @Override
+    public List<User> getAllNotIndexed(int offset, int size) throws DAOException {
+        return retrieveObjects("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+            size);
+    }
+
+    @Override
     public User save(User user) throws DAOException {
         storeObject(user);
         return retrieveObject(User.class, user.getId());

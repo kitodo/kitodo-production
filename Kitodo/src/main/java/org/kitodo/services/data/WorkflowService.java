@@ -61,6 +61,16 @@ public class WorkflowService extends SearchService<Workflow, WorkflowDTO, Workfl
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Workflow> getAllNotIndexed() {
+        return getByQuery("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
     public WorkflowDTO convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException {
         WorkflowDTO workflowDTO = new WorkflowDTO();
         workflowDTO.setId(getIdFromJSONObject(jsonObject));

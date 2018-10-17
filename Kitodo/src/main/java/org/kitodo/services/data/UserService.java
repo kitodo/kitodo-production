@@ -313,6 +313,16 @@ public class UserService extends SearchService<User, UserDTO, UserDAO> implement
     }
 
     @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<User> getAllNotIndexed() {
+        return getByQuery("FROM User WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<UserDTO> findAll(String sort, Integer offset, Integer size, Map filters) throws DataException {
         if (serviceManager.getSecurityAccessService().isAdminOrHasAuthorityGlobal(AUTHORITY_TITLE_VIEW_ALL)) {

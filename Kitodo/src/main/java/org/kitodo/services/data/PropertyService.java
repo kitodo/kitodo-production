@@ -87,6 +87,16 @@ public class PropertyService extends TitleSearchService<Property, PropertyDTO, P
         return countDatabaseRows("SELECT COUNT(*) FROM Property");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Property> getAllNotIndexed() {
+        return getByQuery("FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Find all distinct titles from workpiece properties.
      *

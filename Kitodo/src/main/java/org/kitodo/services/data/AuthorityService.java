@@ -142,6 +142,16 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
         return countDatabaseRows("SELECT COUNT(*) FROM Authority");
     }
 
+    @Override
+    public Long countNotIndexedDatabaseRows() throws DAOException {
+        return countDatabaseRows("SELECT COUNT(*) FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
+    @Override
+    public List<Authority> getAllNotIndexed() {
+        return getByQuery("FROM Authority WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    }
+
     /**
      * Method saves user groups related to modified authority.
      *

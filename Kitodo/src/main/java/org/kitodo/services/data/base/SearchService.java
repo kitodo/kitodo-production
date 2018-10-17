@@ -97,6 +97,36 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public abstract S convertJSONObjectToDTO(JsonObject jsonObject, boolean related) throws DataException;
 
     /**
+     * Count all not indexed rows in database. Not indexed means that row has index
+     * action INDEX or NULL.
+     *
+     * @return amount of all not indexed rows
+     */
+    public abstract Long countNotIndexedDatabaseRows() throws DAOException;
+
+    /**
+     * Get all not indexed objects from database. Not indexed means that row has
+     * index action INDEX or NULL.
+     *
+     * @return list of all not indexed objects
+     */
+    public abstract List<T> getAllNotIndexed();
+
+    /**
+     * Get all not indexed objects from database in given range. Not indexed means
+     * that row has index action INDEX or NULL.
+     *
+     * @param offset
+     *            result - important, numeration starts since 0
+     * @param size
+     *            amount of results
+     * @return list of all not indexed objects from database in given range
+     */
+    public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
+        return dao.getAllNotIndexed(offset, size);
+    }
+
+    /**
      * Get all DTO objects from index an convert them for frontend wit all
      * relations.
      *
