@@ -192,6 +192,19 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
+     * Saves document to the index of Elastic Search and update index flag for
+     * indexed object.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    public void saveToIndexAndUpdateIndexFlag(T baseIndexedBean, boolean forceRefresh)
+            throws CustomResponseException, DAOException, IOException {
+        saveToIndex(baseIndexedBean, forceRefresh);
+        updateIndexFlag(baseIndexedBean);
+    }
+
+    /**
      * Method saves document to the index of Elastic Search.
      *
      * @param baseIndexedBean
@@ -203,7 +216,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     @SuppressWarnings("unchecked")
     public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, IOException {
         indexer.setMethod(HTTPMethods.PUT);
-        if (baseIndexedBean != null) {
+        if (Objects.nonNull(baseIndexedBean)) {
             indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
         }
     }
@@ -220,8 +233,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         indexer.setMethod(HTTPMethods.PUT);
         indexer.performMultipleRequests(baseIndexedBeans, type);
         for (T baseIndexedBean : baseIndexedBeans) {
-            baseIndexedBean.setIndexAction(IndexAction.DONE);
-            dao.save(baseIndexedBean);
+            updateIndexFlag(baseIndexedBean);
         }
     }
 
@@ -905,5 +917,18 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
             return relatedProperties;
         }
         return new ArrayList<>();
+    }
+
+    /**
+     * Update index flag for indexed object.
+     *
+     * @param baseIndexedBean
+     *            object
+     */
+    private void updateIndexFlag(T baseIndexedBean) throws DAOException {
+        if (Objects.nonNull(baseIndexedBean)) {
+            baseIndexedBean.setIndexAction(IndexAction.DONE);
+            saveToDatabase(baseIndexedBean);
+        }
     }
 }
