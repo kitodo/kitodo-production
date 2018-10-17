@@ -17,8 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.UserGroup;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.enums.ObjectType;
 import org.kitodo.helper.Helper;
@@ -49,46 +47,7 @@ public class TemplateBaseForm extends BaseForm {
         this.showInactiveProjects = showInactiveProjects;
     }
 
-    /**
-     * Add user group to task.
-     *
-     * @param task
-     *            to add user group
-     */
-    public void addUserGroup(Task task) {
-        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
-            for (UserGroup taskUserGroup : task.getUserGroups()) {
-                if (taskUserGroup.equals(userGroup)) {
-                    return;
-                }
-            }
-            task.getUserGroups().add(userGroup);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
-        }
-    }
-
-    /**
-     * Remove user group from task.
-     *
-     * @param task
-     *            for delete user group
-     */
-    public void deleteUserGroup(Task task) {
-        Integer userGroupId = Integer.valueOf(Helper.getRequestParameter("ID"));
-        try {
-            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
-            task.getUserGroups().remove(userGroup);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DATABASE_READING,
-                    new Object[]{ObjectType.USER_GROUP.getTranslationSingular(), userGroupId}, logger, e);
-        }
-    }
-
-    protected void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
+    void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
             serviceManager.getTaskService().save(task);
             serviceManager.getTaskService().evict(task);
@@ -99,7 +58,7 @@ public class TemplateBaseForm extends BaseForm {
     }
 
     @SuppressWarnings("unchecked")
-    protected void reload(BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
+    void reload(BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         if (Objects.nonNull(baseBean) && Objects.nonNull(baseBean.getId())) {
             try {
                 searchDatabaseService.refresh(baseBean);
