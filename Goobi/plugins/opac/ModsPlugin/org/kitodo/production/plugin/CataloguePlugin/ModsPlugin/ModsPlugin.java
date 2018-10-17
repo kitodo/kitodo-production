@@ -19,7 +19,6 @@ import java.io.StringReader;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -179,7 +178,11 @@ public class ModsPlugin implements Plugin {
 
     private static List<File> tempFiles = null;
 
-    private static XMLOutputter xmlOutputter = null;
+    private static XMLOutputter xmlOutputter = new XMLOutputter();
+
+    static {
+        xmlOutputter.setFormat(Format.getPrettyFormat());
+    }
 
     private HashMap<String, Element> structureMaps = null;
 
@@ -231,9 +234,9 @@ public class ModsPlugin implements Plugin {
      * MODS document must or must not contain in order to be classified as a
      * specific structureType (e.g. the corresponding key in the Hashmap)
      */
-    private static HashMap<String, List<XPath>> structureTypeMandatoryElements = new HashMap<String, List<XPath>>();
-    private static HashMap<String, List<XPath>> structureTypeForbiddenElements = new HashMap<String, List<XPath>>();
-    private static HashMap<String, String> structureTypeToDocTypeMapping = new HashMap<String, String>();
+    private static HashMap<String, List<XPath>> structureTypeMandatoryElements = new HashMap<>();
+    private static HashMap<String, List<XPath>> structureTypeForbiddenElements = new HashMap<>();
+    private static HashMap<String, String> structureTypeToDocTypeMapping = new HashMap<>();
 
     /**
      * Path of the output file for the XSL transformation.
@@ -371,8 +374,8 @@ public class ModsPlugin implements Plugin {
     private Element getStructureMap(Element rootElement) throws JDOMException {
         Element structureMap = null;
         ElementFilter structMapFilter = new ElementFilter("structMap", METS_NAMESPACE);
-        for (Iterator<Element> structMapElementIter = rootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
-            Element structMapElement = structMapElementIter.next();
+        for (Iterator structMapElementIter = rootElement.getDescendants(structMapFilter); structMapElementIter.hasNext();) {
+            Element structMapElement = (Element) structMapElementIter.next();
             if (Objects.equals(structMapElement.getAttributeValue(METS_TYPE), METS_LOGICAL)) {
                 structureMap = structMapElement;
                 break;
@@ -399,7 +402,7 @@ public class ModsPlugin implements Plugin {
      *          the metadata file to which the given document will be added
      * @param timeout
      *          a timeout in milliseconds after which the operation shall return
-     * @return the name of the DocStructType of the given Docment 'importDoc'
+     * @return the name of the DocStructType of the given Document 'importDoc'
      * @throws IOException
      * @throws JDOMException
      */
@@ -454,10 +457,8 @@ public class ModsPlugin implements Plugin {
      * @param dmdSec
      *          The metadata section for which a mets div is added to the given structure map
      * @return The updated logical structure map
-     * @throws JDOMException
-     * @throws IOException
      */
-    private Element addMetadataSectionToStructureMap(Element structureMap, String docStructType, Element dmdSec) throws JDOMException, IOException {
+    private Element addMetadataSectionToStructureMap(Element structureMap, String docStructType, Element dmdSec) {
 
         // 1: create mets:div for given metadata section
         Element structureMapDiv = createMETSStructureMapDiv(dmdSec.getAttributeValue(METS_ID), docStructType);
@@ -494,8 +495,8 @@ public class ModsPlugin implements Plugin {
         // collect all DMDIDs for which dmd sections exist in given file
         ArrayList<String> dmdids = new ArrayList<>();
         ElementFilter dmdSecFilter = new ElementFilter("dmdSec", METS_NAMESPACE);
-        for (Iterator<Element> dmdSecIter = rootElement.getDescendants(dmdSecFilter); dmdSecIter.hasNext();) {
-            Element dmdSecElement = dmdSecIter.next();
+        for (Iterator dmdSecIter = rootElement.getDescendants(dmdSecFilter); dmdSecIter.hasNext();) {
+            Element dmdSecElement = (Element) dmdSecIter.next();
             dmdids.add(dmdSecElement.getAttributeValue(METS_ID));
         }
 
@@ -508,7 +509,7 @@ public class ModsPlugin implements Plugin {
             }
         }
 
-        Element structureMapElement = (Element) rootElement.getChild("structMap", METS_NAMESPACE);
+        Element structureMapElement = rootElement.getChild("structMap", METS_NAMESPACE);
         if (Objects.equals(structureMapElement, null) || !structureMapElement.getAttributeValue(METS_TYPE).equals(METS_LOGICAL)){
             rootElement.addContent(customStructureMap);
             xmlOutputter.output(metsDocument, new FileWriter(file.getAbsoluteFile()));
@@ -531,8 +532,8 @@ public class ModsPlugin implements Plugin {
      */
     private HashMap<Element, String> saveChildMetadataSectionsToFile(File file,  List<Element> children) throws JDOMException, IOException {
 
-        Document metsDocument = null;
-        Element rootElement = null;
+        Document metsDocument;
+        Element rootElement;
 
         // ensure the file contains correct base mets structure!
         if(file.length() > 0) {
@@ -579,9 +580,8 @@ public class ModsPlugin implements Plugin {
      * @param childDMDSections
      *          List of DMD sections for which structure map divs are created and returned
      * @return list of structure map divs
-     * @throws JDOMException
      */
-    private List<Element> addChildDocumentsToStructureDiv(HashMap<Element, String> childDMDSections) throws JDOMException {
+    private List<Element> addChildDocumentsToStructureDiv(HashMap<Element, String> childDMDSections) {
 
         Element dmdSec;
 
@@ -607,17 +607,14 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
-     * Retrieve and return a given documents ID. Before extracting the ID, the document needs to be transformed
-     * into the internal MetsModsGoobi format to ensure the ID is found at a known location.
+     * Retrieve and return a given documents ID. The document needs to be in
+     * the internal MetsModsGoobi format to ensure the ID is found at a known location.
      *
-     * @param originalDocument
+     * @param transformedDocument
      *          document whose ID is extracted and returned
-     * @param xsltFile
-     *          mapping file used to transform the given document
      * @return String ID of the given document
      */
-    private String extractDocumentIdentifier(Document originalDocument, File xsltFile) throws JDOMException {
-        Document transformedDocument = transformXML(originalDocument, xsltFile);
+    private String extractDocumentIdentifier(Document transformedDocument) throws JDOMException {
         return ((Element) identifierXPath.selectSingleNode(transformedDocument)).getText();
     }
 
@@ -713,7 +710,7 @@ public class ModsPlugin implements Plugin {
                     + "' is not associated with a valid inventory.");
         }
 
-        Element metadatasection = null;
+        Element metadatasection;
 
         String lastStructureType = getStructureType(modsElement);
 
@@ -762,6 +759,17 @@ public class ModsPlugin implements Plugin {
         return structureMap;
     }
 
+    private void resetConfiguration() {
+        loadMappingFile(configuration.getTitle());
+        xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
+        transformationScript = new File(xsltFilepath);
+        tempFiles = new LinkedList<>();
+        structureMaps = new HashMap<>();
+        initializeXPath();
+        initializeStructureToDocTypeMapping();
+        dmdIdCounter = 1;
+        divIdCounter = 1;
+    }
 
     /**
      * The function getHit() returns the hit with the given index from the given
@@ -784,81 +792,51 @@ public class ModsPlugin implements Plugin {
      */
     public Map<String, Object> getHit(Object searchResult, long index, long timeout) throws IOException {
 
-        dmdIdCounter = 1;
-        divIdCounter = 1;
-
-        loadMappingFile(configuration.getTitle());
-
-        xsltFilepath = xsltDir + MODS2GOOBI_TRANSFORMATION_RULES_FILENAME;
-        transformationScript = new File(xsltFilepath);
-
-        tempFiles = new LinkedList<File>();
-
-        structureMaps = new HashMap<>();
-
-        Map<String, Object> result = new HashMap<String, Object>();
-
+        resetConfiguration();
         Query myQuery = ((FindResult) searchResult).getQuery();
-
-        String resultXML = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
-
-        xmlOutputter = new XMLOutputter();
-        xmlOutputter.setFormat(Format.getPrettyFormat());
-
-        initializeXPath();
-
         Fileformat ff;
 
-        Path xsltDirPath = FileSystems.getDefault().getPath(xsltDir);
-
-        if (resultXML == null) {
-            String message = "Error: result empty!";
-            logger.error(message);
-            throw new IllegalStateException(message);
-        }
-
-        else if (!xpathsDefined()) {
+        if (!xpathsDefined()) {
             String message = "Error: XPath variables not defined!";
             logger.error(message);
             throw new IllegalStateException(message);
         }
 
-        else if (!Files.isDirectory(xsltDirPath)) {
+        if (!Files.isDirectory(FileSystems.getDefault().getPath(xsltDir))) {
             String message = "Error: XSLT directory not found!";
             logger.error(message);
             throw new IOException(message);
         }
 
-        else {
+        String resultXML = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
+
+        Map<String, Object> result = new HashMap<>();
+
+        if (resultXML == null) {
+            String message = "Error: result empty!";
+            logger.error(message);
+            throw new IllegalStateException(message);
+        } else {
             sb = new SAXBuilder();
             try {
                 tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
 
+                // TODO: move everything after this point to a separate method that can be called with an uploaded XML file!
                 Document doc = sb.build(new StringReader(resultXML));
-                initializeStructureToDocTypeMapping();
-
-                String docID = extractDocumentIdentifier(doc, transformationScript);
-
-                // read "additionalDetails" from document via XPaths elements
-                // specified in plugin configuration file
-                Document transformedDocument = transformXML(doc, transformationScript);
-                for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
-                    XPath detailPath = XPath.newInstance(detailField.getValue());
-                    Element detailElement = (Element) detailPath.selectSingleNode(transformedDocument);
-                    if (!Objects.equals(detailElement, null)) {
-                        result.put(detailField.getKey(), detailElement.getText());
-                    }
-                }
 
                 @SuppressWarnings("unchecked")
                 ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
-
+                // Remove all records but the one identified by the given 'index'
                 for (int i = 0; i < recordNodes.size(); i++) {
                     Element currentRecord = recordNodes.get(i);
                     if (i != (int) index) {
                         currentRecord.detach();
                     }
                 }
+
+                Document transformedDocument = transformXML(doc, transformationScript);
+                String docID = extractDocumentIdentifier(transformedDocument);
+                result.putAll(getAdditionalDetails(transformedDocument));
 
                 // Global structmap holding the whole structure map (will be added to all metadata files at the end of the loop)
                 Element structMap = createMETSStructureMap(METS_LOGICAL);
@@ -987,9 +965,8 @@ public class ModsPlugin implements Plugin {
      * This function loads the rulesetType and title attributes of individual
      * docType elements and creates a mapping from docStructTypes to docTypes.
      *
-     * @throws JDOMException
      */
-    private void initializeStructureToDocTypeMapping() throws JDOMException {
+    private void initializeStructureToDocTypeMapping() {
 
         XMLConfiguration pluginConfiguration = ConfigOpac.getConfig();
 
@@ -1022,7 +999,7 @@ public class ModsPlugin implements Plugin {
     /**
      * Determines and returns structureType of a given modsElement.
      *
-     * @param modsElement
+     * @param modsElement Element for which the structureType is determined and returned.
      * @return the name of the determined structureType
      * @throws JDOMException
      */
@@ -1031,7 +1008,7 @@ public class ModsPlugin implements Plugin {
         initializeStructureElementTypeConditions();
         String structureType = "";
 
-        boolean structureTypeFound = false;
+        boolean structureTypeFound;
         for (String st : structureTypeMandatoryElements.keySet()) {
             structureTypeFound = true;
             for (XPath mandatoryXPath : structureTypeMandatoryElements.get(st)) {
@@ -1069,8 +1046,6 @@ public class ModsPlugin implements Plugin {
      * @return the transformed JDOM document
      */
     private Document transformXML(Document inputXML, File stylesheetFile) {
-
-        XMLOutputter xmlOutputter = new XMLOutputter();
 
         String xmlString = xmlOutputter.outputString(inputXML);
 
@@ -1144,7 +1119,7 @@ public class ModsPlugin implements Plugin {
      * @throws JDOMException
      */
     private List<Element> retrieveChildDocuments(String documentId, long timeout) throws JDOMException {
-        List<Element> childDocuments = new LinkedList<Element>();
+        List<Element> childDocuments = new LinkedList<>();
         Query childrenQuery = new Query("context.ead.id:" + documentId);
         childrenQuery.setMaximumRecords(getMaximumChildRecordsParameter(configuration.getTitle()));
         String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
@@ -1285,7 +1260,7 @@ public class ModsPlugin implements Plugin {
         for(File f : tempFiles) {
             deleteFile(f.getAbsolutePath());
         }
-        tempFiles = new LinkedList<File>();
+        tempFiles = new LinkedList<>();
     }
 
     /**
@@ -1617,10 +1592,29 @@ public class ModsPlugin implements Plugin {
             try {
                 maximumRecords = Integer.valueOf(configurationValue);
             } catch (NumberFormatException nfe) {
-                logger.warn(CONF_MAXIMUMCHILDRECORDS + " entry contain a non numeric value!");
+                logger.warn(CONF_MAXIMUMCHILDRECORDS + " entry contains a non numeric value!");
             }
         }
 
         return maximumRecords;
+    }
+
+    /**
+     * Read "additionalDetails" from given document 'transformedDocument'
+     * via XPaths elements specified in plugin configuration file.
+     * @param transformedDocument document in internal format
+     * @return Map containing additional details
+     * @throws JDOMException
+     */
+    private Map<String, String> getAdditionalDetails(Document transformedDocument) throws JDOMException {
+        Map<String, String> additionalDetails = new HashMap<>();
+        for (Map.Entry<String, String> detailField : getAdditionalDetailsFields(configuration.getTitle()).entrySet()) {
+            XPath detailPath = XPath.newInstance(detailField.getValue());
+            Element detailElement = (Element) detailPath.selectSingleNode(transformedDocument);
+            if (!Objects.equals(detailElement, null)) {
+                additionalDetails.put(detailField.getKey(), detailElement.getText());
+            }
+        }
+        return additionalDetails;
     }
 }
