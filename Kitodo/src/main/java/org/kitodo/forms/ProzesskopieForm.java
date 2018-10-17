@@ -223,7 +223,7 @@ public class ProzesskopieForm implements Serializable {
 
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIRECTORY_SUFFIX);
     private String addToWikiField = "";
-    private List<AdditionalField> additionalFields;
+    private transient List<AdditionalField> additionalFields;
     private String atstsl = "";
     private List<String> digitalCollections;
     private String docType;

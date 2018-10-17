@@ -81,7 +81,7 @@ public class MassImportForm extends BaseForm {
     private List<String> usablePluginsForFiles;
     private List<String> usablePluginsForFolder;
     private String currentPlugin = "";
-    private IImportPlugin plugin;
+    private transient IImportPlugin plugin;
     private File importFile = null;
     private UploadedFile uploadedFile = null;
     private List<Process> processList;
