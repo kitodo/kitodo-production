@@ -102,19 +102,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Find batches with exact type. Necessary to assure that user pickup type from
-     * the list which contains enums.
-     *
-     * @param type
-     *            of the searched batches
-     * @return list of JSON objects with batches of exact type
-     */
-    public List<JsonObject> findByType(Batch.Type type, boolean contains) throws DataException {
-        QueryBuilder query = createSimpleQuery("type", type.toString(), contains);
-        return searcher.findDocuments(query.toString());
-    }
-
-    /**
      * Find batches with exact title and type. Necessary to assure that user pickup
      * type from the list which contains enums.
      *
