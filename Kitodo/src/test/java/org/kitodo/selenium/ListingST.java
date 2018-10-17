@@ -57,9 +57,11 @@ public class ListingST extends BaseTestSelenium {
     @Test
     public void listTasksTest() throws Exception {
         tasksPage.goTo();
-        String query = "SELECT t FROM Task AS t INNER JOIN t.users AS u WITH u.id = 1 INNER JOIN t.userGroups AS ug "
-        + "INNER JOIN ug.users AS uug WITH u.id = 1 WHERE (t.processingUser = 1 OR u.id = 1 OR uug.id = 1) AND "
-        + "(t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
+
+        String query = "SELECT t FROM Task AS t INNER JOIN t.userGroups AS ug WITH ug.id = 1"
+        + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR ug.id = 1)"
+        + " AND (t.processingStatus = 1 OR t.processingStatus = 2) AND t.typeAutomatic = 0";
+
         int tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
         int tasksDisplayed = tasksPage.countListedTasks();
         assertEquals("Displayed wrong number of tasks", tasksInDatabase, tasksDisplayed);
@@ -74,8 +76,8 @@ public class ListingST extends BaseTestSelenium {
 
         tasksPage.applyFilterShowOnlyOpenTasks();
 
-        query = "SELECT t FROM Task AS t INNER JOIN t.users AS u WITH u.id = 1 INNER JOIN t.userGroups AS ug "
-                + "INNER JOIN ug.users AS uug WITH u.id = 1 WHERE (t.processingUser = 1 OR u.id = 1 OR uug.id = 1) AND "
+        query = "SELECT t FROM Task AS t INNER JOIN t.userGroups AS ug WITH ug.id = 1"
+                + " INNER JOIN t.process AS p WITH p.id IS NOT NULL WHERE (t.processingUser = 1 OR ug.id = 1) AND "
                 + "t.processingStatus = 1 AND t.typeAutomatic = 0";
         tasksInDatabase = serviceManager.getTaskService().getByQuery(query).size();
         tasksDisplayed = tasksPage.countListedTasks();

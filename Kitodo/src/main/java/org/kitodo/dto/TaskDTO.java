@@ -36,8 +36,6 @@ public class TaskDTO extends BaseDTO {
     private String processingEnd;
     private ProcessDTO process;
     private TemplateDTO template;
-    private List<UserDTO> users = new ArrayList<>();
-    private int usersSize;
     private List<UserGroupDTO> userGroups = new ArrayList<>();
     private int userGroupsSize;
     private boolean typeAutomatic;
@@ -312,44 +310,6 @@ public class TaskDTO extends BaseDTO {
      */
     public void setTemplate(TemplateDTO template) {
         this.template = template;
-    }
-
-    /**
-     * Get list of users.
-     * 
-     * @return list of users as UserDTO
-     */
-    public List<UserDTO> getUsers() {
-        return this.users;
-    }
-
-    /**
-     * Set list of users.
-     * 
-     * @param users
-     *            list of users as UserDTO
-     */
-    public void setUsers(List<UserDTO> users) {
-        this.users = users;
-    }
-
-    /**
-     * Get user size.
-     *
-     * @return the size of the user list
-     */
-    public int getUsersSize() {
-        return this.usersSize;
-    }
-
-    /**
-     * Set users size.
-     *
-     * @param usersSize
-     *            as int
-     */
-    public void setUsersSize(int usersSize) {
-        this.usersSize = usersSize;
     }
 
     /**

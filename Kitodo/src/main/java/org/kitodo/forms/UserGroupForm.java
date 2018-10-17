@@ -23,6 +23,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -164,6 +165,51 @@ public class UserGroupForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                 new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupID }, logger, e);
         }
+    }
+
+    /**
+     * Add client to user group.
+     *
+     * @return null
+     */
+    public String addToClient() {
+        int clientId = 0;
+        try {
+            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Client client = serviceManager.getClientService().getById(clientId);
+            for (Client assignedClient : this.userGroup.getClients()) {
+                if (assignedClient.equals(client)) {
+                    return null;
+                }
+            }
+            this.userGroup.getClients().add(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return null;
+    }
+
+    /**
+     * Remove user from client.
+     *
+     * @return empty String
+     */
+    public String deleteFromClient() {
+        int clientId = 0;
+        try {
+            clientId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            Client client = serviceManager.getClientService().getById(clientId);
+            this.userGroup.getClients().remove(client);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[] {ObjectType.CLIENT.getTranslationSingular(), clientId }, logger, e);
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return null;
     }
 
     /**

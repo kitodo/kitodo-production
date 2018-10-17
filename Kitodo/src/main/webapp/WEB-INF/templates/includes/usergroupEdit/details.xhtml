@@ -1,0 +1,104 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:panelGrid columns="1" layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="titleInput" value="#{msgs.title}"/>
+                <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
+                             value="#{UserGroupForm.userGroup.title}" placeholder="#{msgs.title}"
+                             required="#{empty param['editForm:saveButtonToggler']}"/>
+            </div>
+            <div>
+                <p:panelGrid columns="3" layout="grid">
+                    <!--global authorities-->
+
+                    <h:panelGroup>
+                        <h3 style="margin-bottom: 20px">
+                            <h:outputText value="#{msgs.authoritiesGlobal}"/>
+                        </h3>
+                        <p:pickList id="authoritiesGlobalPick"
+                                    showSourceFilter="true" showTargetFilter="true"
+                                    filterMatchMode="contains"
+                                    responsive="true"
+                                    disabled="#{isViewMode}"
+                                    value="#{UserGroupForm.globalAssignableAuthorities}"
+                                    converter="#{authorityConverter}"
+                                    var="authority"
+                                    itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                    itemValue="#{authority}"
+                                    onTransfer="toggleSave()">
+                            <f:facet name="sourceCaption"
+                                     style="color: #000;">#{msgs.available}</f:facet>
+                            <f:facet name="targetCaption"
+                                     style="color: #000;">#{msgs.assigned}</f:facet>
+                        </p:pickList>
+                    </h:panelGroup>
+
+                    <!--client authorities-->
+                    <h:panelGroup>
+                        <h3 style="margin-bottom: 20px">
+                            <h:outputText value="#{msgs.authoritiesClient}"/>
+                        </h3>
+                        <p:pickList id="authoritiesClientPick"
+                                    value="#{UserGroupForm.clientAssignableAuthorities}"
+                                    converter="#{authorityConverter}"
+                                    var="authority"
+                                    disabled="#{isViewMode}"
+                                    showSourceFilter="true" showTargetFilter="true"
+                                    filterMatchMode="contains"
+                                    responsive="true"
+                                    onTransfer="toggleSave()"
+                                    itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                    itemValue="#{authority}">
+                            <f:facet name="sourceCaption"
+                                     style="color: #000;">#{msgs.available}</f:facet>
+                            <f:facet name="targetCaption"
+                                     style="color: #000;">#{msgs.assigned}</f:facet>
+                        </p:pickList>
+                    </h:panelGroup>
+
+                    <!--project authorities-->
+                    <h:panelGroup>
+                        <h3 style="margin-bottom: 20px">
+                            <h:outputText value="#{msgs.authoritiesProject}"/>
+                        </h3>
+                        <p:pickList id="authoritiesProjectPick"
+                                    value="#{UserGroupForm.projectAssignableAuthorities}"
+                                    converter="#{authorityConverter}"
+                                    showSourceFilter="true" showTargetFilter="true"
+                                    disabled="#{isViewMode}"
+                                    filterMatchMode="contains"
+                                    responsive="true"
+                                    var="authority"
+                                    onTransfer="toggleSave()"
+                                    itemLabel="#{authority.getTitleWithoutSuffix()}"
+                                    itemValue="#{authority}">
+                            <f:facet name="sourceCaption"
+                                     style="color: #000;">#{msgs.available}</f:facet>
+                            <f:facet name="targetCaption"
+                                     style="color: #000;">#{msgs.assigned}</f:facet>
+                        </p:pickList>
+                    </h:panelGroup>
+                </p:panelGrid>
+            </div>
+        </p:row>
+        <p:row/>
+    </p:panelGrid>
+
+</ui:composition>

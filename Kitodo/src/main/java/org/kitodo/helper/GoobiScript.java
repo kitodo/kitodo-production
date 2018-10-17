@@ -37,7 +37,6 @@ import org.kitodo.api.ugh.exceptions.WriteException;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.data.database.helper.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
@@ -64,7 +63,6 @@ public class GoobiScript {
     private static final String SWAP_2_NR = "swap2nr";
     private static final String TASK_TITLE = "steptitle";
     private static final String USER_GROUP = "group";
-    private static final String USER_NAME = "username";
 
     /**
      * Start the script execution.
@@ -105,9 +103,6 @@ public class GoobiScript {
                 break;
             case "importFromFileSystem":
                 importFromFileSystem(processes);
-                break;
-            case "addUser":
-                addUser(processes);
                 break;
             case "addUserGroup":
                 addUserGroup(processes);
@@ -606,47 +601,6 @@ public class GoobiScript {
                     break;
                 }
             }
-        }
-    }
-
-    /**
-     * Add user to task of the given processes.
-     *
-     * @param processes
-     *            list of Process objects
-     */
-    private void addUser(List<Process> processes) {
-        if (isActionParameterInvalid(TASK_TITLE) || isActionParameterInvalid(USER_NAME)) {
-            return;
-        }
-
-        // checks if user exists
-        User user;
-        List<User> foundUsers = serviceManager.getUserService()
-                .getByQuery("from User where login='" + this.parameters.get(USER_NAME) + "'");
-        if (!foundUsers.isEmpty()) {
-            user = foundUsers.get(0);
-        } else {
-            Helper.setErrorMessage(KITODO_SCRIPT_FIELD, "Unknown user: ", this.parameters.get(USER_NAME));
-            return;
-        }
-
-        executeActionForAddUser(processes, user);
-        Helper.setMessage(KITODO_SCRIPT_FIELD, "", "adduser finished.");
-    }
-
-    private void executeActionForAddUser(List<Process> processes, User user) {
-        for (Process process : processes) {
-            for (Task task : process.getTasks()) {
-                if (task.getTitle().equals(this.parameters.get(TASK_TITLE))) {
-                    List<User> users = task.getUsers();
-                    if (!users.contains(user)) {
-                        users.add(user);
-                        saveTask(process.getTitle(), task);
-                    }
-                }
-            }
-            Helper.setMessage(KITODO_SCRIPT_FIELD, "Added user to step: ", process.getTitle());
         }
     }
 

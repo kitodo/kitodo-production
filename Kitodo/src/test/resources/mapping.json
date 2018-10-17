@@ -69,6 +69,22 @@
                             }
                         }
                     }
+                },
+                "userGroups": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "title": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
                 }
             }
         },
@@ -757,13 +773,6 @@
                 "typeMetadata": {
                     "type": "boolean"
                 },
-                "users": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        }
-                    }
-                },
                 "userGroups": {
                     "properties": {
                         "id": {
@@ -842,6 +851,22 @@
                                 }
                             },
                             "fielddata": true
+                        }
+                    }
+                },
+                "clients": {
+                    "properties": {
+                        "id": {
+                            "type": "long"
+                        },
+                        "clientName": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
                         }
                     }
                 }
@@ -1014,22 +1039,6 @@
                             "type": "long"
                         },
                         "clientName": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
-                "tasks": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
                             "type": "text",
                             "fields": {
                                 "keyword": {

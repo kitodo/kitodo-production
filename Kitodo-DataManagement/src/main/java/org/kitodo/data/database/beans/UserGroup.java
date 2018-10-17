@@ -44,6 +44,12 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
                     foreignKey = @ForeignKey(name = "FK_userGroup_x_authority_authority_id")) })
     private List<Authority> authorities;
 
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(name = "userGroup_x_client", joinColumns = {@JoinColumn(name = "userGroup_id",
+            foreignKey = @ForeignKey(name = "FK_userGroup_x_client_userGroup_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_userGroup_x_client_client_id")) })
+    private List<Client> clients;
+
     /**
      * The Constructor.
      */
@@ -134,6 +140,27 @@ public class UserGroup extends BaseIndexedBean implements Comparable<UserGroup> 
      */
     public void setTasks(List<Task> tasks) {
         this.tasks = tasks;
+    }
+
+    /**
+     * Gets clients.
+     *
+     * @return The clients.
+     */
+    public List<Client> getClients() {
+        if (this.clients == null) {
+            this.clients = new ArrayList<>();
+        }
+        return clients;
+    }
+
+    /**
+     * Sets clients.
+     *
+     * @param clients The clients.
+     */
+    public void setClients(List<Client> clients) {
+        this.clients = clients;
     }
 
     @Override

@@ -116,7 +116,6 @@ public class UserServiceIT {
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
         assertTrue("User was not found in database!", condition);
 
-        assertEquals("User was found but tasks were not inserted!", 4, user.getTasks().size());
         assertEquals("User was found but tasks were not inserted!", 2, user.getProcessingTasks().size());
     }
 
@@ -339,15 +338,6 @@ public class UserServiceIT {
 
         await().untilAsserted(() -> assertEquals("User group's title is incorrect!", "Admin",
             userService.findById(1, true).getUserGroups().get(0).getTitle()));
-    }
-
-    @Test
-    public void shouldGetTasksSize() {
-        await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", 7, userService.findById(2).getTasks().size()));
-
-        await().untilAsserted(
-            () -> assertEquals("Tasks' size is incorrect!", 6, userService.findById(3).getTasks().size()));
     }
 
     @Test

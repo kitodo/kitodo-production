@@ -24,6 +24,8 @@ public class UserGroupDTO extends BaseDTO {
     private Integer usersSize;
     private List<AuthorityDTO> authorities = new ArrayList<>();
     private int authorizationsSize;
+    private List<ClientDTO> clients = new ArrayList<>();
+    private int clientsSize;
 
     /**
      * Get title.
@@ -118,5 +120,41 @@ public class UserGroupDTO extends BaseDTO {
      */
     public void setAuthorizationsSize(int authorizationsSize) {
         this.authorizationsSize = authorizationsSize;
+    }
+
+    /**
+     * Get list of clients.
+     *
+     * @return The clients.
+     */
+    public List<ClientDTO> getClients() {
+        return clients;
+    }
+
+    /**
+     * Set list of clients.
+     *
+     * @param clients The clients.
+     */
+    public void setClients(List<ClientDTO> clients) {
+        this.clients = clients;
+    }
+
+    /**
+     * Get size of clients result list.
+     *
+     * @return The clientsSize.
+     */
+    public int getClientsSize() {
+        return clientsSize;
+    }
+
+    /**
+     * Sets size of clients result list.
+     *
+     * @param clientsSize The clientsSize.
+     */
+    public void setClientsSize(Integer clientsSize) {
+        this.clientsSize = clientsSize;
     }
 }

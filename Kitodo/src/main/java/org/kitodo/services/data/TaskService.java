@@ -128,7 +128,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         } else {
             BoolQueryBuilder subQuery = new BoolQueryBuilder();
             subQuery.should(createSimpleQuery(TaskTypeField.PROCESSING_USER.getKey(), user.getId(), true));
-            subQuery.should(createSimpleQuery("users.id", user.getId(), true));
             for (UserGroup userGroup : user.getUserGroups()) {
                 subQuery.should(createSimpleQuery("userGroups.id", userGroup.getId(), true));
             }
@@ -173,7 +172,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         manageProcessDependenciesForIndex(task);
         manageTemplateDependenciesForIndex(task);
         manageProcessingUserDependenciesForIndex(task);
-        manageUsersDependenciesForIndex(task);
         manageUserGroupsDependenciesForIndex(task);
     }
 
@@ -226,19 +224,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         for (UserDTO userDTO : userDTOS) {
             serviceManager.getUserService().saveToIndex(serviceManager.getUserService().getById(userDTO.getId()),
                 false);
-        }
-    }
-
-    private void manageUsersDependenciesForIndex(Task task) throws CustomResponseException, IOException {
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            for (User user : task.getUsers()) {
-                user.getTasks().remove(task);
-                serviceManager.getUserService().saveToIndex(user, false);
-            }
-        } else {
-            for (User user : task.getUsers()) {
-                serviceManager.getUserService().saveToIndex(user, false);
-            }
         }
     }
 
@@ -427,7 +412,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(taskJSONObject));
         taskDTO.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(taskJSONObject));
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(taskJSONObject));
-        taskDTO.setUsersSize(TaskTypeField.USERS.getSizeOfProperty(taskJSONObject));
         taskDTO.setUserGroupsSize(TaskTypeField.USER_GROUPS.getSizeOfProperty(taskJSONObject));
 
         /*
@@ -453,8 +437,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
         if (processingUser != 0) {
             taskDTO.setProcessingUser(serviceManager.getUserService().findById(processingUser, true));
         }
-        taskDTO.setUsers(
-            convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USERS.getKey(), serviceManager.getUserService()));
         taskDTO.setUserGroups(convertRelatedJSONObjectToDTO(jsonObject, TaskTypeField.USER_GROUPS.getKey(),
             serviceManager.getUserGroupService()));
     }
@@ -534,21 +516,6 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             return template.getProjects();
         } else {
             return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Get users' list size.
-     *
-     * @param task
-     *            object
-     * @return size
-     */
-    public int getUsersSize(Task task) {
-        if (task.getUsers() == null) {
-            return 0;
-        } else {
-            return task.getUsers().size();
         }
     }
 
@@ -954,7 +921,7 @@ public class TaskService extends TitleSearchService<Task, TaskDTO, TaskDAO> {
             Helper.setErrorMessage("noStepsInWorkflow");
         }
         for (Task task : tasks) {
-            if (getUserGroupsSize(task) == 0 && getUsersSize(task) == 0) {
+            if (getUserGroupsSize(task) == 0) {
                 Helper.setErrorMessage("noUserInStep", new Object[] {task.getTitle() });
             }
         }

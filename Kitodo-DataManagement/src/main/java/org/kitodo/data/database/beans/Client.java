@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -35,6 +36,9 @@ public class Client extends BaseIndexedBean {
 
     @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
     private List<User> users;
+
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    private List<UserGroup> userGroups;
 
     /**
      * Gets name.
@@ -96,6 +100,27 @@ public class Client extends BaseIndexedBean {
      */
     public void setUsers(List<User> users) {
         this.users = users;
+    }
+
+    /**
+     * Get user groups.
+     *
+     * @return list of UserGroup objects
+     */
+    public List<UserGroup> getUserGroups() {
+        if (Objects.isNull(this.userGroups)) {
+            this.userGroups = new ArrayList<>();
+        }
+        return this.userGroups;
+    }
+
+    /**
+     * Set user groups.
+     *
+     * @param userGroups as List of UserGroup objects
+     */
+    public void setUserGroups(List<UserGroup> userGroups) {
+        this.userGroups = userGroups;
     }
 
     @Override

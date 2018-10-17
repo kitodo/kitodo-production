@@ -38,7 +38,6 @@ public class UserType extends BaseType<User> {
         jsonObjectBuilder.add(UserTypeField.PROJECTS.getKey(), addObjectRelation(user.getProjects(), true));
         jsonObjectBuilder.add(UserTypeField.CLIENTS.getKey(), addObjectRelation(user.getClients(), true));
         jsonObjectBuilder.add(UserTypeField.PROCESSING_TASKS.getKey(), addObjectRelation(user.getProcessingTasks()));
-        jsonObjectBuilder.add(UserTypeField.TASKS.getKey(), addObjectRelation(user.getTasks()));
         return jsonObjectBuilder.build();
     }
 }
