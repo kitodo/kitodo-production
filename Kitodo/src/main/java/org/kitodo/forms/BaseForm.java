@@ -27,7 +27,7 @@ public class BaseForm implements Serializable {
     protected String filter = "";
     protected User user;
     protected LazyDTOModel lazyDTOModel = null;
-    static final String REDIRECT_PARAMETER = "faces-redirect=true";
+    private static final String REDIRECT_PARAMETER = "faces-redirect=true";
     private static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabId = 0;
     private boolean saveDisabled = true;
