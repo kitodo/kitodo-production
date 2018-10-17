@@ -78,7 +78,7 @@ public class IndexWorker implements Runnable {
         if (indexAllObjects) {
             objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
         } else {
-            objectsToIndex = searchService.getAll(this.indexedObjects, batchSize);
+            objectsToIndex = searchService.getAllNotIndexed(this.indexedObjects, batchSize);
         }
         indexObjects(objectsToIndex);
         session.clear();
