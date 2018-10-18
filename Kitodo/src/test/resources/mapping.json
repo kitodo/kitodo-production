@@ -33,6 +33,13 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
+                                }
+                            }
                         }
                     }
                 },
@@ -438,6 +445,13 @@
                                     "ignore_above": 256
                                 }
                             }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
+                                }
+                            }
                         }
                     }
                 },
@@ -547,22 +561,6 @@
         "template": {
             "dynamic": "strict",
             "properties": {
-                "batches": {
-                    "properties": {
-                        "id": {
-                            "type": "long"
-                        },
-                        "title": {
-                            "type": "text",
-                            "fields": {
-                                "keyword": {
-                                    "type": "keyword",
-                                    "ignore_above": 256
-                                }
-                            }
-                        }
-                    }
-                },
                 "creationDate": {
                     "type": "date",
                     "format":"yyyy-MM-dd HH:mm:ss"
@@ -587,6 +585,13 @@
                                 "keyword": {
                                     "type": "keyword",
                                     "ignore_above": 256
+                                }
+                            }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
                                 }
                             }
                         }
@@ -1028,6 +1033,13 @@
                                 "keyword": {
                                     "type": "keyword",
                                     "ignore_above": 256
+                                }
+                            }
+                        },
+                        "client": {
+                            "properties": {
+                                "id": {
+                                    "type": "long"
                                 }
                             }
                         }
