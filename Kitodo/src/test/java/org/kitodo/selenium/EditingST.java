@@ -21,6 +21,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -61,9 +62,17 @@ public class EditingST extends BaseTestSelenium {
     public void editProcessTest() throws Exception {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
-        processesPage.editProcess();
+        processesPage.editProcess().changeProcessData();
         assertEquals("Header for edit process is incorrect", "Vorgang bearbeiten (First process)",
             Pages.getProcessEditPage().getHeaderText());
+
+        Pages.getProcessEditPage().save();
+        assertTrue("Redirection after save was not successful", processesPage.isAt());
+
+        Process processAfterEdit = serviceManager.getProcessService().getById(1);
+
+        assertEquals("Incorrect amount of template properties", 4,
+                processAfterEdit.getTemplates().size());
     }
 
     @Test

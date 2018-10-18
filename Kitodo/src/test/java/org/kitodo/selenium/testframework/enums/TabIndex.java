@@ -44,6 +44,13 @@ public enum TabIndex {
     PROCESSES(0),
     BATCHES(1),
 
+    // template edit page
+    PROCESS_DETAILS(0),
+    PROCESS_TASKS(1),
+    PROCESS_TEMPLATES(2),
+    PROCESS_WORKPIECES(3),
+    PROCESS_PROPERTIES(1),
+
     // system page
     INDEXING(0),
     TASKMANAGER(1),
