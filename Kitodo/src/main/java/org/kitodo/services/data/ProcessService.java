@@ -1115,10 +1115,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         return null;
     }
 
-    public String getCreationDateAsString(Process process) {
-        return Helper.getDateAsFormattedString(process.getCreationDate());
-    }
-
     /**
      * Get full progress for process.
      *
@@ -2334,53 +2330,6 @@ public class ProcessService extends TitleSearchService<Process, ProcessDTO, Proc
         }
 
         return propertiesForDocket;
-    }
-
-    /**
-     * Find all processes of active projects, sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findProcessesOfActiveProjects(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
-    }
-
-    /**
-     * Find not closed processes sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     *
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findNotClosedProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatus(false, sort), false);
-    }
-
-    /**
-     * Find processes of open and active projects, sorted according to sort
-     * query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<ProcessDTO> findOpenAndActiveProcessesWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findBySortHelperStatusProjectActive(false, true, sort), false);
-    }
-
-    /**
-     * Find all processes of active projects that are not templates, sorted
-     * according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objectss
-     */
-    public List<ProcessDTO> findAllActiveWithoutTemplates(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
     }
 
     /**

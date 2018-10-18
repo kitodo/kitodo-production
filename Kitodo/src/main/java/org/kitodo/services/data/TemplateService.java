@@ -392,21 +392,6 @@ public class TemplateService extends TitleSearchService<Template, TemplateDTO, T
     }
 
     /**
-     * Find templates of active projects, sorted according to sort query.
-     *
-     * @param sort
-     *            possible sort query according to which results will be sorted
-     * @return the list of sorted processes as ProcessDTO objects
-     */
-    public List<TemplateDTO> findTemplatesOfActiveProjects(String sort) throws DataException {
-        return convertJSONObjectsToDTOs(findByActive(true, sort), false);
-    }
-
-    private List<JsonObject> findByActive(boolean active, String sort) throws DataException {
-        return searcher.findDocuments(getQueryProjectActive(active).toString(), sort);
-    }
-
-    /**
      * Get query for active projects.
      *
      * @param active
