@@ -38,20 +38,28 @@
         <h:outputText value="#{msgs.uebernehmen}" />
     </h:commandLink>
 
-    <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
-        <f:selectItem itemValue="opac" itemLabel="OPAC search" />
-        <f:selectItem itemValue="file" itemLabel="File upload" />
-    </h:selectOneRadio>
+    <h:column>
+        <h:outputText value="#{msgs.catalogue}" style="display:inline" />
+        <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px"
+                         onchange="submit();">
+            <si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
+        </h:selectOneMenu>
+    </h:column>
+
+    <%-- TODO: hide choices if selected OPAC does not support file upload! --%>
+    <%-- FIXME --%>
+    <%-- <h:panelGroup rendered="#{ProzesskopieForm.fileUploadAvailable}"> --%>
+    <h:panelGroup rendered="true">
+        <h:column>
+            <h:selectOneRadio value="#{ProzesskopieForm.source}" onclick="this.form.submit()">
+                <f:selectItem itemValue="opac" itemLabel="OPAC search" />
+                <f:selectItem itemValue="file" itemLabel="File upload" />
+            </h:selectOneRadio>
+        </h:column>
+    </h:panelGroup>
 
     <%-- source 1: search OPAC --%>
     <h:panelGroup rendered="#{ProzesskopieForm.useOpac and ProzesskopieForm.source == 'opac'}">
-
-        <h:outputText value="#{msgs.sucheImOpac}" style="display:inline" />
-        <h:selectOneMenu id="katalogauswahl" value="#{ProzesskopieForm.opacKatalog}" style="display:inline; margin-left:7px"
-            onchange="submit();">
-            <si:selectItems value="#{ProzesskopieForm.allOpacCatalogues}" var="step" itemLabel="#{step}" itemValue="#{step}" />
-        </h:selectOneMenu>
-
         <h:outputText value="#{msgs.feld}" style="display:inline; margin-left:7px" />
         <h:selectOneMenu id="feldauswahl" value="#{ProzesskopieForm.opacSuchfeld}" style="display:inline; margin-left:10px">
             <f:selectItems value="#{ProzesskopieForm.searchFields}" />
@@ -62,13 +70,13 @@
             <f:selectItems value="#{ProzesskopieForm.institutions}" />
         </h:selectOneMenu>
 
+        <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}" style="margin-left:7px;margin-right:7px; width:200px"
+                     onkeypress="return checkOpac('OpacRequest',event)" />
+        <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery" rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
+            <h:graphicImage value="/newpages/images/buttons/opac.gif" style="vertical-align:middle; margin-right:3px" />
+            <h:outputText value="#{msgs.uebernehmen}" />
+        </h:commandLink>
     </h:panelGroup>
-    <h:inputText value="#{ProzesskopieForm.opacSuchbegriff}" rendered="#{ProzesskopieForm.useOpac}" style="margin-left:7px;margin-right:7px; width:200px"
-        onkeypress="return checkOpac('OpacRequest',event)" />
-     <h:commandLink action="#{ProzesskopieForm.OpacAuswerten}" id="performOpacQuery" rendered="#{ProzesskopieForm.useOpac}" title="#{msgs.opacAbfragen}">
-        <h:graphicImage value="/newpages/images/buttons/opac.gif" style="vertical-align:middle; margin-right:3px" />
-        <h:outputText value="#{msgs.uebernehmen}" />
-    </h:commandLink>
 
     <%-- source 2: upload file --%>
     <h:panelGroup rendered="#{ProzesskopieForm.source == 'file'}">

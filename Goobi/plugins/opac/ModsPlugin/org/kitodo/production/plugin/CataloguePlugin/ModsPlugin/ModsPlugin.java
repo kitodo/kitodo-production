@@ -326,27 +326,43 @@ public class ModsPlugin implements Plugin {
      * document.
      */
     private void initializeXPath() {
+        // initialize common XPaths first
         try {
-            srwRecordXPath = XPath.newInstance(getRecordXPath(configuration.getTitle()));
             modsXPath = XPath.newInstance("//mods:mods");
-            parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
-            identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
             metsDivXPath = XPath.newInstance(".//mets:div");
             catalogIDDigitalXPath = XPath.newInstance(".//goobi:metadata[@name='CatalogIDDigital']");
             goobiXpath = XPath.newInstance(".//goobi:goobi");
+            identifierXPath = XPath.newInstance(getIdentifierXPath(configuration.getTitle()));
         } catch (JDOMException e) {
-            logger.error("Error while initializing XPath variables: " + e.getMessage());
+            logger.error("Error while initializing global XPath variables: " + e.getMessage());
+        }
+
+        // TODO: load only xpath definied in specific OPAC configuration!
+        // initialize custom catalog XPaths
+        try {
+            parentIDXPath = XPath.newInstance(getParentElementXPath(configuration.getTitle()));
+            srwRecordXPath = XPath.newInstance(getRecordXPath(configuration.getTitle()));
+        } catch (JDOMException e) {
+            logger.error("Error while initializing catalog specific XPath variables: " + e.getMessage());
         }
     }
 
     /**
-     * Checks and returns whether all static XPath variables used to parse
+     * Checks and returns whether all static mandatory XPath variables used to parse
      * MetsModsGoobi documents have been initialized.
      *
      * @return whether all static XPath variables have been initialized or not
      */
-    private boolean xpathsDefined() {
-        return (!Objects.equals(srwRecordXPath, null) && !Objects.equals(modsXPath, null)
+    private boolean standardXPathsDefined() {
+        return (!Objects.equals(modsXPath, null)
+                && !Objects.equals(metsDivXPath, null)
+                && !Objects.equals(catalogIDDigitalXPath, null)
+                && !Objects.equals(goobiXpath, null)
+                && !Objects.equals(identifierXPath, null));
+    }
+
+    private boolean customXPathsDefined() {
+        return (!Objects.equals(srwRecordXPath, null)
                 && !Objects.equals(parentIDXPath, null));
     }
 
@@ -772,6 +788,94 @@ public class ModsPlugin implements Plugin {
     }
 
     /**
+     * Creates a list of documents from the given xmlString. The order in the resulting list
+     * defines the linear hierarchy of the document structure, with the first Document in the list representing
+     * the leaf and the last representing the root of the hierarchy.
+     *
+     * @param xmlString String containing the XML representing a list of documents
+     * @return the list of documents parsed from the given String
+     */
+    private LinkedList<Document> createDocumentHistoryFromXMLString(String xmlString) {
+        LinkedList<Document> documentHierarchy = new LinkedList<>();
+
+        try {
+            XPath relatedItemXPath = XPath.newInstance("//mods:mods/mods:relatedItem[@type='host']");
+
+            // 1 create jdom.Document given string
+            Document document = sb.build(new StringReader(xmlString));
+            //xmlOutputter.output(document, System.out);
+
+            // 2 separate original document and related item
+            Element relatedItemElement = (Element) relatedItemXPath.selectSingleNode(document);
+            if (relatedItemElement != null) {
+                Element relatedItemDocElement = (Element) relatedItemElement.clone();
+                relatedItemElement.detach();
+                xmlOutputter.output(document, System.out);
+                // 3 add jdom.Documents to list
+                documentHierarchy.add(document);
+                if (relatedItemDocElement != null) {
+                    // TODO: create document for host item and add it to the list
+                }
+            } else {
+                documentHierarchy.add(document);
+            }
+
+        } catch (JDOMException | IOException e) {
+            e.printStackTrace();
+        }
+
+        return documentHierarchy;
+    }
+
+    /**
+     * Create a list of documents from the given FindResult instance. The order in the resulting list
+     * defines the linear hierarchy of the document structure, with the first Document in the list representing
+     * the leaf and the last representing the root of the hierarchy.
+     *
+     * @param findResult
+     * @param index
+     * @param timeout
+     * @return
+     */
+    private LinkedList<Document> createDocumentHistoryFromFindResult(FindResult findResult, long index, long timeout) {
+        Query myQuery = findResult.getQuery();
+        String xmlString = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
+
+        LinkedList<Document> documentHierarchy = new LinkedList<>();
+        if (xmlString == null) {
+            String message = "Error: result empty!";
+            logger.error(message);
+            throw new IllegalStateException(message);
+        } else {
+            try {
+                Document doc = sb.build(new StringReader(xmlString));
+                @SuppressWarnings("unchecked")
+                ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
+                // Remove all records but the one identified by the given 'index'
+                for (int i = 0; i < recordNodes.size(); i++) {
+                    Element currentRecord = recordNodes.get(i);
+                    if (i != index) {
+                        currentRecord.detach();
+                    }
+                }
+
+                // update xmlString so it only contains one record
+                xmlString = xmlOutputter.outputString(doc);
+
+                while (xmlString != null) {
+                    doc = sb.build(new StringReader(xmlString));
+                    documentHierarchy.add(doc);
+                    xmlString = retrieveParentRecord(doc, timeout);
+                }
+
+            } catch (JDOMException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return documentHierarchy;
+    }
+
+    /**
      * The function getHit() returns the hit with the given index from the given
      * search result as a Map&lt;String, Object&gt;. The map contains the full
      * hit as "fileformat", the docType as "type" and some bibliographic
@@ -791,16 +895,7 @@ public class ModsPlugin implements Plugin {
      *      long, long)
      */
     public Map<String, Object> getHit(Object searchResult, long index, long timeout) throws IOException {
-
         resetConfiguration();
-        Query myQuery = ((FindResult) searchResult).getQuery();
-        Fileformat ff;
-
-        if (!xpathsDefined()) {
-            String message = "Error: XPath variables not defined!";
-            logger.error(message);
-            throw new IllegalStateException(message);
-        }
 
         if (!Files.isDirectory(FileSystems.getDefault().getPath(xsltDir))) {
             String message = "Error: XSLT directory not found!";
@@ -808,52 +903,42 @@ public class ModsPlugin implements Plugin {
             throw new IOException(message);
         }
 
-        String resultXML = client.retrieveModsRecord(myQuery.getQueryUrl(), timeout);
+        LinkedList<Document> documentHierarchy = null;
+        if (searchResult instanceof String) {
+            documentHierarchy = createDocumentHistoryFromXMLString((String) searchResult);
+        } else if (searchResult instanceof FindResult) {
+            if (!standardXPathsDefined()) {
+                String message = "Error: XPath variables not defined!";
+                logger.error(message);
+                throw new IllegalStateException(message);
+            }
+            documentHierarchy = createDocumentHistoryFromFindResult((FindResult) searchResult, index, timeout);
+        } else {
+            logger.error("Unknown type '" + Object.class.getName() + "' of given searchResult => abort!");
+        }
 
         Map<String, Object> result = new HashMap<>();
 
-        if (resultXML == null) {
-            String message = "Error: result empty!";
+        tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
+
+        if (documentHierarchy == null || documentHierarchy.isEmpty()) {
+            String message = "Error: document hierarchy is empty!";
             logger.error(message);
             throw new IllegalStateException(message);
         } else {
-            sb = new SAXBuilder();
             try {
-                tempFile = File.createTempFile(TEMP_FILENAME, ".xml");
-
-                // TODO: move everything after this point to a separate method that can be called with an uploaded XML file!
-                Document doc = sb.build(new StringReader(resultXML));
-
-                @SuppressWarnings("unchecked")
-                ArrayList<Element> recordNodes = (ArrayList<Element>) srwRecordXPath.selectNodes(doc);
-                // Remove all records but the one identified by the given 'index'
-                for (int i = 0; i < recordNodes.size(); i++) {
-                    Element currentRecord = recordNodes.get(i);
-                    if (i != (int) index) {
-                        currentRecord.detach();
-                    }
-                }
-
-                Document transformedDocument = transformXML(doc, transformationScript);
+                Document transformedDocument = transformXML(documentHierarchy.get(0), transformationScript);
+                xmlOutputter.output(transformedDocument, System.out);
                 String docID = extractDocumentIdentifier(transformedDocument);
                 result.putAll(getAdditionalDetails(transformedDocument));
 
                 // Global structmap holding the whole structure map (will be added to all metadata files at the end of the loop)
                 Element structMap = createMETSStructureMap(METS_LOGICAL);
 
-                structMap = addDocumentToFileAndStructureMap(doc, tempFile, structMap, docID,  true, timeout);
-
-                // retrieve parent record from original untransformed document
-                // (since "localParentID" is omitted during XSL transformation)
-                String parentXML = retrieveParentRecord(doc, timeout);
-
-                // traverse document hierarchy up to root document and add all documents to mets document
-                while (!Objects.equals(parentXML, null)) {
-                    resultXML = parentXML;
-                    doc = sb.build(new StringReader(resultXML));
-                    parentXML = retrieveParentRecord(doc, timeout);
-
-                    structMap = addDocumentToFileAndStructureMap(doc, tempFile, structMap, docID, false, timeout);
+                for (Document document : documentHierarchy) {
+                    // TODO: there should be a configuration parameter controlling whether child nodes are added or not!
+                    boolean addChildren = (documentHierarchy.indexOf(document) == 0) && searchResult instanceof FindResult;
+                    structMap = addDocumentToFileAndStructureMap(document, tempFile, structMap, docID,  addChildren, timeout);
                 }
 
                 // add structure map to all tempFiles!
@@ -872,7 +957,7 @@ public class ModsPlugin implements Plugin {
                 deleteTemporaryFiles();
 
                 DigitalDocument dd = mm.getDigitalDocument();
-                ff = new XStream(preferences);
+                Fileformat ff = new XStream(preferences);
                 ff.setDigitalDocument(dd);
 
                 DocStructType dst = preferences.getDocStrctTypeByName("BoundBook");
@@ -884,7 +969,7 @@ public class ModsPlugin implements Plugin {
                             .replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
                 }
 
-                String topStructType = getStructureType((Element) modsXPath.selectSingleNode(doc));
+                String topStructType = getStructureType((Element) modsXPath.selectSingleNode(documentHierarchy.get(0)));
 
                 result.put("fileformat", ff);
                 result.put("type", structureTypeToDocTypeMapping.get(topStructType));
@@ -1124,7 +1209,6 @@ public class ModsPlugin implements Plugin {
         childrenQuery.setMaximumRecords(getMaximumChildRecordsParameter(configuration.getTitle()));
         String allChildren = client.retrieveModsRecord(childrenQuery.getQueryUrl(), timeout);
 
-        sb = new SAXBuilder();
         try {
             Document childrenDoc = sb.build(new StringReader(allChildren));
             for (Object child : modsXPath.selectNodes(childrenDoc)) {

@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ResourceBundle;
@@ -390,8 +391,10 @@ public class Helper implements Serializable, Observer {
         if (value != null && parameterList != null && parameterList.size() > 0) {
             int parameterCount = 0;
             for (String parameter : parameterList) {
-                value = value.replace("{" + parameterCount + "}", parameter);
-                parameterCount++;
+                if (!Objects.equals(parameter, null)) {
+                    value = value.replace("{" + parameterCount + "}", parameter);
+                    parameterCount++;
+                }
             }
         }
 
