@@ -20,6 +20,12 @@
             <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
             <mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
         </type>
+        <type rulesetType="Monograph">
+            <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</mandatoryElement>
+        </type>
+        <type rulesetType="MultiVolumeWork">
+            <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</mandatoryElement>
+        </type>
     </structuretypes>
     <catalogue title="Kalliope">
         <config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
@@ -54,5 +60,30 @@
             <detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
             <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
         </additionalDetails>
+        <fileUpload>false</fileUpload>
+    </catalogue>
+    <catalogue title="adis">
+        <mappingFile>mods2kitodo.xsl</mappingFile>
+        <!-- aDis SRU interface not yet available! -->
+        <!--
+        <config address="" description="adis Katalog"/>
+        <identifierParameter value="ead.id" />
+        <parentElement xpath="//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']" />
+        <recordElement xpath="//srw:searchRetrieveResponse/srw:records/srw:record" />
+        -->
+        <identifierElement xpath="//goobi:metadata[@name='CatalogIDDigital']" />
+        <!-- aDis SRU interface supports only single search field (for ID, here called "Satznummer") -->
+        <searchFields>
+            <searchField label="Satznummer" value="SATZNR" />
+        </searchFields>
+        <!-- aDis SRU interface does not support institution filters -->
+        <additionalDetails>
+            <detail name="creator" xpath="//goobi:displayName" />
+            <detail name="title" xpath="//goobi:metadata[@name='TitleDocMain']" />
+            <detail name="shelfmarksource" xpath="//goobi:metadata[@name='shelfmarksource']" />
+            <detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
+            <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
+        </additionalDetails>
+        <fileUpload>true</fileUpload>
     </catalogue>
 </opacCatalogues>

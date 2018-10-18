@@ -75,8 +75,8 @@ public class ConfigOpac {
      *
      * @return config the XMLConfiguration of the ConfigOpac
      */
-    public static XMLConfiguration getConfiguration () {
-        return config;
+    public static XMLConfiguration getConfiguration () throws FileNotFoundException {
+        return getConfig();
     }
 
     /**

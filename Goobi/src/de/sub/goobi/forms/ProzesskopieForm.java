@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
@@ -35,6 +36,7 @@ import javax.faces.model.SelectItem;
 import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -274,6 +276,7 @@ public class ProzesskopieForm {
     private HashMap<String, Boolean> standardFields;
     private String tifHeader_imagedescription = "";
     private String tifHeader_documentname = "";
+    private boolean fileUploadAvailable = false;
 
     public String prepare() {
         atstsl = "";
@@ -2163,19 +2166,30 @@ public class ProzesskopieForm {
      * Upload a file via file upload dialog and validate that it contains valid MODS XML.
      */
     public void uploadFile() {
+        String xsltPath = ConfigMain.getParameter("xsltFolder") + "mods2kitodo.xsl";
         String xsdPath = new Helper().getGoobiConfigDirectory() + "mods.xsd";
         if (this.uploadedFile != null) {
             try (InputStream inputStream = this.uploadedFile.getInputStream()) {
                 String xmlString = IOUtils.toString(inputStream);
                 if (XMLUtils.validateXML(xmlString, xsdPath)) {
                     Helper.setMeldung("Successfully validated given XML file '" + this.uploadedFile.getName() + "'!");
-                    //TODO: handle XML (e.g. convert to internal format)
+                    clearValues();
+                    readProjectConfigs();
+                    if (!pluginAvailableFor(opacKatalog)) {
+                        Helper.setFehlerMeldung("No plugin available for OPAC " + opacKatalog);
+                    } else {
+                        Helper.setMeldung("Plugin found for catalog '" + opacKatalog + "': " + importCatalogue.getTitle(Locale.ENGLISH));
+                        importHit(importCatalogue.getHit(xmlString, -1, -1));
+                    }
                 } else {
                     Helper.setFehlerMeldung("ERROR: given file '" + this.uploadedFile.getName() + "' does not contain valid MODS XML!");
                 }
 
             } catch (IOException e) {
-                e.printStackTrace();
+                logger.error(e.getLocalizedMessage());
+            } catch (PreferencesException e) {
+                logger.error("Preferences error! Wrong ruleset?");
+                logger.error(e.getLocalizedMessage());
             }
         } else {
             System.err.println("Uploaded file is null!");
