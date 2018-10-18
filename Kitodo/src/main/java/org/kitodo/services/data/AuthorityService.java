@@ -44,7 +44,6 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
 
     private final String globalAuthoritySuffix = "_globalAssignable";
     private final String clientAuthoritySuffix = "_clientAssignable";
-    private final String projectAuthoritySuffix = "_projectAssignable";
 
     /**
      * Constructor with Searcher and Indexer assigning.
@@ -86,15 +85,6 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      */
     public String getClientAuthoritySuffix() {
         return clientAuthoritySuffix;
-    }
-
-    /**
-     * Gets projectAuthoritySuffix.
-     *
-     * @return The projectAuthoritySuffix.
-     */
-    public String getProjectAuthoritySuffix() {
-        return projectAuthoritySuffix;
     }
 
     /**
@@ -202,15 +192,6 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
     }
 
     /**
-     * Gets all authorities which are assignable for any project.
-     *
-     * @return The list of authorities.
-     */
-    public List<Authority> getAllAssignableToProjects() throws DAOException {
-        return filterAuthorities(getAll(), projectAuthoritySuffix);
-    }
-
-    /**
      * Filters global assignable authorities out of an given list of authorities.
      *
      * @return The list of authorities.
@@ -226,15 +207,6 @@ public class AuthorityService extends TitleSearchService<Authority, AuthorityDTO
      */
     public List<Authority> filterAssignableToClients(List<Authority> authoritiesToFilter) {
         return filterAuthorities(authoritiesToFilter, clientAuthoritySuffix);
-    }
-
-    /**
-     * Filters project assignable authorities out of an given list of authorities.
-     *
-     * @return The list of authorities.
-     */
-    public List<Authority> filterAssignableToProjects(List<Authority> authoritiesToFilter) {
-        return filterAuthorities(authoritiesToFilter, projectAuthoritySuffix);
     }
 
     /**

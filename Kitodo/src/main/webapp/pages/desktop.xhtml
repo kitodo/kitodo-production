@@ -27,7 +27,7 @@
         <ui:fragment rendered="#{SessionClientController.currentSessionClient ne null or not SessionClientController.shouldUserChangeSessionClient()}">
             <div id="desktopGrid">
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllTasks')}">
+                         rendered="#{SecurityAccessController.hasAuthorityGlobalOrForAnyClient('viewAllTasks')}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.tasks}</h3>
@@ -43,7 +43,7 @@
                     <ui:include src="/WEB-INF/templates/includes/desktop/tasksWidget.xhtml"/>
                 </p:panel>
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAuthorityForAny('viewAllProcesses')}">
+                         rendered="#{SecurityAccessController.hasAuthorityGlobalOrForAnyClient('viewAllProcesses')}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.processes}</h3>
@@ -54,13 +54,12 @@
                             <p:button id="allProcesses" value="#{msgs.allProcesses}"
                                       outcome="processes"
                                       icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
-
                         </div>
                     </div>
                     <ui:include src="/WEB-INF/templates/includes/desktop/processesWidget.xhtml"/>
                 </p:panel>
                 <p:panel styleClass="desktop-widget"
-                         rendered="#{SecurityAccessController.hasAnyAuthorityForAny('viewAllProjects, viewAllDockets')}">
+                         rendered="#{SecurityAccessController.hasAuthorityGlobalOrForAnyClient('viewAllProjects, viewAllDockets')}">
                     <div class="content-header">
                         <div class="ui-panel-content ui-widget-content">
                             <h3>#{msgs.projects}</h3>

@@ -52,9 +52,8 @@
 
         <p:column headerText="#{msgs.actions}" styleClass="actionsColumn">
             <h:form id="projectActionForm">
-                <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('editProject',item.client.id,item.id)}"
-                        outcome="projectEdit"
-                        title="#{msgs.projectEdit}">
+                <h:link rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('editProject',item.client.id)}"
+                        outcome="projectEdit" title="#{msgs.projectEdit}">
                     <f:param name="id" value="#{item.id}" />
                     <f:param name="referer" value="projects"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
@@ -67,7 +66,7 @@
                                action="#{ProjectForm.delete}"
                                title="#{msgs.delete}"
                                update="projectsTabView:projectsTable"
-                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClientOrForProject('deleteProject', item.client.id, item.id)}">
+                               rendered="#{SecurityAccessController.isAdminOrHasAuthorityGlobalOrForClient('deleteProject', item.client.id)}">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{item.id}" target="#{ProjectForm.projectById}"/>
                     <p:confirm header="#{msgs.confirmDelete}"

@@ -239,7 +239,7 @@ public class AddingST extends BaseTestSelenium {
                 userGroupEditPage.getHeaderText());
 
         userGroupEditPage.setUserGroupTitle(userGroup.getTitle()).assignAllGlobalAuthorities()
-                .assignAllClientAuthorities().assignAllProjectAuthorities();
+                .assignAllClientAuthorities();
         userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(1).getName());
         userGroupEditPage.addUserGroupToClient(serviceManager.getClientService().getById(2).getName());
         userGroupEditPage.save();
@@ -260,12 +260,5 @@ public class AddingST extends BaseTestSelenium {
                 .countAssignedClientAuthorities();
         assertEquals("Assigned client authorities of the new user group were not saved!", availableClientAuthorities,
             assignedClientAuthorities);
-
-        int availableProjectAuthorities = serviceManager.getAuthorityService().getAllAssignableToProjects().size();
-        int assignedProjectAuthorities = userGroupEditPage.countAssignedProjectAuthorities();
-        assertEquals("Assigned project authorities of the new user group were not saved!", availableProjectAuthorities,
-                assignedProjectAuthorities);
-        actualTitle = userGroupEditPage.getUserGroupTitle();
-        assertEquals("New Name of user group was not saved", userGroup.getTitle(), actualTitle);
     }
 }

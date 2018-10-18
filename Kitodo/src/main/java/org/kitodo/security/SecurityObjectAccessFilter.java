@@ -21,7 +21,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.services.ServiceManager;
 import org.kitodo.services.security.SecurityAccessService;
 import org.springframework.security.access.AccessDeniedException;
@@ -66,7 +65,7 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
 
             if (httpServletRequest.getRequestURI().contains("pages/projectEdit")
-                    && !isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient("viewProject", idInt)) {
+                    && !securityAccessService.isAdminOrHasAuthorityGlobalOrForClient("viewProject", idInt)) {
                 denyAccess(httpServletRequest, httpServletResponse);
                 return;
             }
@@ -84,16 +83,6 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             }
         }
         chain.doFilter(request, response);
-    }
-
-    private boolean isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(String authority, int id)
-            throws IOException {
-        try {
-            return securityAccessService.isAdminOrHasAuthorityGlobalOrForProjectOrForRelatedClient(authority, id);
-        } catch (DataException e) {
-            throw new IOException(e);
-        }
-
     }
 
     private void denyAccess(HttpServletRequest hreq, HttpServletResponse hres) throws IOException, ServletException {

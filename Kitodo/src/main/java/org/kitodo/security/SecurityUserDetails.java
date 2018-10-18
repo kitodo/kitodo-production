@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.UserGroup;
 import org.kitodo.services.ServiceManager;
@@ -52,7 +51,6 @@ public class SecurityUserDetails extends User implements UserDetails {
 
         List<UserGroup> userGroups = super.getUserGroups();
         List<Client> clients = super.getClients();
-        List<Project> projects = super.getProjects();
         List<SimpleGrantedAuthority> userAuthorities = new ArrayList<>();
 
         for (UserGroup userGroup : userGroups) {
@@ -63,9 +61,6 @@ public class SecurityUserDetails extends User implements UserDetails {
                 }
                 if (authority.getTitle().contains(serviceManager.getAuthorityService().getClientAuthoritySuffix())) {
                     insertClientAuthorities(userAuthorities, authority, clients);
-                }
-                if (authority.getTitle().contains(serviceManager.getAuthorityService().getProjectAuthoritySuffix())) {
-                    insertProjectAuthorities(userAuthorities, authority, projects);
                 }
             }
         }
@@ -93,24 +88,6 @@ public class SecurityUserDetails extends User implements UserDetails {
             }
             SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
                     authorityTitle + "_CLIENT_" + client.getId());
-            if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
-                userAuthorities.add(simpleGrantedAuthorityWithId);
-            }
-        }
-    }
-
-    private void insertProjectAuthorities(List<SimpleGrantedAuthority> userAuthorities, Authority authority,
-            List<Project> projects) {
-        for (Project project : projects) {
-            String authorityTitle = authority.getTitle()
-                    .replace(serviceManager.getAuthorityService().getProjectAuthoritySuffix(), "");
-
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authorityTitle + "_PROJECT_ANY");
-            if (!userAuthorities.contains(simpleGrantedAuthority)) {
-                userAuthorities.add(simpleGrantedAuthority);
-            }
-            SimpleGrantedAuthority simpleGrantedAuthorityWithId = new SimpleGrantedAuthority(
-                    authorityTitle + "_PROJECT_" + project.getId());
             if (!userAuthorities.contains(simpleGrantedAuthorityWithId)) {
                 userAuthorities.add(simpleGrantedAuthorityWithId);
             }

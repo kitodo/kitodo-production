@@ -84,7 +84,7 @@ public class EditingST extends BaseTestSelenium {
     }
 
     @Test
-    public void addTemplateTest() throws Exception {
+    public void editTemplateTest() throws Exception {
         projectsPage.editTemplate();
         assertEquals("Header for edit template is incorrect", "Produktionsvorlage bearbeiten (First template)",
             Pages.getTemplateEditPage().getHeaderText());
