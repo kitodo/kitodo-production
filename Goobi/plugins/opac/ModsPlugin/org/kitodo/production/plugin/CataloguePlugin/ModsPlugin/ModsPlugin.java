@@ -803,27 +803,29 @@ public class ModsPlugin implements Plugin {
         try {
             XPath relatedItemXPath = XPath.newInstance("//mods:mods/mods:relatedItem[@type='host']");
 
-            // 1 create jdom.Document given string
             Document document = sb.build(new StringReader(xmlString));
-            //xmlOutputter.output(document, System.out);
 
-            // 2 separate original document and related item
-            Element relatedItemElement = (Element) relatedItemXPath.selectSingleNode(document);
+            // 1 add original Document to list
+            documentHierarchy.add(document);
+
+            // 2 add related Document to list, if it exists!
+            Document relatedDocument = (Document) document.clone();
+            Element relatedItemElement = (Element) relatedItemXPath.selectSingleNode(relatedDocument);
             if (relatedItemElement != null) {
-                Element relatedItemDocElement = (Element) relatedItemElement.clone();
-                relatedItemElement.detach();
-                xmlOutputter.output(document, System.out);
-                // 3 add jdom.Documents to list
-                documentHierarchy.add(document);
-                if (relatedItemDocElement != null) {
-                    // TODO: create document for host item and add it to the list
+                relatedItemElement = (Element) relatedItemElement.detach();
+                relatedDocument.getRootElement().removeContent();
+                LinkedList<Element> relatedChildren = new LinkedList<>();
+                for (Object child : relatedItemElement.getChildren()) {
+                    relatedChildren.add((Element)child);
                 }
-            } else {
-                documentHierarchy.add(document);
+                for (Element child : relatedChildren) {
+                    relatedDocument.getRootElement().addContent(child.detach());
+                }
+                documentHierarchy.add(relatedDocument);
             }
 
         } catch (JDOMException | IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
 
         return documentHierarchy;
@@ -861,7 +863,7 @@ public class ModsPlugin implements Plugin {
                     }
                 }
 
-                // update xmlString so it only contains one record
+                // update xmlString so it contains only one record
                 xmlString = xmlOutputter.outputString(doc);
 
                 while (xmlString != null) {
@@ -930,7 +932,6 @@ public class ModsPlugin implements Plugin {
         } else {
             try {
                 Document transformedDocument = transformXML(documentHierarchy.get(0), transformationScript);
-                xmlOutputter.output(transformedDocument, System.out);
                 String docID = extractDocumentIdentifier(transformedDocument);
                 result.putAll(getAdditionalDetails(transformedDocument));
 
@@ -971,7 +972,7 @@ public class ModsPlugin implements Plugin {
                             .replaceMetadatum(dd.getPhysicalDocStruct(), preferences, "shelfmarksource", (String) result.get("shelfmarksource"));
                 }
 
-                String topStructType = getStructureType((Element) modsXPath.selectSingleNode(documentHierarchy.get(0)));
+                String topStructType = getStructureType((Element) modsXPath.selectSingleNode(documentHierarchy.get(documentHierarchy.size()-1)));
 
                 result.put("fileformat", ff);
                 result.put("type", structureTypeToDocTypeMapping.get(topStructType));

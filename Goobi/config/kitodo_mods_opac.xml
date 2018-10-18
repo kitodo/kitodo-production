@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opacCatalogues>
+    <!-- list containing translations of possible top struct types -->
     <doctypes>
         <type rulesetType="Inventory" title="inventory">
             <label language="de">Bestand</label>
             <label language="en">Inventory</label>
             <mapping>text</mapping>
+        </type>
+        <type rulesetType="MultiVolumeWork" title="multivolumework">
+            <label language="de">Mehrbändiges Werk</label>
+            <label language="en">Multivolume Work</label>
+        </type>
+        <type rulesetType="Monograph" title="monograph">
+            <label language="de">Monographie</label>
+            <label language="en">Monograph</label>
         </type>
     </doctypes>
 
@@ -84,8 +93,13 @@
             <type rulesetType="Monograph">
                 <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</mandatoryElement>
             </type>
-            <type rulesetType="MultiVolumeWork">
+            <type rulesetType="Volume">
                 <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</mandatoryElement>
+                <mandatoryElement>//mods:mods/mods:relatedItem[@type='host']</mandatoryElement>
+            </type>
+            <type rulesetType="MultiVolumeWork">
+                <forbiddenElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</forbiddenElement>
+                <forbiddenElement>//mods:mods/mods:relatedItem[@type='host']</forbiddenElement>
             </type>
         </structuretypes>
     </catalogue>
