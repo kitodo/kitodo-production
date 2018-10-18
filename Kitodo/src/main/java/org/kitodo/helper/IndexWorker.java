@@ -70,9 +70,9 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, IOException {
+    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
         for (Object object : objectsToIndex) {
-            this.searchService.saveToIndex((BaseIndexedBean) object, false);
+            this.searchService.saveToIndexAndUpdateIndexFlag((BaseIndexedBean) object, false);
             this.indexedObjects++;
         }
     }
