@@ -56,7 +56,7 @@ public class ClientForm extends BaseForm {
             return clientListPath;
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 

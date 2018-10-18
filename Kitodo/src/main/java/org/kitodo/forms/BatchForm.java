@@ -446,7 +446,7 @@ public class BatchForm extends BaseForm {
     public String export() {
         if (this.selectedBatches.isEmpty()) {
             Helper.setErrorMessage(NO_BATCH_SELECTED);
-            return null;
+            return this.stayOnCurrentPage;
         }
 
         for (Batch selectedBatch : selectedBatches) {
@@ -472,7 +472,7 @@ public class BatchForm extends BaseForm {
                     | ReadException | IOException | ExportFileException | RuntimeException | JAXBException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
-                return null;
+                return this.stayOnCurrentPage;
             }
         }
 

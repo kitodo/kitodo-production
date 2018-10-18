@@ -88,17 +88,17 @@ public class DocketForm extends BaseForm {
             if (hasValidRulesetFilePath(myDocket, ConfigCore.getParameter(ParameterCore.DIR_XSLT)) ) {
                 if (existsDocketWithSameName()) {
                     Helper.setErrorMessage("docketTitleDuplicated");
-                    return null;
+                    return this.stayOnCurrentPage;
                 }
                 serviceManager.getDocketService().save(myDocket);
                 return docketListPath;
             } else {
                 Helper.setErrorMessage("docketNotFound");
-                return null;
+                return this.stayOnCurrentPage;
             }
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 

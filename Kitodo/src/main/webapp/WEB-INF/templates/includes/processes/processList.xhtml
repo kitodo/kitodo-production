@@ -43,7 +43,7 @@
                     <h:outputText><i class="fa fa-file-o"/></h:outputText>
                     <f:param name="ProzesseID" value="#{process.id}"/>
                     <f:param name="BenutzerID" value="#{LoginForm.myBenutzer.id}"/>
-                    <f:param name="zurueck" value="processList"/>
+                    <f:param name="stayOnCurrentPage" value="processList"/>
                     <f:setPropertyActionListener value="processes" target="#{Metadaten.referringView}"/>
                     <f:actionListener binding="#{Metadaten.setCorrectionComment(false)}"/>
                     <f:actionListener binding="#{Metadaten.setShowNewComment(false)}"/>

@@ -167,7 +167,7 @@ public class ProjectForm extends BaseForm {
             return projectEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -183,7 +183,7 @@ public class ProjectForm extends BaseForm {
         this.commitFolders();
         if (this.project.getTitle().equals("") || this.project.getTitle() == null) {
             Helper.setErrorMessage("errorProjectNoTitleGiven");
-            return null;
+            return this.stayOnCurrentPage;
         } else {
             try {
                 if (this.copyTemplates) {
@@ -198,7 +198,7 @@ public class ProjectForm extends BaseForm {
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
-                return null;
+                return this.stayOnCurrentPage;
             }
         }
     }
@@ -228,7 +228,7 @@ public class ProjectForm extends BaseForm {
         this.myFolder = new Folder();
         this.myFolder.setProject(this.project);
         this.newFolders.add(this.myFolder.getId());
-        return this.zurueck;
+        return this.stayOnCurrentPage;
     }
 
     /**
@@ -252,7 +252,7 @@ public class ProjectForm extends BaseForm {
         // to be deleted folder IDs are listed
         // and deleted after a commit
         this.deletedFolders.add(this.myFolder.getId());
-        return null;
+        return this.stayOnCurrentPage;
     }
 
     /**

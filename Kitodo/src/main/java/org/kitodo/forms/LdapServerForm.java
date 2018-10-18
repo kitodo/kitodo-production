@@ -74,7 +74,7 @@ public class LdapServerForm extends BaseForm {
             return ldapServerListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 

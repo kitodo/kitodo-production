@@ -72,7 +72,7 @@ public class LdapGroupForm extends BaseForm {
             return ldapGroupListPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -92,7 +92,7 @@ public class LdapGroupForm extends BaseForm {
             return ldapGroupEditPath;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DUPLICATE, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
     }
 
@@ -104,13 +104,13 @@ public class LdapGroupForm extends BaseForm {
     public String delete() {
         if (!this.myLdapGruppe.getUsers().isEmpty()) {
             Helper.setErrorMessage(ERROR_DELETING_LDAP_GROUPE, new Object[]{Helper.getTranslation(LDAP_GROUP)});
-            return null;
+            return this.stayOnCurrentPage;
         }
         try {
             this.serviceManager.getLdapGroupService().removeFromDatabase(this.myLdapGruppe);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {Helper.getTranslation(LDAP_GROUP) }, logger, e);
-            return null;
+            return this.stayOnCurrentPage;
         }
         return ldapGroupListPath;
     }
