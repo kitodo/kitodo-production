@@ -7,26 +7,7 @@
             <mapping>text</mapping>
         </type>
     </doctypes>
-    <structuretypes>
-        <type rulesetType="Inventory">
-            <mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
-            <forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
-        </type>
-        <type rulesetType="Subinventory">
-            <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
-            <forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
-        </type>
-        <type rulesetType="Manuscript">
-            <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
-            <mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
-        </type>
-        <type rulesetType="Monograph">
-            <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</mandatoryElement>
-        </type>
-        <type rulesetType="MultiVolumeWork">
-            <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</mandatoryElement>
-        </type>
-    </structuretypes>
+
     <catalogue title="Kalliope">
         <config address="kalliope-verbund.info" description="Kalliope Verbundkatalog"/>
         <mappingFile>kalliope2kitodo.xsl</mappingFile>
@@ -60,6 +41,20 @@
             <detail name="place" xpath="//goobi:metadata[@name='PlaceOfPublication']" />
             <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
         </additionalDetails>
+        <structuretypes>
+            <type rulesetType="Inventory">
+                <mandatoryElement>//mods:mods/mods:typeOfResource[@collection='yes']</mandatoryElement>
+                <forbiddenElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</forbiddenElement>
+            </type>
+            <type rulesetType="Subinventory">
+                <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+                <forbiddenElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</forbiddenElement>
+            </type>
+            <type rulesetType="Manuscript">
+                <mandatoryElement>//mods:mods/mods:relatedItem/mods:identifier[@type='localparentid']</mandatoryElement>
+                <mandatoryElement>//mods:mods/mods:typeOfResource[@manuscript='yes']</mandatoryElement>
+            </type>
+        </structuretypes>
         <fileUpload>false</fileUpload>
     </catalogue>
     <catalogue title="adis">
@@ -85,5 +80,13 @@
             <detail name="url" xpath="//goobi:metadata[@name='slub_link']" />
         </additionalDetails>
         <fileUpload>true</fileUpload>
+        <structuretypes>
+            <type rulesetType="Monograph">
+                <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'monographic']</mandatoryElement>
+            </type>
+            <type rulesetType="MultiVolumeWork">
+                <mandatoryElement>//mods:mods/mods:originInfo[@eventType='publication']/mods:issuance[text() = 'multipart monograph']</mandatoryElement>
+            </type>
+        </structuretypes>
     </catalogue>
 </opacCatalogues>
