@@ -34,7 +34,6 @@
         <spring.security.version>4.2.3.RELEASE</spring.security.version>
         <selenium.version>3.9.1</selenium.version>
         <cargo.plugin.version>1.6.8</cargo.plugin.version>
-        <com.h2database.h2.version>1.4.197</com.h2database.h2.version>
     </properties>
 
     <dependencies>
@@ -575,7 +574,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.193</version>
+            <version>${com.h2database.h2.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
