@@ -40,9 +40,11 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.configuration.tree.xpath.XPathExpressionEngine;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
@@ -993,9 +995,13 @@ public class ModsPlugin implements Plugin {
 
         if (structureTypeMandatoryElements.keySet().size() < 1 && structureTypeForbiddenElements.keySet().size() < 1) {
 
-            XMLConfiguration pluginConfiguration = ConfigOpac.getConfig();
+            HierarchicalConfiguration opacConfig = ConfigOpac.getConfig();
+            opacConfig.setExpressionEngine(new XPathExpressionEngine());
 
-            for (Object structureTypeObject : pluginConfiguration.configurationsAt("structuretypes.type")) {
+            SubnodeConfiguration pluginConfiguration = opacConfig.configurationAt(
+                    CONF_CATALOGUE + "[@title='" + configuration.getTitle() + "']");
+
+            for (Object structureTypeObject : pluginConfiguration.configurationsAt("structuretypes/type")) {
                 SubnodeConfiguration structureType = (SubnodeConfiguration) structureTypeObject;
 
                 String structureTypeName = "";
