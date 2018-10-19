@@ -431,22 +431,44 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Remove UserGroup.
+     * Remove user group from the task.
      *
-     * @return empty String
+     * @return stay on the same page
      */
     public String deleteUserGroup() {
-        deleteUserGroup(this.task);
+        try {
+            int userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            for (UserGroup userGroup : this.task.getUserGroups()) {
+                if (userGroup.getId().equals(userGroupId)) {
+                    this.task.getUserGroups().remove(userGroup);
+                }
+            }
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
         return this.stayOnCurrentPage;
     }
 
     /**
-     * Add UserGroup.
+     * Add user group to the task.
      *
-     * @return empty String
+     * @return stay on the same page
      */
     public String addUserGroup() {
-        addUserGroup(this.task);
+        int userGroupId = 0;
+        try {
+            userGroupId = Integer.parseInt(Helper.getRequestParameter("ID"));
+            UserGroup userGroup = serviceManager.getUserGroupService().getById(userGroupId);
+
+            if (!this.task.getUserGroups().contains(userGroup)) {
+                this.task.getUserGroups().add(userGroup);
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_DATABASE_READING,
+                    new Object[] {ObjectType.USER_GROUP.getTranslationSingular(), userGroupId }, logger, e);
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
         return this.stayOnCurrentPage;
     }
 
