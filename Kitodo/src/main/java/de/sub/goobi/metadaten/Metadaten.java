@@ -2697,16 +2697,6 @@ public class Metadaten {
     }
 
     /**
-     * Sets new value for wiki field.
-     *
-     * @param inString
-     *            input String
-     */
-    public void setWikiField(String[] inString) {
-    }
-
-
-    /**
      * Get add to wiki field.
      *
      * @return values for add to wiki field
@@ -2742,7 +2732,6 @@ public class Metadaten {
             }
         }
         setShowNewComment(false);
-        setWikiField(getWikiField());
     }
 
     /**
